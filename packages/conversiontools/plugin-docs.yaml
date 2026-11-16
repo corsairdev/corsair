@@ -1,5 +1,6 @@
 displayName: "Conversion Tools"
 description: "Create and manage Conversion Tools file-conversion tasks, uploads, binary downloads, converter discovery, task status, and retention through its REST API."
+domain: conversiontools.io
 overviewNote: >-
   Connect each tenant through the connect-link step below before making
   authenticated API calls. The API-key flow does not prompt for credentials on

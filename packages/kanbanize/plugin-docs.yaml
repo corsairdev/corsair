@@ -1,6 +1,6 @@
 displayName: Kanbanize
 description: Kanban boards with Kanbanize (now Businessmap) - manage boards, workflows, columns and lanes, create and move cards with their custom fields, subtasks and comments, and read tags, users and the account's request limits.
-domain: kanbanize.com
+domain: businessmap.io
 recommendedAuth: api_key
 overviewNote: |
   Create a key in Businessmap under My Account, API, then Show API key. It acts as the user who owns it, with exactly their board permissions. Generating a new key deletes the current one permanently.
