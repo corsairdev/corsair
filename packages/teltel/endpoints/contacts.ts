@@ -42,7 +42,6 @@ export const contactsList: TeltelEndpoints['contactsList'] = async (
 			query: {
 				limit: parsed.limit,
 				offset: parsed.offset,
-				fields: parsed.fields,
 				sort: parsed.sort,
 				filter: filterParam([
 					['group_id', '=', parsed.group_id],
@@ -163,7 +162,6 @@ export const groupsList: TeltelEndpoints['contactGroupsList'] = async (
 			query: {
 				limit: parsed.limit,
 				offset: parsed.offset,
-				fields: parsed.fields,
 			},
 		}),
 	);
@@ -264,7 +262,6 @@ export const groupsContacts: TeltelEndpoints['contactGroupsContacts'] = async (
 			query: {
 				limit: parsed.limit,
 				offset: parsed.offset,
-				fields: parsed.fields,
 			},
 		}),
 	);

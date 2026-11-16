@@ -214,6 +214,26 @@ describe('sms.sendBulk', () => {
 		expect(Array.isArray(result.data)).toBe(false);
 	});
 
+	it('parses the split when it arrives at the top level', async () => {
+		respond(
+			{
+				success: [{ id: '109', index: 0 }],
+				errors: [{ index: 1, title: 'Invalid number' }],
+			},
+			207,
+		);
+
+		const result = await invoke(Sms.smsSendBulk, {
+			messages: [
+				{ from: '37126118199', to: '37126118198', message: 'One' },
+				{ from: '37126118199', to: 'not-a-number', message: 'Two' },
+			],
+		});
+
+		expect(result.errors?.[0]?.index).toBe(1);
+		expect(result.success?.[0]?.id).toBe('109');
+	});
+
 	it('rejects an empty message list', async () => {
 		await expect(invoke(Sms.smsSendBulk, { messages: [] })).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();

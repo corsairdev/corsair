@@ -29,7 +29,6 @@ export const list: TeltelEndpoints['campaignsList'] = async (ctx, input) => {
 			query: {
 				limit: parsed.limit,
 				offset: parsed.offset,
-				fields: parsed.fields,
 				sort: parsed.sort,
 				filter: filterParam([['state', '=', parsed.state]]),
 			},

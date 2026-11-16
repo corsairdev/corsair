@@ -39,7 +39,6 @@ export const callsList: TeltelEndpoints['callsList'] = async (ctx, input) => {
 			query: {
 				limit: parsed.limit,
 				offset: parsed.offset,
-				fields: parsed.fields,
 				sort: parsed.sort,
 				filter: filterParam([
 					['direction', '=', parsed.direction],
@@ -89,7 +88,6 @@ export const numbersList: TeltelEndpoints['numbersList'] = async (
 			query: {
 				limit: parsed.limit,
 				offset: parsed.offset,
-				fields: parsed.fields,
 				sort: parsed.sort,
 			},
 		}),
@@ -196,7 +194,6 @@ export const priceGroupsList: TeltelEndpoints['priceGroupsList'] = async (
 			query: {
 				limit: parsed.limit,
 				offset: parsed.offset,
-				fields: parsed.fields,
 			},
 		}),
 	);
@@ -236,7 +233,6 @@ export const usersList: TeltelEndpoints['usersList'] = async (ctx, input) => {
 			query: {
 				limit: parsed.limit,
 				offset: parsed.offset,
-				fields: parsed.fields,
 			},
 		}),
 		// TelTEL returns each user's API key in the list. It is dropped here

@@ -24,15 +24,10 @@ export const OffsetSchema = z
 	.min(0)
 	.optional()
 	.describe('Results to skip. TelTEL defaults it to 0.');
-export const FieldsSchema = z
-	.string()
-	.optional()
-	.describe('Comma-separated field names to return, leaving the rest out.');
 
 const PagingShape = {
 	limit: LimitSchema,
 	offset: OffsetSchema,
-	fields: FieldsSchema,
 } as const;
 
 /**
@@ -122,6 +117,15 @@ export const BulkSendResultSchema = z
 	})
 	.loose();
 
+/** One failed message in a bulk send, by its index in the request. */
+const BulkSendErrorSchema = z
+	.object({
+		index: z.number().nullish(),
+		title: z.string().nullish(),
+		detail: z.string().nullish(),
+	})
+	.loose();
+
 /**
  * A bulk send answers 200 with the IDs it created, or 207 with a mix of
  * successes and per-message errors. Both shapes are modelled so a partial
@@ -135,25 +139,15 @@ export const SmsSendBulkResponseSchema = z
 				z
 					.object({
 						success: z.array(BulkSendResultSchema).nullish(),
-						errors: z
-							.array(
-								z
-									.object({
-										index: z.number().nullish(),
-										title: z.string().nullish(),
-										detail: z.string().nullish(),
-									})
-									.loose(),
-							)
-							.nullish(),
+						errors: z.array(BulkSendErrorSchema).nullish(),
 					})
 					.loose(),
 			])
 			.nullish(),
 		// The 207 payload puts the same split under data, but TelTEL has also
-		// sent it at the top level, so both are read.
+		// sent it at the top level, so both are read the same way.
 		success: z.array(BulkSendResultSchema).nullish(),
-		errors: z.array(z.record(z.string(), z.string())).nullish(),
+		errors: z.array(BulkSendErrorSchema).nullish(),
 	})
 	.loose();
 
@@ -176,11 +170,15 @@ export const SmsReportsListInputSchema = z.object({
 	'created_at[from]': z
 		.string()
 		.optional()
-		.describe('Only messages created on or after this timestamp.'),
+		.describe(
+			'Only messages created after this timestamp (strict), e.g. "2024-03-01T00:00:00".',
+		),
 	'created_at[to]': z
 		.string()
 		.optional()
-		.describe('Only messages created on or before this timestamp.'),
+		.describe(
+			'Only messages created before this timestamp (strict), e.g. "2024-03-31T23:59:59".',
+		),
 });
 
 export type SmsReportsListInput = z.infer<typeof SmsReportsListInputSchema>;
@@ -633,8 +631,14 @@ export const CallsListInputSchema = z.object({
 		.optional()
 		.describe('Fields to sort by; prefix one with "-" for descending.'),
 	direction: z.enum(['inbound', 'outbound']).optional(),
-	'starttime[from]': z.string().optional(),
-	'starttime[to]': z.string().optional(),
+	'starttime[from]': z
+		.string()
+		.optional()
+		.describe('Only calls started after this timestamp (strict).'),
+	'starttime[to]': z
+		.string()
+		.optional()
+		.describe('Only calls started before this timestamp (strict).'),
 });
 
 export type CallsListInput = z.infer<typeof CallsListInputSchema>;
