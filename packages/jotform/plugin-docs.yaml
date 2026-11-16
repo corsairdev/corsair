@@ -44,12 +44,6 @@ apiExamples:
     call: "{}"
   user.getLabels:
     call: "{}"
-  user.login:
-    call: "{ username: 'testuser.example', password: 'example-password' }"
-  user.logout:
-    call: "{}"
-  user.register:
-    call: "{ username: 'testuser.example', password: 'example-password', email: 'user@example.com' }"
   forms.get:
     call: "{ id: '230000000000000' }"
   forms.create:

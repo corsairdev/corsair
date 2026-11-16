@@ -3,7 +3,6 @@ import type { JotformEndpoints } from '..';
 import {
 	FORM_URLENCODED,
 	makeJotformEndpointRequest,
-	nestSubmissionKeys,
 	toJotformFormBody,
 } from '../client';
 import {
@@ -339,85 +338,6 @@ export const getLabels: JotformEndpoints['user.getLabels'] = async (
 	await logEventFromContext(
 		ctx,
 		'jotform.user.getLabels',
-		{ status: 'success' },
-		'completed',
-	);
-	return parsed;
-};
-
-export const login: JotformEndpoints['user.login'] = async (ctx, input) => {
-	const parsedInput = JotformEndpointInputSchemas['user.login'].parse(input);
-	// Urlencoded body as required by Jotform login endpoint
-	const body = new URLSearchParams({
-		username: parsedInput.username,
-		password: parsedInput.password,
-		...(parsedInput.appName ? { appName: parsedInput.appName } : {}),
-		...(parsedInput.access ? { access: parsedInput.access } : {}),
-	}).toString();
-
-	const response = await makeJotformEndpointRequest(
-		ctx,
-		'/user/login',
-		undefined, // keyless public route
-		{
-			method: 'POST',
-			body,
-			contentType: 'application/x-www-form-urlencoded',
-		},
-	);
-	const parsed = JotformEndpointOutputSchemas['user.login'].parse(response);
-	await logEventFromContext(
-		ctx,
-		'jotform.user.login',
-		{ status: 'success' },
-		'completed',
-	);
-	return parsed;
-};
-
-export const logout: JotformEndpoints['user.logout'] = async (ctx, input) => {
-	JotformEndpointInputSchemas['user.logout'].parse(input);
-	const response = await makeJotformEndpointRequest(
-		ctx,
-		'/user/logout',
-		ctx.key,
-		{ method: 'GET' },
-	);
-	const parsed = JotformEndpointOutputSchemas['user.logout'].parse(response);
-	await logEventFromContext(
-		ctx,
-		'jotform.user.logout',
-		{ status: 'success' },
-		'completed',
-	);
-	return parsed;
-};
-
-export const register: JotformEndpoints['user.register'] = async (
-	ctx,
-	input,
-) => {
-	const parsedInput = JotformEndpointInputSchemas['user.register'].parse(input);
-	const body = new URLSearchParams({
-		username: parsedInput.username,
-		password: parsedInput.password,
-		email: parsedInput.email,
-	}).toString();
-
-	const response = await makeJotformEndpointRequest(
-		ctx,
-		'/user/register',
-		undefined, // keyless public route
-		{
-			method: 'POST',
-			body,
-			contentType: 'application/x-www-form-urlencoded',
-		},
-	);
-	const parsed = JotformEndpointOutputSchemas['user.register'].parse(response);
-	await logEventFromContext(
-		ctx,
-		'jotform.user.register',
 		{ status: 'success' },
 		'completed',
 	);

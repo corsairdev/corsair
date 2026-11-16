@@ -275,22 +275,6 @@ export const JotformEndpointInputSchemas = {
 			addResources: z.union([z.string(), z.boolean()]).optional(),
 		})
 		.strict(),
-	'user.login': z
-		.object({
-			username: z.string().min(1),
-			password: z.string().min(1),
-			appName: z.string().optional(),
-			access: z.string().optional(),
-		})
-		.strict(),
-	'user.logout': z.object({}).strict(),
-	'user.register': z
-		.object({
-			username: z.string().min(1),
-			password: z.string().min(1),
-			email: z.string().min(1),
-		})
-		.strict(),
 
 	// ── Forms ──
 	'forms.get': z
@@ -588,11 +572,6 @@ export const JotformEndpointOutputSchemas = {
 	),
 	// unknown because labels endpoint returns hierarchical label dictionary
 	'user.getLabels': createJotformEnvelope(z.record(z.string(), z.unknown())),
-	// unknown because login returns user session data and API token details
-	'user.login': createJotformEnvelope(z.record(z.string(), z.unknown())),
-	'user.logout': createJotformEnvelope(z.boolean()),
-	// unknown because registration returns newly created user profile details
-	'user.register': createJotformEnvelope(z.record(z.string(), z.unknown())),
 
 	// ── Forms ──
 	'forms.get': createJotformEnvelope(

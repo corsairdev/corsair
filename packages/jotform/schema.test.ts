@@ -29,7 +29,7 @@ describe('Jotform Schemas & Registry Consistency', () => {
 		expect(metaKeys).toEqual(registeredOps);
 		expect(inputSchemaKeys).toEqual(registeredOps);
 		expect(outputSchemaKeys).toEqual(registeredOps);
-		expect(registeredOps.length).toBe(53);
+		expect(registeredOps.length).toBe(50);
 	});
 
 	it('validates user input and output schemas', () => {

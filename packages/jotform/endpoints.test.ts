@@ -13,7 +13,6 @@ import {
 	User,
 } from './endpoints';
 import type { JotformContext } from './index';
-import { PUBLIC_ENDPOINTS } from './index';
 
 jest.mock('corsair/core', () => {
 	const actual = jest.requireActual('corsair/core');
@@ -286,56 +285,6 @@ describe('User Endpoints', () => {
 			query: { addResources: 'true' },
 		});
 		expect(res.responseCode).toBe(200);
-	});
-
-	it('user.login and user.logout and user.register', async () => {
-		mockedRequest.mockResolvedValueOnce({
-			responseCode: 200,
-			message: 'success',
-			content: { appKey: 'new-key' },
-		});
-
-		await User.login(ctx, { username: 'testuser', password: 'secretpassword' });
-		expect(mockedRequest).toHaveBeenCalledWith(
-			'/user/login',
-			undefined,
-			expect.objectContaining({
-				method: 'POST',
-				contentType: 'application/x-www-form-urlencoded',
-			}),
-		);
-
-		mockedRequest.mockResolvedValueOnce({
-			responseCode: 200,
-			message: 'success',
-			content: true,
-		});
-
-		await User.logout(ctx, {});
-		expect(mockedRequest).toHaveBeenCalledWith('/user/logout', ctx.key, {
-			method: 'GET',
-		});
-		expect(PUBLIC_ENDPOINTS.has('user.logout')).toBe(false);
-
-		mockedRequest.mockResolvedValueOnce({
-			responseCode: 200,
-			message: 'success',
-			content: { username: 'registered' },
-		});
-
-		await User.register(ctx, {
-			username: 'registered',
-			password: 'password123',
-			email: 'reg@example.com',
-		});
-		expect(mockedRequest).toHaveBeenCalledWith(
-			'/user/register',
-			undefined,
-			expect.objectContaining({
-				method: 'POST',
-				contentType: 'application/x-www-form-urlencoded',
-			}),
-		);
 	});
 });
 

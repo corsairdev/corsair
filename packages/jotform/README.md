@@ -61,9 +61,6 @@ pnpm add @corsair-dev/jotform
 | `user.getSubmissions` | `jotform.api.user.getSubmissions` | `read` | Get list of submissions for all forms in this account |
 | `user.getSubusers` | `jotform.api.user.getSubusers` | `read` | Get sub-user accounts list and permissions for this account |
 | `user.getUsage` | `jotform.api.user.getUsage` | `read` | Get monthly user usage statistics such as submissions, payments and views |
-| `user.login` | `jotform.api.user.login` | `write` | Log in user with username and password to create an authenticated session |
-| `user.logout` | `jotform.api.user.logout` | `write` | End the current user session and log out |
-| `user.register` | `jotform.api.user.register` | `write` | Register a new user account with username, password and email |
 | `user.updateSettings` | `jotform.api.user.updateSettings` | `write` | Update user account settings including name, email, website and timezone |
 
 ## Auth

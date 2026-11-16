@@ -20,9 +20,6 @@ export const User = {
 	getReports: userModule.getReports,
 	getInvoices: userModule.getInvoices,
 	getLabels: userModule.getLabels,
-	login: userModule.login,
-	logout: userModule.logout,
-	register: userModule.register,
 };
 
 export const Forms = {

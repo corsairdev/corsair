@@ -78,9 +78,6 @@ const jotformEndpointsNested = {
 		getReports: User.getReports,
 		getInvoices: User.getInvoices,
 		getLabels: User.getLabels,
-		login: User.login,
-		logout: User.logout,
-		register: User.register,
 	},
 	forms: {
 		get: Forms.get,
@@ -185,18 +182,6 @@ export const jotformEndpointSchemas = {
 	'user.getLabels': {
 		input: JotformEndpointInputSchemas['user.getLabels'],
 		output: JotformEndpointOutputSchemas['user.getLabels'],
-	},
-	'user.login': {
-		input: JotformEndpointInputSchemas['user.login'],
-		output: JotformEndpointOutputSchemas['user.login'],
-	},
-	'user.logout': {
-		input: JotformEndpointInputSchemas['user.logout'],
-		output: JotformEndpointOutputSchemas['user.logout'],
-	},
-	'user.register': {
-		input: JotformEndpointInputSchemas['user.register'],
-		output: JotformEndpointOutputSchemas['user.register'],
 	},
 	'forms.get': {
 		input: JotformEndpointInputSchemas['forms.get'],
@@ -412,20 +397,6 @@ const jotformEndpointMeta = {
 		description:
 			'Get all labels created by the user for organizing form assets',
 	},
-	'user.login': {
-		riskLevel: 'write',
-		description:
-			'Log in user with username and password to create an authenticated session',
-	},
-	'user.logout': {
-		riskLevel: 'write',
-		description: 'End the current user session and log out',
-	},
-	'user.register': {
-		riskLevel: 'write',
-		description:
-			'Register a new user account with username, password and email',
-	},
 	'forms.get': {
 		riskLevel: 'read',
 		description: 'Get basic information and status for a specific form',
@@ -590,11 +561,7 @@ export const jotformAuthConfig = {
 	api_key: {},
 } as const satisfies PluginAuthConfig;
 
-export const PUBLIC_ENDPOINTS = new Set<string>([
-	'system.getPlan',
-	'user.login',
-	'user.register',
-]);
+export const PUBLIC_ENDPOINTS = new Set<string>(['system.getPlan']);
 
 export type BaseJotformPlugin<T extends JotformPluginOptions> = CorsairPlugin<
 	'jotform',
