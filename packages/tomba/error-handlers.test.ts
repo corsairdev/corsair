@@ -19,8 +19,7 @@ function classify(error: Error): HandlerName {
 }
 
 async function strategy(error: Error) {
-	// The builtin handlers read only the error.
-	return errorHandlers[classify(error)].handler(error, {} as never);
+	return errorHandlers[classify(error)].handler(error);
 }
 
 // The error core's request() throws, as the client passes it on.
