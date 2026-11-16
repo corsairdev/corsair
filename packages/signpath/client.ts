@@ -161,10 +161,29 @@ export async function makeSignpathRequest(
 			rateLimitConfig: SIGNPATH_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		// Core's ApiError goes through unchanged (plugin rule R8): its status and
-		// retryAfter are what the error handlers and core match on. The token sits
-		// in the config headers, not in `error.request`, so the error holds none.
-		if (error instanceof ApiError) throw error;
+		// Still core's ApiError (plugin rule R8), so its status and retry fields
+		// reach the handlers. It is rebuilt only to drop the request's body and
+		// form fields: they can hold an artifact-retrieval link's own auth headers
+		// and the artifact bytes. The API token is in the config, never here.
+		if (error instanceof ApiError) {
+			throw new ApiError(
+				{ method: error.request.method, url: error.request.url },
+				{
+					url: error.url,
+					ok: false,
+					status: error.status,
+					statusText: error.statusText,
+					body: error.body,
+				},
+				error.message,
+				{
+					retryAfter: error.retryAfter,
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
+				},
+			);
+		}
 		// A transport failure never held a body or headers, so its cause is safe
 		// to keep, and it is what tells a retry that nothing reached SignPath.
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.

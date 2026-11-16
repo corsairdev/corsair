@@ -686,6 +686,30 @@ describe('signingRequests.submitWithArtifactRetrievalLink', () => {
 		});
 	});
 
+	it('keeps the link headers out of a failed request error', async () => {
+		respond({ title: 'Bad Request', status: 400 }, 400);
+
+		const error = await invoke(
+			SigningRequests.submitWithArtifactRetrievalLink,
+			{
+				projectSlug: 'my-app',
+				signingPolicySlug: 'release',
+				artifactUrl: 'https://builds.acme.test/app.exe',
+				artifactFileName: 'app.exe',
+				artifactSha256: 'a'.repeat(64),
+				httpHeaders: { Authorization: 'Bearer download-secret' },
+			},
+		).catch(
+			(caught: unknown) => caught, // unknown: rejection reason, narrowed below
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(400);
+		expect(JSON.stringify((error as ApiError).request)).not.toContain(
+			'download-secret',
+		);
+	});
+
 	it('rejects a hash that is not 64 characters', async () => {
 		await expect(
 			invoke(SigningRequests.submitWithArtifactRetrievalLink, {
