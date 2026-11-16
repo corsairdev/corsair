@@ -320,13 +320,15 @@ export const signpathEndpointSchemas = {
 const defaultAuthType = 'api_key' as const;
 
 /**
- * Signing requests are asynchronous, so the three submitters and the resubmit
- * declare a job: `signingRequests.getStatus` is what tells a caller when one
+ * Signing requests are asynchronous, so the three submitters declare a job: `signingRequests.getStatus` is what tells a caller when one
  * finished.
  */
 const SIGNING_REQUEST_DONE = ['Completed'] as const;
 const SIGNING_REQUEST_FAILED = ['Failed', 'Denied', 'Canceled'] as const;
 
+// Submitting, approving and signing are destructive (plugin rule R8): each one
+// puts the organization's code signing certificate on something, and a
+// signature that has been handed out cannot be taken back.
 export const signpathEndpointMeta = {
 	'organization.get': {
 		riskLevel: 'read',
@@ -442,7 +444,7 @@ export const signpathEndpointMeta = {
 			"Read only a signing request's status and workflow status, which is the cheap poll while it waits for approval or processing",
 	},
 	'signingRequests.submitWithArtifact': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Submit an artifact for signing, uploading the bytes in the same call; the request then waits for approval and processing',
 		job: {
@@ -458,7 +460,7 @@ export const signpathEndpointMeta = {
 		},
 	},
 	'signingRequests.submitWithArtifactRetrievalLink': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Submit a signing request that points at an artifact SignPath downloads itself, which is the route for artifacts too large to upload',
 		job: {
@@ -474,7 +476,7 @@ export const signpathEndpointMeta = {
 		},
 	},
 	'signingRequests.submitWithoutArtifact': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Submit a signing request before the artifact exists, returning the upload link the artifact must be delivered to',
 		job: {
@@ -490,19 +492,21 @@ export const signpathEndpointMeta = {
 		},
 	},
 	'signingRequests.signHash': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
 			"Sign a hash with the policy's key and return the signature in the response, without an artifact or a waiting period",
 	},
 	'signingRequests.signMessage': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
 			'Sign a message with ML-DSA and return the signature in the response; PureMldsa is the only algorithm SignPath offers here',
 	},
 	'signingRequests.resubmit': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Resubmit a completed signing request under another policy, which is how a test-signed artifact is promoted to release signing; the new request is found with signingRequests.list',
+			'Resubmit a completed signing request under another policy, which is how a test-signed artifact is promoted to release signing; returns the new request id from the Location header',
 	},
 	'signingRequests.cancel': {
 		riskLevel: 'destructive',
@@ -511,7 +515,7 @@ export const signpathEndpointMeta = {
 			'Cancel a signing request that has not finished; a cancelled request cannot be resumed, so a new one has to be submitted',
 	},
 	'signingRequests.approve': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"Approve a signing request waiting for approval; SignPath accepts it once the policy's required approval count is reached",
 	},

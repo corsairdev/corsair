@@ -111,18 +111,27 @@ describe('signpath plugin definition', () => {
 		expect(irreversible).toEqual([
 			'signingRequests.cancel',
 			'signingRequests.deny',
+			'signingRequests.signHash',
+			'signingRequests.signMessage',
 		]);
 	});
 
-	it('marks both irreversible operations destructive', () => {
+	it('marks signing, submitting, approving, cancelling and denying destructive', () => {
 		const meta = plugin.endpointMeta ?? {};
 		const destructive = Object.entries(meta)
 			.filter(([, entry]) => entry.riskLevel === 'destructive')
 			.map(([name]) => name)
 			.sort();
 		expect(destructive).toEqual([
+			'signingRequests.approve',
 			'signingRequests.cancel',
 			'signingRequests.deny',
+			'signingRequests.resubmit',
+			'signingRequests.signHash',
+			'signingRequests.signMessage',
+			'signingRequests.submitWithArtifact',
+			'signingRequests.submitWithArtifactRetrievalLink',
+			'signingRequests.submitWithoutArtifact',
 		]);
 	});
 
@@ -132,8 +141,8 @@ describe('signpath plugin definition', () => {
 			.filter(([, entry]) => entry.job !== undefined)
 			.map(([name]) => name)
 			.sort();
-		// resubmit is not here: its response is built from the input, because
-		// SignPath returns the new request id only in a Location header.
+		// resubmit is not here: its id comes from a Location header SignPath may
+		// omit, so it is nullable and cannot drive a job.
 		expect(jobs).toEqual([
 			'signingRequests.submitWithArtifact',
 			'signingRequests.submitWithArtifactRetrievalLink',
