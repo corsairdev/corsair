@@ -847,14 +847,14 @@ describe('Pipedrive product endpoints', () => {
 		);
 	});
 
-	it('duplicates a product with the documented POST path and no body', async () => {
+	it('duplicates a product with an empty JSON body (live API 400s on none)', async () => {
 		mockedRequest.mockResolvedValue({ success: true, data: product });
 		await Products.duplicate(ctx, { id: 52 });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/products/52/duplicate',
 			'test-api-token',
 			'api_key',
-			{ method: 'POST' },
+			{ method: 'POST', body: {} },
 		);
 	});
 
@@ -958,15 +958,39 @@ describe('Pipedrive product endpoints', () => {
 			if (!(body instanceof FormData))
 				throw new Error('Expected multipart body');
 			const uploaded = body.get('data');
+			// Live: an upload named `blob` (no extension) is stored but GET then 500s.
 			expect(uploaded).toMatchObject({
 				type: 'image/png',
-				name: 'blob',
+				name: 'image.png',
 			});
 			if (!(uploaded instanceof File))
 				throw new Error('Expected uploaded image');
 			expect(await uploaded.text()).toBe('synthetic image bytes');
 		},
 	);
+
+	it('sends the caller file name and maps jpeg to .jpg', async () => {
+		mockedRequest.mockResolvedValue({
+			success: true,
+			data: { id: 54, product_id: 52 },
+		});
+		const jpeg = new Blob(['jpeg bytes'], { type: 'image/jpeg' });
+		await Products.images.upload(ctx, { id: 52, data: jpeg });
+		await Products.images.upload(ctx, {
+			id: 52,
+			data: jpeg,
+			file_name: 'shoe.jpeg',
+		});
+		const names = mockedRequest.mock.calls.map((call) => {
+			const body = call[3]?.body;
+			const file = body instanceof FormData ? body.get('data') : null;
+			return file instanceof File ? file.name : null;
+		});
+		expect(names).toEqual(['image.jpg', 'shoe.jpeg']);
+		await expect(
+			Products.images.upload(ctx, { id: 52, data: jpeg, file_name: 'shoe' }),
+		).rejects.toThrow();
+	});
 
 	it('deletes a product image', async () => {
 		mockedRequest.mockResolvedValue({ success: true, data: { id: 54 } });

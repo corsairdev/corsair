@@ -145,7 +145,8 @@ export const duplicateProduct: PipedriveEndpoints['productDuplicate'] = async (
 		`/products/${id}/duplicate`,
 		ctx.key,
 		authType(ctx),
-		{ method: 'POST' },
+		// Pipedrive answers 400 to a JSON POST with no body; an empty object works.
+		{ method: 'POST', body: {} },
 	);
 	const parsed =
 		PipedriveEndpointOutputSchemas.productDuplicate.parse(response);
@@ -266,6 +267,12 @@ export const getProductImage: PipedriveEndpoints['productImageGet'] = async (
 	return parsed;
 };
 
+function defaultImageFileName(mimeType: string): string {
+	const subtype = mimeType.split('/')[1]?.split(/[+;]/)[0]?.trim();
+	const extension = subtype === 'jpeg' ? 'jpg' : subtype || 'png';
+	return `image.${extension}`;
+}
+
 async function sendProductImage(
 	ctx: Parameters<PipedriveEndpoints['productImageUpload']>[0],
 	input: Parameters<PipedriveEndpoints['productImageUpload']>[1],
@@ -274,7 +281,13 @@ async function sendProductImage(
 	const parsedInput =
 		PipedriveEndpointInputSchemas.productImageUpload.parse(input);
 	const formData = new FormData();
-	formData.append('data', parsedInput.data);
+	// Pipedrive stores the upload under its file name; a name without an
+	// extension (FormData's default `blob`) saves an image it then fails to read.
+	formData.append(
+		'data',
+		parsedInput.data,
+		parsedInput.file_name ?? defaultImageFileName(parsedInput.data.type),
+	);
 	const response = await makePipedriveRequest(
 		`/products/${parsedInput.id}/images`,
 		ctx.key,
