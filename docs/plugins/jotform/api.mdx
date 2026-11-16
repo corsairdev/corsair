@@ -40,7 +40,7 @@ await corsair.jotform.api.folders.create({ name: 'Feedback Forms' });
 | `message` | `string` | Yes | — |
 | `content` | `object` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 <AccordionGroup>
@@ -53,7 +53,7 @@ await corsair.jotform.api.folders.create({ name: 'Feedback Forms' });
   parent?: string | null,
   color?: string | null,
   path?: string | null,
-  forms?: string[]
+  forms?: string[] | Record<string, any>
 }
 ```
 </Accordion>
@@ -91,7 +91,7 @@ await corsair.jotform.api.folders.delete({ id: 'fold-123' });
 | `message` | `string` | Yes | — |
 | `content` | `string \| Record<string, any> \| boolean` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 
@@ -126,7 +126,7 @@ await corsair.jotform.api.folders.get({ id: 'fold-123' });
 | `message` | `string` | Yes | — |
 | `content` | `object` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 <AccordionGroup>
@@ -139,7 +139,7 @@ await corsair.jotform.api.folders.get({ id: 'fold-123' });
   parent?: string | null,
   color?: string | null,
   path?: string | null,
-  forms?: string[]
+  forms?: string[] | Record<string, any>
 }
 ```
 </Accordion>
@@ -181,7 +181,7 @@ await corsair.jotform.api.folders.update({ id: 'fold-123', name: 'Archived Feedb
 | `message` | `string` | Yes | — |
 | `content` | `object` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 <AccordionGroup>
@@ -189,12 +189,12 @@ await corsair.jotform.api.folders.update({ id: 'fold-123', name: 'Archived Feedb
 
 ```ts
 {
-  id: string,
+  id?: string,
   name?: string | null,
   parent?: string | null,
   color?: string | null,
   path?: string | null,
-  forms?: string[]
+  forms?: string[] | Record<string, any>
 }
 ```
 </Accordion>
@@ -234,7 +234,7 @@ await corsair.jotform.api.forms.clone({ id: '230000000000000' });
 | `message` | `string` | Yes | — |
 | `content` | `Record<string, any>` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 
@@ -271,7 +271,7 @@ await corsair.jotform.api.forms.create({ properties: { title: 'Feedback Form' } 
 | `message` | `string` | Yes | — |
 | `content` | `Record<string, any>` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 
@@ -306,7 +306,7 @@ await corsair.jotform.api.forms.createForms({ formContent: { properties: { title
 | `message` | `string` | Yes | — |
 | `content` | `Record<string, any>` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 
@@ -342,7 +342,7 @@ await corsair.jotform.api.forms.createQuestion({ id: '230000000000000', question
 | `message` | `string` | Yes | — |
 | `content` | `Record<string, any>` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 
@@ -378,7 +378,7 @@ await corsair.jotform.api.forms.createQuestions({ id: '230000000000000', questio
 | `message` | `string` | Yes | — |
 | `content` | `Record<string, any>` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 
@@ -416,7 +416,7 @@ await corsair.jotform.api.forms.createReport({ id: '230000000000000', title: 'Su
 | `message` | `string` | Yes | — |
 | `content` | `object` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 <AccordionGroup>
@@ -445,9 +445,9 @@ await corsair.jotform.api.forms.createReport({ id: '230000000000000', title: 'Su
 
 `forms.createSubmission`
 
-Submit a new entry with field answers to a specific form
+Submit a new entry with field answers to a specific form. Jotform runs the form notifications and autoresponder emails as for a real submission
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.jotform.api.forms.createSubmission({ id: '230000000000000', submission: { '1': 'Sample Answer' } });
@@ -470,7 +470,7 @@ await corsair.jotform.api.forms.createSubmission({ id: '230000000000000', submis
 | `message` | `string` | Yes | — |
 | `content` | `Record<string, any>` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 
@@ -481,9 +481,9 @@ await corsair.jotform.api.forms.createSubmission({ id: '230000000000000', submis
 
 `forms.createSubmissions`
 
-Add multiple submission entries in batch to a specific form
+Add multiple submission entries in batch to a specific form. Each one can trigger the form notification and autoresponder emails
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.jotform.api.forms.createSubmissions({ id: '230000000000000', submissions: [{ '1': 'Sample Answer' }] });
@@ -506,7 +506,7 @@ await corsair.jotform.api.forms.createSubmissions({ id: '230000000000000', submi
 | `message` | `string` | Yes | — |
 | `content` | `Record<string, any>[]` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 
@@ -541,7 +541,7 @@ await corsair.jotform.api.forms.delete({ id: '230000000000000' });
 | `message` | `string` | Yes | — |
 | `content` | `Record<string, any>` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 
@@ -577,7 +577,7 @@ await corsair.jotform.api.forms.deleteQuestion({ id: '230000000000000', qid: '1'
 | `message` | `string` | Yes | — |
 | `content` | `string \| Record<string, any>` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 
@@ -612,7 +612,7 @@ await corsair.jotform.api.forms.get({ id: '230000000000000' });
 | `message` | `string` | Yes | — |
 | `content` | `object \| object[]` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 <AccordionGroup>
@@ -682,7 +682,7 @@ await corsair.jotform.api.forms.getFiles({ id: '230000000000000' });
 | `message` | `string` | Yes | — |
 | `content` | `object[]` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 <AccordionGroup>
@@ -735,7 +735,7 @@ await corsair.jotform.api.forms.getProperties({ id: '230000000000000' });
 | `message` | `string` | Yes | — |
 | `content` | `Record<string, any>` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 
@@ -771,7 +771,7 @@ await corsair.jotform.api.forms.getProperty({ id: '230000000000000', key: 'title
 | `message` | `string` | Yes | — |
 | `content` | `string \| number \| Record<string, any> \| null` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 
@@ -807,7 +807,7 @@ await corsair.jotform.api.forms.getQuestion({ id: '230000000000000', qid: '1' })
 | `message` | `string` | Yes | — |
 | `content` | `Record<string, any> \| Record<string, any>[]` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 
@@ -842,7 +842,7 @@ await corsair.jotform.api.forms.getQuestions({ id: '230000000000000' });
 | `message` | `string` | Yes | — |
 | `content` | `Record<string, any>` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 
@@ -877,7 +877,7 @@ await corsair.jotform.api.forms.getReports({ id: '230000000000000' });
 | `message` | `string` | Yes | — |
 | `content` | `object[]` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 <AccordionGroup>
@@ -934,7 +934,7 @@ await corsair.jotform.api.forms.getSubmissions({ id: '230000000000000', limit: 2
 | `message` | `string` | Yes | — |
 | `content` | `object[]` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `resultSet` | `object` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
@@ -1003,7 +1003,7 @@ await corsair.jotform.api.forms.setProperties({ id: '230000000000000', propertie
 | `message` | `string` | Yes | — |
 | `content` | `Record<string, any>` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 
@@ -1040,7 +1040,7 @@ await corsair.jotform.api.forms.updateQuestion({ id: '230000000000000', qid: '1'
 | `message` | `string` | Yes | — |
 | `content` | `Record<string, any> \| Record<string, any>[]` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 
@@ -1090,7 +1090,7 @@ await corsair.jotform.api.labels.addResources({ id: 'lbl-123', resources: [{ id:
 | `message` | `string` | Yes | — |
 | `content` | `object[]` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 <AccordionGroup>
@@ -1141,7 +1141,7 @@ await corsair.jotform.api.labels.create({ name: 'Internal Forms' });
 | `message` | `string` | Yes | — |
 | `content` | `object` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 <AccordionGroup>
@@ -1190,7 +1190,7 @@ await corsair.jotform.api.labels.delete({ id: 'lbl-123' });
 | `message` | `string` | Yes | — |
 | `content` | `string \| Record<string, any> \| boolean` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 
@@ -1225,7 +1225,7 @@ await corsair.jotform.api.labels.get({ id: 'lbl-123' });
 | `message` | `string` | Yes | — |
 | `content` | `object` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 <AccordionGroup>
@@ -1278,7 +1278,7 @@ await corsair.jotform.api.labels.getResources({ id: 'lbl-123', limit: 20 });
 | `message` | `string` | Yes | — |
 | `content` | `object[]` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `resultSet` | `object` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
@@ -1354,7 +1354,7 @@ await corsair.jotform.api.labels.removeResources({ id: 'lbl-123', resources: [{ 
 | `message` | `string` | Yes | — |
 | `content` | `object[]` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 <AccordionGroup>
@@ -1406,7 +1406,7 @@ await corsair.jotform.api.labels.update({ id: 'lbl-123', name: 'General Forms' }
 | `message` | `string` | Yes | — |
 | `content` | `object` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 <AccordionGroup>
@@ -1414,7 +1414,7 @@ await corsair.jotform.api.labels.update({ id: 'lbl-123', name: 'General Forms' }
 
 ```ts
 {
-  id: string,
+  id?: string,
   name?: string | null,
   color?: string | null,
   parent?: string | null
@@ -1457,7 +1457,7 @@ await corsair.jotform.api.reports.delete({ id: '90000000000000' });
 | `message` | `string` | Yes | — |
 | `content` | `boolean \| Record<string, any>` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 
@@ -1492,7 +1492,7 @@ await corsair.jotform.api.reports.get({ id: '90000000000000' });
 | `message` | `string` | Yes | — |
 | `content` | `object \| object[]` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 <AccordionGroup>
@@ -1556,7 +1556,7 @@ await corsair.jotform.api.submissions.delete({ id: '500000000000000000' });
 | `message` | `string` | Yes | — |
 | `content` | `string \| Record<string, any>` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 
@@ -1591,7 +1591,7 @@ await corsair.jotform.api.submissions.get({ id: '500000000000000000' });
 | `message` | `string` | Yes | — |
 | `content` | `object` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 <AccordionGroup>
@@ -1646,7 +1646,7 @@ await corsair.jotform.api.submissions.update({ id: '500000000000000000', submiss
 | `message` | `string` | Yes | — |
 | `content` | `Record<string, any>` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 
@@ -1683,7 +1683,7 @@ await corsair.jotform.api.system.getPlan({ planName: 'FREE' });
 | `message` | `string` | Yes | — |
 | `content` | `object` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 <AccordionGroup>
@@ -1730,7 +1730,7 @@ await corsair.jotform.api.user.get({});
 | `message` | `string` | Yes | — |
 | `content` | `object` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 <AccordionGroup>
@@ -1784,7 +1784,7 @@ await corsair.jotform.api.user.getFolders({});
 | `message` | `string` | Yes | — |
 | `content` | `object[] \| Record<string, any>` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 <AccordionGroup>
@@ -1797,7 +1797,7 @@ await corsair.jotform.api.user.getFolders({});
   parent?: string | null,
   color?: string | null,
   path?: string | null,
-  forms?: string[]
+  forms?: string[] | Record<string, any>
 }[] | Record<string, any>
 ```
 </Accordion>
@@ -1838,7 +1838,7 @@ await corsair.jotform.api.user.getForms({ limit: 20 });
 | `message` | `string` | Yes | — |
 | `content` | `object[]` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `resultSet` | `object` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
@@ -1915,7 +1915,7 @@ await corsair.jotform.api.user.getHistory({ action: 'formCreation' });
 | `message` | `string` | Yes | — |
 | `content` | `object[]` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 <AccordionGroup>
@@ -1962,7 +1962,7 @@ await corsair.jotform.api.user.getInvoices({});
 | `message` | `string` | Yes | — |
 | `content` | `Record<string, any>[]` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 
@@ -1997,7 +1997,7 @@ await corsair.jotform.api.user.getLabels({});
 | `message` | `string` | Yes | — |
 | `content` | `Record<string, any>` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 
@@ -2027,7 +2027,7 @@ await corsair.jotform.api.user.getReports({});
 | `message` | `string` | Yes | — |
 | `content` | `object[]` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 <AccordionGroup>
@@ -2080,7 +2080,7 @@ await corsair.jotform.api.user.getSettingByKey({ key: 'time_zone' });
 | `message` | `string` | Yes | — |
 | `content` | `string \| number \| boolean \| Record<string, any> \| null` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 
@@ -2110,7 +2110,7 @@ await corsair.jotform.api.user.getSettings({});
 | `message` | `string` | Yes | — |
 | `content` | `Record<string, any>` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 
@@ -2148,7 +2148,7 @@ await corsair.jotform.api.user.getSubmissions({ limit: 20 });
 | `message` | `string` | Yes | — |
 | `content` | `object[]` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `resultSet` | `object` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
@@ -2211,7 +2211,7 @@ await corsair.jotform.api.user.getSubusers({});
 | `message` | `string` | Yes | — |
 | `content` | `object[]` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 <AccordionGroup>
@@ -2257,7 +2257,7 @@ await corsair.jotform.api.user.getUsage({});
 | `message` | `string` | Yes | — |
 | `content` | `object` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 <AccordionGroup>
@@ -2276,111 +2276,6 @@ await corsair.jotform.api.user.getUsage({});
 ```
 </Accordion>
 </AccordionGroup>
-
-
-
----
-
-### login
-
-`user.login`
-
-Log in user with username and password to create an authenticated session
-
-**Risk:** `write`
-
-```ts
-await corsair.jotform.api.user.login({ username: 'testuser.example', password: 'example-password' });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `username` | `string` | Yes | — |
-| `password` | `string` | Yes | — |
-| `appName` | `string` | No | — |
-| `access` | `string` | No | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `responseCode` | `number` | Yes | — |
-| `message` | `string` | Yes | — |
-| `content` | `Record<string, any>` | Yes | — |
-| `duration` | `string` | No | — |
-| `info` | `string` | No | — |
-| `limit-left` | `number \| string` | No | — |
-
-
-
----
-
-### logout
-
-`user.logout`
-
-End the current user session and log out
-
-**Risk:** `write`
-
-```ts
-await corsair.jotform.api.user.logout({});
-```
-
-**Input:** _empty object_
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `responseCode` | `number` | Yes | — |
-| `message` | `string` | Yes | — |
-| `content` | `boolean` | Yes | — |
-| `duration` | `string` | No | — |
-| `info` | `string` | No | — |
-| `limit-left` | `number \| string` | No | — |
-
-
-
----
-
-### register
-
-`user.register`
-
-Register a new user account with username, password and email
-
-**Risk:** `write`
-
-```ts
-await corsair.jotform.api.user.register({ username: 'testuser.example', password: 'example-password', email: 'user@example.com' });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `username` | `string` | Yes | — |
-| `password` | `string` | Yes | — |
-| `email` | `string` | Yes | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `responseCode` | `number` | Yes | — |
-| `message` | `string` | Yes | — |
-| `content` | `Record<string, any>` | Yes | — |
-| `duration` | `string` | No | — |
-| `info` | `string` | No | — |
-| `limit-left` | `number \| string` | No | — |
 
 
 
@@ -2421,7 +2316,7 @@ await corsair.jotform.api.user.updateSettings({ company: 'Acme Corp' });
 | `message` | `string` | Yes | — |
 | `content` | `Record<string, any>` | Yes | — |
 | `duration` | `string` | No | — |
-| `info` | `string` | No | — |
+| `info` | `string \| null` | No | — |
 | `limit-left` | `number \| string` | No | — |
 
 
