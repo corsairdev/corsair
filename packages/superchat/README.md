@@ -17,7 +17,7 @@ pnpm add @corsair-dev/superchat
 | `contactLists.addContact` | `superchat.api.contactLists.addContact` | `write` | Add a contact to a contact list. The list is named in the body on this route, not in the path |
 | `contactLists.create` | `superchat.api.contactLists.create` | `write` | Create a contact list that contacts can be added to |
 | `contactLists.delete` | `superchat.api.contactLists.delete` | `destructive` | Delete a contact list. Its membership goes with it, and this cannot be undone |
-| `contactLists.forContact` | `superchat.api.contactLists.forContact` | `read` | List the contact lists one contact belongs to; this route answers a bare array rather than the paged envelope |
+| `contactLists.forContact` | `superchat.api.contactLists.forContact` | `read` | List the contact lists one contact belongs to, paged by cursor like the other lists |
 | `contactLists.list` | `superchat.api.contactLists.list` | `read` | List the contact lists in the workspace |
 | `contactLists.removeContact` | `superchat.api.contactLists.removeContact` | `write` | Remove a contact from a contact list; the contact itself stays |
 | `contacts.create` | `superchat.api.contacts.create` | `write` | Create a contact. At least one handle is required, and a handle is the email address or phone number that identifies them on a channel |
@@ -33,7 +33,7 @@ pnpm add @corsair-dev/superchat
 | `inboxes.get` | `superchat.api.inboxes.get` | `read` | Read one inbox with its name and workspace url |
 | `inboxes.list` | `superchat.api.inboxes.list` | `read` | List the inboxes in the workspace |
 | `messages.get` | `superchat.api.messages.get` | `read` | Read one message with its content, direction and status |
-| `messages.send` | `superchat.api.messages.send` | `write` | Send a text message on a channel to one recipient. This reaches a real person on WhatsApp, SMS or another channel, and the content has to suit that channel |
+| `messages.send` | `superchat.api.messages.send` | `destructive` | Send a text message on a channel to one recipient. This reaches a real person on WhatsApp, SMS or another channel, and the content has to suit that channel |
 
 ## Auth
 

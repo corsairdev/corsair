@@ -266,7 +266,7 @@ export const superchatEndpointMeta = {
 	'contactLists.forContact': {
 		riskLevel: 'read',
 		description:
-			'List the contact lists one contact belongs to; this route answers a bare array rather than the paged envelope',
+			'List the contact lists one contact belongs to, paged by cursor like the other lists',
 	},
 	'contactLists.addContact': {
 		riskLevel: 'write',
@@ -299,7 +299,7 @@ export const superchatEndpointMeta = {
 			'List the messages in one conversation, paging with a cursor id',
 	},
 	'messages.send': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Send a text message on a channel to one recipient. This reaches a real person on WhatsApp, SMS or another channel, and the content has to suit that channel',
 	},

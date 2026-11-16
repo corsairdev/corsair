@@ -84,4 +84,4 @@ apiNotes:
   contacts.search: 'Every expression has to match. A custom_attribute expression also needs an identifier; the schema rejects one without it.'
   conversations.update: 'Snoozing needs both status snoozed and a snoozed_until time, or the API rejects the call.'
   contacts.list: 'Paging is by cursor: set after or before, never both, and limit is 1 to 100 with a default of 50.'
-  contactLists.addContact: 'The list id goes in the body as { id }, not in the path, on this route. Removing a contact takes it in the path instead.'
+  contactLists.addContact: 'The list id goes in the body as `{ id }`, not in the path, on this route. Removing a contact takes it in the path instead.'

@@ -89,9 +89,11 @@ describe('superchat plugin definition', () => {
 		);
 	});
 
-	it('marks sending a message a write, because it reaches a real person', () => {
+	it('marks sending a message destructive, because it reaches a real person', () => {
 		const meta = plugin.endpointMeta ?? {};
-		expect(meta['messages.send' as keyof typeof meta]?.riskLevel).toBe('write');
+		expect(meta['messages.send' as keyof typeof meta]?.riskLevel).toBe(
+			'destructive',
+		);
 	});
 
 	it('marks removing a contact from a list a write, not a destructive call', () => {
