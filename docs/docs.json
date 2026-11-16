@@ -4399,20 +4399,20 @@
                 ]
               },
               {
-                "group": "Spotlightr",
-                "pages": [
-                  "plugins/spotlightr/overview",
-                  "plugins/spotlightr/api",
-                  "plugins/spotlightr/database"
-                ]
-              },
-              {
                 "group": "Spotify",
                 "pages": [
                   "plugins/spotify/overview",
                   "plugins/spotify/get-credentials",
                   "plugins/spotify/api",
                   "plugins/spotify/database"
+                ]
+              },
+              {
+                "group": "Spotlightr",
+                "pages": [
+                  "plugins/spotlightr/overview",
+                  "plugins/spotlightr/api",
+                  "plugins/spotlightr/database"
                 ]
               },
               {

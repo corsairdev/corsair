@@ -72,15 +72,15 @@ await corsair.spotlightr.api.access.update({ access_id: 555, expire: true });
 
 
 
-**Output:** `string \| object \| object[]`
+**Output:** `string \| number \| object \| object[] \| null \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-string | {
+string | number | {
 } | {
-}[]
+}[] | null | undefined
 ```
 </Accordion>
 </AccordionGroup>
@@ -109,15 +109,15 @@ await corsair.spotlightr.api.access.updateCode({ code_id: 7, expires: true });
 
 
 
-**Output:** `string \| object \| object[]`
+**Output:** `string \| number \| object \| object[] \| null \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-string | {
+string | number | {
 } | {
-}[]
+}[] | null | undefined
 ```
 </Accordion>
 </AccordionGroup>
@@ -149,15 +149,15 @@ The file is sent as multipart form data.
 
 
 
-**Output:** `string \| object \| object[]`
+**Output:** `string \| number \| object \| object[] \| null \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-string | {
+string | number | {
 } | {
-}[]
+}[] | null | undefined
 ```
 </Accordion>
 </AccordionGroup>
@@ -187,15 +187,15 @@ await corsair.spotlightr.api.domains.add({ domain: 'acme.com' });
 
 
 
-**Output:** `string \| object \| object[]`
+**Output:** `string \| number \| object \| object[] \| null \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-string | {
+string | number | {
 } | {
-}[]
+}[] | null | undefined
 ```
 </Accordion>
 </AccordionGroup>
@@ -224,9 +224,9 @@ await corsair.spotlightr.api.domains.list({});
 <Accordion title="Output full type">
 
 ```ts
-{
+(string | {
   domain?: string | null
-}[]
+})[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -256,15 +256,15 @@ await corsair.spotlightr.api.projects.create({ name: 'Marketing' });
 
 
 
-**Output:** `string \| object \| object[]`
+**Output:** `string \| number \| object \| object[] \| null \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-string | {
+string | number | {
 } | {
-}[]
+}[] | null | undefined
 ```
 </Accordion>
 </AccordionGroup>
@@ -324,7 +324,7 @@ await corsair.spotlightr.api.search.search({ query: 'product tour' });
 |------|------|----------|-------------|
 | `query` | `string` | Yes | Text to search for across the account |
 
-The term is sent in the body; the reference lists no query parameters for this route.
+The term is sent in the body as `query`; the reference lists no parameters for this route.
 
 
 
@@ -374,15 +374,15 @@ await corsair.spotlightr.api.students.create({ email: 'jane@acme.com', password:
 
 
 
-**Output:** `string \| object \| object[]`
+**Output:** `string \| number \| object \| object[] \| null \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-string | {
+string | number | {
 } | {
-}[]
+}[] | null | undefined
 ```
 </Accordion>
 </AccordionGroup>
@@ -415,21 +415,21 @@ await corsair.spotlightr.api.videos.create({ name: 'Product tour', url: 'https:/
 | `hls` | `boolean` | No | Encode to HLS (true) or leave the source unsecured (false) |
 | `video_group` | `number` | No | Project to file it under |
 | `create` | `boolean` | No | true confirms the write; false is a dry run |
-| `player_settings` | `string` | No | Another of your videos' base64 ID to copy player settings from |
+| `player_settings` | `number \| string` | No | Another of your videos' numeric ID to copy player settings from |
 
 Pass either `url` or `file`. `url` wins when both are given, and `hls` asks for HLS encoding.
 
 
 
-**Output:** `string \| object \| object[]`
+**Output:** `string \| number \| object \| object[] \| null \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-string | {
+string | number | {
 } | {
-}[]
+}[] | null | undefined
 ```
 </Accordion>
 </AccordionGroup>
@@ -455,19 +455,19 @@ await corsair.spotlightr.api.videos.delete({ video_ids: [1234, 5678] });
 |------|------|----------|-------------|
 | `video_ids` | `(number \| string)[]` | Yes | IDs of the videos to delete |
 
-There is no restore route. IDs are sent as one comma-separated value.
+There is no restore route. Each ID is sent as its own `IDs[]` form field, the format the API accepts.
 
 
 
-**Output:** `string \| object \| object[]`
+**Output:** `string \| number \| object \| object[] \| null \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-string | {
+string | number | {
 } | {
-}[]
+}[] | null | undefined
 ```
 </Accordion>
 </AccordionGroup>
@@ -479,7 +479,7 @@ string | {
 
 `videos.list`
 
-List videos, or one video by ID, optionally narrowed to a project
+List videos (1000 a page), or one video by numeric ID, optionally narrowed to a project
 
 **Risk:** `read`
 
@@ -491,27 +491,43 @@ await corsair.spotlightr.api.videos.list({ video_group: 42 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `video_id` | `string` | No | Only this video; the ID is the base64 value from the watch URL |
+| `video_id` | `number \| string` | No | Only this video (numeric ID) |
 | `video_group` | `number` | No | Only videos in this project |
+| `page` | `number` | No | Page number, from 1; see last_page in the answer |
 
-Pass `video_id` for one video or `video_group` to narrow to a project. The ID is the base64 value from the watch URL.
+Pass `video_id` for one video or `video_group` to narrow to a project. Video IDs are the numeric IDs this route returns, not the base64 form in a watch URL. The answer is a page object under `videos` (1000 videos a page); pass `page` for the next one.
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `videos` | `object` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="videos full type">
 
 ```ts
 {
-  id?: number | string | null,
-  name?: string | null,
-  videoGroup?: number | string | null
-}[]
+  total?: number | null,
+  per_page?: number | string | null,
+  current_page?: number | null,
+  last_page?: number | null,
+  from?: number | null,
+  to?: number | null,
+  next_page_url?: string | null,
+  prev_page_url?: string | null,
+  data: {
+    id?: number | string | null,
+    name?: string | null,
+    videoGroup?: number | string | null
+  }[]
+}
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -571,7 +587,7 @@ await corsair.spotlightr.api.videos.metrics({ video_id: '1357835' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `video_id` | `string` | Yes | Video ID |
+| `video_id` | `number \| string` | Yes | Numeric video ID, as videos.list returns it (the base64 ID in a watch URL is its encoded form and is not accepted) |
 
 The only response body Spotlightr documents. The field is `completitionRate`, not `completionRate`.
 
@@ -608,22 +624,22 @@ await corsair.spotlightr.api.videos.updateSettings({ video_id: '1357835', settin
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `video_id` | `string` | Yes | Base64-decoded video ID |
+| `video_id` | `number \| string` | Yes | Numeric video ID, as videos.list returns it (the base64 ID in a watch URL is its encoded form and is not accepted) |
 | `settings` | `Record<string, string \| number \| boolean \| null>` | Yes | Only the keys to change |
 
 `settings` carries only the keys to change, as a JSON object.
 
 
 
-**Output:** `string \| object \| object[]`
+**Output:** `string \| number \| object \| object[] \| null \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-string | {
+string | number | {
 } | {
-}[]
+}[] | null | undefined
 ```
 </Accordion>
 </AccordionGroup>
@@ -635,9 +651,9 @@ string | {
 
 `videos.updateSource`
 
-Point an existing video at a new source URL
+Point an existing video at a new source URL, replacing the old source
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.spotlightr.api.videos.updateSource({ video_id: 'MTM1NzgzNQ==', url: 'https://cdn.example.com/new.mp4' });
@@ -647,20 +663,22 @@ await corsair.spotlightr.api.videos.updateSource({ video_id: 'MTM1NzgzNQ==', url
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `video_id` | `string` | Yes | Video source to be replaced |
+| `video_id` | `number \| string` | Yes | Numeric ID of the video whose source is replaced |
 | `url` | `string` | Yes | New URL for the source |
 
+Replaces the video source; the old URL is not kept, so this is marked destructive.
 
 
-**Output:** `string \| object \| object[]`
+
+**Output:** `string \| number \| object \| object[] \| null \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-string | {
+string | number | {
 } | {
-}[]
+}[] | null | undefined
 ```
 </Accordion>
 </AccordionGroup>
@@ -672,7 +690,7 @@ string | {
 
 `videos.views`
 
-List a video views, optionally for one known viewer or only those past one percent watched
+List a video views (30 a page), optionally for one known viewer or only those past one percent watched
 
 **Risk:** `read`
 
@@ -684,17 +702,33 @@ await corsair.spotlightr.api.videos.views({ video_id: '1357835', only_watched: t
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `video_id` | `string` | Yes | — |
+| `video_id` | `number \| string` | Yes | Numeric video ID, as videos.list returns it (the base64 ID in a watch URL is its encoded form and is not accepted) |
 | `custom_viewer_id` | `string` | No | ID or email of a known viewer |
 | `only_watched` | `boolean` | No | Only views past 1% watched |
 | `all_views` | `boolean` | No | Skip pagination |
+| `page` | `number` | No | Page number, from 1; 30 views a page |
+
+The answer is a page object with `data`, `summary` and 30 views a page; pass `page` for the next one.
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number \| null` | No | — |
+| `per_page` | `number \| string \| null` | No | — |
+| `current_page` | `number \| null` | No | — |
+| `last_page` | `number \| null` | No | — |
+| `from` | `number \| null` | No | — |
+| `to` | `number \| null` | No | — |
+| `next_page_url` | `string \| null` | No | — |
+| `prev_page_url` | `string \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+| `summary` | `object \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="data full type">
 
 ```ts
 {
@@ -704,7 +738,17 @@ await corsair.spotlightr.api.videos.views({ video_id: '1357835', only_watched: t
 }[]
 ```
 </Accordion>
+
+<Accordion title="summary full type">
+
+```ts
+{
+  totalTime?: number | null
+} | null
+```
+</Accordion>
 </AccordionGroup>
+
 
 
 ---
