@@ -1,0 +1,75 @@
+displayName: Postmark
+description: Transactional email API for sending single and batch messages, managing templates and streams, and reading delivery statistics.
+domain: postmarkapp.com
+recommendedAuth: api_key
+overviewNote: |
+  Postmark sends transactional email. Create a server token under the API Tokens tab of a server and paste it in; it travels in the `X-Postmark-Server-Token` header. The account token covers a different set of account-level routes, which this plugin does not wrap, so one server token is all it needs.
+
+  What to know before you send:
+
+  - **A send cannot be recalled.** `email.send` and `email.sendBatch` deliver real mail. A server in Sandbox mode accepts sends without delivering them, but that is a server setting rather than a request flag.
+  - **A 200 batch is not a success.** `email.sendBatch` answers HTTP 200 with one result per message, and each carries its own `ErrorCode`. `0` means sent, and anything else means that message failed while the others may have gone out.
+  - **The sender must be verified.** `From` needs a confirmed Sender Signature or a verified domain, or the send is rejected with code 300.
+  - **A body is required.** Supply `TextBody`, `HtmlBody`, or both; the plugin rejects a message with neither before it is sent.
+  - **Attachments are base64.** Give each one a `Name`, a `Content` and a `ContentType`, and set `ContentID` to reference it as `cid:` from the HTML.
+  - **Paging is by offset.** List routes take `Count` and `Offset` (100 and 0 when left out) and return `TotalCount`; page while the offset is below it. Note that the bounces route spells its parameters in lowercase, which this plugin maps for you.
+  - **Stats are limited.** The overview accepts a window no older than a year, and the stats API needs the plan that includes it.
+  - **Retries.** A 429 is retried three times by Corsair's request layer, which waits for a `Retry-After` when Postmark sends one. A 5xx or a dropped connection is retried only on reads; a send is never replayed.
+  - **Webhooks.** Postmark posts delivery, bounce and inbound events to a URL you register, but this plugin does not handle inbound deliveries.
+references:
+  - title: Postmark API overview
+    url: https://postmarkapp.com/developer/api/overview
+  - title: Postmark email API
+    url: https://postmarkapp.com/developer/api/email-api
+examples:
+  read:
+    path: server.get
+    title: Read this server's settings
+    args: {}
+  write:
+    path: templates.create
+    title: Create a welcome template
+    args:
+      Name: Welcome Email
+      Alias: onboarding-v1
+      Subject: Hello, from {{company.name}}
+      HtmlBody: <html><body>Hello {{name}}</body></html>
+apiExamples:
+  email.send:
+    call: "{ From: 'sender@example.com', To: 'receiver@example.com', Subject: 'Password Reset', TextBody: 'Click here to reset your password.', MessageStream: 'outbound' }"
+  email.sendBatch:
+    call: "{ Messages: [{ From: 'sender@example.com', To: 'one@example.com', TextBody: 'Hello one' }, { From: 'sender@example.com', To: 'two@example.com', TextBody: 'Hello two' }] }"
+  templates.list:
+    call: "{ Count: 10, Offset: 0 }"
+  templates.get:
+    call: "{ idOrAlias: 'onboarding-v1' }"
+  templates.create:
+    call: "{ Name: 'Welcome Email', Alias: 'onboarding-v1', Subject: 'Hello, from {{company.name}}', HtmlBody: '<html><body>Hello {{name}}</body></html>' }"
+  templates.update:
+    call: "{ idOrAlias: 'onboarding-v1', Subject: 'Welcome aboard' }"
+  templates.delete:
+    call: "{ idOrAlias: 'onboarding-v1' }"
+  templates.validate:
+    call: "{ HtmlBody: '<b>{{name}}</b>', TestRenderModel: { name: 'Kevin' } }"
+  server.get:
+    call: '{}'
+  server.update:
+    call: "{ TrackOpens: true, InboundSpamThreshold: 10 }"
+  streams.list:
+    call: '{}'
+  streams.get:
+    call: "{ id: 'outbound' }"
+  streams.archive:
+    call: "{ id: 'broadcast-1' }"
+  bounces.list:
+    call: "{ Count: 10, Offset: 0 }"
+  bounces.get:
+    call: '{ id: 42 }'
+  bounces.activate:
+    call: '{ id: 42 }'
+  bounces.delivery:
+    call: '{}'
+  stats.overview:
+    call: "{ FromDate: '2026-01-01', ToDate: '2026-01-31' }"
+  stats.sends:
+    call: "{ FromDate: '2026-01-01', ToDate: '2026-01-31' }"
