@@ -94,7 +94,10 @@ async function rejection(promise: Promise<unknown>): Promise<ApiError> {
 }
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	// A call no test queued a response for throws, so nothing reaches the API.
+	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
+		throw new Error('unmocked fetch in a unit test');
+	});
 	mockLog.mockClear();
 });
 
