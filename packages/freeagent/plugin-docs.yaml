@@ -118,7 +118,9 @@ apiNotes:
     Hidden groups and labels are omitted by default. Use include_hidden, order_by,
     and reverse as documented; collection pagination uses page and per_page.
 overviewNote: >-
-  Connect with a FreeAgent OAuth 2.0 access token. This plugin exposes company
+  Connect a FreeAgent OAuth 2.0 app (client ID and secret from dev.freeagent.com).
+  Access tokens last an hour and refresh automatically. Pass sandbox: true to use
+  api.sandbox.freeagent.com for both OAuth and the API. This plugin exposes company
   profile, verified sender addresses, contacts, projects, selected invoice and
   recurring invoice operations, and tracking groups. Many other
   official company API routes remain unimplemented; see the linked route inventory

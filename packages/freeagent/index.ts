@@ -12,7 +12,8 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
+import { freeAgentApiBase } from './client';
 import {
 	Company,
 	Contacts,
@@ -35,6 +36,8 @@ import { FreeAgentSchema } from './schema';
 
 export type FreeAgentPluginOptions = {
 	authType?: PickAuth<'oauth_2'>;
+	/** Use FreeAgent's sandbox (api.sandbox.freeagent.com) for the API and OAuth. */
+	sandbox?: boolean;
 	hooks?: InternalFreeAgentPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof freeAgentEndpointsNested>;
@@ -453,6 +456,14 @@ export const freeAgentAuthConfig = {
 	oauth_2: { account: ['tenant_external_id'] as const },
 } as const satisfies PluginAuthConfig;
 
+function freeAgentOAuthUrls(sandbox: boolean | undefined) {
+	const base = freeAgentApiBase(sandbox);
+	return {
+		authUrl: `${base}/v2/approve_app`,
+		tokenUrl: `${base}/v2/token_endpoint`,
+	};
+}
+
 export type BaseFreeAgentPlugin<T extends FreeAgentPluginOptions> =
 	CorsairPlugin<
 		'freeagent',
@@ -478,6 +489,14 @@ export function freeagent<const T extends FreeAgentPluginOptions>(
 	return {
 		id: 'freeagent',
 		authConfig: freeAgentAuthConfig,
+		oauthConfig: {
+			providerName: 'FreeAgent',
+			authUrl: freeAgentOAuthUrls(options.sandbox).authUrl,
+			tokenUrl: freeAgentOAuthUrls(options.sandbox).tokenUrl,
+			tokenAuthMethod: 'basic',
+			// FreeAgent has no OAuth scopes; access follows the approving user.
+			scopes: [],
+		},
 		schema: FreeAgentSchema,
 		options,
 		hooks: options.hooks,
@@ -489,9 +508,13 @@ export function freeagent<const T extends FreeAgentPluginOptions>(
 		keyBuilder: async (ctx: FreeAgentKeyBuilderContext, source) => {
 			if (source !== 'endpoint') return '';
 			if (!ctx.keys) throw new AuthMissingError('freeagent', 'oauth_2');
-			const accessToken = await ctx.keys.get_access_token();
-			if (!accessToken) throw new AuthMissingError('freeagent', 'oauth_2');
-			return accessToken;
+			// Access tokens last one hour; getOAuthAccessToken refreshes them and
+			// lets core retry a read once after a 401.
+			return getOAuthAccessToken(ctx, {
+				plugin: 'freeagent',
+				tokenUrl: freeAgentOAuthUrls(options.sandbox).tokenUrl,
+				tokenAuthMethod: 'basic',
+			});
 		},
 	} satisfies InternalFreeAgentPlugin;
 }

@@ -4,6 +4,7 @@ import {
 	FreeAgentEndpointInputSchemas,
 	FreeAgentEndpointOutputSchemas,
 } from './endpoints/types';
+import { freeagent } from './index';
 import { FreeAgentSchema } from './schema';
 
 describe('FreeAgent schemas', () => {
@@ -307,6 +308,134 @@ describe('FreeAgent schemas', () => {
 				expect(inputDocs).toContain('price?: number');
 				expect(inputDocs).not.toContain('price?: string | number');
 			}
+		}
+	});
+});
+
+describe('FreeAgent shapes seen on the live sandbox API (11-16)', () => {
+	it('reads project decimals as strings and a nested contact object', () => {
+		const project = {
+			url: 'https://api.sandbox.freeagent.com/v2/projects/1',
+			name: 'corsair-plugin-test project',
+			currency: 'GBP',
+			budget: 10,
+			status: 'Active',
+			budget_units: 'Hours',
+			normal_billing_rate: '50.0',
+			hours_per_day: '8.0',
+			uses_project_invoice_sequence: false,
+			billing_period: 'hour',
+			include_unbilled_time_in_profitability: true,
+			contact: { url: 'https://api.sandbox.freeagent.com/v2/contacts/1' },
+		};
+		expect(() =>
+			FreeAgentEndpointOutputSchemas.projectsGet.parse({ project }),
+		).not.toThrow();
+		expect(() =>
+			FreeAgentEndpointOutputSchemas.projectsList.parse({
+				projects: [project],
+				pagination: { link: null, total_count: '1' },
+			}),
+		).not.toThrow();
+	});
+
+	it('reads an empty default additional text', () => {
+		expect(
+			FreeAgentEndpointOutputSchemas.invoicesDefaultAdditionalTextGet.parse({}),
+		).toEqual({});
+	});
+
+	it('accepts invoice line ids on update, and _destroy to remove a line', () => {
+		const parse = (items: unknown[]) =>
+			FreeAgentEndpointInputSchemas.invoicesUpdate.safeParse({
+				id: '7',
+				invoice: { invoice_items: items },
+			}).success;
+		expect(parse([{ id: '12', description: 'Revised', price: 60 }])).toBe(true);
+		expect(parse([{ id: 12, _destroy: 1 }])).toBe(true);
+		expect(parse([{ description: 'New line', price: 5 }])).toBe(true);
+		expect(parse([{ id: 12, _destroy: 1, price: 5 }])).toBe(false);
+		expect(
+			FreeAgentEndpointInputSchemas.invoicesCreate.safeParse({
+				invoice: {
+					contact: 'https://api.freeagent.com/v2/contacts/1',
+					dated_on: '2026-11-16',
+					payment_terms_in_days: 30,
+					invoice_items: [{ id: '12', description: 'x' }],
+				},
+			}).success,
+		).toBe(false);
+	});
+});
+
+describe('FreeAgent OAuth', () => {
+	it('declares the OAuth app URLs, production by default and sandbox on request', () => {
+		expect(freeagent().oauthConfig).toMatchObject({
+			authUrl: 'https://api.freeagent.com/v2/approve_app',
+			tokenUrl: 'https://api.freeagent.com/v2/token_endpoint',
+			tokenAuthMethod: 'basic',
+		});
+		expect(freeagent({ sandbox: true }).oauthConfig).toMatchObject({
+			authUrl: 'https://api.sandbox.freeagent.com/v2/approve_app',
+			tokenUrl: 'https://api.sandbox.freeagent.com/v2/token_endpoint',
+		});
+	});
+
+	it('refreshes an expired access token instead of returning it', async () => {
+		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(
+				JSON.stringify({
+					access_token: 'fresh-token',
+					refresh_token: 'refresh-token',
+					expires_in: 3600,
+					token_type: 'bearer',
+				}),
+				{ status: 200, headers: { 'Content-Type': 'application/json' } },
+			),
+		);
+		const stored: Record<string, string | null> = {
+			access: 'expired-token',
+			refresh: 'refresh-token',
+			expires: '1',
+		};
+		try {
+			const plugin = freeagent();
+			const token = await plugin.keyBuilder?.(
+				{
+					authType: 'oauth_2',
+					tenantId: 'tenant-test',
+					options: plugin.options,
+					keys: {
+						get_integration_credentials: async () => ({
+							client_id: 'client-id',
+							client_secret: 'client-secret',
+							redirect_url: null,
+						}),
+						get_access_token: async () => stored.access ?? null,
+						set_access_token: async (value: string | null) => {
+							stored.access = value;
+						},
+						get_refresh_token: async () => stored.refresh ?? null,
+						set_refresh_token: async (value: string | null) => {
+							stored.refresh = value;
+						},
+						get_expires_at: async () => stored.expires ?? null,
+						set_expires_at: async (value: string | null) => {
+							stored.expires = value;
+						},
+						get_scope: async () => null,
+						set_scope: async () => {},
+					},
+					// `unknown` cast: a minimal key manager stands in for core's full one.
+				} as unknown as Parameters<NonNullable<typeof plugin.keyBuilder>>[0],
+				'endpoint',
+			);
+			expect(token).toBe('fresh-token');
+			expect(String(fetchMock.mock.calls[0]?.[0])).toBe(
+				'https://api.freeagent.com/v2/token_endpoint',
+			);
+		} finally {
+			fetchMock.mockRestore();
 		}
 	});
 });
