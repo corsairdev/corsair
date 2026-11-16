@@ -1,6 +1,6 @@
 import type { SupersaasEndpoints } from '..';
 import { segment } from '../client';
-import { call, created, deletion, updated } from './shared';
+import { call, created, createdOrUpdated, deletion, updated } from './shared';
 import {
 	SupersaasEndpointInputSchemas as Inputs,
 	SupersaasEndpointOutputSchemas as Outputs,
@@ -78,7 +78,8 @@ export const createWithKey: SupersaasEndpoints['usersCreateWithKey'] = (
 			responseHeader: 'Location',
 		}),
 		{
-			shape: (raw) => created(raw),
+			// A reused key is an update: an empty 200 without Location.
+			shape: (raw, { key }) => createdOrUpdated(raw, key),
 			log: (_, result) => ({ userId: result.id }),
 		},
 	);

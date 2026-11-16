@@ -52,6 +52,16 @@ const PERSONAL_QUERY = new Set(['user']);
 const REDACTED = '[REDACTED]';
 
 function maskUrl(value: string): string {
+	// A user id in the path may be your own key, and nothing stops it being an
+	// email address, so it is masked too.
+	const masked = value.replace(
+		/(\/users\/)[^/?#]+?(\.json)?(?=$|[?#])/,
+		`$1${REDACTED}$2`,
+	);
+	return maskQuery(masked);
+}
+
+function maskQuery(value: string): string {
 	const at = value.indexOf('?');
 	if (at === -1) return value;
 	const params = value
@@ -67,17 +77,19 @@ function maskUrl(value: string): string {
 /**
  * Core's ApiError passes through unchanged unless the request carried personal
  * data: a sent body (users and bookings hold names, emails, addresses,
- * passwords) or a `user` query value. Only then is it rebuilt, with the body
- * dropped and that value masked in `request.query` and both URLs; status,
- * message, response body and rate-limit fields are kept. This is the one
- * rebuild the plugin rules allow: stripping echoed request data.
+ * passwords), a `user` query value or a user id in the path. Only then is it
+ * rebuilt, with the body dropped and those values masked in `request.query`
+ * and both URLs; status, message, response body and rate-limit fields are
+ * kept. This is the one rebuild the plugin rules allow: stripping echoed
+ * request data.
  */
 function withoutRequestData(error: ApiError): ApiError {
 	const { body: sentBody, query, ...request } = error.request;
 	const personalQuery = Object.keys(query ?? {}).some((key) =>
 		PERSONAL_QUERY.has(key),
 	);
-	if (sentBody === undefined && !personalQuery) return error;
+	const userPath = /\/users\/[^/?#]+/.test(error.request.url);
+	if (sentBody === undefined && !personalQuery && !userPath) return error;
 	const maskedQuery = query
 		? Object.fromEntries(
 				Object.entries(query).map(([key, value]) => [

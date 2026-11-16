@@ -110,7 +110,10 @@ const BookingSchema = z
 		schedule_id: IdOut,
 		schedule_name: z.string().nullish(),
 		price: NumOrStr,
-		waitlisted: z.boolean().nullish(),
+		waitlisted: z
+			.union([z.boolean(), z.string()])
+			.nullish()
+			.describe('false, or "W" (documented) / true when on the waiting list.'),
 		deleted: z.boolean().nullish(),
 		user_id: IdOut,
 		user_name: z.string().nullish(),
@@ -517,10 +520,16 @@ const scheduleReadPaging = {
 
 const ScheduleChangesInputSchema = z.object({
 	schedule_id: ScheduleId,
-	from: LocalDateTime.optional().describe(
-		'Only changes after this time. Omitted shows the ten most recent.',
-	),
-	to: LocalDateTime.optional(),
+	from: z
+		.string()
+		.optional()
+		.describe(
+			'Only changes after this UTC time (YYYY-MM-DD HH:MM:SS), not the schedule timezone. Omitted shows the ten most recent.',
+		),
+	to: z
+		.string()
+		.optional()
+		.describe('Only changes before this UTC time (YYYY-MM-DD HH:MM:SS).'),
 	...scheduleReadPaging,
 });
 
@@ -635,7 +644,14 @@ export type SupersaasEndpointOutputs = {
 };
 
 const UsersCreateResponseSchema = CreatedSchema;
-const UsersCreateWithKeyResponseSchema = CreatedSchema;
+/**
+ * A new key answers 201 with a Location header; a key that already exists turns
+ * the call into an update, which answers an empty 200 with no Location.
+ */
+const UsersCreateWithKeyResponseSchema = z.union([
+	CreatedSchema,
+	UpdatedSchema,
+]);
 
 export type UsersCreateResponse = z.infer<typeof UsersCreateResponseSchema>;
 export type UsersCreateWithKeyResponse = z.infer<

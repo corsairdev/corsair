@@ -12,11 +12,11 @@ pnpm add @corsair-dev/supersaas
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `bookings.create` | `supersaas.api.bookings.create` | `write` | Book an appointment. A resource schedule needs start and finish, a capacity schedule needs a slot id, and the two are not interchangeable |
+| `bookings.create` | `supersaas.api.bookings.create` | `destructive` | Book an appointment. A resource schedule needs start and finish, a capacity schedule needs a slot id, and the two are not interchangeable |
 | `bookings.delete` | `supersaas.api.bookings.delete` | `destructive` | Delete a booking, which frees its time for someone else and cannot be undone |
 | `bookings.get` | `supersaas.api.bookings.get` | `read` | Read a single booking by id |
 | `bookings.list` | `supersaas.api.bookings.list` | `read` | List bookings for a schedule, optionally within a start and finish window (resource and service schedules) |
-| `bookings.update` | `supersaas.api.bookings.update` | `write` | Change a booking's time or details |
+| `bookings.update` | `supersaas.api.bookings.update` | `destructive` | Change a booking's time or details |
 | `schedules.agenda` | `supersaas.api.schedules.agenda` | `read` | Read one user's appointments, either within a schedule or across the account |
 | `schedules.changes` | `supersaas.api.schedules.changes` | `read` | Read the changes to a schedule since a time, which is how a sync catches up; omitting the time gives the ten most recent |
 | `schedules.free` | `supersaas.api.schedules.free` | `read` | Read the free spaces in a schedule after a time, which is the availability check |

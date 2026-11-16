@@ -98,6 +98,19 @@ export function deletion(
 	return { id, deleted: true as const };
 }
 
+/**
+ * A keyed user create either creates (201 + Location) or, when the key exists,
+ * updates (empty 200, no Location). Core returns the body when the header is
+ * missing, so an empty body means the update.
+ */
+export function createdOrUpdated(
+	raw: UnknownJson, // unknown: the Location header, or the empty update body
+	key: string,
+): ReturnType<typeof created> | ReturnType<typeof updated> {
+	if (raw === undefined || raw === null || raw === '') return updated(raw, key);
+	return created(raw);
+}
+
 export function updated(
 	raw: UnknownJson, // unknown: the body of an update, which should be empty
 	id: string,

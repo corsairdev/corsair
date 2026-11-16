@@ -175,6 +175,33 @@ describe('users', () => {
 		expect(result).toMatchObject({ created: true, id: '15294241' });
 	});
 
+	it('reads a reused key as an update: an empty 200 without Location', async () => {
+		respondEmpty(fetchMock);
+
+		const result = await invoke(Users.createWithKey, {
+			key: '9001fk',
+			name: 'jane@example.com',
+		});
+
+		expect(result).toEqual({ id: '9001fk', updated: true });
+	});
+
+	it('masks the user id in the path of a failed user read', async () => {
+		respond(
+			fetchMock,
+			{ errors: [{ status: '404', title: 'Not found' }] },
+			404,
+		);
+
+		const error = (await caught(
+			invoke(Users.get, { id: 'jane@example.com' }),
+		)) as ApiError;
+
+		expect(error.status).toBe(404);
+		expect(error.url).toContain('/api/users/[REDACTED].json');
+		expect(JSON.stringify(error)).not.toContain('jane');
+	});
+
 	it('accepts the empty 200 an update answers', async () => {
 		respondEmpty(fetchMock);
 
@@ -416,6 +443,16 @@ describe('schedules', () => {
 			query: { limit: '5', offset: '5' },
 		});
 		expect(result.bookings).toHaveLength(1);
+	});
+
+	it('accepts the documented waitlist marker "W"', async () => {
+		respond(fetchMock, { bookings: [{ ...booking, waitlisted: 'W' }] });
+
+		const result = (await invoke(Schedules.changes, {
+			schedule_id: 858436,
+		})) as SupersaasScheduleRead;
+
+		expect(result.bookings?.[0]?.waitlisted).toBe('W');
 	});
 
 	it('reads a capacity range in the slots envelope', async () => {
