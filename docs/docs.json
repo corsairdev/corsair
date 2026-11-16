@@ -3387,6 +3387,14 @@
                 ]
               },
               {
+                "group": "NASA",
+                "pages": [
+                  "plugins/nasa/overview",
+                  "plugins/nasa/api",
+                  "plugins/nasa/database"
+                ]
+              },
+              {
                 "group": "Neon",
                 "pages": [
                   "plugins/neon/overview",

@@ -1,0 +1,139 @@
+---
+title: "NASA plugin"
+sidebarTitle: "Overview"
+description: "Astronomy Picture of the Day, near-Earth asteroid data from NeoWs, space weather from DONKI, DSCOVR EPIC imagery, EONET natural events and the NASA Image and Video Library."
+---
+
+Use **NASA** through Corsair: one client, typed API calls.
+
+Get a key at https://api.nasa.gov. The form asks for a name, an email and a description of your use, and the key appears on the page immediately; there is no account to create. `DEMO_KEY` works without signing up at 30 requests an hour per IP.
+
+Only two of the five hosts read a key. `api.nasa.gov` (Near Earth Objects, DONKI, EPIC metadata) needs one for every request. `science.nasa.gov` (APOD) accepts one and serves the same data without it. EONET, `images-api.nasa.gov` and `epic.gsfc.nasa.gov` ignore the parameter entirely, so a key is only spent where it is required.
+
+Things worth knowing before you call:
+
+- **APOD takes a six-digit date code**, not `YYYY-MM-DD`. `apod.get` wants `240115` for 2024-01-15. `apod.list` filters with `date_from`/`date_to` in the same form, and NASA ignores either one on its own: sending only `date_from` returns today's entries rather than failing. This plugin rejects a one-sided range before sending.
+- **APOD caps a page at 25 entries.** A larger `per_page` is served as 25, so a page-count based walk needs the cap as its page size.
+- **The NEO feed takes at most seven days per request.** A wider window answers 400. Distances and speeds arrive as decimal strings, so `miss_distance.kilometers` is a string like `"45865643.869616206"`, not a number.
+- **DONKI dates are inclusive on both ends** and default to the last 30 days when omitted. `donki.notification` silently shifts a window wider than 30 days to the last 30, so a long range does not fail, it returns less than you asked for.
+- **`donki.solarFlare` is unverified against live data.** Every probe window answered `[]`, so the wrapper compiles and the request shape matches the docs, but the populated body has not been seen.
+- **EONET sends JSON labelled `application/rss+xml`.** The plugin parses it; a caller never sees a string. `status` omitted means only open events, and an unknown event ID answers a 500 with an HTML body rather than a 404.
+- **EPIC timestamps are not ISO 8601.** `date` is `"2019-05-30 01:09:10"` with a space. A malformed date answers an HTML 500, and a valid date without imagery answers `[]`.
+- **Rate limits are hourly and applied across all api.nasa.gov routes**, 1,000 per key and 30 for `DEMO_KEY`. A 429 is not retried: the window is an hour, so a retry only spends another request.
+
+**What you get:**
+
+- 24 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/nasa better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/nasa better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/nasa better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/nasa better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { nasa } from '@corsair-dev/nasa';
+
+export const corsair = createCorsair({
+	plugins: [
+		nasa(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the NASA API key before the first call: `pnpm corsair setup --plugin=nasa --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+nasa()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'nasa',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read the latest pictures**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.nasa.api.apod.list({ per_page: 3 });
+```
+
+
+**Write**
+
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/nasa/api) reference._
+
+
+See the full list on the [API](/plugins/nasa/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/nasa/api">
+    Every `nasa.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
