@@ -1,0 +1,88 @@
+displayName: Needle
+description: Manage Needle leads and their LinkedIn and Instagram identities, run campaigns and enroll or stop leads, maintain suppression lists, search places and preview AI-composed messages.
+domain: needle.app
+recommendedAuth: api_key
+overviewNote: |
+  A key comes from https://needle.app/settings/api-keys. It is shown once, so copy it then. Each key is bound to one user and one workspace, and every call runs as that user in that workspace.
+
+  - **Every lead needs at least one identity and a timezone.** Identities are a LinkedIn public identifier, `/in/` path, profile URL or user id, or an Instagram username, handle or URL. Needle stores the bare identifier, so the value read back is not the URL sent in. The timezone drives the sending window, so it decides when a step may fire.
+  - **`leads.create` refuses a duplicate.** A second lead with the same identity answers 409. `leads.upsert` is the merging call: it answers `created` or `matched`, and on a match it patches the fields sent onto the existing lead.
+  - **`leads.update` replaces identities rather than adding.** Sending `identities` replaces the whole set, so omit it to leave the existing channels alone.
+  - **A campaign is a graph and starts in draft.** `campaigns.create` takes `nodes` and optional `edges` with at least a start and an end. Nothing is sent until `campaigns.update` sets `status: 'active'`; `paused` halts it again. `campaigns.delete` archives rather than erases.
+  - **Enrollment partly succeeds.** `campaigns.enroll` takes up to 500 lead ids and returns one result per lead: an accepted entry carries an enrollment id, a skipped one carries a reason such as `suppressed` or `recently_contacted`.
+  - **Run `suppressions.check` before enrolling.** It answers `contactable` per identity with the reason when false. Needle also applies its own suppression policy during a send, so an enrolled lead can still be skipped.
+  - **`compose.preview` never sends.** It returns suggested text and the context sources used.
+
+  Worth knowing:
+
+  - **There is no error code.** Every failure is `{ requestId, error }`, so the status is the only classification: 401 a bad key, 403 a missing scope or plan limit, 409 a duplicate identity, 422 validation. Keep the `requestId`: it is what Needle support asks for, and it is on every `NeedleAPIError`.
+  - **Paging is a cursor.** Pass `nextCursor` back as `cursor`; it is null on the last page.
+  - **Only reads are retried on a 5xx.** A failed send or enroll may have gone through, and Needle takes no idempotency key.
+examples:
+  read:
+    path: leads.list
+    title: List the first page of leads
+    args:
+      limit: 10
+  write:
+    path: leads.upsert
+    title: Add a lead, or merge into the existing one
+    args:
+      identities:
+        linkedin: dana-okafor
+      timezone: Europe/London
+      firstName: Dana
+      companyName: Northwind Freight
+apiExamples:
+  account.me: {}
+  leads.create:
+    call: "{ identities: { linkedin: 'https://www.linkedin.com/in/dana-okafor' }, timezone: 'Europe/London', firstName: 'Dana' }"
+  leads.update:
+    call: "{ leadId: '1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d', jobTitle: 'SVP Operations' }"
+  leads.upsert:
+    call: "{ identities: { linkedin: 'dana-okafor' }, timezone: 'Europe/London' }"
+  leads.list:
+    call: "{ limit: 25 }"
+  leads.get:
+    call: "{ leadId: '1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d' }"
+  leads.search:
+    call: "{ query: 'northwind', limit: 10 }"
+  leads.delete:
+    call: "{ leadId: '1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d' }"
+  campaigns.list:
+    call: "{ status: 'active' }"
+  campaigns.create:
+    call: "{ name: 'EMEA logistics Q4', graph: { nodes: [{ id: 'start', kind: 'start' }, { id: 'end', kind: 'end' }] } }"
+  campaigns.get:
+    call: "{ campaignId: '4d5e6f7a-8b9c-4d0e-9f1a-2b3c4d5e6f7a' }"
+  campaigns.update:
+    call: "{ campaignId: '4d5e6f7a-8b9c-4d0e-9f1a-2b3c4d5e6f7a', status: 'active' }"
+  campaigns.delete:
+    call: "{ campaignId: '4d5e6f7a-8b9c-4d0e-9f1a-2b3c4d5e6f7a' }"
+  campaigns.stats:
+    call: "{ campaignId: '4d5e6f7a-8b9c-4d0e-9f1a-2b3c4d5e6f7a' }"
+  campaigns.leads:
+    call: "{ campaignId: '4d5e6f7a-8b9c-4d0e-9f1a-2b3c4d5e6f7a', limit: 50 }"
+  campaigns.enroll:
+    call: "{ campaignId: '4d5e6f7a-8b9c-4d0e-9f1a-2b3c4d5e6f7a', leadIds: ['1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d'] }"
+  campaigns.stopLeads:
+    call: "{ campaignId: '4d5e6f7a-8b9c-4d0e-9f1a-2b3c4d5e6f7a', leadIds: ['1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d'] }"
+  suppressions.list:
+    call: "{ reason: 'unsubscribed' }"
+  suppressions.create:
+    call: "{ entries: [{ scope: 'company', companyDomain: 'competitor.example', reason: 'competitor' }] }"
+  suppressions.delete:
+    call: "{ suppressionId: 'c9d0e1f2-a3b4-4c5d-8e6f-7a8b9c0d1e2f' }"
+  suppressions.check:
+    call: "{ identities: [{ channel: 'linkedin', identity: 'dana-okafor' }] }"
+  places.search:
+    call: "{ query: 'dentists in Munich', limit: 10 }"
+  compose.preview:
+    call: "{ channel: 'linkedin', connectedAccountId: '2f1c8d9e-3a5b-4c6d-8e9f-0a1b2c3d4e5f', leadId: '1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d' }"
+apiNotes:
+  leads.upsert: 'Answers created or matched; on a match it patches the fields sent onto the existing lead.'
+  leads.update: 'Sending identities replaces the whole identity set rather than adding a channel.'
+  leads.create: 'A duplicate identity is refused with 409; use leads.upsert to merge instead.'
+  campaigns.create: 'The campaign starts in draft and contacts nobody until campaigns.update sets status active.'
+  campaigns.enroll: 'One result comes back per lead, so a batch can partly succeed; a skipped entry carries the reason.'
+  suppressions.check: 'Run this before enrolling; Needle also applies its own suppression policy during a send.'

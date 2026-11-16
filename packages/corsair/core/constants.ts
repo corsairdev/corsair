@@ -406,6 +406,7 @@ export const BaseProviders = [
 	'motion',
 	'mrscraper',
 	'nanonets',
+	'needle',
 	'neon',
 	'netsuite',
 	'neverbounce',
@@ -1033,6 +1034,7 @@ export const ProviderDisplayNames = {
 	motion: 'Motion',
 	mrscraper: 'MrScraper',
 	nanonets: 'Nanonets',
+	needle: 'Needle',
 	neon: 'Neon',
 	netsuite: 'NetSuite',
 	neverbounce: 'NeverBounce',
@@ -1667,6 +1669,7 @@ export type AllProviders =
 	| 'motion'
 	| 'mrscraper'
 	| 'nanonets'
+	| 'needle'
 	| 'neon'
 	| 'netsuite'
 	| 'neverbounce'
