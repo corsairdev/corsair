@@ -6471,5 +6471,59 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-16",
+    "package": "cloud",
+    "version": "0.1.200",
+    "changes": []
+  },
+  {
+    "date": "2026-11-16",
+    "package": "@corsair-dev/reducto",
+    "dir": "packages/reducto",
+    "name": "Reducto",
+    "version": "0.1.3",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2467,
+        "title": "Accept null in every parse block and OCR field Reducto may leave empty"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-16",
+    "package": "@corsair-dev/gatherup",
+    "dir": "packages/gatherup",
+    "name": "GatherUp",
+    "version": "0.1.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2542,
+        "title": "Accept the numeric counters the live API returns"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-16",
+    "package": "@corsair-dev/elorus",
+    "dir": "packages/elorus",
+    "name": "Elorus",
+    "version": "0.1.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2543,
+        "title": "Accept the responses the live API returns"
+      }
+    ]
   }
 ]
