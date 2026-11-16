@@ -32,10 +32,10 @@ pnpm add @corsair-dev/swaggerhub
 | `apiSettings.getVisibility` | `swaggerhub.api.apiSettings.getVisibility` | `read` | Read whether one API version is private |
 | `apiSettings.setLifecycle` | `swaggerhub.api.apiSettings.setLifecycle` | `write` | Publish or unpublish one API version. Publishing exposes it to everyone it is visible to |
 | `apiSettings.setVisibility` | `swaggerhub.api.apiSettings.setVisibility` | `write` | Make one API version private or public. A private version leaves public view immediately |
-| `comments.create` | `swaggerhub.api.comments.create` | `write` | Add a comment to one API version, optionally anchored to a line range |
+| `comments.create` | `swaggerhub.api.comments.create` | `destructive` | Post a comment on one API version, optionally anchored to a line range. Collaborators with notifications on are told about it |
 | `comments.delete` | `swaggerhub.api.comments.delete` | `destructive` | Delete one comment and its replies. There is no undo |
 | `comments.list` | `swaggerhub.api.comments.list` | `read` | List the comments on one API version with their replies and open or resolved status |
-| `comments.reply` | `swaggerhub.api.comments.reply` | `write` | Add a reply to an existing comment |
+| `comments.reply` | `swaggerhub.api.comments.reply` | `destructive` | Post a reply to an existing comment. Collaborators with notifications on are told about it |
 | `comments.update` | `swaggerhub.api.comments.update` | `write` | Change the text of one comment |
 | `domains.delete` | `swaggerhub.api.domains.delete` | `destructive` | Delete a domain and every version of it. There is no undo |
 | `domains.deleteVersion` | `swaggerhub.api.domains.deleteVersion` | `destructive` | Delete one version of a domain. The other versions stay, and there is no undo |
@@ -43,7 +43,7 @@ pnpm add @corsair-dev/swaggerhub
 | `domains.getVersions` | `swaggerhub.api.domains.getVersions` | `read` | List every version of one domain |
 | `domains.list` | `swaggerhub.api.domains.list` | `read` | List the domains under one owner |
 | `domains.save` | `swaggerhub.api.domains.save` | `write` | Save a definition to one domain, creating the version or updating it |
-| `integrations.execute` | `swaggerhub.api.integrations.execute` | `write` | Run one integration once, which pushes the stored definition to its target such as a repository or gateway |
+| `integrations.execute` | `swaggerhub.api.integrations.execute` | `destructive` | Run one integration once, which pushes the stored definition to its target such as a repository or gateway |
 | `integrations.list` | `swaggerhub.api.integrations.list` | `read` | List the integrations configured on one API version, with their ids and enabled state |
 | `projects.create` | `swaggerhub.api.projects.create` | `write` | Create a project from a list of API, domain and template names that already exist in the organisation |
 | `projects.delete` | `swaggerhub.api.projects.delete` | `destructive` | Delete a project. The APIs, domains and templates it grouped stay on the account |

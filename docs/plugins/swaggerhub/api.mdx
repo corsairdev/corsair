@@ -59,7 +59,7 @@ Compare a definition against the stored version and list the differences
 **Risk:** `read`
 
 ```ts
-await corsair.swaggerhub.api.apis.compare({ owner: 'your-org', api: 'petstore', version: '1.0.0', definition: 'openapi: 3.0.0' });
+await corsair.swaggerhub.api.apis.compare({ owner: 'your-org', api: 'petstore', version: '1.0.0', definition: 'openapi: 3.0.0\ninfo:\n  title: Petstore\n  version: 1.0.0\npaths: {}', method: 'FULL' });
 ```
 
 **Input**
@@ -71,9 +71,9 @@ await corsair.swaggerhub.api.apis.compare({ owner: 'your-org', api: 'petstore', 
 | `version` | `string` | Yes | — |
 | `definition` | `string` | Yes | — |
 | `format` | `yaml \| json` | No | — |
-| `method` | `previous \| current` | No | — |
+| `method` | `FULL \| LOGICAL \| STRUCTURAL` | No | Defaults to "FULL". |
 
-Posts a definition and answers a **bare array** of differences between it and the stored version, so the plugin returns `{ owner, api, version, changes }`. `method` is a required query parameter on the route and takes `previous` or `current`.
+Posts a definition and answers a **bare array** of differences between it and the stored version, so the plugin returns `{ owner, api, version, changes }`. `method` is a required query parameter on the route and takes `FULL`, `LOGICAL` or `STRUCTURAL`; the plugin sends `FULL` when you leave it out. A response that is not an array fails rather than reading as no changes.
 
 
 
@@ -368,7 +368,7 @@ Read which notification scopes are enabled for one API, and for the caller
 **Risk:** `read`
 
 ```ts
-await corsair.swaggerhub.api.apis.getNotifications({ owner: 'your-org', api: 'petstore', scope: 'self' });
+await corsair.swaggerhub.api.apis.getNotifications({ owner: 'your-org', api: 'petstore', scope: 'USER' });
 ```
 
 **Input**
@@ -377,10 +377,10 @@ await corsair.swaggerhub.api.apis.getNotifications({ owner: 'your-org', api: 'pe
 |------|------|----------|-------------|
 | `owner` | `string` | Yes | — |
 | `api` | `string` | Yes | — |
-| `scope` | `string` | Yes | — |
+| `scope` | `USER \| ALL` | No | Defaults to "USER". |
 | `version` | `string` | No | — |
 
-Answers `{ enabled }`, the notification scopes the caller has on the API. `scope` is a required query parameter and `version` narrows it to one version.
+Answers `{ enabled }`, the notification scopes the caller has on the API. `scope` is a required query parameter, `USER` (the default) or `ALL`, and `version` narrows it to one version.
 
 
 
@@ -584,7 +584,7 @@ Save a definition to one API, creating the version or updating it. Answers 409 o
 **Risk:** `write`
 
 ```ts
-await corsair.swaggerhub.api.apis.save({ owner: 'your-org', api: 'petstore', definition: 'openapi: 3.0.0' });
+await corsair.swaggerhub.api.apis.save({ owner: 'your-org', api: 'petstore', definition: 'openapi: 3.0.0\ninfo:\n  title: Petstore\n  version: 1.0.0\npaths: {}' });
 ```
 
 **Input**
@@ -601,7 +601,7 @@ await corsair.swaggerhub.api.apis.save({ owner: 'your-org', api: 'petstore', def
 | `projectName` | `string` | No | — |
 | `noReconcile` | `boolean` | No | — |
 
-**The definition is the request body**, not a field inside an object. For OpenAPI and AsyncAPI the version comes from `info.version`; pass `version` for GraphQL and MCP. `force` overwrites a published version instead of answering 409. The route replies with no body, so the result reports the owner, name, version and whether it counts as a create.
+**The definition is the request body**, not a field inside an object. For OpenAPI and AsyncAPI the version comes from `info.version`; pass `version` for GraphQL and MCP. `force` overwrites a published version instead of answering 409. The route replies with no body, so the result reports the owner, name and version it saved. Core does not pass the status on, so whether the save created the version is not reported.
 
 
 
@@ -612,7 +612,6 @@ await corsair.swaggerhub.api.apis.save({ owner: 'your-org', api: 'petstore', def
 | `owner` | `string` | Yes | — |
 | `api` | `string` | Yes | — |
 | `version` | `string \| null` | No | — |
-| `created` | `boolean` | Yes | — |
 | `saved` | `true` | Yes | — |
 
 
@@ -675,7 +674,7 @@ await corsair.swaggerhub.api.apis.setNotifications({ owner: 'your-org', api: 'pe
 | `api` | `string` | Yes | — |
 | `enabled` | `string[]` | Yes | — |
 
-**The body is the bare list of scopes**, not an object around it. Answers the resulting `{ enabled }`.
+**The body is the bare list of scopes**, not an object around it. The route answers 200 with no body, so the plugin reports the scopes it sent as `{ enabled }`.
 
 
 
@@ -836,9 +835,9 @@ Makes one version private or public. A private version leaves public view immedi
 
 `comments.create`
 
-Add a comment to one API version, optionally anchored to a line range
+Post a comment on one API version, optionally anchored to a line range. Collaborators with notifications on are told about it
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.swaggerhub.api.comments.create({ owner: 'your-org', api: 'petstore', version: '1.0.0', body: 'This operation needs a summary' });
@@ -1035,9 +1034,9 @@ Answers a **bare array** of comments. A 204 means the version has none, so the p
 
 `comments.reply`
 
-Add a reply to an existing comment
+Post a reply to an existing comment. Collaborators with notifications on are told about it
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.swaggerhub.api.comments.reply({ owner: 'your-org', api: 'petstore', version: '1.0.0', comment: 'c1', body: 'Fixed in 1.0.1' });
@@ -1436,7 +1435,7 @@ Save a definition to one domain, creating the version or updating it
 **Risk:** `write`
 
 ```ts
-await corsair.swaggerhub.api.domains.save({ owner: 'your-org', domain: 'example', definition: 'openapi: 3.0.0' });
+await corsair.swaggerhub.api.domains.save({ owner: 'your-org', domain: 'example', definition: 'openapi: 3.0.0\ninfo:\n  title: Petstore\n  version: 1.0.0\npaths: {}' });
 ```
 
 **Input**
@@ -1463,7 +1462,6 @@ await corsair.swaggerhub.api.domains.save({ owner: 'your-org', domain: 'example'
 | `owner` | `string` | Yes | — |
 | `domain` | `string` | Yes | — |
 | `version` | `string \| null` | No | — |
-| `created` | `boolean` | Yes | — |
 | `saved` | `true` | Yes | — |
 
 
@@ -1478,7 +1476,7 @@ await corsair.swaggerhub.api.domains.save({ owner: 'your-org', domain: 'example'
 
 Run one integration once, which pushes the stored definition to its target such as a repository or gateway
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.swaggerhub.api.integrations.execute({ owner: 'your-org', api: 'petstore', version: '1.0.0', integrationId: 'i1' });
@@ -1809,7 +1807,7 @@ await corsair.swaggerhub.api.specs.list({ specType: 'API', limit: 20 });
 | `order` | `ASC \| DESC` | No | — |
 | `ignoreCount` | `boolean` | No | — |
 
-Answers `{ offset, totalCount, items }`. `specType` takes `API`, `DOMAIN`, `TEMPLATE` or `ANY`. `visibility` takes `PUBLIC`, `PRIVATE` or `ANY`, and `sort` takes `NAME`, `UPDATED`, `CREATED`, `OWNER`, `BEST_MATCH` or `TITLE`, with `order` of `ASC` or `DESC`. `filter: 'user'` narrows the result to the token's own specs.
+Answers the APIs.json listing `{ offset, totalCount, apis }`, one entry per spec. `specType` takes `API`, `DOMAIN`, `TEMPLATE` or `ANY`. `visibility` takes `PUBLIC`, `PRIVATE` or `ANY`, and `sort` takes `NAME`, `UPDATED`, `CREATED`, `OWNER`, `BEST_MATCH` or `TITLE`, with `order` of `ASC` or `DESC`. `filter: 'user'` narrows the result to the token's own specs.
 
 
 
@@ -1817,27 +1815,40 @@ Answers `{ offset, totalCount, items }`. `specType` takes `API`, `DOMAIN`, `TEMP
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `modified` | `string \| null` | No | — |
+| `specificationVersion` | `string \| null` | No | — |
+| `defaultVersion` | `string \| null` | No | — |
 | `offset` | `number \| null` | No | — |
 | `totalCount` | `number \| null` | No | — |
-| `items` | `object[]` | Yes | — |
+| `blocked` | `boolean \| null` | No | — |
+| `apis` | `object[]` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="items full type">
+<Accordion title="apis full type">
 
 ```ts
 {
-  type?: string | null,
-  owner?: string | null,
   name?: string | null,
-  version?: string | null,
-  title?: string | null,
-  visibility?: string | null,
-  state?: string | null,
-  specification?: string | null,
-  created?: string | null,
-  modified?: string | null,
-  defaultVersion?: boolean | null,
-  lastUpdated?: string | null
+  description?: string | null,
+  summary?: string | null,
+  tags?: string[] | null,
+  properties?: {
+    type: string,
+    url?: string | null,
+    value?: string | null
+  }[] | null,
+  totalCount?: {
+    errors?: number | null,
+    warnings?: number | null,
+    hints?: number | null,
+    infos?: number | null
+  } | null,
+  contractTesting?: {
+  } | null
 }[]
 ```
 </Accordion>
@@ -1856,11 +1867,7 @@ Validate an OpenAPI or AsyncAPI definition and get findings with line and column
 **Risk:** `read`
 
 ```ts
-await corsair.swaggerhub.api.specs.validate({ definition: 'openapi: 3.0.0
-info:
-  title: Petstore
-  version: 1.0.0
-paths: {}' });
+await corsair.swaggerhub.api.specs.validate({ definition: 'openapi: 3.0.0\ninfo:\n  title: Petstore\n  version: 1.0.0\npaths: {}' });
 ```
 
 **Input**
@@ -2075,7 +2082,7 @@ Create or update a template and its version
 **Risk:** `write`
 
 ```ts
-await corsair.swaggerhub.api.templates.save({ owner: 'your-org', templateId: 'my-template', definition: 'openapi: 3.0.0' });
+await corsair.swaggerhub.api.templates.save({ owner: 'your-org', templateId: 'my-template', definition: 'openapi: 3.0.0\ninfo:\n  title: Petstore\n  version: 1.0.0\npaths: {}' });
 ```
 
 **Input**
@@ -2101,7 +2108,6 @@ await corsair.swaggerhub.api.templates.save({ owner: 'your-org', templateId: 'my
 | `owner` | `string` | Yes | — |
 | `templateId` | `string` | Yes | — |
 | `version` | `string \| null` | No | — |
-| `created` | `boolean` | Yes | — |
 | `saved` | `true` | Yes | — |
 
 

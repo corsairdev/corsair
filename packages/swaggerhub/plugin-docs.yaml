@@ -39,7 +39,7 @@ apiExamples:
   specs.list:
     call: "{ specType: 'API', limit: 20 }"
   specs.validate:
-    call: "{ definition: 'openapi: 3.0.0\ninfo:\n  title: Petstore\n  version: 1.0.0\npaths: {}' }"
+    call: "{ definition: 'openapi: 3.0.0\\ninfo:\\n  title: Petstore\\n  version: 1.0.0\\npaths: {}' }"
   apis.list:
     call: "{ owner: 'your-org' }"
   apis.listVersions:
@@ -47,7 +47,7 @@ apiExamples:
   apis.getDefinition:
     call: "{ owner: 'your-org', api: 'petstore', version: '1.0.0' }"
   apis.save:
-    call: "{ owner: 'your-org', api: 'petstore', definition: 'openapi: 3.0.0' }"
+    call: "{ owner: 'your-org', api: 'petstore', definition: 'openapi: 3.0.0\\ninfo:\\n  title: Petstore\\n  version: 1.0.0\\npaths: {}' }"
   apis.delete:
     call: "{ owner: 'your-org', api: 'petstore' }"
   apis.deleteVersion:
@@ -57,7 +57,7 @@ apiExamples:
   apis.forkVersion:
     call: "{ owner: 'your-org', api: 'petstore', version: '1.0.0', targetOwner: 'other-org', targetName: 'petstore-copy', targetVersion: '1.0.0' }"
   apis.compare:
-    call: "{ owner: 'your-org', api: 'petstore', version: '1.0.0', definition: 'openapi: 3.0.0' }"
+    call: "{ owner: 'your-org', api: 'petstore', version: '1.0.0', definition: 'openapi: 3.0.0\\ninfo:\\n  title: Petstore\\n  version: 1.0.0\\npaths: {}', method: 'FULL' }"
   apis.getCapabilities:
     call: "{ owner: 'your-org', api: 'petstore', version: '1.0.0' }"
   apis.getDefaultVersion:
@@ -67,7 +67,7 @@ apiExamples:
   apis.rename:
     call: "{ owner: 'your-org', api: 'petstore', newName: 'petstore-v2' }"
   apis.getNotifications:
-    call: "{ owner: 'your-org', api: 'petstore', scope: 'self' }"
+    call: "{ owner: 'your-org', api: 'petstore', scope: 'USER' }"
   apis.setNotifications:
     call: "{ owner: 'your-org', api: 'petstore', enabled: ['self'] }"
   apis.disableNotifications:
@@ -97,7 +97,7 @@ apiExamples:
   domains.getDefinition:
     call: "{ owner: 'your-org', domain: 'example', version: '1.0.0' }"
   domains.save:
-    call: "{ owner: 'your-org', domain: 'example', definition: 'openapi: 3.0.0' }"
+    call: "{ owner: 'your-org', domain: 'example', definition: 'openapi: 3.0.0\\ninfo:\\n  title: Petstore\\n  version: 1.0.0\\npaths: {}' }"
   domains.delete:
     call: "{ owner: 'your-org', domain: 'example' }"
   domains.deleteVersion:
@@ -107,7 +107,7 @@ apiExamples:
   templates.get:
     call: "{ owner: 'swagger-hub', templateId: 'default', version: '1.0.0', builtin: true }"
   templates.save:
-    call: "{ owner: 'your-org', templateId: 'my-template', definition: 'openapi: 3.0.0' }"
+    call: "{ owner: 'your-org', templateId: 'my-template', definition: 'openapi: 3.0.0\\ninfo:\\n  title: Petstore\\n  version: 1.0.0\\npaths: {}' }"
   templates.delete:
     call: "{ owner: 'your-org', templateId: 'my-template', version: '1.0.0' }"
   projects.list:
@@ -126,7 +126,7 @@ apiExamples:
     call: "{ owner: 'your-org', api: 'petstore', version: '1.0.0', integrationId: 'i1' }"
 apiNotes:
   specs.list: |
-    Answers `{ offset, totalCount, items }`. `specType` takes `API`, `DOMAIN`, `TEMPLATE` or `ANY`. `visibility` takes `PUBLIC`, `PRIVATE` or `ANY`, and `sort` takes `NAME`, `UPDATED`, `CREATED`, `OWNER`, `BEST_MATCH` or `TITLE`, with `order` of `ASC` or `DESC`. `filter: 'user'` narrows the result to the token's own specs.
+    Answers the APIs.json listing `{ offset, totalCount, apis }`, one entry per spec. `specType` takes `API`, `DOMAIN`, `TEMPLATE` or `ANY`. `visibility` takes `PUBLIC`, `PRIVATE` or `ANY`, and `sort` takes `NAME`, `UPDATED`, `CREATED`, `OWNER`, `BEST_MATCH` or `TITLE`, with `order` of `ASC` or `DESC`. `filter: 'user'` narrows the result to the token's own specs.
   specs.validate: |
     Posts the definition and answers `{ valid, recognized, spec, summary, findings }`. `valid` is true only when the definition was recognized **and** has no error-severity finding. `maxProblems` caps the findings at 100 by default and 1000 at most. Nothing is saved.
   apis.list: |
@@ -136,7 +136,7 @@ apiNotes:
   apis.getDefinition: |
     Answers `{ definition }` as text. `resolved` follows `$ref`s and `flatten` lifts inline schemas into named models; GraphQL definitions support neither. A JSON definition is re-serialized to a string, so the reply is always text.
   apis.save: |
-    **The definition is the request body**, not a field inside an object. For OpenAPI and AsyncAPI the version comes from `info.version`; pass `version` for GraphQL and MCP. `force` overwrites a published version instead of answering 409. The route replies with no body, so the result reports the owner, name, version and whether it counts as a create.
+    **The definition is the request body**, not a field inside an object. For OpenAPI and AsyncAPI the version comes from `info.version`; pass `version` for GraphQL and MCP. `force` overwrites a published version instead of answering 409. The route replies with no body, so the result reports the owner, name and version it saved. Core does not pass the status on, so whether the save created the version is not reported.
   apis.delete: |
     Deletes the API and every version of it. The route answers 200 with no body, so the plugin reports `{ owner, api, deleted: true }`.
   apis.deleteVersion: |
@@ -146,7 +146,7 @@ apiNotes:
   apis.forkVersion: |
     Writes the version into `targetOwner` under `targetName` and `targetVersion`, which can be another organisation. The name must be at least 3 characters and at most 60, and the version at most 128.
   apis.compare: |
-    Posts a definition and answers a **bare array** of differences between it and the stored version, so the plugin returns `{ owner, api, version, changes }`. `method` is a required query parameter on the route and takes `previous` or `current`.
+    Posts a definition and answers a **bare array** of differences between it and the stored version, so the plugin returns `{ owner, api, version, changes }`. `method` is a required query parameter on the route and takes `FULL`, `LOGICAL` or `STRUCTURAL`; the plugin sends `FULL` when you leave it out. A response that is not an array fails rather than reading as no changes.
   apis.getCapabilities: |
     Answers `{ canViewStandardizationErrors }`, which says whether the token may read this version's standardization findings.
   apis.getDefaultVersion: |
@@ -156,9 +156,9 @@ apiNotes:
   apis.rename: |
     Sends `newName` as a query parameter, with no body. **The published URLs change**, so anything pointing at the old name breaks.
   apis.getNotifications: |
-    Answers `{ enabled }`, the notification scopes the caller has on the API. `scope` is a required query parameter and `version` narrows it to one version.
+    Answers `{ enabled }`, the notification scopes the caller has on the API. `scope` is a required query parameter, `USER` (the default) or `ALL`, and `version` narrows it to one version.
   apis.setNotifications: |
-    **The body is the bare list of scopes**, not an object around it. Answers the resulting `{ enabled }`.
+    **The body is the bare list of scopes**, not an object around it. The route answers 200 with no body, so the plugin reports the scopes it sent as `{ enabled }`.
   apis.disableNotifications: |
     Turns off every notification the caller has on the API. The route answers 200 with no body, so the plugin reports an empty `{ enabled }`.
   apiSettings.getLifecycle: |
