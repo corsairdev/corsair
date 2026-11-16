@@ -1,7 +1,9 @@
 import 'dotenv/config';
 import { ApiError } from 'corsair/http';
 import { makeGoogleDriveRequest } from './client';
+import { download } from './endpoints/files';
 import { GoogleDriveEndpointOutputSchemas } from './endpoints/types';
+import type { GoogleDriveContext } from './index';
 import type {
 	About,
 	File,
@@ -286,36 +288,62 @@ describe('Google Drive API Type Tests', () => {
 			GoogleDriveEndpointOutputSchemas.filesShare.parse(result);
 		});
 
-		it('filesDownload returns correct type', async () => {
-			const filesListResponse = await makeGoogleDriveRequest<FileList>(
-				'/files',
-				TEST_TOKEN,
-				{
-					method: 'GET',
-					query: {
-						q: "mimeType='text/plain'",
-						pageSize: 1,
+		// Through the endpoint an agent calls: a file with bytes that aren't
+		// UTF-8 must come back exactly, and a CSV must come back as text.
+		it('files.download returns a binary file byte for byte and a CSV as text', async () => {
+			const pdf = new Uint8Array([
+				0x25, 0x50, 0x44, 0x46, 0x2d, 0x31, 0x2e, 0x34, 0x0a, 0xff, 0xfe, 0x00,
+				0x80, 0xc3, 0x28,
+			]);
+			const csv = 'id,name\n1,Zoë\n';
+			const upload = async (name: string, mimeType: string, body: Blob) => {
+				const form = new FormData();
+				form.append(
+					'metadata',
+					new Blob([JSON.stringify({ name, mimeType })], {
+						type: 'application/json',
+					}),
+				);
+				form.append('file', body);
+				const response = await fetch(
+					'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',
+					{
+						method: 'POST',
+						headers: { Authorization: `Bearer ${TEST_TOKEN}` },
+						body: form,
 					},
-				},
+				);
+				expect(response.ok).toBe(true);
+				const { id } = (await response.json()) as { id: string };
+				createdFileIds.push(id);
+				return id;
+			};
+			const pdfId = await upload(
+				`corsair-download-test-${Date.now()}.pdf`,
+				'application/pdf',
+				new Blob([pdf], { type: 'application/pdf' }),
 			);
-			const fileId = filesListResponse.files?.[0]?.id;
-			if (!fileId) {
-				throw new Error('No text files found for download test');
-			}
-
-			const response = await makeGoogleDriveRequest<any>(
-				`/files/${fileId}`,
-				TEST_TOKEN,
-				{
-					method: 'GET',
-					query: {
-						alt: 'media',
-					},
-				},
+			const csvId = await upload(
+				`corsair-download-test-${Date.now()}.csv`,
+				'text/csv',
+				new Blob([csv], { type: 'text/csv' }),
 			);
-			const result = response;
 
-			expect(result).toBeDefined();
+			// unknown: the endpoint reads only ctx.key, not a full plugin context.
+			const ctx = { key: TEST_TOKEN } as unknown as GoogleDriveContext;
+			const gotPdf = await download(ctx, { fileId: pdfId });
+			expect(
+				GoogleDriveEndpointOutputSchemas.filesDownload.parse(gotPdf),
+			).toEqual(gotPdf);
+			expect(gotPdf.contentType).toBe('application/pdf');
+			expect(gotPdf.byteLength).toBe(pdf.byteLength);
+			expect(Buffer.from(gotPdf.contentBase64 ?? '', 'base64')).toEqual(
+				Buffer.from(pdf),
+			);
+
+			const gotCsv = await download(ctx, { fileId: csvId });
+			expect(gotCsv.contentType).toBe('text/csv');
+			expect(gotCsv.text).toBe(csv);
 		});
 
 		it('filesDelete works correctly', async () => {
