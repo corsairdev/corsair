@@ -3013,9 +3013,14 @@ export const cellsGetOutputOutputSchema = z
 					traceback: z.string().nullable(),
 				})
 				.passthrough(),
-			// A result type Hex adds later still parses; known types keep literal tags for narrowing.
+			// A result type Hex adds later still parses; known types keep literal tags for
+			// narrowing, and a known type with bad fields still fails.
 			z
-				.object({ type: z.string() })
+				.object({
+					type: z
+						.string()
+						.refine((t) => !['table', 'cell_run_error'].includes(t)),
+				})
 				.passthrough(),
 		]),
 	})
@@ -4430,9 +4435,16 @@ export const threadsGetOutputSchema = z
 							title: z.string(),
 						})
 						.passthrough(),
-					// A block type Hex adds later still parses; known types keep literal tags for narrowing.
+					// A block type Hex adds later still parses; known types keep literal tags for
+					// narrowing, and a known type with bad fields still fails.
 					z
-						.object({ type: z.string() })
+						.object({
+							type: z
+								.string()
+								.refine(
+									(t) => !['text', 'cell', 'project', 'task'].includes(t),
+								),
+						})
 						.passthrough(),
 				]),
 			)

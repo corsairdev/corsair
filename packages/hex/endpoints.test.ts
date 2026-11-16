@@ -1851,4 +1851,12 @@ describe('Thread response blocks', () => {
 		expect(texts).toEqual(['Churn is up 3%']);
 		expect(result.response?.[1]?.type).toBe('chart');
 	});
+
+	it('still rejects a known block type with invalid fields', async () => {
+		mockedRequest.mockResolvedValue({
+			...validOutputs.threadsGet,
+			response: [{ type: 'text', text: 123 }],
+		});
+		await expect(Threads.get(ctx, validInputs.threadsGet)).rejects.toThrow();
+	});
 });
