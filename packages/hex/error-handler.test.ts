@@ -88,6 +88,15 @@ describe('Hex error handlers', () => {
 		});
 	});
 
+	it('routes an ApiError by status, not by words in its message', async () => {
+		const timeout = apiError(504, 'rate limit service timed out');
+		expect(route(timeout)).toBe('DEFAULT');
+		await expect(errorHandlers.DEFAULT.handler(timeout)).resolves.toEqual({
+			maxRetries: 0,
+		});
+		expect(route(apiError(500, 'Resource not found upstream'))).toBe('DEFAULT');
+	});
+
 	it('routes unknown failures to DEFAULT without retrying', async () => {
 		const error = apiError(500, 'Internal Server Error');
 		expect(route(error)).toBe('DEFAULT');

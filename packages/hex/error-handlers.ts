@@ -1,13 +1,25 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 
+/**
+ * An ApiError carries the real HTTP status, so only the status decides its
+ * route. Message matching is for errors that never reached Hex (no status):
+ * a 504 whose body says "rate limit" must not be retried as a 429.
+ */
+function matches(
+	error: Error,
+	statuses: readonly number[],
+	phrases: readonly string[],
+): boolean {
+	if (error instanceof ApiError) return statuses.includes(error.status);
+	const msg = error.message.toLowerCase();
+	return phrases.some((phrase) => msg.includes(phrase));
+}
+
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
-			const msg = error.message.toLowerCase();
-			return msg.includes('too many requests') || msg.includes('rate limit');
-		},
+		match: (error: Error) =>
+			matches(error, [429], ['too many requests', 'rate limit']),
 		handler: async (error: Error) => {
 			let retryAfterMs: number | undefined;
 			if (error instanceof ApiError && error.retryAfter !== undefined) {
@@ -17,50 +29,30 @@ export const errorHandlers = {
 		},
 	},
 	AUTH_ERROR: {
-		match: (error: Error) => {
-			if (
-				error instanceof ApiError &&
-				(error.status === 401 || error.status === 403)
-			)
-				return true;
-			const msg = error.message.toLowerCase();
-			return (
-				msg.includes('unauthorized') ||
-				msg.includes('forbidden') ||
-				msg.includes('invalid_auth') ||
-				msg.includes('insufficient access')
-			);
-		},
+		match: (error: Error) =>
+			matches(
+				error,
+				[401, 403],
+				['unauthorized', 'forbidden', 'invalid_auth', 'insufficient access'],
+			),
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	NOT_FOUND_ERROR: {
-		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 404) return true;
-			return error.message.toLowerCase().includes('not found');
-		},
+		match: (error: Error) => matches(error, [404], ['not found']),
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	VALIDATION_ERROR: {
-		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 422) return true;
-			const msg = error.message.toLowerCase();
-			return msg.includes('validation') || msg.includes('unprocessable');
-		},
+		match: (error: Error) =>
+			matches(error, [422], ['validation', 'unprocessable']),
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	BAD_REQUEST_ERROR: {
-		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 400) return true;
-			const msg = error.message.toLowerCase();
-			return msg.includes('bad request') || msg.includes('invalid input data');
-		},
+		match: (error: Error) =>
+			matches(error, [400], ['bad request', 'invalid input data']),
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	SERVICE_UNAVAILABLE_ERROR: {
-		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 503) return true;
-			return error.message.toLowerCase().includes('service unavailable');
-		},
+		match: (error: Error) => matches(error, [503], ['service unavailable']),
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	DEFAULT: {
