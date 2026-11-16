@@ -140,12 +140,14 @@ export const removeItem: SpotifyEndpoints['playlistsRemoveItem'] = async (
 	ctx,
 	input,
 ) => {
+	// Spotify replaced DELETE /playlists/{id}/tracks with /items in February 2026
+	// (the old route is gone for development-mode apps) and renamed `tracks` to `items`.
 	const result = await makeAuthenticatedSpotifyRequest<
 		SpotifyEndpointOutputs['playlistsRemoveItem']
-	>(`playlists/${input.playlist_id}/tracks`, ctx, {
+	>(`playlists/${input.playlist_id}/items`, ctx, {
 		method: 'DELETE',
 		body: {
-			tracks: input.tracks,
+			items: input.tracks,
 			...(input.snapshot_id && { snapshot_id: input.snapshot_id }),
 		},
 	});
