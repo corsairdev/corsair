@@ -57,13 +57,14 @@ describe('textcortex plugin definition', () => {
 		}
 	});
 
-	it('marks every paid generation a write, and the reads as reads', () => {
+	it('marks every paid generation destructive, and the lookups as reads', () => {
 		const meta = plugin.endpointMeta ?? {};
-		// Each of these spends credits, so a read-only caller must not reach it.
-		expect(meta['chat.completions']?.riskLevel).toBe('write');
-		expect(meta['responses.create']?.riskLevel).toBe('write');
-		expect(meta['images.create']?.riskLevel).toBe('write');
-		expect(meta['web.search']?.riskLevel).toBe('write');
+		// Each of these is a paid job that makes something new (plugin rules R8).
+		expect(meta['chat.completions']?.riskLevel).toBe('destructive');
+		expect(meta['responses.create']?.riskLevel).toBe('destructive');
+		expect(meta['images.create']?.riskLevel).toBe('destructive');
+		// A metered search only returns data, so it stays a read.
+		expect(meta['web.search']?.riskLevel).toBe('read');
 
 		expect(meta['models.list']?.riskLevel).toBe('read');
 		expect(meta['balance.get']?.riskLevel).toBe('read');

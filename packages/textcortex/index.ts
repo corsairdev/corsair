@@ -135,25 +135,30 @@ const textcortexEndpointMeta = {
 		description:
 			'Read the features enabled for the key, such as image generation',
 	},
+	// A paid generation job: each call spends credits (plugin rules R8).
 	'chat.completions': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Generate a chat completion from a conversation, which spends credits on every call',
 	},
+	// A paid generation job: each call spends credits (plugin rules R8).
 	'responses.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Generate one response from a prompt and optional instructions, which spends credits',
 	},
+	// A paid generation job: each call spends credits (plugin rules R8).
 	'images.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Generate images from a prompt, returning URLs or base64 JSON, and spend credits per image',
+			'Generate an image from a prompt, returning its URL, and spend credits per image',
 	},
+	// A metered lookup: it spends credits but only returns data, so it stays a
+	// read like the Ahrefs plugin's queries (plugin rules R8).
 	'web.search': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description:
-			'Search the web and return matching sources, which is a paid call rather than a plain read',
+			'Search the web and return matching sources with snippets; each search spends credits',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof textcortexEndpointsNested
@@ -209,7 +214,7 @@ export function textcortex<const T extends TextCortexPluginOptions>(
 	} satisfies InternalTextCortexPlugin;
 }
 
-export { TextCortexAPIError } from './client';
+export { textCortexErrorDetails } from './client';
 
 export type {
 	BalanceResponse,
