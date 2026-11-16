@@ -92,6 +92,44 @@ describe('multiAccount off (default)', () => {
 		expect(await t.mail.api.token()).toBe('tok-b');
 	});
 
+	it("a replacing identity doesn't keep the old account's refresh token", async () => {
+		await processManagedOAuthDelivery(corsair, {
+			plugin: 'mail',
+			tenantId: 't1',
+			accessToken: 'tok-a',
+			refreshToken: 'rt-a',
+			account: { id: 'a', label: 'a@x.com' },
+		});
+		await deliver('tok-b', { id: 'b', label: 'b@x.com' });
+		const km = createAccountKeyManager({
+			authType: 'managed',
+			integrationName: 'mail',
+			tenantId: 't1',
+			kek: KEK,
+			database: database(),
+		}) as unknown as { get_refresh_token: () => Promise<string | null> };
+		expect(await km.get_refresh_token()).toBeFalsy();
+	});
+
+	it('the same identity reconnecting keeps its refresh token', async () => {
+		await processManagedOAuthDelivery(corsair, {
+			plugin: 'mail',
+			tenantId: 't1',
+			accessToken: 'tok-a',
+			refreshToken: 'rt-a',
+			account: { id: 'a', label: 'a@x.com' },
+		});
+		await deliver('tok-a2', { id: 'a', label: 'a@x.com' });
+		const km = createAccountKeyManager({
+			authType: 'managed',
+			integrationName: 'mail',
+			tenantId: 't1',
+			kek: KEK,
+			database: database(),
+		}) as unknown as { get_refresh_token: () => Promise<string | null> };
+		expect(await km.get_refresh_token()).toBe('rt-a');
+	});
+
 	it('legacy tenant with two rows: unbound call uses the oldest, no throw', async () => {
 		const integ = await env.db
 			.selectFrom('corsair_integrations')

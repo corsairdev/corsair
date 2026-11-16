@@ -377,7 +377,10 @@ export async function upsertAccount(i: {
 			same ?? known.find((k) => !k.ref) ?? (i.allowMany ? undefined : known[0]);
 		if (target) {
 			if (!same || (identity.label && target.label !== identity.label)) {
-				await writeIdentity(trx, target.row, identity, kek);
+				// Another known identity taking the row starts it clean: its old
+				// tokens belong to the account being replaced.
+				const replacing = !same && target.ref !== undefined;
+				await writeIdentity(trx, target.row, identity, kek, replacing);
 			}
 			return { accountId: target.row.id, created: false };
 		}
@@ -416,11 +419,12 @@ async function writeIdentity(
 	row: { id: string; config: AccountConfig; dek?: string | null },
 	identity: AccountIdentity,
 	kek: string,
+	fresh = false,
 ) {
 	const dek = row.dek ? await decryptDEK(row.dek, kek) : generateDEK();
 	const stored = parseConfig(row.config);
 	// A null-DEK row's config was never sealed, so its values are plaintext.
-	const existing = row.dek ? decryptConfig(stored, dek) : stored;
+	const existing = fresh ? {} : row.dek ? decryptConfig(stored, dek) : stored;
 	await trx
 		.updateTable('corsair_accounts')
 		.set({
