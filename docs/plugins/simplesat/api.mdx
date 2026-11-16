@@ -258,7 +258,7 @@ Queued rather than applied: the answer carries a request_id and a message, not t
   company?: string | null,
   language?: string | null,
   tags?: string[] | null,
-  custom_attributes?: Record<string, unknown> | null
+  custom_attributes?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -299,7 +299,7 @@ await corsair.simplesat.api.customers.create({ external_id: '12345', email: 'tes
 | `company` | `string \| null` | No | — |
 | `language` | `string \| null` | No | — |
 | `tags` | `string[] \| null` | No | — |
-| `custom_attributes` | `Record<string, unknown> \| null` | No | — |
+| `custom_attributes` | `Record<string, any> \| null` | No | — |
 
 An upsert: Simplesat matches on external_id or email rather than always inserting, so send one of them. The schema rejects a customer with neither.
 
@@ -316,7 +316,7 @@ An upsert: Simplesat matches on external_id or email rather than always insertin
 | `company` | `string \| null` | No | — |
 | `language` | `string \| null` | No | — |
 | `tags` | `string[] \| null` | No | — |
-| `custom_attributes` | `Record<string, unknown> \| null` | No | — |
+| `custom_attributes` | `Record<string, any> \| null` | No | — |
 
 
 
@@ -326,7 +326,7 @@ An upsert: Simplesat matches on external_id or email rather than always insertin
 
 `customers.get`
 
-Read one customer by their Simplesat id or external id, with their tags and custom attributes
+Read one customer by their Simplesat id, with their tags and custom attributes
 
 **Risk:** `read`
 
@@ -338,7 +338,7 @@ await corsair.simplesat.api.customers.get({ customer_id: '1' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `customer_id` | `string` | Yes | The Simplesat id, or an external id. |
+| `customer_id` | `string` | Yes | The Simplesat customer id. An external id answers 404. |
 
 
 
@@ -353,7 +353,7 @@ await corsair.simplesat.api.customers.get({ customer_id: '1' });
 | `company` | `string \| null` | No | — |
 | `language` | `string \| null` | No | — |
 | `tags` | `string[] \| null` | No | — |
-| `custom_attributes` | `Record<string, unknown> \| null` | No | — |
+| `custom_attributes` | `Record<string, any> \| null` | No | — |
 
 
 
@@ -384,7 +384,7 @@ await corsair.simplesat.api.customers.list({ page_size: 50, subscribed: true });
 | `modified_before` | `string` | No | ISO 8601. |
 | `subscribed` | `boolean` | No | — |
 
-Pass the path from a previous page as next. Every list answers { next, previous, count, results }, and next is a same-host path the plugin checks before use.
+Pass the path from a previous page as `next`. Every list answers `{ next, previous, count, results }`, and `next` is a same-host path the plugin checks before use.
 
 
 
@@ -409,7 +409,7 @@ Pass the path from a previous page as next. Every list answers { next, previous,
   company?: string | null,
   language?: string | null,
   tags?: string[] | null,
-  custom_attributes?: Record<string, unknown> | null
+  custom_attributes?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -423,7 +423,7 @@ Pass the path from a previous page as next. Every list answers { next, previous,
 
 `customers.update`
 
-Update one customer by their Simplesat id or external id, replacing the fields sent
+Update one customer by their Simplesat id, replacing the fields sent
 
 **Risk:** `write`
 
@@ -435,14 +435,14 @@ await corsair.simplesat.api.customers.update({ customer_id: '1', name: 'Renamed'
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `customer_id` | `string` | Yes | — |
+| `customer_id` | `string` | Yes | The Simplesat customer id. |
 | `external_id` | `string \| null` | No | Your own id for this customer. |
 | `email` | `string \| null` | No | — |
 | `name` | `string \| null` | No | — |
 | `company` | `string \| null` | No | — |
 | `language` | `string \| null` | No | — |
 | `tags` | `string[] \| null` | No | — |
-| `custom_attributes` | `Record<string, unknown> \| null` | No | — |
+| `custom_attributes` | `Record<string, any> \| null` | No | — |
 
 
 
@@ -457,7 +457,7 @@ await corsair.simplesat.api.customers.update({ customer_id: '1', name: 'Renamed'
 | `company` | `string \| null` | No | — |
 | `language` | `string \| null` | No | — |
 | `tags` | `string[] \| null` | No | — |
-| `custom_attributes` | `Record<string, unknown> \| null` | No | — |
+| `custom_attributes` | `Record<string, any> \| null` | No | — |
 
 
 
@@ -581,7 +581,7 @@ Creates a response or updates the one that already matches it. `created` backdat
   is_primary: boolean,
   external_id?: string,
   name?: string,
-  custom_attributes?: Record<string, unknown>
+  custom_attributes?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -592,7 +592,7 @@ Creates a response or updates the one that already matches it. `created` backdat
 {
   external_id?: string,
   subject?: string,
-  custom_attributes?: Record<string, unknown>
+  custom_attributes?: Record<string, any>
 }
 ```
 </Accordion>
@@ -606,7 +606,7 @@ Creates a response or updates the one that already matches it. `created` backdat
   name?: string,
   tags?: string[],
   company?: string,
-  custom_attributes?: Record<string, unknown>
+  custom_attributes?: Record<string, any>
 }
 ```
 </Accordion>
@@ -637,7 +637,7 @@ Creates a response or updates the one that already matches it. `created` backdat
 {
   external_id?: string | null,
   subject?: string | null,
-  custom_attributes?: Record<string, unknown> | null
+  custom_attributes?: Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -666,7 +666,7 @@ Creates a response or updates the one that already matches it. `created` backdat
   company?: string | null,
   language?: string | null,
   tags?: string[] | null,
-  custom_attributes?: Record<string, unknown> | null
+  custom_attributes?: Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -745,7 +745,7 @@ await corsair.simplesat.api.responses.get({ response_id: '1' });
 {
   external_id?: string | null,
   subject?: string | null,
-  custom_attributes?: Record<string, unknown> | null
+  custom_attributes?: Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -774,7 +774,7 @@ await corsair.simplesat.api.responses.get({ response_id: '1' });
   company?: string | null,
   language?: string | null,
   tags?: string[] | null,
-  custom_attributes?: Record<string, unknown> | null
+  custom_attributes?: Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -877,7 +877,7 @@ await corsair.simplesat.api.responses.search({ created_start_date: '2024-01-01T0
   ticket?: {
     external_id?: string | null,
     subject?: string | null,
-    custom_attributes?: Record<string, unknown> | null
+    custom_attributes?: Record<string, any> | null
   } | null,
   team_members?: {
     external_id?: string | null,
@@ -894,7 +894,7 @@ await corsair.simplesat.api.responses.search({ created_start_date: '2024-01-01T0
     company?: string | null,
     language?: string | null,
     tags?: string[] | null,
-    custom_attributes?: Record<string, unknown> | null
+    custom_attributes?: Record<string, any> | null
   } | null,
   answers?: {
     id?: number | null,
@@ -977,7 +977,7 @@ await corsair.simplesat.api.responses.update({ response_id: '1', survey_id: 1, a
   is_primary: boolean,
   external_id?: string,
   name?: string,
-  custom_attributes?: Record<string, unknown>
+  custom_attributes?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -988,7 +988,7 @@ await corsair.simplesat.api.responses.update({ response_id: '1', survey_id: 1, a
 {
   external_id?: string,
   subject?: string,
-  custom_attributes?: Record<string, unknown>
+  custom_attributes?: Record<string, any>
 }
 ```
 </Accordion>
@@ -1002,7 +1002,7 @@ await corsair.simplesat.api.responses.update({ response_id: '1', survey_id: 1, a
   name?: string,
   tags?: string[],
   company?: string,
-  custom_attributes?: Record<string, unknown>
+  custom_attributes?: Record<string, any>
 }
 ```
 </Accordion>
@@ -1033,7 +1033,7 @@ await corsair.simplesat.api.responses.update({ response_id: '1', survey_id: 1, a
 {
   external_id?: string | null,
   subject?: string | null,
-  custom_attributes?: Record<string, unknown> | null
+  custom_attributes?: Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -1062,7 +1062,7 @@ await corsair.simplesat.api.responses.update({ response_id: '1', survey_id: 1, a
   company?: string | null,
   language?: string | null,
   tags?: string[] | null,
-  custom_attributes?: Record<string, unknown> | null
+  custom_attributes?: Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -1106,7 +1106,7 @@ await corsair.simplesat.api.responses.update({ response_id: '1', survey_id: 1, a
 
 Send a survey to one customer by email. This notifies a real person, and the survey is identified by its token
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.simplesat.api.surveys.email({ survey_token: 'z_3OxYijnEkfZSt6hLKxCRxBlu4CPQ9feLUAW4Eaen4', customer: { email: 'tester@simplesat.io' } });
@@ -1220,7 +1220,7 @@ await corsair.simplesat.api.teamMembers.create({ external_id: '1', email: 'teste
 | `external_id` | `string \| null` | No | — |
 | `name` | `string \| null` | No | — |
 | `email` | `string \| null` | No | — |
-| `custom_attributes` | `Record<string, unknown> \| null` | No | — |
+| `custom_attributes` | `Record<string, any> \| null` | No | — |
 
 
 
@@ -1232,7 +1232,7 @@ await corsair.simplesat.api.teamMembers.create({ external_id: '1', email: 'teste
 | `external_id` | `string \| null` | No | — |
 | `name` | `string \| null` | No | — |
 | `email` | `string \| null` | No | — |
-| `custom_attributes` | `Record<string, unknown> \| null` | No | — |
+| `custom_attributes` | `Record<string, any> \| null` | No | — |
 | `groups` | `string[] \| null` | No | — |
 
 
@@ -1267,7 +1267,7 @@ await corsair.simplesat.api.teamMembers.get({ team_member_id: '1' });
 | `external_id` | `string \| null` | No | — |
 | `name` | `string \| null` | No | — |
 | `email` | `string \| null` | No | — |
-| `custom_attributes` | `Record<string, unknown> \| null` | No | — |
+| `custom_attributes` | `Record<string, any> \| null` | No | — |
 | `groups` | `string[] \| null` | No | — |
 
 
