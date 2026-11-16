@@ -95,7 +95,8 @@ function messageOf(error: ApiError): string {
 
 /**
  * Sends one request to Mistral with the API key as a Bearer token and
- * returns the parsed JSON. Failures are thrown as `MistralAiAPIError`.
+ * returns the parsed JSON. HTTP failures are core's `ApiError`, with a
+ * clearer message.
  */
 export async function makeMistralAiRequest<T>(
 	endpoint: string,
@@ -134,24 +135,13 @@ export async function makeMistralAiRequest<T>(
 			rateLimitConfig: NO_TRANSPORT_RETRIES,
 		});
 	} catch (error) {
+		// Core's ApiError goes through as is (PLUGIN_PR_RULES R8), so its status,
+		// retryAfter and request stay what core and the error handlers read.
+		// Only the message changes: Mistral's own message or the 422 field list
+		// instead of the bare status text.
 		if (error instanceof ApiError) {
-			throw new MistralAiAPIError(
-				messageOf(error),
-				error.status,
-				error.retryAfter,
-				error.body,
-				method,
-			);
+			error.message = messageOf(error);
 		}
-		if (error instanceof Error) {
-			throw new MistralAiAPIError(
-				error.message,
-				undefined,
-				undefined,
-				undefined,
-				method,
-			);
-		}
-		throw new MistralAiAPIError('Unknown error');
+		throw error;
 	}
 }

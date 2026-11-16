@@ -1,4 +1,4 @@
-import { MistralAiAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import { createClient, jsonResponse, mockFetch, model } from './test-fixtures';
 
 // Mistral's documented 422 body (HTTPValidationError).
@@ -88,7 +88,7 @@ describe('Mistral AI error handling through createCorsair', () => {
 				jsonResponse({ message: 'Unauthorized' }, status),
 			);
 			await expect(corsair.mistralai.api.models.list({})).rejects.toMatchObject(
-				{ name: 'MistralAiAPIError', status },
+				{ name: 'ApiError', status },
 			);
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		});
@@ -105,7 +105,7 @@ describe('Mistral AI error handling through createCorsair', () => {
 				// unknown: a rejection can carry any value; the checks below narrow it.
 				.catch((e: unknown) => e);
 
-			expect(error).toBeInstanceOf(MistralAiAPIError);
+			expect(error).toBeInstanceOf(ApiError);
 			expect(error).toMatchObject({ status: 422, body: validationError });
 			expect(String((error as Error).message)).toBe(
 				'Mistral AI rejected the request: body.messages.0.content: Field required; body.temperature: Input should be less than or equal to 1.5',
@@ -200,7 +200,7 @@ describe('Mistral AI error handling through createCorsair', () => {
 					DEFAULT: { match: () => true, handler: fallback },
 					NOT_FOUND_ERROR: {
 						match: (error: Error) =>
-							error instanceof MistralAiAPIError && error.status === 404,
+							error instanceof ApiError && error.status === 404,
 						handler: notFound,
 					},
 				},
@@ -210,8 +210,7 @@ describe('Mistral AI error handling through createCorsair', () => {
 
 	it('runs a handler the caller adds under a new name, ahead of DEFAULT', async () => {
 		const match = jest.fn(
-			(error: Error) =>
-				error instanceof MistralAiAPIError && error.status === 404,
+			(error: Error) => error instanceof ApiError && error.status === 404,
 		);
 		await withClient(
 			async ({ corsair }) => {

@@ -10,6 +10,13 @@ function statusOf(error: Error): number | undefined {
 	return undefined;
 }
 
+/** The HTTP method of the request that failed, if known. */
+function methodOf(error: Error): string | undefined {
+	if (error instanceof ApiError) return error.request.method;
+	if (error instanceof MistralAiAPIError) return error.method;
+	return undefined;
+}
+
 // Core takes the first handler whose match passes, so order matters and
 // DEFAULT stays last (index.ts keeps it last when options add handlers).
 export const errorHandlers = {
@@ -35,11 +42,7 @@ export const errorHandlers = {
 		/** True for a 503 or a 408 on a GET. */
 		match: (error: Error) => {
 			const status = statusOf(error);
-			return (
-				(status === 503 || status === 408) &&
-				error instanceof MistralAiAPIError &&
-				error.method === 'GET'
-			);
+			return (status === 503 || status === 408) && methodOf(error) === 'GET';
 		},
 		handler: async () => ({
 			maxRetries: 2,

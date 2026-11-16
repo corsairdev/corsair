@@ -1,4 +1,5 @@
-import { MistralAiAPIError, makeMistralAiRequest } from './client';
+import { ApiError } from 'corsair/http';
+import { makeMistralAiRequest } from './client';
 import { jsonResponse, mockFetch } from './test-fixtures';
 
 let fetchMock: jest.SpyInstance;
@@ -23,7 +24,7 @@ describe('makeMistralAiRequest', () => {
 
 		const pending = makeMistralAiRequest('/v1/models', 'k');
 		const settled = expect(pending).rejects.toMatchObject({
-			name: 'MistralAiAPIError',
+			name: 'ApiError',
 			status: 429,
 			retryAfter: 2000,
 		});
@@ -52,8 +53,13 @@ describe('makeMistralAiRequest', () => {
 		// unknown: a rejection can carry any value; the checks below narrow it.
 		const error = await request.catch((e: unknown) => e);
 
-		expect(error).toBeInstanceOf(MistralAiAPIError);
-		expect(error).toMatchObject({ status: 422, method: 'POST', body });
+		// Core's ApiError comes through, not a plugin wrapper (R8).
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({
+			status: 422,
+			body,
+			request: { method: 'POST' },
+		});
 		expect((error as Error).message).toBe(
 			'Mistral AI rejected the request: body.model: Field required; query.page_size: Input should be greater than or equal to 1',
 		);
