@@ -3003,7 +3003,7 @@ await corsair.mistralai.api.files.list({ purpose: 'batch', page: 0, page_size: 2
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 | `include_total` | `boolean` | No | — |
-| `purpose` | `fine-tune \| batch \| ocr \| agentic_safety` | No | — |
+| `purpose` | `fine-tune \| batch \| ocr \| agentic_safety \| audio` | No | — |
 | `search` | `string` | No | — |
 | `sample_type` | `(pretrain \| instruct \| batch_request \| batch_result \| batch_error)[]` | No | — |
 | `source` | `(upload \| repository \| mistral)[]` | No | — |
@@ -3064,7 +3064,7 @@ await corsair.mistralai.api.files.upload({ filename: 'requests.jsonl', content_b
 |------|------|----------|-------------|
 | `filename` | `string` | Yes | Name to store the file under, for example requests.jsonl. |
 | `content_base64` | `string` | Yes | File content, base64 (a data: URL prefix is accepted). |
-| `purpose` | `fine-tune \| batch \| ocr \| agentic_safety` | No | fine-tune, batch (a .jsonl of requests for batch.create), ocr or agentic_safety. |
+| `purpose` | `fine-tune \| batch \| ocr \| agentic_safety \| audio` | No | fine-tune, batch (a .jsonl of requests for batch.create), ocr or agentic_safety. |
 | `visibility` | `workspace \| user` | No | — |
 | `expiry` | `number` | No | Hours until Mistral deletes the file. |
 
