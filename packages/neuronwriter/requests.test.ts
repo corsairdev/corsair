@@ -166,14 +166,16 @@ describe('analysis.start', () => {
 		// Cast past the type: the point is that the schema refuses it at runtime
 		// for a caller passing untyped input.
 		await expect(
-			endpoints.analysis.start(makeContext() as never, {
-				project: 'p1',
-				keyword: 'kw',
-				engine: 'google.com',
-			} as never),
+			endpoints.analysis.start(
+				makeContext() as never,
+				{
+					project: 'p1',
+					keyword: 'kw',
+					engine: 'google.com',
+				} as never,
+			),
 		).rejects.toThrow();
 	});
-
 });
 
 describe('analysis.get', () => {
