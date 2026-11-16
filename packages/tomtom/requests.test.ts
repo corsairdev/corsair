@@ -228,7 +228,7 @@ describe('routing', () => {
 		);
 	});
 
-	it('routing.calculate sends the avoid list as one value', async () => {
+	it('routing.calculate repeats avoid once per value', async () => {
 		respond(routeEnvelope);
 
 		await invoke(RoutingEndpoints.calculate, {
@@ -237,7 +237,11 @@ describe('routing', () => {
 			avoid: ['tollRoads', 'ferries'],
 		});
 
-		expect(lastRequest().params.avoid).toBe('tollRoads,ferries');
+		const [url] = fetchMock.mock.calls.at(-1) as [string];
+		expect(new URL(url).searchParams.getAll('avoid')).toEqual([
+			'tollRoads',
+			'ferries',
+		]);
 	});
 
 	it('routing.calculate rejects an empty origins list', async () => {
@@ -268,9 +272,28 @@ describe('traffic', () => {
 		});
 		expect(lastRequest().params).toEqual({
 			bbox: '4.88,52.36,4.92,52.39',
+			fields: expect.stringContaining('magnitudeOfDelay'),
 			key: 'tt-test-key',
 		});
+		// Without fields, v5 sends only type, geometry and iconCategory.
+		expect(lastRequest().params.fields).toContain('roadNumbers');
+		expect(lastRequest().params.fields).toContain('delay');
 		expect(result.incidents).toHaveLength(1);
+	});
+
+	it('traffic.incidents sends categories and time filters as lists', async () => {
+		respond(incidentDetails);
+
+		await invoke(TrafficEndpoints.incidents, {
+			bbox: '4.88,52.36,4.92,52.39',
+			category_filter: [1, 6],
+			time_validity_filter: ['present', 'future'],
+		});
+
+		expect(lastRequest().params).toMatchObject({
+			categoryFilter: '1,6',
+			timeValidityFilter: 'present,future',
+		});
 	});
 
 	it('traffic.incidents rejects a malformed bounding box', async () => {
@@ -321,24 +344,38 @@ describe('traffic', () => {
 		expect(lastRequest().path).toContain('/absolute/10/json');
 	});
 
-	it('traffic.tile builds the flow path with its style', async () => {
-		respond('png-bytes');
+	// The PNG signature: the 0x89 byte does not survive decoding as text.
+	const PNG = Uint8Array.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 
-		await invoke(TrafficEndpoints.tile, {
+	function respondPng() {
+		fetchMock.mockResolvedValueOnce(
+			new Response(PNG, {
+				status: 200,
+				headers: { 'Content-Type': 'image/png' },
+			}),
+		);
+	}
+
+	it('traffic.tile builds the flow path and returns the bytes as base64', async () => {
+		respondPng();
+
+		const result = (await invoke(TrafficEndpoints.tile, {
 			zoom: 12,
 			x: 2100,
 			y: 1350,
 			style: 'relative-delay',
-		});
+		})) as { content_type: string; base64: string };
 
 		expectAuthenticated();
 		expect(lastRequest().path).toBe(
 			'/traffic/map/4/tile/flow/relative-delay/12/2100/1350.png',
 		);
+		expect(result.content_type).toBe('image/png');
+		expect(Buffer.from(result.base64, 'base64')).toEqual(Buffer.from(PNG));
 	});
 
-	it('traffic.tile omits the style segment for the incidents layer', async () => {
-		respond('png-bytes');
+	it('traffic.tile puts the incident style in the incidents path', async () => {
+		respondPng();
 
 		await invoke(TrafficEndpoints.tile, {
 			layer: 'incidents',
@@ -348,8 +385,20 @@ describe('traffic', () => {
 		});
 
 		expect(lastRequest().path).toBe(
-			'/traffic/map/4/tile/incidents/12/2100/1350.png',
+			'/traffic/map/4/tile/incidents/s3/12/2100/1350.png',
 		);
+	});
+
+	it('traffic.tile throws core ApiError on a failure, key redacted', async () => {
+		respond({ detailedError: { code: 'Forbidden', message: 'no' } }, 403);
+
+		const error = await captureError(
+			invoke(TrafficEndpoints.tile, { zoom: 12, x: 1, y: 1 }),
+		);
+
+		expect((error as { status?: number }).status).toBe(403);
+		expect((error as Error).name).toBe('ApiError');
+		expect(JSON.stringify(error)).not.toContain('tt-test-key');
 	});
 
 	it('traffic.tile rejects a zoom above 22', async () => {

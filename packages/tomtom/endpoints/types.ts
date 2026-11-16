@@ -205,9 +205,11 @@ const ReverseGeocodeSchema = z
 	.loose();
 export type ReverseGeocodeOutput = z.output<typeof ReverseGeocodeSchema>;
 
-const TrafficTileSchema = z
-	.string()
-	.describe('Binary tile data, returned as a string');
+/** A raster tile: PNG bytes, base64-encoded so they survive JSON. */
+const TrafficTileSchema = z.object({
+	content_type: z.string().describe('Usually image/png'),
+	base64: z.string().describe('The tile image, base64-encoded'),
+});
 
 /** Shared paging and filtering fields for the search routes. */
 const SearchFields = {
@@ -365,20 +367,21 @@ const IncidentDetailsInputSchema = z
 		bbox: z
 			.string()
 			.describe(
-				'Bounding box as "minLon,minLat,maxLon,maxLat"; the whole world is -180,-90,180,90',
+				'Bounding box as "minLon,minLat,maxLon,maxLat", at most 10,000 km² in area',
 			),
 		language: z.string().optional().describe('Default en-GB'),
 		category_filter: z
-			.number()
-			.int()
-			.min(0)
-			.max(15)
+			.array(z.number().int().min(0).max(14))
+			.min(1)
 			.optional()
-			.describe('Sum of the incident category numbers to include'),
+			.describe(
+				'Incident categories to include, such as [1, 6] for Accident and Jam; sent comma-separated',
+			),
 		time_validity_filter: z
-			.enum(['present', 'all'])
+			.array(z.enum(['present', 'future']))
+			.min(1)
 			.optional()
-			.describe('Default present'),
+			.describe('present, future or both; default present'),
 	})
 	.superRefine((value, ctx) => {
 		// A malformed box is a 400 at the provider; catching it here saves a call.
@@ -435,7 +438,11 @@ const TrafficTileInputSchema = z.object({
 	style: z
 		.enum(['absolute', 'relative', 'relative-delay', 'reduced-sensitivity'])
 		.optional()
-		.describe('Only applies to the flow layer'),
+		.describe('Flow layer style, default relative'),
+	incident_style: z
+		.enum(['s0', 's0-dark', 's1', 's2', 's3', 'night'])
+		.optional()
+		.describe('Incidents layer style, default s3'),
 	zoom: z.number().int().min(0).max(22),
 	x: z.number().int().min(0),
 	y: z.number().int().min(0),

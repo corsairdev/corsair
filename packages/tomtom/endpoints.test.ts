@@ -82,10 +82,13 @@ describe('output schemas keep the provider field names', () => {
 		expect(parsed.flowSegmentData?.roadClosure).toBe(false);
 	});
 
-	it('parses the tile body as a string', () => {
-		expect(TomTomEndpointOutputSchemas.trafficTile.parse('png-bytes')).toBe(
-			'png-bytes',
-		);
+	it('parses a tile as content type plus base64', () => {
+		expect(
+			TomTomEndpointOutputSchemas.trafficTile.parse({
+				content_type: 'image/png',
+				base64: 'iVBORw0KGgo=',
+			}),
+		).toEqual({ content_type: 'image/png', base64: 'iVBORw0KGgo=' });
 	});
 });
 
@@ -124,9 +127,9 @@ describe('wrong-shaped bodies fail loudly', () => {
 		).toThrow(z.ZodError);
 	});
 
-	it('rejects a tile body that is an object', () => {
+	it('rejects a tile body that is a bare string', () => {
 		expect(() =>
-			TomTomEndpointOutputSchemas.trafficTile.parse({ data: 'x' }),
+			TomTomEndpointOutputSchemas.trafficTile.parse('png-bytes'),
 		).toThrow(z.ZodError);
 	});
 });

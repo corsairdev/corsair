@@ -26,7 +26,8 @@ export const calculateRoute: TomTomEndpoints['routingCalculate'] = async (
 				traffic: parsed.traffic,
 				departAt: parsed.depart_at,
 				vehicleMaxSpeed: parsed.vehicle_max_speed,
-				avoid: parsed.avoid?.length ? parsed.avoid.join(',') : undefined,
+				// TomTom reads each avoidance as its own `avoid` parameter.
+				avoid: parsed.avoid?.length ? parsed.avoid : undefined,
 				language: parsed.language,
 			},
 		}),
