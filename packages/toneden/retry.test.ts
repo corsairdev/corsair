@@ -4,8 +4,9 @@ import { toneden } from './index';
 import { linkEnvelope, linksEnvelope } from './test-fixtures';
 
 /**
- * `requests.test.ts` calls the HTTP client, which is built with `maxRetries: 0`
- * so only `error-handlers.ts` decides what is retried.
+ * Core's request() retries a 429 three times with Retry-After, and the
+ * plugin's 429 handler adds none. This file goes through `createCorsair` to
+ * prove both layers together.
  */
 async function createClient() {
 	const testDb = createTestDatabase();

@@ -1,11 +1,11 @@
 import { inspect } from 'node:util';
+import { ApiError } from 'corsair/http';
 import {
 	describeToneDenError,
 	makeToneDenRequest,
 	TONEDEN_API_BASE,
 	TONEDEN_OAUTH_AUTHORIZE_URL,
 	TONEDEN_OAUTH_TOKEN_URL,
-	ToneDenAPIError,
 } from './client';
 import { unauthorized } from './test-fixtures';
 
@@ -118,23 +118,27 @@ describe('makeToneDenRequest', () => {
 			path: 'links',
 		}).catch((caught: unknown) => caught);
 
-		expect(error).toBeInstanceOf(ToneDenAPIError);
-		expect((error as ToneDenAPIError).status).toBe(401);
-		expect((error as ToneDenAPIError).isAuthError).toBe(true);
-		expect((error as Error).message).toContain('Unauthenticated');
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(401);
+		expect(describeToneDenError(401, (error as ApiError).body, '')).toContain(
+			'Unauthenticated',
+		);
 	});
 
-	it('keeps Retry-After so the rate-limit handler can honour it', async () => {
-		respond({ message: 'slow down' }, 429, { 'Retry-After': '20' });
+	it('retries a 429 in core and keeps Retry-After on the final error', async () => {
+		// Core makes 1 attempt plus 3 retries.
+		for (let i = 0; i < 4; i += 1) {
+			respond({ message: 'slow down' }, 429, { 'Retry-After': '1' });
+		}
 
 		const error = await makeToneDenRequest(TOKEN, {
 			method: 'GET',
 			path: 'links',
 		}).catch((caught: unknown) => caught);
 
-		expect((error as ToneDenAPIError).retryAfter).toBe(20000);
-		expect((error as ToneDenAPIError).isRateLimit).toBe(true);
-	});
+		expect((error as ApiError).retryAfter).toBe(1000);
+		expect((error as ApiError).status).toBe(429);
+	}, 20_000);
 
 	it('records the method so writes are not replayed on a 5xx', async () => {
 		respond({}, 500);
@@ -145,7 +149,21 @@ describe('makeToneDenRequest', () => {
 			body: {},
 		}).catch((caught: unknown) => caught);
 
-		expect((error as ToneDenAPIError).method).toBe('POST');
+		expect((error as ApiError).request.method).toBe('POST');
+	});
+
+	it('drops the request body, which can hold an email, from the error', async () => {
+		respond({ message: 'bad' }, 422);
+
+		const error = await makeToneDenRequest(TOKEN, {
+			method: 'PUT',
+			path: 'users/1',
+			body: { email: 'fan@example.com' },
+		}).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).request.body).toBeUndefined();
+		expect(inspect(error)).not.toContain('fan@example.com');
 	});
 
 	it('never puts the token in the message or its inspection', async () => {

@@ -1,8 +1,8 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { ToneDenAPIError } from './client';
+import { ApiError } from 'corsair/http';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof ToneDenAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 /**
@@ -11,15 +11,11 @@ function statusOf(error: Error): number | undefined {
  * an unknown id, 422 for a rejected body, and 429 for a rate limit.
  */
 export const errorHandlers = {
+	// Core's request() already retried a 429 three times with Retry-After, so
+	// it is not replayed again here.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof ToneDenAPIError && error.isRateLimit,
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs:
-				error instanceof ToneDenAPIError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		match: (error: Error) => statusOf(error) === 429,
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 401: the access token is expired, revoked, or lacks the scope. Core
 	// refreshes an OAuth token once on a 401 before this handler runs.
@@ -49,9 +45,9 @@ export const errorHandlers = {
 	// replay could spend budget on a second campaign.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof ToneDenAPIError &&
-			error.method === 'GET' &&
-			(statusOf(error) ?? 0) >= 500,
+			error instanceof ApiError &&
+			error.request.method === 'GET' &&
+			error.status >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

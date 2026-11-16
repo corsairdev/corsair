@@ -562,7 +562,6 @@ export function toneden<const T extends ToneDenPluginOptions>(
 export {
 	TONEDEN_OAUTH_AUTHORIZE_URL,
 	TONEDEN_OAUTH_TOKEN_URL,
-	ToneDenAPIError,
 } from './client';
 
 export type {

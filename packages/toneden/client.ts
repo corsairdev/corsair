@@ -13,12 +13,13 @@ export const TONEDEN_OAUTH_AUTHORIZE_URL =
 export const TONEDEN_OAUTH_TOKEN_URL =
 	'https://www.toneden.io/auth/oauth2/token';
 
-// error-handlers.ts owns retries. The object has to be complete: request.ts
-// replaces its defaults wholesale, so a partial one either skips the
-// rate-limit block or throws reading `headerNames`.
+// Core's request() retries a 429 three times and honours Retry-After, so the
+// 429 handler in error-handlers.ts does not retry again. The object has to be
+// complete: request.ts replaces its defaults wholesale, so a partial one either
+// skips the rate-limit block or throws reading `headerNames`.
 const TONEDEN_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 0,
+	maxRetries: 3,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },
@@ -28,40 +29,37 @@ const TONEDEN_RATE_LIMIT_CONFIG: RateLimitConfig = {
  * ToneDen's error body is not documented per route. The API answers a JSON
  * object with a `message` or `error` field on failure, and `/links/validPath`
  * answers 200 with `{ valid: false, reason }` for an unusable path, which is a
- * success with a negative answer rather than an error.
+ * success with a negative answer rather than an error. HTTP failures stay
+ * core's ApiError; `describeToneDenError` reads the message out of the body.
  */
-export class ToneDenAPIError extends Error {
-	readonly status?: number;
-	/** Milliseconds from a Retry-After header, when ToneDen sent one. */
-	readonly retryAfter?: number;
-	/** The HTTP method of the failed request, which decides replay safety. */
-	readonly method?: string;
 
-	constructor(
-		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			retryAfter?: number;
-			method?: string;
-		} = {},
-	) {
-		super(message, options.cause ? { cause: options.cause } : undefined);
-		this.name = 'ToneDenAPIError';
-		const cause = options.cause instanceof ApiError ? options.cause : undefined;
-		this.status = options.status ?? cause?.status;
-		this.retryAfter = options.retryAfter ?? cause?.retryAfter;
-		this.method = options.method ?? cause?.request.method;
-	}
-
-	get isRateLimit(): boolean {
-		return this.status === 429;
-	}
-
-	/** The access token was rejected, or has no scope for this route. */
-	get isAuthError(): boolean {
-		return this.status === 401;
-	}
+/**
+ * Core's ApiError keeps the request it failed on, body included, and a user
+ * update or a contact upload carries email addresses and phone numbers. This
+ * rebuilds the same ApiError without the request body. Status, retryAfter and
+ * ToneDen's response body stay as they were.
+ */
+function withoutRequestBody(error: ApiError): ApiError {
+	if (error.request.body === undefined) return error;
+	const stripped = new ApiError(
+		{ ...error.request, body: undefined },
+		{
+			url: error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		error.message,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+	stripped.stack = error.stack;
+	return stripped;
 }
 
 export function describeToneDenError(
@@ -125,17 +123,9 @@ export async function makeToneDenRequest(
 			rateLimitConfig: TONEDEN_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ToneDenAPIError) throw error;
-		if (error instanceof ApiError) {
-			throw new ToneDenAPIError(
-				describeToneDenError(error.status, error.body, error.message),
-				{ cause: error, method },
-			);
-		}
-		// DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new ToneDenAPIError(error.message, { cause: error, method });
-		}
-		throw new ToneDenAPIError('Unknown ToneDen error', { method });
+		// Core's ApiError goes through as an ApiError (plugin rules R8), only
+		// without the request body it carried.
+		if (error instanceof ApiError) throw withoutRequestBody(error);
+		throw error;
 	}
 }
