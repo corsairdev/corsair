@@ -92,6 +92,7 @@ This route is a POST. Pass `computer_id` to narrow to one computer.
 
 ```ts
 {
+  id?: string | number | null,
   name?: string | null,
   allowParams?: boolean | null,
   icon?: string | null,
@@ -117,7 +118,7 @@ This route is a POST. Pass `computer_id` to narrow to one computer.
 
 Run a configured command on one of the account's computers, with optional parameters
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.triggercmd.api.commands.run({ computer: 'laptop', trigger: 'notepad', params: 'MyNote' });
@@ -139,6 +140,7 @@ The response acknowledges dispatch, not completion. Omit `params` rather than pa
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `message` | `string \| null` | No | — |
 | `result` | `string \| null` | No | — |
 | `status` | `string \| null` | No | — |
 
@@ -237,7 +239,7 @@ await corsair.triggercmd.api.panels.list({});
 
 Press a panel button, which runs the command it is configured for
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.triggercmd.api.panels.trigger({ panel: 'Living room', button: 'Lights off' });
@@ -259,6 +261,7 @@ Runs the command the button is configured for, with the button parameters.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `message` | `string \| null` | No | — |
 | `result` | `string \| null` | No | — |
 | `status` | `string \| null` | No | — |
 

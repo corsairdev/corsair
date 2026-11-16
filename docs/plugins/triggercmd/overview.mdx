@@ -13,7 +13,7 @@ Things to know:
 - **Commands live on your computers.** The cloud only stores their names and settings, so `commands.list` reports what each agent synced. Adding or editing a command happens in the agent's `commands.json`, not through this API.
 - **A trigger is not a completion.** `commands.run` acknowledges that the request was dispatched. Use `commands.history` to see whether it actually ran.
 - **Parameters need Allow Params.** A command runs without parameters unless the agent's Allow Params flag is on, and an empty `params` string is rejected here because it would pass an empty argument rather than omitting it.
-- **Panel buttons belong to the dashboard.** Each button is configured with the command and parameters it runs, so `panels.trigger` takes only the panel and button names.
+- **Panel buttons belong to the dashboard.** Each button is configured with the command it runs. `panels.trigger` needs the panel and button names; `params` is optional and only matters for a button that takes them.
 - **A 404 means the route is wrong.** A real route with a bad token answers 401 with `Invalid Token!`, so a 404 is a path error rather than an auth one.
 - **No webhooks.** The provider posts no events for command completion, so poll `commands.history`.
 
