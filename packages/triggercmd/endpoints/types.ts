@@ -98,9 +98,14 @@ const ComputersEnvelopeSchema = RecordsEnvelope(ComputerSchema);
 const PanelButtonsEnvelopeSchema = RecordsEnvelope(PanelButtonSchema);
 const RunsEnvelopeSchema = RecordsEnvelope(CommandRunSchema);
 
-/** A trigger answers an acknowledgement, whose wording is not documented. */
+/**
+ * A trigger answers an acknowledgement: `{ message: "Trigger sent." }` for a
+ * command run, `{ message: "Button ... pressed." }` for a panel button (live,
+ * 11-16). It says the request was dispatched, not that the command ran.
+ */
 const TriggerResultSchema = z
 	.object({
+		message: z.string().nullish(),
 		result: z.string().nullish(),
 		status: z.string().nullish(),
 	})

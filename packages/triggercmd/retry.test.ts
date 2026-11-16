@@ -164,7 +164,7 @@ describe('retries through createCorsair', () => {
 				params: 'MyNote',
 			});
 
-			expect(result.result).toBe('success');
+			expect(result.message).toBe('Trigger sent.');
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
 			testDb.cleanup();

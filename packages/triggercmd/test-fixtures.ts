@@ -62,8 +62,13 @@ export const runsEnvelope = {
 /** An empty account: the key is present and the list is empty. */
 export const emptyEnvelope = { records: [] };
 
-/** A trigger acknowledgement. The provider does not document its wording. */
-export const triggerAccepted = { result: 'success' };
+/** A trigger acknowledgement, as the live API sent it on 11-16. */
+export const triggerAccepted = { message: 'Trigger sent.' };
+
+/** A panel button press, as the live API sent it on 11-16. */
+export const buttonPressed = {
+	message: 'Button test-button on panel corsair-plugin-test pressed.',
+};
 
 // ---------------------------------------------------------------------------
 // error bodies, copied from live probes

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { TriggerCmdEndpointOutputSchemas } from './endpoints/types';
 import {
+	buttonPressed,
 	command,
 	commandRun,
 	commandsEnvelope,
@@ -75,7 +76,13 @@ describe('output schemas keep the provider field names', () => {
 	it('parses a trigger acknowledgement', () => {
 		const parsed =
 			TriggerCmdEndpointOutputSchemas.runCommand.parse(triggerAccepted);
-		expect(parsed.result).toBe('success');
+		expect(parsed.message).toBe('Trigger sent.');
+	});
+
+	it('parses a panel button press', () => {
+		const parsed =
+			TriggerCmdEndpointOutputSchemas.triggerPanelButton.parse(buttonPressed);
+		expect(parsed.message).toContain('pressed');
 	});
 
 	it('accepts an acknowledgement with no fields at all', () => {

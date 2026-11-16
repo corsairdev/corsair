@@ -94,7 +94,7 @@ describe('commands', () => {
 			computer: 'laptop',
 			trigger: 'notepad',
 			params: 'MyNote',
-		})) as { result?: string | null };
+		})) as { message?: string | null };
 
 		expectAuthenticated();
 		expect(lastRequest()).toMatchObject({
@@ -106,7 +106,7 @@ describe('commands', () => {
 			trigger: 'notepad',
 			params: 'MyNote',
 		});
-		expect(result.result).toBe('success');
+		expect(result.message).toBe('Trigger sent.');
 	});
 
 	it('commands.run omits params entirely when not given', async () => {
