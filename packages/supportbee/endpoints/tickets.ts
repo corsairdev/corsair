@@ -437,8 +437,8 @@ export const addLabel: SupportbeeEndpoints['ticketsAddLabel'] = (ctx, input) =>
 		}),
 		{
 			log: (parsed) => ({
+				// The label name is free text that can hold customer data.
 				ticketId: parsed.ticket_id,
-				label: parsed.label_name,
 			}),
 		},
 	);
@@ -466,8 +466,8 @@ export const removeLabel: SupportbeeEndpoints['ticketsRemoveLabel'] = (
 				removed: true,
 			}),
 			log: (parsed) => ({
+				// The label name is free text that can hold customer data.
 				ticketId: parsed.ticket_id,
-				label: parsed.label_name,
 			}),
 		},
 	);

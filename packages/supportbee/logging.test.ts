@@ -34,6 +34,27 @@ function logged(): string {
 }
 
 describe('supportbee event fields', () => {
+	it('leaves label names out of the label events', async () => {
+		mockFetch(
+			jsonResponse(
+				{ label: { id: 1, label: 'Jane-Doe-medical-records', ticket: 7 } },
+				{ status: 201 },
+			),
+		);
+		await endpoints.tickets.addLabel(ctx, {
+			ticket_id: 7,
+			label_name: 'Jane-Doe-medical-records',
+		});
+		mockFetch(new Response(null, { status: 204 }));
+		await endpoints.tickets.removeLabel(ctx, {
+			ticket_id: 7,
+			label_name: 'Jane-Doe-medical-records',
+		});
+
+		expect(mockLog).toHaveBeenCalledTimes(2);
+		expect(logged()).not.toContain('Jane-Doe');
+	});
+
 	it('leaves the search query out, since it is often an email', async () => {
 		mockFetch(jsonResponse(ticketsResponse));
 		await endpoints.tickets.search(ctx, { query: 'bob@example.com' });

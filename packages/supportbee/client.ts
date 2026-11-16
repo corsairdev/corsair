@@ -290,7 +290,20 @@ export async function makeSupportbeeRequest(
 		}
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
-			throw new SupportbeeAPIError(error.message, { cause: error, method });
+			// A key the Headers class refuses (a newline, say) comes back inside
+			// the message, so the key is cut from it and that error is not kept as
+			// the cause.
+			const leaks =
+				apiKey.length > 0 &&
+				(error.message.includes(apiKey) ||
+					String(error.stack ?? '').includes(apiKey));
+			const message = leaks
+				? error.message.split(apiKey).join('[redacted]')
+				: error.message;
+			throw new SupportbeeAPIError(
+				message,
+				leaks ? { method } : { cause: error, method },
+			);
 		}
 		throw new SupportbeeAPIError('Unknown SupportBee error', { method });
 	}

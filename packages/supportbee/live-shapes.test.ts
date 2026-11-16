@@ -5,6 +5,7 @@ import {
 	makeCtx,
 	mockFetch,
 	restoreFetchMock,
+	TEST_KEY,
 } from './test-helpers';
 
 /**
@@ -143,5 +144,30 @@ describe('supportbee live response shapes', () => {
 			filter_id: '30710_20261116062326308',
 			created: true,
 		});
+	});
+});
+
+describe('supportbee review round on da1ad302b', () => {
+	it('refuses a filter body that does not carry a string id', async () => {
+		mockFetch(jsonResponse({ filter: { id: [] } }, { status: 201 }));
+		await expect(
+			endpoints.filters.create(ctx, { rule_id: 'r', consequence_id: 'c' }),
+		).rejects.toThrow(/filter/);
+	});
+
+	it('keeps the key out of a transport error message and cause', async () => {
+		const fetchSpy = jest.spyOn(globalThis, 'fetch');
+		fetchSpy.mockRejectedValue(
+			new TypeError(
+				`Headers.append: "Bearer ${TEST_KEY}" is an invalid header value.`,
+			),
+		);
+		const error = await endpoints.tickets.list(ctx, {}).catch(
+			(caught: unknown) => caught, // unknown: rejection reason, narrowed below
+		);
+		expect(error).toBeInstanceOf(Error);
+		expect((error as Error).message).not.toContain(TEST_KEY);
+		expect(String((error as Error).cause ?? '')).not.toContain(TEST_KEY);
+		fetchSpy.mockReset();
 	});
 });

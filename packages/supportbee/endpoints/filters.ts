@@ -100,14 +100,23 @@ export const create: SupportbeeEndpoints['filtersCreate'] = (ctx, input) =>
 		},
 	);
 
-/** The id from a `{ filter: { id } }` body, or undefined for any other body. */
+/**
+ * The id from the `{ filter: { id } }` body the live API answers with, or
+ * undefined for the empty 201 the docs describe. Any other body throws, so a
+ * malformed answer is not reported as a created filter.
+ */
 function filterIdOf(
 	raw: unknown, // unknown: the create body, which the docs say is empty
 ): string | undefined {
-	if (!raw || typeof raw !== 'object' || !('filter' in raw)) return undefined;
-	const filter = raw.filter;
-	if (!filter || typeof filter !== 'object' || !('id' in filter)) {
-		return undefined;
-	}
-	return typeof filter.id === 'string' ? filter.id : undefined;
+	if (raw === undefined || raw === null || raw === '') return undefined;
+	const filter =
+		typeof raw === 'object' && 'filter' in raw ? raw.filter : undefined;
+	const id =
+		filter && typeof filter === 'object' && 'id' in filter
+			? filter.id
+			: undefined;
+	if (typeof id === 'string' && id.length > 0) return id;
+	throw new Error(
+		'SupportBee answered filters.create with a body that holds no filter id, so the filter is not confirmed. List the filters in SupportBee before retrying.',
+	);
 }
