@@ -36,7 +36,7 @@ apiExamples:
   jobs.get:
     call: "{ jobId: '01h35ccwymj5ctckp8px1azhg6' }"
   jobs.create:
-    call: "{ title: 'Smith wedding', stage: 'lead', eventDate: '2026-06-15', guestCount: 120 }"
+    call: "{ name: 'Smith wedding', stage: 'lead', eventDate: '2026-06-15', guestCount: 120 }"
   jobs.update:
     call: "{ jobId: '01h35ccwymj5ctckp8px1azhg6', stage: 'booked', closed: false }"
   jobs.delete:
@@ -60,7 +60,7 @@ apiExamples:
   payments.create:
     call: "{ jobId: '01h35ccwymj5ctckp8px1azhg6', amount: 75000, memo: 'Deposit' }"
   payments.update:
-    call: "{ paymentId: '01h35ccwymj5ctckp8px1azhgc', amount: 80000 }"
+    call: "{ paymentId: '01h35ccwymj5ctckp8px1azhgc', memo: 'Second deposit' }"
   payments.delete:
     call: "{ paymentId: '01h35ccwymj5ctckp8px1azhgc' }"
   tasks.list:

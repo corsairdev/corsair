@@ -20,8 +20,11 @@ export const job = {
 	eventDate: '2024-06-15',
 	completedDate: null,
 	fulfillmentDate: null,
-	clientContacts: ['01h35ccwymj5ctckp8px1azhg7'],
-	contacts: [{ id: '01h35ccwymj5ctckp8px1azhg7' }],
+	clientContacts: {
+		data: [{ id: '01h35ccwymj5ctckp8px1azhg7' }],
+		has_more: false,
+	},
+	contacts: { data: [{ id: '01h35ccwymj5ctckp8px1azhg7' }], has_more: false },
 	customNumber: null,
 	jobTypeId: '01h35ccwymj5ctckp8px1azhg8',
 	jobTypeName: 'Wedding',

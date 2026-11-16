@@ -82,15 +82,14 @@ Create a lead or job with its type, lead source, brand and event date
 **Risk:** `write`
 
 ```ts
-await corsair.tave.api.jobs.create({ title: 'Smith wedding', stage: 'lead', eventDate: '2026-06-15', guestCount: 120 });
+await corsair.tave.api.jobs.create({ name: 'Smith wedding', stage: 'lead', eventDate: '2026-06-15', guestCount: 120 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `title` | `string` | No | The job title. |
-| `name` | `string` | No | The job name. |
+| `name` | `string` | No | The job name, which overrides the generated title. |
 | `stage` | `lead \| booked \| fulfillment \| completed` | No | The pipeline stage. |
 | `jobTypeId` | `string` | No | The job type. |
 | `leadSourceId` | `string` | No | The lead source. |
@@ -125,8 +124,8 @@ stage defaults to the studio pipeline start; jobTypeId and leadSourceId come fro
 | `eventDate` | `string \| null` | No | — |
 | `completedDate` | `string \| null` | No | — |
 | `fulfillmentDate` | `string \| null` | No | — |
-| `clientContacts` | `string[] \| null` | No | — |
-| `contacts` | `object[] \| null` | No | — |
+| `clientContacts` | `object \| null` | No | — |
+| `contacts` | `object \| null` | No | — |
 | `customNumber` | `string \| null` | No | — |
 | `jobTypeId` | `string \| null` | No | — |
 | `jobTypeName` | `string \| null` | No | — |
@@ -149,12 +148,23 @@ stage defaults to the studio pipeline start; jobTypeId and leadSourceId come fro
 | `links` | `object \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="clientContacts full type">
+
+```ts
+{
+  data?: {
+  }[] | null
+} | null
+```
+</Accordion>
+
 <Accordion title="contacts full type">
 
 ```ts
 {
-  id?: string | null
-}[] | null
+  data?: {
+  }[] | null
+} | null
 ```
 </Accordion>
 
@@ -248,8 +258,8 @@ await corsair.tave.api.jobs.get({ jobId: '01h35ccwymj5ctckp8px1azhg6' });
 | `eventDate` | `string \| null` | No | — |
 | `completedDate` | `string \| null` | No | — |
 | `fulfillmentDate` | `string \| null` | No | — |
-| `clientContacts` | `string[] \| null` | No | — |
-| `contacts` | `object[] \| null` | No | — |
+| `clientContacts` | `object \| null` | No | — |
+| `contacts` | `object \| null` | No | — |
 | `customNumber` | `string \| null` | No | — |
 | `jobTypeId` | `string \| null` | No | — |
 | `jobTypeName` | `string \| null` | No | — |
@@ -272,12 +282,23 @@ await corsair.tave.api.jobs.get({ jobId: '01h35ccwymj5ctckp8px1azhg6' });
 | `links` | `object \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="clientContacts full type">
+
+```ts
+{
+  data?: {
+  }[] | null
+} | null
+```
+</Accordion>
+
 <Accordion title="contacts full type">
 
 ```ts
 {
-  id?: string | null
-}[] | null
+  data?: {
+  }[] | null
+} | null
 ```
 </Accordion>
 
@@ -359,10 +380,14 @@ Returns leads and jobs together; stage accepts lead, booked, fulfillment and com
   eventDate?: string | null,
   completedDate?: string | null,
   fulfillmentDate?: string | null,
-  clientContacts?: string[] | null,
+  clientContacts?: {
+    data?: {
+    }[] | null
+  } | null,
   contacts?: {
-    id?: string | null
-  }[] | null,
+    data?: {
+    }[] | null
+  } | null,
   customNumber?: string | null,
   jobTypeId?: string | null,
   jobTypeName?: string | null,
@@ -504,7 +529,6 @@ await corsair.tave.api.jobs.update({ jobId: '01h35ccwymj5ctckp8px1azhg6', stage:
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `jobId` | `string` | Yes | A lowercase ULID entity ID. |
-| `title` | `string` | No | — |
 | `name` | `string` | No | — |
 | `stage` | `lead \| booked \| fulfillment \| completed` | No | — |
 | `jobTypeId` | `string \| null` | No | A lowercase ULID entity ID. |
@@ -540,8 +564,8 @@ await corsair.tave.api.jobs.update({ jobId: '01h35ccwymj5ctckp8px1azhg6', stage:
 | `eventDate` | `string \| null` | No | — |
 | `completedDate` | `string \| null` | No | — |
 | `fulfillmentDate` | `string \| null` | No | — |
-| `clientContacts` | `string[] \| null` | No | — |
-| `contacts` | `object[] \| null` | No | — |
+| `clientContacts` | `object \| null` | No | — |
+| `contacts` | `object \| null` | No | — |
 | `customNumber` | `string \| null` | No | — |
 | `jobTypeId` | `string \| null` | No | — |
 | `jobTypeName` | `string \| null` | No | — |
@@ -564,12 +588,23 @@ await corsair.tave.api.jobs.update({ jobId: '01h35ccwymj5ctckp8px1azhg6', stage:
 | `links` | `object \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="clientContacts full type">
+
+```ts
+{
+  data?: {
+  }[] | null
+} | null
+```
+</Accordion>
+
 <Accordion title="contacts full type">
 
 ```ts
 {
-  id?: string | null
-}[] | null
+  data?: {
+  }[] | null
+} | null
 ```
 </Accordion>
 
@@ -1176,7 +1211,7 @@ Change a payment's amount, status, memo or method
 **Risk:** `write`
 
 ```ts
-await corsair.tave.api.payments.update({ paymentId: '01h35ccwymj5ctckp8px1azhgc', amount: 80000 });
+await corsair.tave.api.payments.update({ paymentId: '01h35ccwymj5ctckp8px1azhgc', memo: 'Second deposit' });
 ```
 
 **Input**
@@ -1184,7 +1219,6 @@ await corsair.tave.api.payments.update({ paymentId: '01h35ccwymj5ctckp8px1azhgc'
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `paymentId` | `string` | Yes | A lowercase ULID entity ID. |
-| `amount` | `number` | No | — |
 | `status` | `future \| confirmed-future \| posted \| failed \| pending` | No | — |
 | `paymentMethodId` | `string \| null` | No | A lowercase ULID entity ID. |
 | `payerId` | `string \| null` | No | A lowercase ULID entity ID. |

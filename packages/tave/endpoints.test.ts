@@ -191,7 +191,7 @@ describe('jobs.get, create, update and delete', () => {
 		respond(job);
 
 		await invoke(Jobs.create, {
-			title: 'Smith wedding',
+			name: 'Smith wedding',
 			stage: 'lead',
 			jobTypeId: '01h35ccwymj5ctckp8px1azhg8',
 			eventDate: '2024-06-15',
@@ -203,7 +203,7 @@ describe('jobs.get, create, update and delete', () => {
 			method: 'POST',
 		});
 		expect(lastRequest().body).toEqual({
-			title: 'Smith wedding',
+			name: 'Smith wedding',
 			stage: 'lead',
 			jobTypeId: '01h35ccwymj5ctckp8px1azhg8',
 			eventDate: '2024-06-15',
@@ -384,12 +384,12 @@ describe('payments', () => {
 		await invoke(Billing.paymentsGet, { paymentId: payment.id });
 		expect(lastRequest().path).toBe(`/api/v2/payment/${payment.id}`);
 
-		respond({ ...payment, amount: 80000 });
+		respond({ ...payment, memo: 'Second deposit' });
 		await invoke(Billing.paymentsUpdate, {
 			paymentId: payment.id,
-			amount: 80000,
+			memo: 'Second deposit',
 		});
-		expect(lastRequest().body).toEqual({ amount: 80000 });
+		expect(lastRequest().body).toEqual({ memo: 'Second deposit' });
 
 		respondEmpty(204);
 		await invoke(Billing.paymentsRemove, { paymentId: payment.id });
@@ -616,5 +616,22 @@ describe('path ids and sent data', () => {
 		);
 		const read = await invoke(Jobs.get, { jobId: job.id });
 		expect(read.id).toBe(job.id);
+	});
+
+	it('refuses an update whose only fields are undefined', async () => {
+		await expect(
+			invoke(Jobs.update, { jobId: job.id, name: undefined }),
+		).rejects.toMatchObject({ name: 'ZodError' });
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('reads expanded contacts as the documented envelope', async () => {
+		respond({
+			...job,
+			clientContacts: { data: [{ id: 'c1' }], has_more: false },
+			contacts: { data: [], has_more: false },
+		});
+		const read = await invoke(Jobs.get, { jobId: job.id });
+		expect(read.clientContacts?.data).toHaveLength(1);
 	});
 });

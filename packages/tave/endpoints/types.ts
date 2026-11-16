@@ -100,9 +100,16 @@ export const JobSchema = z
 		eventDate: z.string().nullish(),
 		completedDate: z.string().nullish(),
 		fulfillmentDate: z.string().nullish(),
-		clientContacts: z.array(z.string()).nullish(),
-		// The docs type this as an open object keyed by contact ID.
-		contacts: z.array(z.object({ id: z.string().nullish() }).loose()).nullish(),
+		// Both are expansions (`expand`), answered as an envelope
+		// `{ data: [...], has_more }` capped at 25 rows.
+		clientContacts: z
+			.object({ data: z.array(z.looseObject({})).nullish() })
+			.loose()
+			.nullish(),
+		contacts: z
+			.object({ data: z.array(z.looseObject({})).nullish() })
+			.loose()
+			.nullish(),
 		customNumber: z.string().nullish(),
 		jobTypeId: z.string().nullish(),
 		jobTypeName: z.string().nullish(),
@@ -180,8 +187,12 @@ export const JobsGetResponseSchema = JobSchema;
 export type JobsGetResponse = z.infer<typeof JobsGetResponseSchema>;
 
 export const JobsCreateInputSchema = z.object({
-	title: z.string().max(160).optional().describe('The job title.'),
-	name: z.string().max(160).optional().describe('The job name.'),
+	// `title` is generated and read-only; `name` overrides it.
+	name: z
+		.string()
+		.max(160)
+		.optional()
+		.describe('The job name, which overrides the generated title.'),
 	stage: z
 		.enum(['lead', 'booked', 'fulfillment', 'completed'])
 		.optional()
@@ -205,7 +216,6 @@ export type JobsCreateResponse = z.infer<typeof JobsCreateResponseSchema>;
 export const JobsUpdateInputSchema = z
 	.object({
 		jobId: EntityIdSchema,
-		title: z.string().max(160).optional(),
 		name: z.string().max(160).optional(),
 		stage: z.enum(['lead', 'booked', 'fulfillment', 'completed']).optional(),
 		jobTypeId: EntityIdSchema.nullable().optional(),
@@ -220,7 +230,10 @@ export const JobsUpdateInputSchema = z
 		closedDate: IsoDateSchema.nullable().optional(),
 	})
 	.refine(
-		(value) => Object.keys(value).some((key) => key !== 'jobId'),
+		(value) =>
+			Object.entries(value).some(
+				([key, field]) => key !== 'jobId' && field !== undefined,
+			),
 		'Provide at least one field to change.',
 	);
 
@@ -325,7 +338,10 @@ export const ProductsUpdateInputSchema = z
 		expenseCategoryId: EntityIdSchema.nullable().optional(),
 	})
 	.refine(
-		(value) => Object.keys(value).some((key) => key !== 'productId'),
+		(value) =>
+			Object.entries(value).some(
+				([key, field]) => key !== 'productId' && field !== undefined,
+			),
 		'Provide at least one field to change.',
 	);
 
@@ -422,7 +438,7 @@ export type PaymentsCreateResponse = z.infer<
 export const PaymentsUpdateInputSchema = z
 	.object({
 		paymentId: EntityIdSchema,
-		amount: z.number().int().min(1).optional(),
+		// `amount` is read-only on PUT; record a new payment to change it.
 		status: z
 			.enum(['future', 'confirmed-future', 'posted', 'failed', 'pending'])
 			.optional(),
@@ -435,7 +451,10 @@ export const PaymentsUpdateInputSchema = z
 		received: z.string().nullable().optional(),
 	})
 	.refine(
-		(value) => Object.keys(value).some((key) => key !== 'paymentId'),
+		(value) =>
+			Object.entries(value).some(
+				([key, field]) => key !== 'paymentId' && field !== undefined,
+			),
 		'Provide at least one field to change.',
 	);
 
@@ -513,7 +532,10 @@ export const TasksUpdateInputSchema = z
 		dueDate: IsoDateSchema.nullable().optional(),
 	})
 	.refine(
-		(value) => Object.keys(value).some((key) => key !== 'taskId'),
+		(value) =>
+			Object.entries(value).some(
+				([key, field]) => key !== 'taskId' && field !== undefined,
+			),
 		'Provide at least one field to change.',
 	);
 

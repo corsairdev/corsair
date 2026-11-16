@@ -3,6 +3,7 @@ import type { z } from 'zod';
 import type { TaveContext } from '..';
 import type { TaveRequest } from '../client';
 import { makeTaveRequest } from '../client';
+import { DeletedResponseSchema } from './types';
 
 type LogFields = Record<string, string | number | boolean | undefined>;
 
@@ -55,5 +56,6 @@ export async function callDelete<Input extends z.ZodType>(
 	await makeTaveRequest(ctx.key, toRequest(parsed));
 
 	await logEventFromContext(ctx, `tave.${operation.event}`, {}, 'completed');
-	return { success: true };
+	// The result goes through the published delete schema like every output.
+	return DeletedResponseSchema.parse({ success: true });
 }
