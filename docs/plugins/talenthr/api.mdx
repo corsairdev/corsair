@@ -1220,13 +1220,13 @@ await corsair.talenthr.api.timeOff.budgets({ employeeId: 15 });
   timeoff_type_id?: number | null,
   timeoff_type_name?: string | null,
   timeoff_type_slug?: string | null,
-  timeoff_allow_exceeding?: boolean | null,
+  timeoff_allow_exceeding?: boolean | number | null,
   original_budget?: string | null,
   used_budget?: string | null,
-  paid?: boolean | null,
-  has_unlimited_timeoff?: boolean | null,
+  paid?: boolean | number | null,
+  has_unlimited_timeoff?: boolean | number | null,
   unlimited_used_budget?: string | null,
-  employee_has_accrual?: boolean | null,
+  employee_has_accrual?: boolean | number | null,
   accrual_original_budget?: string | null,
   accrual_budget?: string | null,
   accrual_used_budget?: string | null,
@@ -1290,14 +1290,14 @@ Record<string, number | {
 | `start_date` | `string \| null` | No | — |
 | `end_date` | `string \| null` | No | — |
 | `employee_id` | `number \| null` | No | — |
-| `budget` | `string \| null` | No | — |
+| `budget` | `number \| string \| null` | No | — |
 | `approved` | `boolean \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
 | `deleted_at` | `string \| null` | No | — |
-| `working_hours` | `number \| null` | No | — |
-| `budget_days` | `string \| null` | No | — |
-| `budget_hours` | `string \| null` | No | — |
+| `working_hours` | `number \| string \| null` | No | — |
+| `budget_days` | `number \| string \| null` | No | — |
+| `budget_hours` | `number \| string \| null` | No | — |
 | `attachment_url` | `string \| null` | No | — |
 | `attachment_name` | `string \| null` | No | — |
 | `time_off_type` | `object \| null` | No | — |
