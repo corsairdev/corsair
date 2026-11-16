@@ -1,6 +1,6 @@
 import type { SwaggerhubEndpoints } from '..';
 import { specPath } from '../client';
-import { call, queryOf, readDefinition } from './call';
+import { call, queryOf, readBareArray, readDefinition } from './call';
 import {
 	SwaggerhubEndpointInputSchemas as Inputs,
 	SwaggerhubEndpointOutputSchemas as Outputs,
@@ -31,7 +31,7 @@ export const list: SwaggerhubEndpoints['templatesList'] = (ctx, input) =>
 		}),
 		{
 			shape: (raw) => ({
-				templates: Array.isArray(raw) ? raw : [],
+				templates: readBareArray(raw, 'template list'),
 			}),
 			log: (_, result) => ({ count: result.templates.length }),
 		},
@@ -86,7 +86,6 @@ export const save: SwaggerhubEndpoints['templatesSave'] = (ctx, input) =>
 				owner: parsed.owner,
 				templateId: parsed.templateId,
 				version: parsed.version ?? null,
-				created: parsed.force !== true,
 				saved: true,
 			}),
 			log: (parsed) => ({

@@ -1,3 +1,4 @@
+import { ApiError } from 'corsair/http';
 import {
 	apiEntry,
 	apisJson,
@@ -52,7 +53,7 @@ describe('swaggerhub specs', () => {
 			`${BASE}/specs?specType=API&owner=admin&limit=50`,
 		);
 		expect(sentHeader('Authorization')).toBe(TEST_AUTH);
-		expect(result.items).toHaveLength(1);
+		expect(result.apis).toHaveLength(1);
 		expect(result.totalCount).toBe(1);
 	});
 
@@ -167,7 +168,6 @@ describe('swaggerhub apis', () => {
 			owner: 'admin',
 			api: 'example',
 			version: null,
-			created: true,
 			saved: true,
 		});
 	});
@@ -186,7 +186,7 @@ describe('swaggerhub apis', () => {
 		expect(queryParam('version')).toBe('2.0.0');
 	});
 
-	it('reports a forced save as an update rather than a create', async () => {
+	it('sends a forced save with force=true', async () => {
 		mockFetch(new Response(null, { status: 200 }));
 		const result = await endpoints.apis.save(ctx, {
 			owner: 'admin',
@@ -197,7 +197,7 @@ describe('swaggerhub apis', () => {
 		});
 
 		expect(queryParam('force')).toBe('true');
-		expect(result.created).toBe(false);
+		expect(result.saved).toBe(true);
 	});
 
 	it('deletes an API and one version of it', async () => {
@@ -289,11 +289,11 @@ describe('swaggerhub apis', () => {
 			api: 'example',
 			version: '1.0.0',
 			definition,
-			method: 'previous',
+			method: 'STRUCTURAL',
 		});
 
 		expect(pathname()).toBe('/apis/admin/example/1.0.0/compare');
-		expect(queryParam('method')).toBe('previous');
+		expect(queryParam('method')).toBe('STRUCTURAL');
 		expect(rawBody()).toBe(definition);
 		expect(result.changes).toHaveLength(2);
 	});
@@ -359,19 +359,21 @@ describe('swaggerhub apis', () => {
 		const read = await endpoints.apis.getNotifications(ctx, {
 			owner: 'admin',
 			api: 'example',
-			scope: 'self',
 		});
-		expect(queryParam('scope')).toBe('self');
+		// `scope` is required by the route and defaults to USER.
+		expect(queryParam('scope')).toBe('USER');
 		expect(read.enabled).toEqual(['self']);
 
-		mockFetch(jsonResponse({ enabled: ['self', 'team'] }));
-		await endpoints.apis.setNotifications(ctx, {
+		// The documented PUT answers 200 with no body.
+		mockFetch(new Response(null, { status: 200 }));
+		const set = await endpoints.apis.setNotifications(ctx, {
 			owner: 'admin',
 			api: 'example',
 			enabled: ['self', 'team'],
 		});
 		// The body is the bare list of scopes, with no wrapper object.
 		expect(sentBody()).toEqual(['self', 'team']);
+		expect(set.enabled).toEqual(['self', 'team']);
 
 		mockFetch(new Response(null, { status: 200 }));
 		await endpoints.apis.disableNotifications(ctx, {
@@ -756,5 +758,138 @@ describe('swaggerhub base', () => {
 
 	it('leaves the fixture api entry shape intact', () => {
 		expect(apiEntry.properties[0]?.type).toBe('Swagger');
+	});
+});
+
+describe('swaggerhub documented answers', () => {
+	it('sends a JSON definition once, not as a quoted string', async () => {
+		mockFetch(new Response(null, { status: 201 }));
+		await endpoints.apis.save(ctx, {
+			owner: 'admin',
+			api: 'example',
+			definition: '{"openapi":"3.0.0","info":{"title":"x","version":"1"}}',
+			format: 'json',
+		});
+		expect(sentBody()).toEqual({
+			openapi: '3.0.0',
+			info: { title: 'x', version: '1' },
+		});
+	});
+
+	it('refuses a JSON definition that does not parse, before sending', async () => {
+		await expect(
+			endpoints.apis.save(ctx, {
+				owner: 'admin',
+				api: 'example',
+				definition: 'openapi: 3.0.0',
+				format: 'json',
+			}),
+		).rejects.toThrow(/not valid JSON/);
+		expect(fetchCount()).toBe(0);
+	});
+
+	it('reports the sent settings when the settings PUTs answer no body', async () => {
+		mockFetch(new Response(null, { status: 200 }));
+		await expect(
+			endpoints.apiSettings.setLifecycle(ctx, {
+				owner: 'admin',
+				api: 'example',
+				version: '1.0.0',
+				published: true,
+			}),
+		).resolves.toEqual({ published: true });
+
+		mockFetch(new Response(null, { status: 200 }));
+		await expect(
+			endpoints.apiSettings.setVisibility(ctx, {
+				owner: 'admin',
+				api: 'example',
+				version: '1.0.0',
+				private: true,
+			}),
+		).resolves.toEqual({ private: true });
+	});
+
+	it('reports the sent project when create and update answer no body', async () => {
+		mockFetch(new Response(null, { status: 201 }));
+		const created = await endpoints.projects.create(ctx, {
+			owner: 'admin',
+			name: 'payments',
+			apis: ['example'],
+		});
+		expect(created).toMatchObject({
+			owner: 'admin',
+			name: 'payments',
+			apis: ['example'],
+		});
+
+		mockFetch(new Response(null, { status: 200 }));
+		const updated = await endpoints.projects.update(ctx, {
+			owner: 'admin',
+			projectId: 'payments',
+			description: 'Payment APIs',
+		});
+		expect(updated).toMatchObject({ owner: 'admin', name: 'payments' });
+	});
+
+	it('reads a 204 as no comments but refuses a malformed comment list', async () => {
+		mockFetch(new Response(null, { status: 204 }));
+		const none = await endpoints.comments.list(ctx, {
+			owner: 'admin',
+			api: 'example',
+			version: '1.0.0',
+		});
+		expect(none.comments).toEqual([]);
+		expect(none.empty).toBe(true);
+
+		mockFetch(jsonResponse({}));
+		await expect(
+			endpoints.comments.list(ctx, {
+				owner: 'admin',
+				api: 'example',
+				version: '1.0.0',
+			}),
+		).rejects.toThrow(/no array/);
+	});
+
+	it('refuses a malformed comparison, template list or integration list', async () => {
+		mockFetch(jsonResponse({}));
+		await expect(
+			endpoints.apis.compare(ctx, {
+				owner: 'admin',
+				api: 'example',
+				version: '1.0.0',
+				definition,
+			}),
+		).rejects.toThrow(/no array/);
+		expect(queryParam('method')).toBe('FULL');
+
+		mockFetch(jsonResponse({}));
+		await expect(endpoints.templates.list(ctx, {})).rejects.toThrow(/no array/);
+
+		mockFetch(jsonResponse({ integrations: {} }));
+		await expect(
+			endpoints.integrations.list(ctx, {
+				owner: 'admin',
+				api: 'example',
+				version: '1.0.0',
+			}),
+		).rejects.toThrow();
+	});
+
+	it("passes core's ApiError through without the sent definition", async () => {
+		mockFetch(
+			jsonResponse(
+				{ code: 409, message: 'can not overwrite a published API version' },
+				{ status: 409 },
+			),
+		);
+		const error = await endpoints.apis
+			.save(ctx, { owner: 'admin', api: 'example', definition })
+			.catch((caught: unknown) => caught);
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(409);
+		expect((error as ApiError).message).toMatch(/published API version/);
+		expect((error as ApiError).request.body).toBeUndefined();
 	});
 });

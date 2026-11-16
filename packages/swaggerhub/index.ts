@@ -429,9 +429,9 @@ const swaggerhubEndpointMeta = {
 			'List the comments on one API version with their replies and open or resolved status',
 	},
 	'comments.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Add a comment to one API version, optionally anchored to a line range',
+			'Post a comment on one API version, optionally anchored to a line range. Collaborators with notifications on are told about it',
 	},
 	'comments.update': {
 		riskLevel: 'write',
@@ -443,8 +443,9 @@ const swaggerhubEndpointMeta = {
 		description: 'Delete one comment and its replies. There is no undo',
 	},
 	'comments.reply': {
-		riskLevel: 'write',
-		description: 'Add a reply to an existing comment',
+		riskLevel: 'destructive',
+		description:
+			'Post a reply to an existing comment. Collaborators with notifications on are told about it',
 	},
 	'domains.list': {
 		riskLevel: 'read',
@@ -524,7 +525,7 @@ const swaggerhubEndpointMeta = {
 			'List the integrations configured on one API version, with their ids and enabled state',
 	},
 	'integrations.execute': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Run one integration once, which pushes the stored definition to its target such as a repository or gateway',
 	},

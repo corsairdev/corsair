@@ -1,6 +1,6 @@
 import type { SwaggerhubEndpoints } from '..';
 import { segment, specPath } from '../client';
-import { call } from './call';
+import { call, isEmptyBody, readBareArray } from './call';
 import {
 	SwaggerhubEndpointInputSchemas as Inputs,
 	SwaggerhubEndpointOutputSchemas as Outputs,
@@ -40,8 +40,9 @@ export const list: SwaggerhubEndpoints['commentsList'] = (ctx, input) =>
 				owner: parsed.owner,
 				api: parsed.api,
 				version: parsed.version,
-				comments: Array.isArray(raw) ? raw : [],
-				empty: !Array.isArray(raw) || raw.length === 0,
+				// 204 (no body) means no comments; any other non-array is an error.
+				comments: isEmptyBody(raw) ? [] : readBareArray(raw, 'comment list'),
+				empty: isEmptyBody(raw) || (Array.isArray(raw) && raw.length === 0),
 			}),
 			log: (_, result) => ({ count: result.comments.length }),
 		},

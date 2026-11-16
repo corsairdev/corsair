@@ -118,7 +118,6 @@ export const save: SwaggerhubEndpoints['domainsSave'] = (ctx, input) =>
 				owner: parsed.owner,
 				domain: parsed.domain,
 				version: parsed.version ?? null,
-				created: parsed.force !== true,
 				saved: true,
 			}),
 			log: (parsed) => ({

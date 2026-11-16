@@ -1,9 +1,5 @@
 import { asRecord } from 'corsair/core';
-import type {
-	ApiRequestOptions,
-	OpenAPIConfig,
-	RateLimitConfig,
-} from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 /** The registry lives on one host, and every documented path hangs off it. */
@@ -129,17 +125,6 @@ export function specPath(
 	return version === undefined ? base : `${base}/${segment(version)}`;
 }
 
-// `corsair/http` replaces the default rate-limit config wholesale, so every
-// field is spelled out. SwaggerHub does not document a rate limit or send a
-// Retry-After value, and a 429 is handled in error-handlers.ts.
-const SWAGGERHUB_RATE_LIMIT_CONFIG: RateLimitConfig = {
-	enabled: true,
-	maxRetries: 0,
-	initialRetryDelay: 1000,
-	backoffMultiplier: 2,
-	headerNames: { retryAfter: 'retry-after' },
-};
-
 /**
  * Sends one request. The key goes in `Authorization` **without a prefix**, which
  * is what the vendor documents, and a raw definition body keeps its own media
@@ -165,7 +150,7 @@ export async function makeSwaggerhubRequest(
 		method,
 		url: path,
 		query,
-		body: definition ? definition.content : body,
+		body: definition ? definitionBody(definition) : body,
 		mediaType: definition
 			? definition.mediaType
 			: body === undefined
@@ -174,29 +159,78 @@ export async function makeSwaggerhubRequest(
 	};
 
 	try {
-		return await request<unknown>(config, requestOptions, {
-			rateLimitConfig: SWAGGERHUB_RATE_LIMIT_CONFIG,
-		});
+		return await request<unknown>(config, requestOptions);
 	} catch (error) {
+		if (error instanceof ApiError) throw toSwaggerhubApiError(error);
 		if (error instanceof SwaggerhubAPIError) throw error;
-		if (error instanceof ApiError) {
-			const described = describeSwaggerhubError(
-				error.status,
-				error.body,
-				error.message,
-			);
-			throw new SwaggerhubAPIError(described.message, {
-				cause: error,
-				status: error.status,
-				code: described.code,
-				retryAfter: error.retryAfter,
-				method,
-			});
-		}
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new SwaggerhubAPIError(error.message, { cause: error, method });
 		}
 		throw new SwaggerhubAPIError('Unknown SwaggerHub error', { method });
 	}
+}
+
+/**
+ * Core JSON-encodes every body sent with a JSON media type, so a JSON definition
+ * passed as text would arrive as one quoted string. It is parsed here and core
+ * encodes it once. YAML and other text go through as they are.
+ * unknown: a parsed JSON definition is any JSON value.
+ */
+function definitionBody(definition: {
+	content: string;
+	mediaType: string;
+}): unknown {
+	if (!definition.mediaType.includes('/json')) return definition.content;
+	try {
+		return JSON.parse(definition.content);
+	} catch {
+		throw new SwaggerhubAPIError(
+			'[swaggerhub] definition is not valid JSON; send YAML with format: "yaml"',
+		);
+	}
+}
+
+/**
+ * Core's `ApiError` goes through (R8): its `status` and `retryAfter` are what
+ * core's 429 retry and the error handlers read. It is rebuilt only to drop the
+ * sent body and query (a whole API definition) and to carry SwaggerHub's own
+ * message.
+ */
+function toSwaggerhubApiError(error: ApiError): ApiError {
+	const described = describeSwaggerhubError(
+		error.status,
+		error.body,
+		error.message,
+	);
+	let url = error.url;
+	try {
+		const parsed = new URL(error.url);
+		parsed.search = '';
+		url = parsed.toString();
+	} catch {
+		// A relative or empty url carries no query to drop.
+	}
+	return new ApiError(
+		{
+			...error.request,
+			body: undefined,
+			formData: undefined,
+			query: undefined,
+		},
+		{
+			url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		described.message,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }

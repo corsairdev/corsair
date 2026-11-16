@@ -1,7 +1,7 @@
 import { asRecord } from 'corsair/core';
 import type { SwaggerhubEndpoints } from '..';
 import { segment, specPath } from '../client';
-import { call, queryOf, readDefinition } from './call';
+import { bodyOr, call, queryOf, readBareArray, readDefinition } from './call';
 import {
 	SwaggerhubEndpointInputSchemas as Inputs,
 	SwaggerhubEndpointOutputSchemas as Outputs,
@@ -134,9 +134,6 @@ export const save: SwaggerhubEndpoints['apisSave'] = (ctx, input) =>
 				owner: parsed.owner,
 				api: parsed.api,
 				version: parsed.version ?? null,
-				// A save without force can only create a version that did not exist
-				// when no version was named; the route does not say which it did.
-				created: parsed.force !== true,
 				saved: true,
 			}),
 			log: (parsed) => ({
@@ -309,7 +306,9 @@ export const compare: SwaggerhubEndpoints['apisCompare'] = (ctx, input) =>
 				owner: parsed.owner,
 				api: parsed.api,
 				version: parsed.version,
-				changes: Array.isArray(raw) ? raw : [],
+				// The documented answer is a bare array; anything else is an error,
+				// not an empty comparison.
+				changes: readBareArray(raw, 'comparison'),
 			}),
 			log: (_, result) => ({ count: result.changes.length }),
 		},
@@ -479,6 +478,8 @@ export const setNotifications: SwaggerhubEndpoints['apisSetNotifications'] = (
 			body: enabled,
 		}),
 		{
+			// The route answers 200 with no body; report the scopes that were sent.
+			shape: (raw, parsed) => bodyOr(raw, { enabled: parsed.enabled }),
 			log: (parsed, result) => ({
 				owner: parsed.owner,
 				api: parsed.api,

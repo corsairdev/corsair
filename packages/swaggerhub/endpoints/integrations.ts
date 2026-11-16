@@ -36,12 +36,16 @@ export const list: SwaggerhubEndpoints['integrationsList'] = (ctx, input) =>
 		{
 			shape: (raw, parsed) => {
 				const record = asRecord(raw);
-				const integrations = record?.integrations;
+				if (!record) {
+					throw new Error('SwaggerHub returned an unexpected integration list');
+				}
+				// `integrations` is optional in the spec, so a missing key is an
+				// empty list; a present non-array fails the output schema.
 				return {
 					owner: parsed.owner,
 					api: parsed.api,
 					version: parsed.version,
-					integrations: Array.isArray(integrations) ? integrations : [],
+					integrations: record.integrations ?? [],
 				};
 			},
 			log: (_, result) => ({ count: result.integrations.length }),

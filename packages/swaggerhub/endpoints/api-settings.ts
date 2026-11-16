@@ -1,6 +1,6 @@
 import type { SwaggerhubEndpoints } from '..';
 import { specPath } from '../client';
-import { call, queryOf } from './call';
+import { bodyOr, call, queryOf } from './call';
 import {
 	SwaggerhubEndpointInputSchemas as Inputs,
 	SwaggerhubEndpointOutputSchemas as Outputs,
@@ -62,6 +62,8 @@ export const setLifecycle: SwaggerhubEndpoints['apiSettingsSetLifecycle'] = (
 			body: { published },
 		}),
 		{
+			// The route answers 200 with no body; the stored value is what was sent.
+			shape: (raw, parsed) => bodyOr(raw, { published: parsed.published }),
 			log: (parsed) => ({
 				owner: parsed.owner,
 				api: parsed.api,
@@ -115,6 +117,8 @@ export const setVisibility: SwaggerhubEndpoints['apiSettingsSetVisibility'] = (
 			body: { private: isPrivate },
 		}),
 		{
+			// The route answers 200 with no body; the stored value is what was sent.
+			shape: (raw, parsed) => bodyOr(raw, { private: parsed.private }),
 			log: (parsed) => ({
 				owner: parsed.owner,
 				api: parsed.api,

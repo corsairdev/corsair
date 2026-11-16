@@ -1,7 +1,7 @@
 import { asRecord } from 'corsair/core';
 import type { SwaggerhubEndpoints } from '..';
 import { segment } from '../client';
-import { call, queryOf } from './call';
+import { bodyOr, call, queryOf } from './call';
 import {
 	SwaggerhubEndpointInputSchemas as Inputs,
 	SwaggerhubEndpointOutputSchemas as Outputs,
@@ -100,6 +100,18 @@ export const create: SwaggerhubEndpoints['projectsCreate'] = (ctx, input) =>
 			body: projectBody({ name, description, apis, domains, templates }),
 		}),
 		{
+			// 201 carries no body in the spec; report the project that was sent.
+			shape: (raw, parsed) =>
+				bodyOr(raw, {
+					owner: parsed.owner,
+					...projectBody({
+						name: parsed.name,
+						description: parsed.description,
+						apis: parsed.apis,
+						domains: parsed.domains,
+						templates: parsed.templates,
+					}),
+				}),
 			log: (_, result) => ({
 				owner: result.owner ?? undefined,
 				project: result.name ?? undefined,
@@ -123,6 +135,18 @@ export const update: SwaggerhubEndpoints['projectsUpdate'] = (ctx, input) =>
 			body: projectBody({ name, description, apis, domains, templates }),
 		}),
 		{
+			// The PUT answers 200 with no body; report the project that was sent.
+			shape: (raw, parsed) =>
+				bodyOr(raw, {
+					owner: parsed.owner,
+					name: parsed.name ?? parsed.projectId,
+					...projectBody({
+						description: parsed.description,
+						apis: parsed.apis,
+						domains: parsed.domains,
+						templates: parsed.templates,
+					}),
+				}),
 			log: (parsed) => ({
 				owner: parsed.owner,
 				projectId: parsed.projectId,

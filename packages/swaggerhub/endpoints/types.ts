@@ -204,36 +204,6 @@ const IntegrationConfigurationSchema = z
 	})
 	.loose();
 
-/**
- * The `/specs` listing is a page of thin entries: a type, an owner, a name, a
- * version and a few flags. It is the documented way to enumerate specs, because
- * `/apis` answers a 303 to it.
- */
-const SpecSchema = z
-	.object({
-		type: z.string().nullish(),
-		owner: z.string().nullish(),
-		name: z.string().nullish(),
-		version: z.string().nullish(),
-		title: z.string().nullish(),
-		visibility: z.string().nullish(),
-		state: z.string().nullish(),
-		specification: z.string().nullish(),
-		created: z.string().nullish(),
-		modified: z.string().nullish(),
-		defaultVersion: z.boolean().nullish(),
-		lastUpdated: z.string().nullish(),
-	})
-	.loose();
-
-const SpecsPageSchema = z
-	.object({
-		offset: z.number().int().nullish(),
-		totalCount: z.number().int().nullish(),
-		items: z.array(SpecSchema),
-	})
-	.loose();
-
 const TemplateSchema = z
 	.object({
 		id: z.string(),
@@ -276,7 +246,8 @@ const SpecsListInputSchema = z.object({
 
 export type SpecsListInput = z.input<typeof SpecsListInputSchema>;
 
-const SpecsListResponseSchema = SpecsPageSchema;
+/** `GET /specs` answers the APIs.json listing, `{ offset, totalCount, apis }`. */
+const SpecsListResponseSchema = ApisJsonSchema;
 
 export type SpecsListResponse = z.infer<typeof SpecsListResponseSchema>;
 
@@ -383,13 +354,13 @@ export type ApisSaveInput = z.input<typeof ApisSaveInputSchema>;
 
 /**
  * The save route answers 200, 201 or 205 with no body, so the plugin reports
- * what it wrote and whether it created the version.
+ * what it wrote. Core does not pass the status on, so whether the save created
+ * the version is not reported.
  */
 const ApisSaveResponseSchema = z.object({
 	owner: z.string(),
 	api: z.string(),
 	version: z.string().nullish(),
-	created: z.boolean(),
 	saved: z.literal(true),
 });
 
@@ -495,10 +466,10 @@ const ApisCompareInputSchema = z.object({
 	definition: z.string().min(1),
 	format: z.enum(['yaml', 'json']).optional(),
 	/**
-	 * The comparison direction, which the route takes as a required query
-	 * parameter. `previous` asks what changed from the posted definition.
+	 * The comparison method, a required query parameter: `FULL`, `LOGICAL` or
+	 * `STRUCTURAL`. Defaults to `FULL`.
 	 */
-	method: z.enum(['previous', 'current']).optional(),
+	method: z.enum(['FULL', 'LOGICAL', 'STRUCTURAL']).default('FULL'),
 });
 
 export type ApisCompareInput = z.input<typeof ApisCompareInputSchema>;
@@ -585,8 +556,8 @@ export type ApisRenameResponse = z.infer<typeof ApisRenameResponseSchema>;
 const ApisGetNotificationsInputSchema = z.object({
 	owner: z.string().min(1),
 	api: z.string().min(1),
-	/** The notification scope, such as `self`. */
-	scope: z.string().min(1),
+	/** `USER` for the caller's own setting, `ALL` for every user. Defaults to `USER`. */
+	scope: z.enum(['USER', 'ALL']).default('USER'),
 	version: z.string().optional(),
 });
 
@@ -839,7 +810,6 @@ const DomainsSaveResponseSchema = z.object({
 	owner: z.string(),
 	domain: z.string(),
 	version: z.string().nullish(),
-	created: z.boolean(),
 	saved: z.literal(true),
 });
 
@@ -935,7 +905,6 @@ const TemplatesSaveResponseSchema = z.object({
 	owner: z.string(),
 	templateId: z.string(),
 	version: z.string().nullish(),
-	created: z.boolean(),
 	saved: z.literal(true),
 });
 

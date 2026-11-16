@@ -55,7 +55,7 @@ export const list: SwaggerhubEndpoints['specsList'] = (ctx, input) =>
 		}),
 		{
 			log: (_, result) => ({
-				count: result.items.length,
+				count: result.apis.length,
 				total: result.totalCount ?? undefined,
 			}),
 		},

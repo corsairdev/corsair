@@ -65,6 +65,27 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	return result;
 }
 
+/**
+ * True when a write answered without a body. Core resolves an empty body as
+ * `undefined` (or `''` for an empty text body).
+ * unknown: the response body is untyped.
+ */
+export function isEmptyBody(raw: unknown): boolean {
+	return raw === undefined || raw === null || raw === '';
+}
+
+/**
+ * The response object when the route sent one, otherwise what the request set.
+ * Several SwaggerHub writes answer 200 with no body.
+ * unknown: the response body is untyped until this checks it.
+ */
+export function bodyOr(
+	raw: unknown,
+	fallback: Record<string, unknown>,
+): unknown {
+	return isEmptyBody(raw) ? fallback : raw;
+}
+
 /** Drops unset query values so nothing empty is sent. */
 export function queryOf(
 	values: Record<string, string | number | boolean | undefined>,
@@ -87,6 +108,18 @@ export function readDefinition(raw: unknown): string {
 	if (raw === undefined || raw === null) return '';
 	// A JSON or YAML definition that the parser already turned into an object.
 	return JSON.stringify(raw);
+}
+
+/**
+ * A route documented to answer a bare array. Anything else is a named failure,
+ * so an unexpected shape does not read as an empty list.
+ * unknown: the body is untyped until this checks it.
+ */
+export function readBareArray(raw: unknown, label: string): unknown[] {
+	if (!Array.isArray(raw)) {
+		throw new Error(`SwaggerHub returned no array for ${label}`);
+	}
+	return raw;
 }
 
 /**

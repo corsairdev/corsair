@@ -3,8 +3,8 @@
  *
  * Bodies come from the registry's own OpenAPI document at
  * https://api.swaggerhub.com/openapi.json. Two details there matter for the
- * tests: every listing is either an APIs.json object with an `apis` array or a
- * `Page` with an `items` array, and a few routes answer a **bare array**.
+ * tests: every listing is an APIs.json object with an `apis` array, and a few
+ * routes answer a **bare array**.
  */
 
 /** The smallest definition that the save and compare routes take as a body. */
@@ -42,24 +42,11 @@ export const apisJson = {
 	apis: [apiEntry],
 };
 
-export const specItem = {
-	type: 'API',
-	owner: 'admin',
-	name: 'example',
-	version: '1.0.0',
-	title: 'An example API',
-	visibility: 'PUBLIC',
-	state: 'PUBLISHED',
-	specification: 'OpenAPI',
-	created: '2024-01-01T00:00:00.000+0000',
-	modified: '2024-01-02T00:00:00.000+0000',
-	defaultVersion: true,
-};
-
+/** `GET /specs` answers the APIs.json listing (`ApisJson` in the spec). */
 export const specsPage = {
 	offset: 0,
 	totalCount: 1,
-	items: [specItem],
+	apis: [apiEntry],
 };
 
 export const validationResult = {
