@@ -6493,5 +6493,21 @@
         "title": "Accept null in every parse block and OCR field Reducto may leave empty"
       }
     ]
+  },
+  {
+    "date": "2026-11-16",
+    "package": "@corsair-dev/gatherup",
+    "dir": "packages/gatherup",
+    "name": "GatherUp",
+    "version": "0.1.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2542,
+        "title": "Accept the numeric counters the live API returns"
+      }
+    ]
   }
 ]
