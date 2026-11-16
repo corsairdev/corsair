@@ -377,7 +377,7 @@ await corsair.simlacom.api.corporateCustomers.byExternalidCompaniesByEntityexter
       corrAccount?: string,
       bankAccount?: string
     },
-    customFields?: {
+    customFields?: custom[] | {
     },
     address?: {
       id?: number,
@@ -476,7 +476,7 @@ await corsair.simlacom.api.corporateCustomers.byExternalidCompaniesCreate.post({
       corrAccount?: string,
       bankAccount?: string
     },
-    customFields?: {
+    customFields?: custom[] | {
     },
     address?: {
       id?: number,
@@ -715,7 +715,7 @@ await corsair.simlacom.api.corporateCustomers.byExternalidEdit.post({
     createdAt?: string,
     vip?: boolean,
     bad?: boolean,
-    customFields?: {
+    customFields?: custom[] | {
     },
     personalDiscount?: number,
     discountCardNumber?: string | null,
@@ -859,7 +859,7 @@ await corsair.simlacom.api.corporateCustomers.create.post({
     createdAt?: string,
     vip?: boolean,
     bad?: boolean,
-    customFields?: {
+    customFields?: custom[] | {
     },
     personalDiscount?: number,
     discountCardNumber?: string | null,
@@ -905,7 +905,7 @@ await corsair.simlacom.api.corporateCustomers.create.post({
         corrAccount?: string,
         bankAccount?: string
       },
-      customFields?: {
+      customFields?: custom[] | {
       },
       address?: {
         id?: number,
@@ -1099,7 +1099,7 @@ await corsair.simlacom.api.corporateCustomers.getByExternalid.get({
   }[],
   firstClientId?: string,
   lastClientId?: string,
-  customFields?: {
+  customFields?: custom[] | {
   },
   personalDiscount?: number,
   cumulativeDiscount?: number,
@@ -1368,7 +1368,7 @@ await corsair.simlacom.api.corporateCustomers.getByExternalidCompanies.get({
   averageSumm?: number | null,
   costSumm?: number | null,
   ordersCount?: number | null,
-  customFields?: {
+  customFields?: custom[] | {
   }
 }[]
 ```
@@ -1756,7 +1756,7 @@ await corsair.simlacom.api.corporateCustomers.list.get({});
   ]?: string,
   filter[
     customFields
-  ]?: {
+  ]?: custom[] | {
   },
   filter[
     nickName
@@ -1832,7 +1832,7 @@ await corsair.simlacom.api.corporateCustomers.list.get({});
   }[],
   firstClientId?: string,
   lastClientId?: string,
-  customFields?: {
+  customFields?: custom[] | {
   },
   personalDiscount?: number,
   cumulativeDiscount?: number,
@@ -2156,7 +2156,7 @@ await corsair.simlacom.api.corporateCustomers.upload.post({
     createdAt?: string,
     vip?: boolean,
     bad?: boolean,
-    customFields?: {
+    customFields?: custom[] | {
     },
     personalDiscount?: number,
     discountCardNumber?: string | null,
@@ -2202,7 +2202,7 @@ await corsair.simlacom.api.corporateCustomers.upload.post({
         corrAccount?: string,
         bankAccount?: string
       },
-      customFields?: {
+      customFields?: custom[] | {
       },
       address?: {
         id?: number,
@@ -2389,7 +2389,7 @@ await corsair.simlacom.api.cost.byIdEdit.post({
       number?: string
     } | null,
     userId?: number,
-    sites?: {
+    sites?: custom[] | {
     },
     source?: {
       source?: string,
@@ -2475,7 +2475,7 @@ await corsair.simlacom.api.cost.create.post({
       number?: string
     } | null,
     userId?: number,
-    sites?: {
+    sites?: custom[] | {
     },
     source?: {
       source?: string,
@@ -2859,7 +2859,7 @@ await corsair.simlacom.api.cost.upload.post({
       number?: string
     } | null,
     userId?: number,
-    sites?: {
+    sites?: custom[] | {
     },
     source?: {
       source?: string,
@@ -3279,7 +3279,7 @@ await corsair.simlacom.api.customerInteraction.getCartBySiteByCustomerid.get({
       name: string,
       article?: string,
       vatRate?: string,
-      properties?: {
+      properties?: custom[] | {
       },
       unit?: {
         code?: string,
@@ -3366,7 +3366,7 @@ await corsair.simlacom.api.customerInteraction.getFavoritesBySiteByCustomerid.ge
     name: string,
     article?: string,
     vatRate?: string,
-    properties?: {
+    properties?: custom[] | {
     },
     unit?: {
       code?: string,
@@ -3459,7 +3459,7 @@ await corsair.simlacom.api.customers.byExternalidEdit.post({
       corrAccount?: string,
       bankAccount?: string
     },
-    customFields?: {
+    customFields?: custom[] | {
     },
     personalDiscount?: number,
     discountCardNumber?: string | null,
@@ -3739,7 +3739,7 @@ await corsair.simlacom.api.customers.create.post({
       corrAccount?: string,
       bankAccount?: string
     },
-    customFields?: {
+    customFields?: custom[] | {
     },
     personalDiscount?: number,
     discountCardNumber?: string | null,
@@ -3965,7 +3965,7 @@ await corsair.simlacom.api.customers.getByExternalid.get({
   }[],
   firstClientId?: string,
   lastClientId?: string,
-  customFields?: {
+  customFields?: custom[] | {
   },
   personalDiscount?: number,
   cumulativeDiscount?: number,
@@ -4348,7 +4348,7 @@ await corsair.simlacom.api.customers.list.get({
   ]?: string,
   filter[
     customFields
-  ]?: {
+  ]?: custom[] | {
   },
   filter[
     sex
@@ -4509,7 +4509,7 @@ await corsair.simlacom.api.customers.list.get({
   }[],
   firstClientId?: string,
   lastClientId?: string,
-  customFields?: {
+  customFields?: custom[] | {
   },
   personalDiscount?: number,
   cumulativeDiscount?: number,
@@ -5069,7 +5069,7 @@ await corsair.simlacom.api.customers.upload.post({
     createdAt?: string,
     vip?: boolean,
     bad?: boolean,
-    customFields?: {
+    customFields?: custom[] | {
     },
     personalDiscount?: number,
     discountCardNumber?: string | null,
@@ -6931,7 +6931,7 @@ await corsair.simlacom.api.dataBook.referenceDeliveryTypesByCodeEdit.post({
 ```ts
 {
   deliveryType?: {
-    paymentTypes?: {
+    paymentTypes?: custom[] | {
     },
     name: string & string,
     code?: string,
@@ -6943,9 +6943,9 @@ await corsair.simlacom.api.dataBook.referenceDeliveryTypesByCodeEdit.post({
     defaultTariffCode?: string | null,
     defaultTariffType?: string | null,
     integrationCode?: string,
-    deliveryServices?: {
+    deliveryServices?: custom[] | {
     },
-    sites?: {
+    sites?: custom[] | {
     },
     vatRate?: string | null
   }
@@ -7711,9 +7711,9 @@ await corsair.simlacom.api.dataBook.referencePaymentTypesByCodeEdit.post({
     defaultForCrm?: boolean,
     defaultForApi?: boolean,
     description?: string,
-    paymentStatuses?: {
+    paymentStatuses?: custom[] | {
     },
-    sites?: {
+    sites?: custom[] | {
     },
     paymentDeliveryTypes?: {
       code: string,
@@ -7806,7 +7806,7 @@ await corsair.simlacom.api.dataBook.referencePriceTypes.get({});
     cityId?: string | null,
     city?: string | null
   }[],
-  groups?: {
+  groups?: custom[] | {
   },
   ordering?: number,
   currency?: string
@@ -7879,7 +7879,7 @@ await corsair.simlacom.api.dataBook.referencePriceTypesByCodeEdit.post({
       regionId?: string | null,
       cityId?: string | null
     }[],
-    groups?: {
+    groups?: custom[] | {
     },
     currency?: string
   }
@@ -10667,7 +10667,7 @@ await corsair.simlacom.api.deliveries.deliveryShipments.get({});
       externalId?: string,
       number?: string
     }[],
-    extraData?: {
+    extraData?: custom[] | {
     }
   } | {
     integrationCode?: string,
@@ -10689,7 +10689,7 @@ await corsair.simlacom.api.deliveries.deliveryShipments.get({});
       externalId?: string,
       number?: string
     }[],
-    extraData?: {
+    extraData?: custom[] | {
     }
   }
 )[]
@@ -10770,7 +10770,7 @@ await corsair.simlacom.api.deliveries.deliveryShipmentsByIdEdit.post({
       externalId?: string,
       number?: string
     }[],
-    extraData?: {
+    extraData?: custom[] | {
     }
   } | {
     status?: string,
@@ -10788,7 +10788,7 @@ await corsair.simlacom.api.deliveries.deliveryShipmentsByIdEdit.post({
       externalId?: string,
       number?: string
     }[],
-    extraData?: {
+    extraData?: custom[] | {
     }
   }
 }
@@ -10878,7 +10878,7 @@ await corsair.simlacom.api.deliveries.deliveryShipmentsCreate.post({
       externalId?: string,
       number?: string
     }[],
-    extraData?: {
+    extraData?: custom[] | {
     }
   } | {
     status?: string,
@@ -10896,7 +10896,7 @@ await corsair.simlacom.api.deliveries.deliveryShipmentsCreate.post({
       externalId?: string,
       number?: string
     }[],
-    extraData?: {
+    extraData?: custom[] | {
     }
   }
 }
@@ -10992,7 +10992,7 @@ await corsair.simlacom.api.deliveries.getDeliveryShipmentsById.get({
     externalId?: string,
     number?: string
   }[],
-  extraData?: {
+  extraData?: custom[] | {
   }
 } | {
   integrationCode?: string,
@@ -11014,7 +11014,7 @@ await corsair.simlacom.api.deliveries.getDeliveryShipmentsById.get({
     externalId?: string,
     number?: string
   }[],
-  extraData?: {
+  extraData?: custom[] | {
   }
 }
 ```
@@ -11625,7 +11625,7 @@ await corsair.simlacom.api.integration.getIntegrationModulesByCode.get({
   baseUrl?: string,
   actions?: {
   },
-  availableCountries?: {
+  availableCountries?: custom[] | {
   },
   accountUrl?: string,
   integrations?: {
@@ -11649,7 +11649,7 @@ await corsair.simlacom.api.integration.getIntegrationModulesByCode.get({
       description?: string,
       actions?: {
       },
-      payerType?: {
+      payerType?: custom[] | {
       },
       platePrintLimit?: number,
       rateDeliveryCost?: boolean,
@@ -11658,9 +11658,9 @@ await corsair.simlacom.api.integration.getIntegrationModulesByCode.get({
       selfShipmentAvailable?: boolean,
       duplicateOrderProductSupported?: boolean,
       allowTrackNumber?: boolean,
-      availableCountries?: {
+      availableCountries?: custom[] | {
       },
-      requiredFields?: {
+      requiredFields?: custom[] | {
       },
       statusList?: {
         code?: string,
@@ -11680,7 +11680,7 @@ await corsair.simlacom.api.integration.getIntegrationModulesByCode.get({
         hint?: string,
         type?: string,
         multiple?: boolean,
-        choices?: {
+        choices?: custom[] | {
         },
         autocompleteUrl?: string,
         visible?: boolean,
@@ -11694,7 +11694,7 @@ await corsair.simlacom.api.integration.getIntegrationModulesByCode.get({
         hint?: string,
         type?: string,
         multiple?: boolean,
-        choices?: {
+        choices?: custom[] | {
         },
         autocompleteUrl?: string,
         visible?: boolean,
@@ -11721,9 +11721,9 @@ await corsair.simlacom.api.integration.getIntegrationModulesByCode.get({
           code?: string,
           trackingStatusCode?: string
         }[] | null,
-        deliveryExtraData?: {
+        deliveryExtraData?: custom[] | {
         },
-        shipmentExtraData?: {
+        shipmentExtraData?: custom[] | {
         }
       }
     },
@@ -11764,7 +11764,7 @@ await corsair.simlacom.api.integration.getIntegrationModulesByCode.get({
       entrypoint?: string,
       stylesheet?: string,
       runner?: custom,
-      targets?: {
+      targets?: custom[] | {
       } | null,
       pages?: {
         code: string | null,
@@ -11867,7 +11867,7 @@ await corsair.simlacom.api.integration.integrationModulesByCodeEdit.post({
     baseUrl?: string,
     actions?: {
     },
-    availableCountries?: {
+    availableCountries?: custom[] | {
     },
     accountUrl?: string,
     integrations?: {
@@ -11891,7 +11891,7 @@ await corsair.simlacom.api.integration.integrationModulesByCodeEdit.post({
         description?: string,
         actions?: {
         },
-        payerType?: {
+        payerType?: custom[] | {
         },
         platePrintLimit?: number,
         rateDeliveryCost?: boolean,
@@ -11900,9 +11900,9 @@ await corsair.simlacom.api.integration.integrationModulesByCodeEdit.post({
         selfShipmentAvailable?: boolean,
         duplicateOrderProductSupported?: boolean,
         allowTrackNumber?: boolean,
-        availableCountries?: {
+        availableCountries?: custom[] | {
         },
-        requiredFields?: {
+        requiredFields?: custom[] | {
         },
         statusList?: {
           code?: string,
@@ -11922,7 +11922,7 @@ await corsair.simlacom.api.integration.integrationModulesByCodeEdit.post({
           hint?: string,
           type?: string,
           multiple?: boolean,
-          choices?: {
+          choices?: custom[] | {
           },
           autocompleteUrl?: string,
           visible?: boolean,
@@ -11936,7 +11936,7 @@ await corsair.simlacom.api.integration.integrationModulesByCodeEdit.post({
           hint?: string,
           type?: string,
           multiple?: boolean,
-          choices?: {
+          choices?: custom[] | {
           },
           autocompleteUrl?: string,
           visible?: boolean,
@@ -11963,9 +11963,9 @@ await corsair.simlacom.api.integration.integrationModulesByCodeEdit.post({
             code?: string,
             trackingStatusCode?: string
           }[] | null,
-          deliveryExtraData?: {
+          deliveryExtraData?: custom[] | {
           },
-          shipmentExtraData?: {
+          shipmentExtraData?: custom[] | {
           }
         }
       },
@@ -12006,7 +12006,7 @@ await corsair.simlacom.api.integration.integrationModulesByCodeEdit.post({
         entrypoint?: string,
         stylesheet?: string,
         runner?: custom,
-        targets?: {
+        targets?: custom[] | {
         } | null,
         pages?: {
           code: string | null,
@@ -12052,13 +12052,13 @@ await corsair.simlacom.api.integration.integrationModulesByCodeEdit.post({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | No | Query result (successful/unsuccessful) |
-| `info` | `object` | No | Additional information about the results of editing the module |
+| `info` | `custom[] \| object` | No | Additional information about the results of editing the module |
 
 <AccordionGroup>
 <Accordion title="info full type">
 
 ```ts
-{
+custom[] | {
 }
 ```
 </Accordion>
@@ -12903,7 +12903,7 @@ await corsair.simlacom.api.loyalty.accountByIdActivate.post({
   activatedAt?: string,
   confirmedPhoneAt?: string,
   lastCheckId?: string,
-  customFields?: {
+  customFields?: custom[] | {
   }
 }
 ```
@@ -13121,7 +13121,7 @@ await corsair.simlacom.api.loyalty.accountByIdEdit.post({
   loyaltyAccount?: {
     phoneNumber?: string,
     cardNumber?: string,
-    customFields?: {
+    customFields?: custom[] | {
     },
     loyaltyLevelId?: number
   }
@@ -13157,7 +13157,7 @@ await corsair.simlacom.api.loyalty.accountByIdEdit.post({
   activatedAt?: string,
   confirmedPhoneAt?: string,
   lastCheckId?: string,
-  customFields?: {
+  customFields?: custom[] | {
   }
 }
 ```
@@ -13219,7 +13219,7 @@ await corsair.simlacom.api.loyalty.accountCreate.post({
   loyaltyAccount?: {
     phoneNumber?: string,
     cardNumber?: string,
-    customFields?: {
+    customFields?: custom[] | {
     },
     customer: {
       id?: number,
@@ -13239,7 +13239,7 @@ await corsair.simlacom.api.loyalty.accountCreate.post({
 |------|------|----------|-------------|
 | `success` | `boolean` | No | Query result (successful/unsuccessful) |
 | `loyaltyAccount` | `object` | No | Participation in the loyalty program |
-| `warnings` | `object` | No | — |
+| `warnings` | `custom[] \| object` | No | — |
 
 <AccordionGroup>
 <Accordion title="loyaltyAccount full type">
@@ -13259,7 +13259,7 @@ await corsair.simlacom.api.loyalty.accountCreate.post({
   activatedAt?: string,
   confirmedPhoneAt?: string,
   lastCheckId?: string,
-  customFields?: {
+  customFields?: custom[] | {
   }
 }
 ```
@@ -13268,7 +13268,7 @@ await corsair.simlacom.api.loyalty.accountCreate.post({
 <Accordion title="warnings full type">
 
 ```ts
-{
+custom[] | {
 }
 ```
 </Accordion>
@@ -13381,7 +13381,7 @@ await corsair.simlacom.api.loyalty.accounts.get({});
   ][]?: custom[],
   filter[
     customFields
-  ]?: {
+  ]?: custom[] | {
   }
 }
 ```
@@ -13824,7 +13824,7 @@ await corsair.simlacom.api.loyalty.getAccountById.get({
     id?: number,
     externalId?: string,
     site?: string,
-    customFields?: {
+    customFields?: custom[] | {
     },
     firstName?: string | null,
     lastName?: string | null,
@@ -13856,7 +13856,7 @@ await corsair.simlacom.api.loyalty.getAccountById.get({
             xmlId?: string,
             name: string,
             article?: string,
-            properties?: {
+            properties?: custom[] | {
             },
             active?: boolean
           }
@@ -13869,7 +13869,7 @@ await corsair.simlacom.api.loyalty.getAccountById.get({
             xmlId?: string,
             name: string,
             article?: string,
-            properties?: {
+            properties?: custom[] | {
             },
             active?: boolean
           }
@@ -13901,7 +13901,7 @@ await corsair.simlacom.api.loyalty.getAccountById.get({
   confirmedPhoneAt?: string,
   lastCheckId?: string,
   status?: string,
-  customFields?: {
+  customFields?: custom[] | {
   }
 }
 ```
@@ -14185,7 +14185,7 @@ await corsair.simlacom.api.loyalty.getLoyaltiesById.get({
             name: string,
             article?: string,
             vatRate?: string,
-            properties?: {
+            properties?: custom[] | {
             },
             active?: boolean,
             unit?: {
@@ -14205,7 +14205,7 @@ await corsair.simlacom.api.loyalty.getLoyaltiesById.get({
             name: string,
             article?: string,
             vatRate?: string,
-            properties?: {
+            properties?: custom[] | {
             },
             active?: boolean,
             unit?: {
@@ -14646,7 +14646,7 @@ await corsair.simlacom.api.orders.byExternalidEdit.post({
     shipped?: boolean,
     dialogId?: {
     },
-    customFields?: {
+    customFields?: custom[] | {
     },
     orderType?: string,
     orderMethod?: string,
@@ -14717,7 +14717,7 @@ await corsair.simlacom.api.orders.byExternalidEdit.post({
         pickuppointId?: string,
         payerType?: string,
         shipmentpointId?: string,
-        extraData?: {
+        extraData?: custom[] | {
         },
         itemDeclaredValues?: {
           orderProduct?: {
@@ -14756,7 +14756,7 @@ await corsair.simlacom.api.orders.byExternalidEdit.post({
         pickuppointId?: string,
         payerType?: string,
         shipmentpointId?: string,
-        extraData?: {
+        extraData?: custom[] | {
         },
         itemDeclaredValues?: {
           orderProduct?: {
@@ -14999,7 +14999,7 @@ await corsair.simlacom.api.orders.byExternalidEdit.post({
     }[],
     firstClientId?: string,
     lastClientId?: string,
-    customFields?: {
+    customFields?: custom[] | {
     },
     personalDiscount?: number,
     cumulativeDiscount?: number,
@@ -15124,7 +15124,7 @@ await corsair.simlacom.api.orders.byExternalidEdit.post({
     }[],
     firstClientId?: string,
     lastClientId?: string,
-    customFields?: {
+    customFields?: custom[] | {
     },
     personalDiscount?: number,
     cumulativeDiscount?: number,
@@ -15236,7 +15236,7 @@ await corsair.simlacom.api.orders.byExternalidEdit.post({
     }[],
     firstClientId?: string,
     lastClientId?: string,
-    customFields?: {
+    customFields?: custom[] | {
     },
     personalDiscount?: number,
     cumulativeDiscount?: number,
@@ -15306,7 +15306,7 @@ await corsair.simlacom.api.orders.byExternalidEdit.post({
     }[],
     firstClientId?: string,
     lastClientId?: string,
-    customFields?: {
+    customFields?: custom[] | {
     },
     personalDiscount?: number,
     cumulativeDiscount?: number,
@@ -15458,7 +15458,7 @@ await corsair.simlacom.api.orders.byExternalidEdit.post({
     averageSumm?: number | null,
     costSumm?: number | null,
     ordersCount?: number | null,
-    customFields?: {
+    customFields?: custom[] | {
     }
   },
   contragent?: {
@@ -15510,7 +15510,7 @@ await corsair.simlacom.api.orders.byExternalidEdit.post({
       pickuppointName?: string,
       pickuppointCoordinateLatitude?: string,
       pickuppointCoordinateLongitude?: string,
-      extraData?: {
+      extraData?: custom[] | {
       },
       itemDeclaredValues?: {
         orderProduct?: {
@@ -15570,7 +15570,7 @@ await corsair.simlacom.api.orders.byExternalidEdit.post({
       pickuppointName?: string,
       pickuppointCoordinateLatitude?: string,
       pickuppointCoordinateLongitude?: string,
-      extraData?: {
+      extraData?: custom[] | {
       },
       itemDeclaredValues?: {
         orderProduct?: {
@@ -15786,7 +15786,7 @@ await corsair.simlacom.api.orders.byExternalidEdit.post({
       name: string,
       article?: string,
       vatRate?: string,
-      properties?: {
+      properties?: custom[] | {
       },
       unit?: {
         code?: string,
@@ -15824,7 +15824,7 @@ await corsair.simlacom.api.orders.byExternalidEdit.post({
     createdAt?: string,
     comment?: string
   }[],
-  customFields?: {
+  customFields?: custom[] | {
   },
   clientId?: string
 }
@@ -15961,13 +15961,13 @@ await corsair.simlacom.api.orders.combine.post({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | No | Query result (successful/unsuccessful) |
-| `errors` | `object` | No | Errors when combining of orders |
+| `errors` | `custom[] \| object` | No | Errors when combining of orders |
 
 <AccordionGroup>
 <Accordion title="errors full type">
 
 ```ts
-{
+custom[] | {
 }
 ```
 </Accordion>
@@ -16070,7 +16070,7 @@ await corsair.simlacom.api.orders.create.post({
     shipped?: boolean,
     dialogId?: {
     },
-    customFields?: {
+    customFields?: custom[] | {
     },
     orderType?: string,
     orderMethod?: string,
@@ -16140,7 +16140,7 @@ await corsair.simlacom.api.orders.create.post({
         pickuppointId?: string,
         payerType?: string,
         shipmentpointId?: string,
-        extraData?: {
+        extraData?: custom[] | {
         },
         itemDeclaredValues?: {
           orderProduct?: {
@@ -16179,7 +16179,7 @@ await corsair.simlacom.api.orders.create.post({
         pickuppointId?: string,
         payerType?: string,
         shipmentpointId?: string,
-        extraData?: {
+        extraData?: custom[] | {
         },
         itemDeclaredValues?: {
           orderProduct?: {
@@ -16429,7 +16429,7 @@ await corsair.simlacom.api.orders.create.post({
     }[],
     firstClientId?: string,
     lastClientId?: string,
-    customFields?: {
+    customFields?: custom[] | {
     },
     personalDiscount?: number,
     cumulativeDiscount?: number,
@@ -16554,7 +16554,7 @@ await corsair.simlacom.api.orders.create.post({
     }[],
     firstClientId?: string,
     lastClientId?: string,
-    customFields?: {
+    customFields?: custom[] | {
     },
     personalDiscount?: number,
     cumulativeDiscount?: number,
@@ -16666,7 +16666,7 @@ await corsair.simlacom.api.orders.create.post({
     }[],
     firstClientId?: string,
     lastClientId?: string,
-    customFields?: {
+    customFields?: custom[] | {
     },
     personalDiscount?: number,
     cumulativeDiscount?: number,
@@ -16736,7 +16736,7 @@ await corsair.simlacom.api.orders.create.post({
     }[],
     firstClientId?: string,
     lastClientId?: string,
-    customFields?: {
+    customFields?: custom[] | {
     },
     personalDiscount?: number,
     cumulativeDiscount?: number,
@@ -16888,7 +16888,7 @@ await corsair.simlacom.api.orders.create.post({
     averageSumm?: number | null,
     costSumm?: number | null,
     ordersCount?: number | null,
-    customFields?: {
+    customFields?: custom[] | {
     }
   },
   contragent?: {
@@ -16940,7 +16940,7 @@ await corsair.simlacom.api.orders.create.post({
       pickuppointName?: string,
       pickuppointCoordinateLatitude?: string,
       pickuppointCoordinateLongitude?: string,
-      extraData?: {
+      extraData?: custom[] | {
       },
       itemDeclaredValues?: {
         orderProduct?: {
@@ -17000,7 +17000,7 @@ await corsair.simlacom.api.orders.create.post({
       pickuppointName?: string,
       pickuppointCoordinateLatitude?: string,
       pickuppointCoordinateLongitude?: string,
-      extraData?: {
+      extraData?: custom[] | {
       },
       itemDeclaredValues?: {
         orderProduct?: {
@@ -17216,7 +17216,7 @@ await corsair.simlacom.api.orders.create.post({
       name: string,
       article?: string,
       vatRate?: string,
-      properties?: {
+      properties?: custom[] | {
       },
       quantity?: number,
       unit?: {
@@ -17262,7 +17262,7 @@ await corsair.simlacom.api.orders.create.post({
     createdAt?: string,
     comment?: string
   }[],
-  customFields?: {
+  customFields?: custom[] | {
   },
   clientId?: string
 }
@@ -17470,7 +17470,7 @@ await corsair.simlacom.api.orders.getByExternalid.get({
     }[],
     firstClientId?: string,
     lastClientId?: string,
-    customFields?: {
+    customFields?: custom[] | {
     },
     personalDiscount?: number,
     cumulativeDiscount?: number,
@@ -17595,7 +17595,7 @@ await corsair.simlacom.api.orders.getByExternalid.get({
     }[],
     firstClientId?: string,
     lastClientId?: string,
-    customFields?: {
+    customFields?: custom[] | {
     },
     personalDiscount?: number,
     cumulativeDiscount?: number,
@@ -17707,7 +17707,7 @@ await corsair.simlacom.api.orders.getByExternalid.get({
     }[],
     firstClientId?: string,
     lastClientId?: string,
-    customFields?: {
+    customFields?: custom[] | {
     },
     personalDiscount?: number,
     cumulativeDiscount?: number,
@@ -17777,7 +17777,7 @@ await corsair.simlacom.api.orders.getByExternalid.get({
     }[],
     firstClientId?: string,
     lastClientId?: string,
-    customFields?: {
+    customFields?: custom[] | {
     },
     personalDiscount?: number,
     cumulativeDiscount?: number,
@@ -17929,7 +17929,7 @@ await corsair.simlacom.api.orders.getByExternalid.get({
     averageSumm?: number | null,
     costSumm?: number | null,
     ordersCount?: number | null,
-    customFields?: {
+    customFields?: custom[] | {
     }
   },
   contragent?: {
@@ -17981,7 +17981,7 @@ await corsair.simlacom.api.orders.getByExternalid.get({
       pickuppointName?: string,
       pickuppointCoordinateLatitude?: string,
       pickuppointCoordinateLongitude?: string,
-      extraData?: {
+      extraData?: custom[] | {
       },
       itemDeclaredValues?: {
         orderProduct?: {
@@ -18041,7 +18041,7 @@ await corsair.simlacom.api.orders.getByExternalid.get({
       pickuppointName?: string,
       pickuppointCoordinateLatitude?: string,
       pickuppointCoordinateLongitude?: string,
-      extraData?: {
+      extraData?: custom[] | {
       },
       itemDeclaredValues?: {
         orderProduct?: {
@@ -18257,7 +18257,7 @@ await corsair.simlacom.api.orders.getByExternalid.get({
       name: string,
       article?: string,
       vatRate?: string,
-      properties?: {
+      properties?: custom[] | {
       },
       quantity?: number,
       unit?: {
@@ -18296,7 +18296,7 @@ await corsair.simlacom.api.orders.getByExternalid.get({
     createdAt?: string,
     comment?: string
   }[],
-  customFields?: {
+  customFields?: custom[] | {
   },
   clientId?: string
 }
@@ -18425,7 +18425,7 @@ await corsair.simlacom.api.orders.history.get({
       id?: number | null,
       externalId?: string,
       xmlId?: string,
-      properties?: {
+      properties?: custom[] | {
       }
     },
     properties?: {
@@ -18879,7 +18879,7 @@ await corsair.simlacom.api.orders.list.get({});
   ]?: number,
   filter[
     customFields
-  ]?: {
+  ]?: custom[] | {
   }
 }
 ```
@@ -18986,7 +18986,7 @@ await corsair.simlacom.api.orders.list.get({});
     }[],
     firstClientId?: string,
     lastClientId?: string,
-    customFields?: {
+    customFields?: custom[] | {
     },
     personalDiscount?: number,
     cumulativeDiscount?: number,
@@ -19111,7 +19111,7 @@ await corsair.simlacom.api.orders.list.get({});
     }[],
     firstClientId?: string,
     lastClientId?: string,
-    customFields?: {
+    customFields?: custom[] | {
     },
     personalDiscount?: number,
     cumulativeDiscount?: number,
@@ -19223,7 +19223,7 @@ await corsair.simlacom.api.orders.list.get({});
     }[],
     firstClientId?: string,
     lastClientId?: string,
-    customFields?: {
+    customFields?: custom[] | {
     },
     personalDiscount?: number,
     cumulativeDiscount?: number,
@@ -19293,7 +19293,7 @@ await corsair.simlacom.api.orders.list.get({});
     }[],
     firstClientId?: string,
     lastClientId?: string,
-    customFields?: {
+    customFields?: custom[] | {
     },
     personalDiscount?: number,
     cumulativeDiscount?: number,
@@ -19445,7 +19445,7 @@ await corsair.simlacom.api.orders.list.get({});
     averageSumm?: number | null,
     costSumm?: number | null,
     ordersCount?: number | null,
-    customFields?: {
+    customFields?: custom[] | {
     }
   },
   contragent?: {
@@ -19497,7 +19497,7 @@ await corsair.simlacom.api.orders.list.get({});
       pickuppointName?: string,
       pickuppointCoordinateLatitude?: string,
       pickuppointCoordinateLongitude?: string,
-      extraData?: {
+      extraData?: custom[] | {
       },
       itemDeclaredValues?: {
         orderProduct?: {
@@ -19557,7 +19557,7 @@ await corsair.simlacom.api.orders.list.get({});
       pickuppointName?: string,
       pickuppointCoordinateLatitude?: string,
       pickuppointCoordinateLongitude?: string,
-      extraData?: {
+      extraData?: custom[] | {
       },
       itemDeclaredValues?: {
         orderProduct?: {
@@ -19773,7 +19773,7 @@ await corsair.simlacom.api.orders.list.get({});
       name: string,
       article?: string,
       vatRate?: string,
-      properties?: {
+      properties?: custom[] | {
       },
       unit?: {
         code?: string,
@@ -19811,7 +19811,7 @@ await corsair.simlacom.api.orders.list.get({});
     createdAt?: string,
     comment?: string
   }[],
-  customFields?: {
+  customFields?: custom[] | {
   },
   clientId?: string
 }[]
@@ -20485,7 +20485,7 @@ await corsair.simlacom.api.orders.upload.post({
     shipped?: boolean,
     dialogId?: {
     },
-    customFields?: {
+    customFields?: custom[] | {
     },
     orderType?: string,
     orderMethod?: string,
@@ -20551,7 +20551,7 @@ await corsair.simlacom.api.orders.upload.post({
         pickuppointId?: string,
         payerType?: string,
         shipmentpointId?: string,
-        extraData?: {
+        extraData?: custom[] | {
         },
         itemDeclaredValues?: {
           orderProduct?: {
@@ -20590,7 +20590,7 @@ await corsair.simlacom.api.orders.upload.post({
         pickuppointId?: string,
         payerType?: string,
         shipmentpointId?: string,
-        extraData?: {
+        extraData?: custom[] | {
         },
         itemDeclaredValues?: {
           orderProduct?: {
@@ -20860,7 +20860,7 @@ await corsair.simlacom.api.orders.upload.post({
     }[],
     firstClientId?: string,
     lastClientId?: string,
-    customFields?: {
+    customFields?: custom[] | {
     },
     personalDiscount?: number,
     cumulativeDiscount?: number,
@@ -20985,7 +20985,7 @@ await corsair.simlacom.api.orders.upload.post({
     }[],
     firstClientId?: string,
     lastClientId?: string,
-    customFields?: {
+    customFields?: custom[] | {
     },
     personalDiscount?: number,
     cumulativeDiscount?: number,
@@ -21097,7 +21097,7 @@ await corsair.simlacom.api.orders.upload.post({
     }[],
     firstClientId?: string,
     lastClientId?: string,
-    customFields?: {
+    customFields?: custom[] | {
     },
     personalDiscount?: number,
     cumulativeDiscount?: number,
@@ -21167,7 +21167,7 @@ await corsair.simlacom.api.orders.upload.post({
     }[],
     firstClientId?: string,
     lastClientId?: string,
-    customFields?: {
+    customFields?: custom[] | {
     },
     personalDiscount?: number,
     cumulativeDiscount?: number,
@@ -21319,7 +21319,7 @@ await corsair.simlacom.api.orders.upload.post({
     averageSumm?: number | null,
     costSumm?: number | null,
     ordersCount?: number | null,
-    customFields?: {
+    customFields?: custom[] | {
     }
   },
   contragent?: {
@@ -21371,7 +21371,7 @@ await corsair.simlacom.api.orders.upload.post({
       pickuppointName?: string,
       pickuppointCoordinateLatitude?: string,
       pickuppointCoordinateLongitude?: string,
-      extraData?: {
+      extraData?: custom[] | {
       },
       itemDeclaredValues?: {
         orderProduct?: {
@@ -21431,7 +21431,7 @@ await corsair.simlacom.api.orders.upload.post({
       pickuppointName?: string,
       pickuppointCoordinateLatitude?: string,
       pickuppointCoordinateLongitude?: string,
-      extraData?: {
+      extraData?: custom[] | {
       },
       itemDeclaredValues?: {
         orderProduct?: {
@@ -21643,7 +21643,7 @@ await corsair.simlacom.api.orders.upload.post({
       name: string,
       article?: string,
       vatRate?: string,
-      properties?: {
+      properties?: custom[] | {
       },
       unit?: {
         code?: string,
@@ -21681,7 +21681,7 @@ await corsair.simlacom.api.orders.upload.post({
     createdAt?: string,
     comment?: string
   }[],
-  customFields?: {
+  customFields?: custom[] | {
   },
   clientId?: string
 }[] | null
@@ -22901,7 +22901,7 @@ await corsair.simlacom.api.settings.list.get({});
 
 Statistics updating
 
-**Risk:** `read`
+**Risk:** `write`
 
 ```ts
 await corsair.simlacom.api.statistics.statisticUpdate.get({});
@@ -23225,7 +23225,7 @@ await corsair.simlacom.api.store.offers.get({});
   ]?: custom,
   filter[
     properties
-  ]?: {
+  ]?: custom[] | {
   },
   filter[
     sinceId
@@ -23304,7 +23304,7 @@ await corsair.simlacom.api.store.offers.get({});
     stock?: boolean,
     novelty?: boolean,
     recommended?: boolean,
-    options?: {
+    options?: custom[] | {
     },
     groups?: {
       id?: number,
@@ -23318,7 +23318,7 @@ await corsair.simlacom.api.store.offers.get({});
     markable?: boolean,
     markingProvider?: custom
   },
-  properties?: {
+  properties?: custom[] | {
   },
   quantity?: number,
   weight?: number,
@@ -23776,7 +23776,7 @@ await corsair.simlacom.api.store.products.get({});
   ]?: boolean,
   filter[
     properties
-  ]?: {
+  ]?: custom[] | {
   },
   filter[
     markable
@@ -23872,7 +23872,7 @@ await corsair.simlacom.api.store.products.get({});
   stock?: boolean,
   novelty?: boolean,
   recommended?: boolean,
-  options?: {
+  options?: custom[] | {
   },
   groups?: {
     id?: number,
@@ -23896,7 +23896,7 @@ await corsair.simlacom.api.store.products.get({});
     }[],
     purchasePrice?: number,
     vatRate?: string,
-    properties?: {
+    properties?: custom[] | {
     },
     quantity?: number,
     weight?: number,
@@ -25048,14 +25048,14 @@ The official OpenAPI marks `phone`, `type`, and `code` required but omits their 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | No | Query result (successful/unsuccessful) |
-| `notExistCodes` | `object` | No | Array of extensions, which are absent in the system |
-| `notExistUsers` | `object` | No | Array of userId, which are absent in the system |
+| `notExistCodes` | `custom[] \| object` | No | Array of extensions, which are absent in the system |
+| `notExistUsers` | `custom[] \| object` | No | Array of userId, which are absent in the system |
 
 <AccordionGroup>
 <Accordion title="notExistCodes full type">
 
 ```ts
-{
+custom[] | {
 }
 ```
 </Accordion>
@@ -25063,7 +25063,7 @@ The official OpenAPI marks `phone`, `type`, and `code` required but omits their 
 <Accordion title="notExistUsers full type">
 
 ```ts
-{
+custom[] | {
 }
 ```
 </Accordion>
@@ -25305,13 +25305,13 @@ await corsair.simlacom.api.telephony.callsUpload.post({});
 |------|------|----------|-------------|
 | `success` | `boolean` | No | Query result (successful/unsuccessful) |
 | `processedCallsCount` | `number` | No | Quantity of successfully processed calls |
-| `duplicateCalls` | `object` | No | Array of externalId, which are present in the system |
+| `duplicateCalls` | `custom[] \| object` | No | Array of externalId, which are present in the system |
 
 <AccordionGroup>
 <Accordion title="duplicateCalls full type">
 
 ```ts
-{
+custom[] | {
 }
 ```
 </Accordion>
@@ -25576,7 +25576,7 @@ await corsair.simlacom.api.tickets.byExternalidEdit.post({
     addTags?: string[],
     removeTags?: string[],
     attachedTag?: string,
-    customFields?: {
+    customFields?: custom[] | {
     },
     callIds?: number[],
     dialogIds?: number[]
@@ -25740,7 +25740,7 @@ await corsair.simlacom.api.tickets.byExternalidEdit.post({
   callIds?: number[],
   dialogIds?: number[],
   attachedTag?: string,
-  customFields?: {
+  customFields?: custom[] | {
   }
 }
 ```
@@ -26135,7 +26135,7 @@ await corsair.simlacom.api.tickets.create.post({});
     addTags?: string[],
     removeTags?: string[],
     attachedTag?: string,
-    customFields?: {
+    customFields?: custom[] | {
     },
     callIds?: number[],
     dialogIds?: number[],
@@ -26299,7 +26299,7 @@ await corsair.simlacom.api.tickets.create.post({});
   callIds?: number[],
   dialogIds?: number[],
   attachedTag?: string,
-  customFields?: {
+  customFields?: custom[] | {
   }
 }
 ```
@@ -26504,7 +26504,7 @@ await corsair.simlacom.api.tickets.getByExternalid.get({
   callIds?: number[],
   dialogIds?: number[],
   attachedTag?: string,
-  customFields?: {
+  customFields?: custom[] | {
   }
 }
 ```
@@ -26706,7 +26706,7 @@ await corsair.simlacom.api.tickets.history.get({
     tags?: {
       name?: string
     }[],
-    customFields?: {
+    customFields?: custom[] | {
     }
   },
   issue?: {
@@ -26804,7 +26804,7 @@ await corsair.simlacom.api.tickets.list.get({});
 {
   filter[
     customFields
-  ]?: {
+  ]?: custom[] | {
   },
   limit?: custom,
   cursor?: string,
@@ -27076,7 +27076,7 @@ await corsair.simlacom.api.tickets.list.get({});
   callIds?: number[],
   dialogIds?: number[],
   attachedTag?: string,
-  customFields?: {
+  customFields?: custom[] | {
   }
 }[]
 ```
@@ -27440,21 +27440,21 @@ await corsair.simlacom.api.users.userGroups.get({});
   code?: string,
   isManager?: boolean,
   isDeliveryMen?: boolean,
-  deliveryTypes?: {
+  deliveryTypes?: custom[] | {
   },
-  breakdownOrderTypes?: {
+  breakdownOrderTypes?: custom[] | {
   },
-  breakdownStatusGroups?: {
+  breakdownStatusGroups?: custom[] | {
   },
-  breakdownSites?: {
+  breakdownSites?: custom[] | {
   },
-  breakdownOrderMethods?: {
+  breakdownOrderMethods?: custom[] | {
   },
-  grantedOrderTypes?: {
+  grantedOrderTypes?: custom[] | {
   },
-  grantedStatusGroups?: {
+  grantedStatusGroups?: custom[] | {
   },
-  grantedSites?: {
+  grantedSites?: custom[] | {
   }
 }[]
 ```
@@ -27693,7 +27693,7 @@ await corsair.simlacom.api.webAnalytics.clientIdsUpload.post({
 | `success` | `boolean` | No | Query result (successful/unsuccessful) |
 | `failedClientIds` | `object[]` | No | — |
 | `errorMsg` | `string` | No | — |
-| `errors` | `object` | No | — |
+| `errors` | `custom[] \| object` | No | — |
 
 <AccordionGroup>
 <Accordion title="failedClientIds full type">
@@ -27721,7 +27721,7 @@ await corsair.simlacom.api.webAnalytics.clientIdsUpload.post({
 <Accordion title="errors full type">
 
 ```ts
-{
+custom[] | {
 }
 ```
 </Accordion>
@@ -27808,7 +27808,7 @@ await corsair.simlacom.api.webAnalytics.sourcesUpload.post({
 | `success` | `boolean` | No | Query result (successful/unsuccessful) |
 | `failedSources` | `object[]` | No | — |
 | `errorMsg` | `string` | No | — |
-| `errors` | `object` | No | — |
+| `errors` | `custom[] \| object` | No | — |
 
 <AccordionGroup>
 <Accordion title="failedSources full type">
@@ -27840,7 +27840,7 @@ await corsair.simlacom.api.webAnalytics.sourcesUpload.post({
 <Accordion title="errors full type">
 
 ```ts
-{
+custom[] | {
 }
 ```
 </Accordion>
@@ -27936,7 +27936,7 @@ await corsair.simlacom.api.webAnalytics.visitsUpload.post({
 | `success` | `boolean` | No | Query result (successful/unsuccessful) |
 | `failedVisits` | `object[]` | No | — |
 | `errorMsg` | `string` | No | — |
-| `errors` | `object` | No | — |
+| `errors` | `custom[] \| object` | No | — |
 
 <AccordionGroup>
 <Accordion title="failedVisits full type">
@@ -27977,7 +27977,7 @@ await corsair.simlacom.api.webAnalytics.visitsUpload.post({
 <Accordion title="errors full type">
 
 ```ts
-{
+custom[] | {
 }
 ```
 </Accordion>

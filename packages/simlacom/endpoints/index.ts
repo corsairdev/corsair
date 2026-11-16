@@ -3735,7 +3735,7 @@ export const simlaComEndpointMeta: RequiredPluginEndpointMeta<
 		description: 'Batch uploading of visits',
 	},
 	'statistics.statisticUpdate.get': {
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description: 'Statistics updating',
 	},
 };

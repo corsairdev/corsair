@@ -261,6 +261,8 @@ describe('documented operation transport', () => {
 			'destructive',
 		);
 		expect(risk('notifications.send.post')).toBe('destructive');
+		// Queues a statistics job and needs analytics_write, though it is a GET.
+		expect(risk('statistics.statisticUpdate.get')).toBe('write');
 		for (const operation of SIMLACOM_OPERATIONS) {
 			expect(risk(operation.id)).toBe(operation.risk);
 		}

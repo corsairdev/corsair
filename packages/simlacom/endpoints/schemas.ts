@@ -15,6 +15,7 @@ const openApiSchemas = new Map<string, JsonSchema>(
 	Object.entries(operationData.schemas),
 );
 
+// Request and response values are untrusted JSON until this guard narrows them.
 function isJsonValue(value: unknown): value is JsonValue {
 	if (
 		value === null ||
@@ -214,7 +215,15 @@ function schemaToZod(schema: JsonSchema): z.ZodType<unknown> {
 		) {
 			result = objectSchema.catchall(schemaToZod(schema.additionalProperties));
 		} else if (schema.additionalProperties === true) {
-			result = objectSchema.catchall(allowJsonValue);
+			result =
+				Object.keys(fields).length === 0
+					? // The spec types several PHP lists (cost and payment-type `sites`,
+						// notification ids) as an open object; the API takes a JSON list there.
+						z.union([
+							z.array(allowJsonValue),
+							objectSchema.catchall(allowJsonValue),
+						])
+					: objectSchema.catchall(allowJsonValue);
 		} else {
 			result = objectSchema.strict();
 		}
@@ -227,12 +236,14 @@ function schemaToZod(schema: JsonSchema): z.ZodType<unknown> {
 	return result;
 }
 
+// Each field schema is built at runtime from the OpenAPI model, so its value type is only known after parsing.
 function objectSchema(
 	fields: Record<string, z.ZodType<unknown>>,
 ): z.ZodObject<Record<string, z.ZodType<unknown>>> {
 	return z.object(fields).strict();
 }
 
+// Each operation's input shape differs; the returned schema is typed by the generated input map.
 export function createOperationInputSchema(
 	operation: SimlaComOperation,
 ): z.ZodType<SimlaComEndpointInput> {
@@ -360,6 +371,7 @@ function lenientSchemaToZod(schema: JsonSchema): z.ZodType<unknown> {
 	return anyJson;
 }
 
+// The output type varies by operation; callers get the typed value from the endpoint after this check.
 export function createLenientOperationOutputSchema(
 	operation: SimlaComOperation,
 ): z.ZodType<unknown> {

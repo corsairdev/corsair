@@ -1327,7 +1327,7 @@ export type OpenApiSerializedCost = {
 	costItem?: string;
 	order?: OpenApiSerializedEntityOrder6 | null;
 	userId?: number;
-	sites?: Record<string, JsonValue>;
+	sites?: Array<string> | Record<string, JsonValue>;
 	source?: OpenApiSerializedSource4 | null;
 };
 export type OpenApiPaginationResponse2 = {
@@ -2909,7 +2909,7 @@ export type OpenApiSerializedDeliveryType = {
 	defaultTariffType?: string | null;
 	integrationCode?: string;
 	deliveryServices?: Record<string, JsonValue>;
-	sites?: Record<string, JsonValue>;
+	sites?: Array<string> | Record<string, JsonValue>;
 };
 export type OpenApiLegalEntity = {
 	contragentType?: 'legal-entity' | 'enterpreneur' | null;
@@ -3031,7 +3031,7 @@ export type OpenApiSerializedPaymentType = {
 	defaultForApi?: boolean;
 	description?: string;
 	paymentStatuses?: Record<string, JsonValue>;
-	sites?: Record<string, JsonValue>;
+	sites?: Array<string> | Record<string, JsonValue>;
 	paymentDeliveryTypes?: Array<OpenApiPaymentTypeDeliveryPaymentType2>;
 };
 export type OpenApiPriceType = {

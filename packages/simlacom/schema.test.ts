@@ -282,12 +282,16 @@ describe('OpenAPI-derived Zod schemas', () => {
 			['dataBook.referenceStores.get', stores],
 		];
 		for (const [id, response] of cases) {
-			const strict = createOperationOutputSchema(getSimlaComOperation(id));
-			expect(strict.safeParse(response).success).toBe(false);
 			expect(SIMLACOM_OUTPUT_SCHEMAS.get(id)?.safeParse(response).success).toBe(
 				true,
 			);
 		}
+		// The published store model alone still rejects the live `ordering: "990"`.
+		expect(
+			createOperationOutputSchema(
+				getSimlaComOperation('dataBook.referenceStores.get'),
+			).safeParse(stores).success,
+		).toBe(false);
 		// Structure still counts: a list that arrives as a string is refused.
 		expect(
 			SIMLACOM_OUTPUT_SCHEMAS.get('dataBook.referenceStores.get')?.safeParse({
@@ -354,6 +358,12 @@ describe('OpenAPI-derived Zod schemas', () => {
 						userGroups: ['superadmins'],
 					},
 				},
+			}).success,
+		).toBe(true);
+		// The spec types `sites` as an open object; the API takes a list of store codes.
+		expect(
+			SIMLACOM_INPUT_SCHEMAS.get('cost.create.post')?.safeParse({
+				body: { cost: { summ: 1, sites: ['main'] } },
 			}).success,
 		).toBe(true);
 		const keyedFilters: Array<[string, string]> = [

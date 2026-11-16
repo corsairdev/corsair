@@ -11099,7 +11099,7 @@ export const operationData: OperationData = {
 			summary: 'Statistics updating',
 			description:
 				'To access the method, the following permission is required analytics_write . Queues up the task to update key statistical indicators in the system. Retry timeout is 60 seconds. If calls are made more frequently, a 400 error will be returned.',
-			risk: 'read',
+			risk: 'write',
 			parameters: [],
 			response: {
 				kind: 'json',
