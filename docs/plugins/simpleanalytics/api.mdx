@@ -33,9 +33,9 @@ await corsair.simpleanalytics.api.export.datapoints({ hostname: 'example.com', s
 | `fields` | `(added_unix \| added_iso \| added_date \| hostname \| hostname_original \| path \| query \| path_and_query \| is_unique \| is_robot \| document_referrer \| referrer_hostname \| referrer_path \| utm_source \| utm_medium \| utm_campaign \| utm_content \| utm_term \| scrolled_percentage \| duration_seconds \| viewport_width \| viewport_height \| screen_width \| screen_height \| user_agent \| device_type \| country_code \| browser_name \| browser_version \| os_name \| os_version \| lang_region \| lang_language \| uuid \| datapoint \| session_id)[]` | Yes | Always send this: without it the legacy field set comes back, and type=all fails. |
 | `type` | `pageviews \| events \| all` | No | Page views, events, or both. Defaults to pageviews. |
 | `robots` | `boolean` | No | Include robots and crawlers. Defaults to false. |
-| `metadata_fields` | `string[]` | No | Metadata keys to export, such as project_text. Their storage suffix is required here, unlike in Stats filters. |
+| `metadata_fields` | `string[]` | No | Metadata keys to export with their storage suffix, such as project_text (sent as metadata.project_text). The suffix is required here, unlike in Stats filters. |
 
-Export asks for format=json, because the CSV, NDJSON, Parquet and Avro formats cannot be returned intact. Metadata columns appear only when named in metadata_fields, and need their storage suffix.
+Export asks for format=json, because the CSV, NDJSON, Parquet and Avro formats cannot be returned intact. Metadata columns appear only when named in metadata_fields, and need their storage suffix; a bare key such as project_text is sent as metadata.project_text.
 
 
 
@@ -44,7 +44,7 @@ Export asks for format=json, because the CSV, NDJSON, Parquet and Avro formats c
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `datapoints` | `object[]` | Yes | — |
-| `meta` | `Record<string, unknown> \| null` | No | — |
+| `meta` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="datapoints full type">
@@ -137,7 +137,7 @@ await corsair.simpleanalytics.api.stats.get({ hostname: 'example.com', start: 't
 | `device_type` | `mobile \| tablet \| desktop \| tv` | No | — |
 | `metadata` | `Record<string, string>` | No | Exact metadata matches, sent as metadata.&lt;key&gt;. Keys use letters, digits and underscores only, without the storage suffix. |
 
-Send at least one field; an empty list returns the version 1 format. The path form reads one page, so pass path rather than the page filter for that. Metadata filters use the bare key as metadata.<key>, without a storage suffix, and every filter given has to match.
+Send at least one field; an empty list returns the version 1 format. The path form reads one page, so pass path rather than the page filter for that; a path of `/` (the homepage) is sent as the page filter. Metadata filters use the bare key as `metadata.<key>`, without a storage suffix, and every filter given has to match.
 
 
 
