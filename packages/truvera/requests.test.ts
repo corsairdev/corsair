@@ -9,6 +9,8 @@ import {
 } from './endpoints';
 import {
 	createdDid,
+	createdRegistry,
+	createdSchema,
 	credentialMetadata,
 	deleted,
 	didDocument,
@@ -160,14 +162,26 @@ describe('profiles', () => {
 		expect(lastRequest().path).toBe('/profiles');
 	});
 
-	it('profiles.create POSTs the DID', async () => {
+	it('profiles.create POSTs the DID and the name Truvera requires', async () => {
 		respond(profile);
 
-		await invoke(ProfilesEndpoints.create, { did: DID });
+		await invoke(ProfilesEndpoints.create, { did: DID, name: 'Acme Issuer' });
 
 		expectAuthenticated();
 		expect(lastRequest().method).toBe('POST');
-		expect(lastRequest().body).toEqual({ did: DID });
+		expect(lastRequest().body).toEqual({ did: DID, name: 'Acme Issuer' });
+	});
+
+	it('profiles.create and update refuse a call without a name', async () => {
+		// Live: "did and name properties are required".
+		for (const endpoint of [
+			ProfilesEndpoints.create,
+			ProfilesEndpoints.update,
+		]) {
+			const error = await captureError(invoke(endpoint, { did: DID }));
+			expect((error as Error).name).toBe('ZodError');
+		}
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('profiles.update PATCHes the fields it was given', async () => {
@@ -365,6 +379,16 @@ describe('credentials', () => {
 		expect(decodeURIComponent(lastRequest().path)).toContain('/unrevoke');
 	});
 
+	it('credentials.delete accepts the empty 200 the API sends', async () => {
+		fetchMock.mockResolvedValueOnce(new Response(null, { status: 200 }));
+
+		await expect(
+			invoke(CredentialsEndpoints.delete, {
+				credential_id: 'https://creds.truvera.io/1234',
+			}),
+		).resolves.toBeUndefined();
+	});
+
 	it('credentials.delete DELETEs the metadata', async () => {
 		respond(deleted);
 
@@ -379,7 +403,7 @@ describe('credentials', () => {
 
 describe('schemas', () => {
 	it('schemas.create POSTs the JSON schema', async () => {
-		respond(schema);
+		respond(createdSchema);
 
 		const result = (await invoke(SchemasEndpoints.create, {
 			name: 'Basic Credential',
@@ -388,14 +412,16 @@ describe('schemas', () => {
 			properties: { name: { type: 'string' } },
 			required: ['name'],
 			additional_properties: false,
-		})) as { id?: string | null };
+		})) as { id?: string | null; data?: { schema?: { $id?: string } } };
 
 		expectAuthenticated();
 		expect(lastRequest().path).toBe('/schemas');
 		const body = lastRequest().body as Record<string, unknown>;
 		expect(body.name).toBe('Basic Credential');
 		expect(body.additionalProperties).toBe(false);
-		expect(result.id).toContain('schemas/basic-credential');
+		// The answer is the job plus the new schema, whose id is its $id.
+		expect(result.id).toBe('0');
+		expect(result.data?.schema?.$id).toContain('CorsairPluginTest');
 	});
 
 	it('schemas.list GETs the schema list', async () => {
@@ -431,17 +457,19 @@ describe('schemas', () => {
 
 describe('registries', () => {
 	it('registries.create POSTs the registry body', async () => {
-		respond(registry);
+		respond(createdRegistry);
 
 		const result = (await invoke(RegistriesEndpoints.create, {
 			type: 'dock',
 			add_only: true,
-		})) as { id?: string | null };
+		})) as { id?: string | null; data?: { id?: string } };
 
 		expectAuthenticated();
 		expect(lastRequest().path).toBe('/registries');
 		expect(lastRequest().body).toEqual({ type: 'dock', addOnly: true });
-		expect(result.id).toBe(registry.id);
+		// `id` is the job; the registry id is `data.id`.
+		expect(result.id).toBe('75841');
+		expect(result.data?.id).toBe(registry.id);
 	});
 
 	it('registries.list GETs the registry list', async () => {
@@ -497,6 +525,17 @@ describe('registries', () => {
 
 		expect((error as Error).name).toBe('ZodError');
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('registries.revocationStatus reads the boolean type the API answers', async () => {
+		respond({ type: false });
+
+		const result = (await invoke(RegistriesEndpoints.revocationStatus, {
+			registry_id: 'reg-1',
+			revocation_id: '0',
+		})) as { type?: boolean | string | null };
+
+		expect(result.type).toBe(false);
 	});
 
 	it('registries.revocationStatus GETs the status route', async () => {

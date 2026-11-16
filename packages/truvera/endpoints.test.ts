@@ -76,10 +76,11 @@ describe('output schemas keep the provider field names', () => {
 		expect(parsed.additionalProperties).toBe(false);
 	});
 
-	it('parses a registry', () => {
-		const parsed = TruveraEndpointOutputSchemas.createRegistry.parse(registry);
-		expect(parsed.addOnly).toBe(false);
-		expect(parsed.type).toBe('dock');
+	it('parses a registry in the live shape', () => {
+		const parsed = TruveraEndpointOutputSchemas.getRegistry.parse(registry);
+		expect(parsed.policy_and_type?.addOnly).toBe(true);
+		expect(parsed.registry_type).toBe('StatusList2021Entry');
+		expect(parsed.latest_credential_index).toBe(0);
 	});
 
 	it('parses a revocation status', () => {
@@ -130,7 +131,7 @@ describe('wrong-shaped bodies fail loudly', () => {
 
 	it('rejects a registry whose addOnly is a number', () => {
 		expect(() =>
-			TruveraEndpointOutputSchemas.createRegistry.parse({
+			TruveraEndpointOutputSchemas.getRegistry.parse({
 				...registry,
 				addOnly: 1,
 			}),

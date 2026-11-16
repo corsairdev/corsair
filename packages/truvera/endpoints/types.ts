@@ -155,21 +155,58 @@ const SchemaSchema = z
 	.loose();
 export type SchemaOutput = z.output<typeof SchemaSchema>;
 
+// The live API (11-16) nests the policy under `policy_and_type` and adds the
+// registry type, creation time, job and last index; the spec's flat fields
+// stay readable too.
 const RegistrySchema = z
 	.object({
 		id: z.string().nullish(),
+		policy_and_type: z
+			.object({
+				type: z.string().nullish(),
+				policy: z.array(z.string()).nullish(),
+				addOnly: z.boolean().nullish(),
+			})
+			.loose()
+			.nullish(),
+		registry_type: z.string().nullish(),
+		created_at: z.string().nullish(),
+		job_id: z.string().nullish(),
+		latest_credential_index: z.number().nullish(),
 		addOnly: z.boolean().nullish(),
 		policy: z.array(z.union([z.string(), z.object({}).loose()])).nullish(),
 		type: z.string().nullish(),
 		created: z.string().nullish(),
 	})
 	.loose();
+
+/**
+ * Creating a schema or a registry answers `{ id, data }`: `id` is the job to
+ * poll with `jobs.get`, and `data` holds the new schema or registry (its own
+ * id is `data.id` for a registry and `data.schema.$id` for a schema).
+ */
+const CreateJobResultSchema = z
+	.object({
+		id: z
+			.union([z.string(), z.number()])
+			.nullish()
+			.describe('The job to poll with jobs.get'),
+		// unknown: the created schema or registry, as Truvera returns it.
+		data: z.record(z.string(), z.unknown()).nullish(),
+	})
+	.loose();
+export type CreateJobResultOutput = z.output<typeof CreateJobResultSchema>;
 export type RegistryOutput = z.output<typeof RegistrySchema>;
 
+// The spec and the live API (11-16) answer `{ type: <boolean> }`: true when
+// the credential is revoked.
 const RevocationStatusSchema = z
 	.object({
-		status: z.string().nullish().describe('Revoked, unrevoked, or suspended'),
-		type: z.string().nullish(),
+		type: z
+			.union([z.boolean(), z.string()])
+			.nullish()
+			.describe('true when the credential is revoked'),
+		status: z.string().nullish(),
 		revoked: z.boolean().nullish(),
 	})
 	.loose();
@@ -202,8 +239,9 @@ export type JobOutput = z.output<typeof JobSchema>;
 /** A delete answers 200 with an empty object. */
 const DeleteResultSchema = z.object({}).loose();
 
-// The spec documents a profile delete as a 200 with no body, which core hands
-// back as undefined; any body that does arrive must still be an object.
+// The spec documents a profile delete as a 200 with no body, and a credential
+// delete answers the same live (11-16). Core hands an empty body back as
+// undefined; any body that does arrive must still be an object.
 const DeleteProfileResultSchema = z.union([
 	z.object({}).loose(),
 	z.undefined(),
@@ -285,14 +323,22 @@ export type ListProfilesInput = z.input<typeof ListProfilesInputSchema>;
 
 const ProfileListSchema = z.array(ProfileSchema);
 
+// Truvera answers "did and name properties are required" without a name, on
+// create and on update (live, 11-16).
 const CreateProfileInputSchema = z.object({
 	did: DidSchema,
+	name: z.string().min(1).describe('The issuer name shown on credentials'),
+	description: z.string().optional(),
+	logo: z.string().optional(),
 });
 export type CreateProfileInput = z.input<typeof CreateProfileInputSchema>;
 
 const UpdateProfileInputSchema = z.object({
 	did: DidSchema,
-	name: z.string().optional(),
+	name: z
+		.string()
+		.min(1)
+		.describe('Required by Truvera on every update, even when unchanged'),
 	description: z.string().optional(),
 	logo: z.string().optional(),
 	website: z.string().optional().describe('A URL for the profile'),
@@ -576,14 +622,14 @@ export type TruveraEndpointOutputs = {
 	issueCredential: VerifiableCredentialOutput;
 	listCredentials: z.output<typeof CredentialListSchema>;
 	getCredential: CredentialMetadataOutput;
-	deleteCredential: z.output<typeof DeleteResultSchema>;
+	deleteCredential: z.output<typeof DeleteProfileResultSchema>;
 	revokeCredential: z.output<typeof DeleteResultSchema>;
 	unrevokeCredential: z.output<typeof DeleteResultSchema>;
-	createSchema: SchemaOutput;
+	createSchema: CreateJobResultOutput;
 	listSchemas: z.output<typeof SchemaListSchema>;
 	getSchema: SchemaOutput;
 	deleteSchema: z.output<typeof DeleteResultSchema>;
-	createRegistry: RegistryOutput;
+	createRegistry: CreateJobResultOutput;
 	listRegistries: z.output<typeof RegistryListSchema>;
 	getRegistry: RegistryOutput;
 	deleteRegistry: z.output<typeof DeleteResultSchema>;
@@ -638,14 +684,14 @@ export const TruveraEndpointOutputSchemas = {
 	issueCredential: VerifiableCredentialSchema,
 	listCredentials: CredentialListSchema,
 	getCredential: CredentialMetadataSchema,
-	deleteCredential: DeleteResultSchema,
+	deleteCredential: DeleteProfileResultSchema,
 	revokeCredential: DeleteResultSchema,
 	unrevokeCredential: DeleteResultSchema,
-	createSchema: SchemaSchema,
+	createSchema: CreateJobResultSchema,
 	listSchemas: SchemaListSchema,
 	getSchema: SchemaSchema,
 	deleteSchema: DeleteResultSchema,
-	createRegistry: RegistrySchema,
+	createRegistry: CreateJobResultSchema,
 	listRegistries: RegistryListSchema,
 	getRegistry: RegistrySchema,
 	deleteRegistry: DeleteResultSchema,

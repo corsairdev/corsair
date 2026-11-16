@@ -43,20 +43,20 @@ apiExamples:
   dids.create:
     call: "{ type: 'cheqd', key_type: 'ed25519' }"
   dids.get:
-    call: "{ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59' }"
+    call: "{ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59', name: 'Acme Issuer' }"
   dids.getMetadata:
-    call: "{ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59' }"
+    call: "{ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59', name: 'Acme Issuer' }"
   dids.delete:
-    call: "{ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59' }"
+    call: "{ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59', name: 'Acme Issuer' }"
   profiles.list: {}
   profiles.create:
-    call: "{ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59' }"
+    call: "{ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59', name: 'Acme Issuer' }"
   profiles.get:
-    call: "{ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59' }"
+    call: "{ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59', name: 'Acme Issuer' }"
   profiles.update:
     call: "{ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59', name: 'Truvera Issuer' }"
   profiles.delete:
-    call: "{ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59' }"
+    call: "{ did: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59', name: 'Acme Issuer' }"
   credentials.issue:
     call: "{ credential: { issuer: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59', type: ['BasicCredential'], subject: { id: 'did:key:z6Mkq...', name: 'A. Holder' } }, revocable: true }"
   credentials.list:

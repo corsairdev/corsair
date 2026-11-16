@@ -35,7 +35,14 @@ export const create: TruveraEndpoints['profilesCreate'] = async (ctx, input) =>
 		(parsed) => ({
 			method: 'POST',
 			path: 'profiles',
-			body: { did: parsed.did },
+			body: {
+				did: parsed.did,
+				name: parsed.name,
+				...(parsed.description === undefined
+					? {}
+					: { description: parsed.description }),
+				...(parsed.logo === undefined ? {} : { logo: parsed.logo }),
+			},
 		}),
 		{ log: (parsed, result) => ({ did: result.did ?? parsed.did }) },
 	);
@@ -67,7 +74,7 @@ export const update: TruveraEndpoints['profilesUpdate'] = async (ctx, input) =>
 			path: `profiles/${segment(parsed.did)}`,
 			body: {
 				did: parsed.did,
-				...(parsed.name === undefined ? {} : { name: parsed.name }),
+				name: parsed.name,
 				...(parsed.description === undefined
 					? {}
 					: { description: parsed.description }),

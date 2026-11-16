@@ -107,12 +107,30 @@ export const schema = {
 	additionalProperties: false,
 };
 
+// The live shape (sandbox, 11-16), trimmed.
 export const registry = {
-	id: 'e6d3...59d1',
-	addOnly: false,
-	policy: [],
-	type: 'dock',
-	created: '2026-05-02T00:00:00Z',
+	id: '0906a843086f3334f4563b875c1a5581c151b72e9d825fa91a7b2f3e93b18627',
+	policy_and_type: {
+		type: 'OneOf',
+		policy: ['did:cheqd:testnet:db78be1d-d184-4f40-a312-351e1a16004b'],
+		addOnly: true,
+	},
+	created_at: '2026-11-16T03:31:34.818Z',
+	job_id: '75841',
+	registry_type: 'StatusList2021Entry',
+	latest_credential_index: 0,
+};
+
+// Creating a registry or a schema answers the job id and the new item (live).
+export const createdRegistry = { id: '75841', data: { id: registry.id } };
+export const createdSchema = {
+	id: '0',
+	data: {
+		schema: {
+			$id: 'https://schema.truvera.io/CorsairPluginTest-V1-1794799940674.json',
+			name: 'corsair-plugin-test',
+		},
+	},
 };
 
 export const revocationStatus = {
