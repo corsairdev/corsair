@@ -345,6 +345,10 @@ function responseSchema(
 		: schema;
 }
 
+// Documented as 204 with no body, but a V3 task delete answers 200 with
+// `{ affected: { taskIds: [] } }` (live run 11-16). Accept no body or a JSON object.
+const noContentResponse = z.union([z.undefined(), z.object({}).passthrough()]);
+
 const schemaCache = new Map<string, z.ZodType>();
 export const teamworkInputSchemas = Object.fromEntries(
 	teamworkOperations.map((operation) => [
@@ -356,7 +360,7 @@ export const teamworkOutputSchemas = Object.fromEntries(
 	teamworkOperations.map((operation) => [
 		operation.id,
 		operation.response === null
-			? z.undefined()
+			? noContentResponse
 			: responseSchema(operation, schemaCache),
 	]),
 );

@@ -402,10 +402,13 @@ export type TeamworkEndpointInputs = {
  * So every response field is optional and nullable, enum fields are plain
  * strings, and V1 scalars may be any JSON scalar (see the runtime schemas).
  */
-type TeamworkResponse<T> = T extends Array<infer Item>
-	? Array<TeamworkResponse<Item>>
+type TeamworkResponse<T> = [T] extends [undefined]
+	? undefined | { [key: string]: TeamworkJsonValue }
+	: TeamworkResponseValue<T>;
+type TeamworkResponseValue<T> = T extends Array<infer Item>
+	? Array<TeamworkResponseValue<Item>>
 	: T extends object
-		? { [Key in keyof T]?: TeamworkResponse<T[Key]> | null }
+		? { [Key in keyof T]?: TeamworkResponseValue<T[Key]> | null }
 		: (T extends string ? string : T) | null;
 type TeamworkV1Response<T> = T extends Array<infer Item>
 	? Array<TeamworkV1Response<Item>>

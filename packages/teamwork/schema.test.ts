@@ -232,6 +232,14 @@ describe('Teamwork OpenAPI contract schemas', () => {
 		).toBe(true);
 	});
 
+	it('accepts the body a V3 task delete answers although the spec says 204', () => {
+		const schema =
+			teamworkOutputSchemas['v3_delete_projects_api_v3_tasks_taskid_json'];
+		const body = { affected: { taskIds: [] } };
+		expect(schema?.safeParse(body).data).toEqual(body);
+		expect(schema?.safeParse(undefined).success).toBe(true);
+	});
+
 	it('still rejects a response that is not the documented top-level shape', () => {
 		const schema =
 			teamworkOutputSchemas['v3_get_projects_api_v3_projects_projectid_json'];
@@ -356,7 +364,8 @@ describe('Teamwork OpenAPI contract schemas', () => {
 			expect(outputSchema).toBeDefined();
 			expect(inputSchema?.safeParse({ unexpected: true }).success).toBe(false);
 			if (operation.responseCode === '204') {
-				expect(outputSchema?.safeParse({}).success).toBe(false);
+				expect(outputSchema?.safeParse(undefined).success).toBe(true);
+				expect(outputSchema?.safeParse('unexpected text').success).toBe(false);
 			} else {
 				expect(outputSchema?.safeParse(null).success).toBe(false);
 			}
