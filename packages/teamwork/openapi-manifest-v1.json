@@ -14489,7 +14489,7 @@
       "id": "v1_get_projects_estimatedtime_total_json",
       "version": "v1",
       "method": "GET",
-      "path": "/projects/estimatedtime/total.json.",
+      "path": "/projects/estimatedtime/total.json",
       "summary": "Estimated Time Totals on Projects",
       "tag": "Time Tracking",
       "parameters": [],

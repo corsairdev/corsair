@@ -6544,7 +6544,7 @@ export type TeamworkV3Inputs = {
 	};
 	v3_get_projects_api_v3_milestones_metrics_deadlines_json: {
 		path?: Record<string, never>;
-		query?: { startDate?: string; endDate?: string };
+		query: { startDate: string; endDate: string };
 		body?: never;
 	};
 	v3_get_projects_api_v3_milestones_milestoneid_json: {
@@ -7688,23 +7688,23 @@ export type TeamworkV3Inputs = {
 	};
 	v3_get_projects_api_v3_people_metrics_performance_json: {
 		path?: Record<string, never>;
-		query?: {
-			startDate?: string;
+		query: {
+			startDate: string;
 			orderMode?: 'asc' | 'desc';
-			endDate?: string;
+			endDate: string;
 		};
 		body?: never;
 	};
 	v3_get_projects_api_v3_people_utilization_json: {
 		path?: Record<string, never>;
-		query?: {
+		query: {
 			zoom?:
 				| 'week'
 				| 'month'
 				| 'last3months'
 				| 'quarterbyweek'
 				| 'quarterbymonth';
-			startDate?: string;
+			startDate: string;
 			sortOrder?: 'asc' | 'desc';
 			sort?:
 				| 'name'
@@ -7756,7 +7756,7 @@ export type TeamworkV3Inputs = {
 				| 'percentEstimatedBillableUtilization'
 				| 'estimatedMinutes';
 			groupBy?: '' | 'day' | 'week' | 'month' | 'quarter';
-			endDate?: string;
+			endDate: string;
 			pageSize?: number;
 			page?: number;
 			skipCounts?: boolean;
@@ -8257,10 +8257,10 @@ export type TeamworkV3Inputs = {
 	};
 	v3_get_projects_api_v3_projects_metrics_billable_json: {
 		path?: Record<string, never>;
-		query?: {
-			startDate?: string;
+		query: {
+			startDate: string;
 			orderMode?: 'asc' | 'desc';
-			endDate?: string;
+			endDate: string;
 		};
 		body?: never;
 	};
@@ -12321,10 +12321,10 @@ export type TeamworkV3Inputs = {
 	};
 	v3_get_projects_api_v3_reporting_precanned_usertaskcompletion_json: {
 		path?: Record<string, never>;
-		query?: {
+		query: {
 			userType?: 'account' | 'collaborator' | 'contact' | 'client';
 			updatedAfter?: string;
-			startDate?: string;
+			startDate: string;
 			searchTerm?: string;
 			reportFormat?: string;
 			projectType?:
@@ -12345,7 +12345,7 @@ export type TeamworkV3Inputs = {
 				| 'projects'
 				| 'activeprojects';
 			lastLoginAfter?: string;
-			endDate?: string;
+			endDate: string;
 			pageSize?: number;
 			page?: number;
 			skipCounts?: boolean;
@@ -16796,9 +16796,9 @@ export type TeamworkV3Inputs = {
 	};
 	v3_get_projects_api_v3_time_report_json: {
 		path?: Record<string, never>;
-		query?: {
+		query: {
 			type?: 'company' | 'project' | 'user' | 'tasklist' | 'task' | 'team';
-			startDate?: string;
+			startDate: string;
 			searchTerm?: string;
 			reportType?: 'time' | 'loggedtime' | 'userloggedtime' | 'projecttime';
 			reportFormat?: string;
@@ -16824,7 +16824,7 @@ export type TeamworkV3Inputs = {
 				| 'user';
 			groupBy?: 'day' | 'week' | 'month';
 			expandedType?: string;
-			endDate?: string;
+			endDate: string;
 			pageSize?: number;
 			page?: number;
 			skipCounts?: boolean;
@@ -16881,9 +16881,9 @@ export type TeamworkV3Inputs = {
 	};
 	v3_get_projects_api_v3_time_report_totals_json: {
 		path?: Record<string, never>;
-		query?: {
+		query: {
 			type?: 'company' | 'project' | 'user' | 'tasklist' | 'task' | 'team';
-			startDate?: string;
+			startDate: string;
 			searchTerm?: string;
 			reportType?: 'time' | 'loggedtime' | 'userloggedtime' | 'projecttime';
 			reportFormat?: string;
@@ -16909,7 +16909,7 @@ export type TeamworkV3Inputs = {
 				| 'user';
 			groupBy?: 'day' | 'week' | 'month';
 			expandedType?: string;
-			endDate?: string;
+			endDate: string;
 			pageSize?: number;
 			page?: number;
 			skipCounts?: boolean;

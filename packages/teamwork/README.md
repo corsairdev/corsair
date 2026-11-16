@@ -198,7 +198,7 @@ The package covers these resource tags: Boards (10), Comments (10), Companies (1
 | `v1_get_projects_id_time_total_json` | read | `GET /projects/{id}/time/total.json` | Time Totals on a Project | [v1 OpenAPI](https://apidocs.teamwork.com/api/oas/download?slug=teamwork&api_version=v1) |
 | `v1_get_time_total_json` | read | `GET /time/total.json` | Get Total Time across an Account | [v1 OpenAPI](https://apidocs.teamwork.com/api/oas/download?slug=teamwork&api_version=v1) |
 | `v1_get_projects_time_total_json` | read | `GET /projects/time/total.json` | Time Totals across Projects | [v1 OpenAPI](https://apidocs.teamwork.com/api/oas/download?slug=teamwork&api_version=v1) |
-| `v1_get_projects_estimatedtime_total_json` | read | `GET /projects/estimatedtime/total.json.` | Estimated Time Totals on Projects | [v1 OpenAPI](https://apidocs.teamwork.com/api/oas/download?slug=teamwork&api_version=v1) |
+| `v1_get_projects_estimatedtime_total_json` | read | `GET /projects/estimatedtime/total.json` | Estimated Time Totals on Projects | [v1 OpenAPI](https://apidocs.teamwork.com/api/oas/download?slug=teamwork&api_version=v1) |
 | `v1_get_tasklists_id_time_total_json` | read | `GET /tasklists/{id}/time/total.json` | Total Time on a Tasklist | [v1 OpenAPI](https://apidocs.teamwork.com/api/oas/download?slug=teamwork&api_version=v1) |
 | `v1_get_tasks_id_time_total_json` | read | `GET /tasks/{id}/time/total.json` | Total Time on a Task | [v1 OpenAPI](https://apidocs.teamwork.com/api/oas/download?slug=teamwork&api_version=v1) |
 | `v1_get_people_id_loggedtime_json` | read | `GET /people/{id}/loggedtime.json` | Get Logged Time by Person | [v1 OpenAPI](https://apidocs.teamwork.com/api/oas/download?slug=teamwork&api_version=v1) |

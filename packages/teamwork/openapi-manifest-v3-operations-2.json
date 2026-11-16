@@ -9256,7 +9256,7 @@
           "in": "query",
           "type": "string",
           "format": "date",
-          "required": false
+          "required": true
         },
         {
           "name": "searchTerm",
@@ -9339,7 +9339,7 @@
           "in": "query",
           "type": "string",
           "format": "date",
-          "required": false
+          "required": true
         },
         {
           "name": "pageSize",
@@ -9583,7 +9583,7 @@
           "in": "query",
           "type": "string",
           "format": "date",
-          "required": false
+          "required": true
         },
         {
           "name": "searchTerm",
@@ -9666,7 +9666,7 @@
           "in": "query",
           "type": "string",
           "format": "date",
-          "required": false
+          "required": true
         },
         {
           "name": "pageSize",

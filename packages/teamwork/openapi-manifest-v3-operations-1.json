@@ -9276,14 +9276,14 @@
           "in": "query",
           "type": "string",
           "format": "date",
-          "required": false
+          "required": true
         },
         {
           "name": "endDate",
           "in": "query",
           "type": "string",
           "format": "date",
-          "required": false
+          "required": true
         }
       ],
       "bodyRequired": false,
@@ -12067,7 +12067,7 @@
           "in": "query",
           "type": "string",
           "format": "date",
-          "required": false
+          "required": true
         },
         {
           "name": "orderMode",
@@ -12082,7 +12082,7 @@
           "in": "query",
           "type": "string",
           "format": "date",
-          "required": false
+          "required": true
         }
       ],
       "bodyRequired": false,
@@ -12117,7 +12117,7 @@
           "in": "query",
           "type": "string",
           "format": "date",
-          "required": false
+          "required": true
         },
         {
           "name": "sortOrder",
@@ -12222,7 +12222,7 @@
           "in": "query",
           "type": "string",
           "format": "date",
-          "required": false
+          "required": true
         },
         {
           "name": "pageSize",
@@ -13809,7 +13809,7 @@
           "in": "query",
           "type": "string",
           "format": "date",
-          "required": false
+          "required": true
         },
         {
           "name": "orderMode",
@@ -13824,7 +13824,7 @@
           "in": "query",
           "type": "string",
           "format": "date",
-          "required": false
+          "required": true
         }
       ],
       "bodyRequired": false,
@@ -26384,7 +26384,7 @@
           "in": "query",
           "type": "string",
           "format": "date",
-          "required": false
+          "required": true
         },
         {
           "name": "searchTerm",
@@ -26449,7 +26449,7 @@
           "in": "query",
           "type": "string",
           "format": "date",
-          "required": false
+          "required": true
         },
         {
           "name": "pageSize",

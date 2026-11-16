@@ -171,6 +171,37 @@ describe('Teamwork OpenAPI contract schemas', () => {
 		expect(parsed?.data).toEqual(body);
 	});
 
+	it('ends every route in .json, as Teamwork serves them', () => {
+		// The V1 spec lists /projects/estimatedtime/total.json. with a trailing dot, which answers HTML.
+		for (const operation of teamworkOperations) {
+			expect(operation.path).toMatch(/\.json$/);
+		}
+	});
+
+	it.each([
+		'v3_get_projects_api_v3_milestones_metrics_deadlines_json',
+		'v3_get_projects_api_v3_people_metrics_performance_json',
+		'v3_get_projects_api_v3_people_utilization_json',
+		'v3_get_projects_api_v3_projects_metrics_billable_json',
+		'v3_get_projects_api_v3_reporting_precanned_usertaskcompletion_json',
+		'v3_get_projects_api_v3_time_report_json',
+		'v3_get_projects_api_v3_time_report_totals_json',
+	])(
+		'%s requires startDate and endDate, which Teamwork rejects a call without',
+		(id) => {
+			const schema = teamworkInputSchemas[id];
+			expect(schema?.safeParse({ query: {} }).success).toBe(false);
+			expect(
+				schema?.safeParse({ query: { startDate: '2026-11-01' } }).success,
+			).toBe(false);
+			expect(
+				schema?.safeParse({
+					query: { startDate: '2026-11-01', endDate: '2026-11-16' },
+				}).success,
+			).toBe(true);
+		},
+	);
+
 	it('still rejects a response that is not the documented top-level shape', () => {
 		const schema =
 			teamworkOutputSchemas['v3_get_projects_api_v3_projects_projectid_json'];
