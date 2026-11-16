@@ -23,11 +23,11 @@ Official sources: [v5 method reference](https://rest-api-docs.simla.com/v5/), [A
 - Responses are checked for structure only: objects stay objects and lists stay lists, while scalars, nulls and new enum values pass. Live responses differ from the published models (ids and `ordering` as strings, lists where the model has an object), so a strict check would reject valid data. The docs and TypeScript types still describe the published models.
 - GET filters use the documented bracketed query names. A list value is always sent as `name[]=a&name[]=b`, also for the few parameters the reference names without `[]` (Simla.com refuses `ids=1&ids=2`). List operations accept `page` (and `limit` where documented); cursor-based methods accept the documented `cursor`. Pagination metadata is returned unchanged.
 - POST requests use `application/x-www-form-urlencoded`; nested values are encoded as JSON strings per the provider rules.
-- Binary file upload takes a base64 string in `body`; binary downloads return `{ kind: 'binary', contentType, base64 }`. Binary payloads are capped at 20 MiB by this client.
+- Binary file upload takes a base64 string in `body`; binary downloads (files, call recordings, printed order forms) return `{ kind: 'binary', contentType, base64 }`. Binary payloads are capped at 20 MiB by this client.
 - The documented limit is 10 requests/second per IP, or 40/second for telephony. Simla.com may answer with HTTP 503 at the limit. The shared transport honors `Retry-After` for 429; the plugin does not automatically replay 503 writes.
 - API errors keep their HTTP status, rate-limit timing and Simla.com's `errorMsg` and per-field `errors` (for example "Telephony not enabled"); other response fields, path/query values and request bodies are removed.
 - The reference marks `courier.firstName` on courier create/edit and `phone`, `type`, and `code` on telephony call events as required but omits their types. The plugin enforces presence and documents those value shapes as unverified.
-- The order plate print route documents only success/error statuses and no response content schema. It validates a JSON object, but the exact response fields remain unverified.
+- The order plate print route streams the printed form, so it returns the same base64 envelope as file downloads.
 
 ## Operation inventory
 

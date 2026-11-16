@@ -326,4 +326,40 @@ describe('Simla.com transport', () => {
 		expect(error).toBeInstanceOf(ApiError);
 		if (error instanceof ApiError) expect(error.retryAfter).toBe(4000);
 	});
+
+	it('sends keyed custom-field and property filters as filter[name][code]=value', async () => {
+		const fetchMock = jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(jsonResponse({ success: true, products: [] }));
+		const operation = getSimlaComOperation('store.products.get');
+
+		await makeSimlaComRequest(operation, 'key', 'demo', {
+			query: { 'filter[properties]': { color: 'red', size: 'm' } },
+		});
+
+		const url = new URL(String(fetchMock.mock.calls[0]?.[0]));
+		expect(url.searchParams.get('filter[properties][color]')).toBe('red');
+		expect(url.searchParams.get('filter[properties][size]')).toBe('m');
+	});
+
+	it('downloads a printed order form as a binary envelope', async () => {
+		jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(new Uint8Array([0x25, 0x50]), {
+				headers: { 'content-type': 'application/pdf' },
+			}),
+		);
+		const operation = getSimlaComOperation(
+			'orders.byExternalidPlatesByPlateidPrint.get',
+		);
+
+		await expect(
+			makeSimlaComRequest(operation, 'key', 'demo', {
+				path: { externalId: 'A-1', plateId: 3 },
+			}),
+		).resolves.toEqual({
+			kind: 'binary',
+			contentType: 'application/pdf',
+			base64: 'JVA=',
+		});
+	});
 });

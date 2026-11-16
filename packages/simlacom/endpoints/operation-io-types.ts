@@ -2207,8 +2207,8 @@ export type OpenApiLoyalty2 = {
 export type OpenApiSerializedApiNotification = {
 	type: 'api.info' | 'api.error';
 	message: string;
-	userIds?: Record<string, JsonValue>;
-	userGroups?: 'superadmins';
+	userIds?: Array<number>;
+	userGroups?: Array<'superadmins'>;
 };
 export type OpenApiPaginationResponse3 = {
 	limit?: number;
@@ -7504,7 +7504,7 @@ export type SimlaComEndpointInputs = {
 			'filter[firstOrderTo]'?: string;
 			'filter[lastOrderFrom]'?: string;
 			'filter[lastOrderTo]'?: string;
-			'filter[customFields][]'?: Array<string>;
+			'filter[customFields]'?: Record<string, JsonValue>;
 			'filter[sex]'?:
 				| 'male'
 				| 'female'
@@ -7635,7 +7635,7 @@ export type SimlaComEndpointInputs = {
 			'filter[firstOrderTo]'?: string;
 			'filter[lastOrderFrom]'?: string;
 			'filter[lastOrderTo]'?: string;
-			'filter[customFields][]'?: Array<string>;
+			'filter[customFields]'?: Record<string, JsonValue>;
 			'filter[nickName][]'?: Array<string>;
 			'filter[contactName]'?: string;
 			'filter[addressName]'?: string;
@@ -7963,7 +7963,7 @@ export type SimlaComEndpointInputs = {
 			'filter[statuses][]'?: Array<
 				'not_confirmed' | 'activated' | 'deactivated'
 			>;
-			'filter[customFields][]'?: Array<string>;
+			'filter[customFields]'?: Record<string, JsonValue>;
 		};
 	};
 	'loyalty.bonusOperations.get': {
@@ -8095,7 +8095,7 @@ export type SimlaComEndpointInputs = {
 			'filter[maxMarginSumm]'?: number;
 			'filter[minPurchaseSumm]'?: number;
 			'filter[maxPurchaseSumm]'?: number;
-			'filter[customFields][]'?: Array<string>;
+			'filter[customFields]'?: Record<string, JsonValue>;
 		};
 	};
 	'orders.combine.post': {
@@ -8423,7 +8423,7 @@ export type SimlaComEndpointInputs = {
 			'filter[groups][]'?: Array<number>;
 			'filter[priceType]'?: string;
 			'filter[active]'?: true | false;
-			'filter[properties][]'?: Array<string>;
+			'filter[properties]'?: Record<string, JsonValue>;
 			'filter[sinceId]'?: number;
 			'filter[minPrice]'?: number;
 			'filter[maxPrice]'?: number;
@@ -8475,7 +8475,7 @@ export type SimlaComEndpointInputs = {
 			'filter[stock]'?: boolean;
 			'filter[novelty]'?: boolean;
 			'filter[recommended]'?: boolean;
-			'filter[properties][]'?: Array<string>;
+			'filter[properties]'?: Record<string, JsonValue>;
 			'filter[markable]'?: boolean;
 			'filter[productType]'?: number;
 			'filter[offerIds][]'?: Array<number>;
@@ -8847,7 +8847,11 @@ export type SimlaComEndpointOutputs = {
 	'orders.getByExternalid.get': OpenApiOrdersGetResponse;
 	'orders.byExternalidDeliveryCancel.post': OpenApiSimpleResponse2;
 	'orders.byExternalidEdit.post': OpenApiOrdersEditResponse;
-	'orders.byExternalidPlatesByPlateidPrint.get': Record<string, JsonValue>;
+	'orders.byExternalidPlatesByPlateidPrint.get': {
+		kind: 'binary';
+		contentType: string;
+		base64: string;
+	};
 	'ordersPicking.packs.get': OpenApiOrderProductPacksListResponse;
 	'ordersPicking.packsCreate.post': OpenApiOrderProductPackEditResponse;
 	'ordersPicking.packsHistory.get': OpenApiOrdersProductPackHistoryResponseV3;

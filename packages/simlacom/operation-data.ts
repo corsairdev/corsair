@@ -1048,11 +1048,10 @@ export const operationData: OperationData = {
 					},
 				},
 				{
-					name: 'filter[customFields][]',
+					name: 'filter[customFields]',
 					in: 'query',
 					required: false,
-					default: [],
-					schema: { type: 'array', items: { type: 'string' }, default: [] },
+					schema: { type: 'object', additionalProperties: true },
 				},
 				{
 					name: 'filter[sex]',
@@ -2041,11 +2040,10 @@ export const operationData: OperationData = {
 					},
 				},
 				{
-					name: 'filter[customFields][]',
+					name: 'filter[customFields]',
 					in: 'query',
 					required: false,
-					default: [],
-					schema: { type: 'array', items: { type: 'string' }, default: [] },
+					schema: { type: 'object', additionalProperties: true },
 				},
 				{
 					name: 'filter[nickName][]',
@@ -4905,11 +4903,10 @@ export const operationData: OperationData = {
 					},
 				},
 				{
-					name: 'filter[customFields][]',
+					name: 'filter[customFields]',
 					in: 'query',
 					required: false,
-					default: [],
-					schema: { type: 'array', items: { type: 'string' }, default: [] },
+					schema: { type: 'object', additionalProperties: true },
 				},
 			],
 			response: {
@@ -5837,11 +5834,10 @@ export const operationData: OperationData = {
 					schema: { type: 'integer' },
 				},
 				{
-					name: 'filter[customFields][]',
+					name: 'filter[customFields]',
 					in: 'query',
 					required: false,
-					default: [],
-					schema: { type: 'array', items: { type: 'string' }, default: [] },
+					schema: { type: 'object', additionalProperties: true },
 				},
 			],
 			response: {
@@ -6343,7 +6339,7 @@ export const operationData: OperationData = {
 					schema: { type: 'integer', pattern: '\\d+' },
 				},
 			],
-			response: { kind: 'json', schema: {} },
+			response: { kind: 'binary' },
 		},
 		{
 			id: 'ordersPicking.packs.get',
@@ -8834,10 +8830,10 @@ export const operationData: OperationData = {
 					schema: { type: 'boolean', enum: [true, false] },
 				},
 				{
-					name: 'filter[properties][]',
+					name: 'filter[properties]',
 					in: 'query',
 					required: false,
-					schema: { type: 'array', items: { type: 'string' }, minLength: 1 },
+					schema: { type: 'object', additionalProperties: true },
 				},
 				{
 					name: 'filter[sinceId]',
@@ -9197,10 +9193,10 @@ export const operationData: OperationData = {
 					schema: { type: 'boolean' },
 				},
 				{
-					name: 'filter[properties][]',
+					name: 'filter[properties]',
 					in: 'query',
 					required: false,
-					schema: { type: 'array', items: { type: 'string' }, minLength: 1 },
+					schema: { type: 'object', additionalProperties: true },
 				},
 				{
 					name: 'filter[markable]',
@@ -19904,15 +19900,14 @@ export const operationData: OperationData = {
 				userIds: {
 					title: 'Array of recipient identifiers',
 					description: 'Array of recipient identifiers',
-					type: 'object',
-					additionalProperties: true,
+					type: 'array',
+					items: { type: 'integer' },
 				},
 				userGroups: {
 					title: 'Array of recipient groups codes',
 					description: 'Array of recipient groups codes',
-					type: 'object',
-					enum: ['superadmins'],
-					additionalProperties: true,
+					type: 'array',
+					items: { type: 'string', enum: ['superadmins'] },
 				},
 			},
 			type: 'object',

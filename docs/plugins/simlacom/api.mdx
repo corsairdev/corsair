@@ -1756,7 +1756,8 @@ await corsair.simlacom.api.corporateCustomers.list.get({});
   ]?: string,
   filter[
     customFields
-  ][]?: string[],
+  ]?: {
+  },
   filter[
     nickName
   ][]?: string[],
@@ -4347,7 +4348,8 @@ await corsair.simlacom.api.customers.list.get({
   ]?: string,
   filter[
     customFields
-  ][]?: string[],
+  ]?: {
+  },
   filter[
     sex
   ]?: custom,
@@ -13379,7 +13381,8 @@ await corsair.simlacom.api.loyalty.accounts.get({});
   ][]?: custom[],
   filter[
     customFields
-  ][]?: string[]
+  ]?: {
+  }
 }
 ```
 </Accordion>
@@ -14462,9 +14465,8 @@ await corsair.simlacom.api.notifications.send.post({
   notification?: {
     type: custom,
     message: string,
-    userIds?: {
-    },
-    userGroups?: custom
+    userIds?: number[],
+    userGroups?: custom[]
   }
 }
 ```
@@ -15856,7 +15858,7 @@ await corsair.simlacom.api.orders.byExternalidPlatesByPlateidPrint.get({
 | `query` | `object` | No | — |
 | `body` | `never` | No | — |
 
-The OpenAPI reference documents success/error statuses but no response content schema. The operation validates a JSON object; its exact fields are unverified.
+Returns the printed form as a file stream, so the output is a base64 envelope (`kind`, `contentType`, `base64`) capped at 20 MiB.
 
 <AccordionGroup>
 <Accordion title="path full type">
@@ -15882,7 +15884,14 @@ The OpenAPI reference documents success/error statuses but no response content s
 
 
 
-**Output:** `Record<string, custom>`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `binary` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `base64` | `string` | Yes | — |
+
 
 
 ---
@@ -18870,7 +18879,8 @@ await corsair.simlacom.api.orders.list.get({});
   ]?: number,
   filter[
     customFields
-  ][]?: string[]
+  ]?: {
+  }
 }
 ```
 </Accordion>
@@ -23215,7 +23225,8 @@ await corsair.simlacom.api.store.offers.get({});
   ]?: custom,
   filter[
     properties
-  ][]?: string[],
+  ]?: {
+  },
   filter[
     sinceId
   ]?: number,
@@ -23765,7 +23776,8 @@ await corsair.simlacom.api.store.products.get({});
   ]?: boolean,
   filter[
     properties
-  ][]?: string[],
+  ]?: {
+  },
   filter[
     markable
   ]?: boolean,

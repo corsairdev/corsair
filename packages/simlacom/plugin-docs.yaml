@@ -23,7 +23,7 @@ apiNotes:
   files.upload.post: Pass a base64-encoded string in `body`; the provider documents this request as `application/octet-stream`.
   files.byIdDownload.get: Returns the file bytes in a base64 envelope; maximum response size is capped by the client at 20 MiB.
   telephony.getCallsByIdRecord.get: Returns call-recording bytes in a base64 envelope; maximum response size is capped by the client at 20 MiB.
-  orders.byExternalidPlatesByPlateidPrint.get: The OpenAPI reference documents success/error statuses but no response content schema. The operation validates a JSON object; its exact fields are unverified.
+  orders.byExternalidPlatesByPlateidPrint.get: "Returns the printed form as a file stream, so the output is a base64 envelope (`kind`, `contentType`, `base64`) capped at 20 MiB."
   dataBook.referenceCouriersCreate.post: The official OpenAPI marks `courier.firstName` required but omits its type and constraints; the plugin enforces its presence, while the value shape is unverified.
   dataBook.referenceCouriersByIdEdit.post: The official OpenAPI marks `courier.firstName` required but omits its type and constraints; the plugin enforces its presence, while the value shape is unverified.
   telephony.callEvent.post: The official OpenAPI marks `phone`, `type`, and `code` required but omits their types; the plugin enforces their presence, while their value shapes are unverified.

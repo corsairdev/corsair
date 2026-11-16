@@ -335,4 +335,38 @@ describe('OpenAPI-derived Zod schemas', () => {
 			)?.safeParse({ path: { id: 42 }, query: { by: 'id' } }).success,
 		).toBe(true);
 	});
+
+	it('accepts the documented recipient lists and keyed filters', () => {
+		const send = SIMLACOM_INPUT_SCHEMAS.get('notifications.send.post');
+		expect(
+			send?.safeParse({
+				body: {
+					notification: { type: 'api.info', message: 'hi', userIds: [16] },
+				},
+			}).success,
+		).toBe(true);
+		expect(
+			send?.safeParse({
+				body: {
+					notification: {
+						type: 'api.info',
+						message: 'hi',
+						userGroups: ['superadmins'],
+					},
+				},
+			}).success,
+		).toBe(true);
+		const keyedFilters: Array<[string, string]> = [
+			['orders.list.get', 'filter[customFields]'],
+			['customers.list.get', 'filter[customFields]'],
+			['store.offers.get', 'filter[properties]'],
+		];
+		for (const [id, name] of keyedFilters) {
+			expect(
+				SIMLACOM_INPUT_SCHEMAS.get(id)?.safeParse({
+					query: { [name]: { color: 'red' } },
+				}).success,
+			).toBe(true);
+		}
+	});
 });
