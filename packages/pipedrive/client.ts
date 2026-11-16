@@ -92,3 +92,34 @@ export async function makePipedriveRequest<T>(
 		throw error;
 	}
 }
+
+type RefreshableContext = {
+	key: string;
+	_refreshAuth?: () => Promise<string>;
+};
+
+/**
+ * Core refreshes an OAuth token after a 401 only for reads. Every Pipedrive
+ * endpoint sends a single request, so a write that got a 401 can refresh the
+ * token once and send that request again without repeating anything that landed.
+ */
+export function withOAuthRetry<C extends { key: string }, I, O>(
+	endpoint: (ctx: C, input: I) => Promise<O>,
+): (ctx: C, input: I) => Promise<O> {
+	return async (ctx, input) => {
+		try {
+			return await endpoint(ctx, input);
+		} catch (error: unknown) {
+			// `unknown`: transport failures may reject with non-Error values.
+			const refresh = (ctx as RefreshableContext)._refreshAuth;
+			if (
+				!(error instanceof ApiError && error.status === 401) ||
+				typeof refresh !== 'function'
+			) {
+				throw error;
+			}
+			const freshKey = await refresh();
+			return await endpoint({ ...ctx, key: freshKey }, input);
+		}
+	};
+}

@@ -4,6 +4,7 @@ import {
 	makePipedriveRequest,
 	PIPEDRIVE_API_BASE,
 	PIPEDRIVE_RATE_LIMIT_CONFIG,
+	withOAuthRetry,
 } from './client';
 import type { PipedriveKeyBuilderContext } from './index';
 import { pipedrive } from './index';
@@ -309,5 +310,41 @@ describe('Pipedrive HTTP client', () => {
 		} finally {
 			globalThis.fetch = originalFetch;
 		}
+	});
+});
+
+describe('withOAuthRetry', () => {
+	it('refreshes once after a 401 and resends the write with the new token', async () => {
+		const endpoint = jest
+			.fn()
+			.mockRejectedValueOnce(apiError(401))
+			.mockResolvedValueOnce({ success: true });
+		const refresh = jest.fn().mockResolvedValue('fresh-token');
+		const wrapped = withOAuthRetry(endpoint);
+		await expect(
+			wrapped({ key: 'stale-token', _refreshAuth: refresh }, { title: 'x' }),
+		).resolves.toEqual({ success: true });
+		expect(refresh).toHaveBeenCalledTimes(1);
+		expect(endpoint).toHaveBeenLastCalledWith(
+			expect.objectContaining({ key: 'fresh-token' }),
+			{ title: 'x' },
+		);
+	});
+
+	it('rethrows a 401 when no refresh is installed (API token)', async () => {
+		const endpoint = jest.fn().mockRejectedValue(apiError(401));
+		await expect(
+			withOAuthRetry(endpoint)({ key: 'api-token' }, {}),
+		).rejects.toMatchObject({ status: 401 });
+		expect(endpoint).toHaveBeenCalledTimes(1);
+	});
+
+	it('does not retry other errors', async () => {
+		const endpoint = jest.fn().mockRejectedValue(apiError(500));
+		const refresh = jest.fn();
+		await expect(
+			withOAuthRetry(endpoint)({ key: 't', _refreshAuth: refresh }, {}),
+		).rejects.toMatchObject({ status: 500 });
+		expect(refresh).not.toHaveBeenCalled();
 	});
 });

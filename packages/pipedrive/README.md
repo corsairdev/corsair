@@ -33,8 +33,8 @@ Configure an API token or OAuth 2.0 credentials. Pipedrive accepts API tokens in
 | `organizations.delete` | `DELETE /api/v2/organizations/{id}` | Destructive · 3 tokens | `contacts:full` | [Delete organization](https://developers.pipedrive.com/docs/api/v1/Organizations#deleteOrganization) |
 | `activities.list` | `GET /api/v2/activities` | Read · 10 tokens | `activities:read` or `activities:full` | [Get all activities](https://developers.pipedrive.com/docs/api/v1/Activities#getActivities) |
 | `activities.get` | `GET /api/v2/activities/{id}` | Read · 1 token | `activities:read` or `activities:full` | [Get activity](https://developers.pipedrive.com/docs/api/v1/Activities#getActivity) |
-| `activities.create` | `POST /api/v2/activities` | Write · 5 tokens | `activities:full` | [Add activity](https://developers.pipedrive.com/docs/api/v1/Activities#addActivity) |
-| `activities.update` | `PATCH /api/v2/activities/{id}` | Write · 5 tokens | `activities:full` | [Update activity](https://developers.pipedrive.com/docs/api/v1/Activities#updateActivity) |
+| `activities.create` | `POST /api/v2/activities` | Destructive (attendee invitations) · 5 tokens | `activities:full` | [Add activity](https://developers.pipedrive.com/docs/api/v1/Activities#addActivity) |
+| `activities.update` | `PATCH /api/v2/activities/{id}` | Destructive (attendee invitations) · 5 tokens | `activities:full` | [Update activity](https://developers.pipedrive.com/docs/api/v1/Activities#updateActivity) |
 | `activities.delete` | `DELETE /api/v2/activities/{id}` | Destructive · 3 tokens | `activities:full` | [Delete activity](https://developers.pipedrive.com/docs/api/v1/Activities#deleteActivity) |
 | `tasks.list` | `GET /api/v2/tasks` | Read · 10 tokens | `projects:read` or `projects:full` | [Get all tasks](https://developers.pipedrive.com/docs/api/v1/Tasks#getTasks) |
 | `tasks.get` | `GET /api/v2/tasks/{id}` | Read · 1 token | `projects:read` or `projects:full` | [Get task](https://developers.pipedrive.com/docs/api/v1/Tasks#getTask) |

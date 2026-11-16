@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
+import { withOAuthRetry } from './client';
 import {
 	Activities,
 	Deals,
@@ -108,63 +109,63 @@ const pipedriveEndpointsNested = {
 	deals: {
 		list: Deals.list,
 		get: Deals.get,
-		create: Deals.create,
-		update: Deals.update,
-		delete: Deals.delete,
+		create: withOAuthRetry(Deals.create),
+		update: withOAuthRetry(Deals.update),
+		delete: withOAuthRetry(Deals.delete),
 	},
 	persons: {
 		list: Persons.list,
 		get: Persons.get,
-		create: Persons.create,
-		update: Persons.update,
-		delete: Persons.delete,
+		create: withOAuthRetry(Persons.create),
+		update: withOAuthRetry(Persons.update),
+		delete: withOAuthRetry(Persons.delete),
 	},
 	organizations: {
 		list: Organizations.list,
 		get: Organizations.get,
-		create: Organizations.create,
-		update: Organizations.update,
-		delete: Organizations.delete,
+		create: withOAuthRetry(Organizations.create),
+		update: withOAuthRetry(Organizations.update),
+		delete: withOAuthRetry(Organizations.delete),
 	},
 	activities: {
 		list: Activities.list,
 		get: Activities.get,
-		create: Activities.create,
-		update: Activities.update,
-		delete: Activities.delete,
+		create: withOAuthRetry(Activities.create),
+		update: withOAuthRetry(Activities.update),
+		delete: withOAuthRetry(Activities.delete),
 	},
 	tasks: {
 		list: Tasks.list,
 		get: Tasks.get,
-		create: Tasks.create,
-		update: Tasks.update,
-		delete: Tasks.delete,
+		create: withOAuthRetry(Tasks.create),
+		update: withOAuthRetry(Tasks.update),
+		delete: withOAuthRetry(Tasks.delete),
 	},
 	products: {
 		list: Products.list,
-		create: Products.create,
+		create: withOAuthRetry(Products.create),
 		search: Products.search,
 		get: Products.get,
-		update: Products.update,
-		delete: Products.delete,
-		duplicate: Products.duplicate,
+		update: withOAuthRetry(Products.update),
+		delete: withOAuthRetry(Products.delete),
+		duplicate: withOAuthRetry(Products.duplicate),
 		variations: {
 			list: Products.variations.list,
-			create: Products.variations.create,
-			update: Products.variations.update,
-			delete: Products.variations.delete,
+			create: withOAuthRetry(Products.variations.create),
+			update: withOAuthRetry(Products.variations.update),
+			delete: withOAuthRetry(Products.variations.delete),
 		},
 		images: {
 			get: Products.images.get,
-			upload: Products.images.upload,
-			update: Products.images.update,
-			delete: Products.images.delete,
+			upload: withOAuthRetry(Products.images.upload),
+			update: withOAuthRetry(Products.images.update),
+			delete: withOAuthRetry(Products.images.delete),
 		},
 		followers: {
 			list: Products.followers.list,
-			create: Products.followers.create,
+			create: withOAuthRetry(Products.followers.create),
 			changelog: Products.followers.changelog,
-			delete: Products.followers.delete,
+			delete: withOAuthRetry(Products.followers.delete),
 		},
 	},
 } as const;
@@ -405,12 +406,16 @@ const pipedriveEndpointMeta = {
 		description: 'Get an activity by its numeric ID',
 	},
 	'activities.create': {
-		riskLevel: 'write',
-		description: 'Create a calendar activity',
+		// Attendees get an email invitation when the owner has calendar sync on.
+		riskLevel: 'destructive',
+		description:
+			'Create a calendar activity; attendees get an email invitation when calendar sync is on',
 	},
 	'activities.update': {
-		riskLevel: 'write',
-		description: 'Update a calendar activity',
+		// Changed guests, time or place send updated invitations or cancellations.
+		riskLevel: 'destructive',
+		description:
+			'Update a calendar activity; attendees get updated invitations when calendar sync is on',
 	},
 	'activities.delete': {
 		riskLevel: 'destructive',
