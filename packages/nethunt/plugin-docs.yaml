@@ -1,0 +1,67 @@
+displayName: NetHunt CRM
+description: List NetHunt folders and their field names, search and page records, read the change history, and create, update, comment on, log calls against and delete records.
+domain: nethunt.com
+recommendedAuth: api_key
+overviewNote: |
+  NetHunt's API needs two credentials. The **email** is the account address and the **API key** is generated in NetHunt under Settings, Integrations, API. Both are stored on the account: the plugin sends them as HTTP Basic auth, where the email is the username and the key is the password.
+
+  Set both before the first call, for example `pnpm corsair setup --plugin=nethunt --tenant=acme api_key=<key> email=<you@example.com>`, or pass `key` and `email` in the plugin options. `account.verify` confirms the pair works and returns the user behind it.
+
+  What to know before you write:
+
+  - **Folders hold user-defined fields.** `folders.list` gives the ids, and `folders.fields` gives the names a create or update may set. There are no fixed columns, so call both before building a field map.
+  - **A create and an update take different shapes.** `records.create` takes a flat `fields` map plus a required `timeZone`, which NetHunt needs to interpret date values. `records.update` takes `fieldActions`, one entry per field, each able to `overwrite`, `remove` or `add`. Combining `overwrite` with `remove` is rejected here because NetHunt forbids it.
+  - **A delete goes over POST and answers `{}`.** So does linking a Gmail thread. Both return a small result the plugin derives from the call that succeeded, rather than from a body that carries nothing.
+  - **`records.changes` is the only route that reports a delete**, and it is also the one that shows before and after values for each field.
+  - **Reads page by time, not by offset.** `records.recent` and `records.updated` default their window to 24 hours and take a `since` instant. NetHunt takes `fieldName` repeatedly for one call, which the plugin sends as separate parameters.
+
+  Worth knowing:
+
+  - **NetHunt sends no error codes.** A bad email or key is a **401 with a plain-text body**, not JSON. A missing folder or record is a 404 with an empty body. The plugin reads both.
+  - **A 5xx on a write is never retried.** NetHunt takes no idempotency key, so a retried create or update can double up. A 5xx on a read is retried twice.
+examples:
+  read:
+    path: folders.list
+    title: List the folders this account can read
+    args: {}
+  write:
+    path: records.create
+    title: Create a record in a folder
+    args:
+      folderId: 596f644b8f6d05e16c24b810
+      timeZone: Europe/London
+      fields:
+        Name: John Doe
+        Country: GB
+apiExamples:
+  folders.list:
+    call: "{ writable: true }"
+  folders.fields:
+    call: "{ folderId: '596f644b8f6d05e16c24b810' }"
+  records.find:
+    call: "{ folderId: '596f644b8f6d05e16c24b810', query: 'Name:Doe', limit: 10 }"
+  records.recent:
+    call: "{ folderId: '596f644b8f6d05e16c24b810', since: '2026-01-01T00:00:00.000Z', limit: 20 }"
+  records.updated:
+    call: "{ folderId: '596f644b8f6d05e16c24b810', fieldNames: ['Primary Email Address'], since: '2026-01-01T00:00:00.000Z' }"
+  records.changes:
+    call: "{ folderId: '596f644b8f6d05e16c24b810', since: '2026-01-01T00:00:00.000Z' }"
+  records.create:
+    call: "{ folderId: '596f644b8f6d05e16c24b810', timeZone: 'Europe/London', fields: { Name: 'John Doe', Country: 'GB' } }"
+  records.update:
+    call: "{ recordId: '596f644b8f6d05e16c24b830', fieldActions: { Salary: { remove: 100000, add: 200000 } } }"
+  records.delete:
+    call: "{ recordId: '596f644b8f6d05e16c24b830' }"
+  records.comment:
+    call: "{ recordId: '596f644b8f6d05e16c24b830', text: 'Called about the renewal' }"
+  records.callLog:
+    call: "{ recordId: '596f644b8f6d05e16c24b830', text: 'Discovery call', time: '2026-01-01T12:35:00Z', duration: 2.5 }"
+  records.linkThread:
+    call: "{ recordId: '596f644b8f6d05e16c24b830', gmailThreadId: '1234567890abcdef' }"
+  account.verify: {}
+apiNotes:
+  records.create: 'The fields map uses the folder’s own field names, and timeZone is required so NetHunt can read date values.'
+  records.update: 'Each field takes an action: overwrite clears it, remove takes values out, add puts values in. Do not combine overwrite with remove.'
+  records.recent: 'NetHunt defaults the window to 24 hours before the request.'
+  records.updated: 'fieldNames is sent as a repeated fieldName parameter, which NetHunt takes as a list.'
+  records.changes: 'This is the only route that reports a delete, and it carries before and after values per field.'
