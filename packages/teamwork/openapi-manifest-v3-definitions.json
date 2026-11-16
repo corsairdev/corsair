@@ -4364,7 +4364,13 @@
           "$ref": "#/definitions/view.Meta"
         },
         "utilization": {
-          "$ref": "#/definitions/view.ReportUtilizationData"
+          "oneOf": [
+            { "$ref": "#/definitions/view.ReportUtilizationData" },
+            {
+              "type": "array",
+              "items": { "$ref": "#/definitions/view.UserUtilization" }
+            }
+          ]
         }
       },
       "required": ["utilization", "dashboardData", "included", "meta"],

@@ -194,13 +194,43 @@ describe('Teamwork OpenAPI contract schemas', () => {
 			expect(
 				schema?.safeParse({ query: { startDate: '2026-11-01' } }).success,
 			).toBe(false);
-			expect(
-				schema?.safeParse({
-					query: { startDate: '2026-11-01', endDate: '2026-11-16' },
-				}).success,
-			).toBe(true);
+			// The time report also refuses a call without its grouping type.
+			const query =
+				id === 'v3_get_projects_api_v3_time_report_json'
+					? { startDate: '2026-11-01', endDate: '2026-11-16', type: 'user' }
+					: { startDate: '2026-11-01', endDate: '2026-11-16' };
+			expect(schema?.safeParse({ query }).success).toBe(true);
+			if (id === 'v3_get_projects_api_v3_time_report_json') {
+				const { type: _type, ...withoutType } = query as { type?: string };
+				expect(schema?.safeParse({ query: withoutType }).success).toBe(false);
+			}
 		},
 	);
+
+	it('accepts the per-user utilization array the API returns', () => {
+		const body = {
+			utilization: [
+				{
+					userId: 753865,
+					user: { id: 753865, type: 'users' },
+					data: [
+						{
+							startDate: '2026-11-01',
+							endDate: '2026-11-16',
+							availableMinutes: 480,
+							utilizationTarget: null,
+						},
+					],
+				},
+			],
+			meta: { page: { hasMore: false } },
+		};
+		expect(
+			teamworkOutputSchemas[
+				'v3_get_projects_api_v3_people_utilization_json'
+			]?.safeParse(body).success,
+		).toBe(true);
+	});
 
 	it('still rejects a response that is not the documented top-level shape', () => {
 		const schema =

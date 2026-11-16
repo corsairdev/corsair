@@ -9249,7 +9249,7 @@
           "in": "query",
           "type": "string",
           "enum": ["company", "project", "user", "tasklist", "task", "team"],
-          "required": false
+          "required": true
         },
         {
           "name": "startDate",

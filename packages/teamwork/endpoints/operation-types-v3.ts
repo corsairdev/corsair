@@ -1181,7 +1181,10 @@ type TeamworkV3Output_utilization_Response = {
 		users?: Record<string, TeamworkV3Output_view_User>;
 	} & Record<string, TeamworkJsonValue>;
 	meta: TeamworkV3Output_view_Meta;
-	utilization: TeamworkV3Output_view_ReportUtilizationData;
+	// The spec documents the report object; the API answers a per-user array (live run 11-16).
+	utilization:
+		| TeamworkV3Output_view_ReportUtilizationData
+		| Array<TeamworkV3Output_view_UserUtilization>;
 } & Record<string, TeamworkJsonValue>;
 type TeamworkV3Output_view_ActivityLog = {
 	datetime: string;
@@ -16797,7 +16800,7 @@ export type TeamworkV3Inputs = {
 	v3_get_projects_api_v3_time_report_json: {
 		path?: Record<string, never>;
 		query: {
-			type?: 'company' | 'project' | 'user' | 'tasklist' | 'task' | 'team';
+			type: 'company' | 'project' | 'user' | 'tasklist' | 'task' | 'team';
 			startDate: string;
 			searchTerm?: string;
 			reportType?: 'time' | 'loggedtime' | 'userloggedtime' | 'projecttime';
