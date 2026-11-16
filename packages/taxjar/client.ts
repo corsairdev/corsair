@@ -8,41 +8,6 @@ import { ApiError, request } from 'corsair/http';
 
 export const TAXJAR_API_BASE = 'https://api.taxjar.com/v2';
 
-/**
- * TaxJar answers failures as `{ detail, status, error }`, and `error` is a
- * short label such as "Unauthorized" or "Not Found". The `detail` names the
- * route it refused, so it is the useful half of the message.
- * https://developers.taxjar.com/api/reference/
- */
-export class TaxJarAPIError extends Error {
-	readonly status?: number;
-	/** TaxJar's short label: "Unauthorized", "Not Found", "Unprocessable Entity". */
-	readonly code?: string;
-	/** Milliseconds from a Retry-After header, when TaxJar sent one. */
-	readonly retryAfter?: number;
-	/** The HTTP method of the failed request. */
-	readonly method?: string;
-
-	constructor(
-		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			code?: string;
-			retryAfter?: number;
-			method?: string;
-		} = {},
-	) {
-		super(message, options.cause ? { cause: options.cause } : undefined);
-		this.name = 'TaxJarAPIError';
-		const cause = options.cause instanceof ApiError ? options.cause : undefined;
-		this.status = options.status ?? cause?.status;
-		this.retryAfter = options.retryAfter ?? cause?.retryAfter;
-		this.method = options.method ?? cause?.request.method;
-		this.code = options.code;
-	}
-}
-
 // error-handlers.ts owns retries, so the client makes one attempt and only
 // reads Retry-After into the error. TaxJar documents a 429 with no stated
 // header.
@@ -145,20 +110,36 @@ export async function makeTaxJarRequest(
 			rateLimitConfig: TAXJAR_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) {
-			const details = readErrorDetails(error.body);
-			throw new TaxJarAPIError(
-				describeTaxJarError(error.status, error.body, error.message),
-				{ cause: error, code: details.code },
-			);
-		}
-		// DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new TaxJarAPIError(error.message, {
-				cause: error instanceof Error ? error : undefined,
-				method,
-			});
-		}
-		throw new TaxJarAPIError('Unknown TaxJar error', { method });
+		if (error instanceof ApiError) throw stripRequestData(error);
+		throw error;
 	}
+}
+
+/**
+ * Core's ApiError keeps the request it failed on: an order, refund or
+ * customer body with names, street addresses and amounts, and the query.
+ * This rebuilds it without them and keeps what core and the handlers read:
+ * status, body, Retry-After and the method. It is still core's ApiError.
+ */
+export function stripRequestData(error: ApiError): ApiError {
+	return new ApiError(
+		{
+			method: error.request.method,
+			url: error.request.url.split('?')[0] ?? '',
+		},
+		{
+			url: error.url.split('?')[0] ?? '',
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		describeTaxJarError(error.status, error.body, error.message),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }

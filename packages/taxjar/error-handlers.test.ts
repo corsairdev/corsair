@@ -1,5 +1,5 @@
 import type { ErrorHandler, ErrorMatcher } from 'corsair/core';
-import { TaxJarAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
 function apiError(
@@ -7,11 +7,19 @@ function apiError(
 	method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'POST',
 	retryAfter?: number,
 ) {
-	return new TaxJarAPIError(`TaxJar ${status}`, {
-		status,
-		method,
-		retryAfter,
-	});
+	// The error core's request() throws, as the client passes it on.
+	return new ApiError(
+		{ method, url: '/categories' },
+		{
+			url: 'https://api.taxjar.com/v2/categories',
+			ok: false,
+			status,
+			statusText: 'failed',
+			body: { error: 'failed', detail: 'failed', status },
+		},
+		`TaxJar ${status}`,
+		{ retryAfter },
+	);
 }
 
 const context = {} as Parameters<ErrorHandler>[1];

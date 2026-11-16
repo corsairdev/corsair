@@ -239,7 +239,7 @@ const taxjarEndpointMeta = {
 			'List the order transaction IDs recorded through the API, by date or date range',
 	},
 	'orders.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Record an order transaction for tax reporting; shipping is required even when it is zero',
 	},
@@ -248,7 +248,7 @@ const taxjarEndpointMeta = {
 		description: 'Read one order transaction by its ID',
 	},
 	'orders.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Change an order transaction; a transaction that has been filed may refuse the change',
 	},
@@ -264,7 +264,7 @@ const taxjarEndpointMeta = {
 			'List the refund transaction IDs recorded through the API, by date or date range',
 	},
 	'refunds.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Record a refund transaction, linked to its original order by transaction_reference_id',
 	},
@@ -273,7 +273,7 @@ const taxjarEndpointMeta = {
 		description: 'Read one refund transaction by its ID',
 	},
 	'refunds.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Change a refund transaction',
 	},
 	'refunds.delete': {
@@ -354,8 +354,7 @@ export function taxjar<const T extends TaxJarPluginOptions>(
 	} satisfies InternalTaxJarPlugin;
 }
 
-export { TaxJarAPIError } from './client';
-
+export { readNumber } from './client';
 export type {
 	AddressesValidateInput,
 	AddressesValidateResponse,
