@@ -14,9 +14,15 @@ import {
  * Twelve Data has no `/vwma` route (it answers 404), and it documents no route
  * for `vwap` or `ht_trendline` on the free surface, so none is wrapped.
  */
+// The helpers return `Promise<unknown>` and each export casts to its endpoint
+// type: one helper serves many operations whose output types differ only by name,
+// and TypeScript cannot tie a runtime `path` string to the matching endpoint key.
+// The call still parses every answer with the operation's output schema.
 function indicator(
 	path: string,
 	event: string,
+	// Twelve Data names the look-back `period` on /supertrend and `time_period` elsewhere.
+	periodParam: 'time_period' | 'period' = 'time_period',
 ): (
 	ctx: Parameters<NonNullable<TwelveDataEndpoints['rsi']>>[0],
 	input: never,
@@ -37,7 +43,7 @@ function indicator(
 				query: {
 					symbol: parsed.symbol,
 					interval: parsed.interval,
-					time_period: parsed.time_period,
+					[periodParam]: parsed.time_period,
 					series_type: parsed.series_type,
 					outputsize: parsed.outputsize,
 					exchange: parsed.exchange,
@@ -104,6 +110,7 @@ export const roc: TwelveDataEndpoints['roc'] = indicator(
 export const supertrend: TwelveDataEndpoints['supertrend'] = indicator(
 	'supertrend',
 	'supertrend',
+	'period',
 ) as TwelveDataEndpoints['supertrend'];
 export const apo: TwelveDataEndpoints['apo'] = indicator(
 	'apo',
@@ -137,7 +144,7 @@ export const stddev: TwelveDataEndpoints['stddev'] = indicator(
 	'stddev',
 	'stddev',
 ) as TwelveDataEndpoints['stddev'];
-/** `beta` and `correl` read two price series: `series_type_1` and `series_type_2`. */
+/** `beta` and `correl` read two price series: `series_type_1` and `series_type_2`. Typed like `indicator` above. */
 function twoSeriesIndicator(
 	path: string,
 	event: string,

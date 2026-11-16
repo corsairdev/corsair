@@ -99,10 +99,10 @@ apiExamples:
   indicators.tsf:
     call: "{ symbol: 'AAPL', interval: '1day', time_period: 14 }"
 apiNotes:
-  market.quote: 'A quote with several comma-separated symbols returns a map keyed by symbol rather than one object.'
+  market.quote: 'Takes one symbol. Call once per symbol for several: a comma list is rejected before any request.'
   market.timeSeries: '`outputsize` caps the candles and `order` sets newest-first or oldest-first. The free plan caps the history depth.'
   market.exchangeRate: 'The symbol is a pair such as EUR/USD, not a single currency.'
-  reference.stocks: 'Filter by symbol, exchange, country or type. This route answers without a key.'
+  reference.stocks: 'Filter by symbol, exchange, country or type. Twelve Data serves this list without a key, but the plugin still needs a configured key and sends it.'
   reference.etf: 'Uses the same `{ data }` envelope and fields as `reference.stocks`.'
   reference.funds: 'Answers `{ result: { count, list } }` rather than the `{ data }` array the other lists use.'
   reference.bonds: 'Answers `{ result: { count, list } }` rather than the `{ data }` array the other lists use.'

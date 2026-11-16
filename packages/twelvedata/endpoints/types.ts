@@ -217,17 +217,20 @@ const ApiUsageSchema = z
 	.loose();
 export type ApiUsageOutput = z.output<typeof ApiUsageSchema>;
 
+/**
+ * One symbol: for a comma list Twelve Data answers a map keyed by symbol, which
+ * the single-result output schemas read as an empty result.
+ */
+const SingleSymbolSchema = z
+	.string()
+	.min(1)
+	.refine((value) => !value.includes(','), {
+		message: 'Pass one symbol; call once per symbol for several',
+	});
+
 /** Shared request fields for the market-data routes. */
 const SymbolFields = {
-	// One symbol: for a comma list Twelve Data answers a map keyed by symbol,
-	// which the single-quote output schema would read as an empty quote.
-	symbol: z
-		.string()
-		.min(1)
-		.refine((value) => !value.includes(','), {
-			message: 'Pass one symbol; call once per symbol for several',
-		})
-		.describe('One symbol, such as AAPL or EUR/USD'),
+	symbol: SingleSymbolSchema.describe('One symbol, such as AAPL or EUR/USD'),
 	exchange: z.string().optional().describe('Narrow to one exchange'),
 	country: z.string().optional().describe('Narrow to one country'),
 };
@@ -259,7 +262,7 @@ const PriceInputSchema = z.object({ ...SymbolFields });
 export type PriceInput = z.input<typeof PriceInputSchema>;
 
 const TimeSeriesInputSchema = z.object({
-	symbol: z.string().min(1),
+	symbol: SingleSymbolSchema,
 	interval: IntervalSchema,
 	exchange: z.string().optional(),
 	outputsize: z
@@ -277,7 +280,7 @@ const TimeSeriesInputSchema = z.object({
 export type TimeSeriesInput = z.input<typeof TimeSeriesInputSchema>;
 
 const ExchangeRateInputSchema = z.object({
-	symbol: z.string().min(1).describe('A pair such as EUR/USD'),
+	symbol: SingleSymbolSchema.describe('A pair such as EUR/USD'),
 });
 export type ExchangeRateInput = z.input<typeof ExchangeRateInputSchema>;
 

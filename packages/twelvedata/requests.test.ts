@@ -358,6 +358,31 @@ describe('indicators', () => {
 		});
 	});
 
+	it('supertrend sends its look-back as period', async () => {
+		respond(rsiSeries);
+		await invoke(IndicatorsEndpoints.supertrend, {
+			symbol: 'AAPL',
+			interval: '1day',
+			time_period: 20,
+		});
+		expect(lastRequest().params).toEqual({
+			symbol: 'AAPL',
+			interval: '1day',
+			period: '20',
+		});
+	});
+
+	it('timeSeries and exchangeRate reject a comma list before sending', async () => {
+		for (const [endpoint, input] of [
+			[MarketEndpoints.timeSeries, { symbol: 'AAPL,MSFT', interval: '1day' }],
+			[MarketEndpoints.exchangeRate, { symbol: 'EUR/USD,USD/JPY' }],
+		] as const) {
+			const error = await captureError(invoke(endpoint, input));
+			expect((error as Error).name).toBe('ZodError');
+		}
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('beta and correl send the two series the provider reads', async () => {
 		for (const endpoint of [
 			IndicatorsEndpoints.beta,

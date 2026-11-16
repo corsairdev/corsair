@@ -1379,7 +1379,7 @@ await corsair.twelvedata.api.market.quote({ symbol: 'AAPL', exchange: 'NASDAQ' }
 | `exchange` | `string` | No | Narrow to one exchange |
 | `country` | `string` | No | Narrow to one country |
 
-A quote with several comma-separated symbols returns a map keyed by symbol rather than one object.
+Takes one symbol. Call once per symbol for several: a comma list is rejected before any request.
 
 
 
@@ -1832,7 +1832,7 @@ await corsair.twelvedata.api.reference.stocks({ symbol: 'AAPL' });
 | `country` | `string` | No | — |
 | `type` | `string` | No | Common Stock, ETF, Depository Receipt, and so on |
 
-Filter by symbol, exchange, country or type. This route answers without a key.
+Filter by symbol, exchange, country or type. Twelve Data serves this list without a key, but the plugin still needs a configured key and sends it.
 
 
 
