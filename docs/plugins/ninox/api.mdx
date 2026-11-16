@@ -1,0 +1,555 @@
+---
+title: "Ninox API reference"
+sidebarTitle: "API"
+description: "API reference for the Ninox plugin in Corsair: every `ninox.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Fields
+
+### list
+
+`fields.list`
+
+List a table’s field names and types, which decide what a record write may set
+
+**Risk:** `read`
+
+```ts
+await corsair.ninox.api.fields.list({ workspaceId: 'abcdefghijkl', moduleName: 'CRM', tableName: 'Contacts' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | The workspace id, twelve lowercase letters or digits. |
+| `moduleName` | `string` | Yes | The module name, as it appears in the workspace. |
+| `tableName` | `string` | Yes | The table name, as it appears in the module. |
+| `limit` | `number` | No | Most rows to return, 1 to 100. |
+| `offset` | `number` | No | Rows to skip. Starts at 0. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `object[]` | Yes | — |
+| `page_info` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  name?: string | null,
+  type?: string | null,
+  required?: boolean | null,
+  unique?: boolean | null,
+  canRead?: string | null,
+  canWrite?: string | null,
+  binding?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page_info full type">
+
+```ts
+{
+  has_more?: boolean | null,
+  limit?: number | null,
+  offset?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Modules
+
+### list
+
+`modules.list`
+
+List the workspace’s modules, paged by limit and offset
+
+**Risk:** `read`
+
+```ts
+await corsair.ninox.api.modules.list({ workspaceId: 'abcdefghijkl', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | The workspace id, twelve lowercase letters or digits. |
+| `limit` | `number` | No | Most rows to return, 1 to 100. |
+| `offset` | `number` | No | Rows to skip. Starts at 0. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `modules` | `object[]` | Yes | — |
+| `page_info` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="modules full type">
+
+```ts
+{
+  name?: string | null,
+  description?: string | null,
+  afterOpen?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page_info full type">
+
+```ts
+{
+  has_more?: boolean | null,
+  limit?: number | null,
+  offset?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Records
+
+### changes
+
+`records.changes`
+
+Poll a table’s row-level change feed since a timestamp, which needs history tracking enabled on that table
+
+**Risk:** `read`
+
+```ts
+await corsair.ninox.api.records.changes({ workspaceId: 'abcdefghijkl', moduleName: 'CRM', tableName: 'Contacts', since: '2026-11-16T09:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | The workspace id, twelve lowercase letters or digits. |
+| `moduleName` | `string` | Yes | The module name, as it appears in the workspace. |
+| `tableName` | `string` | Yes | The table name, as it appears in the module. |
+| `since` | `string` | Yes | Return changes at or after this instant. Only tables with history tracking enabled answer; others return 400. |
+| `asOf` | `string` | No | The first page's meta.asOf, when paging through one poll so the window stays fixed. |
+| `limit` | `number` | No | Most rows to return, 1 to 100. |
+| `offset` | `number` | No | Rows to skip. Starts at 0. |
+
+Needs history tracking on the table, which otherwise answers 400. Pass meta.asOf back as since on the next poll.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `changes` | `object[]` | Yes | — |
+| `asOf` | `string \| null` | No | Pass as `since` on the next poll to avoid a gap or a repeat. |
+| `page_info` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="changes full type">
+
+```ts
+{
+  id?: string | null,
+  changeType?: string | null,
+  changedAt?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page_info full type">
+
+```ts
+{
+  has_more?: boolean | null,
+  limit?: number | null,
+  offset?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`records.create`
+
+Create rows in one transaction, so a single bad record rolls the whole batch back
+
+**Risk:** `write`
+
+```ts
+await corsair.ninox.api.records.create({ workspaceId: 'abcdefghijkl', moduleName: 'CRM', tableName: 'Contacts', records: [{ Name: 'Dana Okafor', Email: 'dana@northwind.example' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | The workspace id, twelve lowercase letters or digits. |
+| `moduleName` | `string` | Yes | The module name, as it appears in the workspace. |
+| `tableName` | `string` | Yes | The table name, as it appears in the module. |
+| `records` | `Record<string, string \| number \| boolean \| null>[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | — |
+
+
+
+---
+
+### delete
+
+`records.delete`
+
+Delete rows in one transaction, rolling the whole set back if any id is wrong; there is no restore call
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.ninox.api.records.delete({ workspaceId: 'abcdefghijkl', moduleName: 'CRM', tableName: 'Contacts', recordIds: [12, 13] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | The workspace id, twelve lowercase letters or digits. |
+| `moduleName` | `string` | Yes | The module name, as it appears in the workspace. |
+| `tableName` | `string` | Yes | The table name, as it appears in the module. |
+| `recordIds` | `number[]` | Yes | Records to delete. Ninox deletes them in one transaction and rolls the whole set back if any id is wrong. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deletedIds` | `string[]` | Yes | — |
+
+
+
+---
+
+### get
+
+`records.get`
+
+Read one row by id, which is the only way to fetch a known record because the id is not filterable
+
+**Risk:** `read`
+
+```ts
+await corsair.ninox.api.records.get({ workspaceId: 'abcdefghijkl', moduleName: 'CRM', tableName: 'Contacts', recordId: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | The workspace id, twelve lowercase letters or digits. |
+| `moduleName` | `string` | Yes | The module name, as it appears in the workspace. |
+| `tableName` | `string` | Yes | The table name, as it appears in the module. |
+| `recordId` | `number` | Yes | The numeric record id. |
+| `fields` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `values` | `Record<string, string \| number \| boolean \| null> \| null` | No | Field name to value. Ninox accepts a date, timestamp or appointment as an ISO 8601 string or a Unix millisecond value, and a choice or multi field as an option id or label. |
+
+
+
+---
+
+### list
+
+`records.list`
+
+Read rows from a table with a field filter, sort order and offset paging; only columns the table marks filterable are accepted
+
+**Risk:** `read`
+
+```ts
+await corsair.ninox.api.records.list({ workspaceId: 'abcdefghijkl', moduleName: 'CRM', tableName: 'Contacts', filter: '{"Email":"dana@northwind.example"}', limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | The workspace id, twelve lowercase letters or digits. |
+| `moduleName` | `string` | Yes | The module name, as it appears in the workspace. |
+| `tableName` | `string` | Yes | The table name, as it appears in the module. |
+| `fields` | `string[]` | No | Only these field names, sent comma-separated. |
+| `filter` | `string` | No | A JSON object of field name to value, e.g. &#123;"email":"a@b.com"&#125;. A filter on a choice field takes an option id or a label. |
+| `sort` | `string` | No | Comma-separated field names; prefix one with - for descending. |
+| `limit` | `number` | No | Most rows to return, 1 to 100. |
+| `offset` | `number` | No | Rows to skip. Starts at 0. |
+
+filter is a JSON string, and only columns the table marks filterable are accepted.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rows` | `object[]` | Yes | — |
+| `page_info` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="rows full type">
+
+```ts
+{
+  id?: string | null,
+  values?: Record<string, string | number | boolean | null> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page_info full type">
+
+```ts
+{
+  has_more?: boolean | null,
+  limit?: number | null,
+  offset?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`records.update`
+
+Update rows in one transaction, optionally rejecting a write when a field no longer holds the value the caller read
+
+**Risk:** `write`
+
+```ts
+await corsair.ninox.api.records.update({ workspaceId: 'abcdefghijkl', moduleName: 'CRM', tableName: 'Contacts', records: [{ id: 12, Name: 'Dana O.' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | The workspace id, twelve lowercase letters or digits. |
+| `moduleName` | `string` | Yes | The module name, as it appears in the workspace. |
+| `tableName` | `string` | Yes | The table name, as it appears in the module. |
+| `override` | `boolean` | No | Write the values even when one no longer matches its _expected entry, instead of answering 409. |
+| `records` | `object[]` | Yes | — |
+
+Put values you read into _expected; a mismatch answers 409 unless override is true.
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  id: number,
+  _expected?: Record<string, string | number | boolean | null>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `updatedIds` | `string[]` | Yes | — |
+
+
+
+---
+
+### upsert
+
+`records.upsert`
+
+Create or update rows matched by one unique field, refusing an ambiguous match rather than picking a row
+
+**Risk:** `write`
+
+```ts
+await corsair.ninox.api.records.upsert({ workspaceId: 'abcdefghijkl', moduleName: 'CRM', tableName: 'Contacts', matchField: 'Email', records: [{ Email: 'dana@northwind.example', Name: 'Dana Okafor' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | The workspace id, twelve lowercase letters or digits. |
+| `moduleName` | `string` | Yes | The module name, as it appears in the workspace. |
+| `tableName` | `string` | Yes | The table name, as it appears in the module. |
+| `matchField` | `string` | Yes | The unique field to match on. Ninox refuses a field not marked unique, and a non-unique match answers 409. |
+| `records` | `Record<string, string \| number \| boolean \| null>[]` | Yes | — |
+
+matchField must be a field marked unique; an ambiguous match answers 409 rather than picking a row.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `createdIds` | `string[]` | Yes | — |
+| `updatedIds` | `string[]` | Yes | — |
+
+
+
+---
+
+## Tables
+
+### list
+
+`tables.list`
+
+List the tables inside one module
+
+**Risk:** `read`
+
+```ts
+await corsair.ninox.api.tables.list({ workspaceId: 'abcdefghijkl', moduleName: 'CRM' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | The workspace id, twelve lowercase letters or digits. |
+| `moduleName` | `string` | Yes | The module name, as it appears in the workspace. |
+| `limit` | `number` | No | Most rows to return, 1 to 100. |
+| `offset` | `number` | No | Rows to skip. Starts at 0. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tables` | `object[]` | Yes | — |
+| `page_info` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tables full type">
+
+```ts
+{
+  name?: string | null,
+  description?: string | null,
+  canCreate?: string | null,
+  canDelete?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page_info full type">
+
+```ts
+{
+  has_more?: boolean | null,
+  limit?: number | null,
+  offset?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Workspace
+
+### get
+
+`workspace.get`
+
+Read the workspace and the modules in it
+
+**Risk:** `read`
+
+```ts
+await corsair.ninox.api.workspace.get({ workspaceId: 'abcdefghijkl' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | The workspace id, twelve lowercase letters or digits. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `modules` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="modules full type">
+
+```ts
+{
+  name?: string | null,
+  description?: string | null,
+  afterOpen?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
