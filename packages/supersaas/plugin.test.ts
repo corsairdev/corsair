@@ -101,6 +101,12 @@ describe('supersaas plugin definition', () => {
 		}
 	});
 
+	it('marks booking creates and updates destructive, since they can email the customer', () => {
+		const meta = plugin.endpointMeta ?? {};
+		expect(meta['bookings.create']?.riskLevel).toBe('destructive');
+		expect(meta['bookings.update']?.riskLevel).toBe('destructive');
+	});
+
 	it('marks the schedule reads as reads', () => {
 		const meta = plugin.endpointMeta ?? {};
 		for (const name of [

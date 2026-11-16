@@ -1,9 +1,18 @@
 displayName: "Supersaas"
 description: Appointment scheduling API for managing users, bookings, slots, and schedules.
+overviewNote: |
+  SuperSaaS uses HTTP Basic auth: the account name is the username and the API key the password. Store the key as the API key and the account name as `account_name` on the account. The key is under Account Info, API Key.
+
+  - **Every booking and slot call names its schedule.** `schedule_id` is sent as a query parameter; without it SuperSaaS answers 404.
+  - **Creates return the new id.** SuperSaaS answers 201 with an empty body and the new record's URL in `Location`; the plugin returns `{ created, id, location }`. Updates and deletes answer an empty 200 and return `{ id, updated }` or `{ id, deleted }`.
+  - **Bookings can email the customer.** A schedule set to send confirmations emails the customer on a booking create or change, so both are marked destructive. Turn confirmations off on the schedule's Process tab for test runs.
+  - **Schedule reads answer an envelope.** `schedules.changes`, `range`, `agenda` and `free` return `{ bookings }` or, on a capacity schedule, `{ slots }`.
 examples:
   read:
     path: schedules.changes
     title: List recent schedule changes
+    args:
+      schedule_id: 12345
   write:
     path: bookings.create
     title: Create a booking

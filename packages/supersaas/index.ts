@@ -38,8 +38,6 @@ export const supersaasAuthConfig = {
 export type SupersaasPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
-	/** The SuperSaaS account name, used as the Basic username. */
-	accountName?: string;
 	hooks?: InternalSupersaasPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof supersaasEndpointsNested>;
@@ -253,13 +251,17 @@ export const supersaasEndpointMeta = {
 		description: 'Read a single booking by id',
 	},
 	'bookings.create': {
-		riskLevel: 'write',
+		// SuperSaaS emails a confirmation to the customer when the schedule is
+		// set to (Process tab, the default for many schedules), so this can send.
+		riskLevel: 'destructive',
 		description:
-			'Book an appointment. A resource schedule needs start and finish, a capacity schedule needs a slot id, and the two are not interchangeable',
+			'Book an appointment; SuperSaaS may email the customer a confirmation, depending on the schedule settings. A resource schedule needs start and finish, a capacity schedule needs a slot id',
 	},
 	'bookings.update': {
-		riskLevel: 'write',
-		description: "Change a booking's time or details",
+		// A changed booking is confirmed by email the same way as a new one.
+		riskLevel: 'destructive',
+		description:
+			"Change a booking's time or details; SuperSaaS may email the customer about the change, depending on the schedule settings",
 	},
 	'bookings.delete': {
 		riskLevel: 'destructive',
@@ -374,12 +376,13 @@ export type {
 	ScheduleRangeInput,
 	SlotsCreateInput,
 	SupersaasBooking,
-	SupersaasChange,
+	SupersaasCreated,
 	SupersaasDeleted,
 	SupersaasEndpointInputs,
 	SupersaasEndpointOutputs,
-	SupersaasFreeSpace,
+	SupersaasScheduleRead,
 	SupersaasSlot,
+	SupersaasUpdated,
 	SupersaasUser,
 	UsersCreateInput,
 	UsersCreateWithKeyInput,
