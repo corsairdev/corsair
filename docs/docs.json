@@ -4525,14 +4525,6 @@
                 ]
               },
               {
-                "group": "TextCortex",
-                "pages": [
-                  "plugins/textcortex/overview",
-                  "plugins/textcortex/api",
-                  "plugins/textcortex/database"
-                ]
-              },
-              {
                 "group": "Tavily",
                 "pages": [
                   "plugins/tavily/overview",
@@ -4565,6 +4557,14 @@
                   "plugins/telegram/api",
                   "plugins/telegram/database",
                   "plugins/telegram/webhooks"
+                ]
+              },
+              {
+                "group": "TextCortex",
+                "pages": [
+                  "plugins/textcortex/overview",
+                  "plugins/textcortex/api",
+                  "plugins/textcortex/database"
                 ]
               },
               {

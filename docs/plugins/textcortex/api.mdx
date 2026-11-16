@@ -85,7 +85,10 @@ await corsair.textcortex.api.capabilities.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `capabilities` | `Record<string, boolean> \| null` | No | — |
+| `object` | `string \| null` | No | — |
+| `api_version` | `string \| null` | No | — |
+| `openai_compatible` | `Record<string, any> \| null` | No | — |
+| `textcortex` | `Record<string, any> \| null` | No | — |
 
 
 
@@ -99,7 +102,7 @@ await corsair.textcortex.api.capabilities.get({});
 
 Generate a chat completion from a conversation, which spends credits on every call
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.textcortex.api.chat.completions({ model: 'gpt-6-luna', messages: [{ role: 'user', content: 'Hello' }], temperature: 0.7 });
@@ -169,7 +172,7 @@ Spends credits; messages take a plain string content, and a temperature runs fro
   finish_reason?: string | null,
   message?: {
     role?: string | null,
-    content?: string | null
+    content?: string | any[] | null
   } | null
 }[]
 ```
@@ -200,9 +203,9 @@ Spends credits; messages take a plain string content, and a temperature runs fro
 
 `images.create`
 
-Generate images from a prompt, returning URLs or base64 JSON, and spend credits per image
+Generate an image from a prompt, returning its URL, and spend credits per image
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.textcortex.api.images.create({ prompt: 'A red bicycle on a white background', size: '1024x1024' });
@@ -214,11 +217,11 @@ await corsair.textcortex.api.images.create({ prompt: 'A red bicycle on a white b
 |------|------|----------|-------------|
 | `prompt` | `string` | Yes | What the image should show. |
 | `model` | `string` | No | An image model ID. The API picks its default when omitted. |
-| `n` | `number` | No | How many images to generate. |
+| `n` | `1` | No | How many images to generate. TextCortex accepts only 1. |
 | `size` | `string` | No | The output size as "WIDTHxHEIGHT", e.g. "1024x1024". |
-| `response_format` | `url \| b64_json` | No | Whether to return a URL or base64 JSON. |
+| `response_format` | `url` | No | TextCortex returns a URL only; base64 is not offered. |
 
-Spends credits per image; response_format is url or b64_json.
+Spends credits per image. TextCortex makes one image per call and returns a URL.
 
 
 
@@ -235,7 +238,11 @@ Spends credits per image; response_format is url or b64_json.
 ```ts
 {
   url?: string | null,
-  b64_json?: string | null,
+  image_id?: string | null,
+  model?: string | null,
+  file_type?: string | null,
+  width?: number | null,
+  height?: number | null,
   revised_prompt?: string | null
 }[]
 ```
@@ -298,7 +305,7 @@ Use the base model ID and reasoning_effort rather than a deprecated -thinking va
 
 Generate one response from a prompt and optional instructions, which spends credits
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.textcortex.api.responses.create({ model: 'gpt-6-luna', input: 'Say hello', instructions: 'You are a friendly assistant.' });
@@ -330,6 +337,7 @@ Spends credits; store is always sent as false and store: true is rejected.
 | `model` | `string \| null` | No | — |
 | `status` | `string \| null` | No | — |
 | `output` | `object[] \| null` | No | — |
+| `incomplete_details` | `object \| null` | No | — |
 | `output_text` | `string \| null` | No | — |
 | `usage` | `object \| null` | No | — |
 
@@ -341,8 +349,22 @@ Spends credits; store is always sent as false and store: true is rejected.
   type?: string | null,
   text?: string | null,
   id?: string | null,
-  role?: string | null
+  role?: string | null,
+  status?: string | null,
+  content?: {
+    type?: string | null,
+    text?: string | null
+  }[] | null
 }[] | null
+```
+</Accordion>
+
+<Accordion title="incomplete_details full type">
+
+```ts
+{
+  reason?: string | null
+} | null
 ```
 </Accordion>
 
@@ -368,12 +390,12 @@ Spends credits; store is always sent as false and store: true is rejected.
 
 `web.search`
 
-Search the web and return matching sources, which is a paid call rather than a plain read
+Search the web and return matching sources with snippets; each search spends credits
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
-await corsair.textcortex.api.web.search({ query: 'textcortex api', max_results: 5 });
+await corsair.textcortex.api.web.search({ query: 'textcortex api', limit: 5 });
 ```
 
 **Input**
@@ -381,9 +403,10 @@ await corsair.textcortex.api.web.search({ query: 'textcortex api', max_results: 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `query` | `string` | Yes | What to search for. |
-| `max_results` | `number` | No | Cap the number of results. |
+| `limit` | `number` | No | How many results to return, 1 to 10; TextCortex defaults to 5. |
+| `website` | `string` | No | Only return results from this website, e.g. "example.com". |
 
-A paid call rather than a plain read.
+Spends credits per search; returns up to 10 results in `data`, and `website` limits them to one site.
 
 
 
@@ -391,17 +414,45 @@ A paid call rather than a plain read.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results` | `object[]` | Yes | — |
+| `object` | `string \| null` | No | — |
+| `query` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `limit` | `number \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+| `usage` | `object \| null` | No | — |
+| `meta` | `object \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="results full type">
+<Accordion title="data full type">
 
 ```ts
 {
-  title?: string | null,
+  object?: string | null,
   url?: string | null,
-  snippet?: string | null
+  snippet?: string | null,
+  score?: number | null,
+  published_at?: string | null
 }[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  billing?: string | null,
+  cost?: number | null,
+  currency?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  filtered_result_count?: number | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>

@@ -10,11 +10,11 @@ Create a key in your TextCortex account's API settings. The plugin sends it as `
 
 Things to know before you call:
 
-- **Every generation is paid.** `chat.completions`, `responses.create`, `images.create` and `web.search` each spend credits, so they are writes: a read-only caller cannot reach them. Check `balance.get` for what is left.
-- **A 402 means the credits ran out.** Waiting does not help, so the plugin never retries a 402, and `TextCortexAPIError` exposes `isInsufficientCredits` so a caller can tell it apart from throttling.
+- **Every generation is paid.** `chat.completions`, `responses.create` and `images.create` spend credits and produce something new, so they are `destructive` and need approval. `web.search` also spends credits per search, but it only returns data, so it is a `read`. Check `balance.get` for what is left.
+- **A 402 means the credits ran out.** Waiting does not help, so the plugin never retries a 402. Errors are core's `ApiError` with the request body removed; `textCortexErrorDetails(error)` reads the provider's message, code and per-field details.
 - **The models route is the place to start.** `models.list` returns the IDs `chat.completions` and `responses.create` accept. Use the base ID and set `reasoning_effort` instead of a `-thinking` variant, which is deprecated.
 - **Two request shapes.** `chat.completions` takes an OpenAI-style `messages` array. `responses.create` takes a single `input` string with optional `instructions`, and stores nothing: the plugin pins `store: false` and rejects `store: true`.
-- **Text is the supported content.** `chat.completions` sends plain-text messages. Image inputs, tool calls and streaming are not modelled, so the plugin does not offer them rather than silently dropping a field.
+- **Text is the supported content.** `chat.completions` sends plain-text messages. Image inputs, tool calls and streaming are not modelled, and the request schemas are strict, so an unsupported field such as `tools` or `stream` is rejected before anything is sent or billed.
 - **Errors come in three shapes.** The chat route answers the OpenAI `{ error: { message, type } }` envelope, TextCortex's own routes answer `{ message, status }` or `{ detail }`, and a validation failure puts an array in `detail`. All three are parsed, and a validation array keeps each field's location.
 - **No retried paid calls.** The plugin replays a 5xx only on a GET. A repeated completion can produce and bill a second answer, and TextCortex promises no idempotency key.
 
