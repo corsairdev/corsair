@@ -16,7 +16,7 @@ description: "API reference for the LaunchDarkly plugin in Corsair: every `launc
 
 Create a new personal or service access token
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.launchdarkly.api.accessTokens.create({ name: 'CI Deployment Token' });
@@ -693,6 +693,7 @@ await corsair.launchdarkly.api.contexts.get({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `_environmentId` | `string` | No | — |
 | `items` | `object[]` | Yes | — |
 | `totalCount` | `number` | No | — |
 | `continuationToken` | `string` | No | — |
@@ -703,10 +704,10 @@ await corsair.launchdarkly.api.contexts.get({
 
 ```ts
 {
-  key: string,
-  kind?: string,
-  name?: string,
-  attributes?: Record<string, any>,
+  context: any,
+  lastSeen?: string,
+  applicationId?: string,
+  associatedContexts?: any,
   _links?: Record<string, {
     href?: string,
     type?: string
@@ -816,6 +817,7 @@ await corsair.launchdarkly.api.contexts.search({ projectKey: 'default', environm
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `_environmentId` | `string` | No | — |
 | `items` | `object[]` | Yes | — |
 | `totalCount` | `number` | No | — |
 | `continuationToken` | `string` | No | — |
@@ -826,10 +828,10 @@ await corsair.launchdarkly.api.contexts.search({ projectKey: 'default', environm
 
 ```ts
 {
-  key: string,
-  kind?: string,
-  name?: string,
-  attributes?: Record<string, any>,
+  context: any,
+  lastSeen?: string,
+  applicationId?: string,
+  associatedContexts?: any,
   _links?: Record<string, {
     href?: string,
     type?: string
@@ -1533,7 +1535,7 @@ Record<string, {
 
 Update environment configuration via JSON Patch
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.launchdarkly.api.environments.update({
@@ -2040,9 +2042,9 @@ Record<string, {
 
 `featureFlags.update`
 
-Update feature flag rules and variations via JSON Patch
+Update feature flag rules and variations via JSON Patch (turning a flag on or off, or changing targeting, changes what live apps serve)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.launchdarkly.api.featureFlags.update({
@@ -2764,9 +2766,9 @@ Record<string, {
 
 `segments.update`
 
-Update user segment rules via JSON Patch
+Update user segment rules via JSON Patch (changes who flags that use the segment target)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.launchdarkly.api.segments.update({
@@ -2929,7 +2931,7 @@ await corsair.launchdarkly.api.teams.create({ key: 'frontend-team', name: 'Front
 | `description` | `string` | No | — |
 | `memberIDs` | `string[]` | No | — |
 | `customRoleKeys` | `string[]` | No | — |
-| `_creationDate` | `string` | No | — |
+| `_creationDate` | `number` | No | — |
 | `_version` | `number` | No | — |
 | `_links` | `object` | No | — |
 
@@ -3004,7 +3006,7 @@ await corsair.launchdarkly.api.teams.get({ teamKey: 'frontend-team' });
 | `description` | `string` | No | — |
 | `memberIDs` | `string[]` | No | — |
 | `customRoleKeys` | `string[]` | No | — |
-| `_creationDate` | `string` | No | — |
+| `_creationDate` | `number` | No | — |
 | `_version` | `number` | No | — |
 | `_links` | `object` | No | — |
 
@@ -3066,7 +3068,7 @@ await corsair.launchdarkly.api.teams.list({ limit: 10 });
   description?: string,
   memberIDs?: string[],
   customRoleKeys?: string[],
-  _creationDate?: string,
+  _creationDate?: number,
   _version?: number,
   _links?: Record<string, {
     href?: string,
@@ -3165,7 +3167,7 @@ await corsair.launchdarkly.api.teams.update({
 | `description` | `string` | No | — |
 | `memberIDs` | `string[]` | No | — |
 | `customRoleKeys` | `string[]` | No | — |
-| `_creationDate` | `string` | No | — |
+| `_creationDate` | `number` | No | — |
 | `_version` | `number` | No | — |
 | `_links` | `object` | No | — |
 
@@ -3191,7 +3193,7 @@ Record<string, {
 
 `users.get`
 
-Get user record in an environment by user key
+Get user record in an environment by user key (deprecated by LaunchDarkly; accounts on contexts answer 404, use contexts.get)
 
 **Risk:** `read`
 
@@ -3256,7 +3258,7 @@ Record<string, {
 
 `users.list`
 
-List users in an environment
+List users in an environment (deprecated by LaunchDarkly; accounts on contexts answer 404, use contexts.search)
 
 **Risk:** `read`
 
@@ -3329,7 +3331,7 @@ Record<string, {
 
 `users.search`
 
-Search users in an environment by query string
+Search users in an environment by query string (deprecated by LaunchDarkly; accounts on contexts answer 404, use contexts.search)
 
 **Risk:** `read`
 
@@ -3399,3 +3401,4 @@ Record<string, {
 
 
 ---
+
