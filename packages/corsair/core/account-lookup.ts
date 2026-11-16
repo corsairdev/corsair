@@ -12,6 +12,10 @@ import {
 } from './auth/encryption';
 import { generateUUID } from './utils';
 
+export type AccountConfig = Selectable<
+	CorsairKyselyDatabase['corsair_accounts']
+>['config'];
+
 export type AccountLookupInput = {
 	database: CorsairDatabase;
 	integrationName: string;
@@ -23,7 +27,7 @@ export type AccountLookupInput = {
 
 export type IntegrationAccountRow = {
 	id: string;
-	config: unknown;
+	config: AccountConfig;
 	dek: string | null;
 };
 
@@ -134,7 +138,7 @@ export type Account = {
 	id: string;
 	ref?: string;
 	label?: string;
-	config: unknown;
+	config: AccountConfig;
 	dek: string | null;
 };
 
@@ -164,7 +168,7 @@ export class AccountSelectionError extends Error {
 	}
 }
 
-function parseConfig(config: unknown): Record<string, string> {
+function parseConfig(config: AccountConfig): Record<string, string> {
 	if (typeof config === 'string') {
 		try {
 			return JSON.parse(config);
@@ -177,12 +181,12 @@ function parseConfig(config: unknown): Record<string, string> {
 
 const toAccount = (r: {
 	id: string;
-	config: unknown;
+	config: AccountConfig;
 	dek?: string | null;
 }): Account => ({ id: r.id, config: r.config, dek: r.dek ?? null });
 
 export async function readIdentity(
-	row: { config: unknown; dek?: string | null },
+	row: { config: AccountConfig; dek?: string | null },
 	kek: string,
 ): Promise<{ ref?: string; label?: string }> {
 	const config = parseConfig(row.config);
@@ -196,7 +200,7 @@ export async function readIdentity(
 }
 
 const withIdentity = (
-	rows: { id: string; config: unknown; dek?: string | null }[],
+	rows: { id: string; config: AccountConfig; dek?: string | null }[],
 	kek: string,
 ): Promise<Account[]> =>
 	Promise.all(
@@ -405,7 +409,7 @@ async function sealIdentity(
 
 async function writeIdentity(
 	trx: Kysely<CorsairKyselyDatabase>,
-	row: { id: string; config: unknown; dek?: string | null },
+	row: { id: string; config: AccountConfig; dek?: string | null },
 	identity: AccountIdentity,
 	kek: string,
 ) {

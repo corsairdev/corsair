@@ -1,6 +1,7 @@
 import { createHubConnectSession } from '../../hub/connect';
 import type { HubConnectSessionInput } from '../../hub/types';
 import type { CorsairInternalConfig } from '..';
+import type { AccountConfig } from '../account-lookup';
 import {
 	AccountSelectionError,
 	readIdentity,
@@ -172,7 +173,7 @@ async function tenantAccount(
 	internal: CorsairInternalConfig,
 	r: {
 		accountId: string;
-		config: unknown;
+		config: AccountConfig;
 		dek?: string | null;
 		integrationName: string;
 	},

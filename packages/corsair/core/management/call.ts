@@ -12,6 +12,7 @@ export type ResolveCallInput = {
 	op: string;
 	tenant?: string;
 	account?: string;
+	// Unvalidated request input; each op validates its own args.
 	args?: unknown;
 };
 
@@ -69,6 +70,7 @@ const providerError = (providerStatus: number, body: unknown) =>
  * The optional `account` a caller binds, from a body or query value.
  * Present means a non-empty string, as on disconnect.
  */
+// raw is unvalidated request input, narrowed to a string below.
 export function parseAccount(raw: unknown): string | undefined {
 	if (raw === undefined) return undefined;
 	if (typeof raw !== 'string' || !raw.trim()) {
