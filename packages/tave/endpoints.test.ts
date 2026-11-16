@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { TaveAPIError } from './client';
 import { Billing, Jobs, Organization, Work } from './endpoints';
 import {
@@ -84,7 +85,18 @@ function expectAuthenticated() {
  * A promise can reject with any value, so this is the one place the reason is
  * treated as untyped before it is narrowed.
  */
-async function rejection(promise: Promise<unknown>): Promise<TaveAPIError> {
+async function rejection(promise: Promise<unknown>): Promise<ApiError> {
+	const caught = await promise.then(
+		() => undefined,
+		// unknown: a rejection reason has no static type.
+		(caught: unknown) => caught,
+	);
+	expect(caught).toBeInstanceOf(ApiError);
+	return caught as ApiError;
+}
+
+/** An HTML answer is the plugin's own error, not an HTTP failure. */
+async function htmlRejection(promise: Promise<unknown>): Promise<TaveAPIError> {
 	const caught = await promise.then(
 		() => undefined,
 		// unknown: a rejection reason has no static type.
@@ -95,7 +107,11 @@ async function rejection(promise: Promise<unknown>): Promise<TaveAPIError> {
 }
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	// A call no test queued a response for fails at once instead of reaching
+	// the real API.
+	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
+		throw new Error('unmocked fetch in a unit test');
+	});
 	mockLog.mockClear();
 });
 
@@ -266,9 +282,13 @@ describe('products', () => {
 		await invoke(Billing.productsList, { sortBy: 'name asc' });
 		expect(lastRequest().query).toEqual({ sortBy: 'name asc' });
 
-		// The route has no paging, so the schema must reject one rather than
-		// accept it and have the API ignore it.
-		await expect(invoke(Billing.productsList, { page: 2 })).rejects.toThrow();
+		// The route has no paging, so the strict schema rejects one before any
+		// request is sent.
+		const calls = fetchMock.mock.calls.length;
+		await expect(
+			invoke(Billing.productsList, { page: 2 } as never),
+		).rejects.toMatchObject({ name: 'ZodError' });
+		expect(fetchMock.mock.calls.length).toBe(calls);
 	});
 
 	it('creates a product and rejects a decimal price', async () => {
@@ -508,7 +528,6 @@ describe('error handling', () => {
 		const error = await rejection(invoke(Jobs.get, { jobId: 'missing' }));
 
 		expect(error.status).toBe(404);
-		expect(error.isHtmlResponse).toBe(false);
 	});
 
 	it('turns a 200 documentation page into a missing-route error', async () => {
@@ -516,7 +535,7 @@ describe('error handling', () => {
 		// caller must not receive a page it cannot parse.
 		respond(htmlResponse, 200);
 
-		const error = await rejection(invoke(Jobs.get, { jobId: job.id }));
+		const error = await htmlRejection(invoke(Jobs.get, { jobId: job.id }));
 
 		expect(error.isHtmlResponse).toBe(true);
 		expect(error.message).toContain('HTML instead of JSON');
@@ -551,5 +570,26 @@ describe('logging', () => {
 			{},
 			'completed',
 		);
+	});
+});
+
+describe('path ids and sent data', () => {
+	it('refuses a dot-segment id before sending a delete', async () => {
+		await expect(invoke(Jobs.remove, { jobId: '..' })).rejects.toThrow(
+			/not a valid id/,
+		);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('keeps the sent body out of the error', async () => {
+		respond(notFoundResponse, 404);
+		const error = await rejection(
+			invoke(Work.notesCreate, {
+				jobId: job.id,
+				contentHtml: '<p>Client phone 555-0100</p>',
+			}),
+		);
+		expect(error.request.body).toBeUndefined();
+		expect(JSON.stringify(error)).not.toContain('555-0100');
 	});
 });
