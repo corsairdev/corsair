@@ -600,7 +600,7 @@ await corsair.telnyx.api.calls.speak({ callControlId: 'v3:abc123', payload: 'Hel
 | `payload` | `string` | Yes | The text to read aloud. |
 | `voice` | `string` | Yes | The voice to use, e.g. "female", "male" or a provider voice such as "Telnyx.KokoroTTS.af". |
 | `language` | `string` | No | The language of the payload, e.g. "en-US". |
-| `loop` | `number` | No | — |
+| `loop` | `number \| infinity` | No | How many times to play the text, or "infinity" to repeat it. |
 | `stop` | `string` | No | — |
 
 payload and voice are required; language is optional.
@@ -648,7 +648,7 @@ await corsair.telnyx.api.messages.delete({ messageId: '40385f64-5717-4562-b3fc-2
 |------|------|----------|-------------|
 | `messageId` | `string` | Yes | The ID of the scheduled message to cancel. |
 
-Cancels a scheduled message that has not been sent yet; answers with the bare message, not { data }.
+Cancels a scheduled message that has not been sent yet; answers with the bare message, not wrapped in data.
 
 
 
