@@ -82,6 +82,8 @@ export function sentHeader(name: string): string | null {
 	return new Headers(lastCall().init.headers).get(name);
 }
 
+// unknown: each test sends a different JSON body and checks its fields by
+// value, so no single static type fits.
 export function sentBody(): Record<string, unknown> {
 	const body = lastCall().init.body;
 	if (typeof body !== 'string') {

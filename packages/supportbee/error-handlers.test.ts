@@ -66,6 +66,8 @@ describe('supportbee error handling', () => {
 		// Assert absence: `not.toHaveProperty(key, value)` still passes when the
 		// key exists with another value.
 		expect(
+			// unknown: the strategy type has no index signature, and this test
+			// only checks that one key is absent.
 			(strategy as Record<string, unknown>).headersRetryAfterMs,
 		).toBeUndefined();
 	});
