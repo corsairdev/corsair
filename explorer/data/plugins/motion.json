@@ -1,0 +1,1735 @@
+{
+  "id": "motion",
+  "displayName": "Motion",
+  "description": "Manage Motion tasks, projects, workspaces, comments, recurring tasks, and custom fields.",
+  "npmPackageName": "@corsair-dev/motion",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 27,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "motion.api.comments.create",
+      "shortPath": "comments.create",
+      "description": "Create a comment on a task.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string",
+            "description": "The task on which to place a comment."
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "Github Flavored Markdown representing the comment."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "taskId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, email?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "motion.api.comments.list",
+      "shortPath": "comments.list",
+      "description": "List comments on a task.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string",
+            "description": "The task for which all comments should be returned."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Use if a previous request returned a cursor. Will page through results."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ nextCursor?: string | null, pageSize?: number }"
+          },
+          {
+            "key": "comments",
+            "optional": false,
+            "type": "{ id: string, taskId?: string | null, content?: string | null, createdAt?: string | null, creator?: { id?: string | null, name?: string | null, email?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "motion.api.customFields.create",
+      "shortPath": "customFields.create",
+      "description": "Create a custom field in a workspace (beta endpoint).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The workspace in which the custom field is created."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "text | url | date | person | multiPerson | phone | select | multiSelect | number | email | checkbox | relatedTo",
+            "description": "The type of custom field to create."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The name of the custom field."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}",
+            "description": "Configuration object used for advanced custom fields, like single-select, multi-select, checkboxes, and numbers."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "text | url | date | person | multiPerson | phone | select | multiSelect | number | email | checkbox | relatedTo | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "motion.api.customFields.delete",
+      "shortPath": "customFields.delete",
+      "description": "Delete a custom field from a workspace (beta endpoint).",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The workspace for which a custom field should be deleted."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number",
+            "description": "The id of the custom field to be deleted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "motion.api.customFields.list",
+      "shortPath": "customFields.list",
+      "description": "List the custom fields of a workspace (beta endpoint).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The workspace for which custom fields should be returned."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, field?: text | url | date | person | multiPerson | phone | select | multiSelect | number | email | checkbox | relatedTo | string | null }[]"
+      }
+    },
+    {
+      "path": "motion.api.customFieldValues.addToProject",
+      "shortPath": "customFieldValues.addToProject",
+      "description": "Set a custom field value on a project (beta endpoint).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The project on which the custom field value is set."
+          },
+          {
+            "key": "customFieldInstanceId",
+            "optional": false,
+            "type": "string",
+            "description": "The custom field that is being set on the project."
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ type: text | url | date | person | multiPerson | phone | select | multiSelect | number | email | checkbox | relatedTo, value: string | number }",
+            "description": "The value of the custom field on the project that is being set."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string | number | boolean | any[] | { id?: string, name?: string, email?: string } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "motion.api.customFieldValues.addToTask",
+      "shortPath": "customFieldValues.addToTask",
+      "description": "Set a custom field value on a task (beta endpoint).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The task on which the custom field value is set."
+          },
+          {
+            "key": "customFieldInstanceId",
+            "optional": false,
+            "type": "string",
+            "description": "The custom field on the workspace that is being set on the task."
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ type: text | url | date | person | multiPerson | phone | select | multiSelect | number | email | checkbox | relatedTo, value: string | number }",
+            "description": "The value of the custom field on the workspace that is being set."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string | number | boolean | any[] | { id?: string, name?: string, email?: string } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "motion.api.customFieldValues.deleteFromProject",
+      "shortPath": "customFieldValues.deleteFromProject",
+      "description": "Delete a custom field value from a project (beta endpoint).",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The project from which a custom field value will be deleted."
+          },
+          {
+            "key": "valueId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The ID of the custom field value that will be deleted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "motion.api.customFieldValues.deleteFromTask",
+      "shortPath": "customFieldValues.deleteFromTask",
+      "description": "Delete a custom field value from a task (beta endpoint).",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The task from which a custom field value will be deleted."
+          },
+          {
+            "key": "valueId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The ID of the custom field value that will be deleted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "motion.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a project.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The name of the project."
+          },
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "The workspace to which the project belongs."
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 due date on the project."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "The description of the project. HTML input accepted."
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]",
+            "description": "The list of labels by name the project should have."
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "ASAP | HIGH | MEDIUM | LOW",
+            "description": "Defaults to MEDIUM. Options are ASAP, HIGH, MEDIUM, and LOW."
+          },
+          {
+            "key": "projectDefinitionId",
+            "optional": true,
+            "type": "string",
+            "description": "Optional ID of the project definition (template) to use. If provided, stages must also be included."
+          },
+          {
+            "key": "stages",
+            "optional": true,
+            "type": "{ stageDefinitionId: string, dueDate: string, variableInstances?: { variableName: string, value: string }[] }[]",
+            "description": "Optional array of stage objects, required if projectDefinitionId is provided."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ name?: string | null, isDefaultStatus?: boolean | null, isResolvedStatus?: boolean | null } | null"
+          },
+          {
+            "key": "createdTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customFieldValues",
+            "optional": true,
+            "type": "Record<string, { type: string, value?: string | number | boolean | any[] | { id?: string, name?: string, email?: string } | null }> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "motion.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Get a project.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ name?: string | null, isDefaultStatus?: boolean | null, isResolvedStatus?: boolean | null } | null"
+          },
+          {
+            "key": "createdTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customFieldValues",
+            "optional": true,
+            "type": "Record<string, { type: string, value?: string | number | boolean | any[] | { id?: string, name?: string, email?: string } | null }> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "motion.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List projects with cursor pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Use if a previous request returned a cursor. Will page through results."
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string",
+            "description": "The workspace for which all projects should be returned."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ nextCursor?: string | null, pageSize?: number }"
+          },
+          {
+            "key": "projects",
+            "optional": true,
+            "type": "{ id: string, name?: string | null, description?: string | null, workspaceId?: string | null, status?: { name?: string | null, isDefaultStatus?: boolean | null, isResolvedStatus?: boolean | null } | null, createdTime?: string | null, updatedTime?: string | null, dueDate?: string | null, customFieldValues?: Record<string, { type: string, value?: string | number | boolean | any[] | { id?: string, name?: string, email?: string } | null }> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "motion.api.recurringTasks.create",
+      "shortPath": "recurringTasks.create",
+      "description": "Create a recurring task.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The name of the recurring task."
+          },
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "The workspace in which to create the recurring task."
+          },
+          {
+            "key": "frequency",
+            "optional": false,
+            "type": "string",
+            "description": "Frequency in which the task should be scheduled."
+          },
+          {
+            "key": "assigneeId",
+            "optional": false,
+            "type": "string",
+            "description": "To whom the recurring task should be assigned."
+          },
+          {
+            "key": "deadlineType",
+            "optional": true,
+            "type": "HARD | SOFT",
+            "description": "\"HARD\" or \"SOFT\" are the two values allowed."
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "REMINDER | number",
+            "description": "An integer greater than 0 or \"REMINDER\" for a reminder task."
+          },
+          {
+            "key": "startingOn",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 date trimmed to the start of the day passed, like 2024-03-12 or 2024-03-12T06:00:00.000Z."
+          },
+          {
+            "key": "idealTime",
+            "optional": true,
+            "type": "string",
+            "description": "If possible, schedule at the ideal time if free (HH:mm)."
+          },
+          {
+            "key": "schedule",
+            "optional": true,
+            "type": "string",
+            "description": "Schedule the task must adhere to (defaults to \"Work Hours\")."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "The description of the task."
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "HIGH | MEDIUM",
+            "description": "\"HIGH\" or \"MEDIUM\" (which is the default)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "{ id: string, name?: string | null, teamId?: string | null, type?: string | null, labels?: { name?: string }[] | null, statuses?: { name?: string | null, isDefaultStatus?: boolean | null, isResolvedStatus?: boolean | null }[] | null } | null"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, email?: string | null } | null"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, email?: string | null } | null"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ id: string, name?: string } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "motion.api.recurringTasks.delete",
+      "shortPath": "recurringTasks.delete",
+      "description": "Delete a recurring task.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "motion.api.recurringTasks.list",
+      "shortPath": "recurringTasks.list",
+      "description": "List recurring tasks for a workspace.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "The workspace for which all recurring tasks should be returned."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Use if a previous request returned a cursor. Will page through results."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ nextCursor?: string | null, pageSize?: number }"
+          },
+          {
+            "key": "tasks",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, description?: string | null, workspace?: { id: string, name?: string | null, teamId?: string | null, type?: string | null, labels?: { name?: string }[] | null, statuses?: { name?: string | null, isDefaultStatus?: boolean | null, isResolvedStatus?: boolean | null }[] | null } | null, creator?: { id?: string | null, name?: string | null, email?: string | null } | null, assignee?: { id?: string | null, name?: string | null, email?: string | null } | null, project?: { id: string, name?: string } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "motion.api.schedules.list",
+      "shortPath": "schedules.list",
+      "description": "List the schedules available to the workspace.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ name?: string | null, isDefaultTimezone?: boolean | null, timezone?: string | null, schedule?: Record<string, { start?: string, end?: string }[]> | null }[]"
+      }
+    },
+    {
+      "path": "motion.api.statuses.list",
+      "shortPath": "statuses.list",
+      "description": "List the statuses of a workspace.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string",
+            "description": "Get statuses for a particular workspace."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ status: { name?: string | null, isDefaultStatus?: boolean | null, isResolvedStatus?: boolean | null } }[]"
+      }
+    },
+    {
+      "path": "motion.api.tasks.create",
+      "shortPath": "tasks.create",
+      "description": "Create a task.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Title of the task."
+          },
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "The workspace ID the task should be associated with."
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 due date on the task. Required by Motion for scheduled tasks."
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "NONE | REMINDER | number",
+            "description": "\"NONE\", \"REMINDER\", or an integer greater than 0 representing minutes."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to the workspace default status."
+          },
+          {
+            "key": "autoScheduled",
+            "optional": true,
+            "type": "{ startDate?: string, deadlineType?: HARD | SOFT | NONE, schedule?: string } | null",
+            "description": "Set values to turn auto scheduling on, or null to turn auto scheduling off."
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string",
+            "description": "The project ID the task should be associated with."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Github Flavored Markdown for the input."
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "ASAP | HIGH | MEDIUM | LOW",
+            "description": "ASAP, HIGH, MEDIUM, and LOW are valid values."
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]",
+            "description": "The names of the labels to be added to the task."
+          },
+          {
+            "key": "assigneeId",
+            "optional": true,
+            "type": "string",
+            "description": "The user id the task should be assigned to."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deadlineType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "parentRecurringTaskId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "completedTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "startOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, email?: string | null } | null"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ id: string, name?: string | null, description?: string | null, workspaceId?: string | null, status?: { name?: string | null, isDefaultStatus?: boolean | null, isResolvedStatus?: boolean | null } | null, createdTime?: string | null, updatedTime?: string | null, dueDate?: string | null, customFieldValues?: Record<string, { type: string, value?: string | number | boolean | any[] | { id?: string, name?: string, email?: string } | null }> | null } | null"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "{ id: string, name?: string | null, teamId?: string | null, type?: string | null, labels?: { name?: string }[] | null, statuses?: { name?: string | null, isDefaultStatus?: boolean | null, isResolvedStatus?: boolean | null }[] | null } | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ name?: string | null, isDefaultStatus?: boolean | null, isResolvedStatus?: boolean | null } | null"
+          },
+          {
+            "key": "assignees",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, email?: string | null }[] | null"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "string | null",
+            "description": "ASAP, HIGH, MEDIUM or LOW."
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{ name?: string }[] | null"
+          },
+          {
+            "key": "scheduledStart",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "scheduledEnd",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "schedulingIssue",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True when Motion could not schedule the task."
+          },
+          {
+            "key": "createdTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastInteractedTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "chunks",
+            "optional": true,
+            "type": "{ id?: string | null, duration?: number | null, scheduledStart?: string | null, scheduledEnd?: string | null, completedTime?: string | null, isFixed?: boolean | null }[] | null"
+          },
+          {
+            "key": "customFieldValues",
+            "optional": true,
+            "type": "Record<string, { type: string, value?: string | number | boolean | any[] | { id?: string, name?: string, email?: string } | null }> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "motion.api.tasks.delete",
+      "shortPath": "tasks.delete",
+      "description": "Delete a task.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "motion.api.tasks.get",
+      "shortPath": "tasks.get",
+      "description": "Get a task.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deadlineType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "parentRecurringTaskId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "completedTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "startOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, email?: string | null } | null"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ id: string, name?: string | null, description?: string | null, workspaceId?: string | null, status?: { name?: string | null, isDefaultStatus?: boolean | null, isResolvedStatus?: boolean | null } | null, createdTime?: string | null, updatedTime?: string | null, dueDate?: string | null, customFieldValues?: Record<string, { type: string, value?: string | number | boolean | any[] | { id?: string, name?: string, email?: string } | null }> | null } | null"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "{ id: string, name?: string | null, teamId?: string | null, type?: string | null, labels?: { name?: string }[] | null, statuses?: { name?: string | null, isDefaultStatus?: boolean | null, isResolvedStatus?: boolean | null }[] | null } | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ name?: string | null, isDefaultStatus?: boolean | null, isResolvedStatus?: boolean | null } | null"
+          },
+          {
+            "key": "assignees",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, email?: string | null }[] | null"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "string | null",
+            "description": "ASAP, HIGH, MEDIUM or LOW."
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{ name?: string }[] | null"
+          },
+          {
+            "key": "scheduledStart",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "scheduledEnd",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "schedulingIssue",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True when Motion could not schedule the task."
+          },
+          {
+            "key": "createdTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastInteractedTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "chunks",
+            "optional": true,
+            "type": "{ id?: string | null, duration?: number | null, scheduledStart?: string | null, scheduledEnd?: string | null, completedTime?: string | null, isFixed?: boolean | null }[] | null"
+          },
+          {
+            "key": "customFieldValues",
+            "optional": true,
+            "type": "Record<string, { type: string, value?: string | number | boolean | any[] | { id?: string, name?: string, email?: string } | null }> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "motion.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "List tasks with optional filters and cursor pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assigneeId",
+            "optional": true,
+            "type": "string",
+            "description": "Limit tasks returned to a specific assignee."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Use if a previous request returned a cursor. Will page through results."
+          },
+          {
+            "key": "includeAllStatuses",
+            "optional": true,
+            "type": "boolean",
+            "description": "Limit tasks returned by statuses that exist on tasks. Cannot be combined with status."
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string",
+            "description": "Limit tasks returned by label on the task."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Limit tasks returned to those that contain this string. Case in-sensitive."
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string",
+            "description": "Limit tasks returned to a given project."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string[]",
+            "description": "Limit tasks returned by statuses that exist on tasks. Cannot be combined with includeAllStatuses."
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string",
+            "description": "The id of the workspace you want tasks from. If not provided, tasks from all workspaces are returned."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ nextCursor?: string | null, pageSize?: number }"
+          },
+          {
+            "key": "tasks",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, description?: string | null, duration?: string | number | null, dueDate?: string | null, deadlineType?: string | null, parentRecurringTaskId?: string | null, completed?: boolean | null, completedTime?: string | null, updatedTime?: string | null, startOn?: string | null, creator?: { id?: string | null, name?: string | null, email?: string | null } | null, project?: { id: string, name?: string | null, description?: string | null, workspaceId?: string | null, status?: { name?: string | null, isDefaultStatus?: boolean | null, isResolvedStatus?: boolean | null } | null, createdTime?: string | null, updatedTime?: string | null, dueDate?: string | null, customFieldValues?: Record<string, { type: string, value?: string | number | boolean | any[] | { id?: string, name?: string, email?: string } | null }> | null } | null, workspace?: { id: string, name?: string | null, teamId?: string | null, type?: string | null, labels?: { name?: string }[] | null, statuses?: { name?: string | null, isDefaultStatus?: boolean | null, isResolvedStatus?: boolean | null }[] | null } | null, status?: { name?: string | null, isDefaultStatus?: boolean | null, isResolvedStatus?: boolean | null } | null, assignees?: { id?: string | null, name?: string | null, email?: string | null }[] | null, priority?: string | null, labels?: { name?: string }[] | null, scheduledStart?: string | null, scheduledEnd?: string | null, schedulingIssue?: boolean | null, createdTime?: string | null, lastInteractedTime?: string | null, chunks?: { id?: string | null, duration?: number | null, scheduledStart?: string | null, scheduledEnd?: string | null, completedTime?: string | null, isFixed?: boolean | null }[] | null, customFieldValues?: Record<string, { type: string, value?: string | number | boolean | any[] | { id?: string, name?: string, email?: string } | null }> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "motion.api.tasks.move",
+      "shortPath": "tasks.move",
+      "description": "Move a task to another workspace.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "The id of the workspace to which you want the task moved."
+          },
+          {
+            "key": "assigneeId",
+            "optional": true,
+            "type": "string",
+            "description": "The user id the task should be assigned to."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deadlineType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "parentRecurringTaskId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "completedTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "startOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, email?: string | null } | null"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ id: string, name?: string | null, description?: string | null, workspaceId?: string | null, status?: { name?: string | null, isDefaultStatus?: boolean | null, isResolvedStatus?: boolean | null } | null, createdTime?: string | null, updatedTime?: string | null, dueDate?: string | null, customFieldValues?: Record<string, { type: string, value?: string | number | boolean | any[] | { id?: string, name?: string, email?: string } | null }> | null } | null"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "{ id: string, name?: string | null, teamId?: string | null, type?: string | null, labels?: { name?: string }[] | null, statuses?: { name?: string | null, isDefaultStatus?: boolean | null, isResolvedStatus?: boolean | null }[] | null } | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ name?: string | null, isDefaultStatus?: boolean | null, isResolvedStatus?: boolean | null } | null"
+          },
+          {
+            "key": "assignees",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, email?: string | null }[] | null"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "string | null",
+            "description": "ASAP, HIGH, MEDIUM or LOW."
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{ name?: string }[] | null"
+          },
+          {
+            "key": "scheduledStart",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "scheduledEnd",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "schedulingIssue",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True when Motion could not schedule the task."
+          },
+          {
+            "key": "createdTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastInteractedTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "chunks",
+            "optional": true,
+            "type": "{ id?: string | null, duration?: number | null, scheduledStart?: string | null, scheduledEnd?: string | null, completedTime?: string | null, isFixed?: boolean | null }[] | null"
+          },
+          {
+            "key": "customFieldValues",
+            "optional": true,
+            "type": "Record<string, { type: string, value?: string | number | boolean | any[] | { id?: string, name?: string, email?: string } | null }> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "motion.api.tasks.unassign",
+      "shortPath": "tasks.unassign",
+      "description": "Remove the assignee from a task.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "motion.api.tasks.update",
+      "shortPath": "tasks.update",
+      "description": "Update a task.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Title of the task."
+          },
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "The workspace ID the task should be associated with."
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 due date on the task. Required by Motion for scheduled tasks."
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "NONE | REMINDER | number",
+            "description": "\"NONE\", \"REMINDER\", or an integer greater than 0 representing minutes."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to the workspace default status."
+          },
+          {
+            "key": "autoScheduled",
+            "optional": true,
+            "type": "{ startDate?: string, deadlineType?: HARD | SOFT | NONE, schedule?: string } | null",
+            "description": "Set values to turn auto scheduling on, or null to turn auto scheduling off."
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string",
+            "description": "The project ID the task should be associated with."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Github Flavored Markdown for the input."
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "ASAP | HIGH | MEDIUM | LOW",
+            "description": "ASAP, HIGH, MEDIUM, and LOW are valid values."
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]",
+            "description": "The names of the labels to be added to the task."
+          },
+          {
+            "key": "assigneeId",
+            "optional": true,
+            "type": "string",
+            "description": "The user id the task should be assigned to."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deadlineType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "parentRecurringTaskId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "completedTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "startOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, email?: string | null } | null"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ id: string, name?: string | null, description?: string | null, workspaceId?: string | null, status?: { name?: string | null, isDefaultStatus?: boolean | null, isResolvedStatus?: boolean | null } | null, createdTime?: string | null, updatedTime?: string | null, dueDate?: string | null, customFieldValues?: Record<string, { type: string, value?: string | number | boolean | any[] | { id?: string, name?: string, email?: string } | null }> | null } | null"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "{ id: string, name?: string | null, teamId?: string | null, type?: string | null, labels?: { name?: string }[] | null, statuses?: { name?: string | null, isDefaultStatus?: boolean | null, isResolvedStatus?: boolean | null }[] | null } | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ name?: string | null, isDefaultStatus?: boolean | null, isResolvedStatus?: boolean | null } | null"
+          },
+          {
+            "key": "assignees",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, email?: string | null }[] | null"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "string | null",
+            "description": "ASAP, HIGH, MEDIUM or LOW."
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{ name?: string }[] | null"
+          },
+          {
+            "key": "scheduledStart",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "scheduledEnd",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "schedulingIssue",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True when Motion could not schedule the task."
+          },
+          {
+            "key": "createdTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastInteractedTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "chunks",
+            "optional": true,
+            "type": "{ id?: string | null, duration?: number | null, scheduledStart?: string | null, scheduledEnd?: string | null, completedTime?: string | null, isFixed?: boolean | null }[] | null"
+          },
+          {
+            "key": "customFieldValues",
+            "optional": true,
+            "type": "Record<string, { type: string, value?: string | number | boolean | any[] | { id?: string, name?: string, email?: string } | null }> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "motion.api.users.list",
+      "shortPath": "users.list",
+      "description": "List workspace or team members.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Use if a previous request returned a cursor. Will page through results."
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string",
+            "description": "The ID of the team for which all members will be returned."
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string",
+            "description": "The ID of the workspace for which all members will be returned."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ nextCursor?: string | null, pageSize?: number }"
+          },
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, email?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "motion.api.users.me",
+      "shortPath": "users.me",
+      "description": "Get the authenticated user.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "motion.api.workspaces.list",
+      "shortPath": "workspaces.list",
+      "description": "List workspaces.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Use if a previous request returned a cursor. Will page through results."
+          },
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "string[]",
+            "description": "Expand details of specific workspaces, instead of getting all of them."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ nextCursor?: string | null, pageSize?: number }"
+          },
+          {
+            "key": "workspaces",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, teamId?: string | null, type?: string | null, labels?: { name?: string }[] | null, statuses?: { name?: string | null, isDefaultStatus?: boolean | null, isResolvedStatus?: boolean | null }[] | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
