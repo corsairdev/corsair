@@ -1,0 +1,1036 @@
+---
+title: "HypeAuditor API reference"
+sidebarTitle: "API"
+description: "API reference for the HypeAuditor plugin in Corsair: every `hypeauditor.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### planInfo
+
+`account.planInfo`
+
+Read the report credits and discovery calls left in the plan; API subscriptions only
+
+**Risk:** `read`
+
+```ts
+await corsair.hypeauditor.api.account.planInfo({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+
+### unlockedReports
+
+`account.unlockedReports`
+
+List the reports unlocked on the account, with `refunded` marking a credit returned after a failed build
+
+**Risk:** `read`
+
+```ts
+await corsair.hypeauditor.api.account.unlockedReports({ limit: 100, date_from: '2024-01-01' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Items per page. |
+| `offset` | `number` | No | Zero-based index of the first item. |
+| `date_from` | `string` | No | Only reports unlocked on or after this date. A date without a time is read as `00:00:00`. |
+| `date_to` | `string` | No | Only reports unlocked on or before this date. Omitted, the window runs from account creation to now. |
+
+A date without a time is read as `00:00:00`, and omitting both dates covers the account history.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object[] \| Record<string, JsonValue>` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  report_id?: number | null,
+  username?: string | null,
+  type?: string | null,
+  unlocked_at?: number | string | null,
+  refunded?: boolean | null
+}[] | Record<string, JsonValue>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Discovery
+
+### keywords
+
+`discovery.keywords`
+
+Read the posts behind a keyword search by their content IDs, which is free and safe to repeat
+
+**Risk:** `read`
+
+```ts
+await corsair.hypeauditor.api.discovery.keywords({ socialNetwork: 'instagram', contentIds: '123,456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `socialNetwork` | `instagram \| youtube \| tiktok \| twitter \| twitch` | Yes | — |
+| `contentIds` | `string` | Yes | Comma separated content IDs to look up. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+### search
+
+`discovery.search`
+
+Search creators with the documented filters, 20 per page; each page costs one discovery call, and `sandbox` answers sample data without spending one
+
+**Risk:** `write`
+
+```ts
+await corsair.hypeauditor.api.discovery.search({ social_network: 'instagram', filters: { search: ['nasa'], subscribers_count: { from: 10000, to: 100000 } }, page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `social_network` | `instagram \| youtube \| tiktok \| twitter \| twitch` | Yes | Which network to search. Required. |
+| `filters` | `Record<string, JsonValue> \| null` | No | The documented discovery filters, sent as the request body alongside `social_network`: `search`, `search_content`, `search_description`, `niche_search`, `category`, `account_geo`, `subscribers_count`, `er`, `growth`, `sort`, `username_exclude` and the rest. See https://hypeauditor.readme.io/reference/general_discovery. |
+| `page` | `number` | No | Page number, 1-indexed, 20 items per page. The result is capped at 10,000 rows, so the highest page is 500. Each page costs one discovery call. |
+| `sandbox` | `boolean` | No | Use the sandbox action, which validates the request and returns a sample without spending a call. Defaults to false. |
+
+Each page costs one discovery call and returns 20 rows; the last page is 500. `sandbox: true` spends nothing.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+## History
+
+### instagram
+
+`history.instagram`
+
+Read the Instagram metrics history for a username, which is free and safe to repeat
+
+**Risk:** `read`
+
+```ts
+await corsair.hypeauditor.api.history.instagram({ channel: 'nasa' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | The account identifier from its URL: a username for TikTok, Twitch, Twitter and Snapchat, and a channel ID or username for YouTube. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+### tiktok
+
+`history.tiktok`
+
+Read the TikTok metrics history for a channel, which is free and safe to repeat
+
+**Risk:** `read`
+
+```ts
+await corsair.hypeauditor.api.history.tiktok({ channel: 'littlebig' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | The account identifier from its URL: a username for TikTok, Twitch, Twitter and Snapchat, and a channel ID or username for YouTube. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+### twitch
+
+`history.twitch`
+
+Read the Twitch metrics history for a channel, which is free and safe to repeat
+
+**Risk:** `read`
+
+```ts
+await corsair.hypeauditor.api.history.twitch({ channel: 'nasa' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | The account identifier from its URL: a username for TikTok, Twitch, Twitter and Snapchat, and a channel ID or username for YouTube. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+### twitter
+
+`history.twitter`
+
+Read the Twitter metrics history for a channel, which is free and safe to repeat
+
+**Risk:** `read`
+
+```ts
+await corsair.hypeauditor.api.history.twitter({ channel: 'nasa' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | The account identifier from its URL: a username for TikTok, Twitch, Twitter and Snapchat, and a channel ID or username for YouTube. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+### youtube
+
+`history.youtube`
+
+Read the YouTube metrics history for a channel, which is free and safe to repeat
+
+**Risk:** `read`
+
+```ts
+await corsair.hypeauditor.api.history.youtube({ channel: 'NASA' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | The account identifier from its URL: a username for TikTok, Twitch, Twitter and Snapchat, and a channel ID or username for YouTube. |
+
+The action is `auditor.youtube.history`. The docs page names `auditor.youtubeHistory`, which answers 405 code 3.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+## Lists
+
+### add
+
+`lists.add`
+
+Add a report to a saved list; repeating it leaves the report in the list, so it is safe to retry
+
+**Risk:** `write`
+
+```ts
+await corsair.hypeauditor.api.lists.add({ list_id: 483, channel_id: 'nasa', type: 'IG' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | Yes | The list to add the report to. |
+| `channel_id` | `string` | Yes | The channel: a username for `IG`, `TT`, `TW` and `TR`, and a channel ID for `YT`. |
+| `type` | `IG \| YT \| TT \| TW \| TR` | Yes | `IG`, `YT`, `TT`, `TW` or `TR`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `boolean` | Yes | — |
+
+
+
+---
+
+### items
+
+`lists.items`
+
+Read the reports saved in one list, up to 100 per page, which is free and safe to repeat
+
+**Risk:** `read`
+
+```ts
+await corsair.hypeauditor.api.lists.items({ id: 0, limit: 100, offset: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The list ID. `id: 0` is the default "Recent searches" list. |
+| `limit` | `number` | No | Items per page, at most 100. Defaults to the provider's 100. |
+| `offset` | `number` | No | Zero-based index of the first item. Defaults to 0. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object[] \| Record<string, JsonValue>` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  report_id?: number | null,
+  name?: string | null,
+  username?: string | null,
+  type?: string | null,
+  followers?: number | null,
+  comment?: string | null,
+  lists?: string | null,
+  created?: number | null
+}[] | Record<string, JsonValue>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`lists.list`
+
+List the saved lists in the account; the default "Recent searches" list is `id: 0`
+
+**Risk:** `read`
+
+```ts
+await corsair.hypeauditor.api.lists.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  count?: number | null,
+  created?: number | null,
+  updated?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`lists.remove`
+
+Remove a report from a saved list; the default "Recent searches" list cannot be changed
+
+**Risk:** `write`
+
+```ts
+await corsair.hypeauditor.api.lists.remove({ report_id: 6456, list_id: 483 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `report_id` | `number` | Yes | The report to remove. |
+| `list_id` | `number` | Yes | The list to remove it from. The default "Recent searches" list, `id: 0`, cannot be changed. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `boolean` | Yes | — |
+
+
+
+---
+
+## Media
+
+### instagram
+
+`media.instagram`
+
+Read an Instagram account’s recent media, which is free and safe to repeat
+
+**Risk:** `read`
+
+```ts
+await corsair.hypeauditor.api.media.instagram({ channel: 'nasa' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | The account identifier from its URL: a username for TikTok, Twitch, Twitter and Snapchat, and a channel ID or username for YouTube. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+### tiktok
+
+`media.tiktok`
+
+Read a TikTok account’s media by channel ID, which is free and safe to repeat
+
+**Risk:** `read`
+
+```ts
+await corsair.hypeauditor.api.media.tiktok({ channel: '1234567' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | The account identifier from its URL: a username for TikTok, Twitch, Twitter and Snapchat, and a channel ID or username for YouTube. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+### youtube
+
+`media.youtube`
+
+Read a YouTube channel’s media, one page at a time, which is free and safe to repeat
+
+**Risk:** `read`
+
+```ts
+await corsair.hypeauditor.api.media.youtube({ channel: 'NASA', page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | The account identifier from its URL: a username for TikTok, Twitch, Twitter and Snapchat, and a channel ID or username for YouTube. |
+| `page` | `number` | No | Page number, 1-indexed. Omitted reads the first page. |
+
+One page at a time, which is free and safe to repeat.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+## Mentions
+
+### tiktok
+
+`mentions.tiktok`
+
+Read the brands a TikTok account’s videos mention, which is free and safe to repeat
+
+**Risk:** `read`
+
+```ts
+await corsair.hypeauditor.api.mentions.tiktok({ channel: 'littlebig' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | The account identifier from its URL: a username for TikTok, Twitch, Twitter and Snapchat, and a channel ID or username for YouTube. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+### youtube
+
+`mentions.youtube`
+
+Read the brands a YouTube channel’s videos mention, which is free and safe to repeat
+
+**Risk:** `read`
+
+```ts
+await corsair.hypeauditor.api.mentions.youtube({ channel: 'NASA' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | The account identifier from its URL: a username for TikTok, Twitch, Twitter and Snapchat, and a channel ID or username for YouTube. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+
+## Reports
+
+### instagram
+
+`reports.instagram`
+
+Read the Instagram report by username or user ID; the first request for a creator spends a credit, and a 202 answer carries `retryTtl`
+
+**Risk:** `write`
+
+```ts
+await corsair.hypeauditor.api.reports.instagram({ username: 'nasa' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | No | Instagram username without `@`. Send this or `user_id`, not both. |
+| `user_id` | `string` | No | Instagram user ID, which the report returns as `user.id`. Send this or `username`, not both. |
+| `type` | `report \| advanced_report` | No | `report` is the mini report and costs one mini-report credit; `advanced_report` is the full report and costs one report credit. Omitted, the provider unlocks the advanced report. |
+| `features` | `string[]` | No | Additional report features, such as `ranking` or `mentions`. Omitted returns the default set, and not every feature is in the mini report. |
+
+Send exactly one of `username` or `user_id`; they are two separate actions.
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  result: {
+    report_state?: string | null,
+    user?: {
+      id?: string | number | null,
+      username?: string | null,
+      full_name?: string | null,
+      is_private?: boolean | null,
+      is_verified?: boolean | null,
+      is_deleted?: boolean | null,
+      about?: string | null,
+      photo_url?: string | null
+    } | null,
+    validUntil?: number | null,
+    restTokens?: number | null,
+    _report_quality?: string | null
+  }
+} | {
+  result: {
+    retryTtl: number,
+    restTokens?: number | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### snapchat
+
+`reports.snapchat`
+
+Read the Snapchat report by username; the first request for a creator spends a credit, and a 202 answer carries `retryTtl`
+
+**Risk:** `write`
+
+```ts
+await corsair.hypeauditor.api.reports.snapchat({ channel: 'nasa' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | The account identifier from its URL: a username for TikTok, Twitch, Twitter and Snapchat, and a channel ID or username for YouTube. |
+| `type` | `report \| advanced_report` | No | `report` is the mini report and costs one mini-report credit; `advanced_report` is the full report and costs one report credit. Omitted, the provider unlocks the advanced report. |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  result: {
+    report_state?: string | null,
+    user?: {
+      id?: string | number | null,
+      username?: string | null,
+      full_name?: string | null,
+      is_private?: boolean | null,
+      is_verified?: boolean | null,
+      is_deleted?: boolean | null,
+      about?: string | null,
+      photo_url?: string | null
+    } | null,
+    validUntil?: number | null,
+    restTokens?: number | null,
+    _report_quality?: string | null
+  }
+} | {
+  result: {
+    retryTtl: number,
+    restTokens?: number | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### tiktok
+
+`reports.tiktok`
+
+Read the TikTok report by username or user ID; the first request for a creator spends a credit, and a 202 answer carries `retryTtl`
+
+**Risk:** `write`
+
+```ts
+await corsair.hypeauditor.api.reports.tiktok({ channel: 'littlebig' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | No | TikTok username without `@`. Send this or `user_id`. |
+| `user_id` | `string` | No | TikTok user ID. Send this or `channel`. |
+| `type` | `report \| advanced_report` | No | `report` is the mini report and costs one mini-report credit; `advanced_report` is the full report and costs one report credit. Omitted, the provider unlocks the advanced report. |
+
+Send exactly one of `channel` or `user_id`, for the same reason.
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  result: {
+    report_state?: string | null,
+    user?: {
+      id?: string | number | null,
+      username?: string | null,
+      full_name?: string | null,
+      is_private?: boolean | null,
+      is_verified?: boolean | null,
+      is_deleted?: boolean | null,
+      about?: string | null,
+      photo_url?: string | null
+    } | null,
+    validUntil?: number | null,
+    restTokens?: number | null,
+    _report_quality?: string | null
+  }
+} | {
+  result: {
+    retryTtl: number,
+    restTokens?: number | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### twitch
+
+`reports.twitch`
+
+Read the Twitch report by username; the first request for a creator spends a credit, and a 202 answer carries `retryTtl`
+
+**Risk:** `write`
+
+```ts
+await corsair.hypeauditor.api.reports.twitch({ channel: 'nasa' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | The account identifier from its URL: a username for TikTok, Twitch, Twitter and Snapchat, and a channel ID or username for YouTube. |
+| `type` | `report \| advanced_report` | No | `report` is the mini report and costs one mini-report credit; `advanced_report` is the full report and costs one report credit. Omitted, the provider unlocks the advanced report. |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  result: {
+    report_state?: string | null,
+    user?: {
+      id?: string | number | null,
+      username?: string | null,
+      full_name?: string | null,
+      is_private?: boolean | null,
+      is_verified?: boolean | null,
+      is_deleted?: boolean | null,
+      about?: string | null,
+      photo_url?: string | null
+    } | null,
+    validUntil?: number | null,
+    restTokens?: number | null,
+    _report_quality?: string | null
+  }
+} | {
+  result: {
+    retryTtl: number,
+    restTokens?: number | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### twitter
+
+`reports.twitter`
+
+Read the Twitter report by username; the first request for a creator spends a credit, and a 202 answer carries `retryTtl`
+
+**Risk:** `write`
+
+```ts
+await corsair.hypeauditor.api.reports.twitter({ channel: 'nasa' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | The account identifier from its URL: a username for TikTok, Twitch, Twitter and Snapchat, and a channel ID or username for YouTube. |
+| `type` | `report \| advanced_report` | No | `report` is the mini report and costs one mini-report credit; `advanced_report` is the full report and costs one report credit. Omitted, the provider unlocks the advanced report. |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  result: {
+    report_state?: string | null,
+    user?: {
+      id?: string | number | null,
+      username?: string | null,
+      full_name?: string | null,
+      is_private?: boolean | null,
+      is_verified?: boolean | null,
+      is_deleted?: boolean | null,
+      about?: string | null,
+      photo_url?: string | null
+    } | null,
+    validUntil?: number | null,
+    restTokens?: number | null,
+    _report_quality?: string | null
+  }
+} | {
+  result: {
+    retryTtl: number,
+    restTokens?: number | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### youtube
+
+`reports.youtube`
+
+Read the YouTube report by channel ID or username; the first request for a creator spends a credit, and a 202 answer carries `retryTtl`
+
+**Risk:** `write`
+
+```ts
+await corsair.hypeauditor.api.reports.youtube({ channel: 'NASA', type: 'report' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | The account identifier from its URL: a username for TikTok, Twitch, Twitter and Snapchat, and a channel ID or username for YouTube. |
+| `type` | `report \| advanced_report` | No | `report` is the mini report and costs one mini-report credit; `advanced_report` is the full report and costs one report credit. Omitted, the provider unlocks the advanced report. |
+| `features` | `string[]` | No | Additional report features, such as `ranking` or `mentions`. Omitted returns the default set, and not every feature is in the mini report. |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  result: {
+    report_state?: string | null,
+    user?: {
+      id?: string | number | null,
+      username?: string | null,
+      full_name?: string | null,
+      is_private?: boolean | null,
+      is_verified?: boolean | null,
+      is_deleted?: boolean | null,
+      about?: string | null,
+      photo_url?: string | null
+    } | null,
+    validUntil?: number | null,
+    restTokens?: number | null,
+    _report_quality?: string | null
+  }
+} | {
+  result: {
+    retryTtl: number,
+    restTokens?: number | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Suggester
+
+### get
+
+`suggester.get`
+
+Suggest a channel name from a partial one, which is free and safe to repeat
+
+**Risk:** `read`
+
+```ts
+await corsair.hypeauditor.api.suggester.get({ search: 'nas' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | Yes | The name to look for. |
+| `st` | `string` | No | A social network code to restrict the suggestion to. |
+| `exclSt` | `string` | No | A social network code to leave out of the suggestion. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `JsonValue \| null` | No | — |
+
+
+
+---
+
+## Taxonomy
+
+### get
+
+`taxonomy.get`
+
+Read the category, thematics and language ids the discovery filters take
+
+**Risk:** `read`
+
+```ts
+await corsair.hypeauditor.api.taxonomy.get({});
+```
+
+**Input:** _empty object_
+
+Returns the category, thematics and language ids the discovery filters take.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `Record<string, JsonValue> \| null` | No | — |
+
+
+
+---
+

@@ -2845,6 +2845,14 @@
                 ]
               },
               {
+                "group": "HypeAuditor",
+                "pages": [
+                  "plugins/hypeauditor/overview",
+                  "plugins/hypeauditor/api",
+                  "plugins/hypeauditor/database"
+                ]
+              },
+              {
                 "group": "Hyperbrowser",
                 "pages": [
                   "plugins/hyperbrowser/overview",
