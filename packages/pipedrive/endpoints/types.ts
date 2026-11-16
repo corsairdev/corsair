@@ -110,30 +110,30 @@ const DealUpdateInputSchema = z
 // Response objects are extensible in OpenAPI (additionalProperties is not false).
 const DealResponseSchema = z
 	.object({
-		id: z.number().int().optional(),
-		title: z.string().optional(),
-		owner_id: z.number().int().optional(),
+		id: z.number().int().nullable().optional(),
+		title: z.string().nullable().optional(),
+		owner_id: z.number().int().nullable().optional(),
 		person_id: z.number().int().nullable().optional(),
 		org_id: z.number().int().nullable().optional(),
-		pipeline_id: z.number().int().optional(),
-		stage_id: z.number().int().optional(),
-		value: z.number().optional(),
-		currency: z.string().optional(),
-		add_time: z.string().optional(),
+		pipeline_id: z.number().int().nullable().optional(),
+		stage_id: z.number().int().nullable().optional(),
+		value: z.number().nullable().optional(),
+		currency: z.string().nullable().optional(),
+		add_time: z.string().nullable().optional(),
 		update_time: z.string().nullable().optional(),
 		stage_change_time: z.string().nullable().optional(),
-		is_deleted: z.boolean().optional(),
-		is_archived: z.boolean().optional(),
-		status: z.string().optional(),
+		is_deleted: z.boolean().nullable().optional(),
+		is_archived: z.boolean().nullable().optional(),
+		status: z.string().nullable().optional(),
 		probability: z.number().nullable().optional(),
 		lost_reason: z.string().nullable().optional(),
-		visible_to: z.number().int().optional(),
+		visible_to: z.number().int().nullable().optional(),
 		close_time: z.string().nullable().optional(),
 		won_time: z.string().nullable().optional(),
 		lost_time: z.string().nullable().optional(),
 		expected_close_date: z.string().nullable().optional(),
-		label_ids: z.array(z.number().int()).optional(),
-		origin: z.string().optional(),
+		label_ids: z.array(z.number().int()).nullable().optional(),
+		origin: z.string().nullable().optional(),
 		origin_id: z.string().nullable().optional(),
 		channel: z.number().int().nullable().optional(),
 		channel_id: z.string().nullable().optional(),
@@ -141,32 +141,34 @@ const DealResponseSchema = z
 		arr: z.number().nullable().optional(),
 		mrr: z.number().nullable().optional(),
 		acv: z.number().nullable().optional(),
-		custom_fields: DealCustomFieldsSchema.optional(),
+		custom_fields: DealCustomFieldsSchema.nullable().optional(),
 	})
 	.passthrough();
 
 const DealResponseEnvelopeSchema = z
 	.object({
-		success: z.boolean().optional(),
-		data: DealResponseSchema.optional(),
+		success: z.boolean().nullable().optional(),
+		data: DealResponseSchema.nullable().optional(),
 	})
 	.passthrough();
 const DealListResponseSchema = z
 	.object({
-		success: z.boolean().optional(),
-		data: z.array(DealResponseSchema).optional(),
+		success: z.boolean().nullable().optional(),
+		data: z.array(DealResponseSchema).nullable().optional(),
 		additional_data: z
 			.object({ next_cursor: z.string().nullable().optional() })
 			.passthrough()
+			.nullable()
 			.optional(),
 	})
 	.passthrough();
 const DealDeleteResponseSchema = z
 	.object({
-		success: z.boolean().optional(),
+		success: z.boolean().nullable().optional(),
 		data: z
-			.object({ id: z.number().int().optional() })
+			.object({ id: z.number().int().nullable().optional() })
 			.passthrough()
+			.nullable()
 			.optional(),
 	})
 	.passthrough();
@@ -209,9 +211,9 @@ const PersonContactItemInputSchema = z
 // Response contact objects remain extensible because OpenAPI does not close their properties.
 const PersonContactItemResponseSchema = z
 	.object({
-		value: z.string().optional(),
-		primary: z.boolean().optional(),
-		label: z.string().optional(),
+		value: z.string().nullable().optional(),
+		primary: z.boolean().nullable().optional(),
+		label: z.string().nullable().optional(),
 	})
 	.passthrough();
 
@@ -233,7 +235,7 @@ const PersonAddressInputSchema = z
 // Response addresses remain extensible because OpenAPI does not close their properties.
 const PersonAddressResponseSchema = z
 	.object({
-		value: z.string().optional(),
+		value: z.string().nullable().optional(),
 		country: z.string().nullable().optional(),
 		admin_area_level_1: z.string().nullable().optional(),
 		admin_area_level_2: z.string().nullable().optional(),
@@ -324,51 +326,53 @@ const PersonUpdateInputSchema = z
 // Response objects are extensible in OpenAPI; contact fields are optional and several are nullable.
 const PersonResponseSchema = z
 	.object({
-		id: z.number().int().optional(),
-		name: z.string().optional(),
-		first_name: z.string().optional(),
-		last_name: z.string().optional(),
-		owner_id: z.number().int().optional(),
-		org_id: z.number().int().optional(),
-		add_time: z.string().optional(),
+		id: z.number().int().nullable().optional(),
+		name: z.string().nullable().optional(),
+		first_name: z.string().nullable().optional(),
+		last_name: z.string().nullable().optional(),
+		owner_id: z.number().int().nullable().optional(),
+		org_id: z.number().int().nullable().optional(),
+		add_time: z.string().nullable().optional(),
 		update_time: z.string().nullable().optional(),
-		emails: z.array(PersonContactItemResponseSchema).optional(),
-		phones: z.array(PersonContactItemResponseSchema).optional(),
-		is_deleted: z.boolean().optional(),
-		visible_to: z.number().int().optional(),
-		label_ids: z.array(z.number().int()).optional(),
+		emails: z.array(PersonContactItemResponseSchema).nullable().optional(),
+		phones: z.array(PersonContactItemResponseSchema).nullable().optional(),
+		is_deleted: z.boolean().nullable().optional(),
+		visible_to: z.number().int().nullable().optional(),
+		label_ids: z.array(z.number().int()).nullable().optional(),
 		picture_id: z.number().int().nullable().optional(),
 		postal_address: PersonAddressResponseSchema.nullable().optional(),
-		notes: z.string().optional(),
-		im: z.array(PersonContactItemResponseSchema).optional(),
-		birthday: z.string().optional(),
-		job_title: z.string().optional(),
-		custom_fields: PersonCustomFieldsSchema.optional(),
+		notes: z.string().nullable().optional(),
+		im: z.array(PersonContactItemResponseSchema).nullable().optional(),
+		birthday: z.string().nullable().optional(),
+		job_title: z.string().nullable().optional(),
+		custom_fields: PersonCustomFieldsSchema.nullable().optional(),
 	})
 	.passthrough();
 
 const PersonResponseEnvelopeSchema = z
 	.object({
-		success: z.boolean().optional(),
-		data: PersonResponseSchema.optional(),
+		success: z.boolean().nullable().optional(),
+		data: PersonResponseSchema.nullable().optional(),
 	})
 	.passthrough();
 const PersonListResponseSchema = z
 	.object({
-		success: z.boolean().optional(),
-		data: z.array(PersonResponseSchema).optional(),
+		success: z.boolean().nullable().optional(),
+		data: z.array(PersonResponseSchema).nullable().optional(),
 		additional_data: z
 			.object({ next_cursor: z.string().nullable().optional() })
 			.passthrough()
+			.nullable()
 			.optional(),
 	})
 	.passthrough();
 const PersonDeleteResponseSchema = z
 	.object({
-		success: z.boolean().optional(),
+		success: z.boolean().nullable().optional(),
 		data: z
-			.object({ id: z.number().int().optional() })
+			.object({ id: z.number().int().nullable().optional() })
 			.passthrough()
+			.nullable()
 			.optional(),
 	})
 	.passthrough();
@@ -476,7 +480,7 @@ const OrganizationUpdateInputSchema = z
 
 const OrganizationAddressResponseSchema = z
 	.object({
-		value: z.string().optional(),
+		value: z.string().nullable().optional(),
 		country: z.string().nullable().optional(),
 		admin_area_level_1: z.string().nullable().optional(),
 		admin_area_level_2: z.string().nullable().optional(),
@@ -492,45 +496,47 @@ const OrganizationAddressResponseSchema = z
 // Organization response objects are open in the specification; retain provider-added fields.
 const OrganizationResponseSchema = z
 	.object({
-		id: z.number().int().optional(),
-		name: z.string().optional(),
-		owner_id: z.number().int().optional(),
-		add_time: z.string().optional(),
+		id: z.number().int().nullable().optional(),
+		name: z.string().nullable().optional(),
+		owner_id: z.number().int().nullable().optional(),
+		add_time: z.string().nullable().optional(),
 		update_time: z.string().nullable().optional(),
-		is_deleted: z.boolean().optional(),
-		visible_to: z.number().int().optional(),
+		is_deleted: z.boolean().nullable().optional(),
+		visible_to: z.number().int().nullable().optional(),
 		address: OrganizationAddressResponseSchema.nullable().optional(),
-		label_ids: z.array(z.number().int()).optional(),
+		label_ids: z.array(z.number().int()).nullable().optional(),
 		website: z.string().nullable().optional(),
 		linkedin: z.string().nullable().optional(),
 		industry: z.number().int().nullable().optional(),
 		annual_revenue: z.number().int().nullable().optional(),
 		employee_count: z.number().int().nullable().optional(),
-		custom_fields: OrganizationCustomFieldsSchema.optional(),
+		custom_fields: OrganizationCustomFieldsSchema.nullable().optional(),
 	})
 	.passthrough();
 const OrganizationResponseEnvelopeSchema = z
 	.object({
-		success: z.boolean().optional(),
-		data: OrganizationResponseSchema.optional(),
+		success: z.boolean().nullable().optional(),
+		data: OrganizationResponseSchema.nullable().optional(),
 	})
 	.passthrough();
 const OrganizationListResponseSchema = z
 	.object({
-		success: z.boolean().optional(),
-		data: z.array(OrganizationResponseSchema).optional(),
+		success: z.boolean().nullable().optional(),
+		data: z.array(OrganizationResponseSchema).nullable().optional(),
 		additional_data: z
 			.object({ next_cursor: z.string().nullable().optional() })
 			.passthrough()
+			.nullable()
 			.optional(),
 	})
 	.passthrough();
 const OrganizationDeleteResponseSchema = z
 	.object({
-		success: z.boolean().optional(),
+		success: z.boolean().nullable().optional(),
 		data: z
-			.object({ id: z.number().int().optional() })
+			.object({ id: z.number().int().nullable().optional() })
 			.passthrough()
+			.nullable()
 			.optional(),
 	})
 	.passthrough();
@@ -567,9 +573,22 @@ const ActivityAttendeeSchema = z
 		user_id: z.number().int().optional(),
 	})
 	.strict();
-const ActivityParticipantResponseSchema =
-	ActivityParticipantSchema.passthrough();
-const ActivityAttendeeResponseSchema = ActivityAttendeeSchema.passthrough();
+const ActivityParticipantResponseSchema = z
+	.object({
+		person_id: z.number().int().nullable().optional(),
+		primary: z.boolean().nullable().optional(),
+	})
+	.passthrough();
+const ActivityAttendeeResponseSchema = z
+	.object({
+		email: z.string().nullable().optional(),
+		name: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		is_organizer: z.boolean().nullable().optional(),
+		person_id: z.number().int().nullable().optional(),
+		user_id: z.number().int().nullable().optional(),
+	})
+	.passthrough();
 
 const ActivityWriteFields = {
 	subject: z.string().optional(),
@@ -626,7 +645,7 @@ const ActivityUpdateInputSchema =
 // Response objects are open in the specification; preserve documented provider extensions.
 const ActivityLocationResponseSchema = z
 	.object({
-		value: z.string().optional(),
+		value: z.string().nullable().optional(),
 		country: z.string().nullable().optional(),
 		admin_area_level_1: z.string().nullable().optional(),
 		admin_area_level_2: z.string().nullable().optional(),
@@ -640,57 +659,64 @@ const ActivityLocationResponseSchema = z
 	.passthrough();
 const ActivityResponseSchema = z
 	.object({
-		id: z.number().int().optional(),
-		subject: z.string().optional(),
-		type: z.string().optional(),
-		owner_id: z.number().int().optional(),
-		creator_user_id: z.number().int().optional(),
-		is_deleted: z.boolean().optional(),
-		add_time: z.string().optional(),
-		update_time: z.string().optional(),
+		id: z.number().int().nullable().optional(),
+		subject: z.string().nullable().optional(),
+		type: z.string().nullable().optional(),
+		owner_id: z.number().int().nullable().optional(),
+		creator_user_id: z.number().int().nullable().optional(),
+		is_deleted: z.boolean().nullable().optional(),
+		add_time: z.string().nullable().optional(),
+		update_time: z.string().nullable().optional(),
 		deal_id: z.number().int().nullable().optional(),
 		lead_id: z.string().nullable().optional(),
 		person_id: z.number().int().nullable().optional(),
 		org_id: z.number().int().nullable().optional(),
 		project_id: z.number().int().nullable().optional(),
-		due_date: z.string().optional(),
+		due_date: z.string().nullable().optional(),
 		due_time: z.string().nullable().optional(),
 		duration: z.string().nullable().optional(),
-		busy: z.boolean().optional(),
-		done: z.boolean().optional(),
+		busy: z.boolean().nullable().optional(),
+		done: z.boolean().nullable().optional(),
 		marked_as_done_time: z.string().nullable().optional(),
 		location: ActivityLocationResponseSchema.nullable().optional(),
-		participants: z.array(ActivityParticipantResponseSchema).optional(),
-		attendees: z.array(ActivityAttendeeResponseSchema).optional(),
-		conference_meeting_client: z.string().optional(),
-		conference_meeting_url: z.string().optional(),
-		conference_meeting_id: z.string().optional(),
-		public_description: z.string().optional(),
-		priority: z.number().int().optional(),
+		participants: z
+			.array(ActivityParticipantResponseSchema)
+			.nullable()
+			.optional(),
+		attendees: z.array(ActivityAttendeeResponseSchema).nullable().optional(),
+		conference_meeting_client: z.string().nullable().optional(),
+		conference_meeting_url: z.string().nullable().optional(),
+		conference_meeting_id: z.string().nullable().optional(),
+		public_description: z.string().nullable().optional(),
+		priority: z.number().int().nullable().optional(),
 		outcome: z.number().int().nullable().optional(),
-		note: z.string().optional(),
+		note: z.string().nullable().optional(),
 	})
 	.passthrough();
 const ActivityResponseEnvelopeSchema = z
 	.object({
-		success: z.boolean().optional(),
-		data: ActivityResponseSchema.optional(),
+		success: z.boolean().nullable().optional(),
+		data: ActivityResponseSchema.nullable().optional(),
 	})
 	.passthrough();
 const ActivityListResponseSchema = z
 	.object({
-		success: z.boolean().optional(),
-		data: z.array(ActivityResponseSchema).optional(),
+		success: z.boolean().nullable().optional(),
+		data: z.array(ActivityResponseSchema).nullable().optional(),
 		additional_data: z
 			.object({ next_cursor: z.string().nullable().optional() })
 			.passthrough()
+			.nullable()
 			.optional(),
 	})
 	.passthrough();
 const ActivityDeleteResponseSchema = z
 	.object({
-		success: z.boolean().optional(),
-		data: z.object({ id: z.number().int().optional() }).optional(),
+		success: z.boolean().nullable().optional(),
+		data: z
+			.object({ id: z.number().int().nullable().optional() })
+			.nullable()
+			.optional(),
 	})
 	.passthrough();
 
@@ -743,44 +769,48 @@ const TaskUpdateInputSchema = TaskIdInputSchema.extend({
 
 const TaskResponseSchema = z
 	.object({
-		id: z.number().int().optional(),
-		title: z.string().min(1).max(255).optional(),
-		creator_id: z.number().int().optional(),
+		id: z.number().int().nullable().optional(),
+		title: z.string().nullable().optional(),
+		creator_id: z.number().int().nullable().optional(),
 		description: z.string().nullable().optional(),
-		project_id: z.number().int().optional(),
-		is_done: z.boolean().optional(),
-		is_milestone: z.boolean().optional(),
-		due_date: z.iso.date().nullable().optional(),
-		start_date: z.iso.date().nullable().optional(),
+		project_id: z.number().int().nullable().optional(),
+		is_done: z.boolean().nullable().optional(),
+		is_milestone: z.boolean().nullable().optional(),
+		due_date: z.string().nullable().optional(),
+		start_date: z.string().nullable().optional(),
 		parent_task_id: z.number().int().nullable().optional(),
-		assignee_ids: z.array(z.number().int()).optional(),
-		priority: z.number().int().min(0).nullable().optional(),
-		add_time: z.string().optional(),
-		update_time: z.string().optional(),
+		assignee_ids: z.array(z.number().int()).nullable().optional(),
+		priority: z.number().int().nullable().optional(),
+		add_time: z.string().nullable().optional(),
+		update_time: z.string().nullable().optional(),
 		marked_as_done_time: z.string().nullable().optional(),
 	})
 	.passthrough();
 const TaskResponseEnvelopeSchema = z
 	.object({
-		success: z.boolean().optional(),
-		data: TaskResponseSchema.optional(),
+		success: z.boolean().nullable().optional(),
+		data: TaskResponseSchema.nullable().optional(),
 		additional_data: z.object({}).passthrough().nullable().optional(),
 	})
 	.passthrough();
 const TaskListResponseSchema = z
 	.object({
-		success: z.boolean().optional(),
-		data: z.array(TaskResponseSchema).optional(),
+		success: z.boolean().nullable().optional(),
+		data: z.array(TaskResponseSchema).nullable().optional(),
 		additional_data: z
 			.object({ next_cursor: z.string().nullable().optional() })
 			.passthrough()
+			.nullable()
 			.optional(),
 	})
 	.passthrough();
 const TaskDeleteResponseSchema = z
 	.object({
-		success: z.boolean().optional(),
-		data: z.object({ id: z.number().int().optional() }).optional(),
+		success: z.boolean().nullable().optional(),
+		data: z
+			.object({ id: z.number().int().nullable().optional() })
+			.nullable()
+			.optional(),
 		additional_data: z.object({}).passthrough().nullable().optional(),
 	})
 	.passthrough();

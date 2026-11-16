@@ -130,6 +130,11 @@ const ProductVariationUpdateInputSchema = ProductIdInputSchema.extend({
 const ProductImageInputSchema = ProductIdInputSchema.extend({
 	// Pipedrive documents this multipart field as binary; Blob preserves binary data without string encoding.
 	data: z.instanceof(Blob),
+	// Sent as the multipart file name; it needs an extension such as .png or .jpg.
+	file_name: z
+		.string()
+		.regex(/\.[A-Za-z0-9]+$/)
+		.optional(),
 }).strict();
 const ProductFollowerListInputSchema = ProductIdInputSchema.extend({
 	limit: z.number().int().min(1).max(500).optional(),
@@ -145,42 +150,42 @@ const ProductFollowerDeleteInputSchema = z
 // Pipedrive's OpenAPI response objects do not set additionalProperties: false, so response extensions are retained.
 const ProductPriceResponseSchema = z
 	.object({
-		price: z.number().optional(),
-		cost: z.number().optional(),
+		price: z.number().nullable().optional(),
+		cost: z.number().nullable().optional(),
 		product_id: z.number().int().nullable().optional(),
-		product_variation_id: z.number().int().optional(),
+		product_variation_id: z.number().int().nullable().optional(),
 		currency: z.string().nullable().optional(),
 		direct_cost: z.number().nullable().optional(),
-		notes: z.string().optional(),
+		notes: z.string().nullable().optional(),
 	})
 	.passthrough();
 
 // Response custom-field values remain arbitrary account-defined JSON until runtime-checked here.
 const ProductResponseSchema = z
 	.object({
-		id: z.number().int().optional(),
-		name: z.string().optional(),
-		code: z.string().optional(),
-		unit: z.string().optional(),
-		tax: z.number().optional(),
-		is_deleted: z.boolean().optional(),
-		is_linkable: z.boolean().optional(),
-		visible_to: ProductVisibilitySchema.optional(),
-		owner_id: z.number().int().optional(),
-		add_time: z.string().optional(),
-		update_time: z.string().optional(),
-		description: z.string().optional(),
+		id: z.number().int().nullable().optional(),
+		name: z.string().nullable().optional(),
+		code: z.string().nullable().optional(),
+		unit: z.string().nullable().optional(),
+		tax: z.number().nullable().optional(),
+		is_deleted: z.boolean().nullable().optional(),
+		is_linkable: z.boolean().nullable().optional(),
+		visible_to: ProductVisibilitySchema.nullable().optional(),
+		owner_id: z.number().int().nullable().optional(),
+		add_time: z.string().nullable().optional(),
+		update_time: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
 		category: z.string().nullable().optional(),
-		custom_fields: ProductCustomFieldsSchema.optional(),
-		billing_frequency: ProductBillingFrequencySchema.optional(),
+		custom_fields: ProductCustomFieldsSchema.nullable().optional(),
+		billing_frequency: ProductBillingFrequencySchema.nullable().optional(),
 		billing_frequency_cycles: z
 			.number()
 			.int()
-			.min(1)
-			.max(208)
+
+			.nullable()
 			.nullable()
 			.optional(),
-		prices: z.array(ProductPriceResponseSchema).optional(),
+		prices: z.array(ProductPriceResponseSchema).nullable().optional(),
 	})
 	.passthrough();
 
@@ -189,103 +194,109 @@ const ProductCursorResponseSchema = z
 	.passthrough();
 const ProductListResponseSchema = z
 	.object({
-		success: z.boolean().optional(),
-		data: z.array(ProductResponseSchema).optional(),
-		additional_data: ProductCursorResponseSchema.optional(),
+		success: z.boolean().nullable().optional(),
+		data: z.array(ProductResponseSchema).nullable().optional(),
+		additional_data: ProductCursorResponseSchema.nullable().optional(),
 	})
 	.passthrough();
 const ProductResponseEnvelopeSchema = z
 	.object({
-		success: z.boolean().optional(),
-		data: ProductResponseSchema.optional(),
+		success: z.boolean().nullable().optional(),
+		data: ProductResponseSchema.nullable().optional(),
 	})
 	.passthrough();
 const ProductDeleteResponseSchema = z
 	.object({
-		success: z.boolean().optional(),
+		success: z.boolean().nullable().optional(),
 		data: z
-			.object({ id: z.number().int().optional() })
+			.object({ id: z.number().int().nullable().optional() })
 			.passthrough()
+			.nullable()
 			.optional(),
 	})
 	.passthrough();
 
 const ProductSearchResponseSchema = z
 	.object({
-		success: z.boolean().optional(),
+		success: z.boolean().nullable().optional(),
 		data: z
 			.object({
 				items: z
 					.array(
 						z
 							.object({
-								result_score: z.number().optional(),
+								result_score: z.number().nullable().optional(),
 								item: z
 									.object({
-										id: z.number().int().optional(),
-										type: z.string().optional(),
-										name: z.string().optional(),
+										id: z.number().int().nullable().optional(),
+										type: z.string().nullable().optional(),
+										name: z.string().nullable().optional(),
 										code: z.string().nullable().optional(),
-										visible_to: z.number().int().optional(),
+										visible_to: z.number().int().nullable().optional(),
 										owner: z
-											.object({ id: z.number().int().optional() })
+											.object({ id: z.number().int().nullable().optional() })
 											.passthrough()
+											.nullable()
 											.optional(),
-										custom_fields: z.array(z.string()).optional(),
+										custom_fields: z.array(z.string()).nullable().optional(),
 									})
 									.passthrough()
+									.nullable()
 									.optional(),
 							})
 							.passthrough(),
 					)
+					.nullable()
 					.optional(),
 			})
 			.passthrough()
+			.nullable()
 			.optional(),
-		additional_data: ProductCursorResponseSchema.optional(),
+		additional_data: ProductCursorResponseSchema.nullable().optional(),
 	})
 	.passthrough();
 
 const ProductVariationResponseSchema = z
 	.object({
-		id: z.number().int().optional(),
-		name: z.string().optional(),
-		product_id: z.number().int().optional(),
-		prices: z.array(ProductPriceResponseSchema).optional(),
+		id: z.number().int().nullable().optional(),
+		name: z.string().nullable().optional(),
+		product_id: z.number().int().nullable().optional(),
+		prices: z.array(ProductPriceResponseSchema).nullable().optional(),
 	})
 	.passthrough();
 const ProductVariationListResponseSchema = z
 	.object({
-		success: z.boolean().optional(),
-		data: z.array(ProductVariationResponseSchema).optional(),
-		additional_data: ProductCursorResponseSchema.optional(),
+		success: z.boolean().nullable().optional(),
+		data: z.array(ProductVariationResponseSchema).nullable().optional(),
+		additional_data: ProductCursorResponseSchema.nullable().optional(),
 	})
 	.passthrough();
 const ProductVariationResponseEnvelopeSchema = z
 	.object({
-		success: z.boolean().optional(),
-		data: ProductVariationResponseSchema.optional(),
+		success: z.boolean().nullable().optional(),
+		data: ProductVariationResponseSchema.nullable().optional(),
 	})
 	.passthrough();
 const ProductVariationDeleteResponseSchema = z
 	.object({
-		success: z.boolean().optional(),
+		success: z.boolean().nullable().optional(),
 		data: z
-			.object({ id: z.number().int().optional() })
+			.object({ id: z.number().int().nullable().optional() })
 			.passthrough()
+			.nullable()
 			.optional(),
 	})
 	.passthrough();
 
 const ProductImageResponseSchema = z
 	.object({
-		id: z.number().int().optional(),
-		product_id: z.number().int().optional(),
-		company_id: z.string().optional(),
-		public_url: z.string().optional(),
-		add_time: z.string().optional(),
-		mime_type: z.string().optional(),
-		name: z.string().optional(),
+		id: z.number().int().nullable().optional(),
+		product_id: z.number().int().nullable().optional(),
+		company_id: z.string().nullable().optional(),
+		public_url: z.string().nullable().optional(),
+		add_time: z.string().nullable().optional(),
+		mime_type: z.string().nullable().optional(),
+		name: z.string().nullable().optional(),
 	})
 	.passthrough();
 const ProductImageEnvelopeSchema = z
@@ -296,25 +307,26 @@ const ProductImageEnvelopeSchema = z
 	.passthrough();
 const ProductImageDeleteResponseSchema = z
 	.object({
-		success: z.boolean().optional(),
+		success: z.boolean().nullable().optional(),
 		data: z
-			.object({ id: z.number().int().optional() })
+			.object({ id: z.number().int().nullable().optional() })
 			.passthrough()
+			.nullable()
 			.optional(),
 	})
 	.passthrough();
 
 const ProductFollowerResponseSchema = z
 	.object({
-		user_id: z.number().int().optional(),
-		add_time: z.string().optional(),
+		user_id: z.number().int().nullable().optional(),
+		add_time: z.string().nullable().optional(),
 	})
 	.passthrough();
 const ProductFollowerListResponseSchema = z
 	.object({
-		success: z.boolean().optional(),
-		data: z.array(ProductFollowerResponseSchema).optional(),
-		additional_data: ProductCursorResponseSchema.optional(),
+		success: z.boolean().nullable().optional(),
+		data: z.array(ProductFollowerResponseSchema).nullable().optional(),
+		additional_data: ProductCursorResponseSchema.nullable().optional(),
 	})
 	.passthrough();
 const ProductFollowerEnvelopeSchema = z
@@ -325,26 +337,27 @@ const ProductFollowerEnvelopeSchema = z
 	.passthrough();
 const ProductFollowerDeleteResponseSchema = z
 	.object({
-		success: z.boolean().optional(),
+		success: z.boolean().nullable().optional(),
 		data: z
-			.object({ user_id: z.number().int().optional() })
+			.object({ user_id: z.number().int().nullable().optional() })
 			.passthrough()
+			.nullable()
 			.optional(),
 	})
 	.passthrough();
 const ProductFollowerChangelogItemSchema = z
 	.object({
-		action: z.string().optional(),
-		actor_user_id: z.number().int().optional(),
-		follower_user_id: z.number().int().optional(),
-		time: z.string().optional(),
+		action: z.string().nullable().optional(),
+		actor_user_id: z.number().int().nullable().optional(),
+		follower_user_id: z.number().int().nullable().optional(),
+		time: z.string().nullable().optional(),
 	})
 	.passthrough();
 const ProductFollowerChangelogResponseSchema = z
 	.object({
-		success: z.boolean().optional(),
-		data: z.array(ProductFollowerChangelogItemSchema).optional(),
-		additional_data: ProductCursorResponseSchema.optional(),
+		success: z.boolean().nullable().optional(),
+		data: z.array(ProductFollowerChangelogItemSchema).nullable().optional(),
+		additional_data: ProductCursorResponseSchema.nullable().optional(),
 	})
 	.passthrough();
 

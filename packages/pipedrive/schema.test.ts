@@ -250,6 +250,13 @@ describe('Pipedrive endpoint schemas', () => {
 		expect(plugin.endpointMeta?.['activities.delete']?.riskLevel).toBe(
 			'destructive',
 		);
+		// Attendees get calendar invitations (and updates) by email.
+		expect(plugin.endpointMeta?.['activities.create']?.riskLevel).toBe(
+			'destructive',
+		);
+		expect(plugin.endpointMeta?.['activities.update']?.riskLevel).toBe(
+			'destructive',
+		);
 		expect(plugin.endpoints?.tasks.list).toBeDefined();
 		expect(plugin.endpointMeta?.['tasks.delete']?.riskLevel).toBe(
 			'destructive',
@@ -718,5 +725,98 @@ describe('Pipedrive endpoint schemas', () => {
 				data: product,
 			}),
 		).toThrow(z.ZodError);
+	});
+});
+
+describe('Pipedrive responses from the live API (sandbox, 11-16)', () => {
+	// Trimmed from real api/v2 responses: null custom_fields and conference fields.
+	const liveDeal = {
+		id: 1,
+		title: 'corsair-plugin-test deal',
+		creator_user_id: 1,
+		value: 1000,
+		person_id: null,
+		org_id: null,
+		stage_id: 1,
+		currency: 'USD',
+		status: 'open',
+		probability: null,
+		local_won_date: null,
+		custom_fields: null,
+		owner_id: 1,
+		label_ids: [],
+		is_deleted: false,
+		origin: 'API',
+		origin_id: null,
+		channel: null,
+		is_archived: false,
+		archive_time: null,
+	};
+	const liveOrganization = {
+		id: 1,
+		name: 'corsair-plugin-test org',
+		custom_fields: null,
+		owner_id: 1,
+		label_ids: [],
+		website: 'https://example.com',
+		linkedin: null,
+		industry: null,
+		annual_revenue: null,
+		employee_count: null,
+		is_deleted: false,
+		address: null,
+	};
+	const liveActivity = {
+		id: 1,
+		subject: 'corsair-plugin-test call',
+		type: 'call',
+		owner_id: 1,
+		deal_id: null,
+		due_date: '2026-11-16',
+		due_time: null,
+		done: false,
+		busy: false,
+		location: null,
+		participants: [],
+		conference_meeting_client: null,
+		conference_meeting_url: null,
+		conference_meeting_id: null,
+		public_description: null,
+		priority: null,
+		outcome: null,
+		note: 'plugin test',
+		private: false,
+		custom_fields: null,
+	};
+
+	it('parses deals, organizations and activities with null fields', () => {
+		const list = (data: unknown) => ({
+			success: true,
+			data: [data],
+			additional_data: { next_cursor: null },
+		});
+		expect(() =>
+			PipedriveEndpointOutputSchemas.dealList.parse(list(liveDeal)),
+		).not.toThrow();
+		expect(() =>
+			PipedriveEndpointOutputSchemas.dealCreate.parse({
+				success: true,
+				data: liveDeal,
+			}),
+		).not.toThrow();
+		expect(() =>
+			PipedriveEndpointOutputSchemas.organizationList.parse(
+				list(liveOrganization),
+			),
+		).not.toThrow();
+		expect(() =>
+			PipedriveEndpointOutputSchemas.activityList.parse(list(liveActivity)),
+		).not.toThrow();
+		expect(() =>
+			PipedriveEndpointOutputSchemas.activityCreate.parse({
+				success: true,
+				data: liveActivity,
+			}),
+		).not.toThrow();
 	});
 });
