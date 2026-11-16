@@ -108,6 +108,17 @@ describe('surveymonkey surveys', () => {
 		expect(details.pages).toHaveLength(1);
 	});
 
+	it('types the questions that getDetails returns on each page', async () => {
+		mockFetch(
+			jsonResponse({ ...survey, pages: [{ ...page, questions: [question] }] }),
+		);
+		const details = await endpoints.surveys.getDetails(ctx, {
+			survey_id: '1234',
+		});
+		// No cast: the question is parsed with the question schema.
+		expect(details.pages?.[0]?.questions?.[0]?.family).toBe(question.family);
+	});
+
 	it('patches only the fields it was given', async () => {
 		mockFetch(jsonResponse(survey));
 		await endpoints.surveys.update(ctx, {
@@ -917,6 +928,7 @@ describe('surveymonkey single-resource reads and the remaining writes', () => {
 				last_name: 'Doe',
 				email: 'john@example.com',
 			})
+			// unknown: a rejection can be any value; the assertions narrow it.
 			.catch((caught: unknown) => caught);
 		expect(error).toBeInstanceOf(ApiError);
 		expect((error as ApiError).status).toBe(400);

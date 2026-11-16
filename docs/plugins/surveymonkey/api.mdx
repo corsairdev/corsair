@@ -1406,6 +1406,32 @@ Answers the created page. `position` is 1-based; omitting it appends the page.
 
 ```ts
 {
+  id: string,
+  headings?: {
+    heading?: string | null,
+    description?: string | null
+  }[] | null,
+  family?: string | null,
+  subtype?: string | null,
+  position?: number | null,
+  required?: {
+  } | null,
+  visible?: boolean | null,
+  href?: string | null,
+  answers?: {
+    choices?: {
+      id?: string | null,
+      position?: number | null,
+      visible?: boolean | null,
+      text?: string | null
+    }[] | null,
+    rows?: {
+    }[] | null,
+    other?: {
+    }[] | null,
+    cols?: {
+    }[] | null
+  } | null
 }[] | null
 ```
 </Accordion>
@@ -1490,6 +1516,32 @@ Answers one page with its `question_count`.
 
 ```ts
 {
+  id: string,
+  headings?: {
+    heading?: string | null,
+    description?: string | null
+  }[] | null,
+  family?: string | null,
+  subtype?: string | null,
+  position?: number | null,
+  required?: {
+  } | null,
+  visible?: boolean | null,
+  href?: string | null,
+  answers?: {
+    choices?: {
+      id?: string | null,
+      position?: number | null,
+      visible?: boolean | null,
+      text?: string | null
+    }[] | null,
+    rows?: {
+    }[] | null,
+    other?: {
+    }[] | null,
+    cols?: {
+    }[] | null
+  } | null
 }[] | null
 ```
 </Accordion>
@@ -1558,6 +1610,32 @@ Answers `{ data }` in page order. A survey always has at least one page once it 
   question_count?: number | null,
   href?: string | null,
   questions?: {
+    id: string,
+    headings?: {
+      heading?: string | null,
+      description?: string | null
+    }[] | null,
+    family?: string | null,
+    subtype?: string | null,
+    position?: number | null,
+    required?: {
+    } | null,
+    visible?: boolean | null,
+    href?: string | null,
+    answers?: {
+      choices?: {
+        id?: string | null,
+        position?: number | null,
+        visible?: boolean | null,
+        text?: string | null
+      }[] | null,
+      rows?: {
+      }[] | null,
+      other?: {
+      }[] | null,
+      cols?: {
+      }[] | null
+    } | null
   }[] | null
 }[]
 ```
@@ -1611,6 +1689,32 @@ Sends PATCH, so only the fields you pass change. `position` reorders the page wi
 
 ```ts
 {
+  id: string,
+  headings?: {
+    heading?: string | null,
+    description?: string | null
+  }[] | null,
+  family?: string | null,
+  subtype?: string | null,
+  position?: number | null,
+  required?: {
+  } | null,
+  visible?: boolean | null,
+  href?: string | null,
+  answers?: {
+    choices?: {
+      id?: string | null,
+      position?: number | null,
+      visible?: boolean | null,
+      text?: string | null
+    }[] | null,
+    rows?: {
+    }[] | null,
+    other?: {
+    }[] | null,
+    cols?: {
+    }[] | null
+  } | null
 }[] | null
 ```
 </Accordion>
@@ -3072,6 +3176,32 @@ Answers the survey with every page and question, including each choice's id and 
   question_count?: number | null,
   href?: string | null,
   questions?: {
+    id: string,
+    headings?: {
+      heading?: string | null,
+      description?: string | null
+    }[] | null,
+    family?: string | null,
+    subtype?: string | null,
+    position?: number | null,
+    required?: {
+    } | null,
+    visible?: boolean | null,
+    href?: string | null,
+    answers?: {
+      choices?: {
+        id?: string | null,
+        position?: number | null,
+        visible?: boolean | null,
+        text?: string | null
+      }[] | null,
+      rows?: {
+      }[] | null,
+      other?: {
+      }[] | null,
+      cols?: {
+      }[] | null
+    } | null
   }[] | null
 }[] | null
 ```

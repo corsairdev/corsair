@@ -65,18 +65,6 @@ const surveySchema = z
 	})
 	.loose();
 
-const pageSchema = z
-	.object({
-		id: z.string(),
-		title: z.string().nullish(),
-		description: z.string().nullish(),
-		position: z.number().int().nullish(),
-		question_count: z.number().int().nullish(),
-		href: z.string().nullish(),
-		questions: z.array(z.looseObject({})).nullish(),
-	})
-	.loose();
-
 const questionSchema = z
 	.object({
 		id: z.string(),
@@ -116,6 +104,19 @@ const questionSchema = z
 			})
 			.loose()
 			.nullish(),
+	})
+	.loose();
+
+const pageSchema = z
+	.object({
+		id: z.string(),
+		title: z.string().nullish(),
+		description: z.string().nullish(),
+		position: z.number().int().nullish(),
+		question_count: z.number().int().nullish(),
+		href: z.string().nullish(),
+		/** Filled on `surveys.getDetails`, where each page carries its questions. */
+		questions: z.array(questionSchema).nullish(),
 	})
 	.loose();
 
