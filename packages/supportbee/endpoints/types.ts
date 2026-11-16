@@ -99,15 +99,37 @@ const TicketSchema = z
 		archived: z.boolean().nullish(),
 		spam: z.boolean().nullish(),
 		summary: z.string().nullish(),
-		source: z.array(z.string()).nullish(),
+		/**
+		 * The docs show an array of addresses; the live API sends an object keyed
+		 * by how the ticket arrived, such as `{ web: "...@supportbeemail.com" }`.
+		 */
+		source: z
+			.union([z.array(z.string()), z.record(z.string(), z.string().nullish())])
+			.nullish(),
 		cc: z.array(z.string()).nullish(),
 		bcc: z.array(z.string()).nullish(),
-		labels: z.array(z.string()).nullish(),
+		/** The docs show names; the live API sends `{ id, name, color }` objects. */
+		labels: z
+			.array(
+				z.union([
+					z.string(),
+					z
+						.object({
+							id: z.number().int().nullish(),
+							name: z.string().nullish(),
+							color: z.string().nullish(),
+						})
+						.loose(),
+				]),
+			)
+			.nullish(),
 		requester: RequesterSchema.nullish(),
 		content: ContentPartSchema.nullish(),
-		// Spelled `asignee` by the API.
+		// The docs spell these `asignee`; the live API sends `assignee`.
 		current_user_asignee: UserSchema.nullish(),
 		current_team_asignee: TeamSchema.nullish(),
+		current_user_assignee: UserSchema.nullish(),
+		current_team_assignee: TeamSchema.nullish(),
 	})
 	.loose();
 
@@ -912,6 +934,10 @@ export type FiltersCreateInput = z.input<typeof FiltersCreateInputSchema>;
 const FiltersCreateResponseSchema = z.object({
 	rule_id: z.string(),
 	consequence_id: z.string(),
+	filter_id: z
+		.string()
+		.optional()
+		.describe('The new filter id, when returned.'),
 	created: z.literal(true),
 });
 

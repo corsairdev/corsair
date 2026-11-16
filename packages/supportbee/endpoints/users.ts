@@ -165,6 +165,12 @@ export const addMember: SupportbeeEndpoints['usersAddMember'] = (ctx, input) =>
 			body: { member: { id: member_id } },
 		}),
 		{
+			// The docs show `{ user }`; the live API answers `{ member }`. The
+			// added member is returned as `user` either way.
+			shape: (raw) =>
+				raw && typeof raw === 'object' && 'member' in raw && !('user' in raw)
+					? { user: raw.member }
+					: raw,
 			log: (parsed, result) => ({
 				groupId: parsed.id,
 				memberId: parsed.member_id,

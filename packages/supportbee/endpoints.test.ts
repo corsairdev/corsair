@@ -503,9 +503,10 @@ describe('supportbee attachments, snippets, filters, emails, reports and labels'
 			consequence_id: '5_2',
 			created: true,
 		});
+		// Live run 11-16: the top-level ids the docs show answer 500; the API
+		// creates the filter only with them under `filter`.
 		expect(sentBody()).toEqual({
-			rule_id: '5_1',
-			consequence_id: '5_2',
+			filter: { rule_id: '5_1', consequence_id: '5_2' },
 		});
 	});
 

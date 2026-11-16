@@ -104,6 +104,10 @@ export const create: SupportbeeEndpoints['ticketsCreate'] = (ctx, input) =>
 			},
 		}),
 		{
+			// The docs show the bare ticket; the live API wraps it as `{ ticket }`,
+			// as tickets.get does. Both are accepted and the ticket is returned.
+			shape: (raw) =>
+				raw && typeof raw === 'object' && 'ticket' in raw ? raw.ticket : raw,
 			log: (_, result) => ({ ticketId: result.id }),
 		},
 	);

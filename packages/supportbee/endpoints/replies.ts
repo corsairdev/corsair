@@ -41,6 +41,10 @@ export const get: SupportbeeEndpoints['repliesGet'] = (ctx, input) =>
 			path: `/tickets/${segment(ticket_id)}/replies/${segment(id)}`,
 		}),
 		{
+			// The docs show the bare reply; the live API wraps it as `{ reply }`.
+			// Both are accepted and the reply is returned.
+			shape: (raw) =>
+				raw && typeof raw === 'object' && 'reply' in raw ? raw.reply : raw,
 			log: (parsed) => ({ ticketId: parsed.ticket_id, replyId: parsed.id }),
 		},
 	);
