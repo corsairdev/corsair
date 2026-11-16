@@ -229,6 +229,7 @@ describe('FreeAgent client', () => {
 		const error = await makeFreeAgentRequest('/v2/contacts', 'access-token', {
 			method: 'POST',
 			body: { contact: { email: 'person@example.com' } },
+			// `unknown`: a rejection can carry any value; checked as ApiError below.
 		}).catch((caught: unknown) => caught);
 		expect(error).toBeInstanceOf(ApiError);
 		expect(error).toMatchObject({

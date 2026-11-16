@@ -346,6 +346,7 @@ describe('FreeAgent shapes seen on the live sandbox API (11-16)', () => {
 	});
 
 	it('accepts invoice line ids on update, and _destroy to remove a line', () => {
+		// `unknown[]`: the cases include shapes the schema must reject.
 		const parse = (items: unknown[]) =>
 			FreeAgentEndpointInputSchemas.invoicesUpdate.safeParse({
 				id: '7',
