@@ -1,6 +1,10 @@
 import { AuthMissingError } from 'corsair/core';
 import { ApiError } from 'corsair/http';
-import { makeThinkificRequest, normalizeThinkificSubdomain } from './client';
+import {
+	makeThinkificRequest,
+	normalizeThinkificSubdomain,
+	THINKIFIC_RATE_LIMIT_CONFIG,
+} from './client';
 import * as Bundles from './endpoints/bundles';
 import * as Coupons from './endpoints/coupons';
 import * as Enrollments from './endpoints/enrollments';
@@ -188,6 +192,19 @@ describe('Thinkific errors and account fields', () => {
 		expect(failure.message).toContain('email has already been taken');
 		expect(failure.message).toContain('password is too short');
 		expect(failure.message).not.toContain('private@example.com');
+	});
+
+	it('backs off past a full rate-limit minute when RateLimit-Reset is not an epoch', () => {
+		const { maxRetries, initialRetryDelay, backoffMultiplier } =
+			THINKIFIC_RATE_LIMIT_CONFIG;
+		let total = 0;
+		for (let attempt = 1; attempt <= maxRetries; attempt++) {
+			total += Math.min(
+				initialRetryDelay * backoffMultiplier ** (attempt - 1),
+				60_000,
+			);
+		}
+		expect(total).toBeGreaterThanOrEqual(60_000);
 	});
 
 	it('stores the site subdomain as its own account field', () => {

@@ -9,10 +9,16 @@ import { ApiError, request } from 'corsair/http';
 
 export const THINKIFIC_API_BASE = 'https://api.thinkific.com/api/public/v1';
 
+/**
+ * Thinkific limits each site to 120 requests a minute. Its guide calls `RateLimit-Reset` both an
+ * epoch time and "the amount of time (in milliseconds) until the rate limit resets". Core reads the
+ * header as an epoch; a millisecond duration reads as a time in the past and core falls back to
+ * this backoff, so the backoff alone spans the one-minute window (15 s, 30 s, 60 s).
+ */
 export const THINKIFIC_RATE_LIMIT_CONFIG = {
 	enabled: true,
 	maxRetries: 3,
-	initialRetryDelay: 1000,
+	initialRetryDelay: 15_000,
 	backoffMultiplier: 2,
 	headerNames: {
 		retryAfter: 'Retry-After',
