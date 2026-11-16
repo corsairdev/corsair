@@ -91,7 +91,7 @@ describe('Hex error handlers', () => {
 	it('routes an ApiError by status, not by words in its message', async () => {
 		const timeout = apiError(504, 'rate limit service timed out');
 		expect(route(timeout)).toBe('DEFAULT');
-		await expect(errorHandlers.DEFAULT.handler(timeout)).resolves.toEqual({
+		await expect(errorHandlers.DEFAULT.handler()).resolves.toEqual({
 			maxRetries: 0,
 		});
 		expect(route(apiError(500, 'Resource not found upstream'))).toBe('DEFAULT');
