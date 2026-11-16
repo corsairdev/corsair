@@ -13,6 +13,12 @@ const EmployeeIdSchema = z
 	.positive()
 	.describe('The employee ID, from `employees.directory` or `employees.hire`.');
 
+/** An amount TalentHR sends as a number on some routes and a string on others. */
+const NumberOrStringSchema = z.union([z.number(), z.string()]);
+
+/** Live 11-16: budget flags arrive as 0/1 numbers as well as booleans. */
+const FlagSchema = z.union([z.boolean(), z.number().transform((v) => v !== 0)]);
+
 const IsoDateSchema = z
 	.string()
 	.regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected YYYY-MM-DD.')
@@ -585,14 +591,16 @@ export const TimeOffCreateResponseSchema = z
 		start_date: z.string().nullish(),
 		end_date: z.string().nullish(),
 		employee_id: z.number().nullish(),
-		budget: z.string().nullish(),
+		// Live 11-16: the create answer sends `budget` as a number (1) and
+		// `working_hours` as a string ("8.00"); the list sends "1.000".
+		budget: NumberOrStringSchema.nullish(),
 		approved: z.boolean().nullish(),
 		created_at: z.string().nullish(),
 		updated_at: z.string().nullish(),
 		deleted_at: z.string().nullish(),
-		working_hours: z.number().nullish(),
-		budget_days: z.string().nullish(),
-		budget_hours: z.string().nullish(),
+		working_hours: NumberOrStringSchema.nullish(),
+		budget_days: NumberOrStringSchema.nullish(),
+		budget_hours: NumberOrStringSchema.nullish(),
 		attachment_url: z.string().nullish(),
 		attachment_name: z.string().nullish(),
 		time_off_type: z
@@ -685,13 +693,13 @@ const TimeOffBudgetSchema = z
 		timeoff_type_id: z.number().nullish(),
 		timeoff_type_name: z.string().nullish(),
 		timeoff_type_slug: z.string().nullish(),
-		timeoff_allow_exceeding: z.boolean().nullish(),
+		timeoff_allow_exceeding: FlagSchema.nullish(),
 		original_budget: z.string().nullish(),
 		used_budget: z.string().nullish(),
-		paid: z.boolean().nullish(),
-		has_unlimited_timeoff: z.boolean().nullish(),
+		paid: FlagSchema.nullish(),
+		has_unlimited_timeoff: FlagSchema.nullish(),
 		unlimited_used_budget: z.string().nullish(),
-		employee_has_accrual: z.boolean().nullish(),
+		employee_has_accrual: FlagSchema.nullish(),
 		accrual_original_budget: z.string().nullish(),
 		accrual_budget: z.string().nullish(),
 		accrual_used_budget: z.string().nullish(),

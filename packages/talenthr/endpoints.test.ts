@@ -518,6 +518,79 @@ describe('timeOff.types and timeOff.budgets', () => {
 	});
 });
 
+describe('live response shapes (11-16)', () => {
+	it('reads 0/1 flags on budgets as booleans', async () => {
+		// Trimmed from a live GET /employees/{id}/time-off-budgets.
+		respond({
+			success: true,
+			data: [
+				{
+					id: 10,
+					employee_id: 1,
+					budget: '15.000',
+					time_off_cycle_id: 1,
+					timeoff_type_id: 4,
+					timeoff_type_name: 'Vacation',
+					timeoff_type_slug: 'vacation',
+					timeoff_allow_exceeding: 1,
+					original_budget: '15.000',
+					used_budget: '0.000',
+					paid: 0,
+					has_unlimited_timeoff: false,
+					unlimited_used_budget: null,
+					employee_has_accrual: false,
+				},
+			],
+		});
+
+		const result = await invoke(TimeOff.budgets, { employeeId: 1 });
+
+		expect(result[0]?.timeoff_allow_exceeding).toBe(true);
+		expect(result[0]?.paid).toBe(false);
+		expect(result[0]?.has_unlimited_timeoff).toBe(false);
+	});
+
+	it('accepts the numeric budget and string working_hours a create answers', async () => {
+		// Trimmed from a live POST /employees/{id}/time-off-requests-advanced.
+		respond({
+			success: true,
+			data: {
+				id: 4,
+				employee_id: 1,
+				assignee_id: 1,
+				timeoff_type_id: 4,
+				start_date: '2026-11-26',
+				end_date: '2026-11-26',
+				answered: true,
+				approved: true,
+				budget: 1,
+				note: 'corsair-plugin-test',
+				replier_id: 1,
+				is_canceled: false,
+				created_at: '2026-11-16 06:11:21',
+				updated_at: '2026-11-16 06:11:22',
+				deleted_at: null,
+				working_hours: '8.00',
+				timeoff_accrual_data: null,
+				time_off_type: { id: 4, name: 'Vacation', slug: 'vacation' },
+				allow_cancel: true,
+				attachment_url: null,
+				attachment_name: null,
+			},
+		});
+
+		const result = await invoke(TimeOff.create, {
+			employeeId: 1,
+			start_date: '2026-11-26',
+			end_date: '2026-11-26',
+			timeoff_type_id: 4,
+		});
+
+		expect(result.budget).toBe(1);
+		expect(result.working_hours).toBe('8.00');
+	});
+});
+
 describe('organization collections', () => {
 	it('lists divisions', async () => {
 		respond(divisionsResponse);
