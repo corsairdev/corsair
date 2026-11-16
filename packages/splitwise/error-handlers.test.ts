@@ -17,6 +17,8 @@ function classify(error: Error): HandlerName {
 // Every handler ignores its arguments now, so it is called the way core
 // calls it, with the error, through a widened signature.
 async function strategy(error: Error) {
+	// unknown: the handlers return different retry-strategy shapes; each test
+	// compares the result with toEqual.
 	const handler = errorHandlers[classify(error)].handler as (
 		error: Error,
 	) => Promise<unknown>;
