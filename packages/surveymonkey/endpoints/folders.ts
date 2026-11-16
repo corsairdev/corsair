@@ -28,7 +28,10 @@ export const list: SurveymonkeyEndpoints['foldersList'] = (ctx, input) =>
 		},
 	);
 
-/** A folder is created with a capitalised `Title`, which is what the route reads. */
+/**
+ * A folder is created from a lowercase `title`. The reference's example sends
+ * `Title`, but the live API ignores it and names the folder "New Folder".
+ */
 export const create: SurveymonkeyEndpoints['foldersCreate'] = (ctx, input) =>
 	call(
 		ctx,
@@ -41,7 +44,7 @@ export const create: SurveymonkeyEndpoints['foldersCreate'] = (ctx, input) =>
 		({ title }) => ({
 			method: 'POST',
 			path: '/survey_folders',
-			body: { Title: title },
+			body: { title },
 		}),
 		{
 			log: (_, result) => ({ folderId: result.id }),

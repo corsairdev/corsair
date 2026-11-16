@@ -1,6 +1,7 @@
+import { asRecord } from 'corsair/core';
 import type { SurveymonkeyEndpoints } from '..';
-import { segment } from '../client';
-import { call, listBody, queryOf, unwrapList } from './call';
+import { makeSurveymonkeyRequest, segment } from '../client';
+import { call, listBody, queryOf, resolveBase, unwrapList } from './call';
 import {
 	SurveymonkeyEndpointInputSchemas as Inputs,
 	SurveymonkeyEndpointOutputSchemas as Outputs,
@@ -94,15 +95,38 @@ export const get: SurveymonkeyEndpoints['webhooksGet'] = (ctx, input) =>
 		},
 	);
 
-export const update: SurveymonkeyEndpoints['webhooksUpdate'] = (ctx, input) =>
-	call(
+/**
+ * SurveyMonkey's PATCH re-checks `object_ids` and answers 400 "One or more
+ * objects ids are not accessible" when they are left out (seen live 11-16), so
+ * a patch without them first reads the webhook and sends its current ones.
+ */
+async function currentObjectIds(
+	ctx: Parameters<SurveymonkeyEndpoints['webhooksUpdate']>[0],
+	webhookId: string,
+): Promise<string[] | undefined> {
+	const raw = await makeSurveymonkeyRequest(await resolveBase(ctx), ctx.key, {
+		method: 'GET',
+		path: `/webhooks/${segment(webhookId)}`,
+	});
+	const ids = asRecord(raw)?.object_ids;
+	return Array.isArray(ids) ? ids.map(String) : undefined;
+}
+
+export const update: SurveymonkeyEndpoints['webhooksUpdate'] = async (
+	ctx,
+	input,
+) => {
+	const parsed = Inputs.webhooksUpdate.parse(input ?? {});
+	const objectIds =
+		parsed.object_ids ?? (await currentObjectIds(ctx, parsed.webhook_id));
+	return call(
 		ctx,
 		{
 			event: 'webhooks.update',
 			input: Inputs.webhooksUpdate,
 			output: Outputs.webhooksUpdate,
 		},
-		input,
+		{ ...parsed, object_ids: objectIds },
 		({
 			webhook_id,
 			name,
@@ -127,6 +151,7 @@ export const update: SurveymonkeyEndpoints['webhooksUpdate'] = (ctx, input) =>
 			log: (parsed) => ({ webhookId: parsed.webhook_id }),
 		},
 	);
+};
 
 export const remove: SurveymonkeyEndpoints['webhooksDelete'] = (ctx, input) =>
 	call(

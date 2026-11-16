@@ -26,6 +26,7 @@ import {
 } from './test-fixtures';
 import {
 	BASE,
+	currentFetch,
 	endpoints,
 	fetchCount,
 	installFetchMock,
@@ -807,16 +808,40 @@ describe('surveymonkey webhooks, users and folders', () => {
 		await endpoints.webhooks.update(ctx, {
 			webhook_id: '1234',
 			subscription_url: 'https://example.com/other',
+			object_ids: ['1234'],
 		});
 		expect(lastCall().init.method).toBe('PATCH');
 		expect(sentBody()).toEqual({
 			subscription_url: 'https://example.com/other',
+			object_ids: ['1234'],
 		});
 
 		mockFetch(jsonResponse({}));
 		await expect(
 			endpoints.webhooks.delete(ctx, { webhook_id: '1234' }),
 		).resolves.toEqual({ webhook_id: '1234', deleted: true });
+	});
+
+	it('resends the stored object_ids when a webhook patch leaves them out', async () => {
+		// Live 11-16: PATCH /webhooks/{id} with only a name answers 400 "One or
+		// more objects ids are not accessible"; with the object_ids it is 200.
+		mockFetch(jsonResponse(webhook));
+		mockFetch(jsonResponse({ ...webhook, name: 'Renamed' }));
+		const result = await endpoints.webhooks.update(ctx, {
+			webhook_id: '1234',
+			name: 'Renamed',
+		});
+
+		expect(fetchCount()).toBe(2);
+		const [firstUrl, firstInit] = currentFetch().mock.calls[0]!;
+		expect(new URL(String(firstUrl)).pathname).toBe('/v3/webhooks/1234');
+		expect((firstInit as RequestInit | undefined)?.method ?? 'GET').toBe('GET');
+		expect(lastCall().init.method).toBe('PATCH');
+		expect(sentBody()).toEqual({
+			name: 'Renamed',
+			object_ids: ['1234', '5678'],
+		});
+		expect(result.name).toBe('Renamed');
 	});
 
 	it('reads the account behind the token', async () => {
@@ -827,7 +852,7 @@ describe('surveymonkey webhooks, users and folders', () => {
 		expect(result.account_type).toBe('premier');
 	});
 
-	it('lists and creates survey folders, sending the capitalised Title', async () => {
+	it('lists and creates survey folders, sending a lowercase title', async () => {
 		mockFetch(jsonResponse(folderWrapper));
 		const listed = await endpoints.folders.list(ctx, {});
 		expect(pathname()).toBe('/v3/survey_folders');
@@ -835,7 +860,9 @@ describe('surveymonkey webhooks, users and folders', () => {
 
 		mockFetch(jsonResponse(folder, { status: 201 }));
 		await endpoints.folders.create(ctx, { title: 'My Folder' });
-		expect(sentBody()).toEqual({ Title: 'My Folder' });
+		// Live 11-16: `{ Title }` is ignored and the folder is named "New Folder";
+		// `{ title }` names it.
+		expect(sentBody()).toEqual({ title: 'My Folder' });
 	});
 
 	it('refuses a list body that is not the documented wrapper', async () => {

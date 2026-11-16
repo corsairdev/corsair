@@ -184,7 +184,7 @@ apiNotes:
   pages.get: |
     Answers one page with its `question_count`.
   pages.update: |
-    Sends PATCH, so only the fields you pass change. `position` reorders the page within the survey.
+    Sends PATCH, so only the fields you pass change. SurveyMonkey rejects a patch without `object_ids`, so when you leave them out the plugin reads the webhook first and resends its current ones. `position` reorders the page within the survey.
   pages.delete: |
     Answers 200 with an empty body and reports `{ survey_id, page_id, deleted: true }`. The questions on the page go with it.
   questions.list: |
@@ -194,7 +194,7 @@ apiNotes:
   questions.get: |
     Answers one question with its choices, required rule and validity settings.
   questions.update: |
-    Sends PATCH, so only the fields you pass change. `visible: false` hides the question without deleting it, and the answers already recorded stay.
+    Sends PATCH, so only the fields you pass change. SurveyMonkey rejects a patch without `object_ids`, so when you leave them out the plugin reads the webhook first and resends its current ones. `visible: false` hides the question without deleting it, and the answers already recorded stay.
   questions.delete: |
     Answers 200 with an empty body and reports the three ids. The answers recorded for the question go with it.
   responses.list: |
@@ -218,7 +218,7 @@ apiNotes:
   collectors.get: |
     Answers one collector with its link, status and settings.
   collectors.update: |
-    Sends PATCH, so only the fields you pass change. **`status` is the field that opens or closes it**, and `type` cannot be changed.
+    Sends PATCH, so only the fields you pass change. SurveyMonkey rejects a patch without `object_ids`, so when you leave them out the plugin reads the webhook first and resends its current ones. **`status` is the field that opens or closes it**, and `type` cannot be changed.
   collectors.delete: |
     Answers 200 with an empty body and reports `{ collector_id, deleted: true }`. Its link stops working; the responses it gathered stay on the survey.
   messages.list: |
@@ -260,7 +260,7 @@ apiNotes:
   contacts.get: |
     Answers one contact with its `custom_fields` and status.
   contacts.update: |
-    Sends PATCH, so only the fields you pass change. `custom_fields` replaces the whole map.
+    Sends PATCH, so only the fields you pass change. SurveyMonkey rejects a patch without `object_ids`, so when you leave them out the plugin reads the webhook first and resends its current ones. `custom_fields` replaces the whole map.
   contacts.delete: |
     Answers 200 with an empty body and reports `{ contact_id, deleted: true }`. The contact leaves every list and stops receiving invites.
   contacts.listFields: |
@@ -274,7 +274,7 @@ apiNotes:
   webhooks.get: |
     Answers one webhook subscription.
   webhooks.update: |
-    Sends PATCH, so only the fields you pass change.
+    Sends PATCH, so only the fields you pass change. SurveyMonkey rejects a patch without `object_ids`, so when you leave them out the plugin reads the webhook first and resends its current ones.
   webhooks.delete: |
     Answers 200 with an empty body and reports `{ webhook_id, deleted: true }`. The URL stops receiving events.
   users.getMe: |
@@ -282,4 +282,4 @@ apiNotes:
   folders.list: |
     Answers `{ data }` of survey folders.
   folders.create: |
-    Sends the title as a capitalised **`Title`**, which is the field the route reads, and answers the folder.
+    Sends the title as a lowercase **`title`** and answers the folder. The reference's example uses `Title`, which the API ignores (the folder comes back as "New Folder").
