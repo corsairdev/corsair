@@ -20,7 +20,8 @@ import {
 
 describe('output schemas keep the provider field names', () => {
 	it('parses a link list', () => {
-		const parsed = ToneDenEndpointOutputSchemas.listLinks.parse(linksEnvelope);
+		const parsed =
+			ToneDenEndpointOutputSchemas.listUserLinks.parse(linksEnvelope);
 		expect(parsed.links).toHaveLength(2);
 		expect(parsed.links[0]?.title).toBe('New single');
 	});
@@ -65,7 +66,9 @@ describe('output schemas keep the provider field names', () => {
 
 	it('parses an attachment list', () => {
 		const parsed =
-			ToneDenEndpointOutputSchemas.listAttachments.parse(attachmentsEnvelope);
+			ToneDenEndpointOutputSchemas.listUserAttachments.parse(
+				attachmentsEnvelope,
+			);
 		expect(parsed.attachments[0]?.type).toBe('contest');
 		expect(parsed.attachments[0]?.actions).toHaveLength(1);
 	});
@@ -129,7 +132,7 @@ describe('output schemas keep the provider field names', () => {
 describe('wrong-shaped bodies fail loudly', () => {
 	it('rejects a link list whose links is an object', () => {
 		expect(() =>
-			ToneDenEndpointOutputSchemas.listLinks.parse({ links: {} }),
+			ToneDenEndpointOutputSchemas.listUserLinks.parse({ links: {} }),
 		).toThrow(z.ZodError);
 	});
 
@@ -149,7 +152,7 @@ describe('wrong-shaped bodies fail loudly', () => {
 
 	it('rejects an attachment list whose element is a string', () => {
 		expect(() =>
-			ToneDenEndpointOutputSchemas.listAttachments.parse({
+			ToneDenEndpointOutputSchemas.listUserAttachments.parse({
 				attachments: ['contest'],
 			}),
 		).toThrow(z.ZodError);

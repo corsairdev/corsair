@@ -20,7 +20,7 @@ if (!ACCESS_TOKEN) {
 }
 
 describeIfToken('ToneDen live API', () => {
-	const links = tonedenEndpointSchemas['links.list'];
+	const links = tonedenEndpointSchemas['links.listForUser'];
 	const validPath = tonedenEndpointSchemas['links.validPath'];
 
 	// The raw client, built the way the plugin builds it.
@@ -37,7 +37,11 @@ describeIfToken('ToneDen live API', () => {
 	}
 
 	it('lists links through the output schema', async () => {
-		const parsed = links.output.parse(await get('links', { limit: 1 }));
+		// ToneDen lists links per user; 'me' resolves the token's own user.
+		const me = (await get('users/me')) as { user?: { id?: number } };
+		const parsed = links.output.parse(
+			await get(`users/${me.user?.id}/links`, { limit: 1 }),
+		);
 		expect(Array.isArray(parsed.links)).toBe(true);
 	});
 

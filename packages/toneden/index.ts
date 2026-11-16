@@ -12,7 +12,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
-import { TONEDEN_OAUTH_TOKEN_URL } from './client';
+import { TONEDEN_OAUTH_AUTHORIZE_URL, TONEDEN_OAUTH_TOKEN_URL } from './client';
 import {
 	AttachmentsEndpoints,
 	CampaignsEndpoints,
@@ -78,7 +78,6 @@ type ToneDenEndpoint<K extends keyof ToneDenEndpointOutputs> = CorsairEndpoint<
 >;
 
 export type ToneDenEndpoints = {
-	linksList: ToneDenEndpoint<'listLinks'>;
 	linksListForUser: ToneDenEndpoint<'listUserLinks'>;
 	linksGet: ToneDenEndpoint<'getLink'>;
 	linksCreate: ToneDenEndpoint<'createLink'>;
@@ -88,7 +87,6 @@ export type ToneDenEndpoints = {
 	linksValidPath: ToneDenEndpoint<'validPath'>;
 	linksInsights: ToneDenEndpoint<'linkInsights'>;
 	linksInsightsOverview: ToneDenEndpoint<'linkInsightsOverview'>;
-	attachmentsList: ToneDenEndpoint<'listAttachments'>;
 	attachmentsListForUser: ToneDenEndpoint<'listUserAttachments'>;
 	attachmentsGet: ToneDenEndpoint<'getAttachment'>;
 	attachmentsCreate: ToneDenEndpoint<'createAttachment'>;
@@ -120,7 +118,6 @@ export type ToneDenEndpoints = {
 
 const tonedenEndpointsNested = {
 	links: {
-		list: LinksEndpoints.list,
 		listForUser: LinksEndpoints.listForUser,
 		get: LinksEndpoints.get,
 		create: LinksEndpoints.create,
@@ -132,7 +129,6 @@ const tonedenEndpointsNested = {
 		insightsOverview: LinksEndpoints.insightsOverview,
 	},
 	attachments: {
-		list: AttachmentsEndpoints.list,
 		listForUser: AttachmentsEndpoints.listForUser,
 		get: AttachmentsEndpoints.get,
 		create: AttachmentsEndpoints.create,
@@ -174,10 +170,6 @@ const tonedenEndpointsNested = {
 } as const;
 
 export const tonedenEndpointSchemas = {
-	'links.list': {
-		input: ToneDenEndpointInputSchemas.listLinks,
-		output: ToneDenEndpointOutputSchemas.listLinks,
-	},
 	'links.listForUser': {
 		input: ToneDenEndpointInputSchemas.listUserLinks,
 		output: ToneDenEndpointOutputSchemas.listUserLinks,
@@ -213,10 +205,6 @@ export const tonedenEndpointSchemas = {
 	'links.insightsOverview': {
 		input: ToneDenEndpointInputSchemas.linkInsightsOverview,
 		output: ToneDenEndpointOutputSchemas.linkInsightsOverview,
-	},
-	'attachments.list': {
-		input: ToneDenEndpointInputSchemas.listAttachments,
-		output: ToneDenEndpointOutputSchemas.listAttachments,
 	},
 	'attachments.listForUser': {
 		input: ToneDenEndpointInputSchemas.listUserAttachments,
@@ -333,11 +321,6 @@ export const tonedenEndpointSchemas = {
 const defaultAuthType = 'oauth_2' as const;
 
 const tonedenEndpointMeta = {
-	'links.list': {
-		riskLevel: 'read',
-		description:
-			'List links, optionally filtered by target type, with offset paging',
-	},
 	'links.listForUser': {
 		riskLevel: 'read',
 		description: "List one user's links",
@@ -378,10 +361,6 @@ const tonedenEndpointMeta = {
 	'links.insightsOverview': {
 		riskLevel: 'read',
 		description: "Read a summary of one link's performance",
-	},
-	'attachments.list': {
-		riskLevel: 'read',
-		description: 'List contests and social unlocks',
 	},
 	'attachments.listForUser': {
 		riskLevel: 'read',
@@ -435,12 +414,12 @@ const tonedenEndpointMeta = {
 		description: 'Read one ad campaign',
 	},
 	'campaigns.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Create an ad campaign on Facebook or Google; creating one can start spend, so review the body before calling',
 	},
 	'campaigns.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Change an ad campaign; only the given fields are sent',
 	},
 	'campaigns.delete': {
@@ -478,11 +457,11 @@ const tonedenEndpointMeta = {
 		description: 'Read one playbook campaign',
 	},
 	'playbooks.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Create a playbook campaign from a template',
 	},
 	'playbooks.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Change a playbook campaign title or archive state',
 	},
 	'playbooks.delete': {
@@ -525,6 +504,16 @@ export function toneden<const T extends ToneDenPluginOptions>(
 	return {
 		id: 'toneden',
 		authConfig: tonedenAuthConfig,
+		// ToneDen uses the authorization-code flow, documents no scopes, and
+		// sends users only to redirect URIs registered on the app.
+		oauthConfig: {
+			providerName: 'ToneDen',
+			authUrl: TONEDEN_OAUTH_AUTHORIZE_URL,
+			tokenUrl: TONEDEN_OAUTH_TOKEN_URL,
+			scopes: [],
+			tokenAuthMethod: 'body' as const,
+			requiresRegisteredRedirect: true,
+		},
 		schema: ToneDenSchema,
 		options: options,
 		hooks: options.hooks,

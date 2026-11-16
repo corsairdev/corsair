@@ -6,23 +6,6 @@ import {
 	ToneDenEndpointOutputSchemas,
 } from './types';
 
-export const list: ToneDenEndpoints['attachmentsList'] = async (ctx, input) =>
-	call(
-		ctx,
-		{
-			event: 'attachments.list',
-			input: ToneDenEndpointInputSchemas.listAttachments,
-			output: ToneDenEndpointOutputSchemas.listAttachments,
-		},
-		input,
-		(parsed) => ({
-			method: 'GET',
-			path: 'attachments',
-			query: { offset: parsed.offset, limit: parsed.limit },
-		}),
-		{ log: (_parsed, result) => ({ attachments: result.attachments.length }) },
-	);
-
 export const listForUser: ToneDenEndpoints['attachmentsListForUser'] = async (
 	ctx,
 	input,
@@ -38,7 +21,11 @@ export const listForUser: ToneDenEndpoints['attachmentsListForUser'] = async (
 		(parsed) => ({
 			method: 'GET',
 			path: `users/${segment(parsed.user_id)}/attachments`,
-			query: { offset: parsed.offset, limit: parsed.limit },
+			query: {
+				type: parsed.type,
+				offset: parsed.offset,
+				limit: parsed.limit,
+			},
 		}),
 		{
 			log: (parsed, result) => ({

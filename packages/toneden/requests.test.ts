@@ -67,30 +67,21 @@ afterEach(() => {
 });
 
 describe('links', () => {
-	it('links.list GETs v1/links with paging', async () => {
+	it('links.listForUser GETs the user path with paging', async () => {
 		respond(linksEnvelope);
 
-		const result = (await invoke(LinksEndpoints.list, {
+		const result = (await invoke(LinksEndpoints.listForUser, {
+			user_id: 1,
 			target_type: 'music',
 			limit: 25,
 		})) as { links: unknown[] };
 
 		expectAuthenticated();
-		expect(lastRequest()).toMatchObject({
-			path: '/api/v1/links',
-			method: 'GET',
-		});
+		// ToneDen has no top-level GET /links (it answers 404); links are listed
+		// per user.
+		expect(lastRequest().path).toBe('/api/v1/users/1/links');
 		expect(lastRequest().params).toEqual({ target_type: 'music', limit: '25' });
 		expect(result.links).toHaveLength(2);
-	});
-
-	it('links.listForUser GETs the user path', async () => {
-		respond(linksEnvelope);
-
-		await invoke(LinksEndpoints.listForUser, { user_id: 1 });
-
-		expectAuthenticated();
-		expect(lastRequest().path).toBe('/api/v1/users/1/links');
 	});
 
 	it('links.get GETs one link', async () => {
@@ -235,25 +226,26 @@ describe('links', () => {
 });
 
 describe('attachments', () => {
-	it('attachments.list GETs v1/attachments', async () => {
+	it('attachments.listForUser GETs the user path with the required type', async () => {
 		respond(attachmentsEnvelope);
 
-		const result = (await invoke(AttachmentsEndpoints.list, {})) as {
-			attachments: unknown[];
-		};
-
-		expectAuthenticated();
-		expect(lastRequest().path).toBe('/api/v1/attachments');
-		expect(result.attachments).toHaveLength(1);
-	});
-
-	it('attachments.listForUser GETs the user path', async () => {
-		respond(attachmentsEnvelope);
-
-		await invoke(AttachmentsEndpoints.listForUser, { user_id: 1 });
+		const result = (await invoke(AttachmentsEndpoints.listForUser, {
+			user_id: 1,
+			type: 'unlock',
+		})) as { attachments: unknown[] };
 
 		expectAuthenticated();
 		expect(lastRequest().path).toBe('/api/v1/users/1/attachments');
+		expect(lastRequest().params).toEqual({ type: 'unlock' });
+		expect(result.attachments).toHaveLength(1);
+	});
+
+	it('attachments.listForUser refuses a call without a type', async () => {
+		const error = await captureError(
+			invoke(AttachmentsEndpoints.listForUser, { user_id: 1 }),
+		);
+		expect((error as Error).name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('attachments.get GETs one', async () => {
@@ -607,6 +599,14 @@ describe('playbooks and users', () => {
 
 		expectAuthenticated();
 		expect(lastRequest().method).toBe('DELETE');
+	});
+
+	it("users.get takes 'me' for the connected user", async () => {
+		respond(userEnvelope);
+
+		await invoke(UsersEndpoints.get, { user_id: 'me' });
+
+		expect(lastRequest().path).toBe('/api/v1/users/me');
 	});
 
 	it('users.get GETs the profile', async () => {

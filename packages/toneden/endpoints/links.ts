@@ -6,27 +6,6 @@ import {
 	ToneDenEndpointOutputSchemas,
 } from './types';
 
-export const list: ToneDenEndpoints['linksList'] = async (ctx, input) =>
-	call(
-		ctx,
-		{
-			event: 'links.list',
-			input: ToneDenEndpointInputSchemas.listLinks,
-			output: ToneDenEndpointOutputSchemas.listLinks,
-		},
-		input,
-		(parsed) => ({
-			method: 'GET',
-			path: 'links',
-			query: {
-				target_type: parsed.target_type,
-				offset: parsed.offset,
-				limit: parsed.limit,
-			},
-		}),
-		{ log: (_parsed, result) => ({ links: result.links.length }) },
-	);
-
 export const listForUser: ToneDenEndpoints['linksListForUser'] = async (
 	ctx,
 	input,

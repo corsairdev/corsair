@@ -55,7 +55,9 @@ describe('retries through createCorsair', () => {
 			respond({ message: 'slow down' }, 429, { 'Retry-After': '1' });
 			respond(linksEnvelope);
 
-			const result = await corsair.toneden.api.links.list({});
+			const result = await corsair.toneden.api.links.listForUser({
+				user_id: 1,
+			});
 
 			expect(result.links).toHaveLength(2);
 			expect(fetchMock).toHaveBeenCalledTimes(2);
@@ -71,7 +73,9 @@ describe('retries through createCorsair', () => {
 				respond({}, 429);
 			}
 
-			await expect(corsair.toneden.api.links.list({})).rejects.toMatchObject({
+			await expect(
+				corsair.toneden.api.links.listForUser({ user_id: 1 }),
+			).rejects.toMatchObject({
 				status: 429,
 			});
 			expect(fetchMock).toHaveBeenCalledTimes(4);
@@ -115,7 +119,9 @@ describe('retries through createCorsair', () => {
 		try {
 			respond({ message: 'Unauthenticated.' }, 401);
 
-			await expect(corsair.toneden.api.links.list({})).rejects.toMatchObject({
+			await expect(
+				corsair.toneden.api.links.listForUser({ user_id: 1 }),
+			).rejects.toMatchObject({
 				status: 401,
 			});
 			expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -131,7 +137,7 @@ describe('retries through createCorsair', () => {
 			respond({}, 429, { 'Retry-After': '2' });
 			respond(linksEnvelope);
 
-			const pending = corsair.toneden.api.links.list({});
+			const pending = corsair.toneden.api.links.listForUser({ user_id: 1 });
 			await jest.advanceTimersByTimeAsync(1500);
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 			await jest.advanceTimersByTimeAsync(600);
@@ -152,7 +158,7 @@ describe('retries through createCorsair', () => {
 			respond({}, 429);
 			respond(linksEnvelope);
 
-			const pending = corsair.toneden.api.links.list({});
+			const pending = corsair.toneden.api.links.listForUser({ user_id: 1 });
 			await jest.advanceTimersByTimeAsync(900);
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 			await jest.advanceTimersByTimeAsync(200);

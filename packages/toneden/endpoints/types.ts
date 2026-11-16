@@ -237,13 +237,6 @@ const AttachmentWriteFields = {
 // links
 // ---------------------------------------------------------------------------
 
-const ListLinksInputSchema = z.object({
-	target_type: z.string().optional().describe('Only links of this target type'),
-	offset: z.number().int().min(0).optional(),
-	limit: z.number().int().min(1).optional(),
-});
-export type ListLinksInput = z.input<typeof ListLinksInputSchema>;
-
 const UserLinksInputSchema = z.object({
 	user_id: z.number().int().positive(),
 	target_type: z.string().optional(),
@@ -328,14 +321,11 @@ export type LinkInsightsOverviewInput = z.input<
 // attachments
 // ---------------------------------------------------------------------------
 
-const ListAttachmentsInputSchema = z.object({
-	offset: z.number().int().min(0).optional(),
-	limit: z.number().int().min(1).optional(),
-});
-export type ListAttachmentsInput = z.input<typeof ListAttachmentsInputSchema>;
-
 const UserAttachmentsInputSchema = z.object({
 	user_id: z.number().int().positive(),
+	type: z
+		.enum(['unlock', 'contest'])
+		.describe('Which kind of attachment to list; ToneDen requires it'),
 	offset: z.number().int().min(0).optional(),
 	limit: z.number().int().min(1).optional(),
 });
@@ -525,7 +515,11 @@ export type PlaybookWriteInput = z.input<typeof PlaybookWriteSchema>;
 // users
 // ---------------------------------------------------------------------------
 
-const UserIdInputSchema = z.object({ user_id: z.number().int().positive() });
+const UserIdInputSchema = z.object({
+	user_id: z
+		.union([z.number().int().positive(), z.literal('me')])
+		.describe("A user ID, or 'me' for the connected user"),
+});
 export type UserIdInput = z.input<typeof UserIdInputSchema>;
 
 const UpdateUserInputSchema = z
@@ -562,7 +556,6 @@ const DeleteResultSchema = z.union([
 ]);
 
 export type ToneDenEndpointInputs = {
-	listLinks: ListLinksInput;
 	listUserLinks: UserLinksInput;
 	getLink: GetLinkInput;
 	createLink: CreateLinkInput;
@@ -572,7 +565,6 @@ export type ToneDenEndpointInputs = {
 	validPath: ValidPathInput;
 	linkInsights: LinkInsightsInput;
 	linkInsightsOverview: LinkInsightsOverviewInput;
-	listAttachments: ListAttachmentsInput;
 	listUserAttachments: UserAttachmentsInput;
 	getAttachment: AttachmentIdInput;
 	createAttachment: CreateAttachmentInput;
@@ -603,7 +595,6 @@ export type ToneDenEndpointInputs = {
 };
 
 export type ToneDenEndpointOutputs = {
-	listLinks: z.output<typeof LinksEnvelopeSchema>;
 	listUserLinks: z.output<typeof LinksEnvelopeSchema>;
 	getLink: z.output<typeof LinkEnvelopeSchema>;
 	createLink: z.output<typeof LinkEnvelopeSchema>;
@@ -613,7 +604,6 @@ export type ToneDenEndpointOutputs = {
 	validPath: ValidPathOutput;
 	linkInsights: InsightsOutput;
 	linkInsightsOverview: InsightsOutput;
-	listAttachments: z.output<typeof AttachmentsEnvelopeSchema>;
 	listUserAttachments: z.output<typeof AttachmentsEnvelopeSchema>;
 	getAttachment: z.output<typeof AttachmentEnvelopeSchema>;
 	createAttachment: z.output<typeof AttachmentEnvelopeSchema>;
@@ -644,7 +634,6 @@ export type ToneDenEndpointOutputs = {
 };
 
 export const ToneDenEndpointInputSchemas = {
-	listLinks: ListLinksInputSchema,
 	listUserLinks: UserLinksInputSchema,
 	getLink: GetLinkInputSchema,
 	createLink: CreateLinkInputSchema,
@@ -654,7 +643,6 @@ export const ToneDenEndpointInputSchemas = {
 	validPath: ValidPathInputSchema,
 	linkInsights: LinkInsightsInputSchema,
 	linkInsightsOverview: LinkInsightsOverviewInputSchema,
-	listAttachments: ListAttachmentsInputSchema,
 	listUserAttachments: UserAttachmentsInputSchema,
 	getAttachment: AttachmentIdInputSchema,
 	createAttachment: CreateAttachmentInputSchema,
@@ -689,7 +677,6 @@ export const ToneDenEndpointInputSchemas = {
 } as const;
 
 export const ToneDenEndpointOutputSchemas = {
-	listLinks: LinksEnvelopeSchema,
 	listUserLinks: LinksEnvelopeSchema,
 	getLink: LinkEnvelopeSchema,
 	createLink: LinkEnvelopeSchema,
@@ -699,7 +686,6 @@ export const ToneDenEndpointOutputSchemas = {
 	validPath: ValidPathSchema,
 	linkInsights: InsightsSchema,
 	linkInsightsOverview: InsightsSchema,
-	listAttachments: AttachmentsEnvelopeSchema,
 	listUserAttachments: AttachmentsEnvelopeSchema,
 	getAttachment: AttachmentEnvelopeSchema,
 	createAttachment: AttachmentEnvelopeSchema,

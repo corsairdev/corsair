@@ -36,7 +36,6 @@ const operations = [
 	'attachments.entries',
 	'attachments.entriesTotals',
 	'attachments.get',
-	'attachments.list',
 	'attachments.listForUser',
 	'attachments.unlockPlatforms',
 	'attachments.unlocks',
@@ -55,7 +54,6 @@ const operations = [
 	'links.get',
 	'links.insights',
 	'links.insightsOverview',
-	'links.list',
 	'links.listForUser',
 	'links.update',
 	'links.validPath',
@@ -126,7 +124,6 @@ describe('toneden plugin definition', () => {
 			'attachments.entries',
 			'attachments.entriesTotals',
 			'attachments.get',
-			'attachments.list',
 			'attachments.listForUser',
 			'attachments.unlockPlatforms',
 			'attachments.unlocks',
@@ -139,13 +136,34 @@ describe('toneden plugin definition', () => {
 			'links.get',
 			'links.insights',
 			'links.insightsOverview',
-			'links.list',
 			'links.listForUser',
 			'links.validPath',
 			'playbooks.get',
 			'userLists.list',
 			'users.get',
 		]);
+	});
+
+	it('carries the OAuth config the connect flow needs', () => {
+		expect(plugin.oauthConfig).toMatchObject({
+			providerName: 'ToneDen',
+			authUrl: 'https://www.toneden.io/auth/oauth2/authorize',
+			tokenUrl: 'https://www.toneden.io/auth/oauth2/token',
+			requiresRegisteredRedirect: true,
+		});
+	});
+
+	it('marks ad spend destructive (R8)', () => {
+		const meta = plugin.endpointMeta ?? {};
+		// Creating or changing an ad or playbook campaign can start or raise spend.
+		for (const name of [
+			'campaigns.create',
+			'campaigns.update',
+			'playbooks.create',
+			'playbooks.update',
+		] as const) {
+			expect(meta[name]?.riskLevel).toBe('destructive');
+		}
 	});
 
 	it('marks every delete destructive and irreversible', () => {

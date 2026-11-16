@@ -5,7 +5,6 @@ import * as Playbooks from './playbooks';
 import * as Users from './users';
 
 export const LinksEndpoints = {
-	list: Links.list,
 	listForUser: Links.listForUser,
 	get: Links.get,
 	create: Links.create,
@@ -18,7 +17,6 @@ export const LinksEndpoints = {
 };
 
 export const AttachmentsEndpoints = {
-	list: Attachments.list,
 	listForUser: Attachments.listForUser,
 	get: Attachments.get,
 	create: Attachments.create,

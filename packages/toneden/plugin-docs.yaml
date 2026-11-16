@@ -7,18 +7,21 @@ overviewNote: |
 
   Things to know:
 
-  - **Every route is scoped to a user.** Campaigns and user lists take `user_id` in the path, and links and attachments can be listed per user. Find your own ID with `users.get` once connected.
+  - **Every route is scoped to a user.** Campaigns and user lists take `user_id` in the path, and links and attachments are listed per user (`links.listForUser`, `attachments.listForUser` with a `type` of `unlock` or `contest`). Call `users.get` with `user_id: 'me'` to read the connected user and its ID.
   - **A taken path is a successful call.** `links.validPath` answers 200 with `valid: false` and a reason, so check the flag rather than catching an error.
   - **Writes send only what you pass.** ToneDen documents no required body field, so an update with no field is rejected here rather than sending an empty body that changes nothing.
-  - **Creating a campaign can start spend.** `campaigns.create` creates a real campaign on Facebook or Google. Review the body before calling it.
+  - **Campaign writes can spend money.** `campaigns.create` creates a real campaign on Facebook or Google, and a campaign or playbook update can change its budget or status, so `campaigns.create`, `campaigns.update`, `playbooks.create` and `playbooks.update` are `destructive`. Review the body before calling them.
+  - **Link insights need a metric.** `links.insights` takes `metric` (`clicks`, `clickthroughs` or `rsvps`) and the window as `start_date` and `end_date`.
+  - **Errors.** HTTP failures are core's `ApiError`; `describeToneDenError` reads the message out of its body.
   - **Ad campaigns need a linked ad account.** A campaign write also needs the ad account, creative and targeting fields ToneDen documents; the plugin forwards whatever you send without inventing defaults.
   - **User lists need ToneDen approval.** The custom-audience endpoints say to contact support for access.
   - **No webhooks.** ToneDen posts no events, so performance is read through the insights routes.
 examples:
   read:
-    path: links.list
+    path: links.listForUser
     title: List your links
     args:
+      user_id: 1
       limit: 25
   write:
     path: links.create
@@ -28,8 +31,6 @@ examples:
       target_type: music
       target_url: https://open.spotify.com/album/abc
 apiExamples:
-  links.list:
-    call: "{ target_type: 'music', limit: 25 }"
   links.listForUser:
     call: "{ user_id: 1 }"
   links.get:
@@ -45,13 +46,11 @@ apiExamples:
   links.validPath:
     call: "{ path: 'new-single', subdomain: 'ada' }"
   links.insights:
-    call: "{ link_id: 48213, start: '2026-05-01', end: '2026-05-31' }"
+    call: "{ link_id: 48213, metric: 'clicks', start_date: '2026-05-01', end_date: '2026-05-31' }"
   links.insightsOverview:
     call: "{ link_id: 48213 }"
-  attachments.list:
-    call: "{ limit: 25 }"
   attachments.listForUser:
-    call: "{ user_id: 1 }"
+    call: "{ user_id: 1, type: 'unlock' }"
   attachments.get:
     call: "{ attachment_id: 9100 }"
   attachments.create:
@@ -61,7 +60,7 @@ apiExamples:
   attachments.delete:
     call: "{ attachment_id: 9100 }"
   attachments.entries:
-    call: "{ attachment_id: 9100 }"
+    call: "{ attachment_id: 9100, start_date: '2026-05-01', aggregate_interval: 'day' }"
   attachments.entriesTotals:
     call: "{ attachment_id: 9100 }"
   attachments.unlocks:
@@ -89,9 +88,9 @@ apiExamples:
   userLists.create:
     call: "{ external_ad_account_id: 'act_123', type: 'email' }"
   userLists.updateContacts:
-    call: "{ list_id: 55, add: ['a@acme.com'] }"
+    call: "{ list_id: 55, add: [{ email: 'a@acme.com' }] }"
   offlineConversions.upload:
-    call: "{ user_id: 1 }"
+    call: "{ user_id: 1, events: [{ user: { email: 'fan@example.com' }, event: 'Purchase', timestamp: 1779000000, value: 25 }] }"
   playbooks.get:
     call: "{ campaign_id: 9900 }"
   playbooks.create:
@@ -101,7 +100,7 @@ apiExamples:
   playbooks.delete:
     call: "{ campaign_id: 9900 }"
   users.get:
-    call: "{ user_id: 1 }"
+    call: "{ user_id: 'me' }"
   users.update:
     call: "{ user_id: 1, display_name: 'Ada L.' }"
 apiNotes:
