@@ -1,8 +1,17 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { SuperchatAPIError } from './client';
+import { asRecord } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 
+// HTTP failures arrive as core's ApiError. Transport failures
+// (SuperchatAPIError) carry no status and fall through to DEFAULT.
 function statusOf(error: Error): number | undefined {
-	return error instanceof SuperchatAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
+}
+
+function exceptionCode(error: Error): string | undefined {
+	if (!(error instanceof ApiError)) return undefined;
+	const code = asRecord(error.body)?.exceptionCode;
+	return typeof code === 'string' ? code : undefined;
 }
 
 /**
@@ -21,22 +30,24 @@ export const errorHandlers = {
 		handler: async (error: Error) => ({
 			maxRetries: 3,
 			headersRetryAfterMs:
-				error instanceof SuperchatAPIError ? error.retryAfter : undefined,
+				error instanceof ApiError ? error.retryAfter : undefined,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
 	// 401 is a missing key and 403 a key Superchat does not recognise, so both
 	// mean the credential is wrong rather than a scope being absent.
 	AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof SuperchatAPIError && error.isAuthError,
+		match: (error: Error) => {
+			const status = statusOf(error);
+			return status === 401 || status === 403;
+		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 404, or a NotFoundException code: no such contact, conversation, message
 	// or channel.
 	NOT_FOUND_ERROR: {
 		match: (error: Error) =>
-			error instanceof SuperchatAPIError && error.isNotFound,
+			statusOf(error) === 404 || exceptionCode(error) === 'NotFoundException',
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 400 and 422: a field failed validation, such as a contact with no handle or
@@ -58,9 +69,9 @@ export const errorHandlers = {
 	// first attempt may already have been delivered to a real person.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof SuperchatAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			error instanceof ApiError &&
+			error.request.method === 'GET' &&
+			error.status >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

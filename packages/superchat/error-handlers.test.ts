@@ -1,5 +1,5 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { SuperchatAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import { errorHandlers as builtinHandlers } from './error-handlers';
 import type { JsonObject } from './json';
 
@@ -13,12 +13,21 @@ function build(options: {
 	retryAfter?: number;
 	body?: JsonObject;
 }) {
-	return new SuperchatAPIError(`Superchat ${options.status}`, {
-		status: options.status,
-		method: options.method,
-		retryAfter: options.retryAfter,
-		body: options.body,
-	});
+	return new ApiError(
+		{
+			method: (options.method ?? 'GET') as 'GET' | 'POST',
+			url: '/contacts',
+		},
+		{
+			url: 'https://api.superchat.com/v1.0/contacts',
+			ok: false,
+			status: options.status ?? 0,
+			statusText: '',
+			body: options.body,
+		},
+		`Superchat ${options.status}`,
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 const context = (error: Error) => ({
@@ -28,7 +37,13 @@ const context = (error: Error) => ({
 	originalError: error,
 });
 
+// Picks the handler the way core does (first match in key order), so a test
+// fails when its handler's matcher stops matching.
 async function run(name: keyof typeof errorHandlers, error: Error) {
+	const selected = Object.entries(errorHandlers).find(([, entry]) =>
+		entry?.match(error, context(error)),
+	);
+	expect(selected?.[0]).toBe(name);
 	const entry = errorHandlers[name];
 	if (!entry) throw new Error(`missing handler ${name}`);
 	return entry.handler(error, context(error));
@@ -118,7 +133,7 @@ describe('superchat error handlers', () => {
 });
 
 describe('superchat error classification', () => {
-	it('reads the code and user message from the envelope', () => {
+	it('sends a 405 to VALIDATION_ERROR, not auth or not-found', async () => {
 		const error = build({
 			status: 405,
 			body: {
@@ -128,17 +143,17 @@ describe('superchat error classification', () => {
 			},
 		});
 
-		expect(error.code).toBe('MethodNotAllowedException');
-		expect(error.userMessage).toBe('Methode nicht erlaubt');
-		// A 405 is neither auth nor not-found; it means the base lost its v1.0.
-		expect(error.isAuthError).toBe(false);
-		expect(error.isNotFound).toBe(false);
+		await expect(run('VALIDATION_ERROR', error)).resolves.toEqual({
+			maxRetries: 0,
+		});
 	});
 
-	it('reads a NotFoundException code as not found even without a 404', () => {
-		expect(
-			build({ status: 400, body: { exceptionCode: 'NotFoundException' } })
-				.isNotFound,
-		).toBe(true);
+	it('reads a NotFoundException code as not found even without a 404', async () => {
+		await expect(
+			run(
+				'NOT_FOUND_ERROR',
+				build({ status: 400, body: { exceptionCode: 'NotFoundException' } }),
+			),
+		).resolves.toEqual({ maxRetries: 0 });
 	});
 });

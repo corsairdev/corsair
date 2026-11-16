@@ -164,16 +164,25 @@ export async function makeSuperchatRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
-			// The cause is deliberately not attached: it carries the request,
-			// including the X-API-KEY header, so `util.inspect(error)` would print
-			// the key.
-			throw new SuperchatAPIError(
+			// Still core's ApiError (plugin rule R8), so its status and retry fields
+			// reach the handlers. It is rebuilt only to drop the request body, which
+			// holds message text, phone numbers and email addresses. The key is in
+			// the config headers, never in the request options.
+			throw new ApiError(
+				{ method: error.request.method, url: error.request.url },
+				{
+					url: error.url,
+					ok: false,
+					status: error.status,
+					statusText: error.statusText,
+					body: error.body,
+				},
 				describeSuperchatError(error.status, error.body, error.message),
 				{
-					status: error.status,
-					body: error.body,
 					retryAfter: error.retryAfter,
-					method: error.request.method,
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
 				},
 			);
 		}
