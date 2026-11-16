@@ -63,6 +63,19 @@ describe('JobNimbus regressions', () => {
 		);
 	});
 
+	it('keeps the actor email out of the thrown error', async () => {
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValueOnce(jsonResponse({ message: 'Forbidden' }, 403));
+		const failure = await contactsList(ctx, {
+			actor: 'teammate@example.com',
+		}).catch((caught: unknown) => caught);
+		if (!(failure instanceof ApiError)) throw new Error('Expected ApiError');
+		expect(failure.status).toBe(403);
+		expect(JSON.stringify(failure.request)).not.toContain('teammate');
+		expect(failure.url).not.toContain('teammate');
+	});
+
 	it('only treats HTTP 429 as a rate limit for ApiError', () => {
 		const gatewayTimeout = new ApiError(
 			{ method: 'POST', url: '/jobs' },

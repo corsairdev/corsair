@@ -166,13 +166,14 @@ export async function makeJobNimbusRequest<T>(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
-			// Request bodies carry customer names, emails, phone numbers and addresses, and core
-			// does not redact bodies, so the rethrown error keeps the status, the provider's
-			// message and the retry metadata but not the body that was sent.
+			// Request bodies carry customer names, emails, phone numbers and addresses, and the query
+			// can carry a team member's email (`actor`) or filter values. Core redacts neither, so the
+			// rethrown error keeps the status, the provider's message and the retry metadata but not
+			// the body or query that was sent.
 			const sanitizedError = new ApiError(
-				{ ...error.request, body: undefined },
+				{ ...error.request, body: undefined, query: undefined },
 				{
-					url: error.url,
+					url: error.url.split('?')[0] ?? error.url,
 					ok: false,
 					status: error.status,
 					statusText: error.statusText,
