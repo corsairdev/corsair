@@ -88,7 +88,7 @@ describe('hotspotsystem live smoke', () => {
 			expect(Array.isArray(result.items)).toBe(true);
 		});
 
-		it('reads one location\'s vouchers when a location exists', async () => {
+		it("reads one location's vouchers when a location exists", async () => {
 			const list = await endpoints.locations.list(ctx, { limit: 1 });
 			const first = list.items[0];
 			if (!first?.id) return;
