@@ -1,4 +1,5 @@
 import type { TaveEndpoints } from '..';
+import { segment } from '../client';
 import { call, callDelete } from './call';
 import {
 	NotesCreateInputSchema,
@@ -58,7 +59,7 @@ export const tasksUpdate: TaveEndpoints['tasksUpdate'] = async (ctx, input) => {
 		input,
 		(parsed) => {
 			const { taskId, ...changes } = parsed;
-			return { method: 'PUT', path: `/task/${taskId}`, body: changes };
+			return { method: 'PUT', path: `/task/${segment(taskId)}`, body: changes };
 		},
 	);
 };
@@ -68,7 +69,7 @@ export const tasksRemove: TaveEndpoints['tasksRemove'] = async (ctx, input) => {
 		ctx,
 		{ event: 'tasks.remove', input: TasksRemoveInputSchema },
 		input,
-		(parsed) => ({ method: 'DELETE', path: `/task/${parsed.taskId}` }),
+		(parsed) => ({ method: 'DELETE', path: `/task/${segment(parsed.taskId)}` }),
 	);
 };
 
@@ -131,6 +132,6 @@ export const notesRemove: TaveEndpoints['notesRemove'] = async (ctx, input) => {
 		ctx,
 		{ event: 'notes.remove', input: NotesRemoveInputSchema },
 		input,
-		(parsed) => ({ method: 'DELETE', path: `/note/${parsed.noteId}` }),
+		(parsed) => ({ method: 'DELETE', path: `/note/${segment(parsed.noteId)}` }),
 	);
 };

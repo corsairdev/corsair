@@ -1,4 +1,5 @@
 import type { TaveEndpoints } from '..';
+import { segment } from '../client';
 import { call, callDelete } from './call';
 import {
 	PaymentsCreateInputSchema,
@@ -54,7 +55,10 @@ export const paymentsGet: TaveEndpoints['paymentsGet'] = async (ctx, input) => {
 			output: PaymentsGetResponseSchema,
 		},
 		input,
-		(parsed) => ({ method: 'GET', path: `/payment/${parsed.paymentId}` }),
+		(parsed) => ({
+			method: 'GET',
+			path: `/payment/${segment(parsed.paymentId)}`,
+		}),
 	);
 };
 
@@ -88,7 +92,11 @@ export const paymentsUpdate: TaveEndpoints['paymentsUpdate'] = async (
 		input,
 		(parsed) => {
 			const { paymentId, ...changes } = parsed;
-			return { method: 'PUT', path: `/payment/${paymentId}`, body: changes };
+			return {
+				method: 'PUT',
+				path: `/payment/${segment(paymentId)}`,
+				body: changes,
+			};
 		},
 	);
 };
@@ -101,7 +109,10 @@ export const paymentsRemove: TaveEndpoints['paymentsRemove'] = async (
 		ctx,
 		{ event: 'payments.remove', input: PaymentsRemoveInputSchema },
 		input,
-		(parsed) => ({ method: 'DELETE', path: `/payment/${parsed.paymentId}` }),
+		(parsed) => ({
+			method: 'DELETE',
+			path: `/payment/${segment(parsed.paymentId)}`,
+		}),
 	);
 };
 
@@ -135,7 +146,10 @@ export const productsGet: TaveEndpoints['productsGet'] = async (ctx, input) => {
 			output: ProductsGetResponseSchema,
 		},
 		input,
-		(parsed) => ({ method: 'GET', path: `/product/${parsed.productId}` }),
+		(parsed) => ({
+			method: 'GET',
+			path: `/product/${segment(parsed.productId)}`,
+		}),
 	);
 };
 
@@ -169,7 +183,11 @@ export const productsUpdate: TaveEndpoints['productsUpdate'] = async (
 		input,
 		(parsed) => {
 			const { productId, ...changes } = parsed;
-			return { method: 'PUT', path: `/product/${productId}`, body: changes };
+			return {
+				method: 'PUT',
+				path: `/product/${segment(productId)}`,
+				body: changes,
+			};
 		},
 	);
 };
@@ -182,6 +200,9 @@ export const productsRemove: TaveEndpoints['productsRemove'] = async (
 		ctx,
 		{ event: 'products.remove', input: ProductsRemoveInputSchema },
 		input,
-		(parsed) => ({ method: 'DELETE', path: `/product/${parsed.productId}` }),
+		(parsed) => ({
+			method: 'DELETE',
+			path: `/product/${segment(parsed.productId)}`,
+		}),
 	);
 };

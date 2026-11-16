@@ -262,11 +262,14 @@ export const ProductSchema = z
 
 export type TaveProduct = z.infer<typeof ProductSchema>;
 
-export const ProductsListInputSchema = z.object({
-	// The API documents only sortBy on this route: it has no page or pageSize,
-	// so asking for them would silently return the whole list.
-	sortBy: SortBySchema,
-});
+export const ProductsListInputSchema = z
+	.object({
+		// The API documents only sortBy on this route: it has no page or
+		// pageSize, so the schema is strict and refuses them instead of
+		// stripping them and returning the whole list.
+		sortBy: SortBySchema,
+	})
+	.strict();
 
 export type ProductsListInput = z.infer<typeof ProductsListInputSchema>;
 

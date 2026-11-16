@@ -1,4 +1,5 @@
 import type { TaveEndpoints } from '..';
+import { segment } from '../client';
 import { call, callDelete } from './call';
 import {
 	JobsCreateInputSchema,
@@ -54,7 +55,7 @@ export const get: TaveEndpoints['jobsGet'] = async (ctx, input) => {
 		input,
 		(parsed) => ({
 			method: 'GET',
-			path: `/job/${parsed.jobId}`,
+			path: `/job/${segment(parsed.jobId)}`,
 		}),
 	);
 };
@@ -87,7 +88,7 @@ export const update: TaveEndpoints['jobsUpdate'] = async (ctx, input) => {
 		input,
 		(parsed) => {
 			const { jobId, ...changes } = parsed;
-			return { method: 'PUT', path: `/job/${jobId}`, body: changes };
+			return { method: 'PUT', path: `/job/${segment(jobId)}`, body: changes };
 		},
 	);
 };
@@ -97,7 +98,7 @@ export const remove: TaveEndpoints['jobsRemove'] = async (ctx, input) => {
 		ctx,
 		{ event: 'jobs.remove', input: JobsRemoveInputSchema },
 		input,
-		(parsed) => ({ method: 'DELETE', path: `/job/${parsed.jobId}` }),
+		(parsed) => ({ method: 'DELETE', path: `/job/${segment(parsed.jobId)}` }),
 	);
 };
 
@@ -112,7 +113,7 @@ export const payments: TaveEndpoints['jobsPayments'] = async (ctx, input) => {
 		input,
 		(parsed) => ({
 			method: 'GET',
-			path: `/job/${parsed.jobId}/payment`,
+			path: `/job/${segment(parsed.jobId)}/payment`,
 		}),
 	);
 };

@@ -1,9 +1,5 @@
 import { asRecord } from 'corsair/core';
-import type {
-	ApiRequestOptions,
-	OpenAPIConfig,
-	RateLimitConfig,
-} from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export const TAVE_API_BASE = 'https://workspace.vsco.co/api/v2';
@@ -45,17 +41,6 @@ export class TaveAPIError extends Error {
 	}
 }
 
-// error-handlers.ts owns retries, so the client makes one attempt and only
-// reads Retry-After into the error.
-const TAVE_RATE_LIMIT_CONFIG: RateLimitConfig = {
-	enabled: true,
-	maxRetries: 0,
-	initialRetryDelay: 1000,
-	backoffMultiplier: 2,
-	headerNames: { retryAfter: 'retry-after' },
-	isRateLimitError: (status) => status === 429,
-};
-
 // unknown: the body is untyped until asRecord narrows it; an unexpected route
 // answers HTML, which asRecord rejects.
 function readErrorMessage(body: unknown): string | undefined {
@@ -83,6 +68,18 @@ export function describeTaveError(
 	}
 	const text = readErrorMessage(body) ?? fallback;
 	return status === undefined ? text : `VSCO Workspace ${status}: ${text}`;
+}
+
+/**
+ * Encodes one path segment. IDs are ULIDs; a `.` or `..` id is refused so a URL
+ * parser cannot resolve it to a parent path.
+ */
+export function segment(value: string | number): string {
+	const text = String(value);
+	if (text === '.' || text === '..') {
+		throw new Error(`[tave] "${text}" is not a valid id`);
+	}
+	return encodeURIComponent(text);
 }
 
 export type TaveQuery = Record<string, string | number | boolean | undefined>;
@@ -122,9 +119,8 @@ export async function makeTaveRequest(
 	try {
 		// unknown: the response shape is the endpoint's concern; the caller
 		// parses it with its zod output schema.
-		const response = await request<unknown>(config, requestOptions, {
-			rateLimitConfig: TAVE_RATE_LIMIT_CONFIG,
-		});
+		// Core's default config retries a 429 three times (R8).
+		const response = await request<unknown>(config, requestOptions);
 		// A route that does not exist answers 200 with the docs page, so an HTML
 		// body has to become an error rather than a record.
 		if (looksLikeHtml(response)) {
@@ -138,12 +134,7 @@ export async function makeTaveRequest(
 		// Rethrow the HTML error raised above untouched: the ApiError branch
 		// would otherwise re-wrap it and lose the flag.
 		if (error instanceof TaveAPIError) throw error;
-		if (error instanceof ApiError) {
-			throw new TaveAPIError(
-				describeTaveError(error.status, error.body, error.message),
-				{ cause: error },
-			);
-		}
+		if (error instanceof ApiError) throw toTaveApiError(error);
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new TaveAPIError(error.message, {
@@ -153,4 +144,43 @@ export async function makeTaveRequest(
 		}
 		throw new TaveAPIError('Unknown VSCO Workspace error', { method });
 	}
+}
+
+/**
+ * Core's `ApiError` goes through (R8): its `status` and `retryAfter` are what
+ * core's 429 retry and the error handlers read. It is rebuilt only to drop the
+ * sent body and query (client names, notes, payment memos) and to carry VSCO
+ * Workspace's own message.
+ */
+function toTaveApiError(error: ApiError): ApiError {
+	let url = error.url;
+	try {
+		const parsed = new URL(error.url);
+		parsed.search = '';
+		url = parsed.toString();
+	} catch {
+		// A relative or empty url carries no query to drop.
+	}
+	return new ApiError(
+		{
+			...error.request,
+			body: undefined,
+			formData: undefined,
+			query: undefined,
+		},
+		{
+			url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		describeTaveError(error.status, error.body, error.message),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }

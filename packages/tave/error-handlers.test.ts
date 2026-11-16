@@ -1,17 +1,26 @@
 import type { ErrorHandler, ErrorMatcher } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { TaveAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
+/** Core's HTTP error, the shape an HTTP failure reaches the handlers in. */
 function apiError(
 	status: number,
 	method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'POST',
 	retryAfter?: number,
 ) {
-	return new TaveAPIError(`VSCO Workspace ${status}`, {
-		status,
-		method,
-		retryAfter,
-	});
+	return new ApiError(
+		{ method, url: '/job' },
+		{
+			url: 'https://workspace.vsco.co/api/v2/job',
+			ok: false,
+			status,
+			statusText: '',
+			body: {},
+		},
+		`VSCO Workspace ${status}`,
+		{ retryAfter },
+	);
 }
 
 const context = {} as Parameters<ErrorHandler>[1];
@@ -67,13 +76,12 @@ describe('tave error handlers', () => {
 		});
 	});
 
-	it('retries a 429 and passes a Retry-After through', async () => {
+	it('leaves 429 retries to core and passes a Retry-After through', async () => {
 		await expect(
 			handler('RATE_LIMIT_ERROR')(apiError(429, 'GET', 2000), context),
 		).resolves.toEqual({
-			maxRetries: 3,
+			maxRetries: 0,
 			headersRetryAfterMs: 2000,
-			retryStrategy: 'exponential_backoff',
 		});
 	});
 

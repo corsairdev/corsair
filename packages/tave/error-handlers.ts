@@ -1,8 +1,22 @@
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { TaveAPIError } from './client';
 
+/**
+ * HTTP failures arrive as core's `ApiError`; an HTML answer and network
+ * failures as `TaveAPIError`.
+ */
 function statusOf(error: Error): number | undefined {
-	return error instanceof TaveAPIError ? error.status : undefined;
+	if (error instanceof ApiError || error instanceof TaveAPIError) {
+		return error.status;
+	}
+	return undefined;
+}
+
+function methodOf(error: Error): string | undefined {
+	if (error instanceof ApiError) return error.request?.method;
+	if (error instanceof TaveAPIError) return error.method;
+	return undefined;
 }
 
 // Error bodies are `{ error: true, status, message }`, and an unknown route
@@ -15,13 +29,16 @@ export const errorHandlers = {
 			error instanceof TaveAPIError && error.isHtmlResponse,
 		handler: async () => ({ maxRetries: 0 }),
 	},
+	// Core's request() already retries a 429 three times and honours
+	// Retry-After (R8), so the handler does not retry again.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
 		handler: async (error: Error) => ({
-			maxRetries: 3,
+			maxRetries: 0,
 			headersRetryAfterMs:
-				error instanceof TaveAPIError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
+				error instanceof ApiError || error instanceof TaveAPIError
+					? error.retryAfter
+					: undefined,
 		}),
 	},
 	AUTH_ERROR: {
@@ -54,9 +71,7 @@ export const errorHandlers = {
 	// repeated create makes a second job or note.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof TaveAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			methodOf(error) === 'GET' && (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,
