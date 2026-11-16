@@ -381,8 +381,8 @@ await corsair.talenthr.api.employees.directory({ limit: 50, offset: 0, filter: '
 |------|------|----------|-------------|
 | `limit` | `number` | No | Rows per page. Defaults to 10; TalentHR caps it at 100. |
 | `offset` | `number` | No | Rows to skip. Defaults to 0. |
-| `filter` | `string` | No | Filter IDs joined by commas, in the form `field:id` (for example `department_id:6,division_id:13`). Get the IDs from `employees.directoryFilters`. |
-| `customFields` | `string` | No | Custom field slugs joined by commas, from `customFields.list`. TalentHR returns them under each row. |
+| `filter` | `string` | No | Filter IDs joined by commas, in the form `field:id` (for example `department_id:6,division_id:13`). TalentHR lists the filter IDs at `GET /directory/filters`, which this plugin does not wrap; the IDs come from the division, department, location and job title lists. |
+| `customFields` | `string` | No | Custom field slugs joined by commas, as set up in TalentHR (its `GET /custom-fields`, which this plugin does not wrap). TalentHR returns them under each row. |
 
 limit defaults to 10 and caps at 100; filter takes field:id pairs separated by commas, with IDs from the directory filters endpoint.
 
@@ -629,7 +629,7 @@ await corsair.talenthr.api.employees.get({ employeeId: 15 });
 
 Create an employee with a hire date, employment status and optional job, pay and emergency contact records; TalentHR emails the new employee unless prevent_email is set
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.talenthr.api.employees.hire({ first_name: 'Ada', last_name: 'Lovelace', email: 'ada@example.com', hire_date: '2026-12-01', employment_status: { employment_status_id: 1 }, reports_to_employee_id: 15 });
@@ -803,9 +803,9 @@ reports_to_employee_id is required and accepts null for the head of the company;
 
 `employees.rehire`
 
-Return a terminated employee to active status from a new hire date, with a manager and employment status
+Return a terminated employee to active status from a new hire date, with a manager and employment status; TalentHR sends a rehire email unless prevent_email is set
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.talenthr.api.employees.rehire({ employeeId: 34, hire_date: '2027-01-15', reports_to_employee_id: 15, employment_status: { employment_status_id: 1 } });
@@ -820,6 +820,7 @@ await corsair.talenthr.api.employees.rehire({ employeeId: 34, hire_date: '2027-0
 | `reports_to_employee_id` | `number` | Yes | The manager employee ID. It must be active and not this employee. |
 | `employment_status` | `object` | Yes | The status the employee returns to. |
 | `job_record` | `object` | No | — |
+| `prevent_email` | `boolean` | No | When true, TalentHR sends no rehire notification email. |
 
 hire_date must fall after the latest termination date, and reports_to_employee_id must be an active employee.
 
@@ -862,9 +863,9 @@ hire_date must fall after the latest termination date, and reports_to_employee_i
 
 `employees.terminate`
 
-Terminate an employee from a given date, recording the reason and whether the departure was regrettable
+Terminate an employee from a given date, recording the reason and whether the departure was regrettable; TalentHR emails the people given offboarding tasks
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.talenthr.api.employees.terminate({ employeeId: 34, effective_date: '2026-12-31', termination_reason: 'Relocation' });
@@ -928,7 +929,7 @@ Change an employee’s name, contact, address, SSN, birth date, manager or emerg
 **Risk:** `write`
 
 ```ts
-await corsair.talenthr.api.employees.update({ employeeId: 15, city: 'Athens', work_phone: '+30 210 0000000' });
+await corsair.talenthr.api.employees.update({ employeeId: 15, first_name: 'Ada', last_name: 'Lovelace', email: 'ada@example.com', city: 'Athens', work_phone: '+30 210 0000000' });
 ```
 
 **Input**
@@ -1244,9 +1245,9 @@ await corsair.talenthr.api.timeOff.budgets({ employeeId: 15 });
 
 `timeOff.create`
 
-Book time off for an employee, either preapproved or sent to their manager for approval
+Book time off for an employee, either preapproved or sent to their manager for approval by email
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.talenthr.api.timeOff.create({ employeeId: 15, start_date: '2026-12-01', end_date: '2026-12-03', timeoff_type_id: 1, note: 'Family trip' });
@@ -1412,9 +1413,9 @@ await corsair.talenthr.api.timeOff.list({ employeeId: 15, limit: 10, offset: 0 }
 
 `timeOff.reply`
 
-Approve or reject a time off request on behalf of the manager
+Approve or reject a time off request on behalf of the manager; TalentHR emails the employee the outcome
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.talenthr.api.timeOff.reply({ employeeId: 15, timeOffRequestId: 2402, accept: true });
