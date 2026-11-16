@@ -28,6 +28,8 @@ await corsair.simplekpi.api.breakdownItems.create({ name: 'EMEA', breakdown_id: 
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `breakdown_id` | `number` | No | Omit it for an item that combines several breakdowns. |
+| `is_archived` | `boolean` | No | Archive the item. An update replaces the item, so send it again. |
+| `sort_order` | `number` | No | Display position. An update replaces the item, so send it again. |
 
 
 
@@ -40,6 +42,8 @@ await corsair.simplekpi.api.breakdownItems.create({ name: 'EMEA', breakdown_id: 
 | `breakdown_id` | `number \| null` | No | Null when the item combines more than one breakdown. |
 | `user_id` | `number \| null` | No | Set for a People breakdown item, null for every other kind. |
 | `is_system` | `boolean \| null` | No | — |
+| `is_archived` | `boolean \| null` | No | — |
+| `sort_order` | `number \| null` | No | — |
 | `created_at` | `string \| null` | No | ISO 8601. |
 | `updated_at` | `string \| null` | No | ISO 8601. |
 
@@ -64,6 +68,8 @@ await corsair.simplekpi.api.breakdownItems.delete({ id: 77 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | A positive integer assigned by SimpleKPI. |
+
+SimpleKPI answers 204 but keeps the item, archived (`is_archived: true`), rather than removing it (live, 11-16).
 
 
 
@@ -107,6 +113,8 @@ await corsair.simplekpi.api.breakdownItems.get({ id: 77 });
 | `breakdown_id` | `number \| null` | No | Null when the item combines more than one breakdown. |
 | `user_id` | `number \| null` | No | Set for a People breakdown item, null for every other kind. |
 | `is_system` | `boolean \| null` | No | — |
+| `is_archived` | `boolean \| null` | No | — |
+| `sort_order` | `number \| null` | No | — |
 | `created_at` | `string \| null` | No | ISO 8601. |
 | `updated_at` | `string \| null` | No | ISO 8601. |
 
@@ -130,9 +138,11 @@ await corsair.simplekpi.api.breakdownItems.list({ breakdown_id: 12 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `breakdown_id` | `number` | No | Only items under this breakdown. |
+| `breakdown_id` | `number` | No | Only items under this breakdown. Applied to the returned page, since the API has no such filter. |
 | `page` | `number` | No | Which page to return, counting from 1. |
 | `rows` | `number` | No | How many rows per page, 500 by default. Page until one comes back short, because there is no total. |
+
+`breakdown_id` filters the returned page here; the API itself has no such filter, so page through every item to find all of one breakdown.
 
 
 
@@ -148,6 +158,8 @@ await corsair.simplekpi.api.breakdownItems.list({ breakdown_id: 12 });
   breakdown_id?: number | null,
   user_id?: number | null,
   is_system?: boolean | null,
+  is_archived?: boolean | null,
+  sort_order?: number | null,
   created_at?: string | null,
   updated_at?: string | null
 }[]
@@ -177,6 +189,8 @@ await corsair.simplekpi.api.breakdownItems.update({ id: 77, name: 'EMEA North' }
 | `id` | `number` | Yes | A positive integer assigned by SimpleKPI. |
 | `name` | `string` | Yes | — |
 | `breakdown_id` | `number \| null` | No | A positive integer assigned by SimpleKPI. |
+| `is_archived` | `boolean` | No | Archive the item. An update replaces the item, so send it again. |
+| `sort_order` | `number` | No | Display position. An update replaces the item, so send it again. |
 
 
 
@@ -189,6 +203,8 @@ await corsair.simplekpi.api.breakdownItems.update({ id: 77, name: 'EMEA North' }
 | `breakdown_id` | `number \| null` | No | Null when the item combines more than one breakdown. |
 | `user_id` | `number \| null` | No | Set for a People breakdown item, null for every other kind. |
 | `is_system` | `boolean \| null` | No | — |
+| `is_archived` | `boolean \| null` | No | — |
+| `sort_order` | `number \| null` | No | — |
 | `created_at` | `string \| null` | No | ISO 8601. |
 | `updated_at` | `string \| null` | No | ISO 8601. |
 
@@ -646,7 +662,7 @@ await corsair.simplekpi.api.kpiEntries.create({ kpi_id: 1234, entry_date: '2026-
 | `setNotes` | `boolean` | No | True writes notes, false leaves the stored text untouched. |
 | `addToActual` | `boolean` | No | True adds actual to the stored value instead of replacing it. |
 
-An upsert on kpi_id, source_id and entry_date. A write with every value empty answers 200 with { stored: false }, which the output models alongside the entry shape.
+An upsert on kpi_id, source_id and entry_date. A write with every value empty answers 200 with `{ stored: false }`, which the output models alongside the entry shape.
 
 
 
@@ -1510,6 +1526,8 @@ await corsair.simplekpi.api.reports.allDataEntries({ kpiIDs: [1234], dateFrom: '
 | `kpiIDs` | `number[]` | No | The KPIs to report on. Sent as a comma separated list. |
 | `dateFrom` | `string` | No | — |
 | `dateTo` | `string` | No | — |
+| `userIDs` | `number[]` | No | Only these users. Sent as a comma separated list. |
+| `groupItemIDs` | `number[]` | No | Only these breakdown items. Sent as a comma separated list. |
 
 The kpiIDs filter is sent as a comma separated list, which is how this one route takes an array.
 
