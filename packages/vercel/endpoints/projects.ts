@@ -105,11 +105,27 @@ export const deleteProject = defineEndpoint({
 	input: In.deleteProject,
 	output: Out.deleteProject,
 	run: async (ctx, input) => {
+		// The local record is keyed by project id; a name is looked up first so
+		// the record can be cleared once Vercel confirms the delete.
+		let projectId: string | undefined = input.idOrName.startsWith('prj_')
+			? input.idOrName
+			: undefined;
+		if (!projectId && ctx.db.projects) {
+			const found = await makeAuthenticatedVercelRequest<{ id?: string }>(
+				`/v9/projects/${seg(input.idOrName)}`,
+				ctx,
+				{ teamId: input.teamId },
+			);
+			projectId = typeof found?.id === 'string' ? found.id : undefined;
+		}
 		await makeAuthenticatedVercelRequest(
 			`/v9/projects/${seg(input.idOrName)}`,
 			ctx,
 			{ method: 'DELETE', teamId: input.teamId },
 		);
+		if (projectId && ctx.db.projects) {
+			await ctx.db.projects.deleteByEntityId(projectId);
+		}
 		// 204 No Content: reaching here means Vercel removed it.
 		return { deleted: true, idOrName: input.idOrName };
 	},

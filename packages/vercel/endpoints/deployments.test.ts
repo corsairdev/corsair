@@ -472,10 +472,13 @@ describe('createDeployment event payload', () => {
 				framework: null,
 				installCommand: 'npm config set //r/:_authToken=npm_SECRET && npm i',
 				buildCommand: 'pnpm build',
+				commandForIgnoringBuildStep:
+					'git diff --quiet HEAD^ HEAD ./ || TOKEN=ign_SECRET exit 1',
 			},
 		});
 		const logged = JSON.stringify(logEvent.mock.calls[0]?.[2]);
 		expect(logged).not.toContain('npm_SECRET');
+		expect(logged).not.toContain('ign_SECRET');
 		expect(logged).not.toContain('pnpm build');
 		expect(logged).toContain('[redacted]');
 	});

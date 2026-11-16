@@ -112,18 +112,24 @@ export function compactBody<T extends Record<string, unknown>>(
 }
 
 /**
- * Build, install and dev commands can carry registry tokens or other secrets
- * (`npm config set //registry/:_authToken=…`). For the event log, each
- * `*Command` string becomes a marker that it was set.
+ * Shell commands (buildCommand, installCommand, devCommand,
+ * commandForIgnoringBuildStep) can carry registry tokens or other secrets
+ * (`npm config set //registry/:_authToken=…`). For the event log, any string
+ * field whose name contains "command" becomes a marker that it was set.
  */
+const COMMAND_FIELD = /command/i;
+
+// Settings objects mix strings, booleans, nulls and nested objects per
+// endpoint; only command strings are rewritten, everything else passes as is.
 export function maskCommands<T extends Record<string, unknown>>(
 	settings: T | undefined,
 ): Record<string, unknown> | undefined {
 	if (!settings) return settings;
+	// Same mixed values as the input, with command strings swapped out.
 	const out: Record<string, unknown> = {};
 	for (const [key, value] of Object.entries(settings)) {
 		out[key] =
-			key.endsWith('Command') && typeof value === 'string'
+			COMMAND_FIELD.test(key) && typeof value === 'string'
 				? '[redacted]'
 				: value;
 	}

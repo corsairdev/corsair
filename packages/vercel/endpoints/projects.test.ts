@@ -32,10 +32,11 @@ const logEvent = logEventFromContext as jest.MockedFunction<
 >;
 
 const upsert = jest.fn();
+const remove = jest.fn();
 const ctx = {
 	key: 'test-token',
 	options: {},
-	db: { projects: { upsertByEntityId: upsert } },
+	db: { projects: { upsertByEntityId: upsert, deleteByEntityId: remove } },
 } as unknown as VercelContext;
 
 const project = {
@@ -159,6 +160,28 @@ describe('projects', () => {
 			method: 'DELETE',
 			teamId: undefined,
 		});
+		expect(remove).toHaveBeenCalledWith('prj_1');
+	});
+
+	it('deleteProject by name looks up the id so the local record is cleared too', async () => {
+		request
+			.mockResolvedValueOnce({ id: 'prj_9', name: 'site' })
+			.mockResolvedValueOnce(undefined);
+		await deleteProject(ctx, { idOrName: 'site' });
+		expect(request).toHaveBeenNthCalledWith(1, '/v9/projects/site', ctx, {
+			teamId: undefined,
+		});
+		expect(request).toHaveBeenNthCalledWith(2, '/v9/projects/site', ctx, {
+			method: 'DELETE',
+			teamId: undefined,
+		});
+		expect(remove).toHaveBeenCalledWith('prj_9');
+	});
+
+	it('deleteProject leaves the local record alone when Vercel refuses', async () => {
+		request.mockRejectedValueOnce(new Error('Forbidden'));
+		await expect(deleteProject(ctx, { idOrName: 'prj_1' })).rejects.toThrow();
+		expect(remove).not.toHaveBeenCalled();
 	});
 
 	it('pause and unpause post to their routes', async () => {
@@ -245,6 +268,8 @@ describe('projects event payloads', () => {
 		await createProject(ctx, {
 			name: 'site',
 			buildCommand: 'TOKEN=build_SECRET pnpm build',
+			commandForIgnoringBuildStep:
+				'curl -H "Authorization: Bearer ignore_SECRET" x',
 		});
 		const logged = JSON.stringify(logEvent.mock.calls.map((call) => call[2]));
 		expect(logged).not.toContain('SECRET');
