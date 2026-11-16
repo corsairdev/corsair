@@ -6,13 +6,13 @@ import {
 } from './types';
 
 /**
- * The 25 technical indicators share one route shape: a path named after the
+ * The 24 technical indicators share one route shape: a path named after the
  * indicator, plus `symbol`, `interval`, `time_period`, `series_type`,
  * `outputsize` and `exchange`. Each one answers a different set of decimal
  * strings, so the output schema is the open indicator record.
  *
- * `vwma` takes `time_period` the same way, and the provider documents no route
- * for `vwap` or `ht_trendline` on the free surface, so neither is wrapped.
+ * Twelve Data has no `/vwma` route (it answers 404), and it documents no route
+ * for `vwap` or `ht_trendline` on the free surface, so none is wrapped.
  */
 function indicator(
 	path: string,
@@ -125,10 +125,6 @@ export const wma: TwelveDataEndpoints['wma'] = indicator(
 	'wma',
 	'wma',
 ) as TwelveDataEndpoints['wma'];
-export const vwma: TwelveDataEndpoints['vwma'] = indicator(
-	'vwma',
-	'vwma',
-) as TwelveDataEndpoints['vwma'];
 export const min: TwelveDataEndpoints['min'] = indicator(
 	'min',
 	'min',
@@ -141,11 +137,52 @@ export const stddev: TwelveDataEndpoints['stddev'] = indicator(
 	'stddev',
 	'stddev',
 ) as TwelveDataEndpoints['stddev'];
-export const beta: TwelveDataEndpoints['beta'] = indicator(
+/** `beta` and `correl` read two price series: `series_type_1` and `series_type_2`. */
+function twoSeriesIndicator(
+	path: string,
+	event: string,
+): (
+	ctx: Parameters<NonNullable<TwelveDataEndpoints['beta']>>[0],
+	input: never,
+) => Promise<unknown> {
+	return async (ctx, input) =>
+		call(
+			ctx,
+			{
+				event,
+				operation: `indicators.${event}`,
+				input: TwelveDataEndpointInputSchemas.beta,
+				output: TwelveDataEndpointOutputSchemas.beta,
+			},
+			input,
+			(parsed) => ({
+				method: 'GET',
+				path,
+				query: {
+					symbol: parsed.symbol,
+					interval: parsed.interval,
+					time_period: parsed.time_period,
+					series_type_1: parsed.series_type_1,
+					series_type_2: parsed.series_type_2,
+					outputsize: parsed.outputsize,
+					exchange: parsed.exchange,
+				},
+			}),
+			{
+				log: (parsed, result) => ({
+					symbol: parsed.symbol,
+					interval: parsed.interval,
+					values: result.values?.length ?? 0,
+				}),
+			},
+		);
+}
+
+export const beta: TwelveDataEndpoints['beta'] = twoSeriesIndicator(
 	'beta',
 	'beta',
 ) as TwelveDataEndpoints['beta'];
-export const correl: TwelveDataEndpoints['correl'] = indicator(
+export const correl: TwelveDataEndpoints['correl'] = twoSeriesIndicator(
 	'correl',
 	'correl',
 ) as TwelveDataEndpoints['correl'];

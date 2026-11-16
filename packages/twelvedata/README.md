@@ -34,7 +34,6 @@ pnpm add @corsair-dev/twelvedata
 | `indicators.supertrend` | `twelvedata.api.indicators.supertrend` | `read` | Read the SUPERTREND technical indicator for a symbol over an interval |
 | `indicators.tsf` | `twelvedata.api.indicators.tsf` | `read` | Read the TSF technical indicator for a symbol over an interval |
 | `indicators.ultosc` | `twelvedata.api.indicators.ultosc` | `read` | Read the ULTOSC technical indicator for a symbol over an interval |
-| `indicators.vwma` | `twelvedata.api.indicators.vwma` | `read` | Read the VWMA technical indicator for a symbol over an interval |
 | `indicators.willr` | `twelvedata.api.indicators.willr` | `read` | Read the WILLR technical indicator for a symbol over an interval |
 | `indicators.wma` | `twelvedata.api.indicators.wma` | `read` | Read the WMA technical indicator for a symbol over an interval |
 | `market.apiUsage` | `twelvedata.api.market.apiUsage` | `read` | Read how many API calls the key has made, and the plan limit |

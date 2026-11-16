@@ -44,7 +44,6 @@ const indicators = [
 	'supertrend',
 	'tsf',
 	'ultosc',
-	'vwma',
 	'willr',
 	'wma',
 ];
@@ -85,7 +84,7 @@ describe('twelvedata plugin definition', () => {
 	});
 
 	it('has 37 operations', () => {
-		expect(operations).toHaveLength(37);
+		expect(operations).toHaveLength(36);
 	});
 
 	it('gives every endpoint a description and reads only', () => {

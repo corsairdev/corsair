@@ -87,8 +87,6 @@ apiExamples:
     call: "{ symbol: 'AAPL', interval: '1day', time_period: 14 }"
   indicators.wma:
     call: "{ symbol: 'AAPL', interval: '1day', time_period: 14 }"
-  indicators.vwma:
-    call: "{ symbol: 'AAPL', interval: '1day', time_period: 14 }"
   indicators.min:
     call: "{ symbol: 'AAPL', interval: '1day', time_period: 14 }"
   indicators.max:

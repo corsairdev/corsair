@@ -85,7 +85,6 @@ export type TwelveDataEndpoints = {
 	stochrsi: TwelveDataEndpoint<'stochrsi'>;
 	ultosc: TwelveDataEndpoint<'ultosc'>;
 	wma: TwelveDataEndpoint<'wma'>;
-	vwma: TwelveDataEndpoint<'vwma'>;
 	min: TwelveDataEndpoint<'min'>;
 	max: TwelveDataEndpoint<'max'>;
 	stddev: TwelveDataEndpoint<'stddev'>;
@@ -130,7 +129,6 @@ const twelvedataEndpointsNested = {
 		stochrsi: IndicatorsEndpoints.stochrsi,
 		ultosc: IndicatorsEndpoints.ultosc,
 		wma: IndicatorsEndpoints.wma,
-		vwma: IndicatorsEndpoints.vwma,
 		min: IndicatorsEndpoints.min,
 		max: IndicatorsEndpoints.max,
 		stddev: IndicatorsEndpoints.stddev,
@@ -260,10 +258,6 @@ export const twelvedataEndpointSchemas = {
 	'indicators.wma': {
 		input: TwelveDataEndpointInputSchemas.wma,
 		output: TwelveDataEndpointOutputSchemas.wma,
-	},
-	'indicators.vwma': {
-		input: TwelveDataEndpointInputSchemas.vwma,
-		output: TwelveDataEndpointOutputSchemas.vwma,
 	},
 	'indicators.min': {
 		input: TwelveDataEndpointInputSchemas.min,
@@ -440,11 +434,6 @@ const twelvedataEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Read the WMA technical indicator for a symbol over an interval',
-	},
-	'indicators.vwma': {
-		riskLevel: 'read',
-		description:
-			'Read the VWMA technical indicator for a symbol over an interval',
 	},
 	'indicators.min': {
 		riskLevel: 'read',

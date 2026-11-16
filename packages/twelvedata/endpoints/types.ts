@@ -172,11 +172,11 @@ const TimeSeriesSchema = z
 	.loose();
 export type TimeSeriesOutput = z.output<typeof TimeSeriesSchema>;
 
-/** An exchange rate, also decimal strings. */
+/** An exchange rate. Unlike the quote routes, `rate` comes back as a JSON number. */
 const ExchangeRateSchema = z
 	.object({
 		symbol: z.string().nullish(),
-		rate: DecimalSchema.nullish(),
+		rate: z.union([z.number(), DecimalSchema]).nullish(),
 		timestamp: z.union([z.number(), z.string()]).nullish(),
 	})
 	.passthrough();
@@ -193,7 +193,11 @@ const IndicatorSchema = z
 			.object({
 				symbol: z.string().nullish(),
 				interval: z.string().nullish(),
-				indicator: z.string().nullish(),
+				// An object such as { name, series_type, time_period } describing the indicator.
+				// unknown because each indicator lists its own parameters here.
+				indicator: z
+					.union([z.string(), z.record(z.string(), z.unknown())])
+					.nullish(),
 			})
 			.loose()
 			.nullish(),
@@ -292,6 +296,30 @@ const IndicatorInputSchema = z.object({
 });
 export type IndicatorInput = z.input<typeof IndicatorInputSchema>;
 
+const SeriesTypeSchema = z.enum(['close', 'open', 'high', 'low']);
+
+/**
+ * `beta` and `correl` compare two price series of the symbol. Twelve Data reads
+ * `series_type_1` and `series_type_2` (defaults open and close) and ignores
+ * `series_type` on these routes.
+ */
+const TwoSeriesIndicatorInputSchema = IndicatorInputSchema.omit({
+	series_type: true,
+})
+	.extend({
+		series_type_1: SeriesTypeSchema.optional().describe(
+			'First price series; default open',
+		),
+		series_type_2: SeriesTypeSchema.optional().describe(
+			'Second price series; default close',
+		),
+	})
+	// strict so a caller's single `series_type` fails loudly instead of being ignored.
+	.strict();
+export type TwoSeriesIndicatorInput = z.input<
+	typeof TwoSeriesIndicatorInputSchema
+>;
+
 // ---------------------------------------------------------------------------
 // reference data
 // ---------------------------------------------------------------------------
@@ -387,12 +415,11 @@ export type TwelveDataEndpointInputs = {
 	stochrsi: IndicatorInput;
 	ultosc: IndicatorInput;
 	wma: IndicatorInput;
-	vwma: IndicatorInput;
 	min: IndicatorInput;
 	max: IndicatorInput;
 	stddev: IndicatorInput;
-	beta: IndicatorInput;
-	correl: IndicatorInput;
+	beta: TwoSeriesIndicatorInput;
+	correl: TwoSeriesIndicatorInput;
 	tsf: IndicatorInput;
 };
 
@@ -429,7 +456,6 @@ export type TwelveDataEndpointOutputs = {
 	stochrsi: IndicatorOutput;
 	ultosc: IndicatorOutput;
 	wma: IndicatorOutput;
-	vwma: IndicatorOutput;
 	min: IndicatorOutput;
 	max: IndicatorOutput;
 	stddev: IndicatorOutput;
@@ -477,12 +503,11 @@ export const TwelveDataEndpointInputSchemas = {
 	stochrsi: IndicatorInputSchema,
 	ultosc: IndicatorInputSchema,
 	wma: IndicatorInputSchema,
-	vwma: IndicatorInputSchema,
 	min: IndicatorInputSchema,
 	max: IndicatorInputSchema,
 	stddev: IndicatorInputSchema,
-	beta: IndicatorInputSchema,
-	correl: IndicatorInputSchema,
+	beta: TwoSeriesIndicatorInputSchema,
+	correl: TwoSeriesIndicatorInputSchema,
 	tsf: IndicatorInputSchema,
 } as const;
 
@@ -517,7 +542,6 @@ export const TwelveDataEndpointOutputSchemas = {
 	stochrsi: IndicatorSchema,
 	ultosc: IndicatorSchema,
 	wma: IndicatorSchema,
-	vwma: IndicatorSchema,
 	min: IndicatorSchema,
 	max: IndicatorSchema,
 	stddev: IndicatorSchema,

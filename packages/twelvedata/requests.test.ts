@@ -320,7 +320,6 @@ describe('indicators', () => {
 			'stochrsi',
 			'ultosc',
 			'wma',
-			'vwma',
 			'min',
 			'max',
 			'stddev',
@@ -358,6 +357,39 @@ describe('indicators', () => {
 			series_type: 'open',
 			outputsize: '100',
 		});
+	});
+
+	it('beta and correl send the two series the provider reads', async () => {
+		for (const endpoint of [
+			IndicatorsEndpoints.beta,
+			IndicatorsEndpoints.correl,
+		]) {
+			respond(rsiSeries);
+			await invoke(endpoint, {
+				symbol: 'AAPL',
+				interval: '1day',
+				series_type_1: 'high',
+				series_type_2: 'low',
+			});
+			expect(lastRequest().params).toEqual({
+				symbol: 'AAPL',
+				interval: '1day',
+				series_type_1: 'high',
+				series_type_2: 'low',
+			});
+		}
+	});
+
+	it('beta rejects the single series_type, which the route ignores', async () => {
+		const error = await captureError(
+			invoke(IndicatorsEndpoints.beta, {
+				symbol: 'AAPL',
+				interval: '1day',
+				series_type: 'high',
+			}),
+		);
+		expect((error as Error).name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
 
