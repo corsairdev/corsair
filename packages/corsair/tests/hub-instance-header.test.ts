@@ -1,4 +1,5 @@
 import { hubApiGet, hubApiPost } from '../hub/client/http';
+import { CORSAIR_SDK_CAPABILITIES } from '../hub/sdk-version';
 import type { HubConfig } from '../hub/types';
 
 const hub = (instanceKey?: string): HubConfig => ({
@@ -59,4 +60,23 @@ describe('x-corsair-instance-key on the wire', () => {
 			expect('x-corsair-instance-key' in sent[0]).toBe(false);
 		});
 	}
+});
+
+describe('x-corsair-capabilities on the wire', () => {
+	const originalFetch = global.fetch;
+	afterEach(() => {
+		global.fetch = originalFetch;
+	});
+
+	it('is sent on hub POSTs', async () => {
+		const sent = mockFetch();
+		await hubApiPost({
+			hub: hub(),
+			path: '/x',
+			body: {},
+			parseResponse: parse,
+		});
+		expect(sent[0]?.['x-corsair-capabilities']).toBe(CORSAIR_SDK_CAPABILITIES);
+		expect(CORSAIR_SDK_CAPABILITIES).toBe('multi-account');
+	});
 });
