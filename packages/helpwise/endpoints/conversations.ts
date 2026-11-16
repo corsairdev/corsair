@@ -141,9 +141,10 @@ export const list: HelpwiseEndpoint<'conversations.list'> = async (
 	const parsedInput =
 		HelpwiseEndpointInputSchemas['conversations.list'].parse(input);
 
-	const query: Record<string, string | number | undefined> = {};
+	const query: Record<string, string | number | number[] | undefined> = {};
 	if (parsedInput.inboxIds && parsedInput.inboxIds.length > 0) {
-		query['inboxIds[]'] = parsedInput.inboxIds.join(',');
+		// Core repeats an array key once per value: inboxIds[]=1&inboxIds[]=2.
+		query['inboxIds[]'] = parsedInput.inboxIds;
 	}
 	if (parsedInput.labelId !== undefined) {
 		query.labelId = parsedInput.labelId;
@@ -184,6 +185,12 @@ export const get: HelpwiseEndpoint<'conversations.get'> = async (
 	const query: Record<string, string | number | undefined> = {};
 	if (parsedInput.labelId !== undefined) {
 		query.labelId = parsedInput.labelId;
+	}
+	if (parsedInput.limit !== undefined) {
+		query.limit = parsedInput.limit;
+	}
+	if (parsedInput.pageToken !== undefined) {
+		query.pageToken = parsedInput.pageToken;
 	}
 
 	const response = await makeHelpwiseRequest<ConversationsGetResponse>(

@@ -17,13 +17,13 @@ export const getOverall: HelpwiseEndpoint<'reports.getOverall'> = async (
 	const parsedInput =
 		HelpwiseEndpointInputSchemas['reports.getOverall'].parse(input);
 
-	const query: Record<string, string | number | undefined> = {
+	const query: Record<string, string | number | number[] | undefined> = {
 		start: parsedInput.start,
 		end: parsedInput.end,
 	};
 	if (parsedInput.inboxId !== undefined) query.inboxId = parsedInput.inboxId;
 	if (parsedInput.tagId && parsedInput.tagId.length > 0) {
-		query['tagId[]'] = parsedInput.tagId.join(',');
+		query['tagId[]'] = parsedInput.tagId;
 	}
 	if (parsedInput.isBusinessHours !== undefined) {
 		query.isBusinessHours = parsedInput.isBusinessHours;
@@ -55,12 +55,12 @@ export const getTags: HelpwiseEndpoint<'reports.getTags'> = async (
 	const parsedInput =
 		HelpwiseEndpointInputSchemas['reports.getTags'].parse(input);
 
-	const query: Record<string, string | number | undefined> = {
+	const query: Record<string, string | number | number[] | undefined> = {
 		start: parsedInput.start,
 		end: parsedInput.end,
 	};
 	if (parsedInput.tagId && parsedInput.tagId.length > 0) {
-		query['tagId[]'] = parsedInput.tagId.join(',');
+		query['tagId[]'] = parsedInput.tagId;
 	}
 	if (parsedInput.isBusinessHours !== undefined) {
 		query.isBusinessHours = parsedInput.isBusinessHours;

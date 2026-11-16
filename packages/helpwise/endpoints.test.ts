@@ -135,7 +135,7 @@ describe('Conversations endpoints', () => {
 			{
 				method: 'GET',
 				query: {
-					'inboxIds[]': '1,2',
+					'inboxIds[]': [1, 2],
 					limit: 50,
 					pageToken: 'prev',
 				},
@@ -648,7 +648,7 @@ describe('Users, Notes, WhatsApp and Reports endpoints', () => {
 					start: '2025-01-01',
 					end: '2025-01-31',
 					inboxId: 10,
-					'tagId[]': '1,2',
+					'tagId[]': [1, 2],
 				},
 			},
 		);
