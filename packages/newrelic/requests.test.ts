@@ -348,9 +348,12 @@ describe('query.nrql', () => {
 		await expect(
 			// Cast past the type: the point is that the schema refuses a missing
 			// accountId at runtime for a caller passing untyped input.
-			endpoints.query.nrql(makeContext() as never, {
-				query: 'SELECT 1',
-			} as never),
+			endpoints.query.nrql(
+				makeContext() as never,
+				{
+					query: 'SELECT 1',
+				} as never,
+			),
 		).rejects.toThrow();
 	});
 });
