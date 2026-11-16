@@ -353,16 +353,22 @@ await corsair.jobnimbus.api.account.getSettings({});
 
 
 
-**Output**
+**Output:** `object \| any[]`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `workflows` | `any[]` | No | — |
-| `fileTypes` | `any[]` | No | — |
-| `taskTypes` | `any[]` | No | — |
-| `activityTypes` | `any[]` | No | — |
-| `sources` | `any[]` | No | — |
+<AccordionGroup>
+<Accordion title="Output full type">
 
+```ts
+{
+  workflows?: any[],
+  fileTypes?: any[],
+  taskTypes?: any[],
+  activityTypes?: any[],
+  sources?: any[]
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
