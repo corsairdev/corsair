@@ -1823,6 +1823,7 @@ describe('Response enums accept values Hex adds later', () => {
 	});
 
 	it('inputs still reject values outside the enum', async () => {
+		// unknown because this test passes input the typed signature forbids, to check the runtime schema.
 		const fn = Suggestions.update as (
 			c: unknown,
 			i: unknown,
@@ -1831,5 +1832,23 @@ describe('Response enums accept values Hex adds later', () => {
 			fn(ctx, { suggestionId: 's1', status: 'ARCHIVED' }),
 		).rejects.toThrow();
 		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+});
+
+describe('Thread response blocks', () => {
+	it('keeps literal tags for known blocks and parses a block type Hex adds later', async () => {
+		mockedRequest.mockResolvedValue({
+			...validOutputs.threadsGet,
+			response: [
+				{ type: 'text', text: 'Churn is up 3%' },
+				{ type: 'chart', url: 'https://app.hex.tech/chart/1' },
+			],
+		});
+		const result = await Threads.get(ctx, validInputs.threadsGet);
+		const texts = (result.response ?? []).flatMap((block) =>
+			block.type === 'text' && 'text' in block ? [block.text] : [],
+		);
+		expect(texts).toEqual(['Churn is up 3%']);
+		expect(result.response?.[1]?.type).toBe('chart');
 	});
 });

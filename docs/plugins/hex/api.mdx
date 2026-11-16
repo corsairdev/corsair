@@ -463,7 +463,7 @@ await corsair.hex.api.cells.getOutput({ cellId: '00000000-0000-4000-8000-0000000
 
 ```ts
 {
-  type: table | string,
+  type: table,
   rowLimit: number,
   rowsReturned: number,
   totalRows: number | null,
@@ -476,9 +476,11 @@ await corsair.hex.api.cells.getOutput({ cellId: '00000000-0000-4000-8000-0000000
   rows: {
   }[]
 } | {
-  type: cell_run_error | string,
+  type: cell_run_error,
   message: string,
   traceback: string | null
+} | {
+  type: string
 }
 ```
 </Accordion>
@@ -5736,20 +5738,22 @@ await corsair.hex.api.threads.get({ id: '00000000-0000-4000-8000-000000000012' }
 ```ts
 (
   {
-    type: text | string,
+    type: text,
     text: string
   } | {
-    type: cell | string,
+    type: cell,
     id: string,
     staticId: string,
     label: string | null
   } | {
-    type: project | string,
+    type: project,
     id: string,
     title: string | null
   } | {
-    type: task | string,
+    type: task,
     title: string
+  } | {
+    type: string
   }
 )[] | null
 ```

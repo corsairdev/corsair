@@ -2989,7 +2989,7 @@ export const cellsGetOutputOutputSchema = z
 		result: z.union([
 			z
 				.object({
-					type: openEnum(['table']),
+					type: z.literal('table'),
 					rowLimit: z.number(),
 					rowsReturned: z.number(),
 					totalRows: z.number().nullable(),
@@ -3008,10 +3008,14 @@ export const cellsGetOutputOutputSchema = z
 				.passthrough(),
 			z
 				.object({
-					type: openEnum(['cell_run_error']),
+					type: z.literal('cell_run_error'),
 					message: z.string(),
 					traceback: z.string().nullable(),
 				})
+				.passthrough(),
+			// A result type Hex adds later still parses; known types keep literal tags for narrowing.
+			z
+				.object({ type: z.string() })
 				.passthrough(),
 		]),
 	})
@@ -4401,13 +4405,13 @@ export const threadsGetOutputSchema = z
 				z.union([
 					z
 						.object({
-							type: openEnum(['text']),
+							type: z.literal('text'),
 							text: z.string(),
 						})
 						.passthrough(),
 					z
 						.object({
-							type: openEnum(['cell']),
+							type: z.literal('cell'),
 							id: z.string(),
 							staticId: z.string(),
 							label: z.string().nullable(),
@@ -4415,16 +4419,20 @@ export const threadsGetOutputSchema = z
 						.passthrough(),
 					z
 						.object({
-							type: openEnum(['project']),
+							type: z.literal('project'),
 							id: z.string(),
 							title: z.string().nullable(),
 						})
 						.passthrough(),
 					z
 						.object({
-							type: openEnum(['task']),
+							type: z.literal('task'),
 							title: z.string(),
 						})
+						.passthrough(),
+					// A block type Hex adds later still parses; known types keep literal tags for narrowing.
+					z
+						.object({ type: z.string() })
 						.passthrough(),
 				]),
 			)
