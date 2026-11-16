@@ -37,12 +37,12 @@ await corsair.suitedash.api.companies.create({ name: 'Microsoft', role: 'Client'
 | `address` | `object` | No | — |
 | `tags` | `string[] \| null` | No | — |
 | `background_info` | `string \| null` | No | — |
-| `public_custom_fields` | `Record<string, unknown> \| null` | No | — |
-| `private_custom_fields` | `Record<string, unknown> \| null` | No | — |
-| `target_custom_fields` | `Record<string, unknown> \| null` | No | — |
+| `public_custom_fields` | `Record<string, any> \| null` | No | — |
+| `private_custom_fields` | `Record<string, any> \| null` | No | — |
+| `target_custom_fields` | `Record<string, any> \| null` | No | — |
 | `primaryContact` | `object` | No | — |
 
-Set primaryContact.create_primary to create the first contact in the same call; first_name, last_name and email are then required inside it.
+Set primaryContact.create_primary_contact_if_not_exists to create the first contact in the same call; first_name, last_name and email are then required inside it.
 
 <AccordionGroup>
 <Accordion title="address full type">
@@ -63,7 +63,7 @@ Set primaryContact.create_primary to create the first contact in the same call; 
 
 ```ts
 {
-  create_primary?: boolean,
+  create_primary_contact_if_not_exists?: boolean,
   role?: string,
   name_prefix?: string | null,
   first_name?: string,
@@ -124,9 +124,9 @@ Set primaryContact.create_primary to create the first contact in the same call; 
   tags?: string[] | null,
   background_info?: string | null,
   created?: string | null,
-  public_custom_fields?: unknown[] | Record<string, unknown> | null,
-  private_custom_fields?: unknown[] | Record<string, unknown> | null,
-  target_custom_fields?: unknown[] | Record<string, unknown> | null
+  public_custom_fields?: any[] | Record<string, any> | null,
+  private_custom_fields?: any[] | Record<string, any> | null,
+  target_custom_fields?: any[] | Record<string, any> | null
 }
 ```
 </Accordion>
@@ -232,9 +232,9 @@ The identifier is a uid or an exact name; SuiteDash decides which from the value
   tags?: string[] | null,
   background_info?: string | null,
   created?: string | null,
-  public_custom_fields?: unknown[] | Record<string, unknown> | null,
-  private_custom_fields?: unknown[] | Record<string, unknown> | null,
-  target_custom_fields?: unknown[] | Record<string, unknown> | null
+  public_custom_fields?: any[] | Record<string, any> | null,
+  private_custom_fields?: any[] | Record<string, any> | null,
+  target_custom_fields?: any[] | Record<string, any> | null
 }
 ```
 </Accordion>
@@ -341,9 +341,9 @@ await corsair.suitedash.api.companies.list({ page: 1, orderBy: 'created:desc' })
   tags?: string[] | null,
   background_info?: string | null,
   created?: string | null,
-  public_custom_fields?: unknown[] | Record<string, unknown> | null,
-  private_custom_fields?: unknown[] | Record<string, unknown> | null,
-  target_custom_fields?: unknown[] | Record<string, unknown> | null
+  public_custom_fields?: any[] | Record<string, any> | null,
+  private_custom_fields?: any[] | Record<string, any> | null,
+  target_custom_fields?: any[] | Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -396,43 +396,25 @@ await corsair.suitedash.api.companies.meta({});
 Read this before writing custom fields: the keys are uuids unique to the account, not field names.
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `true` | Yes | — |
-| `message` | `string \| null` | No | — |
-| `data` | `unknown[]` | Yes | — |
-| `meta` | `object \| null` | No | — |
+**Output:** `object`
 
 <AccordionGroup>
-<Accordion title="meta full type">
+<Accordion title="Output full type">
 
 ```ts
-{
-  pagination?: {
-    pageSize?: number | null,
-    totalPages?: number | null,
-    totalItems?: number | null,
-    currentPageNumber?: number | null,
-    previousPage?: string | null,
-    nextPage?: string | null
-  } | null,
-  attributes?: Record<string, {
-    type?: string | null,
-    format?: string | null,
-    required?: boolean | null,
-    nullable?: boolean | null,
-    allowed_on_action?: string[] | null,
-    allowed_values?: string[] | null,
-    field_name?: string | null,
-    field_description?: string | null
-  }> | null
-} | null
+Record<string, {
+  type?: string | null,
+  format?: string | null,
+  required?: boolean | null,
+  nullable?: boolean | null,
+  allowed_on_action?: string[] | null,
+  allowed_values?: string[] | null,
+  field_name?: string | null,
+  field_description?: string | null
+}>
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -441,7 +423,7 @@ Read this before writing custom fields: the keys are uuids unique to the account
 
 `companies.update`
 
-Change a company's details, tags, category, custom fields, communities or worlds. Only the fields sent change
+Change a company's details, phones, address, tags or custom fields. Only the fields sent change
 
 **Risk:** `write`
 
@@ -454,8 +436,6 @@ await corsair.suitedash.api.companies.update({ identifier: 'e2c43cd3-eb1c-4269-a
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | The company's uid or its exact name. SuiteDash decides which from the value, so send the name as the name. |
-| `name` | `string` | Yes | — |
-| `role` | `Lead \| Client \| Prospect` | Yes | — |
 | `phone` | `string \| null` | No | — |
 | `home_phone` | `string \| null` | No | — |
 | `work_phone` | `string \| null` | No | — |
@@ -465,9 +445,10 @@ await corsair.suitedash.api.companies.update({ identifier: 'e2c43cd3-eb1c-4269-a
 | `address` | `object` | No | — |
 | `tags` | `string[] \| null` | No | — |
 | `background_info` | `string \| null` | No | — |
-| `public_custom_fields` | `Record<string, unknown> \| null` | No | — |
-| `private_custom_fields` | `Record<string, unknown> \| null` | No | — |
-| `target_custom_fields` | `Record<string, unknown> \| null` | No | — |
+| `public_custom_fields` | `Record<string, any> \| null` | No | — |
+| `private_custom_fields` | `Record<string, any> \| null` | No | — |
+| `target_custom_fields` | `Record<string, any> \| null` | No | — |
+| `name` | `string` | No | — |
 
 Custom fields are keyed by uuid. A response sends them as an array, but a write sends an object keyed by field uuid.
 
@@ -536,9 +517,9 @@ Custom fields are keyed by uuid. A response sends them as an array, but a write 
   tags?: string[] | null,
   background_info?: string | null,
   created?: string | null,
-  public_custom_fields?: unknown[] | Record<string, unknown> | null,
-  private_custom_fields?: unknown[] | Record<string, unknown> | null,
-  target_custom_fields?: unknown[] | Record<string, unknown> | null
+  public_custom_fields?: any[] | Record<string, any> | null,
+  private_custom_fields?: any[] | Record<string, any> | null,
+  target_custom_fields?: any[] | Record<string, any> | null
 }
 ```
 </Accordion>
@@ -580,9 +561,9 @@ Custom fields are keyed by uuid. A response sends them as an array, but a write 
 
 `contacts.create`
 
-Create a contact. First name, last name, email and role are required, and the role decides portal access
+Create a contact. First name, last name, email and role are required, and the role decides portal access. send_welcome_email sends the portal invitation
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.suitedash.api.contacts.create({ first_name: 'Matilda', last_name: 'Walker', email: 'matilda@example.com', role: 'Client' });
@@ -608,9 +589,9 @@ await corsair.suitedash.api.contacts.create({ first_name: 'Matilda', last_name: 
 | `address` | `object` | No | — |
 | `tags` | `string[] \| null` | No | — |
 | `send_welcome_email` | `boolean` | No | Send the portal welcome email as part of the write. |
-| `public_custom_fields` | `Record<string, unknown> \| null` | No | — |
-| `private_custom_fields` | `Record<string, unknown> \| null` | No | — |
-| `target_custom_fields` | `Record<string, unknown> \| null` | No | — |
+| `public_custom_fields` | `Record<string, any> \| null` | No | — |
+| `private_custom_fields` | `Record<string, any> \| null` | No | — |
+| `target_custom_fields` | `Record<string, any> \| null` | No | — |
 | `role` | `Lead \| Client \| Prospect` | Yes | The contact role, which decides what the portal shows them. |
 
 First name, last name, email and role are all required by the spec, and role decides what the client portal shows them.
@@ -671,13 +652,13 @@ First name, last name, email and role are all required by the spec, and role dec
     country?: string | null,
     zip?: string | null
   } | null,
-  company?: unknown | null,
-  companies?: unknown[] | null,
+  company?: any | null,
+  companies?: any[] | null,
   tags?: string[] | null,
   created?: string | null,
-  public_custom_fields?: unknown[] | Record<string, unknown> | null,
-  private_custom_fields?: unknown[] | Record<string, unknown> | null,
-  target_custom_fields?: unknown[] | Record<string, unknown> | null
+  public_custom_fields?: any[] | Record<string, any> | null,
+  private_custom_fields?: any[] | Record<string, any> | null,
+  target_custom_fields?: any[] | Record<string, any> | null
 }
 ```
 </Accordion>
@@ -774,13 +755,13 @@ The identifier is a uid or an email address, decided from the value.
     country?: string | null,
     zip?: string | null
   } | null,
-  company?: unknown | null,
-  companies?: unknown[] | null,
+  company?: any | null,
+  companies?: any[] | null,
   tags?: string[] | null,
   created?: string | null,
-  public_custom_fields?: unknown[] | Record<string, unknown> | null,
-  private_custom_fields?: unknown[] | Record<string, unknown> | null,
-  target_custom_fields?: unknown[] | Record<string, unknown> | null
+  public_custom_fields?: any[] | Record<string, any> | null,
+  private_custom_fields?: any[] | Record<string, any> | null,
+  target_custom_fields?: any[] | Record<string, any> | null
 }
 ```
 </Accordion>
@@ -878,13 +859,13 @@ await corsair.suitedash.api.contacts.list({ createdMin: '2026-01-01T00:00:00+00:
     country?: string | null,
     zip?: string | null
   } | null,
-  company?: unknown | null,
-  companies?: unknown[] | null,
+  company?: any | null,
+  companies?: any[] | null,
   tags?: string[] | null,
   created?: string | null,
-  public_custom_fields?: unknown[] | Record<string, unknown> | null,
-  private_custom_fields?: unknown[] | Record<string, unknown> | null,
-  target_custom_fields?: unknown[] | Record<string, unknown> | null
+  public_custom_fields?: any[] | Record<string, any> | null,
+  private_custom_fields?: any[] | Record<string, any> | null,
+  target_custom_fields?: any[] | Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -935,43 +916,25 @@ await corsair.suitedash.api.contacts.meta({});
 **Input:** _empty object_
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `true` | Yes | — |
-| `message` | `string \| null` | No | — |
-| `data` | `unknown[]` | Yes | — |
-| `meta` | `object \| null` | No | — |
+**Output:** `object`
 
 <AccordionGroup>
-<Accordion title="meta full type">
+<Accordion title="Output full type">
 
 ```ts
-{
-  pagination?: {
-    pageSize?: number | null,
-    totalPages?: number | null,
-    totalItems?: number | null,
-    currentPageNumber?: number | null,
-    previousPage?: string | null,
-    nextPage?: string | null
-  } | null,
-  attributes?: Record<string, {
-    type?: string | null,
-    format?: string | null,
-    required?: boolean | null,
-    nullable?: boolean | null,
-    allowed_on_action?: string[] | null,
-    allowed_values?: string[] | null,
-    field_name?: string | null,
-    field_description?: string | null
-  }> | null
-} | null
+Record<string, {
+  type?: string | null,
+  format?: string | null,
+  required?: boolean | null,
+  nullable?: boolean | null,
+  allowed_on_action?: string[] | null,
+  allowed_values?: string[] | null,
+  field_name?: string | null,
+  field_description?: string | null
+}>
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -982,7 +945,7 @@ await corsair.suitedash.api.contacts.meta({});
 
 Change a contact's details, addresses, tags or custom fields, optionally sending the portal welcome email
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.suitedash.api.contacts.update({ identifier: 'aa454efd-4074-3926-a370-e96cda162aa0', title: 'Manager', send_welcome_email: true });
@@ -1009,9 +972,9 @@ await corsair.suitedash.api.contacts.update({ identifier: 'aa454efd-4074-3926-a3
 | `address` | `object` | No | — |
 | `tags` | `string[] \| null` | No | — |
 | `send_welcome_email` | `boolean` | No | Send the portal welcome email as part of the write. |
-| `public_custom_fields` | `Record<string, unknown> \| null` | No | — |
-| `private_custom_fields` | `Record<string, unknown> \| null` | No | — |
-| `target_custom_fields` | `Record<string, unknown> \| null` | No | — |
+| `public_custom_fields` | `Record<string, any> \| null` | No | — |
+| `private_custom_fields` | `Record<string, any> \| null` | No | — |
+| `target_custom_fields` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="address full type">
@@ -1069,13 +1032,13 @@ await corsair.suitedash.api.contacts.update({ identifier: 'aa454efd-4074-3926-a3
     country?: string | null,
     zip?: string | null
   } | null,
-  company?: unknown | null,
-  companies?: unknown[] | null,
+  company?: any | null,
+  companies?: any[] | null,
   tags?: string[] | null,
   created?: string | null,
-  public_custom_fields?: unknown[] | Record<string, unknown> | null,
-  private_custom_fields?: unknown[] | Record<string, unknown> | null,
-  target_custom_fields?: unknown[] | Record<string, unknown> | null
+  public_custom_fields?: any[] | Record<string, any> | null,
+  private_custom_fields?: any[] | Record<string, any> | null,
+  target_custom_fields?: any[] | Record<string, any> | null
 }
 ```
 </Accordion>
@@ -1117,9 +1080,9 @@ await corsair.suitedash.api.contacts.update({ identifier: 'aa454efd-4074-3926-a3
 
 `marketing.subscribe`
 
-Subscribe contacts to marketing audiences. The answer carries one result per subscriber, and a partial failure is reported there
+Subscribe contacts to marketing audiences, which can start the emails those audiences send. The answer carries one result per subscriber, and a partial failure is reported there
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.suitedash.api.marketing.subscribe({ subscribers: [{ email: 'matilda@example.com', first_name: 'Matilda', audiences: [35, 485] }] });
@@ -1228,14 +1191,14 @@ The lookup mode is part of the path: uid, name, contains_the_following, or most_
     full_name?: string | null,
     email?: string | null
   } | null,
-  secondary_clients?: unknown[] | null,
-  teammates?: unknown[] | null,
+  secondary_clients?: any[] | null,
+  teammates?: any[] | null,
   team?: {
     uid?: string | null,
     name?: string | null
   } | null,
-  leader?: unknown | null,
-  project_custom_fields?: unknown[] | Record<string, unknown> | null
+  leader?: any | null,
+  project_custom_fields?: any[] | Record<string, any> | null
 }
 ```
 </Accordion>
@@ -1324,14 +1287,14 @@ await corsair.suitedash.api.projects.list({ page: 1 });
     full_name?: string | null,
     email?: string | null
   } | null,
-  secondary_clients?: unknown[] | null,
-  teammates?: unknown[] | null,
+  secondary_clients?: any[] | null,
+  teammates?: any[] | null,
   team?: {
     uid?: string | null,
     name?: string | null
   } | null,
-  leader?: unknown | null,
-  project_custom_fields?: unknown[] | Record<string, unknown> | null
+  leader?: any | null,
+  project_custom_fields?: any[] | Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -1382,43 +1345,25 @@ await corsair.suitedash.api.projects.meta({});
 **Input:** _empty object_
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `true` | Yes | — |
-| `message` | `string \| null` | No | — |
-| `data` | `unknown[]` | Yes | — |
-| `meta` | `object \| null` | No | — |
+**Output:** `object`
 
 <AccordionGroup>
-<Accordion title="meta full type">
+<Accordion title="Output full type">
 
 ```ts
-{
-  pagination?: {
-    pageSize?: number | null,
-    totalPages?: number | null,
-    totalItems?: number | null,
-    currentPageNumber?: number | null,
-    previousPage?: string | null,
-    nextPage?: string | null
-  } | null,
-  attributes?: Record<string, {
-    type?: string | null,
-    format?: string | null,
-    required?: boolean | null,
-    nullable?: boolean | null,
-    allowed_on_action?: string[] | null,
-    allowed_values?: string[] | null,
-    field_name?: string | null,
-    field_description?: string | null
-  }> | null
-} | null
+Record<string, {
+  type?: string | null,
+  format?: string | null,
+  required?: boolean | null,
+  nullable?: boolean | null,
+  allowed_on_action?: string[] | null,
+  allowed_values?: string[] | null,
+  field_name?: string | null,
+  field_description?: string | null
+}>
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -1449,7 +1394,7 @@ await corsair.suitedash.api.projects.update({ type: 'uid', identifier: '2ff558c3
 | `info_title_client` | `string \| null` | No | — |
 | `info_description_client` | `string \| null` | No | — |
 | `info_description` | `string \| null` | No | — |
-| `project_custom_fields` | `unknown[] \| Record<string, unknown> \| null` | No | The custom fields of this record. A response sends an array; a write sends an object keyed by field uuid. |
+| `project_custom_fields` | `any[] \| Record<string, any> \| null` | No | The custom fields of this record. A response sends an array; a write sends an object keyed by field uuid. |
 
 
 
@@ -1482,14 +1427,14 @@ await corsair.suitedash.api.projects.update({ type: 'uid', identifier: '2ff558c3
     full_name?: string | null,
     email?: string | null
   } | null,
-  secondary_clients?: unknown[] | null,
-  teammates?: unknown[] | null,
+  secondary_clients?: any[] | null,
+  teammates?: any[] | null,
   team?: {
     uid?: string | null,
     name?: string | null
   } | null,
-  leader?: unknown | null,
-  project_custom_fields?: unknown[] | Record<string, unknown> | null
+  leader?: any | null,
+  project_custom_fields?: any[] | Record<string, any> | null
 }
 ```
 </Accordion>
