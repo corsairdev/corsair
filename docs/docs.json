@@ -4649,6 +4649,14 @@
                 ]
               },
               {
+                "group": "Thanks.io",
+                "pages": [
+                  "plugins/thanksio/overview",
+                  "plugins/thanksio/api",
+                  "plugins/thanksio/database"
+                ]
+              },
+              {
                 "group": "Ticketmaster",
                 "pages": [
                   "plugins/ticketmaster/overview",

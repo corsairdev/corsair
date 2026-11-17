@@ -555,6 +555,7 @@ export const BaseProviders = [
 	'synthflowai',
 	'taggun',
 	'tally',
+	'thanksio',
 	'tavily',
 	'tavilymcp',
 	'teamcamp',
@@ -1191,6 +1192,7 @@ export const ProviderDisplayNames = {
 	synthflowai: 'Synthflow AI',
 	taggun: 'Taggun',
 	tally: 'Tally',
+	thanksio: 'Thanks.io',
 	tavily: 'Tavily',
 	tavilymcp: 'Tavily MCP',
 	teamcamp: 'Teamcamp',
@@ -1834,6 +1836,7 @@ export type AllProviders =
 	| 'synthflowai'
 	| 'taggun'
 	| 'tally'
+	| 'thanksio'
 	| 'tavily'
 	| 'tavilymcp'
 	| 'teamcamp'
