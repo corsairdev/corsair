@@ -4429,6 +4429,14 @@
                 ]
               },
               {
+                "group": "Simple Analytics",
+                "pages": [
+                  "plugins/simpleanalytics/overview",
+                  "plugins/simpleanalytics/api",
+                  "plugins/simpleanalytics/database"
+                ]
+              },
+              {
                 "group": "SimpleKPI",
                 "pages": [
                   "plugins/simplekpi/overview",
