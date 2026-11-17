@@ -7964,5 +7964,50 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/currencyscoop",
+    "dir": "packages/currencyscoop",
+    "name": "CurrencyScoop",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/logodev",
+    "dir": "packages/logodev",
+    "name": "Logo.dev",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/newsapi",
+    "dir": "packages/newsapi",
+    "name": "NewsAPI",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/pdfless",
+    "dir": "packages/pdfless",
+    "name": "PDFLess",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/platerecognizer",
+    "dir": "packages/platerecognizer",
+    "name": "Plate Recognizer",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
