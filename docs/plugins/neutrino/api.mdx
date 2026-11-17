@@ -221,7 +221,7 @@ await corsair.neutrino.api.geocode.address({ address: '48 Greys Avenue, Auckland
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `found` | `boolean \| null` | No | — |
+| `found` | `number \| null` | No | — |
 | `locations` | `object[] \| null` | No | — |
 
 <AccordionGroup>
@@ -534,11 +534,49 @@ await corsair.neutrino.api.ip.probe({ ip: '1.1.1.1' });
 
 ## Messaging
 
+### phoneVerify
+
+`messaging.phoneVerify`
+
+Call a number and read out a generated security code, which reaches a real person and costs credits; check the code with verifySecurityCode
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.neutrino.api.messaging.phoneVerify({ number: '+61412345678', codeLength: 6 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number` | `string` | Yes | The phone number to call. |
+| `codeLength` | `number` | No | How many digits the generated security code has (4 to 12). |
+| `playbackDelay` | `number` | No | Milliseconds between each digit read out. |
+| `countryCode` | `string` | No | — |
+| `languageCode` | `string` | No | — |
+
+Places a real call and spends credits. A 5xx on this route is not retried.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number-valid` | `boolean \| null` | No | — |
+| `calling` | `boolean \| null` | No | — |
+| `security-code` | `string \| null` | No | — |
+
+
+
+---
+
 ### smsVerify
 
 `messaging.smsVerify`
 
-Generate a security code and text it to a number, which sends a real SMS and costs a credit; compare it with verifySecurityCode
+Generate a security code and text it to a number, which sends a real SMS and costs a credit; check the code the person types with verifySecurityCode
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -551,7 +589,7 @@ await corsair.neutrino.api.messaging.smsVerify({ number: '+61412345678', codeLen
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `number` | `string` | Yes | The phone number to message. |
-| `codeLength` | `number` | No | How many digits the generated security code has. |
+| `codeLength` | `number` | No | How many digits the generated security code has (4 to 12). |
 | `countryCode` | `string` | No | — |
 | `languageCode` | `string` | No | — |
 | `brandName` | `string` | No | — |
@@ -567,6 +605,37 @@ Sends a real SMS and spends a credit. A 5xx on this route is not retried.
 | `number-valid` | `boolean \| null` | No | — |
 | `security-code` | `string \| null` | No | — |
 | `sent` | `boolean \| null` | No | — |
+
+
+
+---
+
+### verifySecurityCode
+
+`messaging.verifySecurityCode`
+
+Check a code a person typed against the codes smsVerify and phoneVerify sent, optionally capping failed attempts per user
+
+**Risk:** `read`
+
+```ts
+await corsair.neutrino.api.messaging.verifySecurityCode({ securityCode: '123456', limitBy: 'user-42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `securityCode` | `string` | Yes | The code the person typed in, from smsVerify or phoneVerify. |
+| `limitBy` | `string` | No | Any id for the person (user id, IP) to cap failed attempts per value against brute force. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `verified` | `boolean \| null` | No | — |
 
 
 
@@ -660,7 +729,104 @@ await corsair.neutrino.api.phone.validate({ number: '+61412345678' });
 
 ---
 
+## Text
+
+### badWordFilter
+
+`text.badWordFilter`
+
+Scan text or a page for profanity and return the words found and a censored copy
+
+**Risk:** `read`
+
+```ts
+await corsair.neutrino.api.text.badWordFilter({ content: 'Some text to check', censorCharacter: '*' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | Yes | The text to scan, or a URL whose page text Neutrino scans. |
+| `censorCharacter` | `string` | No | Replace each letter of a bad word with this character. |
+| `catalog` | `string` | No | Which word list to use: "strict" (the default) or "obscene". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bad-words-list` | `string[] \| null` | No | — |
+| `bad-words-total` | `number \| null` | No | — |
+| `censored-content` | `string \| null` | No | — |
+| `is-bad` | `boolean \| null` | No | — |
+
+
+
+---
+
 ## Web
+
+### browserBot
+
+`web.browserBot`
+
+Load a page in a real browser, optionally run JavaScript on it (click, fill, submit), and return the rendered content and selected elements
+
+**Risk:** `write`
+
+```ts
+await corsair.neutrino.api.web.browserBot({ url: 'https://example.com', selector: 'h1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The page to load in a real browser. |
+| `timeout` | `number` | No | Seconds to wait for the page to load (Neutrino defaults to 30). |
+| `delay` | `number` | No | Seconds to wait after the page loads, for scripts to finish. |
+| `selector` | `string` | No | A CSS selector; the matching elements come back in `elements`. |
+| `exec` | `string[]` | No | JavaScript statements to run on the page in order, e.g. click or fill a field; their values come back in `exec-results`. |
+| `userAgent` | `string` | No | — |
+| `ignoreCertificateErrors` | `boolean` | No | — |
+
+exec runs JavaScript on the page, so this is write; a 5xx is not retried.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string \| null` | No | — |
+| `content` | `string \| null` | No | — |
+| `mime-type` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `is-error` | `boolean \| null` | No | — |
+| `is-timeout` | `boolean \| null` | No | — |
+| `error-message` | `string \| null` | No | — |
+| `http-status-code` | `number \| null` | No | — |
+| `http-status-message` | `string \| null` | No | — |
+| `is-http-ok` | `boolean \| null` | No | — |
+| `is-http-redirect` | `boolean \| null` | No | — |
+| `http-redirect-url` | `string \| null` | No | — |
+| `server-ip` | `string \| null` | No | — |
+| `load-time` | `number \| null` | No | — |
+| `response-headers` | `Record<string, any> \| null` | No | — |
+| `is-secure` | `boolean \| null` | No | — |
+| `security-details` | `Record<string, any> \| null` | No | — |
+| `elements` | `Record<string, any>[] \| null` | No | — |
+| `exec-results` | `Record<string, any>[] \| null` | No | — |
+| `language-code` | `string \| null` | No | — |
+| `url-valid` | `boolean \| null` | No | — |
+| `content-size` | `number \| null` | No | — |
+| `server-hostname` | `string \| null` | No | — |
+
+
+
+---
 
 ### domainLookup
 
@@ -694,7 +860,7 @@ await corsair.neutrino.api.web.domainLookup({ host: 'neutrinoapi.com' });
 | `fqdn` | `string \| null` | No | — |
 | `is-subdomain` | `boolean \| null` | No | — |
 | `tld` | `string \| null` | No | — |
-| `tld-cc` | `boolean \| null` | No | — |
+| `tld-cc` | `string \| null` | No | — |
 | `rank` | `number \| null` | No | — |
 | `is-gov` | `boolean \| null` | No | — |
 | `is-opennic` | `boolean \| null` | No | — |
@@ -796,16 +962,20 @@ await corsair.neutrino.api.web.uaLookup({ ua: 'Mozilla/5.0 (Macintosh; Intel Mac
 | `type` | `string \| null` | No | — |
 | `name` | `string \| null` | No | — |
 | `version` | `string \| null` | No | — |
-| `version-major` | `number \| null` | No | — |
+| `version-major` | `string \| number \| null` | No | — |
 | `browser-engine` | `string \| null` | No | — |
 | `browser-release` | `string \| null` | No | — |
 | `os` | `string \| null` | No | — |
 | `os-family` | `string \| null` | No | — |
 | `os-version` | `string \| null` | No | — |
-| `os-version-major` | `number \| null` | No | — |
+| `os-version-major` | `string \| number \| null` | No | — |
 | `is-mobile` | `boolean \| null` | No | — |
 | `is-webview` | `boolean \| null` | No | — |
 | `device-brand` | `string \| null` | No | — |
+| `device-model` | `string \| null` | No | — |
+| `browser-name` | `string \| null` | No | — |
+| `browser-version` | `string \| null` | No | — |
+| `is-app` | `boolean \| null` | No | — |
 
 
 
