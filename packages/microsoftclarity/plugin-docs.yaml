@@ -11,4 +11,4 @@ examples:
       numOfDays: 1
       dimension1: OS
 apiNotes:
-  insights.get: "Use `numOfDays` 1, 2, or 3 and up to three optional dimension values. Metric information fields vary with the metric and requested breakdown."
+  insights.get: "Use `numOfDays` 1, 2, or 3 and up to three optional dimension values. Metric information fields vary with the metric and requested breakdown; counts can be numbers or strings, and averages are null when the project had no traffic."

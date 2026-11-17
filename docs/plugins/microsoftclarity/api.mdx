@@ -31,7 +31,7 @@ await corsair.microsoftclarity.api.insights.get({});
 | `dimension2` | `string` | No | — |
 | `dimension3` | `string` | No | — |
 
-Use `numOfDays` 1, 2, or 3 and up to three optional dimension values. Metric information fields vary with the metric and requested breakdown.
+Use `numOfDays` 1, 2, or 3 and up to three optional dimension values. Metric information fields vary with the metric and requested breakdown; counts can be numbers or strings, and averages are null when the project had no traffic.
 
 
 
@@ -44,11 +44,13 @@ Use `numOfDays` 1, 2, or 3 and up to three optional dimension values. Metric inf
 {
   metricName: string,
   information: {
-    totalSessionCount?: string,
-    totalBotSessionCount?: string,
-    distantUserCount?: string,
-    PagesPerSessionPercentage?: number,
-    OS?: string
+    totalSessionCount?: string | number | null,
+    totalBotSessionCount?: string | number | null,
+    distinctUserCount?: string | number | null,
+    distantUserCount?: string | number | null,
+    pagesPerSessionPercentage?: number | null,
+    PagesPerSessionPercentage?: number | null,
+    OS?: string | null
   }[]
 }[]
 ```
@@ -57,3 +59,4 @@ Use `numOfDays` 1, 2, or 3 and up to three optional dimension values. Metric inf
 
 
 ---
+
