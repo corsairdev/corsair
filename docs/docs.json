@@ -1203,6 +1203,14 @@
                 ]
               },
               {
+                "group": "Cert Spotter",
+                "pages": [
+                  "plugins/certspotter/overview",
+                  "plugins/certspotter/api",
+                  "plugins/certspotter/database"
+                ]
+              },
+              {
                 "group": "Chaser",
                 "pages": [
                   "plugins/chaser/overview",
@@ -2049,6 +2057,14 @@
                 ]
               },
               {
+                "group": "eTermin",
+                "pages": [
+                  "plugins/etermin/overview",
+                  "plugins/etermin/api",
+                  "plugins/etermin/database"
+                ]
+              },
+              {
                 "group": "Eventbrite",
                 "pages": [
                   "plugins/eventbrite/overview",
@@ -2292,6 +2308,14 @@
                 ]
               },
               {
+                "group": "Fly.io",
+                "pages": [
+                  "plugins/fly/overview",
+                  "plugins/fly/api",
+                  "plugins/fly/database"
+                ]
+              },
+              {
                 "group": "Folk",
                 "pages": [
                   "plugins/folk/overview",
@@ -2337,6 +2361,22 @@
                   "plugins/foursquare/overview",
                   "plugins/foursquare/api",
                   "plugins/foursquare/database"
+                ]
+              },
+              {
+                "group": "FreeAgent",
+                "pages": [
+                  "plugins/freeagent/overview",
+                  "plugins/freeagent/api",
+                  "plugins/freeagent/database"
+                ]
+              },
+              {
+                "group": "Freshdesk",
+                "pages": [
+                  "plugins/freshdesk/overview",
+                  "plugins/freshdesk/api",
+                  "plugins/freshdesk/database"
                 ]
               },
               {
@@ -2444,6 +2484,14 @@
                 ]
               },
               {
+                "group": "Klipfolio",
+                "pages": [
+                  "plugins/klipfolio/overview",
+                  "plugins/klipfolio/api",
+                  "plugins/klipfolio/database"
+                ]
+              },
+              {
                 "group": "Gift Up!",
                 "pages": [
                   "plugins/giftup/overview",
@@ -2518,6 +2566,14 @@
                   "plugins/gmicloud/overview",
                   "plugins/gmicloud/api",
                   "plugins/gmicloud/database"
+                ]
+              },
+              {
+                "group": "GoDial",
+                "pages": [
+                  "plugins/godial/overview",
+                  "plugins/godial/api",
+                  "plugins/godial/database"
                 ]
               },
               {
@@ -2754,6 +2810,14 @@
                 ]
               },
               {
+                "group": "Hex",
+                "pages": [
+                  "plugins/hex/overview",
+                  "plugins/hex/api",
+                  "plugins/hex/database"
+                ]
+              },
+              {
                 "group": "HeyGen",
                 "pages": [
                   "plugins/heygen/overview",
@@ -2964,6 +3028,14 @@
                 ]
               },
               {
+                "group": "Jotform",
+                "pages": [
+                  "plugins/jotform/overview",
+                  "plugins/jotform/api",
+                  "plugins/jotform/database"
+                ]
+              },
+              {
                 "group": "Kadoa",
                 "pages": [
                   "plugins/kadoa/overview",
@@ -3098,6 +3170,14 @@
                   "plugins/krakenio/overview",
                   "plugins/krakenio/api",
                   "plugins/krakenio/database"
+                ]
+              },
+              {
+                "group": "LaunchDarkly",
+                "pages": [
+                  "plugins/launchdarkly/overview",
+                  "plugins/launchdarkly/api",
+                  "plugins/launchdarkly/database"
                 ]
               },
               {
@@ -3345,6 +3425,14 @@
                 ]
               },
               {
+                "group": "Modelry",
+                "pages": [
+                  "plugins/modelry/overview",
+                  "plugins/modelry/api",
+                  "plugins/modelry/database"
+                ]
+              },
+              {
                 "group": "Monday.com",
                 "pages": [
                   "plugins/monday/overview",
@@ -3582,6 +3670,14 @@
                 ]
               },
               {
+                "group": "Parma",
+                "pages": [
+                  "plugins/parma/overview",
+                  "plugins/parma/api",
+                  "plugins/parma/database"
+                ]
+              },
+              {
                 "group": "Parseur",
                 "pages": [
                   "plugins/parseur/overview",
@@ -3644,6 +3740,14 @@
                   "plugins/pinecone/overview",
                   "plugins/pinecone/api",
                   "plugins/pinecone/database"
+                ]
+              },
+              {
+                "group": "Pipedrive",
+                "pages": [
+                  "plugins/pipedrive/overview",
+                  "plugins/pipedrive/api",
+                  "plugins/pipedrive/database"
                 ]
               },
               {
@@ -4332,6 +4436,23 @@
                 ]
               },
               {
+                "group": "ShipStation API (formerly ShipEngine)",
+                "pages": [
+                  "plugins/shipengine/overview",
+                  "plugins/shipengine/api",
+                  "plugins/shipengine/database"
+                ]
+              },
+              {
+                "group": "Shopify",
+                "pages": [
+                  "plugins/shopify/overview",
+                  "plugins/shopify/api",
+                  "plugins/shopify/database",
+                  "plugins/shopify/webhooks"
+                ]
+              },
+              {
                 "group": "Short.io",
                 "pages": [
                   "plugins/shortio/overview",
@@ -4345,6 +4466,55 @@
                   "plugins/shortcut/overview",
                   "plugins/shortcut/api",
                   "plugins/shortcut/database"
+                ]
+              },
+              {
+                "group": "SignWell",
+                "pages": [
+                  "plugins/signwell/overview",
+                  "plugins/signwell/api",
+                  "plugins/signwell/database",
+                  "plugins/signwell/webhooks"
+                ]
+              },
+              {
+                "group": "Simple Analytics",
+                "pages": [
+                  "plugins/simpleanalytics/overview",
+                  "plugins/simpleanalytics/api",
+                  "plugins/simpleanalytics/database"
+                ]
+              },
+              {
+                "group": "SimpleKPI",
+                "pages": [
+                  "plugins/simplekpi/overview",
+                  "plugins/simplekpi/api",
+                  "plugins/simplekpi/database"
+                ]
+              },
+              {
+                "group": "Simplero",
+                "pages": [
+                  "plugins/simplero/overview",
+                  "plugins/simplero/api",
+                  "plugins/simplero/database"
+                ]
+              },
+              {
+                "group": "Simplesat",
+                "pages": [
+                  "plugins/simplesat/overview",
+                  "plugins/simplesat/api",
+                  "plugins/simplesat/database"
+                ]
+              },
+              {
+                "group": "Simla.com",
+                "pages": [
+                  "plugins/simlacom/overview",
+                  "plugins/simlacom/api",
+                  "plugins/simlacom/database"
                 ]
               },
               {
@@ -4391,6 +4561,14 @@
                 ]
               },
               {
+                "group": "Splitwise",
+                "pages": [
+                  "plugins/splitwise/overview",
+                  "plugins/splitwise/api",
+                  "plugins/splitwise/database"
+                ]
+              },
+              {
                 "group": "Spoki",
                 "pages": [
                   "plugins/spoki/overview",
@@ -4405,6 +4583,22 @@
                   "plugins/spotify/get-credentials",
                   "plugins/spotify/api",
                   "plugins/spotify/database"
+                ]
+              },
+              {
+                "group": "Spotlightr",
+                "pages": [
+                  "plugins/spotlightr/overview",
+                  "plugins/spotlightr/api",
+                  "plugins/spotlightr/database"
+                ]
+              },
+              {
+                "group": "Square",
+                "pages": [
+                  "plugins/square/overview",
+                  "plugins/square/api",
+                  "plugins/square/database"
                 ]
               },
               {
@@ -4459,6 +4653,22 @@
                 ]
               },
               {
+                "group": "Storyblok",
+                "pages": [
+                  "plugins/storyblok/overview",
+                  "plugins/storyblok/api",
+                  "plugins/storyblok/database"
+                ]
+              },
+              {
+                "group": "SuiteDash",
+                "pages": [
+                  "plugins/suitedash/overview",
+                  "plugins/suitedash/api",
+                  "plugins/suitedash/database"
+                ]
+              },
+              {
                 "group": "Superchat",
                 "pages": [
                   "plugins/superchat/overview",
@@ -4484,11 +4694,35 @@
                 ]
               },
               {
+                "group": "SuperSaaS",
+                "pages": [
+                  "plugins/supersaas/overview",
+                  "plugins/supersaas/api",
+                  "plugins/supersaas/database"
+                ]
+              },
+              {
+                "group": "Supportbee",
+                "pages": [
+                  "plugins/supportbee/overview",
+                  "plugins/supportbee/api",
+                  "plugins/supportbee/database"
+                ]
+              },
+              {
                 "group": "Surf",
                 "pages": [
                   "plugins/surf/overview",
                   "plugins/surf/api",
                   "plugins/surf/database"
+                ]
+              },
+              {
+                "group": "SurveyMonkey",
+                "pages": [
+                  "plugins/surveymonkey/overview",
+                  "plugins/surveymonkey/api",
+                  "plugins/surveymonkey/database"
                 ]
               },
               {
@@ -4508,6 +4742,14 @@
                 ]
               },
               {
+                "group": "SwaggerHub",
+                "pages": [
+                  "plugins/swaggerhub/overview",
+                  "plugins/swaggerhub/api",
+                  "plugins/swaggerhub/database"
+                ]
+              },
+              {
                 "group": "Synthflow AI",
                 "pages": [
                   "plugins/synthflowai/overview",
@@ -4521,6 +4763,14 @@
                   "plugins/taggun/overview",
                   "plugins/taggun/api",
                   "plugins/taggun/database"
+                ]
+              },
+              {
+                "group": "TalentHR",
+                "pages": [
+                  "plugins/talenthr/overview",
+                  "plugins/talenthr/api",
+                  "plugins/talenthr/database"
                 ]
               },
               {
@@ -4550,6 +4800,14 @@
                 ]
               },
               {
+                "group": "TaxJar",
+                "pages": [
+                  "plugins/taxjar/overview",
+                  "plugins/taxjar/api",
+                  "plugins/taxjar/database"
+                ]
+              },
+              {
                 "group": "Teamcamp",
                 "pages": [
                   "plugins/teamcamp/overview",
@@ -4568,6 +4826,38 @@
                 ]
               },
               {
+                "group": "Telnyx",
+                "pages": [
+                  "plugins/telnyx/overview",
+                  "plugins/telnyx/api",
+                  "plugins/telnyx/database"
+                ]
+              },
+              {
+                "group": "Templated",
+                "pages": [
+                  "plugins/templated/overview",
+                  "plugins/templated/api",
+                  "plugins/templated/database"
+                ]
+              },
+              {
+                "group": "TextCortex",
+                "pages": [
+                  "plugins/textcortex/overview",
+                  "plugins/textcortex/api",
+                  "plugins/textcortex/database"
+                ]
+              },
+              {
+                "group": "TelTEL",
+                "pages": [
+                  "plugins/teltel/overview",
+                  "plugins/teltel/api",
+                  "plugins/teltel/database"
+                ]
+              },
+              {
                 "group": "TextIt",
                 "pages": [
                   "plugins/textit/overview",
@@ -4581,6 +4871,14 @@
                   "plugins/textrazor/overview",
                   "plugins/textrazor/api",
                   "plugins/textrazor/database"
+                ]
+              },
+              {
+                "group": "Thanks.io",
+                "pages": [
+                  "plugins/thanksio/overview",
+                  "plugins/thanksio/api",
+                  "plugins/thanksio/database"
                 ]
               },
               {
@@ -4701,6 +4999,22 @@
                 ]
               },
               {
+                "group": "Tomba",
+                "pages": [
+                  "plugins/tomba/overview",
+                  "plugins/tomba/api",
+                  "plugins/tomba/database"
+                ]
+              },
+              {
+                "group": "TomTom",
+                "pages": [
+                  "plugins/tomtom/overview",
+                  "plugins/tomtom/api",
+                  "plugins/tomtom/database"
+                ]
+              },
+              {
                 "group": "TPSCheck",
                 "pages": [
                   "plugins/tpscheck/overview",
@@ -4716,6 +5030,14 @@
                   "plugins/trello/api",
                   "plugins/trello/database",
                   "plugins/trello/webhooks"
+                ]
+              },
+              {
+                "group": "TRIGGERcmd",
+                "pages": [
+                  "plugins/triggercmd/overview",
+                  "plugins/triggercmd/api",
+                  "plugins/triggercmd/database"
                 ]
               },
               {
@@ -4735,6 +5057,14 @@
                 ]
               },
               {
+                "group": "Truvera",
+                "pages": [
+                  "plugins/truvera/overview",
+                  "plugins/truvera/api",
+                  "plugins/truvera/database"
+                ]
+              },
+              {
                 "group": "Turbot Pipes",
                 "pages": [
                   "plugins/turbotpipes/overview",
@@ -4748,6 +5078,14 @@
                   "plugins/turso/overview",
                   "plugins/turso/api",
                   "plugins/turso/database"
+                ]
+              },
+              {
+                "group": "Twelve Data",
+                "pages": [
+                  "plugins/twelvedata/overview",
+                  "plugins/twelvedata/api",
+                  "plugins/twelvedata/database"
                 ]
               },
               {

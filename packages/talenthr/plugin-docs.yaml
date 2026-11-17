@@ -1,0 +1,87 @@
+displayName: TalentHR
+description: HR management with TalentHR - hire, update, terminate and rehire employees, read the directory, book and approve time off, and manage the divisions, departments, locations and job titles those records reference.
+domain: talenthr.io
+recommendedAuth: api_key
+overviewNote: |
+  Create a key in TalentHR under Domain settings, API. The request authenticates with HTTP Basic, where the key is the username and the password is ignored; this plugin builds that header for you. The key is scoped to one TalentHR domain, so a key from another domain reads as a missing tenant.
+
+  Things to know before you call:
+
+  - **A wrong key looks like a missing tenant.** TalentHR answers a refused key with 401 and the body `{"success": false, "error": {"hr_code_key": "not_found_tenancy"}}`. HTTP failures arrive as core's `ApiError`: check `error.status === 401` first, then `error.body.error.hr_code_key` (`not_found_tenancy` when the body names the tenant). A working key on the wrong domain produces the same body.
+  - **Every answer is an envelope.** Successful calls are `{ success: true, data }` and the plugin returns `data` alone. The deletes answer `{ success: true }` with no `data`, so their result is that object.
+  - **Updates are not partial.** `employees.update` requires `first_name`, `last_name` and `email` on every call, because TalentHR treats the body as the full contact record rather than a patch. Read the employee first and send those three back with the fields you are changing.
+  - **Hiring sends email.** `employees.hire` emails the new employee unless you pass `prevent_email: true`.
+  - **Terminating, rehiring and answering time off also send email.** `employees.terminate` notifies the people given offboarding tasks, `employees.rehire` sends a rehire email unless `prevent_email: true`, and `timeOff.reply` emails the employee the outcome. All of these are `destructive`.
+  - **Booking time off emails a manager.** `timeOff.create` with `preapproved: false` or without `preapproved` sends the employee's manager an approval email. Passing `preapproved: true` approves it directly when the caller's role allows.
+  - **Time off amounts are not always strings.** Lists and budgets send amounts as strings with three decimals, such as `"10.000"`, but a `timeOff.create` answer sends `budget` as a number and `working_hours` as `"8.00"`. Treat each amount as a number, a string or null, and convert it before doing arithmetic.
+  - **Paging is offset based.** `employees.directory` takes `limit` (default 10, maximum 100) and `offset`, and answers `{ total, rows }` where `total` counts every match, not the page.
+  - **Deletes can be refused.** A division, department or job title that an active job position uses cannot be deleted, and a delete clears that record from benefits, reviews and tasks that referenced it.
+  - **Rate limit.** TalentHR allows 2000 requests per minute per key and sends no `Retry-After` header. The plugin retries a 429 three times with exponential backoff.
+examples:
+  read:
+    path: employees.directory
+    title: List the first page of the directory
+    args:
+      limit: 25
+  write:
+    path: timeOff.create
+    title: Book a day of sick leave
+    args:
+      employeeId: 15
+      start_date: '2026-12-01'
+      end_date: '2026-12-01'
+      timeoff_type_id: 1
+apiExamples:
+  employees.directory:
+    call: "{ limit: 50, offset: 0, filter: 'department_id:6' }"
+  employees.get:
+    call: '{ employeeId: 15 }'
+  employees.hire:
+    call: "{ first_name: 'Ada', last_name: 'Lovelace', email: 'ada@example.com', hire_date: '2026-12-01', employment_status: { employment_status_id: 1 }, reports_to_employee_id: 15 }"
+  employees.update:
+    call: "{ employeeId: 15, first_name: 'Ada', last_name: 'Lovelace', email: 'ada@example.com', city: 'Athens', work_phone: '+30 210 0000000' }"
+  employees.terminate:
+    call: "{ employeeId: 34, effective_date: '2026-12-31', termination_reason: 'Relocation' }"
+  employees.rehire:
+    call: "{ employeeId: 34, hire_date: '2027-01-15', reports_to_employee_id: 15, employment_status: { employment_status_id: 1 } }"
+  employees.delete:
+    call: '{ employeeId: 34 }'
+  employees.employmentStatuses:
+    call: '{ employeeId: 15 }'
+  timeOff.list:
+    call: '{ employeeId: 15, limit: 10, offset: 0 }'
+  timeOff.create:
+    call: "{ employeeId: 15, start_date: '2026-12-01', end_date: '2026-12-03', timeoff_type_id: 1, note: 'Family trip' }"
+  timeOff.delete:
+    call: '{ employeeId: 15, timeOffRequestId: 2402 }'
+  timeOff.reply:
+    call: '{ employeeId: 15, timeOffRequestId: 2402, accept: true }'
+  timeOff.types: {}
+  timeOff.budgets:
+    call: '{ employeeId: 15 }'
+  divisions.list: {}
+  divisions.get:
+    call: '{ id: 12 }'
+  divisions.create:
+    call: "{ name: 'North America' }"
+  divisions.update:
+    call: "{ id: 12, name: 'North America East' }"
+  divisions.delete:
+    call: '{ id: 12 }'
+  departments.list: {}
+  departments.create:
+    call: "{ name: 'Engineering' }"
+  departments.delete:
+    call: '{ id: 6 }'
+  locations.list: {}
+  jobTitles.list: {}
+  referenceData.employmentStatuses: {}
+apiNotes:
+  'employees.directory': 'limit defaults to 10 and caps at 100; filter takes field:id pairs separated by commas, with IDs from the directory filters endpoint.'
+  'employees.hire': 'reports_to_employee_id is required and accepts null for the head of the company; prevent_email stops the welcome email.'
+  'employees.terminate': 'effective_date must be YYYY-MM-DD; termination_reason accepts up to 4000 characters.'
+  'employees.rehire': 'hire_date must fall after the latest termination date, and reports_to_employee_id must be an active employee.'
+  'timeOff.create': 'The route is multipart/form-data; amountOptions is sent as a JSON string and must cover every day from start_date through end_date.'
+  'timeOff.reply': 'accept is a boolean: true approves, false rejects.'
+  'departments.delete': 'TalentHR refuses the delete while an active job position uses the department.'
+  'divisions.delete': 'TalentHR refuses the delete while an active job position uses the division.'
