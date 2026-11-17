@@ -9,10 +9,11 @@ import { ApiError, request } from 'corsair/http';
 export const NEURONWRITER_API_BASE =
 	'https://app.neuronwriter.com/neuron-api/0.5/writer';
 
-// Retries belong to error-handlers.ts. NeuronWriter documents no Retry-After,
-// so the name is kept only so a proxy that sends one is honoured.
+// Core's request() retries a 429 three times with backoff and honours a
+// Retry-After header if a proxy sends one, so the 429 handler in
+// error-handlers.ts does not retry again. NEURONwriter documents none.
 const NEURONWRITER_RATE_LIMIT_CONFIG: RateLimitConfig = {
-	maxRetries: 0,
+	maxRetries: 3,
 	enabled: true,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,

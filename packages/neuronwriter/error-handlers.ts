@@ -14,14 +14,11 @@ function statusOf(error: Error): number | undefined {
 }
 
 export const errorHandlers = {
+	// Core's request() already retried the 429 three times, honouring any
+	// Retry-After, so it is not replayed again here.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
-		handler: async (error: Error) => ({
-			maxRetries: 2,
-			headersRetryAfterMs:
-				error instanceof ApiError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	// A bad or inactive key. A retry sends the same key, so it cannot help.
 	AUTH_ERROR: {

@@ -44,14 +44,10 @@ function apiError(
 }
 
 describe('neuronwriter error handlers', () => {
-	it('retries a 429 and passes Retry-After through', async () => {
+	it('does not replay a 429 core already retried with Retry-After', async () => {
 		const error = apiError(429, { retryAfter: 3000 });
 		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
-		expect(await strategy(error)).toEqual({
-			maxRetries: 2,
-			headersRetryAfterMs: 3000,
-			retryStrategy: 'exponential_backoff',
-		});
+		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
 	it('does not retry a 401, which is a bad or inactive key', async () => {
