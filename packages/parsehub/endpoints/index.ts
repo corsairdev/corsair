@@ -1,8 +1,3 @@
-export { listProjects, Projects } from './projects';
-export type { ListProjectsInput, ListProjectsResponse } from './types';
-export {
-	ListProjectsInputSchema,
-	ListProjectsResponseSchema,
-	ParsehubEndpointInputSchemas,
-	ParsehubEndpointOutputSchemas,
-} from './types';
+export { Projects } from './projects';
+export { Runs } from './runs';
+export * from './types';

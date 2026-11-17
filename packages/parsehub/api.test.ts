@@ -12,7 +12,9 @@ if (!KEY) {
 
 describeLive('ParseHub live', () => {
 	it('lists projects', async () => {
-		const response = await makeParsehubRequest<unknown>(KEY as string, {});
+		const response = await makeParsehubRequest<unknown>(KEY as string, {
+			path: '/projects',
+		});
 		const parsed = ListProjectsResponseSchema.parse(response);
 		expect(Array.isArray(parsed.projects)).toBe(true);
 	});

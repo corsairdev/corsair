@@ -1,25 +1,30 @@
-import type {
-	ApiRequestOptions,
-	OpenAPIConfig,
-	RateLimitConfig,
-} from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 
 export const PARSEHUB_API_BASE = 'https://www.parsehub.com';
 
-const NO_TRANSPORT_RETRIES: RateLimitConfig = {
-	enabled: true,
-	maxRetries: 0,
-	initialRetryDelay: 0,
-	backoffMultiplier: 1,
-	headerNames: {
-		retryAfter: 'retry-after',
-	},
+export type ParsehubRequest = {
+	method?: 'GET' | 'POST' | 'DELETE';
+	/** Path after `/api/v2`, with every path value already encoded. */
+	path: string;
+	query?: Record<string, string | number | undefined>;
+	/** Form fields for a POST. ParseHub takes POST bodies form-encoded only. */
+	form?: Record<string, string | undefined>;
 };
 
+/** Encode one path value so tokens cannot add path segments. */
+export function pathPart(value: string): string {
+	return encodeURIComponent(value);
+}
+
+/**
+ * ParseHub takes the key as `api_key`: in the query string for GET and
+ * DELETE, in the form body for POST. Core's `request()` keeps its default
+ * 429 retries (it honours Retry-After).
+ */
 export async function makeParsehubRequest<T>(
 	apiKey: string,
-	query: Record<string, string | number | undefined>,
+	req: ParsehubRequest,
 ): Promise<T> {
 	const config: OpenAPIConfig = {
 		BASE: PARSEHUB_API_BASE,
@@ -31,16 +36,25 @@ export async function makeParsehubRequest<T>(
 		},
 	};
 
-	const requestOptions: ApiRequestOptions = {
-		method: 'GET',
-		url: '/api/v2/projects',
-		query: {
-			api_key: apiKey,
-			...query,
-		},
-	};
+	const method = req.method ?? 'GET';
+	const requestOptions: ApiRequestOptions =
+		method === 'POST'
+			? {
+					method,
+					url: `/api/v2${req.path}`,
+					query: req.query,
+					body: new URLSearchParams(
+						Object.entries({ api_key: apiKey, ...req.form }).filter(
+							(entry): entry is [string, string] => entry[1] !== undefined,
+						),
+					).toString(),
+					mediaType: 'application/x-www-form-urlencoded; charset=utf-8',
+				}
+			: {
+					method,
+					url: `/api/v2${req.path}`,
+					query: { api_key: apiKey, ...req.query },
+				};
 
-	return await request<T>(config, requestOptions, {
-		rateLimitConfig: NO_TRANSPORT_RETRIES,
-	});
+	return await request<T>(config, requestOptions);
 }

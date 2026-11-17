@@ -1,20 +1,55 @@
 displayName: ParseHub
-description: List the scraping projects on a ParseHub account. The key is the api_key query parameter.
+description: Run ParseHub scraping projects and get the data they extract.
 domain: parsehub.com
 recommendedAuth: api_key
 overviewNote: |
-  An empty key comes back as HTTP 401. Offset starts at 0. Limit is 1 to 20.
+  Things to know before you call:
+
+  - **Projects are built in the ParseHub desktop app.** The API lists, runs and reads projects; it cannot create or edit them.
+  - **A run is asynchronous.** `projects.run` returns the new run straight away. Poll `runs.get` until `data_ready` is true (ParseHub allows 25 polls in a run's first 5 minutes, then one every 3 minutes), then call `runs.getData`. `projects.getLastReadyData` skips the polling and returns the newest finished data.
+  - **Data comes as JSON or CSV.** `format: 'csv'` returns the CSV as a string.
+  - **The key is the `api_key` parameter.** The client sends it in the query string for reads and in the form body for POST calls. With no key stored, Corsair raises `AuthMissingError` before any request; a key ParseHub rejects comes back as HTTP 401.
+  - **Limits.** 5 requests a second (up to 25 queued); `projects.list` returns at most 20 projects per page.
+references:
+  - title: ParseHub API reference
+    url: https://www.parsehub.com/docs/ref/api/v2/
 examples:
   read:
-    path: projects.list
-    title: List ParseHub projects
+    path: projects.getLastReadyData
+    title: Get the latest scraped data of a project
     args:
-      offset: 0
-      limit: 20
+      project_token: t-0WMEZ-Bc9sWGHAMsYvP7y4
+  write:
+    path: projects.run
+    title: Run a project with a search value
+    args:
+      project_token: t-0WMEZ-Bc9sWGHAMsYvP7y4
+      start_value_override:
+        query: San Francisco
 apiNotes:
   projects.list: |
-    Omit offset, limit, or include_options to take the service default. include_options is sent as 1 or 0.
+    Omit offset, limit or include_options to take the service default. include_options is sent as 1 or 0.
+  projects.run: |
+    `start_value_override` is sent as a JSON string. `send_email: true` emails the account owner when the run ends.
 apiExamples:
   projects.list:
     offset: 0
     limit: 20
+  projects.get:
+    project_token: t-0WMEZ-Bc9sWGHAMsYvP7y4
+    include_options: true
+  projects.run:
+    project_token: t-0WMEZ-Bc9sWGHAMsYvP7y4
+    start_url: https://www.example.com
+    start_value_override:
+      query: San Francisco
+  projects.getLastReadyData:
+    project_token: t-0WMEZ-Bc9sWGHAMsYvP7y4
+  runs.get:
+    run_token: tCcB4hfFP6wvBRe2gwZv9aJp
+  runs.getData:
+    run_token: tCcB4hfFP6wvBRe2gwZv9aJp
+  runs.cancel:
+    run_token: tCcB4hfFP6wvBRe2gwZv9aJp
+  runs.delete:
+    run_token: tCcB4hfFP6wvBRe2gwZv9aJp

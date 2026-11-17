@@ -1,66 +1,155 @@
 import type { CorsairEndpoint } from 'corsair/core';
-import { AuthMissingError, logEventFromContext } from 'corsair/core';
-import { makeParsehubRequest } from '../client';
+import { pathPart } from '../client';
 import type { ParsehubContext } from '../context';
 import { ParsehubProjectEntity } from '../schema/database';
-import type { ListProjectsInput, ListProjectsResponse } from './types';
-import { ListProjectsInputSchema, ListProjectsResponseSchema } from './types';
+import { callParsehub, flag, requireKey } from './shared';
+import type {
+	GetLastReadyDataInput,
+	GetLastReadyDataResponse,
+	GetProjectInput,
+	GetProjectResponse,
+	ListProjectsInput,
+	ListProjectsResponse,
+	ParsehubProject,
+	RunProjectInput,
+	RunProjectResponse,
+} from './types';
+import {
+	GetLastReadyDataInputSchema,
+	GetLastReadyDataResponseSchema,
+	GetProjectInputSchema,
+	GetProjectResponseSchema,
+	ListProjectsInputSchema,
+	ListProjectsResponseSchema,
+	RunProjectInputSchema,
+	RunProjectResponseSchema,
+} from './types';
 
 export const listProjects: CorsairEndpoint<
 	ParsehubContext,
 	ListProjectsInput,
 	ListProjectsResponse
 > = async (ctx, input) => {
-	if (!ctx.key) {
-		throw new AuthMissingError('parsehub', 'api_key');
-	}
-
+	requireKey(ctx);
 	const parsed = ListProjectsInputSchema.parse(input ?? {});
-	const body = await makeParsehubRequest<unknown>(ctx.key, {
-		offset: parsed.offset,
-		limit: parsed.limit,
-		include_options:
-			parsed.include_options === undefined
-				? undefined
-				: parsed.include_options
-					? 1
-					: 0,
-	});
-	const result = ListProjectsResponseSchema.parse(body);
-	await storeProjects(ctx, result.projects);
-	await logEventFromContext(
+	const result = await callParsehub(
 		ctx,
-		'parsehub.projects.list',
+		'projects.list',
+		{
+			path: '/projects',
+			query: {
+				offset: parsed.offset,
+				limit: parsed.limit,
+				include_options: flag(parsed.include_options),
+			},
+		},
+		ListProjectsResponseSchema,
 		{ offset: parsed.offset ?? 0 },
-		'completed',
 	);
+	await storeProjects(ctx, result.projects);
 	return result;
 };
 
-function projectRow(item: unknown): ParsehubProjectEntity | undefined {
-	if (!item || typeof item !== 'object') return undefined;
-	const record = item as { token?: unknown; title?: unknown };
-	const parsed = ParsehubProjectEntity.safeParse({
-		token: record.token,
-		title: typeof record.title === 'string' ? record.title : undefined,
-	});
-	return parsed.success ? parsed.data : undefined;
-}
+export const getProject: CorsairEndpoint<
+	ParsehubContext,
+	GetProjectInput,
+	GetProjectResponse
+> = async (ctx, input) => {
+	requireKey(ctx);
+	const parsed = GetProjectInputSchema.parse(input);
+	const result = await callParsehub(
+		ctx,
+		'projects.get',
+		{
+			path: `/projects/${pathPart(parsed.project_token)}`,
+			query: {
+				offset: parsed.offset,
+				include_options: flag(parsed.include_options),
+			},
+		},
+		GetProjectResponseSchema,
+		{ project_token: parsed.project_token },
+	);
+	await storeProjects(ctx, [result]);
+	return result;
+};
 
+export const runProject: CorsairEndpoint<
+	ParsehubContext,
+	RunProjectInput,
+	RunProjectResponse
+> = async (ctx, input) => {
+	requireKey(ctx);
+	const parsed = RunProjectInputSchema.parse(input);
+	const sendEmail = flag(parsed.send_email);
+	return callParsehub(
+		ctx,
+		'projects.run',
+		{
+			method: 'POST',
+			path: `/projects/${pathPart(parsed.project_token)}/run`,
+			form: {
+				start_url: parsed.start_url,
+				start_template: parsed.start_template,
+				start_value_override:
+					parsed.start_value_override === undefined
+						? undefined
+						: JSON.stringify(parsed.start_value_override),
+				send_email: sendEmail === undefined ? undefined : String(sendEmail),
+			},
+		},
+		RunProjectResponseSchema,
+		{ project_token: parsed.project_token },
+	);
+};
+
+export const getLastReadyData: CorsairEndpoint<
+	ParsehubContext,
+	GetLastReadyDataInput,
+	GetLastReadyDataResponse
+> = async (ctx, input) => {
+	requireKey(ctx);
+	const parsed = GetLastReadyDataInputSchema.parse(input);
+	return callParsehub(
+		ctx,
+		'projects.getLastReadyData',
+		{
+			path: `/projects/${pathPart(parsed.project_token)}/last_ready_run/data`,
+			query: { format: parsed.format },
+		},
+		GetLastReadyDataResponseSchema,
+		{ project_token: parsed.project_token },
+	);
+};
+
+/**
+ * Saves each project's token and title. A response without a title keeps
+ * the stored one.
+ */
 async function storeProjects(
 	ctx: ParsehubContext,
-	projects: unknown[],
+	projects: ParsehubProject[],
 ): Promise<void> {
 	if (!ctx.db?.projects) return;
-	for (const item of projects) {
-		const row = projectRow(item);
-		if (!row) continue;
+	for (const project of projects) {
 		try {
-			await ctx.db.projects.upsertByEntityId(row.token, row);
+			const existing = await ctx.db.projects.findByEntityId(project.token);
+			const row = ParsehubProjectEntity.safeParse({
+				...existing?.data,
+				token: project.token,
+				title: project.title ?? existing?.data.title,
+			});
+			if (!row.success) continue;
+			await ctx.db.projects.upsertByEntityId(project.token, row.data);
 		} catch {
 			console.warn('Failed to save ParseHub project');
 		}
 	}
 }
 
-export const Projects = { list: listProjects };
+export const Projects = {
+	list: listProjects,
+	get: getProject,
+	run: runProject,
+	getLastReadyData,
+};
