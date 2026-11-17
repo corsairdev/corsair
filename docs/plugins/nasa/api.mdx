@@ -71,11 +71,11 @@ await corsair.nasa.api.apod.list({ per_page: 5 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `page` | `number` | No | 1-based page number. |
-| `per_page` | `number` | No | Entries per page. NASA caps this at 25; a larger value is served as 25. |
-| `date_from` | `number` | No | Oldest day in the legacy YYMMDD form, e.g. 240115. Only honoured when date_to is also sent. |
-| `date_to` | `number` | No | Newest day in the legacy YYMMDD form, e.g. 240117. Only honoured when date_from is also sent. |
+| `per_page` | `number` | No | Entries per page, 1 to 25. NASA serves at most 25, so the plugin rejects a larger value instead of returning fewer than asked. |
+| `date_from` | `string` | No | Oldest day as the six-digit YYMMDD code, e.g. '240115' or '050101'. A string, so the leading zero of a 2000-2009 date survives. Only honoured when date_to is also sent. |
+| `date_to` | `string` | No | Newest day as the six-digit YYMMDD code, e.g. '240117'. Only honoured when date_from is also sent. |
 
-NASA serves at most 25 entries per page whatever per_page says, and applies date_from and date_to only as a pair.
+per_page takes 1 to 25, the most NASA serves per page. date_from and date_to are six-digit YYMMDD strings and apply only as a pair.
 
 
 
@@ -130,8 +130,10 @@ await corsair.nasa.api.donki.cme({ startDate: '2026-11-01', endDate: '2026-11-05
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `startDate` | `string` | No | First day to include. Defaults at the provider to 30 days before today. |
-| `endDate` | `string` | No | Last day to include, inclusive. Defaults at the provider to today. |
+| `startDate` | `string` | Yes | First day to include. |
+| `endDate` | `string` | Yes | Last day to include, inclusive. |
+
+NASA answers 400 unless both startDate and endDate are sent.
 
 
 
@@ -324,8 +326,10 @@ await corsair.nasa.api.donki.enlilSimulation({ startDate: '2026-10-20', endDate:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `startDate` | `string` | No | First day to include. Defaults at the provider to 30 days before today. |
+| `startDate` | `string` | No | First day to include. Defaults at the provider to seven days before today (UTC). |
 | `endDate` | `string` | No | Last day to include, inclusive. Defaults at the provider to today. |
+
+Omitted dates default to the last seven days, not 30.
 
 
 
@@ -657,7 +661,7 @@ await corsair.nasa.api.donki.notification({ startDate: '2026-11-01', endDate: '2
 | `endDate` | `string` | No | Last day to include, inclusive. Defaults at the provider to today. |
 | `type` | `all \| FLR \| SEP \| CME \| IPS \| MPC \| GST \| RBE \| report` | No | Which notifications to return. Defaults to all. NASA caps the window at 30 days and quietly shifts it when a wider range is sent. |
 
-The provider caps the window at 30 days and shifts a wider range rather than rejecting it.
+Defaults to the last seven days. The provider caps the window at 30 days and shifts a wider range rather than rejecting it.
 
 
 
@@ -818,6 +822,8 @@ await corsair.nasa.api.donki.solarFlare({ startDate: '2026-10-01', endDate: '202
 |------|------|----------|-------------|
 | `startDate` | `string` | No | First day to include. Defaults at the provider to 30 days before today. |
 | `endDate` | `string` | No | Last day to include, inclusive. Defaults at the provider to today. |
+
+api.nasa.gov answered 404 for every FLR request on 2026-11-17; the route matches NASA's docs.
 
 
 
@@ -1065,7 +1071,7 @@ Omitting status returns only open events.
 
 `epic.availableDates`
 
-List every day that has EPIC imagery, newest first
+List every day that has EPIC imagery, oldest first
 
 **Risk:** `read`
 
