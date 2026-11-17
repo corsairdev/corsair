@@ -2866,6 +2866,14 @@
                 ]
               },
               {
+                "group": "Help Scout",
+                "pages": [
+                  "plugins/helpscout/overview",
+                  "plugins/helpscout/api",
+                  "plugins/helpscout/database"
+                ]
+              },
+              {
                 "group": "HERE",
                 "pages": [
                   "plugins/here/overview",
