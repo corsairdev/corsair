@@ -476,6 +476,16 @@ describe('responses', () => {
 		).resolves.toEqual(reply);
 	});
 
+	it('does not report a check-in when the reply has no body', async () => {
+		// Sympla documents 200 with a body; core hands back undefined both for a
+		// 204 and for a 200 whose JSON failed to parse, so neither counts.
+		mockRequest.mockResolvedValue(undefined as never);
+		await expect(
+			checkInParticipant(context('k'), { event_id: 'e', participant_id: 1 }),
+		).rejects.toThrow();
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
 	it('lets an HTTP 401 ApiError through unchanged', async () => {
 		const error = new ApiError(
 			{ method: 'GET', url: '/public/v1.6.0/events' },
