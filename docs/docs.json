@@ -4641,6 +4641,14 @@
                 ]
               },
               {
+                "group": "TextCortex",
+                "pages": [
+                  "plugins/textcortex/overview",
+                  "plugins/textcortex/api",
+                  "plugins/textcortex/database"
+                ]
+              },
+              {
                 "group": "TextIt",
                 "pages": [
                   "plugins/textit/overview",
