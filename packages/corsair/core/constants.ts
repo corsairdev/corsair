@@ -281,6 +281,7 @@ export const BaseProviders = [
 	'folk',
 	'followupboss',
 	'fomo',
+	'forcemanager',
 	'formbricks',
 	'formdesk',
 	'foursquare',
@@ -965,6 +966,7 @@ export const ProviderDisplayNames = {
 	folk: 'Folk',
 	followupboss: 'Follow Up Boss',
 	fomo: 'Fomo',
+	forcemanager: 'ForceManager',
 	formbricks: 'Formbricks',
 	formdesk: 'Formdesk',
 	foursquare: 'Foursquare',
@@ -1656,6 +1658,7 @@ export type AllProviders =
 	| 'folk'
 	| 'followupboss'
 	| 'fomo'
+	| 'forcemanager'
 	| 'formbricks'
 	| 'formdesk'
 	| 'foursquare'
