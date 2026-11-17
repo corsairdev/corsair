@@ -1,0 +1,4566 @@
+---
+title: "Thinkific API reference"
+sidebarTitle: "API"
+description: "API reference for the Thinkific plugin in Corsair: every `thinkific.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Bundles
+
+### createEnrollment
+
+`bundles.createEnrollment`
+
+Create an Enrollment in a Bundle of Courses (Thinkific can email the learner)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.thinkific.api.bundles.createEnrollment({ path: {"id":1}, body: {"user_id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `body` | `object` | No | — |
+
+Thinkific documents both 201 synchronous and 202 asynchronous creation responses without a response body schema; this operation validates an empty response rather than inventing a job payload.
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  user_id: number,
+  activated_at?: string,
+  expiry_date?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`bundles.get`
+
+List a bundle
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.bundles.get({ path: {"id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `tagline` | `string` | No | — |
+| `banner_image_url` | `string` | No | — |
+| `course_ids` | `number[]` | Yes | — |
+| `bundle_card_image_url` | `string` | No | — |
+
+
+
+---
+
+### listCourses
+
+`bundles.listCourses`
+
+List Courses by bundle ID
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.bundles.listCourses({ path: {"id":1}, query: {"page":1,"limit":25} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  page?: number,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  slug?: string,
+  subtitle?: string,
+  product_id: number,
+  description?: string,
+  course_card_text?: string,
+  intro_video_youtube?: string,
+  contact_information?: string,
+  keywords?: string,
+  duration?: string,
+  banner_image_url?: string,
+  course_card_image_url?: string,
+  intro_video_wistia_identifier?: string,
+  administrator_user_ids?: number[],
+  chapter_ids: number[],
+  reviews_enabled: boolean,
+  user_id?: number,
+  instructor_id: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    current_page?: number,
+    next_page?: number,
+    prev_page?: number,
+    total_pages?: number,
+    total_items?: number,
+    entries_info?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listEnrollments
+
+`bundles.listEnrollments`
+
+List a enrollments in a bundle
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.bundles.listEnrollments({ path: {"id":1}, query: {"page":1,"limit":25} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  page?: number,
+  limit?: number,
+  query[
+    user_id
+  ]?: number,
+  query[
+    email
+  ]?: string,
+  query[
+    completed
+  ]?: string,
+  query[
+    expired
+  ]?: string,
+  query[
+    created_after
+  ]?: string,
+  query[
+    created_before
+  ]?: string,
+  query[
+    created_on
+  ]?: string,
+  query[
+    created_on_or_after
+  ]?: string,
+  query[
+    created_on_or_before
+  ]?: string,
+  query[
+    updated_after
+  ]?: string,
+  query[
+    updated_before
+  ]?: string,
+  query[
+    updated_on
+  ]?: string,
+  query[
+    updated_on_or_after
+  ]?: string,
+  query[
+    updated_on_or_before
+  ]?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  user_email: string,
+  user_name: string,
+  user_id: number,
+  course_name: string,
+  course_id: number,
+  percentage_completed: number,
+  expired: boolean,
+  is_free_trial: boolean,
+  completed: boolean,
+  started_at: string,
+  activated_at: string,
+  completed_at: string,
+  updated_at: string,
+  expiry_date: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    current_page?: number,
+    next_page?: number,
+    prev_page?: number,
+    total_pages?: number,
+    total_items?: number,
+    entries_info?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateEnrollments
+
+`bundles.updateEnrollments`
+
+Update Enrollments in a Bundle
+
+**Risk:** `write`
+
+```ts
+await corsair.thinkific.api.bundles.updateEnrollments({ path: {"id":1}, body: {"user_id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  user_id: number,
+  activated_at?: string,
+  expiry_date?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Categories
+
+### create
+
+`categories.create`
+
+Create a new Category
+
+**Risk:** `write`
+
+```ts
+await corsair.thinkific.api.categories.create({ body: {"description":"sample","name":"sample","slug":"sample"} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  description: string,
+  slug: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `slug` | `string` | No | — |
+| `created_at` | `string` | Yes | — |
+| `product_ids` | `number[]` | Yes | — |
+| `default` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`categories.get`
+
+Get Collections by Id
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.categories.get({ path: {"id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `slug` | `string` | No | — |
+| `created_at` | `string` | Yes | — |
+| `product_ids` | `number[]` | Yes | — |
+| `default` | `boolean` | Yes | — |
+
+
+
+---
+
+### list
+
+`categories.list`
+
+Get Collections
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.categories.list({ query: {"page":1,"limit":25} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  page?: number,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  description: string,
+  slug?: string,
+  created_at: string,
+  product_ids: number[],
+  default: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    current_page?: number,
+    next_page?: number,
+    prev_page?: number,
+    total_pages?: number,
+    total_items?: number,
+    entries_info?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listProducts
+
+`categories.listProducts`
+
+Get products by Collections id
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.categories.listProducts({ path: {"id":1}, query: {"page":1,"limit":25} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  page?: number,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: number,
+  created_at?: string,
+  productable_id?: number,
+  productable_type?: string,
+  price?: number,
+  position?: number,
+  status?: string,
+  name?: string,
+  private?: boolean,
+  hidden?: boolean,
+  subscription?: boolean,
+  days_until_expiry?: number,
+  has_certificate?: boolean,
+  keywords?: string,
+  seo_title?: string,
+  seo_description?: string,
+  collection_ids?: number[],
+  related_product_ids?: number[],
+  description?: string,
+  card_image_url?: string,
+  slug?: string,
+  product_prices?: {
+    id?: number,
+    is_primary?: boolean,
+    payment_type?: free | one-time | subscription | payment-plan,
+    label?: string | null,
+    price?: string,
+    days_until_expiry?: string | null,
+    pay_button_text?: string | null,
+    number_of_payments?: string | null,
+    interval?: month | year,
+    interval_count?: string,
+    trial_interval?: day | month | null,
+    trial_interval_count?: string | null,
+    custom_first_price?: string | null,
+    price_name?: string,
+    currency?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    current_page?: number,
+    next_page?: number,
+    prev_page?: number,
+    total_pages?: number,
+    total_items?: number,
+    entries_info?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`categories.remove`
+
+Delete collection by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.thinkific.api.categories.remove({ path: {"id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### update
+
+`categories.update`
+
+Update collection by ID
+
+**Risk:** `write`
+
+```ts
+await corsair.thinkific.api.categories.update({ path: {"id":1}, body: {"description":"sample","name":"sample","slug":"sample"} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  description: string,
+  slug: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Category Memberships
+
+### addProducts
+
+`categoryMemberships.addProducts`
+
+Add Product to Category
+
+**Risk:** `write`
+
+```ts
+await corsair.thinkific.api.categoryMemberships.addProducts({ path: {"id":1}, body: {"product_ids":[1]} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  product_ids: number[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### removeProducts
+
+`categoryMemberships.removeProducts`
+
+Delete Products by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.thinkific.api.categoryMemberships.removeProducts({ path: {"id":1}, body: {"product_ids":[1]} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  product_ids: number[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Chapters
+
+### get
+
+`chapters.get`
+
+Get Chapters
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.chapters.get({ path: {"id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `position` | `number` | Yes | — |
+| `description` | `string` | No | — |
+| `duration_in_seconds` | `number` | No | — |
+| `content_ids` | `number[]` | Yes | — |
+
+
+
+---
+
+### listContents
+
+`chapters.listContents`
+
+Get Contents by Chapter id
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.chapters.listContents({ path: {"id":1}, query: {"page":1,"limit":25} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  page?: number,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  position: number,
+  chapter_id: number,
+  contentable_type: Assignment | Audio | Download | BrilliumExam | Disqus | HtmlItem | Iframe | LiveLesson | Lesson | Pdf | Presentation | Quiz | Survey,
+  free: boolean,
+  take_url: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    current_page?: number,
+    next_page?: number,
+    prev_page?: number,
+    total_pages?: number,
+    total_items?: number,
+    entries_info?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contents
+
+### get
+
+`contents.get`
+
+Get Contents by Id
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.contents.get({ path: {"id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `position` | `number` | Yes | — |
+| `chapter_id` | `number` | Yes | — |
+| `contentable_type` | `Assignment \| Audio \| Download \| BrilliumExam \| Disqus \| HtmlItem \| Iframe \| LiveLesson \| Lesson \| Pdf \| Presentation \| Quiz \| Survey` | Yes | — |
+| `free` | `boolean` | Yes | — |
+| `take_url` | `string` | Yes | — |
+
+
+
+---
+
+## Coupons
+
+### bulkCreate
+
+`coupons.bulkCreate`
+
+Bulk Create Coupons
+
+**Risk:** `write`
+
+```ts
+await corsair.thinkific.api.coupons.bulkCreate({ query: {"promotion_id":1}, body: {"bulk_quantity_per_coupon":1,"bulk_coupon_code_length":8,"bulk_quantity":2} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  promotion_id: number
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  bulk_quantity_per_coupon?: number,
+  bulk_coupon_code_length?: number,
+  bulk_quantity?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  code: string,
+  note: string,
+  quantity_used: number,
+  quantity: number,
+  promotion_id: number,
+  created_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`coupons.create`
+
+Create a Coupon
+
+**Risk:** `write`
+
+```ts
+await corsair.thinkific.api.coupons.create({ query: {"promotion_id":1}, body: {"code":"sample"} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  promotion_id: number
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  code: string,
+  note?: string,
+  quantity?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `code` | `string` | Yes | — |
+| `note` | `string` | Yes | — |
+| `quantity_used` | `number` | Yes | — |
+| `quantity` | `number` | Yes | — |
+| `promotion_id` | `number` | Yes | — |
+| `created_at` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`coupons.get`
+
+Get a Coupon by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.coupons.get({ path: {"id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `code` | `string` | Yes | — |
+| `note` | `string` | Yes | — |
+| `quantity_used` | `number` | Yes | — |
+| `quantity` | `number` | Yes | — |
+| `promotion_id` | `number` | Yes | — |
+| `created_at` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`coupons.list`
+
+Get Coupons
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.coupons.list({ query: {"promotion_id":1,"page":1,"limit":25} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  promotion_id: number,
+  page?: number,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  code: string,
+  note: string,
+  quantity_used: number,
+  quantity: number,
+  promotion_id: number,
+  created_at: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    current_page?: number,
+    next_page?: number,
+    prev_page?: number,
+    total_pages?: number,
+    total_items?: number,
+    entries_info?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`coupons.remove`
+
+Delete Coupon by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.thinkific.api.coupons.remove({ path: {"id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### update
+
+`coupons.update`
+
+Update a Coupon
+
+**Risk:** `write`
+
+```ts
+await corsair.thinkific.api.coupons.update({ path: {"id":1}, body: {"code":"sample"} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  code: string,
+  note?: string,
+  quantity_used?: string,
+  quantity?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Course Reviews
+
+### create
+
+`courseReviews.create`
+
+Create a course review
+
+**Risk:** `write`
+
+```ts
+await corsair.thinkific.api.courseReviews.create({ query: {"course_id":1}, body: {"approved":false,"rating":1,"review_text":"sample","title":"sample","user_id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  course_id: number
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  rating: number,
+  title: string,
+  review_text: string,
+  user_id: number,
+  approved: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `rating` | `number` | Yes | — |
+| `title` | `string` | Yes | — |
+| `review_text` | `string` | Yes | — |
+| `user_id` | `number` | Yes | — |
+| `course_id` | `number` | Yes | — |
+| `approved` | `boolean` | Yes | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`courseReviews.get`
+
+Get Course Reviews By ID
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.courseReviews.get({ path: {"id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `rating` | `number` | Yes | — |
+| `title` | `string` | Yes | — |
+| `review_text` | `string` | Yes | — |
+| `user_id` | `number` | Yes | — |
+| `course_id` | `number` | Yes | — |
+| `approved` | `boolean` | Yes | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`courseReviews.list`
+
+Get Course Reviews
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.courseReviews.list({ query: {"course_id":1,"page":1,"limit":25} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  course_id: number,
+  page?: number,
+  limit?: number,
+  approved?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  rating: number,
+  title: string,
+  review_text: string,
+  user_id: number,
+  course_id: number,
+  approved: boolean,
+  created_at?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    current_page?: number,
+    next_page?: number,
+    prev_page?: number,
+    total_pages?: number,
+    total_items?: number,
+    entries_info?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Courses
+
+### get
+
+`courses.get`
+
+Get courses by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.courses.get({ path: {"id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `slug` | `string` | No | — |
+| `subtitle` | `string` | No | — |
+| `product_id` | `number` | Yes | — |
+| `description` | `string` | No | — |
+| `course_card_text` | `string` | No | — |
+| `intro_video_youtube` | `string` | No | — |
+| `contact_information` | `string` | No | — |
+| `keywords` | `string` | No | — |
+| `duration` | `string` | No | — |
+| `banner_image_url` | `string` | No | — |
+| `course_card_image_url` | `string` | No | — |
+| `intro_video_wistia_identifier` | `string` | No | — |
+| `administrator_user_ids` | `number[]` | No | — |
+| `chapter_ids` | `number[]` | Yes | — |
+| `reviews_enabled` | `boolean` | Yes | — |
+| `user_id` | `number` | No | — |
+| `instructor_id` | `number` | Yes | — |
+
+
+
+---
+
+### list
+
+`courses.list`
+
+Get Courses
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.courses.list({ query: {"page":1,"limit":25} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  page?: number,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  slug?: string,
+  subtitle?: string,
+  product_id: number,
+  description?: string,
+  course_card_text?: string,
+  intro_video_youtube?: string,
+  contact_information?: string,
+  keywords?: string,
+  duration?: string,
+  banner_image_url?: string,
+  course_card_image_url?: string,
+  intro_video_wistia_identifier?: string,
+  administrator_user_ids?: number[],
+  chapter_ids: number[],
+  reviews_enabled: boolean,
+  user_id?: number,
+  instructor_id: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    current_page?: number,
+    next_page?: number,
+    prev_page?: number,
+    total_pages?: number,
+    total_items?: number,
+    entries_info?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listChapters
+
+`courses.listChapters`
+
+Get Chapters by Course ID
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.courses.listChapters({ path: {"id":1}, query: {"page":1,"limit":25} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  page?: number,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  position: number,
+  description?: string,
+  duration_in_seconds?: number,
+  content_ids: number[]
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    current_page?: number,
+    next_page?: number,
+    prev_page?: number,
+    total_pages?: number,
+    total_items?: number,
+    entries_info?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Custom Profile Fields
+
+### list
+
+`customProfileFields.list`
+
+Get Custom profile field definition
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.customProfileFields.list({ query: {"page":1,"limit":25} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  page?: number,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  label: string,
+  field_type: string,
+  required: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    current_page?: number,
+    next_page?: number,
+    prev_page?: number,
+    total_pages?: number,
+    total_items?: number,
+    entries_info?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Enrollments
+
+### create
+
+`enrollments.create`
+
+Create enrollment (Thinkific can email the learner)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.thinkific.api.enrollments.create({ body: {"course_id":1,"user_id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  course_id?: number,
+  user_id?: number,
+  activated_at?: string,
+  expiry_date?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `user_email` | `string` | Yes | — |
+| `user_name` | `string` | Yes | — |
+| `user_id` | `number` | Yes | — |
+| `course_name` | `string` | Yes | — |
+| `course_id` | `number` | Yes | — |
+| `percentage_completed` | `number` | Yes | — |
+| `expired` | `boolean` | Yes | — |
+| `is_free_trial` | `boolean` | Yes | — |
+| `completed` | `boolean` | Yes | — |
+| `started_at` | `string` | Yes | — |
+| `activated_at` | `string` | Yes | — |
+| `completed_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `expiry_date` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`enrollments.get`
+
+Get enrollments by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.enrollments.get({ path: {"id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `user_email` | `string` | Yes | — |
+| `user_name` | `string` | Yes | — |
+| `user_id` | `number` | Yes | — |
+| `course_name` | `string` | Yes | — |
+| `course_id` | `number` | Yes | — |
+| `percentage_completed` | `number` | Yes | — |
+| `expired` | `boolean` | Yes | — |
+| `is_free_trial` | `boolean` | Yes | — |
+| `completed` | `boolean` | Yes | — |
+| `started_at` | `string` | Yes | — |
+| `activated_at` | `string` | Yes | — |
+| `completed_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `expiry_date` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`enrollments.list`
+
+Get Enrollments
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.enrollments.list({ query: {"page":1,"limit":25} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  page?: number,
+  limit?: number,
+  query[
+    user_id
+  ]?: number,
+  query[
+    course_id
+  ]?: number,
+  query[
+    email
+  ]?: string,
+  query[
+    free_trial
+  ]?: boolean,
+  query[
+    full
+  ]?: boolean,
+  query[
+    completed
+  ]?: boolean,
+  query[
+    expired
+  ]?: boolean,
+  query[
+    created_on
+  ]?: string,
+  query[
+    created_before
+  ]?: string,
+  query[
+    created_on_or_before
+  ]?: string,
+  query[
+    created_after
+  ]?: string,
+  query[
+    created_on_or_after
+  ]?: string,
+  query[
+    updated_on
+  ]?: string,
+  query[
+    updated_before
+  ]?: string,
+  query[
+    updated_on_or_before
+  ]?: string,
+  query[
+    updated_after
+  ]?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  user_email: string,
+  user_name: string,
+  user_id: number,
+  course_name: string,
+  course_id: number,
+  percentage_completed: number,
+  expired: boolean,
+  is_free_trial: boolean,
+  completed: boolean,
+  started_at: string,
+  activated_at: string,
+  completed_at: string,
+  updated_at: string,
+  expiry_date: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    current_page?: number,
+    next_page?: number,
+    prev_page?: number,
+    total_pages?: number,
+    total_items?: number,
+    entries_info?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`enrollments.update`
+
+Update enrollment
+
+**Risk:** `write`
+
+```ts
+await corsair.thinkific.api.enrollments.update({ path: {"id":1}, body: {"activated_at":"2026-01-01T00:00:00.000Z","expiry_date":"2027-01-01T00:00:00.000Z"} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  activated_at?: string,
+  expiry_date?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## External Orders
+
+### create
+
+`externalOrders.create`
+
+Create a new external order
+
+**Risk:** `write`
+
+```ts
+await corsair.thinkific.api.externalOrders.create({ body: {"payment_provider":"sample","user_id":1,"product_id":1,"order_type":"one-time"} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  payment_provider: string,
+  user_id: number,
+  product_id: number,
+  order_type: one-time | subscription | payment-plan,
+  transaction?: {
+    amount: number,
+    currency: string,
+    reference?: string,
+    action?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+
+
+
+---
+
+### purchase
+
+`externalOrders.purchase`
+
+purchase transaction
+
+**Risk:** `destructive`
+
+```ts
+await corsair.thinkific.api.externalOrders.purchase({ path: {"id":"sample"}, body: {"amount":10000,"currency":"USD"} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  amount: number,
+  currency: string,
+  reference?: string,
+  action?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### refund
+
+`externalOrders.refund`
+
+refund transaction
+
+**Risk:** `destructive`
+
+```ts
+await corsair.thinkific.api.externalOrders.refund({ path: {"id":1}, body: {"amount":10000,"currency":"USD"} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  amount: number,
+  currency: string,
+  reference?: string,
+  action?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Group Analysts
+
+### addGroup
+
+`groupAnalysts.addGroup`
+
+Add Analyst to Groups
+
+**Risk:** `write`
+
+```ts
+await corsair.thinkific.api.groupAnalysts.addGroup({ path: {"user_id":1}, body: {"group_ids":[1]} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  user_id: number
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  group_ids: number[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### removeGroup
+
+`groupAnalysts.removeGroup`
+
+Delete Analyst
+
+**Risk:** `destructive`
+
+```ts
+await corsair.thinkific.api.groupAnalysts.removeGroup({ path: {"user_id":1,"group_id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  user_id: number,
+  group_id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Groups
+
+### assignAnalysts
+
+`groups.assignAnalysts`
+
+Assign Analysts to a Group
+
+**Risk:** `write`
+
+```ts
+await corsair.thinkific.api.groups.assignAnalysts({ path: {"group_id":1}, body: {"user_ids":[1]} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  group_id: number
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  user_ids: number[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### create
+
+`groups.create`
+
+Create Group
+
+**Risk:** `write`
+
+```ts
+await corsair.thinkific.api.groups.create({ body: {"name":"sample"} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `token` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`groups.get`
+
+Get Group
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.groups.get({ path: {"id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `token` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`groups.list`
+
+Get Groups
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.groups.list({ query: {"page":1,"limit":25} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  page?: number,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  token: string,
+  created_at: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    current_page?: number,
+    next_page?: number,
+    prev_page?: number,
+    total_pages?: number,
+    total_items?: number,
+    entries_info?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAnalysts
+
+`groups.listAnalysts`
+
+Get Group Analysts
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.groups.listAnalysts({ path: {"group_id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  group_id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_analysts` | `number[]` | Yes | — |
+
+
+
+---
+
+### remove
+
+`groups.remove`
+
+Delete Group by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.thinkific.api.groups.remove({ path: {"id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### removeAnalyst
+
+`groups.removeAnalyst`
+
+Delete Analyst
+
+**Risk:** `destructive`
+
+```ts
+await corsair.thinkific.api.groups.removeAnalyst({ path: {"group_id":1,"user_id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  group_id: number,
+  user_id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Group Users
+
+### addUsers
+
+`groupUsers.addUsers`
+
+Create a User to existing Groups
+
+**Risk:** `write`
+
+```ts
+await corsair.thinkific.api.groupUsers.addUsers({ body: {"group_names":["sample"],"user_id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  user_id: number,
+  group_names: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Instructors
+
+### create
+
+`instructors.create`
+
+Create instructor
+
+**Risk:** `write`
+
+```ts
+await corsair.thinkific.api.instructors.create({ body: {"first_name":"sample","last_name":"sample","slug":"sample"} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  user_id?: number,
+  title?: string,
+  first_name: string,
+  last_name: string,
+  bio?: string,
+  slug: string,
+  avatar_url?: string,
+  email?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `user_id` | `number` | No | — |
+| `title` | `string` | No | — |
+| `first_name` | `string` | Yes | — |
+| `last_name` | `string` | Yes | — |
+| `bio` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `avatar_url` | `string` | No | — |
+| `email` | `string` | No | — |
+| `created_at` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`instructors.get`
+
+Get Instructor by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.instructors.get({ path: {"id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `user_id` | `number` | No | — |
+| `title` | `string` | No | — |
+| `first_name` | `string` | Yes | — |
+| `last_name` | `string` | Yes | — |
+| `bio` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `avatar_url` | `string` | No | — |
+| `email` | `string` | No | — |
+| `created_at` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`instructors.list`
+
+Get Instructors
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.instructors.list({ query: {"page":1,"limit":25} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  page?: number,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  user_id?: number,
+  title?: string,
+  first_name: string,
+  last_name: string,
+  bio?: string,
+  slug?: string,
+  avatar_url?: string,
+  email?: string,
+  created_at: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    current_page?: number,
+    next_page?: number,
+    prev_page?: number,
+    total_pages?: number,
+    total_items?: number,
+    entries_info?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`instructors.remove`
+
+Delete instructor
+
+**Risk:** `destructive`
+
+```ts
+await corsair.thinkific.api.instructors.remove({ path: {"id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### update
+
+`instructors.update`
+
+Update instructor
+
+**Risk:** `write`
+
+```ts
+await corsair.thinkific.api.instructors.update({ path: {"id":1}, body: {"first_name":"sample","last_name":"sample","slug":"sample"} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  user_id?: number,
+  title?: string,
+  first_name: string,
+  last_name: string,
+  bio?: string,
+  slug: string,
+  avatar_url?: string,
+  email?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Orders
+
+### get
+
+`orders.get`
+
+Get orders by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.orders.get({ path: {"id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number` | Yes | — |
+| `user_email` | `string` | Yes | — |
+| `user_name` | `string` | Yes | — |
+| `product_name` | `string` | Yes | — |
+| `product_id` | `number` | Yes | — |
+| `amount_dollars` | `string` | Yes | — |
+| `amount_cents` | `number` | Yes | — |
+| `subscription` | `boolean` | Yes | — |
+| `coupon_code` | `string` | No | — |
+| `coupon_id` | `number` | No | — |
+| `items` | `object[]` | No | — |
+| `affiliate_referral_code` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `created at` | `string` | No | — |
+| `id` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  product_id?: number,
+  product_name?: string,
+  amount_dollars?: number,
+  amount_cents?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`orders.list`
+
+Get Orders
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.orders.list({ query: {"page":1,"limit":25} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  page?: number,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  user_id: number,
+  user_email: string,
+  user_name: string,
+  product_name: string,
+  product_id: number,
+  amount_dollars: string,
+  amount_cents: number,
+  subscription: boolean,
+  coupon_code?: string,
+  coupon_id?: number,
+  items?: {
+    product_id?: number,
+    product_name?: string,
+    amount_dollars?: number,
+    amount_cents?: number
+  }[],
+  affiliate_referral_code?: string,
+  status: string,
+  created at?: string,
+  id: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    current_page?: number,
+    next_page?: number,
+    prev_page?: number,
+    total_pages?: number,
+    total_items?: number,
+    entries_info?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Product Publish Requests
+
+### approve
+
+`productPublishRequests.approve`
+
+Approves Product Publish Request
+
+**Risk:** `destructive`
+
+```ts
+await corsair.thinkific.api.productPublishRequests.approve({ path: {"id":1}, body: {"user_id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  user_id: number,
+  response_text?: string,
+  notify_requester?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### deny
+
+`productPublishRequests.deny`
+
+Denies Product Publish Request
+
+**Risk:** `destructive`
+
+```ts
+await corsair.thinkific.api.productPublishRequests.deny({ path: {"id":1}, body: {"user_id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  user_id: number,
+  response_text?: string,
+  notify_requester?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`productPublishRequests.get`
+
+Get product publish request by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.productPublishRequests.get({ path: {"id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `number` | Yes | — |
+| `status` | `string` | Yes | — |
+| `response_text` | `string` | No | — |
+| `requesting_user_id` | `number` | Yes | — |
+| `responding_user_id` | `number` | No | — |
+| `completed_at` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`productPublishRequests.list`
+
+Get List of unhandled product publish requests
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.productPublishRequests.list({ query: {"page":1,"limit":25} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+The published OpenAPI response component points its items to PromotionResponse, but the operation returns Product Publish Requests. This plugin validates items with ProductPublishRequest, matching the documented detail route.
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  page?: number,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  product_id: number,
+  status: string,
+  response_text?: string,
+  requesting_user_id: number,
+  responding_user_id?: number,
+  completed_at?: string,
+  created_at?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    current_page?: number,
+    next_page?: number,
+    prev_page?: number,
+    total_pages?: number,
+    total_items?: number,
+    entries_info?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Products
+
+### get
+
+`products.get`
+
+Get product by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.products.get({ path: {"id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `productable_id` | `number` | No | — |
+| `productable_type` | `string` | No | — |
+| `price` | `number` | No | — |
+| `position` | `number` | No | — |
+| `status` | `string` | No | — |
+| `name` | `string` | No | — |
+| `private` | `boolean` | No | — |
+| `hidden` | `boolean` | No | — |
+| `subscription` | `boolean` | No | — |
+| `days_until_expiry` | `number` | No | — |
+| `has_certificate` | `boolean` | No | — |
+| `keywords` | `string` | No | — |
+| `seo_title` | `string` | No | — |
+| `seo_description` | `string` | No | — |
+| `collection_ids` | `number[]` | No | — |
+| `related_product_ids` | `number[]` | No | — |
+| `description` | `string` | No | — |
+| `card_image_url` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `product_prices` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="product_prices full type">
+
+```ts
+{
+  id?: number,
+  is_primary?: boolean,
+  payment_type?: free | one-time | subscription | payment-plan,
+  label?: string | null,
+  price?: string,
+  days_until_expiry?: string | null,
+  pay_button_text?: string | null,
+  number_of_payments?: string | null,
+  interval?: month | year,
+  interval_count?: string,
+  trial_interval?: day | month | null,
+  trial_interval_count?: string | null,
+  custom_first_price?: string | null,
+  price_name?: string,
+  currency?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`products.list`
+
+List products
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.products.list({ query: {"page":1,"limit":25} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  page?: number,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: number,
+  created_at?: string,
+  productable_id?: number,
+  productable_type?: string,
+  price?: number,
+  position?: number,
+  status?: string,
+  name?: string,
+  private?: boolean,
+  hidden?: boolean,
+  subscription?: boolean,
+  days_until_expiry?: number,
+  has_certificate?: boolean,
+  keywords?: string,
+  seo_title?: string,
+  seo_description?: string,
+  collection_ids?: number[],
+  related_product_ids?: number[],
+  description?: string,
+  card_image_url?: string,
+  slug?: string,
+  product_prices?: {
+    id?: number,
+    is_primary?: boolean,
+    payment_type?: free | one-time | subscription | payment-plan,
+    label?: string | null,
+    price?: string,
+    days_until_expiry?: string | null,
+    pay_button_text?: string | null,
+    number_of_payments?: string | null,
+    interval?: month | year,
+    interval_count?: string,
+    trial_interval?: day | month | null,
+    trial_interval_count?: string | null,
+    custom_first_price?: string | null,
+    price_name?: string,
+    currency?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    current_page?: number,
+    next_page?: number,
+    prev_page?: number,
+    total_pages?: number,
+    total_items?: number,
+    entries_info?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listRelated
+
+`products.listRelated`
+
+Get related products
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.products.listRelated({ path: {"id":1}, query: {"page":1,"limit":25} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  page?: number,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: number,
+  created_at?: string,
+  productable_id?: number,
+  productable_type?: string,
+  price?: number,
+  position?: number,
+  status?: string,
+  name?: string,
+  private?: boolean,
+  hidden?: boolean,
+  subscription?: boolean,
+  days_until_expiry?: number,
+  has_certificate?: boolean,
+  keywords?: string,
+  seo_title?: string,
+  seo_description?: string,
+  collection_ids?: number[],
+  related_product_ids?: number[],
+  description?: string,
+  card_image_url?: string,
+  slug?: string,
+  product_prices?: {
+    id?: number,
+    is_primary?: boolean,
+    payment_type?: free | one-time | subscription | payment-plan,
+    label?: string | null,
+    price?: string,
+    days_until_expiry?: string | null,
+    pay_button_text?: string | null,
+    number_of_payments?: string | null,
+    interval?: month | year,
+    interval_count?: string,
+    trial_interval?: day | month | null,
+    trial_interval_count?: string | null,
+    custom_first_price?: string | null,
+    price_name?: string,
+    currency?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    current_page?: number,
+    next_page?: number,
+    prev_page?: number,
+    total_pages?: number,
+    total_items?: number,
+    entries_info?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Promotions
+
+### create
+
+`promotions.create`
+
+Create a new promotion
+
+**Risk:** `write`
+
+```ts
+await corsair.thinkific.api.promotions.create({ body: {"amount":1,"discount_type":"fixed","name":"sample"} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  description?: string,
+  starts_at?: string,
+  expires_at?: string,
+  discount_type: fixed | percentage,
+  amount: number,
+  product_ids?: number[],
+  coupon_ids?: number[],
+  duration?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `starts_at` | `string` | No | — |
+| `expires_at` | `string` | No | — |
+| `discount_type` | `fixed \| percentage` | No | — |
+| `amount` | `number` | No | — |
+| `coupon_ids` | `number[]` | No | — |
+| `duration` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`promotions.get`
+
+Get promotion by provided ID
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.promotions.get({ path: {"id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `starts_at` | `string` | No | — |
+| `expires_at` | `string` | No | — |
+| `discount_type` | `fixed \| percentage` | No | — |
+| `amount` | `number` | No | — |
+| `coupon_ids` | `number[]` | No | — |
+| `duration` | `number` | No | — |
+
+
+
+---
+
+### getByCoupon
+
+`promotions.getByCoupon`
+
+Get Promotion associated with the provided Coupon code.
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.promotions.getByCoupon({ query: {"product_id":1,"coupon_code":"sample"} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  product_id: number,
+  coupon_code: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `starts_at` | `string` | No | — |
+| `expires_at` | `string` | No | — |
+| `discount_type` | `fixed \| percentage` | No | — |
+| `amount` | `number` | No | — |
+| `coupon_ids` | `number[]` | No | — |
+| `duration` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`promotions.list`
+
+List promotions
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.promotions.list({ query: {"page":1,"limit":25} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  page?: number,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  description?: string,
+  starts_at?: string,
+  expires_at?: string,
+  discount_type?: fixed | percentage,
+  amount?: number,
+  coupon_ids?: number[],
+  duration?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    current_page?: number,
+    next_page?: number,
+    prev_page?: number,
+    total_pages?: number,
+    total_items?: number,
+    entries_info?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`promotions.remove`
+
+Delete promotion by provided ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.thinkific.api.promotions.remove({ path: {"id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### update
+
+`promotions.update`
+
+Update promotion by provided ID
+
+**Risk:** `write`
+
+```ts
+await corsair.thinkific.api.promotions.update({ path: {"id":1}, body: {"amount":1,"discount_type":"fixed","name":"sample"} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  description?: string,
+  starts_at?: string,
+  expires_at?: string,
+  discount_type: fixed | percentage,
+  amount: number,
+  product_ids?: number[],
+  coupon_ids?: number[],
+  duration?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Users
+
+### create
+
+`users.create`
+
+Create user
+
+**Risk:** `destructive`
+
+```ts
+await corsair.thinkific.api.users.create({ body: {"email":"learner@example.com","first_name":"sample","last_name":"sample"} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  first_name: string,
+  last_name: string,
+  email: string,
+  password?: string,
+  roles?: (affiliate | course_admin | group_analyst | site_admin)[],
+  bio?: string,
+  company?: string,
+  headline?: string,
+  affiliate_code?: string,
+  affiliate_commission?: number,
+  affiliate_commission_type?: string,
+  affiliate_payout_email?: string,
+  custom_profile_fields?: {
+    value?: string,
+    custom_profile_field_definition_id: number
+  }[],
+  skip_custom_fields_validation?: boolean,
+  send_welcome_email?: boolean,
+  external_id?: string,
+  provider?: SSO | OPENID_CONNECT
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `full_name` | `string` | No | — |
+| `company` | `string` | No | — |
+| `email` | `string` | No | — |
+| `roles` | `(affiliate \| course_admin \| group_analyst \| site_admin)[]` | No | — |
+| `avatar_url` | `string` | No | — |
+| `bio` | `string` | No | — |
+| `headline` | `string` | No | — |
+| `affiliate_code` | `string` | No | — |
+| `external_source` | `string` | No | — |
+| `affiliate_commission` | `number` | No | — |
+| `affiliate_commission_type` | `string` | No | — |
+| `affiliate_payout_email` | `string` | No | — |
+| `administered_course_ids` | `number[]` | No | — |
+| `custom_profile_fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_profile_fields full type">
+
+```ts
+{
+  id?: number,
+  value?: string,
+  label?: string,
+  custom_profile_field_definition_id?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createExpressSignInLink
+
+`users.createExpressSignInLink`
+
+Get a learner's Express Sign In Link
+
+**Risk:** `destructive`
+
+```ts
+await corsair.thinkific.api.users.createExpressSignInLink({ path: {"id":1} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+The returned Express Sign In URL is password-equivalent and must be treated as a secret. Do not copy it into logs or share it outside the intended learner.
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number` | Yes | — |
+| `url` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`users.get`
+
+List Users by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.users.get({ path: {"id":"sample"} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  provider?: SSO | OPENID_CONNECT
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `full_name` | `string` | No | — |
+| `company` | `string` | No | — |
+| `email` | `string` | No | — |
+| `roles` | `(affiliate \| course_admin \| group_analyst \| site_admin)[]` | No | — |
+| `avatar_url` | `string` | No | — |
+| `bio` | `string` | No | — |
+| `headline` | `string` | No | — |
+| `affiliate_code` | `string` | No | — |
+| `external_source` | `string` | No | — |
+| `affiliate_commission` | `number` | No | — |
+| `affiliate_commission_type` | `string` | No | — |
+| `affiliate_payout_email` | `string` | No | — |
+| `administered_course_ids` | `number[]` | No | — |
+| `custom_profile_fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_profile_fields full type">
+
+```ts
+{
+  id?: number,
+  value?: string,
+  label?: string,
+  custom_profile_field_definition_id?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAuthentication
+
+`users.getAuthentication`
+
+Get User Auth data by ID and Provider
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.users.getAuthentication({ path: {"id":"sample","provider":"SSO"} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: string,
+  provider: SSO | OPENID_CONNECT
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `SSO \| OPENID_CONNECT` | No | — |
+| `external_id` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`users.list`
+
+List Users
+
+**Risk:** `read`
+
+```ts
+await corsair.thinkific.api.users.list({ query: {"page":1,"limit":25} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  page?: number,
+  limit?: number,
+  query[
+    email
+  ]?: string,
+  query[
+    role
+  ]?: string,
+  query[
+    external_source
+  ]?: string,
+  query[
+    custom_profile_field_label
+  ]?: string,
+  query[
+    custom_profile_field_value
+  ]?: string,
+  query[
+    group_id
+  ]?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: number,
+  created_at?: string,
+  first_name?: string,
+  last_name?: string,
+  full_name?: string,
+  company?: string,
+  email?: string,
+  roles?: (affiliate | course_admin | group_analyst | site_admin)[],
+  avatar_url?: string,
+  bio?: string,
+  headline?: string,
+  affiliate_code?: string,
+  external_source?: string,
+  affiliate_commission?: number,
+  affiliate_commission_type?: string,
+  affiliate_payout_email?: string,
+  administered_course_ids?: number[],
+  custom_profile_fields?: {
+    id?: number,
+    value?: string,
+    label?: string,
+    custom_profile_field_definition_id?: number
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    current_page?: number,
+    next_page?: number,
+    prev_page?: number,
+    total_pages?: number,
+    total_items?: number,
+    entries_info?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`users.remove`
+
+Delete user by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.thinkific.api.users.remove({ path: {"id":"sample"} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  provider?: SSO | OPENID_CONNECT
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### update
+
+`users.update`
+
+Update user by ID
+
+**Risk:** `write`
+
+```ts
+await corsair.thinkific.api.users.update({ path: {"id":"sample"}, body: {"first_name":"Updated"} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  provider?: SSO | OPENID_CONNECT
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  first_name?: string,
+  last_name?: string,
+  email?: string,
+  password?: string,
+  roles?: (affiliate | course_admin | group_analyst | site_admin)[],
+  avatar_url?: string,
+  bio?: string,
+  company?: string,
+  headline?: string,
+  external_source?: string,
+  affiliate_code?: string,
+  affiliate_commission?: number,
+  affiliate_commission_type?: string,
+  affiliate_payout_email?: string,
+  custom_profile_fields?: {
+    value?: string,
+    custom_profile_field_definition_id: number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
