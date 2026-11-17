@@ -1,0 +1,147 @@
+---
+title: "Simple Analytics plugin"
+sidebarTitle: "Overview"
+description: "Web analytics from Simple Analytics - aggregated page views, visitors, top pages, referrers, UTM values, devices and event counts, raw data point exports, and website management on the account."
+---
+
+Use **Simple Analytics** through Corsair: one client, typed API calls.
+
+Create an API key in Simple Analytics under account settings. It starts with `sa_api_key_`. Pass it as the plugin's `key` option or store it on the account; the plugin sends it as the `Api-Key` header.
+
+The Admin API also needs your user ID, which Simple Analytics shows next to the key you just created. Store it as `user_id` on the account. The Stats and Export operations work with the key alone.
+
+Things to know before you query:
+
+- **Stats needs an explicit fields list.** Send at least one field; an empty list falls back to the version 1 response format. Every field is optional in the output because the API returns only what you ask for.
+- **The plugin always sends a key.** Simple Analytics lets anyone read a public website's page views, visitors and histogram without one, but this plugin needs an API key (stored on the account or passed as `key`) for every operation. When a public site hides its top pages, the `pages` field and page filters need a key with access to that site.
+- **Some filters cost more.** A contains search, `pages=*/app/example-name/*`, needs a key even for a public site, must be the only path pattern, and only accepts the pageviews, visitors and histogram fields. It is rate limited and answers 429 with a `Retry-After`.
+- **Metadata keys differ between APIs.** Stats filters use the bare key, as `metadata.<key>`, without a storage suffix. Export needs the suffix, such as `project_text`, and exports a metadata column only when you name it.
+- **Export returns JSON here.** The route also serves CSV, TSV, NDJSON, Parquet and Avro, but this plugin asks for `json`, because that is the only format it can return intact.
+- **Failures arrive in the body.** Simple Analytics answers `{ ok: false, error }` (Stats and Export) or `{ success: false, error }` (Admin) on a 200 or 400, so the plugin checks the body and throws rather than returning a failure as data: a 200 that says `ok: false` throws `SimpleanalyticsAPIError`, and a 4xx or 5xx throws core's `ApiError` unchanged, with the provider's text in `body.error`.
+- **A locked key is a real risk.** Twenty failed authentications in fifteen minutes lock the key for up to fifteen minutes, so the plugin never retries an auth failure. A 423 means a Free-plan website is missing its Simple Analytics badge; the plugin reads that as a `BADGE_REQUIRED` permission error.
+- **Dates.** Use `YYYY-MM-DD` or a placeholder such as `today-30d`. The Export API also takes an hourly `YYYY-MM-DDTHH`.
+
+**What you get:**
+
+- 4 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/simpleanalytics better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/simpleanalytics better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/simpleanalytics better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/simpleanalytics better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { simpleanalytics } from '@corsair-dev/simpleanalytics';
+
+export const corsair = createCorsair({
+	plugins: [
+		simpleanalytics(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Simple Analytics API key before the first call: `pnpm corsair setup --plugin=simpleanalytics --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+simpleanalytics()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'simpleanalytics',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read page views and visitors for the last week**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.simpleanalytics.api.stats.get({
+	hostname: 'example.com',
+	start: 'today-7d',
+	end: 'today',
+	fields: ['pageviews', 'visitors'],
+});
+```
+
+
+**Add a website to the account**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.simpleanalytics.api.websites.add({ hostname: 'example.com', timezone: 'Europe/Amsterdam', isPublic: false });
+```
+
+
+See the full list on the [API](/plugins/simpleanalytics/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/simpleanalytics/api">
+    Every `simpleanalytics.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
