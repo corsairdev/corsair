@@ -551,6 +551,7 @@ export const BaseProviders = [
 	'simplesat',
 	'slack',
 	'slackbot',
+	'smsalert',
 	'snapchat',
 	'snowflake',
 	'sourcegraph',
@@ -1225,6 +1226,7 @@ export const ProviderDisplayNames = {
 	simplesat: 'Simplesat',
 	slack: 'Slack',
 	slackbot: 'Slackbot',
+	smsalert: 'SMS Alert',
 	snapchat: 'Snapchat',
 	snowflake: 'Snowflake',
 	sourcegraph: 'Sourcegraph',
@@ -1906,6 +1908,7 @@ export type AllProviders =
 	| 'simplesat'
 	| 'slack'
 	| 'slackbot'
+	| 'smsalert'
 	| 'snapchat'
 	| 'snowflake'
 	| 'sourcegraph'
