@@ -3367,6 +3367,14 @@
                 ]
               },
               {
+                "group": "Linkup",
+                "pages": [
+                  "plugins/linkup/overview",
+                  "plugins/linkup/api",
+                  "plugins/linkup/database"
+                ]
+              },
+              {
                 "group": "LiteScrape",
                 "pages": [
                   "plugins/litescrape/overview",

@@ -1,0 +1,33 @@
+displayName: Linkup
+description: Read Linkup credits, search, answer, fetch a page, and create a response.
+domain: linkup.so
+recommendedAuth: api_key
+overviewNote: |
+  The key is a Bearer token. An invalid bearer on credits, search, fetch, and responses each returned HTTP 401. Page text and generated text are not stored. Search and answer spend credits.
+examples:
+  read:
+    path: credits.get
+    title: Read credits
+    args: {}
+apiNotes:
+  credits.get: |
+    GET /v1/credits/balance. Stores the balance.
+  search.run: |
+    POST /v1/search with outputType searchResults. Stores name, url, type, and date.
+  answers.get: |
+    POST /v1/search with outputType sourcedAnswer. Source text is not stored.
+  pages.fetch: |
+    POST /v1/fetch. Returns markdown and does not store the page.
+  responses.create: |
+    POST /v1/responses. Stores id, model, and object.
+apiExamples:
+  credits.get:
+    call: "{}"
+  search.run:
+    call: "{ q: 'weather' }"
+  answers.get:
+    call: "{ q: 'weather' }"
+  pages.fetch:
+    call: "{ url: 'https://example.com' }"
+  responses.create:
+    call: "{ input: 'Hello', model: 'linkup' }"

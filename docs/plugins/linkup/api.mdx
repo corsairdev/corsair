@@ -1,0 +1,230 @@
+---
+title: "Linkup API reference"
+sidebarTitle: "API"
+description: "API reference for the Linkup plugin in Corsair: every `linkup.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Answers
+
+### get
+
+`answers.get`
+
+Ask for a sourced answer. This spends credits. Source text is not stored.
+
+**Risk:** `write`
+
+```ts
+await corsair.linkup.api.answers.get({ q: 'weather' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+
+POST /v1/search with outputType sourcedAnswer. Source text is not stored.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `answer` | `string` | Yes | — |
+| `sources` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="sources full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  type?: string,
+  publishedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Credits
+
+### get
+
+`credits.get`
+
+Read the remaining credit balance.
+
+**Risk:** `read`
+
+```ts
+await corsair.linkup.api.credits.get({});
+```
+
+**Input:** _empty object_
+
+GET /v1/credits/balance. Stores the balance.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credit` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="credit full type">
+
+```ts
+{
+  id: balance,
+  balance: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Pages
+
+### fetch
+
+`pages.fetch`
+
+Fetch one page as markdown. This spends credits. The page is not stored.
+
+**Risk:** `write`
+
+```ts
+await corsair.linkup.api.pages.fetch({ url: 'https://example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+
+POST /v1/fetch. Returns markdown and does not store the page.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `markdown` | `string` | Yes | — |
+
+
+
+---
+
+## Responses
+
+### create
+
+`responses.create`
+
+Create a response. This spends credits. The generated text is not stored.
+
+**Risk:** `write`
+
+```ts
+await corsair.linkup.api.responses.create({ input: 'Hello', model: 'linkup' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `string` | Yes | — |
+| `model` | `string` | Yes | — |
+
+POST /v1/responses. Stores id, model, and object.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `response` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  id: string,
+  model?: string,
+  object?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Search
+
+### run
+
+`search.run`
+
+Search the web. This spends credits. Page text is not stored.
+
+**Risk:** `write`
+
+```ts
+await corsair.linkup.api.search.run({ q: 'weather' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+
+POST /v1/search with outputType searchResults. Stores name, url, type, and date.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  type?: string,
+  publishedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
