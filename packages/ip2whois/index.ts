@@ -60,13 +60,14 @@ export const ip2whoisEndpointSchemas = {
 
 const ip2whoisEndpointMeta = {
 	'domain.lookup': {
-		// Each query spends credits.
-		riskLevel: 'destructive',
+		// Metered (one query from the plan's quota), but it only returns data,
+		// so it stays `read`, like the Ahrefs plugin's metered reads.
+		riskLevel: 'read',
 		description: 'Look up WHOIS registration data for a domain.',
 	},
 	'hosted.lookup': {
-		// Each query spends credits. The IP stays out of the event payload.
-		riskLevel: 'destructive',
+		// Metered read, like domain.lookup. The IP stays out of the event payload.
+		riskLevel: 'read',
 		description: 'List domains hosted on an IP address.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof ip2whoisEndpointsNested>;
