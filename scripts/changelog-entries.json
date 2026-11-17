@@ -8081,5 +8081,32 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/echtpost",
+    "dir": "packages/echtpost",
+    "name": "Echtpost",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/helpscout",
+    "dir": "packages/helpscout",
+    "name": "Help Scout",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/twocaptcha",
+    "dir": "packages/twocaptcha",
+    "name": "2Captcha",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
