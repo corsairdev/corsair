@@ -286,44 +286,46 @@ describe('Google Maps Plugin API Tests', () => {
 			4000,
 		);
 
-		mockedMakeRequest.mockResolvedValueOnce([
-			{
-				originIndex: 0,
-				destinationIndex: 0,
-				condition: 'ROUTE_EXISTS',
-				distanceMeters: 1609,
-				duration: '600s',
-				status: { code: 0, message: 'OK' },
-			},
-		]);
-		const resOptions = await plugin.endpoints!.routes.distanceMatrix(
-			dummyOAuthCtx,
-			{
-				origins: 'SF',
-				destinations: 'Oakland',
-				units: 'imperial',
-				departure_time: '1700000000',
-			},
-		);
-		expect(resOptions.rows).toBeDefined();
-		expect((resOptions.rows![0] as any).elements[0].status).toBe('OK');
-		expect((resOptions.rows![0] as any).elements[0].distance.text).toBe(
-			'1.0 mi',
-		);
-		expect(mockedMakeRequest).toHaveBeenLastCalledWith(
-			'/distanceMatrix/v1:computeRouteMatrix',
-			dummyOAuthCtx,
-			expect.objectContaining({
-				body: expect.objectContaining({
-					departureTime: '2023-11-14T22:13:20.000Z',
+		for (const departure_time of ['1700000000', '1700000000000']) {
+			mockedMakeRequest.mockResolvedValueOnce([
+				{
+					originIndex: 0,
+					destinationIndex: 0,
+					condition: 'ROUTE_EXISTS',
+					distanceMeters: 1609,
+					duration: '600s',
+					status: { code: 0, message: 'OK' },
+				},
+			]);
+			const resOptions = await plugin.endpoints!.routes.distanceMatrix(
+				dummyOAuthCtx,
+				{
+					origins: 'SF',
+					destinations: 'Oakland',
+					units: 'imperial',
+					departure_time,
+				},
+			);
+			expect(resOptions.rows).toBeDefined();
+			expect((resOptions.rows![0] as any).elements[0].status).toBe('OK');
+			expect((resOptions.rows![0] as any).elements[0].distance.text).toBe(
+				'1.0 mi',
+			);
+			expect(mockedMakeRequest).toHaveBeenLastCalledWith(
+				'/distanceMatrix/v1:computeRouteMatrix',
+				dummyOAuthCtx,
+				expect.objectContaining({
+					body: expect.objectContaining({
+						departureTime: '2023-11-14T22:13:20.000Z',
+					}),
 				}),
-			}),
-		);
-		const lastBody = mockedMakeRequest.mock.calls.at(-1)?.[2]?.body as Record<
-			string,
-			unknown
-		>;
-		expect(lastBody.units).toBeUndefined();
+			);
+			const lastBody = mockedMakeRequest.mock.calls.at(-1)?.[2]?.body as Record<
+				string,
+				unknown
+			>;
+			expect(lastBody.units).toBeUndefined();
+		}
 	});
 
 	it('routes.getDirection calculates directions (api_key and oauth)', async () => {
