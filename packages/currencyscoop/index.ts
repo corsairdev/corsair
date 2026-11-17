@@ -9,6 +9,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import type { CurrencyScoopContext } from './context';
 import {
 	convertQuote,
@@ -132,7 +133,8 @@ export function currencyscoop<const T extends CurrencyScoopPluginOptions>(
 			if (source === 'endpoint' && options.key) return options.key;
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const key = await ctx.keys.get_api_key();
-				return key ?? '';
+				if (!key) throw new AuthMissingError('currencyscoop', 'api_key');
+				return key;
 			}
 			return '';
 		},
