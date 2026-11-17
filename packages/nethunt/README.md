@@ -16,7 +16,10 @@ pnpm add @corsair-dev/nethunt
 | `folders.fields` | `nethunt.api.folders.fields` | `read` | List a folder's field names, which are user-defined and are what a create or update must use |
 | `folders.list` | `nethunt.api.folders.list` | `read` | List the folders this account can read, or only the ones it may create records in |
 | `records.callLog` | `nethunt.api.records.callLog` | `write` | Log a call on a record’s timeline with its start time and duration in minutes |
-| `records.changes` | `nethunt.api.records.changes` | `read` | Read the audit trail for a folder: who changed which field, when, with before and after values, including deletes |
+| `records.changes` | `nethunt.api.records.changes` | `read` | Read the audit trail for a folder: who changed which field and when, as the values removed and added, including deletes |
+| `records.recentComments` | `nethunt.api.records.recentComments` | `read` | List comments added to records in a folder after a timestamp; NetHunt defaults the window to 24 hours |
+| `records.recentCallLogs` | `nethunt.api.records.recentCallLogs` | `read` | List calls logged on records in a folder after a timestamp, with start, end and duration |
+| `records.recentFiles` | `nethunt.api.records.recentFiles` | `read` | List Google Drive files attached to records in a folder after a timestamp |
 | `records.comment` | `nethunt.api.records.comment` | `write` | Add a comment to a record’s timeline |
 | `records.create` | `nethunt.api.records.create` | `write` | Create one record in a folder from a flat map of the folder’s field names, with the time zone NetHunt needs to read dates |
 | `records.delete` | `nethunt.api.records.delete` | `destructive` | Delete a record permanently; NetHunt has no restore route and the audit trail keeps only the change entry |

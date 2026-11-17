@@ -172,21 +172,35 @@ const RecordsChangesInputSchema = z.object({
 
 export type RecordsChangesInput = z.input<typeof RecordsChangesInputSchema>;
 
+/**
+ * One field's change: the values removed and the values added. NetHunt reports
+ * actions, not before and after snapshots, so an update to a multi-value field
+ * lists only what changed.
+ */
 const FieldActionSchema = z
 	.object({
-		before: FieldValueSchema.optional(),
-		after: FieldValueSchema.optional(),
+		remove: FieldValueSchema.optional(),
+		add: FieldValueSchema.optional(),
+	})
+	.loose();
+
+/** Who made the change. */
+const ChangeUserSchema = z
+	.object({
+		personalName: z.string().nullish(),
+		emailAddress: z.string().nullish(),
 	})
 	.loose();
 
 const RecordChangeSchema = z
 	.object({
+		id: z.string().nullish(),
 		recordId: z.string().nullish(),
 		time: z.string().nullish(),
-		user: z.string().nullish(),
+		user: ChangeUserSchema.nullish(),
 		/** CREATE, UPDATE or DELETE. */
 		recordAction: z.string().nullish(),
-		/** Field name to the change made, as before and after values. */
+		/** Field name to the change made, as remove and add actions. */
 		fieldActions: z.record(z.string(), FieldActionSchema).nullish(),
 	})
 	.loose();
@@ -393,6 +407,84 @@ export type NethuntUser = z.infer<typeof NethuntUserSchema>;
 
 export const VerifyArraySchema = z.array(VerifyResultSchema);
 
+// ── records.recentComments / recentCallLogs / recentFiles ─────────────────
+
+/** The three timeline triggers take the same folder, since and limit. */
+const TimelineInputSchema = z.object({
+	folderId: FolderIdSchema,
+	since: InstantSchema.optional().describe(
+		'Only items created after this instant. Defaults at NetHunt to 24 hours before the request.',
+	),
+	limit: z.number().int().min(1).optional(),
+});
+
+export type TimelineInput = z.input<typeof TimelineInputSchema>;
+
+const RecordCommentSchema = z
+	.object({
+		id: z.string().nullish(),
+		commentId: z.string().nullish(),
+		recordId: z.string().nullish(),
+		createdAt: z.string().nullish(),
+		text: z.string().nullish(),
+	})
+	.loose();
+
+const RecordsRecentCommentsResponseSchema = z.object({
+	comments: z.array(RecordCommentSchema),
+});
+
+export type RecordsRecentCommentsResponse = z.infer<
+	typeof RecordsRecentCommentsResponseSchema
+>;
+
+const RecordCallLogSchema = z
+	.object({
+		id: z.string().nullish(),
+		callLogId: z.string().nullish(),
+		recordId: z.string().nullish(),
+		createdAt: z.string().nullish(),
+		text: z.string().nullish(),
+		/** When the call started. */
+		time: z.string().nullish(),
+		/** Minutes. */
+		duration: z.number().nullish(),
+		endTime: z.string().nullish(),
+	})
+	.loose();
+
+const RecordsRecentCallLogsResponseSchema = z.object({
+	callLogs: z.array(RecordCallLogSchema),
+});
+
+export type RecordsRecentCallLogsResponse = z.infer<
+	typeof RecordsRecentCallLogsResponseSchema
+>;
+
+const RecordFileSchema = z
+	.object({
+		id: z.string().nullish(),
+		fileId: z.string().nullish(),
+		folderId: z.string().nullish(),
+		recordId: z.string().nullish(),
+		createdAt: z.string().nullish(),
+		googleDriveFileId: z.string().nullish(),
+		description: z.string().nullish(),
+		iconUrl: z.string().nullish(),
+		mimeType: z.string().nullish(),
+		name: z.string().nullish(),
+		url: z.string().nullish(),
+	})
+	.loose();
+
+const RecordsRecentFilesResponseSchema = z.object({
+	files: z.array(RecordFileSchema),
+});
+
+export type RecordsRecentFilesResponse = z.infer<
+	typeof RecordsRecentFilesResponseSchema
+>;
+
 // ── Registry ──────────────────────────────────────────────────────────────
 
 export type NethuntEndpointInputs = {
@@ -402,6 +494,9 @@ export type NethuntEndpointInputs = {
 	recordsRecent: RecordsRecentInput;
 	recordsUpdated: RecordsUpdatedInput;
 	recordsChanges: RecordsChangesInput;
+	recordsRecentComments: TimelineInput;
+	recordsRecentCallLogs: TimelineInput;
+	recordsRecentFiles: TimelineInput;
 	recordsCreate: RecordsCreateInput;
 	recordsUpdate: RecordsUpdateInput;
 	recordsDelete: RecordsDeleteInput;
@@ -418,6 +513,9 @@ export type NethuntEndpointOutputs = {
 	recordsRecent: RecordsRecentResponse;
 	recordsUpdated: RecordsUpdatedResponse;
 	recordsChanges: RecordsChangesResponse;
+	recordsRecentComments: RecordsRecentCommentsResponse;
+	recordsRecentCallLogs: RecordsRecentCallLogsResponse;
+	recordsRecentFiles: RecordsRecentFilesResponse;
 	recordsCreate: RecordsCreateResponse;
 	recordsUpdate: RecordsUpdateResponse;
 	recordsDelete: RecordsDeleteResponse;
@@ -434,6 +532,9 @@ export const NethuntEndpointInputSchemas = {
 	recordsRecent: RecordsRecentInputSchema,
 	recordsUpdated: RecordsUpdatedInputSchema,
 	recordsChanges: RecordsChangesInputSchema,
+	recordsRecentComments: TimelineInputSchema,
+	recordsRecentCallLogs: TimelineInputSchema,
+	recordsRecentFiles: TimelineInputSchema,
 	recordsCreate: RecordsCreateInputSchema,
 	recordsUpdate: RecordsUpdateInputSchema,
 	recordsDelete: RecordsDeleteInputSchema,
@@ -450,6 +551,9 @@ export const NethuntEndpointOutputSchemas = {
 	recordsRecent: RecordsFindResponseSchema,
 	recordsUpdated: RecordsFindResponseSchema,
 	recordsChanges: RecordsChangesResponseSchema,
+	recordsRecentComments: RecordsRecentCommentsResponseSchema,
+	recordsRecentCallLogs: RecordsRecentCallLogsResponseSchema,
+	recordsRecentFiles: RecordsRecentFilesResponseSchema,
 	recordsCreate: RecordCreatedSchema,
 	recordsUpdate: RecordUpdatedSchema,
 	recordsDelete: RecordsDeleteResponseSchema,

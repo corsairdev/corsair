@@ -1,4 +1,5 @@
-import type { NethuntEndpoints } from '..';
+import type { z } from 'zod';
+import type { NethuntContext, NethuntEndpoints } from '..';
 import { segment } from '../client';
 import { call } from './call';
 import {
@@ -264,4 +265,72 @@ export const linkThread: NethuntEndpoints['recordsLinkThread'] = (ctx, input) =>
 			}),
 			log: ({ recordId }) => ({ recordId }),
 		},
+	);
+
+/** One timeline trigger: comments, call logs or Drive files created lately. */
+function timeline<Output extends z.ZodType>(
+	ctx: NethuntContext,
+	event: string,
+	trigger: string,
+	key: string,
+	// unknown: the caller's raw input, parsed by the shared timeline schema.
+	input: unknown,
+	output: Output,
+): Promise<z.output<Output>> {
+	return call(
+		ctx,
+		{ event, input: Inputs.recordsRecentComments, output },
+		input,
+		({ folderId, since, limit }) => ({
+			method: 'GET',
+			path: `/zapier/triggers/${trigger}/${segment(folderId)}`,
+			query: { since, limit },
+		}),
+		{
+			shape: (raw) => ({ [key]: asArray(raw, trigger) }),
+			log: () => ({ trigger }),
+		},
+	);
+}
+
+/** Comments added to records in a folder after a timestamp. */
+export const recentComments: NethuntEndpoints['recordsRecentComments'] = (
+	ctx,
+	input,
+) =>
+	timeline(
+		ctx,
+		'records.recentComments',
+		'new-comment',
+		'comments',
+		input,
+		Outputs.recordsRecentComments,
+	);
+
+/** Calls logged on records in a folder after a timestamp. */
+export const recentCallLogs: NethuntEndpoints['recordsRecentCallLogs'] = (
+	ctx,
+	input,
+) =>
+	timeline(
+		ctx,
+		'records.recentCallLogs',
+		'new-call-log',
+		'callLogs',
+		input,
+		Outputs.recordsRecentCallLogs,
+	);
+
+/** Google Drive files attached to records in a folder after a timestamp. */
+export const recentFiles: NethuntEndpoints['recordsRecentFiles'] = (
+	ctx,
+	input,
+) =>
+	timeline(
+		ctx,
+		'records.recentFiles',
+		'new-gdrivefile',
+		'files',
+		input,
+		Outputs.recordsRecentFiles,
 	);

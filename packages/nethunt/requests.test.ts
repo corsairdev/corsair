@@ -1,7 +1,8 @@
 import type { CorsairEndpoint } from 'corsair/core';
-import { asRecord, createCorsair } from 'corsair/core';
+import { AuthMissingError, asRecord, createCorsair } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import type { NethuntPluginOptions } from './index';
-import { nethunt, nethuntEndpointsNested } from './index';
+import { nethunt, nethuntEndpointsNested, splitCredentials } from './index';
 import {
 	authTest,
 	badCredentials,
@@ -11,6 +12,9 @@ import {
 	emptyObject,
 	folderFields,
 	folders,
+	recentCallLogs,
+	recentComments,
+	recentFiles,
 	recordChanges,
 	records,
 	updatedRecord,
@@ -21,9 +25,10 @@ const API_KEY = 'c3e07232-05d3-40c6-a18b';
 
 function makeContext() {
 	return {
-		key: API_KEY,
+		// The keyBuilder hands endpoints the `email:apiKey` pair as ctx.key.
+		key: `${EMAIL}:${API_KEY}`,
 		authType: 'api_key' as const,
-		options: { email: EMAIL } as NethuntPluginOptions,
+		options: {} as NethuntPluginOptions,
 		tenantId: 'default',
 		log: async () => undefined,
 		db: {},
@@ -33,7 +38,9 @@ function makeContext() {
 }
 
 // unknown: each operation has its own input and output, and every call site
-// passes a concrete value that the operation's schema validates.
+// passes a concrete value that the operation's schema validates. The same
+// holds for `capture` below: its input, body and result are those per-operation
+// values, checked by each operation's own schemas.
 type Endpoint = CorsairEndpoint<never, unknown, unknown>;
 
 const endpoints = nethuntEndpointsNested;
@@ -84,25 +91,14 @@ describe('Nethunt basic auth', () => {
 		expect(decoded).toBe(`${EMAIL}:${API_KEY}`);
 	});
 
-	it('falls back to the stored email when no option is set', async () => {
-		const original = globalThis.fetch;
-		let header: string | null = null;
-		globalThis.fetch = (async (_url: string, options: RequestInit) => {
-			header = new Headers(options.headers).get('authorization');
-			return new Response(JSON.stringify(folders), {
-				status: 200,
-				headers: { 'Content-Type': 'application/json' },
-			});
-		}) as typeof fetch;
-
-		try {
-			const ctx = { ...makeContext(), options: {} as NethuntPluginOptions };
-			await endpoints.folders.list(ctx as never, {});
-			const decoded = Buffer.from(String(header).slice(6), 'base64').toString();
-			expect(decoded).toBe(`${EMAIL}:${API_KEY}`);
-		} finally {
-			globalThis.fetch = original;
-		}
+	it('never reads the email from plugin options at call time', async () => {
+		const { init } = await capture(endpoints.folders.list, {}, folders);
+		const decoded = Buffer.from(
+			String(new Headers(init.headers).get('authorization')).slice(6),
+			'base64',
+		).toString();
+		// makeContext sets no email option, so the pair came from ctx.key.
+		expect(decoded).toBe(`${EMAIL}:${API_KEY}`);
 	});
 });
 
@@ -242,8 +238,60 @@ describe('records.changes', () => {
 		);
 		const list = asRecord(result)?.changes;
 		expect(Array.isArray(list) ? list.length : 0).toBe(2);
+		const update = asRecord(Array.isArray(list) ? list[0] : null);
+		expect(asRecord(update?.user)?.personalName).toBe('Jane Doe');
+		expect(asRecord(asRecord(update?.fieldActions)?.Salary)).toEqual({
+			remove: 100000,
+			add: 200000,
+		});
 		const deletion = asRecord(Array.isArray(list) ? list[1] : null);
 		expect(deletion?.recordAction).toBe('DELETE');
+	});
+});
+
+describe('timeline triggers', () => {
+	it('lists recent comments, call logs and Drive files from their triggers', async () => {
+		const cases: Array<[Endpoint, string, string, unknown]> = [
+			[
+				endpoints.records.recentComments,
+				'new-comment',
+				'comments',
+				recentComments,
+			],
+			[
+				endpoints.records.recentCallLogs,
+				'new-call-log',
+				'callLogs',
+				recentCallLogs,
+			],
+			[endpoints.records.recentFiles, 'new-gdrivefile', 'files', recentFiles],
+		];
+		for (const [endpoint, trigger, key, body] of cases) {
+			const { result, url } = await capture(
+				endpoint,
+				{ folderId: 'f1', since: '2026-11-01T00:00:00.000Z', limit: 2 },
+				body,
+			);
+			const parsed = new URL(url);
+			expect(parsed.pathname).toBe(`/api/v1/zapier/triggers/${trigger}/f1`);
+			expect(parsed.searchParams.get('since')).toBe('2026-11-01T00:00:00.000Z');
+			expect(parsed.searchParams.get('limit')).toBe('2');
+			const list = asRecord(result)?.[key];
+			expect({ key, count: Array.isArray(list) ? list.length : -1 }).toEqual({
+				key,
+				count: 1,
+			});
+		}
+	});
+
+	it('rejects a trigger answer that is not an array', async () => {
+		await expect(
+			capture(
+				endpoints.records.recentComments,
+				{ folderId: 'f1' },
+				{ comments: [] },
+			),
+		).rejects.toThrow(/new-comment array/);
 	});
 });
 
@@ -446,10 +494,12 @@ describe('nethunt error reporting', () => {
 			contentType: 'text/plain;charset=UTF-8',
 		}).catch((caught: unknown) => caught);
 
-		expect(String(error)).toContain(
+		// Core's ApiError comes through unchanged, with the text body on it.
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(401);
+		expect(String((error as ApiError).body)).toContain(
 			'Your email address or API key does not appear to be valid',
 		);
-		expect(String(error)).toContain('401');
 	});
 
 	it('reports a 404 for a folder that does not exist', async () => {
@@ -463,7 +513,8 @@ describe('nethunt error reporting', () => {
 			},
 		).catch((caught: unknown) => caught);
 
-		expect(String(error)).toContain('404');
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(404);
 	});
 
 	it('does not leak the API key into the error message', async () => {
@@ -493,7 +544,7 @@ describe('nethunt plugin definition', () => {
 		expect(plugin.authConfig).toEqual({ api_key: { account: ['email'] } });
 	});
 
-	it('exposes exactly the 13 catalog operations', () => {
+	it('exposes exactly the 16 catalog operations', () => {
 		const nested = Object.entries(nethuntEndpointsNested).flatMap(
 			([group, fns]) => Object.keys(fns).map((name) => `${group}.${name}`),
 		);
@@ -509,6 +560,9 @@ describe('nethunt plugin definition', () => {
 			'records.find',
 			'records.linkThread',
 			'records.recent',
+			'records.recentCallLogs',
+			'records.recentComments',
+			'records.recentFiles',
 			'records.update',
 			'records.updated',
 		]);
@@ -520,29 +574,42 @@ describe('nethunt plugin definition', () => {
 		expect(meta['records.delete']?.irreversible).toBe(true);
 	});
 
-	it('builds a key from the option, then the stored key, then throws', async () => {
-		const plugin = nethunt();
-		await expect(
-			plugin.keyBuilder?.(
-				{
-					authType: 'api_key',
-					options: {},
-					keys: { get_api_key: () => Promise.resolve('stored') },
-				} as never,
-				'endpoint',
-			),
-		).resolves.toBe('stored');
+	it('builds the email:key pair from options, then stored fields, and throws on a missing half', async () => {
+		const stored = (apiKey: string | undefined, email: string | undefined) =>
+			({
+				authType: 'api_key',
+				options: {},
+				keys: {
+					get_api_key: () => Promise.resolve(apiKey),
+					get_email: () => Promise.resolve(email),
+				},
+			}) as never;
 
 		await expect(
-			plugin.keyBuilder?.(
-				{
-					authType: 'api_key',
-					options: {},
-					keys: { get_api_key: () => Promise.resolve(undefined) },
-				} as never,
+			nethunt({ key: 'opt-key', email: 'opt@example.com' }).keyBuilder?.(
+				stored(undefined, undefined),
 				'endpoint',
 			),
-		).rejects.toThrow();
+		).resolves.toBe('opt@example.com:opt-key');
+		await expect(
+			nethunt().keyBuilder?.(stored('stored', EMAIL), 'endpoint'),
+		).resolves.toBe(`${EMAIL}:stored`);
+		// A key without an email used to send an unsigned request; now it asks
+		// for the missing half.
+		await expect(
+			nethunt().keyBuilder?.(stored('stored', undefined), 'endpoint'),
+		).rejects.toThrow(AuthMissingError);
+		await expect(
+			nethunt().keyBuilder?.(stored(undefined, EMAIL), 'endpoint'),
+		).rejects.toThrow(AuthMissingError);
+	});
+
+	it('splits the pair at the last colon, since the key has none', () => {
+		expect(splitCredentials('a@b.co:k-1')).toEqual({
+			email: 'a@b.co',
+			apiKey: 'k-1',
+		});
+		expect(() => splitCredentials('only-a-key')).toThrow(/email/);
 	});
 
 	it('is creatable through createCorsair', () => {
