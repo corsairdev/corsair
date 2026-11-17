@@ -94,6 +94,42 @@ POST /v1/ocr/reader/ with a `type` (vin, trailer_id, odometer, shipping_containe
 
 ```ts
 {
+  identifier?: {
+    type?: string,
+    props?: {
+      code?: {
+        value?: string,
+        score?: number
+      }[],
+      orientation?: {
+        value?: string,
+        score?: number
+      }[],
+      label?: {
+        value?: string,
+        score?: number
+      }[],
+      confidence?: number
+    }
+  },
+  seal_identification?: {
+    carrier_or_brand?: string | null,
+    seal_type?: string | null
+  },
+  text_ocr?: {
+    serial_number?: {
+      code?: {
+        value?: string,
+        confidence?: number
+      }
+    },
+    additional_markings?: string[] | null
+  },
+  barcode_data?: {
+    code_present?: boolean | null,
+    code_type?: string | null,
+    decoded_value?: string | null
+  }
 }[]
 ```
 </Accordion>

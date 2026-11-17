@@ -117,10 +117,71 @@ export const ReadOcrInputSchema = z
 	})
 	.refine(oneImageSource, { message: ONE_IMAGE_SOURCE });
 
-/** Results differ by `type` (identifier fields vs C-TPAT seal fields), so each stays loose. */
+const OcrValueSchema = z
+	.object({ value: z.string().optional(), score: z.number().optional() })
+	.loose();
+
+/**
+ * One OCR result. Identifier types (vin, trailer_id, odometer, shipping_container,
+ * boat_reg_number) fill `identifier.props.code[].value`; `seal_ctpat` fills the
+ * seal fields instead. Everything is optional so either shape parses.
+ */
+const OcrResultSchema = z
+	.object({
+		identifier: z
+			.object({
+				type: z.string().optional(),
+				props: z
+					.object({
+						code: z.array(OcrValueSchema).optional(),
+						orientation: z.array(OcrValueSchema).optional(),
+						label: z.array(OcrValueSchema).optional(),
+						confidence: z.number().optional(),
+					})
+					.loose()
+					.optional(),
+			})
+			.loose()
+			.optional(),
+		seal_identification: z
+			.object({
+				carrier_or_brand: z.string().nullable().optional(),
+				seal_type: z.string().nullable().optional(),
+			})
+			.loose()
+			.optional(),
+		text_ocr: z
+			.object({
+				serial_number: z
+					.object({
+						code: z
+							.object({
+								value: z.string().optional(),
+								confidence: z.number().optional(),
+							})
+							.loose()
+							.optional(),
+					})
+					.loose()
+					.optional(),
+				additional_markings: z.array(z.string()).nullable().optional(),
+			})
+			.loose()
+			.optional(),
+		barcode_data: z
+			.object({
+				code_present: z.boolean().nullable().optional(),
+				code_type: z.string().nullable().optional(),
+				decoded_value: z.string().nullable().optional(),
+			})
+			.loose()
+			.optional(),
+	})
+	.loose();
+
 export const ReadOcrResponseSchema = z
 	.object({
-		results: z.array(z.object({}).loose()),
+		results: z.array(OcrResultSchema),
 		processing_time: z.number().optional(),
 		filename: z.string().nullable().optional(),
 		camera_id: z.string().nullable().optional(),

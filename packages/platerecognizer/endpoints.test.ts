@@ -28,6 +28,9 @@ function context(
 	key: string,
 	db?: PlateRecognizerContext['db'],
 ): PlateRecognizerContext {
+	// A partial mock context: the endpoints read only `key` and `db`, so the
+	// rest of the plugin context is left out on purpose. The `db` fixtures
+	// below are partial for the same reason.
 	return { key, db } as unknown as PlateRecognizerContext;
 }
 
@@ -249,6 +252,9 @@ describe('ocr', () => {
 			uploadUrl: 'https://example.com/trailer.jpg',
 		});
 		expect(result.results).toHaveLength(1);
+		expect(result.results[0]?.identifier?.props?.code?.[0]?.value).toBe(
+			'12345',
+		);
 		const [config, options] = mockRequest.mock.calls[0] ?? [];
 		expect(config?.TIMEOUT).toBe(120_000);
 		expect(config?.HEADERS).toMatchObject({ Authorization: 'Token tok_test' });
@@ -264,6 +270,36 @@ describe('ocr', () => {
 			type: 'trailer_id',
 			count: 1,
 		});
+	});
+
+	it('parses the documented C-TPAT seal result', async () => {
+		mockRequest.mockResolvedValue({
+			results: [
+				{
+					seal_identification: {
+						carrier_or_brand: 'Acme',
+						seal_type: 'Bolt seal',
+					},
+					text_ocr: {
+						serial_number: { code: { value: '00123456', confidence: 0.8 } },
+						additional_markings: [],
+					},
+					barcode_data: {
+						code_present: true,
+						code_type: null,
+						decoded_value: null,
+					},
+					verification_checks: { pin_barrel_visible: true },
+				},
+			],
+		});
+		const result = await readOcr(context('tok_test'), {
+			type: 'seal_ctpat',
+			upload: 'aW1hZ2U=',
+		});
+		expect(result.results[0]?.text_ocr?.serial_number?.code?.value).toBe(
+			'00123456',
+		);
 	});
 
 	it('rejects an unknown OCR type before any request', async () => {
