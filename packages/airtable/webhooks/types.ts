@@ -88,10 +88,15 @@ const AirtableWebhookPayloadItemSchema = z
 	})
 	.loose();
 
-export const AirtableWebhookPayloadsResponseSchema = z.object({
-	cursorForNextPayload: z.number().optional(),
-	payloads: z.array(AirtableWebhookPayloadItemSchema).default([]),
-});
+// Airtable's list payloads response: `cursor` is the transaction number to pass on the next call,
+// `mightHaveMore` says whether to call again right away.
+export const AirtableWebhookPayloadsResponseSchema = z
+	.object({
+		cursor: z.number().optional(),
+		mightHaveMore: z.boolean().optional(),
+		payloads: z.array(AirtableWebhookPayloadItemSchema).default([]),
+	})
+	.loose();
 
 export type AirtableWebhookPayloadsResponse = z.infer<
 	typeof AirtableWebhookPayloadsResponseSchema

@@ -1,0 +1,1811 @@
+{
+  "id": "storyblok",
+  "displayName": "Storyblok",
+  "description": "Headless CMS content from Storyblok - manage stories, components, datasources and their entries, tags, asset metadata, releases and webhook endpoints through the Management API.",
+  "npmPackageName": "@corsair-dev/storyblok",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 43,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "space_id", "region"]
+    }
+  ],
+  "api": [
+    {
+      "path": "storyblok.api.assets.bulkDelete",
+      "shortPath": "assets.bulkDelete",
+      "description": "Delete several assets in one call, with the same effect as deleting each",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "number[]",
+            "description": "The asset ids to delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.assets.delete",
+      "shortPath": "assets.delete",
+      "description": "Delete one asset, so any content referencing it shows a broken file",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asset_id",
+            "optional": false,
+            "type": "number",
+            "description": "A Storyblok numeric id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asset",
+            "optional": false,
+            "type": "{ id?: number | null, filename?: string | null, short_filename?: string | null, space_id?: number | null, asset_folder_id?: number | null, content_type?: string | null, content_length?: number | null, alt?: string | null, copyright?: string | null, title?: string | null, source?: string | null, focus?: string | null, locked?: boolean | null, is_private?: boolean | null, publish_at?: string | null, expire_at?: string | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null, file?: Record<string, any> | null, meta_data?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.assets.get",
+      "shortPath": "assets.get",
+      "description": "Read one asset with its file details and metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asset_id",
+            "optional": false,
+            "type": "number",
+            "description": "A Storyblok numeric id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asset",
+            "optional": false,
+            "type": "{ id?: number | null, filename?: string | null, short_filename?: string | null, space_id?: number | null, asset_folder_id?: number | null, content_type?: string | null, content_length?: number | null, alt?: string | null, copyright?: string | null, title?: string | null, source?: string | null, focus?: string | null, locked?: boolean | null, is_private?: boolean | null, publish_at?: string | null, expire_at?: string | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null, file?: Record<string, any> | null, meta_data?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.assets.list",
+      "shortPath": "assets.list",
+      "description": "List assets with a search and a folder filter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Entries per page, up to 1000. Defaults to 25."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "in_folder",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assets",
+            "optional": false,
+            "type": "{ id?: number | null, filename?: string | null, short_filename?: string | null, space_id?: number | null, asset_folder_id?: number | null, content_type?: string | null, content_length?: number | null, alt?: string | null, copyright?: string | null, title?: string | null, source?: string | null, focus?: string | null, locked?: boolean | null, is_private?: boolean | null, publish_at?: string | null, expire_at?: string | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null, file?: Record<string, any> | null, meta_data?: Record<string, any> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.assets.update",
+      "shortPath": "assets.update",
+      "description": "Change an asset's metadata: alt text, title, copyright, focus point, privacy and publish window. Uploading new bytes is a separate flow and is not wrapped",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asset_id",
+            "optional": false,
+            "type": "number",
+            "description": "A Storyblok numeric id."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "alt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "copyright",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "focus",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_private",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "publish_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expire_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asset",
+            "optional": false,
+            "type": "{ id?: number | null, filename?: string | null, short_filename?: string | null, space_id?: number | null, asset_folder_id?: number | null, content_type?: string | null, content_length?: number | null, alt?: string | null, copyright?: string | null, title?: string | null, source?: string | null, focus?: string | null, locked?: boolean | null, is_private?: boolean | null, publish_at?: string | null, expire_at?: string | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null, file?: Record<string, any> | null, meta_data?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.components.create",
+      "shortPath": "components.create",
+      "description": "Create a component, which is the field schema a content type uses. Its name is the key content references",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The technical name, which content uses as its component key."
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "schema",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "Field name to its definition, such as { title: { type: \"text\" } }."
+          },
+          {
+            "key": "is_root",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_nestable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "preview_field",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "preview_tmpl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "component_group_uuid",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "component",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, display_name?: string | null, real_name?: string | null, schema?: Record<string, any> | null, image?: string | null, preview_field?: string | null, preview_tmpl?: string | null, is_root?: boolean | null, is_nestable?: boolean | null, icon?: string | null, color?: string | null, component_group_uuid?: string | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.components.delete",
+      "shortPath": "components.delete",
+      "description": "Delete a component. Content that uses it can no longer render, and this cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "component_id",
+            "optional": false,
+            "type": "number",
+            "description": "A Storyblok numeric id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "component",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, display_name?: string | null, real_name?: string | null, schema?: Record<string, any> | null, image?: string | null, preview_field?: string | null, preview_tmpl?: string | null, is_root?: boolean | null, is_nestable?: boolean | null, icon?: string | null, color?: string | null, component_group_uuid?: string | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.components.list",
+      "shortPath": "components.list",
+      "description": "List the components that define content types, with their field schemas",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Entries per page, up to 1000. Defaults to 25."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "components",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, display_name?: string | null, real_name?: string | null, schema?: Record<string, any> | null, image?: string | null, preview_field?: string | null, preview_tmpl?: string | null, is_root?: boolean | null, is_nestable?: boolean | null, icon?: string | null, color?: string | null, component_group_uuid?: string | null, created_at?: string | null, updated_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.components.update",
+      "shortPath": "components.update",
+      "description": "Replace a component's field schema. Existing content is not migrated: a removed field's values stay in stories, hidden, until a migration removes them",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "component_id",
+            "optional": false,
+            "type": "number",
+            "description": "A Storyblok numeric id."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The technical name, which content uses as its component key."
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "schema",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "Field name to its definition, such as { title: { type: \"text\" } }."
+          },
+          {
+            "key": "is_root",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_nestable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "preview_field",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "preview_tmpl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "component_group_uuid",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "component",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, display_name?: string | null, real_name?: string | null, schema?: Record<string, any> | null, image?: string | null, preview_field?: string | null, preview_tmpl?: string | null, is_root?: boolean | null, is_nestable?: boolean | null, icon?: string | null, color?: string | null, component_group_uuid?: string | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.datasourceEntries.create",
+      "shortPath": "datasourceEntries.create",
+      "description": "Add an entry to a datasource",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasource_id",
+            "optional": false,
+            "type": "number",
+            "description": "The datasource this entry belongs to."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasource_entry",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, value?: string | null, dimension_value?: string | null, position?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.datasourceEntries.delete",
+      "shortPath": "datasourceEntries.delete",
+      "description": "Delete a datasource entry; content using that option loses it",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasource_entry_id",
+            "optional": false,
+            "type": "number",
+            "description": "A Storyblok numeric id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string",
+            "description": "The id (or, for a tag, the id or name) that was deleted."
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.datasourceEntries.get",
+      "shortPath": "datasourceEntries.get",
+      "description": "Read one datasource entry with its name, value and position",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasource_entry_id",
+            "optional": false,
+            "type": "number",
+            "description": "A Storyblok numeric id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasource_entry",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, value?: string | null, dimension_value?: string | null, position?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.datasourceEntries.list",
+      "shortPath": "datasourceEntries.list",
+      "description": "List datasource entries, optionally only those of one datasource or one dimension value",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Entries per page, up to 1000. Defaults to 25."
+          },
+          {
+            "key": "datasource_id",
+            "optional": true,
+            "type": "number",
+            "description": "Only entries of this datasource."
+          },
+          {
+            "key": "dimension",
+            "optional": true,
+            "type": "number | string",
+            "description": "The numeric id of a dimension; entries then carry that dimension_value. Send it with datasource_id: Storyblok only resolves dimension values within one datasource."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasource_entries",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, value?: string | null, dimension_value?: string | null, position?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.datasourceEntries.update",
+      "shortPath": "datasourceEntries.update",
+      "description": "Replace a datasource entry's name and value",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasource_entry_id",
+            "optional": false,
+            "type": "number",
+            "description": "A Storyblok numeric id."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasource_id",
+            "optional": false,
+            "type": "number",
+            "description": "The datasource this entry belongs to."
+          },
+          {
+            "key": "dimension_value",
+            "optional": true,
+            "type": "string",
+            "description": "The value for the dimension named by dimension_id."
+          },
+          {
+            "key": "dimension_id",
+            "optional": true,
+            "type": "number",
+            "description": "The dimension whose value dimension_value sets."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasource_entry",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, value?: string | null, dimension_value?: string | null, position?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.datasources.create",
+      "shortPath": "datasources.create",
+      "description": "Create a datasource, whose slug is what content uses to reference it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string",
+            "description": "The identifier content uses to reference the datasource."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasource",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, slug?: string | null, dimensions?: Record<string, any>[] | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.datasources.delete",
+      "shortPath": "datasources.delete",
+      "description": "Delete a datasource along with its entries. Content that references it is left pointing at nothing",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasource_id",
+            "optional": false,
+            "type": "number",
+            "description": "A Storyblok numeric id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string",
+            "description": "The id (or, for a tag, the id or name) that was deleted."
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.datasources.get",
+      "shortPath": "datasources.get",
+      "description": "Read one datasource with its dimensions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasource_id",
+            "optional": false,
+            "type": "number",
+            "description": "A Storyblok numeric id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasource",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, slug?: string | null, dimensions?: Record<string, any>[] | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.datasources.list",
+      "shortPath": "datasources.list",
+      "description": "List the datasources on the space, such as reusable option lists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Entries per page, up to 1000. Defaults to 25."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasources",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, slug?: string | null, dimensions?: Record<string, any>[] | null, created_at?: string | null, updated_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.datasources.update",
+      "shortPath": "datasources.update",
+      "description": "Replace a datasource name and slug",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasource_id",
+            "optional": false,
+            "type": "number",
+            "description": "A Storyblok numeric id."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string",
+            "description": "The identifier content uses to reference the datasource."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasource",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, slug?: string | null, dimensions?: Record<string, any>[] | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.releases.create",
+      "shortPath": "releases.create",
+      "description": "Create a release that stories can be grouped into and published together",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "release_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "When to release it, ISO 8601."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "public",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "release",
+            "optional": false,
+            "type": "{ id?: number | null, uuid?: string | null, name?: string | null, release_at?: string | null, released?: boolean | null, timezone?: string | null, public?: boolean | null, owner_id?: number | null, branches_to_deploy?: number[] | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.releases.delete",
+      "shortPath": "releases.delete",
+      "description": "Delete a release. The stories grouped in it stay, but the grouping is gone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "release_id",
+            "optional": false,
+            "type": "number",
+            "description": "A Storyblok numeric id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "release",
+            "optional": false,
+            "type": "{ id?: number | null, uuid?: string | null, name?: string | null, release_at?: string | null, released?: boolean | null, timezone?: string | null, public?: boolean | null, owner_id?: number | null, branches_to_deploy?: number[] | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.releases.get",
+      "shortPath": "releases.get",
+      "description": "Read one release with its schedule, released state and the branches it deploys",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "release_id",
+            "optional": false,
+            "type": "number",
+            "description": "A Storyblok numeric id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "release",
+            "optional": false,
+            "type": "{ id?: number | null, uuid?: string | null, name?: string | null, release_at?: string | null, released?: boolean | null, timezone?: string | null, public?: boolean | null, owner_id?: number | null, branches_to_deploy?: number[] | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.releases.list",
+      "shortPath": "releases.list",
+      "description": "List releases with their schedules and released state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Entries per page, up to 1000. Defaults to 25."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "releases",
+            "optional": false,
+            "type": "{ id?: number | null, uuid?: string | null, name?: string | null, release_at?: string | null, released?: boolean | null, timezone?: string | null, public?: boolean | null, owner_id?: number | null, branches_to_deploy?: number[] | null, created_at?: string | null, updated_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.releases.update",
+      "shortPath": "releases.update",
+      "description": "Change a release, or publish it in the same call with do_release",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "release_id",
+            "optional": false,
+            "type": "number",
+            "description": "A Storyblok numeric id."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "release_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "When to release it, ISO 8601."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "public",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "do_release",
+            "optional": true,
+            "type": "boolean",
+            "description": "Release now rather than saving the schedule."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "release",
+            "optional": false,
+            "type": "{ id?: number | null, uuid?: string | null, name?: string | null, release_at?: string | null, released?: boolean | null, timezone?: string | null, public?: boolean | null, owner_id?: number | null, branches_to_deploy?: number[] | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.spaces.get",
+      "shortPath": "spaces.get",
+      "description": "Read the configured space: its plan, counts, environments and defaults",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "space",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, domain?: string | null, uniq_domain?: string | null, plan?: string | null, plan_level?: number | null, role?: string | null, owner_id?: number | null, parent_id?: number | null, stories_count?: number | null, assets_count?: number | null, trial?: boolean | null, default_root?: string | null, created_at?: string | null, limits?: Record<string, any> | null, options?: Record<string, any> | null, environments?: Record<string, any>[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.spaces.list",
+      "shortPath": "spaces.list",
+      "description": "List the spaces the token can reach, which is how a space id is found",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Entries per page, up to 1000. Defaults to 25."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "spaces",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, domain?: string | null, uniq_domain?: string | null, plan?: string | null, plan_level?: number | null, role?: string | null, owner_id?: number | null, parent_id?: number | null, stories_count?: number | null, assets_count?: number | null, trial?: boolean | null, default_root?: string | null, created_at?: string | null, limits?: Record<string, any> | null, options?: Record<string, any> | null, environments?: Record<string, any>[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.stories.create",
+      "shortPath": "stories.create",
+      "description": "Create a story, optionally publishing it or grouping it in a release in the same call",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The story name, which the UI shows."
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string",
+            "description": "The URL segment. Storyblok derives full_slug from this and the parent."
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "The story content: a component key naming the content type plus that component's fields, keyed by field name, such as { component: \"page\", title: \"Welcome\" }."
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_startpage",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "disable_fe_editor",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "meta_data",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "tag_list",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "publish",
+            "optional": true,
+            "type": "boolean",
+            "description": "Publish in the same call rather than leaving a draft."
+          },
+          {
+            "key": "release_id",
+            "optional": true,
+            "type": "number",
+            "description": "Group the story in this release instead of publishing it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "story",
+            "optional": false,
+            "type": "{ id?: number | null, uuid?: string | null, name?: string | null, slug?: string | null, full_slug?: string | null, path?: string | null, parent_id?: number | null, group_id?: string | null, is_folder?: boolean | null, is_startpage?: boolean | null, published?: boolean | null, published_at?: string | null, first_published_at?: string | null, unpublished_changes?: boolean | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null, sort_by_date?: string | null, tag_list?: string[] | null, release_ids?: number[] | null, position?: number | null, content?: Record<string, any> | null, meta_data?: Record<string, any> | null, alternates?: Record<string, any>[] | null, breadcrumbs?: Record<string, any>[] | null, translated_slugs?: Record<string, any>[] | null, localized_paths?: Record<string, any>[] | null, default_root?: string | null, disable_fe_editor?: boolean | null, preview_token?: Record<string, any> | null, stage?: Record<string, any> | null, last_author?: Record<string, any> | null, last_author_id?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.stories.delete",
+      "shortPath": "stories.delete",
+      "description": "Delete a story and trash it. Storyblok keeps it in the trash, but this plugin does not wrap a restore, so treat it as permanent",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "story_id",
+            "optional": false,
+            "type": "number",
+            "description": "The numeric story id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "story",
+            "optional": false,
+            "type": "{ id?: number | null, uuid?: string | null, name?: string | null, slug?: string | null, full_slug?: string | null, path?: string | null, parent_id?: number | null, group_id?: string | null, is_folder?: boolean | null, is_startpage?: boolean | null, published?: boolean | null, published_at?: string | null, first_published_at?: string | null, unpublished_changes?: boolean | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null, sort_by_date?: string | null, tag_list?: string[] | null, release_ids?: number[] | null, position?: number | null, content?: Record<string, any> | null, meta_data?: Record<string, any> | null, alternates?: Record<string, any>[] | null, breadcrumbs?: Record<string, any>[] | null, translated_slugs?: Record<string, any>[] | null, localized_paths?: Record<string, any>[] | null, default_root?: string | null, disable_fe_editor?: boolean | null, preview_token?: Record<string, any> | null, stage?: Record<string, any> | null, last_author?: Record<string, any> | null, last_author_id?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.stories.get",
+      "shortPath": "stories.get",
+      "description": "Read one story with its full content, published state, tags and version ids",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "story_id",
+            "optional": false,
+            "type": "number",
+            "description": "The numeric story id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "story",
+            "optional": false,
+            "type": "{ id?: number | null, uuid?: string | null, name?: string | null, slug?: string | null, full_slug?: string | null, path?: string | null, parent_id?: number | null, group_id?: string | null, is_folder?: boolean | null, is_startpage?: boolean | null, published?: boolean | null, published_at?: string | null, first_published_at?: string | null, unpublished_changes?: boolean | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null, sort_by_date?: string | null, tag_list?: string[] | null, release_ids?: number[] | null, position?: number | null, content?: Record<string, any> | null, meta_data?: Record<string, any> | null, alternates?: Record<string, any>[] | null, breadcrumbs?: Record<string, any>[] | null, translated_slugs?: Record<string, any>[] | null, localized_paths?: Record<string, any>[] | null, default_root?: string | null, disable_fe_editor?: boolean | null, preview_token?: Record<string, any> | null, stage?: Record<string, any> | null, last_author?: Record<string, any> | null, last_author_id?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.stories.list",
+      "shortPath": "stories.list",
+      "description": "List stories with filters for slug, tag, parent, publication state and release. This route omits each story's content unless with_summary is set",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Entries per page, up to 1000. Defaults to 25."
+          },
+          {
+            "key": "text_search",
+            "optional": true,
+            "type": "string",
+            "description": "Search the name, slug and content of every story."
+          },
+          {
+            "key": "by_slugs",
+            "optional": true,
+            "type": "string",
+            "description": "Full slugs to include, comma separated. A trailing * matches a prefix, as in posts/*."
+          },
+          {
+            "key": "excluding_slugs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "by_ids",
+            "optional": true,
+            "type": "string",
+            "description": "Story ids, comma separated."
+          },
+          {
+            "key": "by_uuids",
+            "optional": true,
+            "type": "string",
+            "description": "Story UUIDs, comma separated."
+          },
+          {
+            "key": "with_tag",
+            "optional": true,
+            "type": "string",
+            "description": "Tag names, comma separated."
+          },
+          {
+            "key": "is_published",
+            "optional": true,
+            "type": "boolean",
+            "description": "True for published stories only, false for drafts only."
+          },
+          {
+            "key": "folder_only",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "story_only",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "with_parent",
+            "optional": true,
+            "type": "number",
+            "description": "Only stories under this parent id."
+          },
+          {
+            "key": "starts_with",
+            "optional": true,
+            "type": "string",
+            "description": "Only slugs starting with this value."
+          },
+          {
+            "key": "in_trash",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only deleted stories."
+          },
+          {
+            "key": "in_release",
+            "optional": true,
+            "type": "number",
+            "description": "Only stories grouped in this release."
+          },
+          {
+            "key": "with_summary",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include a content_summary. Without it this route omits the content field entirely."
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "string",
+            "description": "Sorting, such as created_at:desc or content.my_field:asc:float."
+          },
+          {
+            "key": "favourite",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stories",
+            "optional": false,
+            "type": "{ id?: number | null, uuid?: string | null, name?: string | null, slug?: string | null, full_slug?: string | null, path?: string | null, parent_id?: number | null, group_id?: string | null, is_folder?: boolean | null, is_startpage?: boolean | null, published?: boolean | null, published_at?: string | null, first_published_at?: string | null, unpublished_changes?: boolean | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null, sort_by_date?: string | null, tag_list?: string[] | null, release_ids?: number[] | null, position?: number | null, content?: Record<string, any> | null, meta_data?: Record<string, any> | null, alternates?: Record<string, any>[] | null, breadcrumbs?: Record<string, any>[] | null, translated_slugs?: Record<string, any>[] | null, localized_paths?: Record<string, any>[] | null, default_root?: string | null, disable_fe_editor?: boolean | null, preview_token?: Record<string, any> | null, stage?: Record<string, any> | null, last_author?: Record<string, any> | null, last_author_id?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.stories.publish",
+      "shortPath": "stories.publish",
+      "description": "Publish a story, or add it to a release with release_id. Storyblok implements this as a GET, but it changes published state",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "story_id",
+            "optional": false,
+            "type": "number",
+            "description": "A Storyblok numeric id."
+          },
+          {
+            "key": "release_id",
+            "optional": true,
+            "type": "number",
+            "description": "Add the story to this release instead of publishing it now."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "story",
+            "optional": false,
+            "type": "{ id?: number | null, uuid?: string | null, name?: string | null, slug?: string | null, full_slug?: string | null, path?: string | null, parent_id?: number | null, group_id?: string | null, is_folder?: boolean | null, is_startpage?: boolean | null, published?: boolean | null, published_at?: string | null, first_published_at?: string | null, unpublished_changes?: boolean | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null, sort_by_date?: string | null, tag_list?: string[] | null, release_ids?: number[] | null, position?: number | null, content?: Record<string, any> | null, meta_data?: Record<string, any> | null, alternates?: Record<string, any>[] | null, breadcrumbs?: Record<string, any>[] | null, translated_slugs?: Record<string, any>[] | null, localized_paths?: Record<string, any>[] | null, default_root?: string | null, disable_fe_editor?: boolean | null, preview_token?: Record<string, any> | null, stage?: Record<string, any> | null, last_author?: Record<string, any> | null, last_author_id?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.stories.unpublish",
+      "shortPath": "stories.unpublish",
+      "description": "Unpublish a story, so the Content Delivery API stops serving it. Storyblok implements this as a GET",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "story_id",
+            "optional": false,
+            "type": "number",
+            "description": "The numeric story id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "story",
+            "optional": false,
+            "type": "{ id?: number | null, uuid?: string | null, name?: string | null, slug?: string | null, full_slug?: string | null, path?: string | null, parent_id?: number | null, group_id?: string | null, is_folder?: boolean | null, is_startpage?: boolean | null, published?: boolean | null, published_at?: string | null, first_published_at?: string | null, unpublished_changes?: boolean | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null, sort_by_date?: string | null, tag_list?: string[] | null, release_ids?: number[] | null, position?: number | null, content?: Record<string, any> | null, meta_data?: Record<string, any> | null, alternates?: Record<string, any>[] | null, breadcrumbs?: Record<string, any>[] | null, translated_slugs?: Record<string, any>[] | null, localized_paths?: Record<string, any>[] | null, default_root?: string | null, disable_fe_editor?: boolean | null, preview_token?: Record<string, any> | null, stage?: Record<string, any> | null, last_author?: Record<string, any> | null, last_author_id?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.stories.update",
+      "shortPath": "stories.update",
+      "description": "Replace a story's fields and content. Sending publish also publishes it; without it the change stays a draft",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "story_id",
+            "optional": false,
+            "type": "number",
+            "description": "A Storyblok numeric id."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The story name, which the UI shows."
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string",
+            "description": "The URL segment. Storyblok derives full_slug from this and the parent."
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "The story content: a component key naming the content type plus that component's fields, keyed by field name, such as { component: \"page\", title: \"Welcome\" }."
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_startpage",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "disable_fe_editor",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "meta_data",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "tag_list",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "publish",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "release_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string",
+            "description": "Update this language version rather than the default one."
+          },
+          {
+            "key": "force_update",
+            "optional": true,
+            "type": "string",
+            "description": "Storyblok's own override flag, passed through as sent."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "story",
+            "optional": false,
+            "type": "{ id?: number | null, uuid?: string | null, name?: string | null, slug?: string | null, full_slug?: string | null, path?: string | null, parent_id?: number | null, group_id?: string | null, is_folder?: boolean | null, is_startpage?: boolean | null, published?: boolean | null, published_at?: string | null, first_published_at?: string | null, unpublished_changes?: boolean | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null, sort_by_date?: string | null, tag_list?: string[] | null, release_ids?: number[] | null, position?: number | null, content?: Record<string, any> | null, meta_data?: Record<string, any> | null, alternates?: Record<string, any>[] | null, breadcrumbs?: Record<string, any>[] | null, translated_slugs?: Record<string, any>[] | null, localized_paths?: Record<string, any>[] | null, default_root?: string | null, disable_fe_editor?: boolean | null, preview_token?: Record<string, any> | null, stage?: Record<string, any> | null, last_author?: Record<string, any> | null, last_author_id?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.tags.create",
+      "shortPath": "tags.create",
+      "description": "Create a tag, optionally attaching it to a story as it is created",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "story_id",
+            "optional": true,
+            "type": "number",
+            "description": "Attach the new tag to this story as it is created."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, taggings_count?: number | null, tag_on_stories?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.tags.delete",
+      "shortPath": "tags.delete",
+      "description": "Delete a tag, removing it from every story that carried it. This cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag_id",
+            "optional": false,
+            "type": "string",
+            "description": "The tag id or name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string",
+            "description": "The id (or, for a tag, the id or name) that was deleted."
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "List the tags on the space with how many stories carry each",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Entries per page, up to 1000. Defaults to 25."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, taggings_count?: number | null, tag_on_stories?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.tags.update",
+      "shortPath": "tags.update",
+      "description": "Rename a tag, which updates every story that carries it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, taggings_count?: number | null, tag_on_stories?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Register a webhook endpoint for the given actions, optionally with a secret Storyblok signs each delivery with",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "endpoint",
+            "optional": false,
+            "type": "string",
+            "description": "The HTTPS URL Storyblok posts to."
+          },
+          {
+            "key": "actions",
+            "optional": false,
+            "type": "string[]",
+            "description": "The events to send, such as story.published. webhooks.listActions returns the accepted values."
+          },
+          {
+            "key": "activated",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to true when creating."
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string | null",
+            "description": "When set, Storyblok signs each delivery with it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_endpoint",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, description?: string | null, endpoint?: string | null, space_id?: number | null, secret?: string | null, actions?: string[] | null, activated?: boolean | null, deleted_at?: string | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a webhook endpoint, so Storyblok stops posting to its URL",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_endpoint_id",
+            "optional": false,
+            "type": "number",
+            "description": "A Storyblok numeric id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_endpoint",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, description?: string | null, endpoint?: string | null, space_id?: number | null, secret?: string | null, actions?: string[] | null, activated?: boolean | null, deleted_at?: string | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.webhooks.get",
+      "shortPath": "webhooks.get",
+      "description": "Read one webhook endpoint with its actions and activation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_endpoint_id",
+            "optional": false,
+            "type": "number",
+            "description": "A Storyblok numeric id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_endpoint",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, description?: string | null, endpoint?: string | null, space_id?: number | null, secret?: string | null, actions?: string[] | null, activated?: boolean | null, deleted_at?: string | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List the webhook endpoints on the space",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Entries per page, up to 1000. Defaults to 25."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_endpoints",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, description?: string | null, endpoint?: string | null, space_id?: number | null, secret?: string | null, actions?: string[] | null, activated?: boolean | null, deleted_at?: string | null, created_at?: string | null, updated_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.webhooks.listActions",
+      "shortPath": "webhooks.listActions",
+      "description": "List the action names a webhook may subscribe to, read from Storyblok so a new event needs no plugin change",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "allowed_actions",
+            "optional": false,
+            "type": "{ action: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storyblok.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Replace a webhook endpoint, its action list or its activation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_endpoint_id",
+            "optional": false,
+            "type": "number",
+            "description": "A Storyblok numeric id."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "endpoint",
+            "optional": false,
+            "type": "string",
+            "description": "The HTTPS URL Storyblok posts to."
+          },
+          {
+            "key": "actions",
+            "optional": false,
+            "type": "string[]",
+            "description": "The events to send, such as story.published. webhooks.listActions returns the accepted values."
+          },
+          {
+            "key": "activated",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to true when creating."
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string | null",
+            "description": "When set, Storyblok signs each delivery with it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_endpoint",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, description?: string | null, endpoint?: string | null, space_id?: number | null, secret?: string | null, actions?: string[] | null, activated?: boolean | null, deleted_at?: string | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
