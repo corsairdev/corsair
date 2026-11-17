@@ -4466,6 +4466,14 @@
                 ]
               },
               {
+                "group": "Serply",
+                "pages": [
+                  "plugins/serply/overview",
+                  "plugins/serply/api",
+                  "plugins/serply/database"
+                ]
+              },
+              {
                 "group": "ServiceM8",
                 "pages": [
                   "plugins/servicem8/overview",
