@@ -14,7 +14,7 @@ import type {
 	ItemsOutput,
 	ListInput,
 } from './types';
-import { ListInputSchema } from './types';
+import { ItemOutputSchema, ItemsOutputSchema, ListInputSchema } from './types';
 
 /** The REST collections this plugin covers. */
 type Resource =
@@ -91,10 +91,11 @@ export function formFrom(
 	return form;
 }
 
+// unknown: the response body; itemsOf checks the envelope.
 function first(body: unknown, what: string): NetLicensingItem {
 	const item = itemsOf(body).items[0];
 	if (!item) throw new Error(`NetLicensing returned no ${what}`);
-	return item;
+	return ItemOutputSchema.parse({ item }).item;
 }
 
 export function listOf(
@@ -106,9 +107,14 @@ export function listOf(
 		const body = await netlicensingGet<unknown>(ctx.key, `/${resource}`, {
 			filter: parsed.filter,
 		});
-		const { items, page } = itemsOf(body);
-		await logEventFromContext(ctx, event, { count: items.length }, 'completed');
-		return { items, page };
+		const result = ItemsOutputSchema.parse(itemsOf(body));
+		await logEventFromContext(
+			ctx,
+			event,
+			{ count: result.items.length },
+			'completed',
+		);
+		return result;
 	};
 }
 

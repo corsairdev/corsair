@@ -288,6 +288,41 @@ describe('reads', () => {
 		});
 	});
 
+	it('keeps paging on the original licenses and products lists', async () => {
+		mockRequest.mockResolvedValueOnce({
+			items: {
+				item: [
+					{ type: 'License', property: [{ name: 'number', value: 'L1' }] },
+				],
+				pagenumber: '0',
+				totalpages: '2',
+				totalitems: '150',
+				hasnext: 'true',
+			},
+		});
+		const result = await Licenses.list(ctx(), { filter: 'page=0;items=100' });
+		expect(result.page).toEqual({
+			pageNumber: 0,
+			totalPages: 2,
+			totalItems: 150,
+			hasNext: true,
+		});
+	});
+
+	it.each([
+		['an HTML error page', '<html>bad gateway</html>'],
+		['an object without items', { error: 'x' }],
+	])('fails on %s instead of returning nothing', async (_n, body) => {
+		mockRequest.mockResolvedValueOnce(body);
+		await expect(Licensees.list(ctx(), {})).rejects.toThrow(
+			'unexpected response',
+		);
+		mockRequest.mockResolvedValueOnce(body);
+		await expect(Products.list(ctx(), {})).rejects.toThrow(
+			'unexpected response',
+		);
+	});
+
 	it('returns an empty list when NetLicensing sends no items', async () => {
 		mockRequest.mockResolvedValueOnce({ items: { item: [] } });
 		const result = await Licensees.list(ctx(), {});

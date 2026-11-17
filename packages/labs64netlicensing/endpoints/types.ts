@@ -16,12 +16,23 @@ export const ProductSchema = z.object({
 	version: z.string().optional(),
 });
 
+const ListPageSchema = z
+	.object({
+		pageNumber: z.number().optional(),
+		totalPages: z.number().optional(),
+		totalItems: z.number().optional(),
+		hasNext: z.boolean().optional(),
+	})
+	.describe('Paging from NetLicensing; ask for the next page with filter');
+
 export const ListLicensesResponseSchema = z.object({
 	licenses: z.array(LicenseSchema),
+	page: ListPageSchema,
 });
 
 export const ListProductsResponseSchema = z.object({
 	products: z.array(ProductSchema),
+	page: ListPageSchema,
 });
 
 export type ListInput = z.infer<typeof ListInputSchema>;

@@ -26,6 +26,7 @@ function context(
 	key: string,
 	db?: NetLicensingContext['db'],
 ): NetLicensingContext {
+	// unknown: the endpoints read only `key` and `db`; a full context is not needed.
 	return { key, db } as unknown as NetLicensingContext;
 }
 
@@ -59,6 +60,7 @@ describe('licenses.list', () => {
 		const result = await listLicenses(
 			context('sekrit', {
 				licenses: { upsertByEntityId: upsert },
+				// unknown: a fake table with only the methods the endpoint calls.
 			} as unknown as NetLicensingContext['db']),
 			{ filter: 'page=0;items=50' },
 		);
@@ -155,6 +157,7 @@ describe('products.list', () => {
 		const result = await listProducts(
 			context('sekrit', {
 				products: { upsertByEntityId: upsert },
+				// unknown: a fake table with only the methods the endpoint calls.
 			} as unknown as NetLicensingContext['db']),
 			{},
 		);

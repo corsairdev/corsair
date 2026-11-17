@@ -1,6 +1,7 @@
 import type { CorsairEndpoint } from 'corsair/core';
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
-import { listedItems, netlicensingGet, optionalFlag } from '../client';
+import type { NetLicensingPage } from '../client';
+import { itemsOf, listedItems, netlicensingGet, optionalFlag } from '../client';
 import type { NetLicensingContext } from '../context';
 import {
 	NetLicensingLicenseEntity,
@@ -17,7 +18,7 @@ async function load(
 	ctx: NetLicensingContext,
 	path: '/license' | '/product',
 	input: ListInput | undefined,
-): Promise<Record<string, string>[]> {
+): Promise<{ rows: Record<string, string>[]; page: NetLicensingPage }> {
 	if (!ctx.key) {
 		throw new AuthMissingError('labs64netlicensing', 'api_key');
 	}
@@ -25,7 +26,7 @@ async function load(
 	const body = await netlicensingGet<unknown>(ctx.key, path, {
 		filter: parsed.filter,
 	});
-	return listedItems(body);
+	return { rows: listedItems(body), page: itemsOf(body).page };
 }
 
 export const listLicenses: CorsairEndpoint<
@@ -33,7 +34,8 @@ export const listLicenses: CorsairEndpoint<
 	ListInput,
 	ListLicensesResponse
 > = async (ctx, input) => {
-	const rows = (await load(ctx, '/license', input)).flatMap((item) => {
+	const loaded = await load(ctx, '/license', input);
+	const rows = loaded.rows.flatMap((item) => {
 		const row = NetLicensingLicenseEntity.safeParse({
 			number: item.number,
 			active: optionalFlag(item.active),
@@ -55,7 +57,7 @@ export const listLicenses: CorsairEndpoint<
 		{ count: rows.length },
 		'completed',
 	);
-	return { licenses: rows };
+	return { licenses: rows, page: loaded.page };
 };
 
 export const listProducts: CorsairEndpoint<
@@ -63,7 +65,8 @@ export const listProducts: CorsairEndpoint<
 	ListInput,
 	ListProductsResponse
 > = async (ctx, input) => {
-	const rows = (await load(ctx, '/product', input)).flatMap((item) => {
+	const loaded = await load(ctx, '/product', input);
+	const rows = loaded.rows.flatMap((item) => {
 		const row = NetLicensingProductEntity.safeParse({
 			number: item.number,
 			active: optionalFlag(item.active),
@@ -87,5 +90,5 @@ export const listProducts: CorsairEndpoint<
 		{ count: rows.length },
 		'completed',
 	);
-	return { products: rows };
+	return { products: rows, page: loaded.page };
 };

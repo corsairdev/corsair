@@ -211,7 +211,13 @@ export function itemsOf(body: unknown): {
 	page: NetLicensingPage;
 	ttl?: string;
 } {
-	const record = (body ?? {}) as Record<string, unknown>;
+	// A JSON object with `items` (an object, or null when NetLicensing has
+	// nothing to return) is the documented envelope; anything else, such as
+	// an HTML error page, is an error rather than an empty result.
+	if (!body || typeof body !== 'object' || !('items' in body)) {
+		throw new Error('NetLicensing returned an unexpected response');
+	}
+	const record = body as Record<string, unknown>;
 	const items = (record.items ?? {}) as Record<string, unknown>;
 	const num = (v: unknown) =>
 		v == null || v === '' || Number.isNaN(Number(v)) ? undefined : Number(v);
@@ -235,7 +241,9 @@ export function itemsOf(body: unknown): {
 
 // unknown: the response body, checked field by field.
 export function listedItems(body: unknown): Record<string, string>[] {
-	if (!body || typeof body !== 'object') return [];
+	if (!body || typeof body !== 'object' || !('items' in body)) {
+		throw new Error('NetLicensing returned an unexpected response');
+	}
 	const items = (body as { items?: unknown }).items;
 	if (!items || typeof items !== 'object') return [];
 	return asList((items as { item?: unknown }).item).map(propertyMap);

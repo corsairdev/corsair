@@ -536,6 +536,7 @@ GET /license. Returns number and active for each license, and stores them locall
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `licenses` | `object[]` | Yes | — |
+| `page` | `object` | Yes | Paging from NetLicensing; ask for the next page with filter |
 
 <AccordionGroup>
 <Accordion title="licenses full type">
@@ -545,6 +546,18 @@ GET /license. Returns number and active for each license, and stores them locall
   number: string,
   active?: boolean
 }[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  pageNumber?: number,
+  totalPages?: number,
+  totalItems?: number,
+  hasNext?: boolean
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1350,6 +1363,7 @@ GET /product. Returns number, active, name and version, and stores them locally.
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `products` | `object[]` | Yes | — |
+| `page` | `object` | Yes | Paging from NetLicensing; ask for the next page with filter |
 
 <AccordionGroup>
 <Accordion title="products full type">
@@ -1361,6 +1375,18 @@ GET /product. Returns number, active, name and version, and stores them locally.
   name?: string,
   version?: string
 }[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  pageNumber?: number,
+  totalPages?: number,
+  totalItems?: number,
+  hasNext?: boolean
+}
 ```
 </Accordion>
 </AccordionGroup>
