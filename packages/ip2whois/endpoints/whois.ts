@@ -19,6 +19,11 @@ import {
 	HostedLookupResponseSchema,
 } from './types';
 
+/**
+ * IP2WHOIS can send `{ error: { error_code, error_message } }` with HTTP 200.
+ * The body is untrusted provider JSON, so it stays `unknown` and each level is
+ * checked before it is read.
+ */
 function failureMessage(body: unknown): string | undefined {
 	if (!body || typeof body !== 'object' || !('error' in body)) return undefined;
 	const error = (body as { error?: unknown }).error;
@@ -39,6 +44,7 @@ export const lookupDomain: CorsairEndpoint<
 	}
 
 	const parsed = DomainLookupInputSchema.parse(input);
+	// `unknown` until DomainLookupResponseSchema parses it: untrusted provider JSON.
 	const body = await makeIp2whoisRequest<unknown>(ctx.key, '/v2', {
 		domain: parsed.domain,
 	});
@@ -62,6 +68,7 @@ export const lookupHosted: CorsairEndpoint<
 	}
 
 	const parsed = HostedLookupInputSchema.parse(input);
+	// `unknown` until HostedLookupResponseSchema parses it: untrusted provider JSON.
 	const body = await makeIp2whoisRequest<unknown>(ctx.key, '/domains', {
 		ip: parsed.ip,
 		page: parsed.page,
