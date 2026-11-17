@@ -439,6 +439,7 @@ export const BaseProviders = [
 	'mrscraper',
 	'nanonets',
 	'nasa',
+	'nasdaq',
 	'neon',
 	'netsuite',
 	'neverbounce',
@@ -1150,6 +1151,7 @@ export const ProviderDisplayNames = {
 	mrscraper: 'MrScraper',
 	nanonets: 'Nanonets',
 	nasa: 'NASA',
+	nasdaq: 'Nasdaq Data Link',
 	neon: 'Neon',
 	netsuite: 'NetSuite',
 	neverbounce: 'NeverBounce',
@@ -1868,6 +1870,7 @@ export type AllProviders =
 	| 'mrscraper'
 	| 'nanonets'
 	| 'nasa'
+	| 'nasdaq'
 	| 'neon'
 	| 'netsuite'
 	| 'neverbounce'

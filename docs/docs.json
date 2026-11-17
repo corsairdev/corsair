@@ -3651,6 +3651,14 @@
                 ]
               },
               {
+                "group": "Nasdaq Data Link",
+                "pages": [
+                  "plugins/nasdaq/overview",
+                  "plugins/nasdaq/api",
+                  "plugins/nasdaq/database"
+                ]
+              },
+              {
                 "group": "Neon",
                 "pages": [
                   "plugins/neon/overview",
