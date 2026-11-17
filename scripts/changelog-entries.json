@@ -7760,5 +7760,23 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/mistralai",
+    "dir": "packages/mistralai",
+    "name": "Mistral AI",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/tave",
+    "dir": "packages/tave",
+    "name": "Tave",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
