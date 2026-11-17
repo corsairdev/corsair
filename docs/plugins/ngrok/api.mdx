@@ -812,7 +812,7 @@ List cloud endpoints with their public URL, upstream and traffic policy, newest 
 **Risk:** `read`
 
 ```ts
-await corsair.ngrok.api.endpoints.list({ limit: 10, filter: 'proto="https"' });
+await corsair.ngrok.api.endpoints.list({ limit: 10, filter: 'obj.proto == "https"' });
 ```
 
 **Input**
@@ -821,7 +821,7 @@ await corsair.ngrok.api.endpoints.list({ limit: 10, filter: 'proto="https"' });
 |------|------|----------|-------------|
 | `before_id` | `string` | No | The page cursor: the before_id from the last next_page_uri, or that whole URL. |
 | `limit` | `number` | No | Most results to return. |
-| `filter` | `string` | No | ngrok filter syntax, e.g. description="my app" or proto="https". |
+| `filter` | `string` | No | A CEL expression over each item as `obj`, e.g. obj.description == "my app" or obj.proto == "https". |
 
 
 
