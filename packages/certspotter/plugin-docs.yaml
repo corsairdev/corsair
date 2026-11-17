@@ -1,0 +1,32 @@
+displayName: SSLMate Cert Spotter
+description: 'Search Certificate Transparency logs for a domain''s certificates, and follow the stream of new issuances.'
+domain: sslmate.com
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key at https://sslmate.com/account/api_keys. The free tier allows 100 single-hostname queries an hour and 10 full-domain queries an hour; paid plans raise both.
+
+  Things to know:
+
+  - **Paging is a cursor.** The last issuance's `id` is the next call's `after`. Repeat until the answer is an empty array: you have caught up. The operation returns only the array, not the provider's `Retry-After` header, so wait a few minutes before asking again with the same cursor (Cert Spotter currently asks firehose readers to wait 5 minutes).
+  - **Fields need `expand`.** `dns_names`, `issuer`, `revocation`, `problem_reporting`, `cert_der` and the `pubkey` fields are left out unless named in `expand`. A nested field takes a dotted path, such as `issuer.caa_domains`.
+  - **`revoked` is three-state.** It is `true`, `false`, or `null` when Cert Spotter cannot determine the status. Expired certificates always report `null`.
+  - **Wildcards.** A request for `www.example.com` does not return a `*.example.com` certificate unless `match_wildcards` is true, and sub-domain certificates need `include_subdomains`.
+  - **The firehose needs its own subscription.** `firehose.list` returns every issuance across all logs. Falling too far behind answers `lagging_client`, which means restart from the end rather than retry.
+  - **Two failures are not retried.** `timeout` means the query exceeded your plan's limit, and `payment_required` means the subscription lapsed. Both need a plan change, not a replay.
+examples:
+  read:
+    path: issuances.list
+    title: List the certificates for a domain
+    args:
+      domain: example.com
+      expand:
+        - dns_names
+        - issuer
+apiExamples:
+  issuances.list:
+    call: "{ domain: 'example.com', include_subdomains: true, expand: ['dns_names', 'issuer', 'revocation'] }"
+  firehose.list:
+    call: "{ after: '17433446883' }"
+apiNotes:
+  issuances.list: 'Take `id` from the last issuance and pass it as `after` to page. An empty array means you have caught up; wait a few minutes before asking again with the same cursor.'
+  firehose.list: 'Requires a Firehose subscription. An empty array means you have caught up; wait about 5 minutes before the next call. Omit `after` to start from about the last hour; a `lagging_client` error means restart without it.'

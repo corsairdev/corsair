@@ -140,6 +140,7 @@ export const BaseProviders = [
 	'cdrplatform',
 	'celigo',
 	'certifier',
+	'certspotter',
 	'chaser',
 	'chatbotkit',
 	'chatfai',
@@ -244,6 +245,7 @@ export const BaseProviders = [
 	'esignatures',
 	'erpnext',
 	'esputnik',
+	'etermin',
 	'eventbrite',
 	'eventee',
 	'eventzilla',
@@ -273,12 +275,14 @@ export const BaseProviders = [
 	'flexisign',
 	'flutterwave',
 	'fluxguard',
+	'fly',
 	'folk',
 	'followupboss',
 	'fomo',
 	'formbricks',
 	'formdesk',
 	'foursquare',
+	'freshdesk',
 	'fundable',
 	'gemini',
 	'gagelist',
@@ -301,6 +305,7 @@ export const BaseProviders = [
 	'gleap',
 	'gmail',
 	'gmicloud',
+	'godial',
 	'gong',
 	'googleaddressvalidation',
 	'googleanalytics',
@@ -366,6 +371,7 @@ export const BaseProviders = [
 	'klaviyo',
 	'klazify',
 	'kling',
+	'klipfolio',
 	'knack',
 	'kofi',
 	'kommo',
@@ -400,6 +406,7 @@ export const BaseProviders = [
 	'miro',
 	'missive',
 	'mixmax',
+	'modelry',
 	'monday',
 	'mondaymcp',
 	'moonclerk',
@@ -430,6 +437,7 @@ export const BaseProviders = [
 	'outlook',
 	'pagerduty',
 	'parallel',
+	'parma',
 	'parseur',
 	'pdfapi',
 	'pdfco',
@@ -521,15 +529,22 @@ export const BaseProviders = [
 	'servicenow',
 	'sevdesk',
 	'sharepoint',
+	'shipengine',
 	'shippo',
+	'shopify',
 	'shortcut',
 	'shortio',
+	'simpleanalytics',
+	'simplekpi',
+	'simplero',
+	'simplesat',
 	'slack',
 	'slackbot',
 	'snapchat',
 	'snowflake',
 	'sourcegraph',
 	'spoki',
+	'spotlightr',
 	'spotify',
 	'stackai',
 	'stackexchange',
@@ -538,6 +553,8 @@ export const BaseProviders = [
 	'streamtime',
 	'stripe',
 	'studiobyai21labs',
+	'suitedash',
+	'supersaas',
 	'supabase',
 	'supadata',
 	'surf',
@@ -547,8 +564,12 @@ export const BaseProviders = [
 	'taggun',
 	'tally',
 	'telnyx',
+	'thanksio',
 	'tavily',
+	'taxjar',
 	'tavilymcp',
+	'templated',
+	'textcortex',
 	'teamcamp',
 	'teams',
 	'telegram',
@@ -566,10 +587,13 @@ export const BaseProviders = [
 	'tisane',
 	'tldv',
 	'todoist',
+	'tomba',
+	'tomtom',
 	'toggl',
 	'tokenmetrics',
 	'tpscheck',
 	'trello',
+	'triggercmd',
 	'tripadvisor',
 	'trustpilot',
 	'turbotpipes',
@@ -768,6 +792,7 @@ export const ProviderDisplayNames = {
 	cdrplatform: 'CDR Platform',
 	celigo: 'Celigo',
 	certifier: 'Certifier',
+	certspotter: 'SSLMate Cert Spotter',
 	chaser: 'Chaser',
 	chatbotkit: 'ChatBotKit',
 	chatfai: 'ChatFAI',
@@ -872,6 +897,7 @@ export const ProviderDisplayNames = {
 	esignatures: 'eSignatures',
 	erpnext: 'ERPNext',
 	esputnik: 'eSputnik',
+	etermin: 'ETermin',
 	eventbrite: 'Eventbrite',
 	eventee: 'Eventee',
 	eventzilla: 'Eventzilla',
@@ -901,12 +927,14 @@ export const ProviderDisplayNames = {
 	flexisign: 'Flexisign',
 	flutterwave: 'Flutterwave',
 	fluxguard: 'Fluxguard',
+	fly: 'Fly',
 	folk: 'Folk',
 	followupboss: 'Follow Up Boss',
 	fomo: 'Fomo',
 	formbricks: 'Formbricks',
 	formdesk: 'Formdesk',
 	foursquare: 'Foursquare',
+	freshdesk: 'Freshdesk',
 	fundable: 'Fundable',
 	gemini: 'Gemini',
 	gagelist: 'Gagelist',
@@ -929,6 +957,7 @@ export const ProviderDisplayNames = {
 	gleap: 'Gleap',
 	gmail: 'Gmail',
 	gmicloud: 'GMI Cloud',
+	godial: 'GoDial',
 	gong: 'Gong',
 	googleaddressvalidation: 'Google Address Validation',
 	googleanalytics: 'Google Analytics',
@@ -994,6 +1023,7 @@ export const ProviderDisplayNames = {
 	klaviyo: 'Klaviyo',
 	klazify: 'Klazify',
 	kling: 'Kling',
+	klipfolio: 'Klipfolio',
 	knack: 'Knack',
 	kofi: 'Ko-fi',
 	kommo: 'Kommo',
@@ -1028,6 +1058,7 @@ export const ProviderDisplayNames = {
 	miro: 'Miro',
 	missive: 'Missive',
 	mixmax: 'Mixmax',
+	modelry: 'Modelry',
 	monday: 'Monday',
 	mondaymcp: 'Monday MCP',
 	moonclerk: 'MoonClerk',
@@ -1058,6 +1089,7 @@ export const ProviderDisplayNames = {
 	outlook: 'Outlook',
 	pagerduty: 'PagerDuty',
 	parallel: 'Parallel',
+	parma: 'Parma',
 	parseur: 'Parseur',
 	pdfapi: 'PDF-API.io',
 	pdfco: 'PDF.co',
@@ -1149,15 +1181,22 @@ export const ProviderDisplayNames = {
 	servicenow: 'ServiceNow',
 	sevdesk: 'Sevdesk',
 	sharepoint: 'SharePoint',
+	shipengine: 'ShipStation API (formerly ShipEngine)',
 	shippo: 'Shippo',
+	shopify: 'Shopify',
 	shortcut: 'Shortcut',
 	shortio: 'Short.io',
+	simpleanalytics: 'Simple Analytics',
+	simplekpi: 'SimpleKPI',
+	simplero: 'Simplero',
+	simplesat: 'Simplesat',
 	slack: 'Slack',
 	slackbot: 'Slackbot',
 	snapchat: 'Snapchat',
 	snowflake: 'Snowflake',
 	sourcegraph: 'Sourcegraph',
 	spoki: 'Spoki',
+	spotlightr: 'Spotlightr',
 	spotify: 'Spotify',
 	stackai: 'StackAI',
 	stackexchange: 'Stack Exchange',
@@ -1166,6 +1205,8 @@ export const ProviderDisplayNames = {
 	streamtime: 'Streamtime',
 	stripe: 'Stripe',
 	studiobyai21labs: 'StudioByAI21Labs',
+	suitedash: 'SuiteDash',
+	supersaas: 'SuperSaaS',
 	supabase: 'Supabase',
 	supadata: 'Supadata',
 	surf: 'Surf',
@@ -1175,8 +1216,12 @@ export const ProviderDisplayNames = {
 	taggun: 'Taggun',
 	tally: 'Tally',
 	telnyx: 'Telnyx',
+	thanksio: 'Thanks.io',
 	tavily: 'Tavily',
+	taxjar: 'TaxJar',
 	tavilymcp: 'Tavily MCP',
+	templated: 'Templated',
+	textcortex: 'TextCortex',
 	teamcamp: 'Teamcamp',
 	teams: 'Teams',
 	telegram: 'Telegram',
@@ -1194,10 +1239,13 @@ export const ProviderDisplayNames = {
 	tisane: 'Tisane',
 	tldv: 'tl;dv',
 	todoist: 'Todoist',
+	tomba: 'Tomba',
+	tomtom: 'TomTom',
 	toggl: 'Toggl',
 	tokenmetrics: 'Token Metrics',
 	tpscheck: 'TPSCheck',
 	trello: 'Trello',
+	triggercmd: 'TRIGGERcmd',
 	tripadvisor: 'Tripadvisor',
 	trustpilot: 'Trustpilot',
 	turbotpipes: 'Turbot Pipes',
@@ -1403,6 +1451,7 @@ export type AllProviders =
 	| 'cdrplatform'
 	| 'celigo'
 	| 'certifier'
+	| 'certspotter'
 	| 'chaser'
 	| 'chatbotkit'
 	| 'chatfai'
@@ -1507,6 +1556,7 @@ export type AllProviders =
 	| 'esignatures'
 	| 'erpnext'
 	| 'esputnik'
+	| 'etermin'
 	| 'eventbrite'
 	| 'eventee'
 	| 'eventzilla'
@@ -1536,12 +1586,14 @@ export type AllProviders =
 	| 'flexisign'
 	| 'flutterwave'
 	| 'fluxguard'
+	| 'fly'
 	| 'folk'
 	| 'followupboss'
 	| 'fomo'
 	| 'formbricks'
 	| 'formdesk'
 	| 'foursquare'
+	| 'freshdesk'
 	| 'fundable'
 	| 'gemini'
 	| 'gagelist'
@@ -1564,6 +1616,7 @@ export type AllProviders =
 	| 'gleap'
 	| 'gmail'
 	| 'gmicloud'
+	| 'godial'
 	| 'gong'
 	| 'googleaddressvalidation'
 	| 'googleanalytics'
@@ -1629,6 +1682,7 @@ export type AllProviders =
 	| 'klaviyo'
 	| 'klazify'
 	| 'kling'
+	| 'klipfolio'
 	| 'knack'
 	| 'kofi'
 	| 'kommo'
@@ -1663,6 +1717,7 @@ export type AllProviders =
 	| 'miro'
 	| 'missive'
 	| 'mixmax'
+	| 'modelry'
 	| 'monday'
 	| 'mondaymcp'
 	| 'moonclerk'
@@ -1693,6 +1748,7 @@ export type AllProviders =
 	| 'outlook'
 	| 'pagerduty'
 	| 'parallel'
+	| 'parma'
 	| 'parseur'
 	| 'pdfapi'
 	| 'pdfco'
@@ -1784,15 +1840,22 @@ export type AllProviders =
 	| 'servicenow'
 	| 'sevdesk'
 	| 'sharepoint'
+	| 'shipengine'
 	| 'shippo'
+	| 'shopify'
 	| 'shortcut'
 	| 'shortio'
+	| 'simpleanalytics'
+	| 'simplekpi'
+	| 'simplero'
+	| 'simplesat'
 	| 'slack'
 	| 'slackbot'
 	| 'snapchat'
 	| 'snowflake'
 	| 'sourcegraph'
 	| 'spoki'
+	| 'spotlightr'
 	| 'spotify'
 	| 'stackai'
 	| 'stackexchange'
@@ -1801,6 +1864,8 @@ export type AllProviders =
 	| 'streamtime'
 	| 'stripe'
 	| 'studiobyai21labs'
+	| 'suitedash'
+	| 'supersaas'
 	| 'supabase'
 	| 'supadata'
 	| 'surf'
@@ -1810,8 +1875,12 @@ export type AllProviders =
 	| 'taggun'
 	| 'tally'
 	| 'telnyx'
+	| 'thanksio'
 	| 'tavily'
+	| 'taxjar'
 	| 'tavilymcp'
+	| 'templated'
+	| 'textcortex'
 	| 'teamcamp'
 	| 'teams'
 	| 'telegram'
@@ -1829,10 +1898,13 @@ export type AllProviders =
 	| 'tisane'
 	| 'tldv'
 	| 'todoist'
+	| 'tomba'
+	| 'tomtom'
 	| 'toggl'
 	| 'tokenmetrics'
 	| 'tpscheck'
 	| 'trello'
+	| 'triggercmd'
 	| 'tripadvisor'
 	| 'trustpilot'
 	| 'turbotpipes'

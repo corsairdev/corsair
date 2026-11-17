@@ -1,0 +1,27 @@
+displayName: Parma
+description: Manage Parma CRM relationships, notes, groups, deals, pipelines, stages, and users.
+examples:
+  read:
+    path: deals.get
+    args:
+      id: "123"
+  write:
+    path: notes.create
+    args:
+      body: Follow up next week
+      relationship_ids: [123]
+apiExamples:
+  deals.get: { id: "123" }
+  notes.create: { body: Follow up next week, relationship_ids: [123] }
+  notes.update: { id: "123", body: Updated note }
+  pipelines.get: { id: "123" }
+  relationships.addGroup: { relationship_id: "123", group_id: 456 }
+  relationships.create: { name: Example relationship, group_ids: [456] }
+  relationships.delete: { id: "123" }
+  relationships.get: { id: "123" }
+  relationships.listGroups: { relationship_id: "123" }
+  relationships.listNotes: { relationship_id: "123" }
+  relationships.removeGroup: { relationship_id: "123", relationship_group_id: "456" }
+  relationships.update: { id: "123", name: Updated relationship }
+  stages.get: { id: "123" }
+  users.get: { id: "123" }

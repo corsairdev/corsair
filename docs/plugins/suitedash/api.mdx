@@ -1,0 +1,1534 @@
+---
+title: "SuiteDash API reference"
+sidebarTitle: "API"
+description: "API reference for the SuiteDash plugin in Corsair: every `suitedash.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Companies
+
+### create
+
+`companies.create`
+
+Create a company, optionally with its first contact in the same call. The role decides what the client portal shows it
+
+**Risk:** `write`
+
+```ts
+await corsair.suitedash.api.companies.create({ name: 'Microsoft', role: 'Client', website: 'https://www.microsoft.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `role` | `Lead \| Client \| Prospect` | Yes | — |
+| `phone` | `string \| null` | No | — |
+| `home_phone` | `string \| null` | No | — |
+| `work_phone` | `string \| null` | No | — |
+| `shop_phone` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `full_address` | `string \| null` | No | — |
+| `address` | `object` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `background_info` | `string \| null` | No | — |
+| `public_custom_fields` | `Record<string, any> \| null` | No | — |
+| `private_custom_fields` | `Record<string, any> \| null` | No | — |
+| `target_custom_fields` | `Record<string, any> \| null` | No | — |
+| `primaryContact` | `object` | No | — |
+
+Set primaryContact.create_primary_contact_if_not_exists to create the first contact in the same call; first_name, last_name and email are then required inside it.
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  address_line_1?: string | null,
+  address_line_2?: string | null,
+  city?: string | null,
+  state?: string | null,
+  country?: string | null,
+  zip?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="primaryContact full type">
+
+```ts
+{
+  create_primary_contact_if_not_exists?: boolean,
+  role?: Lead | Client | Prospect,
+  name_prefix?: string | null,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
+  phone?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string \| null` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uid?: string | null,
+  role?: Lead | Client | Prospect | null,
+  name?: string | null,
+  phone?: string | null,
+  category?: {
+    name?: string | null,
+    color?: string | null,
+    isDefault?: boolean | null
+  } | null,
+  home_phone?: string | null,
+  work_phone?: string | null,
+  shop_phone?: string | null,
+  website?: string | null,
+  full_address?: string | null,
+  address?: {
+    address_line_1?: string | null,
+    address_line_2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    country?: string | null,
+    zip?: string | null
+  } | null,
+  primaryContact?: {
+    uid?: string | null,
+    role?: string | null,
+    name_prefix?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    email?: string | null
+  } | null,
+  tags?: string[] | null,
+  background_info?: string | null,
+  created?: string | null,
+  public_custom_fields?: any[] | Record<string, any> | null,
+  private_custom_fields?: any[] | Record<string, any> | null,
+  target_custom_fields?: any[] | Record<string, any> | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    pageSize?: number | null,
+    totalPages?: number | null,
+    totalItems?: number | null,
+    currentPageNumber?: number | null,
+    previousPage?: string | null,
+    nextPage?: string | null
+  } | null,
+  attributes?: Record<string, {
+    type?: string | null,
+    format?: string | null,
+    required?: boolean | null,
+    nullable?: boolean | null,
+    allowed_on_action?: string[] | null,
+    allowed_values?: string[] | null,
+    field_name?: string | null,
+    field_description?: string | null
+  }> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`companies.get`
+
+Read one company by uid or exact name, with its category, address, primary contact and custom fields
+
+**Risk:** `read`
+
+```ts
+await corsair.suitedash.api.companies.get({ identifier: 'Schowalter-Parisian', meta: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | The company's uid or its exact name. SuiteDash decides which from the value, so send the name as the name. |
+| `meta` | `boolean` | No | Include the meta block: the paging object plus this account's custom field definitions. |
+
+The identifier is a uid or an exact name; SuiteDash decides which from the value. Set meta to true to also get the paging and custom field definitions.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string \| null` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uid?: string | null,
+  role?: Lead | Client | Prospect | null,
+  name?: string | null,
+  phone?: string | null,
+  category?: {
+    name?: string | null,
+    color?: string | null,
+    isDefault?: boolean | null
+  } | null,
+  home_phone?: string | null,
+  work_phone?: string | null,
+  shop_phone?: string | null,
+  website?: string | null,
+  full_address?: string | null,
+  address?: {
+    address_line_1?: string | null,
+    address_line_2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    country?: string | null,
+    zip?: string | null
+  } | null,
+  primaryContact?: {
+    uid?: string | null,
+    role?: string | null,
+    name_prefix?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    email?: string | null
+  } | null,
+  tags?: string[] | null,
+  background_info?: string | null,
+  created?: string | null,
+  public_custom_fields?: any[] | Record<string, any> | null,
+  private_custom_fields?: any[] | Record<string, any> | null,
+  target_custom_fields?: any[] | Record<string, any> | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    pageSize?: number | null,
+    totalPages?: number | null,
+    totalItems?: number | null,
+    currentPageNumber?: number | null,
+    previousPage?: string | null,
+    nextPage?: string | null
+  } | null,
+  attributes?: Record<string, {
+    type?: string | null,
+    format?: string | null,
+    required?: boolean | null,
+    nullable?: boolean | null,
+    allowed_on_action?: string[] | null,
+    allowed_values?: string[] | null,
+    field_name?: string | null,
+    field_description?: string | null
+  }> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`companies.list`
+
+List companies with filters for when they were created, an order, and whether to include the paging and custom field meta
+
+**Risk:** `read`
+
+```ts
+await corsair.suitedash.api.companies.list({ page: 1, orderBy: 'created:desc' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, from 1. |
+| `createdMin` | `string` | No | Only records created at or after this. |
+| `createdMax` | `string` | No | Only records created before this. |
+| `orderBy` | `string` | No | A field name, optionally followed by :asc or :desc. |
+| `meta` | `boolean` | No | Include the meta block: the paging object plus this account's custom field definitions. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uid?: string | null,
+  role?: Lead | Client | Prospect | null,
+  name?: string | null,
+  phone?: string | null,
+  category?: {
+    name?: string | null,
+    color?: string | null,
+    isDefault?: boolean | null
+  } | null,
+  home_phone?: string | null,
+  work_phone?: string | null,
+  shop_phone?: string | null,
+  website?: string | null,
+  full_address?: string | null,
+  address?: {
+    address_line_1?: string | null,
+    address_line_2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    country?: string | null,
+    zip?: string | null
+  } | null,
+  primaryContact?: {
+    uid?: string | null,
+    role?: string | null,
+    name_prefix?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    email?: string | null
+  } | null,
+  tags?: string[] | null,
+  background_info?: string | null,
+  created?: string | null,
+  public_custom_fields?: any[] | Record<string, any> | null,
+  private_custom_fields?: any[] | Record<string, any> | null,
+  target_custom_fields?: any[] | Record<string, any> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    pageSize?: number | null,
+    totalPages?: number | null,
+    totalItems?: number | null,
+    currentPageNumber?: number | null,
+    previousPage?: string | null,
+    nextPage?: string | null
+  } | null,
+  attributes?: Record<string, {
+    type?: string | null,
+    format?: string | null,
+    required?: boolean | null,
+    nullable?: boolean | null,
+    allowed_on_action?: string[] | null,
+    allowed_values?: string[] | null,
+    field_name?: string | null,
+    field_description?: string | null
+  }> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### meta
+
+`companies.meta`
+
+Read the meta attributes of the company custom fields, which is where the uuid keys a write uses come from
+
+**Risk:** `read`
+
+```ts
+await corsair.suitedash.api.companies.meta({});
+```
+
+**Input:** _empty object_
+
+Read this before writing custom fields: the keys are uuids unique to the account, not field names.
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+Record<string, {
+  type?: string | null,
+  format?: string | null,
+  required?: boolean | null,
+  nullable?: boolean | null,
+  allowed_on_action?: string[] | null,
+  allowed_values?: string[] | null,
+  field_name?: string | null,
+  field_description?: string | null
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`companies.update`
+
+Change a company's details, phones, address, tags or custom fields. Only the fields sent change
+
+**Risk:** `write`
+
+```ts
+await corsair.suitedash.api.companies.update({ identifier: 'e2c43cd3-eb1c-4269-a184-ffd9d26d6ef8', name: 'Microsoft Corporation' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | The company's uid or its exact name. SuiteDash decides which from the value, so send the name as the name. |
+| `phone` | `string \| null` | No | — |
+| `home_phone` | `string \| null` | No | — |
+| `work_phone` | `string \| null` | No | — |
+| `shop_phone` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `full_address` | `string \| null` | No | — |
+| `address` | `object` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `background_info` | `string \| null` | No | — |
+| `public_custom_fields` | `Record<string, any> \| null` | No | — |
+| `private_custom_fields` | `Record<string, any> \| null` | No | — |
+| `target_custom_fields` | `Record<string, any> \| null` | No | — |
+| `name` | `string` | No | — |
+
+Custom fields are keyed by uuid. A response sends them as an array, but a write sends an object keyed by field uuid.
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  address_line_1?: string | null,
+  address_line_2?: string | null,
+  city?: string | null,
+  state?: string | null,
+  country?: string | null,
+  zip?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string \| null` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uid?: string | null,
+  role?: Lead | Client | Prospect | null,
+  name?: string | null,
+  phone?: string | null,
+  category?: {
+    name?: string | null,
+    color?: string | null,
+    isDefault?: boolean | null
+  } | null,
+  home_phone?: string | null,
+  work_phone?: string | null,
+  shop_phone?: string | null,
+  website?: string | null,
+  full_address?: string | null,
+  address?: {
+    address_line_1?: string | null,
+    address_line_2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    country?: string | null,
+    zip?: string | null
+  } | null,
+  primaryContact?: {
+    uid?: string | null,
+    role?: string | null,
+    name_prefix?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    email?: string | null
+  } | null,
+  tags?: string[] | null,
+  background_info?: string | null,
+  created?: string | null,
+  public_custom_fields?: any[] | Record<string, any> | null,
+  private_custom_fields?: any[] | Record<string, any> | null,
+  target_custom_fields?: any[] | Record<string, any> | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    pageSize?: number | null,
+    totalPages?: number | null,
+    totalItems?: number | null,
+    currentPageNumber?: number | null,
+    previousPage?: string | null,
+    nextPage?: string | null
+  } | null,
+  attributes?: Record<string, {
+    type?: string | null,
+    format?: string | null,
+    required?: boolean | null,
+    nullable?: boolean | null,
+    allowed_on_action?: string[] | null,
+    allowed_values?: string[] | null,
+    field_name?: string | null,
+    field_description?: string | null
+  }> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a contact. First name, last name, email and role are required, and the role decides portal access. send_welcome_email sends the portal invitation
+
+**Risk:** `destructive`
+
+```ts
+await corsair.suitedash.api.contacts.create({ first_name: 'Matilda', last_name: 'Walker', email: 'matilda@example.com', role: 'Client' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name_prefix` | `string \| null` | No | — |
+| `first_name` | `string` | Yes | — |
+| `last_name` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `home_email` | `string \| null` | No | — |
+| `work_email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `home_phone` | `string \| null` | No | — |
+| `work_phone` | `string \| null` | No | — |
+| `shop_phone` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `full_address` | `string \| null` | No | — |
+| `address` | `object` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `send_welcome_email` | `boolean` | No | Send the portal welcome email as part of the write. |
+| `public_custom_fields` | `Record<string, any> \| null` | No | — |
+| `private_custom_fields` | `Record<string, any> \| null` | No | — |
+| `target_custom_fields` | `Record<string, any> \| null` | No | — |
+| `role` | `Lead \| Client \| Prospect` | Yes | The contact role, which decides what the portal shows them. |
+
+First name, last name, email and role are all required by the spec, and role decides what the client portal shows them.
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  address_line_1?: string | null,
+  address_line_2?: string | null,
+  city?: string | null,
+  state?: string | null,
+  country?: string | null,
+  zip?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string \| null` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uid?: string | null,
+  role?: string | null,
+  name_prefix?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  home_email?: string | null,
+  work_email?: string | null,
+  phone?: string | null,
+  home_phone?: string | null,
+  work_phone?: string | null,
+  shop_phone?: string | null,
+  title?: string | null,
+  website?: string | null,
+  active?: boolean | null,
+  full_address?: string | null,
+  address?: {
+    address_line_1?: string | null,
+    address_line_2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    country?: string | null,
+    zip?: string | null
+  } | null,
+  company?: any | null,
+  companies?: any[] | null,
+  tags?: string[] | null,
+  created?: string | null,
+  public_custom_fields?: any[] | Record<string, any> | null,
+  private_custom_fields?: any[] | Record<string, any> | null,
+  target_custom_fields?: any[] | Record<string, any> | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    pageSize?: number | null,
+    totalPages?: number | null,
+    totalItems?: number | null,
+    currentPageNumber?: number | null,
+    previousPage?: string | null,
+    nextPage?: string | null
+  } | null,
+  attributes?: Record<string, {
+    type?: string | null,
+    format?: string | null,
+    required?: boolean | null,
+    nullable?: boolean | null,
+    allowed_on_action?: string[] | null,
+    allowed_values?: string[] | null,
+    field_name?: string | null,
+    field_description?: string | null
+  }> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Read one contact by uid or email, with their roles, phones, addresses and custom fields
+
+**Risk:** `read`
+
+```ts
+await corsair.suitedash.api.contacts.get({ identifier: 'matilda@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | The contact's uid or its email address. SuiteDash decides which from the value. |
+| `meta` | `boolean` | No | Include the meta block: the paging object plus this account's custom field definitions. |
+
+The identifier is a uid or an email address, decided from the value.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string \| null` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uid?: string | null,
+  role?: string | null,
+  name_prefix?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  home_email?: string | null,
+  work_email?: string | null,
+  phone?: string | null,
+  home_phone?: string | null,
+  work_phone?: string | null,
+  shop_phone?: string | null,
+  title?: string | null,
+  website?: string | null,
+  active?: boolean | null,
+  full_address?: string | null,
+  address?: {
+    address_line_1?: string | null,
+    address_line_2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    country?: string | null,
+    zip?: string | null
+  } | null,
+  company?: any | null,
+  companies?: any[] | null,
+  tags?: string[] | null,
+  created?: string | null,
+  public_custom_fields?: any[] | Record<string, any> | null,
+  private_custom_fields?: any[] | Record<string, any> | null,
+  target_custom_fields?: any[] | Record<string, any> | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    pageSize?: number | null,
+    totalPages?: number | null,
+    totalItems?: number | null,
+    currentPageNumber?: number | null,
+    previousPage?: string | null,
+    nextPage?: string | null
+  } | null,
+  attributes?: Record<string, {
+    type?: string | null,
+    format?: string | null,
+    required?: boolean | null,
+    nullable?: boolean | null,
+    allowed_on_action?: string[] | null,
+    allowed_values?: string[] | null,
+    field_name?: string | null,
+    field_description?: string | null
+  }> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List contacts with filters for when they were created, an order, and whether to include the meta block
+
+**Risk:** `read`
+
+```ts
+await corsair.suitedash.api.contacts.list({ createdMin: '2026-01-01T00:00:00+00:00' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, from 1. |
+| `createdMin` | `string` | No | Only records created at or after this. |
+| `createdMax` | `string` | No | Only records created before this. |
+| `orderBy` | `string` | No | A field name, optionally followed by :asc or :desc. |
+| `meta` | `boolean` | No | Include the meta block: the paging object plus this account's custom field definitions. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uid?: string | null,
+  role?: string | null,
+  name_prefix?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  home_email?: string | null,
+  work_email?: string | null,
+  phone?: string | null,
+  home_phone?: string | null,
+  work_phone?: string | null,
+  shop_phone?: string | null,
+  title?: string | null,
+  website?: string | null,
+  active?: boolean | null,
+  full_address?: string | null,
+  address?: {
+    address_line_1?: string | null,
+    address_line_2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    country?: string | null,
+    zip?: string | null
+  } | null,
+  company?: any | null,
+  companies?: any[] | null,
+  tags?: string[] | null,
+  created?: string | null,
+  public_custom_fields?: any[] | Record<string, any> | null,
+  private_custom_fields?: any[] | Record<string, any> | null,
+  target_custom_fields?: any[] | Record<string, any> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    pageSize?: number | null,
+    totalPages?: number | null,
+    totalItems?: number | null,
+    currentPageNumber?: number | null,
+    previousPage?: string | null,
+    nextPage?: string | null
+  } | null,
+  attributes?: Record<string, {
+    type?: string | null,
+    format?: string | null,
+    required?: boolean | null,
+    nullable?: boolean | null,
+    allowed_on_action?: string[] | null,
+    allowed_values?: string[] | null,
+    field_name?: string | null,
+    field_description?: string | null
+  }> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### meta
+
+`contacts.meta`
+
+Read the meta attributes of the contact custom fields, which is where the uuid keys a write uses come from
+
+**Risk:** `read`
+
+```ts
+await corsair.suitedash.api.contacts.meta({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+Record<string, {
+  type?: string | null,
+  format?: string | null,
+  required?: boolean | null,
+  nullable?: boolean | null,
+  allowed_on_action?: string[] | null,
+  allowed_values?: string[] | null,
+  field_name?: string | null,
+  field_description?: string | null
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`contacts.update`
+
+Change a contact's details, addresses, tags or custom fields, optionally sending the portal welcome email
+
+**Risk:** `destructive`
+
+```ts
+await corsair.suitedash.api.contacts.update({ identifier: 'aa454efd-4074-3926-a370-e96cda162aa0', title: 'Manager', send_welcome_email: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | The contact's uid or its email address. SuiteDash decides which from the value. |
+| `name_prefix` | `string \| null` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `home_email` | `string \| null` | No | — |
+| `work_email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `home_phone` | `string \| null` | No | — |
+| `work_phone` | `string \| null` | No | — |
+| `shop_phone` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `full_address` | `string \| null` | No | — |
+| `address` | `object` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `send_welcome_email` | `boolean` | No | Send the portal welcome email as part of the write. |
+| `public_custom_fields` | `Record<string, any> \| null` | No | — |
+| `private_custom_fields` | `Record<string, any> \| null` | No | — |
+| `target_custom_fields` | `Record<string, any> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  address_line_1?: string | null,
+  address_line_2?: string | null,
+  city?: string | null,
+  state?: string | null,
+  country?: string | null,
+  zip?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string \| null` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uid?: string | null,
+  role?: string | null,
+  name_prefix?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  home_email?: string | null,
+  work_email?: string | null,
+  phone?: string | null,
+  home_phone?: string | null,
+  work_phone?: string | null,
+  shop_phone?: string | null,
+  title?: string | null,
+  website?: string | null,
+  active?: boolean | null,
+  full_address?: string | null,
+  address?: {
+    address_line_1?: string | null,
+    address_line_2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    country?: string | null,
+    zip?: string | null
+  } | null,
+  company?: any | null,
+  companies?: any[] | null,
+  tags?: string[] | null,
+  created?: string | null,
+  public_custom_fields?: any[] | Record<string, any> | null,
+  private_custom_fields?: any[] | Record<string, any> | null,
+  target_custom_fields?: any[] | Record<string, any> | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    pageSize?: number | null,
+    totalPages?: number | null,
+    totalItems?: number | null,
+    currentPageNumber?: number | null,
+    previousPage?: string | null,
+    nextPage?: string | null
+  } | null,
+  attributes?: Record<string, {
+    type?: string | null,
+    format?: string | null,
+    required?: boolean | null,
+    nullable?: boolean | null,
+    allowed_on_action?: string[] | null,
+    allowed_values?: string[] | null,
+    field_name?: string | null,
+    field_description?: string | null
+  }> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Marketing
+
+### subscribe
+
+`marketing.subscribe`
+
+Subscribe contacts to marketing audiences, which can start the emails those audiences send. A partial failure throws, with the per-subscriber results on the error body
+
+**Risk:** `destructive`
+
+```ts
+await corsair.suitedash.api.marketing.subscribe({ subscribers: [{ email: 'matilda@example.com', first_name: 'Matilda', audiences: [35, 485] }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscribers` | `object[]` | Yes | — |
+
+The body is a bare array. The answer carries one result per subscriber and its top-level success is true only when every one worked, so a partial failure throws rather than looking like success.
+
+<AccordionGroup>
+<Accordion title="subscribers full type">
+
+```ts
+{
+  email: string,
+  first_name?: string,
+  last_name?: string,
+  audiences: number[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  success?: boolean | null,
+  errors?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### get
+
+`projects.get`
+
+Find one project by uid, exact name, a name fragment, or the most recent one, with its clients, team and custom fields
+
+**Risk:** `read`
+
+```ts
+await corsair.suitedash.api.projects.get({ type: 'contains_the_following', identifier: 'Digital' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `uid \| name \| contains_the_following \| most_recent` | Yes | How to find the project: uid, exact name, a name fragment, or most_recent with identifier "true". |
+| `identifier` | `string` | Yes | — |
+| `meta` | `boolean` | No | Include the meta block: the paging object plus this account's custom field definitions. |
+
+The lookup mode is part of the path: uid, name, contains_the_following, or most_recent with identifier "true".
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string \| null` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uid?: string | null,
+  name?: string | null,
+  status?: string | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  due_time?: string | null,
+  created?: string | null,
+  info_description?: string | null,
+  info_title_client?: string | null,
+  info_description_client?: string | null,
+  client?: {
+    uid?: string | null,
+    full_name?: string | null,
+    email?: string | null
+  } | null,
+  secondary_clients?: any[] | null,
+  teammates?: any[] | null,
+  team?: {
+    uid?: string | null,
+    name?: string | null
+  } | null,
+  leader?: any | null,
+  project_custom_fields?: any[] | Record<string, any> | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    pageSize?: number | null,
+    totalPages?: number | null,
+    totalItems?: number | null,
+    currentPageNumber?: number | null,
+    previousPage?: string | null,
+    nextPage?: string | null
+  } | null,
+  attributes?: Record<string, {
+    type?: string | null,
+    format?: string | null,
+    required?: boolean | null,
+    nullable?: boolean | null,
+    allowed_on_action?: string[] | null,
+    allowed_values?: string[] | null,
+    field_name?: string | null,
+    field_description?: string | null
+  }> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List projects with filters for when they were created, an order, and whether to include the meta block
+
+**Risk:** `read`
+
+```ts
+await corsair.suitedash.api.projects.list({ page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, from 1. |
+| `createdMin` | `string` | No | Only records created at or after this. |
+| `createdMax` | `string` | No | Only records created before this. |
+| `orderBy` | `string` | No | A field name, optionally followed by :asc or :desc. |
+| `meta` | `boolean` | No | Include the meta block: the paging object plus this account's custom field definitions. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uid?: string | null,
+  name?: string | null,
+  status?: string | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  due_time?: string | null,
+  created?: string | null,
+  info_description?: string | null,
+  info_title_client?: string | null,
+  info_description_client?: string | null,
+  client?: {
+    uid?: string | null,
+    full_name?: string | null,
+    email?: string | null
+  } | null,
+  secondary_clients?: any[] | null,
+  teammates?: any[] | null,
+  team?: {
+    uid?: string | null,
+    name?: string | null
+  } | null,
+  leader?: any | null,
+  project_custom_fields?: any[] | Record<string, any> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    pageSize?: number | null,
+    totalPages?: number | null,
+    totalItems?: number | null,
+    currentPageNumber?: number | null,
+    previousPage?: string | null,
+    nextPage?: string | null
+  } | null,
+  attributes?: Record<string, {
+    type?: string | null,
+    format?: string | null,
+    required?: boolean | null,
+    nullable?: boolean | null,
+    allowed_on_action?: string[] | null,
+    allowed_values?: string[] | null,
+    field_name?: string | null,
+    field_description?: string | null
+  }> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### meta
+
+`projects.meta`
+
+Read the meta attributes of the project custom fields
+
+**Risk:** `read`
+
+```ts
+await corsair.suitedash.api.projects.meta({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+Record<string, {
+  type?: string | null,
+  format?: string | null,
+  required?: boolean | null,
+  nullable?: boolean | null,
+  allowed_on_action?: string[] | null,
+  allowed_values?: string[] | null,
+  field_name?: string | null,
+  field_description?: string | null
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`projects.update`
+
+Change a project's name, status, dates, information text or custom fields. SuiteDash's update schema is open, so only the documented fields are typed
+
+**Risk:** `write`
+
+```ts
+await corsair.suitedash.api.projects.update({ type: 'uid', identifier: '2ff558c3-3eb0-48e1-a3bc-4c7f59dfb02f', status: 'Completed' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `uid \| name \| contains_the_following \| most_recent` | Yes | How to find the project: uid, exact name, a name fragment, or most_recent with identifier "true". |
+| `identifier` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+| `start_date` | `string \| null` | No | — |
+| `end_date` | `string \| null` | No | — |
+| `due_time` | `string \| null` | No | — |
+| `info_title_client` | `string \| null` | No | — |
+| `info_description_client` | `string \| null` | No | — |
+| `info_description` | `string \| null` | No | — |
+| `project_custom_fields` | `any[] \| Record<string, any> \| null` | No | The custom fields of this record. A response sends an array; a write sends an object keyed by field uuid. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string \| null` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uid?: string | null,
+  name?: string | null,
+  status?: string | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  due_time?: string | null,
+  created?: string | null,
+  info_description?: string | null,
+  info_title_client?: string | null,
+  info_description_client?: string | null,
+  client?: {
+    uid?: string | null,
+    full_name?: string | null,
+    email?: string | null
+  } | null,
+  secondary_clients?: any[] | null,
+  teammates?: any[] | null,
+  team?: {
+    uid?: string | null,
+    name?: string | null
+  } | null,
+  leader?: any | null,
+  project_custom_fields?: any[] | Record<string, any> | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    pageSize?: number | null,
+    totalPages?: number | null,
+    totalItems?: number | null,
+    currentPageNumber?: number | null,
+    previousPage?: string | null,
+    nextPage?: string | null
+  } | null,
+  attributes?: Record<string, {
+    type?: string | null,
+    format?: string | null,
+    required?: boolean | null,
+    nullable?: boolean | null,
+    allowed_on_action?: string[] | null,
+    allowed_values?: string[] | null,
+    field_name?: string | null,
+    field_description?: string | null
+  }> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Worlds
+
+### list
+
+`worlds.list`
+
+List the worlds on the account, which is a Power-up and answers a bare array rather than the CRM list envelope
+
+**Risk:** `read`
+
+```ts
+await corsair.suitedash.api.worlds.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `orderBy` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uid?: string | null,
+  key?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  pageSize?: number | null,
+  totalPages?: number | null,
+  totalItems?: number | null,
+  currentPageNumber?: number | null,
+  previousPage?: string | null,
+  nextPage?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
