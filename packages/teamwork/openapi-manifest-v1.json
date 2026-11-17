@@ -2459,6 +2459,32 @@
       "responseCode": "200"
     },
     {
+      "id": "tasklists.delete",
+      "version": "v1",
+      "method": "DELETE",
+      "path": "/tasklists/{id}.json",
+      "summary": "Delete a Task List",
+      "tag": "Task lists",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "bodyRequired": false,
+      "response": {
+        "type": "object",
+        "properties": {
+          "STATUS": {
+            "type": "string"
+          }
+        }
+      },
+      "responseCode": "200"
+    },
+    {
       "id": "tasklists.reorder",
       "version": "v1",
       "method": "PUT",

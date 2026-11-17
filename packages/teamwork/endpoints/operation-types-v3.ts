@@ -124,6 +124,10 @@ type TeamworkV3Input_reminder_Reminder = {
 	type: string;
 	userIds: Array<number>;
 };
+// A PATCH refuses userIds and teamIds (live run 11-17).
+type TeamworkV3Input_reminder_UpdateRequest = {
+	reminder: Omit<TeamworkV3Input_reminder_Reminder, 'userIds' | 'teamIds'>;
+};
 type TeamworkV3Input_reminder_Request = {
 	reminder: TeamworkV3Input_reminder_Reminder;
 };
@@ -7780,7 +7784,7 @@ export type TeamworkV3Inputs = {
 	'taskReminders.update': {
 		path: { taskId: number; reminderId: number };
 		query?: Record<string, never>;
-		body: TeamworkV3Input_reminder_Request;
+		body: TeamworkV3Input_reminder_UpdateRequest;
 	};
 	'taskReminders.delete': {
 		path: { taskId: number; reminderId: number };
@@ -8233,11 +8237,6 @@ export type TeamworkV3Inputs = {
 			>;
 			excludeIds?: Array<number>;
 		};
-		body?: never;
-	};
-	'tasklists.delete': {
-		path: { tasklistId: number };
-		query?: Record<string, never>;
 		body?: never;
 	};
 	'tasklists.listTemplates': {
@@ -11545,36 +11544,6 @@ export type TeamworkV3Inputs = {
 		};
 		body?: never;
 	};
-	'notebooks.compareVersions': {
-		path: { notebookId: number };
-		query?: {
-			include?: Array<'users'>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-		};
-		body?: never;
-	};
 	'notebooks.deleteVersions': {
 		path: { notebookId: number };
 		query?: { versionIds?: Array<number> };
@@ -12604,9 +12573,9 @@ export type TeamworkV3Inputs = {
 	};
 	'time.reportByType': {
 		path: { type: string };
-		query?: {
+		query: {
 			type?: 'company' | 'project' | 'user' | 'tasklist' | 'task' | 'team';
-			startDate?: string;
+			startDate: string;
 			searchTerm?: string;
 			reportType?: 'time' | 'loggedtime' | 'userloggedtime' | 'projecttime';
 			reportFormat?: string;
@@ -12632,7 +12601,7 @@ export type TeamworkV3Inputs = {
 				| 'user';
 			groupBy?: 'day' | 'week' | 'month';
 			expandedType?: string;
-			endDate?: string;
+			endDate: string;
 			pageSize?: number;
 			page?: number;
 			skipCounts?: boolean;
@@ -13061,7 +13030,6 @@ export type TeamworkV3Outputs = {
 	'taskReminders.delete': undefined;
 	'tasklists.list': TeamworkV3Output_tasklist_TasklistsResponse;
 	'tasklists.get': TeamworkV3Output_tasklist_Response;
-	'tasklists.delete': undefined;
 	'tasklists.listTemplates': TeamworkV3Output_tasklist_TasklistsResponse;
 	'milestones.list': TeamworkV3Output_milestone_MilestonesResponse;
 	'milestones.get': TeamworkV3Output_milestone_Response;
@@ -13096,7 +13064,6 @@ export type TeamworkV3Outputs = {
 	'notebooks.delete': undefined;
 	'notebooks.listVersions': TeamworkV3Output_notebook_VersionsResponse;
 	'notebooks.getVersion': TeamworkV3Output_notebook_VersionResponse;
-	'notebooks.compareVersions': TeamworkV3Output_notebook_VersionResponse;
 	'notebooks.deleteVersions': undefined;
 	'time.list': TeamworkV3Output_timelog_TimelogsResponse;
 	'time.get': TeamworkV3Output_timelog_Response;

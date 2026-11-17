@@ -461,6 +461,11 @@ export type TeamworkV1Inputs = {
 			};
 		};
 	};
+	'tasklists.delete': {
+		path: { id: string };
+		query?: Record<string, never>;
+		body?: never;
+	};
 	'tasklists.reorder': {
 		path: { id: string };
 		query?: Record<string, never>;
@@ -1674,6 +1679,7 @@ export type TeamworkV1Outputs = {
 		STATUS?: string;
 	} & Record<string, TeamworkJsonValue>;
 	'tasklists.update': { STATUS?: string } & Record<string, TeamworkJsonValue>;
+	'tasklists.delete': { STATUS?: string } & Record<string, TeamworkJsonValue>;
 	'tasklists.reorder': { STATUS?: string } & Record<string, TeamworkJsonValue>;
 	'tasklists.copy': { STATUS?: string } & Record<string, TeamworkJsonValue>;
 	'tasklists.move': { STATUS?: string } & Record<string, TeamworkJsonValue>;

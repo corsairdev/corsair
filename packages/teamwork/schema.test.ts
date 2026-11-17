@@ -125,6 +125,39 @@ describe('Teamwork OpenAPI contract schemas', () => {
 		);
 	});
 
+	it('deletes task lists on the V1 route, since the V3 one answers 404 live', () => {
+		const operation = teamworkOperations.find(
+			(item) => item.id === 'tasklists.delete',
+		);
+		expect(operation).toMatchObject({
+			version: 'v1',
+			method: 'DELETE',
+			path: '/tasklists/{id}.json',
+		});
+	});
+
+	it('leaves the recipients out of a reminder update, which Teamwork refuses there', () => {
+		const update = teamworkOperations.find(
+			(item) => item.id === 'taskReminders.update',
+		);
+		expect(update?.body).toEqual({
+			$ref: '#/definitions/reminder.UpdateRequest',
+		});
+		const reminder = teamworkDefinitions.v3['reminder.UpdateReminder'];
+		const properties = Object.keys(
+			(reminder?.properties ?? {}) as Record<string, unknown>,
+		);
+		expect(properties).toEqual(expect.arrayContaining(['remindAt', 'note']));
+		expect(properties).not.toContain('userIds');
+		expect(properties).not.toContain('teamIds');
+		expect(
+			teamworkInputSchemas['taskReminders.update']?.safeParse({
+				path: { taskId: 1, reminderId: 2 },
+				body: { reminder: { remindAt: '2026-12-09T09:00:00Z', note: 'x' } },
+			}).success,
+		).toBe(true);
+	});
+
 	it('keeps the typed operation ID list in sync with the provider manifest', () => {
 		expect([...TEAMWORK_OPERATION_IDS].sort()).toEqual(
 			teamworkOperations.map((operation) => operation.id).sort(),
@@ -178,6 +211,43 @@ describe('Teamwork OpenAPI contract schemas', () => {
 			'people.me',
 			{ person: { id: 753865, firstName: 'Corsair', createdBy: null } },
 		],
+		// V1 answers ids and counts as strings and some flags as booleans (live run 11-17).
+		[
+			'projectCategories.get',
+			{
+				STATUS: 'OK',
+				category: {
+					elements_count: '0',
+					color: '',
+					id: '56260',
+					type: 'ProjectCategory',
+					'parent-id': '',
+					name: 'corsair-plugin-test',
+					count: '0',
+				},
+			},
+		],
+		[
+			'teams.get',
+			{
+				STATUS: 'OK',
+				projects: {},
+				team: {
+					deleted: false,
+					id: '63157',
+					canEdit: true,
+					members: [{ id: '753865', type: 'user' }],
+					parentTeam: {},
+					numSubteams: '0',
+					isPrivate: false,
+					name: 'corsair-plugin-test team',
+				},
+			},
+		],
+		[
+			'tasklists.create',
+			{ STATUS: 'OK', LOCKDOWNID: '', TASKLISTID: '4073858' },
+		],
 		// Sparse fieldsets leave out every unselected field, on any resource.
 		[
 			'tasks.list',
@@ -205,24 +275,28 @@ describe('Teamwork OpenAPI contract schemas', () => {
 		'people.taskCompletion',
 		'time.report',
 		'time.reportTotals',
+		'time.reportByType',
 	])(
 		'%s requires startDate and endDate, which Teamwork rejects a call without',
 		(id) => {
 			const schema = teamworkInputSchemas[id];
+			const path = id === 'time.reportByType' ? { type: 'user' } : {};
 			expect(schema?.safeParse({}).success).toBe(false);
-			expect(schema?.safeParse({ query: {} }).success).toBe(false);
+			expect(schema?.safeParse({ path, query: {} }).success).toBe(false);
 			expect(
-				schema?.safeParse({ query: { startDate: '2026-11-01' } }).success,
+				schema?.safeParse({ path, query: { startDate: '2026-11-01' } }).success,
 			).toBe(false);
 			// The time report also refuses a call without its grouping type.
 			const query =
 				id === 'time.report'
 					? { startDate: '2026-11-01', endDate: '2026-11-16', type: 'user' }
 					: { startDate: '2026-11-01', endDate: '2026-11-16' };
-			expect(schema?.safeParse({ query }).success).toBe(true);
+			expect(schema?.safeParse({ path, query }).success).toBe(true);
 			if (id === 'time.report') {
 				const { type: _type, ...withoutType } = query as { type?: string };
-				expect(schema?.safeParse({ query: withoutType }).success).toBe(false);
+				expect(schema?.safeParse({ path, query: withoutType }).success).toBe(
+					false,
+				);
 			}
 		},
 	);

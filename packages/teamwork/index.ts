@@ -236,7 +236,6 @@ export const teamworkEndpointSchemas = {
 	'notebooks.move': teamworkSchemaEntry('notebooks.move'),
 	'notebooks.listVersions': teamworkSchemaEntry('notebooks.listVersions'),
 	'notebooks.getVersion': teamworkSchemaEntry('notebooks.getVersion'),
-	'notebooks.compareVersions': teamworkSchemaEntry('notebooks.compareVersions'),
 	'notebooks.deleteVersions': teamworkSchemaEntry('notebooks.deleteVersions'),
 	'notebookCategories.list': teamworkSchemaEntry('notebookCategories.list'),
 	'notebookCategories.get': teamworkSchemaEntry('notebookCategories.get'),
@@ -574,7 +573,8 @@ const teamworkEndpointMeta = {
 	},
 	'taskReminders.update': {
 		riskLevel: 'write',
-		description: 'Update a task reminder.',
+		description:
+			"Change a reminder's time, type or note. To change who gets it, delete it and add a new one.",
 	},
 	'taskReminders.delete': {
 		riskLevel: 'destructive',
@@ -598,7 +598,7 @@ const teamworkEndpointMeta = {
 	},
 	'tasklists.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a task list.',
+		description: 'Delete a task list and its tasks.',
 	},
 	'tasklists.listTemplates': {
 		riskLevel: 'read',
@@ -938,10 +938,6 @@ const teamworkEndpointMeta = {
 	'notebooks.getVersion': {
 		riskLevel: 'read',
 		description: 'Get one version of a notebook.',
-	},
-	'notebooks.compareVersions': {
-		riskLevel: 'read',
-		description: 'Compare two versions of a notebook.',
 	},
 	'notebooks.deleteVersions': {
 		riskLevel: 'destructive',

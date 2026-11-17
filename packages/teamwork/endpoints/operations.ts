@@ -335,9 +335,6 @@ export const teamworkOperationsNested = {
 		move: createTeamworkOperationEndpoint('notebooks.move'),
 		listVersions: createTeamworkOperationEndpoint('notebooks.listVersions'),
 		getVersion: createTeamworkOperationEndpoint('notebooks.getVersion'),
-		compareVersions: createTeamworkOperationEndpoint(
-			'notebooks.compareVersions',
-		),
 		deleteVersions: createTeamworkOperationEndpoint('notebooks.deleteVersions'),
 	},
 	notebookCategories: {

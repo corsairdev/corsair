@@ -161,7 +161,6 @@ export const TEAMWORK_OPERATION_IDS = [
 	'notebooks.move',
 	'notebooks.listVersions',
 	'notebooks.getVersion',
-	'notebooks.compareVersions',
 	'notebooks.deleteVersions',
 	'notebookCategories.list',
 	'notebookCategories.get',

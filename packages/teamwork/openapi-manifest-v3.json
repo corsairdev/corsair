@@ -14136,7 +14136,7 @@
         }
       ],
       "body": {
-        "$ref": "#/definitions/reminder.Request"
+        "$ref": "#/definitions/reminder.UpdateRequest"
       },
       "bodyRequired": true,
       "response": {
@@ -15182,25 +15182,6 @@
         "$ref": "#/definitions/tasklist.Response"
       },
       "responseCode": "200"
-    },
-    {
-      "id": "tasklists.delete",
-      "version": "v3",
-      "method": "DELETE",
-      "path": "/projects/api/v3/tasklists/{tasklistId}.json",
-      "summary": "Delete an existing tasklist.",
-      "tag": "Tasklists",
-      "parameters": [
-        {
-          "name": "tasklistId",
-          "in": "path",
-          "type": "integer",
-          "required": true
-        }
-      ],
-      "bodyRequired": false,
-      "response": null,
-      "responseCode": "204"
     },
     {
       "id": "tasklists.listTemplates",
@@ -23894,69 +23875,6 @@
       "responseCode": "200"
     },
     {
-      "id": "notebooks.compareVersions",
-      "version": "v3",
-      "method": "GET",
-      "path": "/projects/api/v3/notebooks/{notebookId}/compare.json",
-      "summary": "Compare 2 notebook versions",
-      "tag": "Notebooks",
-      "parameters": [
-        {
-          "name": "notebookId",
-          "in": "path",
-          "type": "integer",
-          "required": true
-        },
-        {
-          "name": "include",
-          "in": "query",
-          "type": "array",
-          "items": {
-            "enum": ["users"],
-            "type": "string"
-          },
-          "required": false
-        },
-        {
-          "name": "fields[users]",
-          "in": "query",
-          "type": "array",
-          "items": {
-            "enum": [
-              "id",
-              "firstName",
-              "lastName",
-              "title",
-              "email",
-              "companyId",
-              "company",
-              "isAdmin",
-              "isClientUser",
-              "isServiceAccount",
-              "type",
-              "deleted",
-              "avatarUrl",
-              "lengthOfDay",
-              "workingHoursId",
-              "workingHour",
-              "userRate",
-              "userCost",
-              "canAddProjects",
-              "updatedAt",
-              "teams"
-            ],
-            "type": "string"
-          },
-          "required": false
-        }
-      ],
-      "bodyRequired": false,
-      "response": {
-        "$ref": "#/definitions/notebook.VersionResponse"
-      },
-      "responseCode": "200"
-    },
-    {
       "id": "notebooks.deleteVersions",
       "version": "v3",
       "method": "DELETE",
@@ -27553,7 +27471,7 @@
           "in": "query",
           "type": "string",
           "format": "date",
-          "required": false
+          "required": true
         },
         {
           "name": "searchTerm",
@@ -27636,7 +27554,7 @@
           "in": "query",
           "type": "string",
           "format": "date",
-          "required": false
+          "required": true
         },
         {
           "name": "pageSize",
@@ -39713,6 +39631,37 @@
         "entryIds",
         "entries"
       ],
+      "type": "object"
+    },
+    "reminder.UpdateReminder": {
+      "description": "A PATCH answers 400 \"unknown field userIds\" (live run 11-17), so the recipients are not part of an update.",
+      "properties": {
+        "isRelative": {
+          "type": "boolean"
+        },
+        "note": {
+          "type": "string"
+        },
+        "relativeNumberDays": {
+          "type": "integer"
+        },
+        "remindAt": {
+          "$ref": "#/definitions/entity.RemindAt"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "required": ["remindAt", "type", "isRelative", "relativeNumberDays"]
+    },
+    "reminder.UpdateRequest": {
+      "properties": {
+        "reminder": {
+          "$ref": "#/definitions/reminder.UpdateReminder"
+        }
+      },
+      "required": ["reminder"],
       "type": "object"
     }
   }
