@@ -1,7 +1,7 @@
 ---
 title: "Teamwork plugin"
 sidebarTitle: "Overview"
-description: "Teamwork.com project management operations for projects, tasks, people, time tracking, and collaboration resources."
+description: "Teamwork.com projects, tasks, task lists, milestones, comments, time tracking, timers, people and companies."
 ---
 
 Use **Teamwork** through Corsair: one client, typed API calls.
@@ -10,7 +10,7 @@ Store each tenant's Teamwork site as site_name with its API key: acme for acme.t
 
 **What you get:**
 
-- 362 typed API operations
+- 220 typed API operations
 
 ## Setup
 
@@ -96,19 +96,30 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`v1_get_boards_columns_cards_id_json`**
+**List a project's open tasks**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.teamwork.api.v1_get_boards_columns_cards_id_json({});
+await tenant.teamwork.api.tasks.list({
+	query: {
+		projectIds: [1470497],
+		includeCompletedTasks: false,
+	},
+});
 ```
 
 
-**`v1_delete_boards_columns_cards_id_json`**
+**Create a task without emailing anyone**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.teamwork.api.v1_delete_boards_columns_cards_id_json({});
+await tenant.teamwork.api.tasks.create({
+	path: { tasklistId: 4073104 },
+	body: {
+		task: { name: 'Draft the launch post' },
+		taskOptions: { notify: false },
+	},
+});
 ```
 
 
