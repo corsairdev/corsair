@@ -7406,5 +7406,23 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/langchain",
+    "dir": "adapters/langchain",
+    "name": "langchain",
+    "version": "0.1.49",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/square",
+    "dir": "packages/square",
+    "name": "Square",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
