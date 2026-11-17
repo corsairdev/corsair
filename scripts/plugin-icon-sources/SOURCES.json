@@ -109,6 +109,10 @@
     "from": "https://svgl.app/library/cursor_light.svg",
     "note": "stylesheet (one fill rule) inlined"
   },
+  "d2lbrightspace": {
+    "from": "https://media.brand.dev/a9f3055a-23fd-4345-83a0-cee7006c942a.svg",
+    "note": "found with the context.dev Brand API for d2l.com"
+  },
   "databox": {
     "from": "https://media.brand.dev/637dcc37-8b39-462e-9981-097c284ad89f.svg",
     "note": "found with the context.dev Brand API for databox.com"
@@ -150,9 +154,17 @@
   "doppler": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/doppler.svg"
   },
+  "dopplermarketingautomation": {
+    "from": "https://media.brand.dev/83c8121a-20b5-44f9-947e-82e99ca55203.svg",
+    "note": "found with the context.dev Brand API for fromdoppler.com"
+  },
   "dovetail": {
     "from": "https://dovetail.com/favicon.svg",
     "note": "the brand site's own SVG icon; its dark-mode stylesheet dropped (the light colours are also inline fills)"
+  },
+  "draftable": {
+    "from": "https://media.brand.dev/e7222453-0ab7-4dd7-ae71-7176ae35655a.svg",
+    "note": "found with the context.dev Brand API for draftable.com"
   },
   "dropbox": {
     "from": "https://svgl.app/library/dropbox.svg"
@@ -167,6 +179,10 @@
   "erpnext": {
     "from": "https://media.brand.dev/8076c83e-7531-472b-ab69-cb2147e725c0.svg",
     "note": "found with the context.dev Brand API for frappe.io"
+  },
+  "etermin": {
+    "from": "https://media.brand.dev/70ee07d0-424a-43ef-8c91-2eaac5c6c752.svg",
+    "note": "found with the context.dev Brand API for etermin.net"
   },
   "excel": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/excel.svg"
@@ -205,6 +221,10 @@
   },
   "flutterwave": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/flutterwave.svg"
+  },
+  "fly": {
+    "from": "https://media.brand.dev/b0fa67a4-5932-4fc2-ae5f-eb05076bcfd3.svg",
+    "note": "found with the context.dev Brand API for fly.io"
   },
   "folk": {
     "from": "https://media.brand.dev/512ec990-d8b3-4c40-87de-80260917f007.svg",
@@ -245,6 +265,10 @@
   "gleap": {
     "from": "https://media.brand.dev/5d89b105-20d6-49f1-a7da-aab4efc80df8.svg",
     "note": "found with the context.dev Brand API for gleap.io"
+  },
+  "globalping": {
+    "from": "https://media.brand.dev/a03c0789-a0e6-49d7-9c73-b0f856fa12c6.svg",
+    "note": "found with the context.dev Brand API for globalping.io"
   },
   "gmail": {
     "from": "https://svgl.app/library/gmail.svg"
@@ -305,6 +329,10 @@
   "hashnode": {
     "from": "https://svgl.app/library/hashnode.svg"
   },
+  "hex": {
+    "from": "https://media.brand.dev/26c85f2e-2b63-4b32-8c33-1452cf91249b.svg",
+    "note": "found with the context.dev Brand API for hex.tech"
+  },
   "hubplanner": {
     "from": "https://media.brand.dev/f4a6845b-7f17-42f5-baaf-719a313793d2.svg",
     "note": "found with the context.dev Brand API for hubplanner.com"
@@ -317,6 +345,18 @@
   },
   "intercom": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/intercom.svg"
+  },
+  "ip2proxy": {
+    "from": "https://media.brand.dev/6cbfe82a-5ced-43f6-a2cf-dca7fc54ea4c.svg",
+    "note": "found with the context.dev Brand API for ip2location.com"
+  },
+  "ip2whois": {
+    "from": "https://media.brand.dev/a5234b28-860d-416f-9362-91af9458e32e.svg",
+    "note": "found with the context.dev Brand API for ip2whois.com"
+  },
+  "jotform": {
+    "from": "https://media.brand.dev/d75df6e1-8f5f-41f1-a93c-4b47ac0f01cb.svg",
+    "note": "found with the context.dev Brand API for jotform.com"
   },
   "keyword": {
     "from": "https://media.brand.dev/ca427665-f4ca-4a40-a7f6-a24bf4c040df.svg",
@@ -332,6 +372,10 @@
   },
   "linkedin": {
     "from": "https://svgl.app/library/linkedin.svg"
+  },
+  "logodev": {
+    "from": "https://media.brand.dev/99d0f2c0-1997-40b1-a627-719822039b0c.svg",
+    "note": "found with the context.dev Brand API for logo.dev"
   },
   "loyverse": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/loyverse.svg"
@@ -360,6 +404,10 @@
   },
   "neon": {
     "from": "https://svgl.app/library/neon.svg"
+  },
+  "newsapi": {
+    "from": "https://media.brand.dev/165fd9e1-c7d2-4e13-992d-b1507dbcd925.svg",
+    "note": "found with the context.dev Brand API for newsapi.org"
   },
   "nextdns": {
     "from": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/nextdns.svg",
@@ -477,6 +525,10 @@
     "from": "https://media.brand.dev/2308b1d5-5c3d-41d7-9766-96edf92f8cb2.svg",
     "note": "found with the context.dev Brand API for scrape.do"
   },
+  "searchapi": {
+    "from": "https://media.brand.dev/e3a59537-9c5e-41ef-b778-5ddf03e9a33e.svg",
+    "note": "found with the context.dev Brand API for searchapi.io"
+  },
   "semanticscholar": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/semanticscholar.svg"
   },
@@ -489,9 +541,21 @@
   "sharepoint": {
     "from": "https://svgl.app/library/microsoft-sharepoint.svg"
   },
+  "shipengine": {
+    "from": "https://media.brand.dev/e4186d37-74c9-4780-8db3-14858816d700.svg",
+    "note": "found with the context.dev Brand API for shipengine.com"
+  },
   "shortcut": {
     "from": "https://media.brand.dev/dde75a56-1d84-43fe-a839-6b94fa6cc79e.svg",
     "note": "found with the context.dev Brand API for shortcut.com"
+  },
+  "simpleanalytics": {
+    "from": "https://media.brand.dev/60d64103-3941-415c-ada2-7bd4a3db67e1.svg",
+    "note": "found with the context.dev Brand API for simpleanalytics.com"
+  },
+  "simplekpi": {
+    "from": "https://media.brand.dev/85ec0ace-e92e-4cc7-99ac-0b26386a2f1a.svg",
+    "note": "found with the context.dev Brand API for simplekpi.com"
   },
   "slack": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/slack.svg"
@@ -509,6 +573,10 @@
   "sourcegraph": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/sourcegraph.svg"
   },
+  "storyblok": {
+    "from": "https://media.brand.dev/3c796387-03c2-4b40-9bcd-9a88db2b39d2.svg",
+    "note": "found with the context.dev Brand API for storyblok.com"
+  },
   "strava": {
     "from": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/strava.svg",
     "note": "Simple Icons (CC0), filled with the brand colour #FC4C02"
@@ -523,9 +591,21 @@
   "supabase": {
     "from": "https://svgl.app/library/supabase.svg"
   },
+  "surveymonkey": {
+    "from": "https://media.brand.dev/f2021b33-a1bb-418f-865d-bc04a3175f09.svg",
+    "note": "found with the context.dev Brand API for surveymonkey.com"
+  },
   "svix": {
     "from": "https://media.brand.dev/7d3b979e-0d4c-4af2-9512-b0444a952b6a.svg",
     "note": "found with the context.dev Brand API for svix.com"
+  },
+  "talenthr": {
+    "from": "https://media.brand.dev/fdbdaacc-1fde-4253-9c17-f29fc0ba6244.svg",
+    "note": "found with the context.dev Brand API for talenthr.io"
+  },
+  "tave": {
+    "from": "https://media.brand.dev/0edab74d-687e-40f0-94d0-1a65245eb4dd.svg",
+    "note": "found with the context.dev Brand API for workspace.vsco.co"
   },
   "tavilymcp": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/tavily_mcp.svg"
@@ -540,8 +620,24 @@
   "telegram": {
     "from": "https://svgl.app/library/telegram.svg"
   },
+  "teltel": {
+    "from": "https://media.brand.dev/14304999-63f3-4724-bcdd-4a530c6e3b2b.svg",
+    "note": "found with the context.dev Brand API for teltel.io"
+  },
+  "thanksio": {
+    "from": "https://media.brand.dev/935d0d1f-24ff-45e7-9c69-54227eb8a629.svg",
+    "note": "found with the context.dev Brand API for thanks.io"
+  },
   "todoist": {
     "from": "https://svgl.app/library/todoist.svg"
+  },
+  "tomba": {
+    "from": "https://media.brand.dev/a5cf06e2-88ab-4f85-9226-fd381d2ea3ba.svg",
+    "note": "found with the context.dev Brand API for tomba.io"
+  },
+  "tomtom": {
+    "from": "https://media.brand.dev/89086d54-8de2-4c63-b833-f2a0b0351b24.svg",
+    "note": "found with the context.dev Brand API for tomtom.com"
   },
   "trello": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/trello.svg"

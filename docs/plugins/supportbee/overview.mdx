@@ -1,0 +1,147 @@
+---
+title: "Supportbee plugin"
+sidebarTitle: "Overview"
+description: "Help desk for reading, replying to and routing support tickets, with users, teams, labels, snippets and reports."
+---
+
+Use **Supportbee** through Corsair: one client, typed API calls.
+
+**Every SupportBee desk is its own subdomain**, so there is no shared API host. Set `supportbee({ company: 'acme' })` or store it with `keys.set_company(company)`. The host on its own (`acme.supportbee.com`) and a pasted desk address (`https://acme.supportbee.com/tickets`) are accepted too. Requests only go to `https://<company>.supportbee.com`: another domain, an IP address or a port is rejected before anything is sent. Without a company the plugin throws before it sends anything.
+
+Credentials are one **API token**, found on the desk under the profile picture, then API Token. Store it as the account's `api_key`, or pass it as `supportbee({ key })`.
+
+Things to know before you call:
+
+- **Every request needs `Accept: application/json`**, which the client sends. Without it the desk answers HTML.
+- **Ticket search takes `query`, not `q`.** The route is `/tickets/search`, and a blank query is rejected before the request.
+- **`tickets.delete` only works on a trashed ticket**, and only an admin can call it. Trash first, then delete.
+- **The list route answers unarchived tickets only** unless `archived` names another scope, and it returns 15 tickets a page in last-activity order.
+- **A reply leaves SupportBee.** `replies.create` mail reaches the real customer; `comments.create` is the internal note only staff see.
+- **A ticket takes a user assignee or a team assignee, not both.** Reassigning to another team clears the user assignee.
+- **A filter is three calls.** `filters.createRule` and `filters.createConsequence` each return an id, and `filters.create` links them. Until the link exists, nothing happens.
+- **`emails` manages forwarding addresses**, not mail. SupportBee generates the `forward_to` address an existing mailbox forwards into.
+- **The flag routes answer 204 with no body**, so the plugin reports `{ id, updated: true }` rather than returning nothing.
+- **A customer group is a user with `type: customer_group`**, and its members are added with `users.addMember`. There is no route to remove a member.
+
+**What you get:**
+
+- 50 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/supportbee better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/supportbee better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/supportbee better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/supportbee better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { supportbee } from '@corsair-dev/supportbee';
+
+export const corsair = createCorsair({
+	plugins: [
+		supportbee(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Supportbee API key before the first call: `pnpm corsair setup --plugin=supportbee --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+supportbee()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'supportbee',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List recent tickets**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.supportbee.api.tickets.list({ page: 1 });
+```
+
+
+**Reply to a ticket**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.supportbee.api.replies.create({
+	ticket_id: 1,
+	content: { text: 'Thanks for reaching out, we are looking into this now.' },
+});
+```
+
+
+See the full list on the [API](/plugins/supportbee/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/supportbee/api">
+    Every `supportbee.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

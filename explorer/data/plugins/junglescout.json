@@ -1,0 +1,535 @@
+{
+  "id": "junglescout",
+  "displayName": "Jungle Scout",
+  "description": "Query Amazon keyword intelligence, search volume trends, product database filters, sales estimates, and share of voice analytics via Jungle Scout.",
+  "npmPackageName": "@corsair-dev/junglescout",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 6,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "junglescout.api.keywords.byAsin",
+      "shortPath": "keywords.byAsin",
+      "description": "Query keywords and rankings for up to 10 Amazon ASINs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "marketplace",
+            "optional": false,
+            "type": "us | uk | de | in | ca | fr | it | es | mx | jp"
+          },
+          {
+            "key": "asins",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "name | -name | dominant_category | -dominant_category | monthly_trend | -monthly_trend | quarterly_trend | -quarterly_trend | monthly_search_volume_exact | -monthly_search_volume_exact | monthly_search_volume_broad | -monthly_search_volume_broad | recommended_promotions | -recommended_promotions | sp_brand_ad_bid | -sp_brand_ad_bid | ppc_bid_broad | -ppc_bid_broad | ppc_bid_exact | -ppc_bid_exact | ease_of_ranking_score | -ease_of_ranking_score | relevancy_score | -relevancy_score | organic_product_count | -organic_product_count"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_variants",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "min_monthly_search_volume_exact",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_monthly_search_volume_exact",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "min_monthly_search_volume_broad",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_monthly_search_volume_broad",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "min_word_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_word_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "min_organic_product_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_organic_product_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, type?: string | null, attributes: { country?: string | null, name?: string | null, primary_asin?: string | null, monthly_trend?: number | null, monthly_search_volume_exact?: number | null, quarterly_trend?: number | null, monthly_search_volume_broad?: number | null, dominant_category?: string | null, recommended_promotions?: number | null, updated_at?: string | null, sp_brand_ad_bid?: number | null, ppc_bid_broad?: number | null, ppc_bid_exact?: number | null, ease_of_ranking_score?: number | null, relevancy_score?: number | null, organic_product_count?: number | null, sponsored_product_count?: number | null, organic_rank?: number | null, sponsored_rank?: number | null, overall_rank?: number | null, organic_ranking_asins_count?: number | null, sponsored_ranking_asins_count?: number | null, avg_competitor_organic_rank?: number | null, avg_competitor_sponsored_rank?: number | null, relative_organic_position?: number | null, relative_sponsored_position?: number | null, competitor_organic_rank?: { asin?: string | null, organic_rank?: number | null }[] | null, competitor_sponsored_rank?: { asin?: string | null, sponsored_rank?: number | null }[] | null } }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null } | null"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_items?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "junglescout.api.keywords.byKeyword",
+      "shortPath": "keywords.byKeyword",
+      "description": "Discover keyword search volumes and relevancy metrics for search terms",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "marketplace",
+            "optional": false,
+            "type": "us | uk | de | in | ca | fr | it | es | mx | jp"
+          },
+          {
+            "key": "search_terms",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "name | -name | dominant_category | -dominant_category | monthly_trend | -monthly_trend | quarterly_trend | -quarterly_trend | monthly_search_volume_exact | -monthly_search_volume_exact | monthly_search_volume_broad | -monthly_search_volume_broad | recommended_promotions | -recommended_promotions | sp_brand_ad_bid | -sp_brand_ad_bid | ppc_bid_broad | -ppc_bid_broad | ppc_bid_exact | -ppc_bid_exact | ease_of_ranking_score | -ease_of_ranking_score | relevancy_score | -relevancy_score | organic_product_count | -organic_product_count"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "min_monthly_search_volume_exact",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_monthly_search_volume_exact",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "min_monthly_search_volume_broad",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_monthly_search_volume_broad",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "min_word_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_word_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "min_organic_product_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_organic_product_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, type?: string | null, attributes: { country?: string | null, name?: string | null, monthly_trend?: number | null, monthly_search_volume_exact?: number | null, quarterly_trend?: number | null, monthly_search_volume_broad?: number | null, dominant_category?: string | null, recommended_promotions?: number | null, sp_brand_ad_bid?: number | null, ppc_bid_broad?: number | null, ppc_bid_exact?: number | null, relevancy_score?: number | null, organic_product_count?: number | null, sponsored_product_count?: number | null } }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null } | null"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_items?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "junglescout.api.keywords.historicalSearchVolume",
+      "shortPath": "keywords.historicalSearchVolume",
+      "description": "Retrieve weekly historical search volume trends for a keyword",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "marketplace",
+            "optional": false,
+            "type": "us | uk | de | in | ca | fr | it | es | mx | jp"
+          },
+          {
+            "key": "keyword",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, type?: string | null, attributes: { estimate_start_date?: string | null, estimate_end_date?: string | null, estimated_exact_search_volume?: number | null } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "junglescout.api.productDatabase.query",
+      "shortPath": "productDatabase.query",
+      "description": "Search Amazon product catalog with sales, revenue, rank, and review filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "marketplace",
+            "optional": false,
+            "type": "us | uk | de | in | ca | fr | it | es | mx | jp"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "name | -name | category | -category | revenue | -revenue | sales | -sales | price | -price | rank | -rank | reviews | -reviews | lqs | -lqs | sellers | -sellers"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_keywords",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "exclude_keywords",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "product_tiers",
+            "optional": true,
+            "type": "(standard | oversize)[]"
+          },
+          {
+            "key": "seller_types",
+            "optional": true,
+            "type": "(amz | fba | fbm)[]"
+          },
+          {
+            "key": "exclude_top_brands",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "exclude_unavailable_products",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "min_price",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_price",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "min_net",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_net",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "min_rank",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_rank",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "min_sales",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_sales",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "min_revenue",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_revenue",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "min_reviews",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_reviews",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "min_rating",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_rating",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "min_weight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_weight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "min_sellers",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_sellers",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "min_lqs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_lqs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "min_updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, type?: string | null, attributes: { title?: string | null, price?: number | null, reviews?: number | null, category?: string | null, rating?: number | null, image_url?: string | null, parent_asin?: string | null, is_variant?: boolean | null, seller_type?: string | null, breadcrumb_path?: string | null, is_standalone?: boolean | null, is_parent?: boolean | null, is_available?: boolean | null, brand?: string | null, product_rank?: number | null, weight_value?: number | null, weight_unit?: string | null, length_value?: number | null, width_value?: number | null, height_value?: number | null, dimensions_unit?: string | null, listing_quality_score?: number | null, number_of_sellers?: number | null, buy_box_owner?: string | null, buy_box_owner_seller_id?: string | null, date_first_available?: string | null, date_first_available_is_estimated?: boolean | null, approximate_30_day_revenue?: number | null, approximate_30_day_units_sold?: number | null, subcategory_ranks?: { subcategory?: string | null, rank?: number | null, id?: string | null }[] | null, fee_breakdown?: { fba_fee?: number | null, referral_fee?: number | null, variable_closing_fee?: number | null, total_fees?: number | null } | null, ean_list?: string[] | null, isbn_list?: string[] | null, upc_list?: string[] | null, gtin_list?: string[] | null, variant_reviews?: number | null, updated_at?: string | null } }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null } | null"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_items?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "junglescout.api.salesEstimates.query",
+      "shortPath": "salesEstimates.query",
+      "description": "Retrieve daily historical sales estimates and pricing for an ASIN",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "marketplace",
+            "optional": false,
+            "type": "us | uk | de | in | ca | fr | it | es | mx | jp"
+          },
+          {
+            "key": "asin",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, type?: string | null, attributes: { asin?: string | null, is_parent?: boolean | null, is_variant?: boolean | null, is_standalone?: boolean | null, parent_asin?: string | null, variants?: string[] | null, data: { date?: string | null, estimated_units_sold?: number | null, last_known_price?: number | null }[] } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "junglescout.api.shareOfVoice.get",
+      "shortPath": "shareOfVoice.get",
+      "description": "Retrieve brand market share and visibility metrics for a search term",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "marketplace",
+            "optional": false,
+            "type": "us | uk | de | in | ca | fr | it | es | mx | jp"
+          },
+          {
+            "key": "keyword",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, type?: string | null, attributes: { estimated_30_day_search_volume?: number | null, exact_suggested_bid_median?: number | null, product_count?: number | null, updated_at?: string | null, top_asins_model_start_date?: string | null, top_asins_model_end_date?: string | null, brands?: { brand?: string | null, combined_products?: number | null, combined_weighted_sov?: number | null, combined_basic_sov?: number | null, combined_average_position?: number | null, combined_average_price?: number | null, organic_products?: number | null, organic_weighted_sov?: number | null, organic_basic_sov?: number | null, organic_average_position?: number | null, organic_average_price?: number | null, sponsored_products?: number | null, sponsored_weighted_sov?: number | null, sponsored_basic_sov?: number | null, sponsored_average_position?: number | null, sponsored_average_price?: number | null }[] | null, top_asins?: { asin?: string | null, name?: string | null, brand?: string | null, clicks?: number | null, conversions?: number | null, conversion_rate?: number | null }[] | null } }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
