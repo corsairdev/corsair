@@ -10,6 +10,14 @@ import {
 	SearchToolsInputSchema,
 	SearchToolsOutputSchema,
 } from './types';
+import {
+	DescribeModelInputSchema,
+	DescribeModelOutputSchema,
+	ListProvidersInputSchema,
+	ListProvidersOutputSchema,
+	QuoteInferenceToolInputSchema,
+	QuoteInferenceToolOutputSchema,
+} from './types-integrations';
 export const list = defineEndpoint({
 	event: 'deepline.tools.list',
 	input: ListToolsInputSchema,
@@ -68,4 +76,36 @@ export const execute = defineEndpoint({
 				headers: { 'Idempotency-Key': input.idempotencyKey },
 			},
 		),
+});
+export const providers = defineEndpoint({
+	event: 'deepline.tools.providers',
+	input: ListProvidersInputSchema,
+	output: ListProvidersOutputSchema,
+	run: (ctx, input) =>
+		makeDeeplineRequest(`/api/v2/tools/providers`, ctx.key, {
+			method: 'GET',
+			query: { changed: input.changed ? true : undefined },
+		}),
+});
+// Prices a payload without running it; no credits are spent.
+export const quote = defineEndpoint({
+	event: 'deepline.tools.quote',
+	input: QuoteInferenceToolInputSchema,
+	output: QuoteInferenceToolOutputSchema,
+	run: (ctx, input) =>
+		makeDeeplineRequest(
+			`/api/v2/integrations/${segment(input.toolId)}/quote`,
+			ctx.key,
+			{ method: 'POST', body: input.payload },
+		),
+});
+export const describeModel = defineEndpoint({
+	event: 'deepline.tools.describeModel',
+	input: DescribeModelInputSchema,
+	output: DescribeModelOutputSchema,
+	run: (ctx, input) =>
+		makeDeeplineRequest(`/api/v2/models/describe`, ctx.key, {
+			method: 'GET',
+			query: { model: input.model },
+		}),
 });

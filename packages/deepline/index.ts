@@ -15,6 +15,11 @@ import type { z } from 'zod';
 import { endpoints } from './endpoints';
 import * as contracts from './endpoints/types';
 import { errorHandlers } from './error-handlers';
+import { billingMeta, billingSchemas } from './registry-billing';
+import { integrationsMeta, integrationsSchemas } from './registry-integrations';
+import { monitorsMeta, monitorsSchemas } from './registry-monitors';
+import { playsMeta, playsSchemas } from './registry-plays';
+import { runsMeta, runsSchemas } from './registry-runs';
 import { DeeplineSchema } from './schema';
 
 export type DeeplinePluginOptions = {
@@ -115,6 +120,11 @@ export const deeplineEndpointSchemas = {
 		input: contracts.GetBillingLedgerInputSchema,
 		output: contracts.GetBillingLedgerOutputSchema,
 	},
+	...playsSchemas,
+	...runsSchemas,
+	...integrationsSchemas,
+	...billingSchemas,
+	...monitorsSchemas,
 } as const satisfies RequiredPluginEndpointSchemas<typeof endpoints>;
 export type DeeplineEndpointInputs = {
 	[K in keyof typeof deeplineEndpointSchemas]: z.input<
@@ -209,6 +219,11 @@ const meta = {
 		riskLevel: 'read',
 		description: 'List or export the credit ledger',
 	},
+	...playsMeta,
+	...runsMeta,
+	...integrationsMeta,
+	...billingMeta,
+	...monitorsMeta,
 } as const satisfies RequiredPluginEndpointMeta<typeof endpoints>;
 export const deeplineAuthConfig = {
 	api_key: { account: [] as const },

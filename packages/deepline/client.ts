@@ -7,7 +7,7 @@ export type DeeplineQuery = Record<
 	string | number | boolean | undefined
 >;
 export interface DeeplineRequestOptions {
-	method?: 'GET' | 'POST';
+	method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 	query?: DeeplineQuery;
 	// Tools and Plays each define their own JSON input contract at runtime.
 	body?: unknown;

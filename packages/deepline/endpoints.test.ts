@@ -5,6 +5,23 @@ import { endpoints } from './endpoints';
 import { errorHandlers } from './error-handlers';
 import type { DeeplineContext } from './index';
 import { deepline, deeplineEndpointSchemas } from './index';
+import { billingSchemas } from './registry-billing';
+import { integrationsSchemas } from './registry-integrations';
+import { monitorsSchemas } from './registry-monitors';
+import { playsSchemas } from './registry-plays';
+import { runsSchemas } from './registry-runs';
+
+// Each group registry has its own contract suite (plays-lifecycle, runs-control,
+// integrations, billing-writes, monitors). This file owns the original ops.
+const groupOps = new Set(
+	[
+		playsSchemas,
+		runsSchemas,
+		integrationsSchemas,
+		billingSchemas,
+		monitorsSchemas,
+	].flatMap((registry) => Object.keys(registry)),
+);
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
@@ -365,8 +382,13 @@ describe('Deepline HTTP contracts', () => {
 		},
 	);
 	it('covers every registered operation', () => {
-		expect(cases.map((t) => t.name).sort()).toEqual(
-			Object.keys(deeplineEndpointSchemas).sort(),
+		const coreOps = Object.keys(deeplineEndpointSchemas).filter(
+			(name) => !groupOps.has(name),
+		);
+		expect(cases.map((t) => t.name).sort()).toEqual(coreOps.sort());
+		// Every registered op belongs to this suite or exactly one group suite.
+		expect(coreOps.length + groupOps.size).toBe(
+			Object.keys(deeplineEndpointSchemas).length,
 		);
 	});
 	it.each(cases)('$name rejects a malformed success response', async (test) => {
@@ -443,9 +465,12 @@ describe('Deepline HTTP contracts', () => {
 	it('marks both dispatch operations destructive and all reads read', () => {
 		const meta = deepline().endpointMeta;
 		for (const [name, entry] of Object.entries(meta ?? {}))
-			expect(entry.riskLevel).toBe(
-				['plays.run', 'tools.execute'].includes(name) ? 'destructive' : 'read',
-			);
+			if (!groupOps.has(name))
+				expect(entry.riskLevel).toBe(
+					['plays.run', 'tools.execute'].includes(name)
+						? 'destructive'
+						: 'read',
+				);
 	});
 });
 it('accepts the native execution envelope observed in the live API', async () => {
