@@ -1,6 +1,7 @@
 # Display copy for the docs, the catalog, corsair.dev and Hub.
 displayName: Hex
 description: Collaborative analytics and data workspace platform — manage projects, trigger and monitor project runs, configure notebook cells, collections, data connections, user groups, and interact with AI agent threads.
+domain: hex.tech
 overviewNote: |
   Semantic ZIP ingestion is not exposed by this plugin. The public OpenAPI describes the ingest route as importing a ZIP but only defines JSON flags and no archive upload field or upload contract, so Corsair cannot safely send the required project contents.
 examples:

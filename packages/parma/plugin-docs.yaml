@@ -1,5 +1,6 @@
 displayName: Parma
 description: Manage Parma CRM relationships, notes, groups, deals, pipelines, stages, and users.
+domain: parma.ai
 examples:
   read:
     path: deals.get
