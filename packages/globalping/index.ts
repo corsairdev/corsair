@@ -131,8 +131,14 @@ export function globalping<const T extends GlobalpingPluginOptions>(
 		keyBuilder: async (ctx: GlobalpingKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) return options.key;
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const key = await ctx.keys.get_api_key();
-				return key ?? '';
+				// The key is optional: Globalping serves every route anonymously with a
+				// lower hourly limit. With no stored account (or no key in it) the
+				// lookup throws or returns null; both mean "call without a token".
+				try {
+					return (await ctx.keys.get_api_key()) ?? '';
+				} catch {
+					return '';
+				}
 			}
 			return '';
 		},
