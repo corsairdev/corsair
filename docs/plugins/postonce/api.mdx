@@ -79,6 +79,436 @@ await corsair.postonce.api.accounts.list({});
 
 ---
 
+## Analytics
+
+### get
+
+`analytics.get`
+
+Per-account and per-post views, likes, comments, shares and saves over the last 7, 30 or 90 days, including posts made outside PostOnce, with each post compared to its account's median views.
+
+**Risk:** `read`
+
+```ts
+await corsair.postonce.api.analytics.get({ days: 30 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `days` | `7 \| 30 \| 90` | No | Range in days: 7, 30 or 90 (default 30) |
+| `account_id` | `string` | No | Only this connected account |
+| `external_user_id` | `string` | No | Only accounts connected for this end user of yours |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  range?: {
+    days?: number,
+    start?: string,
+    end?: string
+  },
+  accounts?: {
+    id?: string,
+    platform?: string,
+    username?: string | null,
+    metrics_status?: string,
+    posts_with_views?: number,
+    median_views?: number | null,
+    followers?: number | null,
+    followers_observed_at?: string | null
+  }[],
+  posts?: {
+    id?: string,
+    post_id?: string | null,
+    title?: string | null,
+    caption?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Drafts
+
+### create
+
+`drafts.create`
+
+Save text, media and intended accounts as a draft without publishing or scheduling it.
+
+**Risk:** `write`
+
+```ts
+await corsair.postonce.api.drafts.create({ content: 'Idea for next week', suggested_platforms: ['linkedin'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | No | Draft text |
+| `candidate_angle` | `string` | No | A note on the angle or hook this draft tries |
+| `media` | `object[]` | No | — |
+| `selected_account_ids` | `string[]` | No | Connected account ids the draft is meant for |
+| `suggested_platforms` | `string[]` | No | Platform names, e.g. linkedin or x |
+| `idempotencyKey` | `string` | No | Sent as the Idempotency-Key header. A repeat with the same body returns the original draft. |
+
+<AccordionGroup>
+<Accordion title="media full type">
+
+```ts
+{
+  url: string,
+  type: image | video,
+  file_name?: string,
+  mime_type?: string,
+  width?: number,
+  height?: number,
+  size?: number,
+  duration?: number,
+  thumbnail_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  content?: string | null,
+  candidate_angle?: string | null,
+  media?: {
+  }[] | null,
+  selected_account_ids?: string[] | null,
+  suggested_platforms?: string[] | null,
+  source_type?: string | null,
+  status?: string,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`drafts.get`
+
+Get one draft.
+
+**Risk:** `read`
+
+```ts
+await corsair.postonce.api.drafts.get({ id: 'DRAFT_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Draft id (UUID) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  content?: string | null,
+  candidate_angle?: string | null,
+  media?: {
+  }[] | null,
+  selected_account_ids?: string[] | null,
+  suggested_platforms?: string[] | null,
+  source_type?: string | null,
+  status?: string,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`drafts.list`
+
+List unscheduled drafts, newest first. Page with after = meta.next_after and after_id = meta.next_after_id.
+
+**Risk:** `read`
+
+```ts
+await corsair.postonce.api.drafts.list({ status: 'inbox', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `after` | `string` | No | meta.next_after from the previous page |
+| `after_id` | `string` | No | meta.next_after_id from the previous page |
+| `status` | `inbox \| ready \| archived` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  content?: string | null,
+  candidate_angle?: string | null,
+  media?: {
+  }[] | null,
+  selected_account_ids?: string[] | null,
+  suggested_platforms?: string[] | null,
+  source_type?: string | null,
+  status?: string,
+  created_at?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  has_more?: boolean,
+  next_after?: string | null,
+  next_after_id?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`drafts.update`
+
+Edit, archive, restore or mark a draft ready. Pass the draft's current updated_at as expected_updated_at; a stale value gets a 409.
+
+**Risk:** `write`
+
+```ts
+await corsair.postonce.api.drafts.update({ id: 'DRAFT_ID', expected_updated_at: 'UPDATED_AT', status: 'ready' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Draft id (UUID) |
+| `expected_updated_at` | `string` | Yes | The draft's updated_at as last read |
+| `content` | `string` | No | Draft text |
+| `candidate_angle` | `string` | No | A note on the angle or hook this draft tries |
+| `media` | `object[]` | No | — |
+| `selected_account_ids` | `string[]` | No | Connected account ids the draft is meant for |
+| `suggested_platforms` | `string[]` | No | Platform names, e.g. linkedin or x |
+| `status` | `inbox \| ready \| archived` | No | Move the draft: archived archives it, inbox restores it |
+
+<AccordionGroup>
+<Accordion title="media full type">
+
+```ts
+{
+  url: string,
+  type: image | video,
+  file_name?: string,
+  mime_type?: string,
+  width?: number,
+  height?: number,
+  size?: number,
+  duration?: number,
+  thumbnail_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  content?: string | null,
+  candidate_angle?: string | null,
+  media?: {
+  }[] | null,
+  selected_account_ids?: string[] | null,
+  suggested_platforms?: string[] | null,
+  source_type?: string | null,
+  status?: string,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Media
+
+### createUpload
+
+`media.createUpload`
+
+Get a signed URL to upload an image or video to, and a media_id. After the file is PUT to the URL, media.get gives the public URL that posts and drafts accept.
+
+**Risk:** `write`
+
+```ts
+await corsair.postonce.api.media.createUpload({ filename: 'launch.png', content_type: 'image/png' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filename` | `string` | Yes | File name with extension, e.g. launch.png |
+| `content_type` | `image/jpeg \| image/png \| image/webp \| video/mp4 \| video/quicktime \| video/webm` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  media_id: string,
+  content_type?: string,
+  path?: string,
+  upload?: {
+    path?: string,
+    token?: string,
+    signedUrl?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`media.get`
+
+Turn a media_id into the uploaded file's public URL.
+
+**Risk:** `read`
+
+```ts
+await corsair.postonce.api.media.get({ id: 'MEDIA_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | media_id from media.createUpload |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  path?: string,
+  public_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Posts
 
 ### cancel
@@ -318,6 +748,63 @@ await corsair.postonce.api.posts.get({ id: 'POST_ID' });
 
 ---
 
+### getAnalytics
+
+`posts.getAnalytics`
+
+Views, likes, comments, shares and saves for each published copy of one post (TikTok, Instagram, YouTube and Facebook). Cached for up to an hour.
+
+**Risk:** `read`
+
+```ts
+await corsair.postonce.api.posts.getAnalytics({ id: 'POST_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Aggregate post id (UUID) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  media_url?: string | null,
+  targets?: {
+    account_id?: string,
+    platform?: string,
+    platform_post_id?: string | null,
+    url?: string | null,
+    published_at?: string | null,
+    metrics_status?: string,
+    views?: number | null,
+    likes?: number | null,
+    comments?: number | null,
+    shares?: number | null,
+    saves?: number | null,
+    engagement_rate?: number | null,
+    last_updated?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ### list
 
 `posts.list`
@@ -388,6 +875,733 @@ await corsair.postonce.api.posts.list({ limit: 20 });
 ```ts
 {
   next_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### publish
+
+`posts.publish`
+
+Publish a scheduled post right now. It goes live on every target and cannot be recalled.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postonce.api.posts.publish({ id: 'POST_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Aggregate post id (UUID) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  content?: string | null,
+  external_id?: string | null,
+  media?: {
+    url: string,
+    type?: string | null,
+    width?: number | null,
+    height?: number | null,
+    size?: number | null,
+    duration?: number | null,
+    thumbnail_url?: string | null
+  }[] | null,
+  origin?: string | null,
+  publish_at?: string | null,
+  status?: string | null,
+  created_at?: string | null,
+  targets?: {
+    target_post_id?: string | null,
+    account_id?: string | null,
+    platform?: string | null,
+    target_variant?: string | null,
+    username?: string | null,
+    status?: string | null,
+    error?: string | null,
+    platform_post_id?: string | null,
+    platform_post_url?: string | null,
+    scheduled_time?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retryTarget
+
+`posts.retryTarget`
+
+Retry one failed destination of a post (targetId from the post's targets). Published destinations are not posted again.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postonce.api.posts.retryTarget({ id: 'POST_ID', targetId: 'TARGET_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Aggregate post id (UUID) |
+| `targetId` | `string` | Yes | Id of the failed target, from the post's targets[] |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  content?: string | null,
+  external_id?: string | null,
+  media?: {
+    url: string,
+    type?: string | null,
+    width?: number | null,
+    height?: number | null,
+    size?: number | null,
+    duration?: number | null,
+    thumbnail_url?: string | null
+  }[] | null,
+  origin?: string | null,
+  publish_at?: string | null,
+  status?: string | null,
+  created_at?: string | null,
+  targets?: {
+    target_post_id?: string | null,
+    account_id?: string | null,
+    platform?: string | null,
+    target_variant?: string | null,
+    username?: string | null,
+    status?: string | null,
+    error?: string | null,
+    platform_post_id?: string | null,
+    platform_post_url?: string | null,
+    scheduled_time?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`posts.update`
+
+Change a scheduled post before it runs: text, accounts, media or publish time. Only the fields sent change.
+
+**Risk:** `write`
+
+```ts
+await corsair.postonce.api.posts.update({ id: 'POST_ID', publish_at: '2026-12-02T15:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Aggregate post id (UUID) |
+| `content` | `string` | No | New post text |
+| `targets` | `object[]` | No | Replaces the list of accounts to publish to |
+| `media` | `object[]` | No | Replaces the images or video |
+| `publish_at` | `string \| null` | No | New ISO-8601 publish time |
+| `external_id` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="targets full type">
+
+```ts
+{
+  account_id: string,
+  content_override?: string | null,
+  platform_options?: Record<string, any> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="media full type">
+
+```ts
+{
+  url: string,
+  type?: image | video,
+  width?: number,
+  height?: number,
+  size?: number,
+  duration?: number,
+  thumbnail_url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  content?: string | null,
+  external_id?: string | null,
+  media?: {
+    url: string,
+    type?: string | null,
+    width?: number | null,
+    height?: number | null,
+    size?: number | null,
+    duration?: number | null,
+    thumbnail_url?: string | null
+  }[] | null,
+  origin?: string | null,
+  publish_at?: string | null,
+  status?: string | null,
+  created_at?: string | null,
+  targets?: {
+    target_post_id?: string | null,
+    account_id?: string | null,
+    platform?: string | null,
+    target_variant?: string | null,
+    username?: string | null,
+    status?: string | null,
+    error?: string | null,
+    platform_post_id?: string | null,
+    platform_post_url?: string | null,
+    scheduled_time?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Register an HTTPS endpoint for signed post.published, post.partially_published and post.failed events (up to 5). The reply is the only time the signing secret is shown.
+
+**Risk:** `write`
+
+```ts
+await corsair.postonce.api.webhooks.create({ url: 'https://example.com/postonce-events' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public HTTPS URL; redirects are not followed |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  url?: string,
+  description?: string | null,
+  events?: string[],
+  created_at?: string,
+  secret?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a webhook endpoint and its delivery log.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.postonce.api.webhooks.delete({ id: 'WEBHOOK_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Webhook id (UUID) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  deleted?: boolean,
+  id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Get one registered webhook endpoint.
+
+**Risk:** `read`
+
+```ts
+await corsair.postonce.api.webhooks.get({ id: 'WEBHOOK_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Webhook id (UUID) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  url?: string,
+  description?: string | null,
+  events?: string[],
+  created_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List registered webhook endpoints (signing secrets are not returned).
+
+**Risk:** `read`
+
+```ts
+await corsair.postonce.api.webhooks.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  url?: string,
+  description?: string | null,
+  events?: string[],
+  created_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Workflows
+
+### create
+
+`workflows.create`
+
+Create a cross-posting workflow. While active, PostOnce publishes every new post from the source account to the target accounts automatically.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postonce.api.workflows.create({ name: 'TikTok to Instagram', source_account_id: 'ACCOUNT_ID', target_account_ids: ['ACCOUNT_ID_2'], is_active: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `source_account_id` | `string` | Yes | Connected account whose new posts are copied |
+| `target_account_ids` | `string[]` | Yes | Connected accounts that get each new post |
+| `is_active` | `boolean` | No | — |
+| `future_content_enabled` | `boolean` | No | — |
+| `settings` | `object` | No | — |
+| `idempotencyKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  content_filters?: {
+    types?: {
+      text?: boolean,
+      image?: boolean,
+      quote?: boolean,
+      video?: boolean
+    },
+    hashtags?: {
+      include?: string[],
+      exclude?: string[]
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  profile_id?: string,
+  name?: string | null,
+  description?: string | null,
+  source_account_id?: string | null,
+  target_account_ids?: string[] | null,
+  settings?: {
+  } | null,
+  is_active?: boolean,
+  future_content_enabled?: boolean,
+  created_at?: string,
+  updated_at?: string,
+  last_checked?: string | null,
+  last_enabled_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`workflows.delete`
+
+Delete a cross-posting workflow and its queued items.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.postonce.api.workflows.delete({ id: 'WORKFLOW_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Workflow id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  deleted?: boolean,
+  id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`workflows.get`
+
+Get one cross-posting workflow.
+
+**Risk:** `read`
+
+```ts
+await corsair.postonce.api.workflows.get({ id: 'WORKFLOW_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Workflow id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  profile_id?: string,
+  name?: string | null,
+  description?: string | null,
+  source_account_id?: string | null,
+  target_account_ids?: string[] | null,
+  settings?: {
+  } | null,
+  is_active?: boolean,
+  future_content_enabled?: boolean,
+  created_at?: string,
+  updated_at?: string,
+  last_checked?: string | null,
+  last_enabled_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`workflows.list`
+
+List cross-posting workflows: each copies new posts from a source account to target accounts.
+
+**Risk:** `read`
+
+```ts
+await corsair.postonce.api.workflows.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  profile_id?: string,
+  name?: string | null,
+  description?: string | null,
+  source_account_id?: string | null,
+  target_account_ids?: string[] | null,
+  settings?: {
+  } | null,
+  is_active?: boolean,
+  future_content_enabled?: boolean,
+  created_at?: string,
+  updated_at?: string,
+  last_checked?: string | null,
+  last_enabled_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`workflows.update`
+
+Change a cross-posting workflow: name, accounts, filters or is_active. Turning it on or adding targets makes PostOnce publish future posts to them automatically.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postonce.api.workflows.update({ id: 'WORKFLOW_ID', is_active: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Workflow id |
+| `name` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `source_account_id` | `string` | No | Connected account whose new posts are copied |
+| `target_account_ids` | `string[]` | No | Connected accounts that get each new post |
+| `is_active` | `boolean` | No | — |
+| `future_content_enabled` | `boolean` | No | — |
+| `settings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  content_filters?: {
+    types?: {
+      text?: boolean,
+      image?: boolean,
+      quote?: boolean,
+      video?: boolean
+    },
+    hashtags?: {
+      include?: string[],
+      exclude?: string[]
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  profile_id?: string,
+  name?: string | null,
+  description?: string | null,
+  source_account_id?: string | null,
+  target_account_ids?: string[] | null,
+  settings?: {
+  } | null,
+  is_active?: boolean,
+  future_content_enabled?: boolean,
+  created_at?: string,
+  updated_at?: string,
+  last_checked?: string | null,
+  last_enabled_at?: string | null
 }
 ```
 </Accordion>

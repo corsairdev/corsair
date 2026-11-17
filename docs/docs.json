@@ -3983,6 +3983,14 @@
                 ]
               },
               {
+                "group": "PostOnce",
+                "pages": [
+                  "plugins/postonce/overview",
+                  "plugins/postonce/api",
+                  "plugins/postonce/database"
+                ]
+              },
+              {
                 "group": "Prismic",
                 "pages": [
                   "plugins/prismic/overview",
@@ -4038,14 +4046,6 @@
                   "plugins/postman/overview",
                   "plugins/postman/api",
                   "plugins/postman/database"
-                ]
-              },
-              {
-                "group": "PostOnce",
-                "pages": [
-                  "plugins/postonce/overview",
-                  "plugins/postonce/api",
-                  "plugins/postonce/database"
                 ]
               },
               {
