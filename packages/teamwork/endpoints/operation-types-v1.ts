@@ -1184,7 +1184,7 @@ export type TeamworkV1Inputs = {
 		path?: Record<string, never>;
 		query?: Record<string, never>;
 		body?: {
-			person?: {
+			team?: {
 				parentTeamId?: number;
 				name?: string;
 				logoPendingFileRef?: string;
@@ -1204,7 +1204,7 @@ export type TeamworkV1Inputs = {
 		path: { id: string };
 		query?: Record<string, never>;
 		body?: {
-			person?: {
+			team?: {
 				parentTeamId?: number;
 				name?: string;
 				logoPendingFileRef?: string;
@@ -1270,7 +1270,7 @@ export type TeamworkV1Inputs = {
 		path: { id: string };
 		query?: Record<string, never>;
 		body?: {
-			person?: {
+			team?: {
 				parentTeamId?: number;
 				name?: string;
 				logoPendingFileRef?: string;

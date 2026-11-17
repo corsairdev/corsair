@@ -7979,7 +7979,7 @@
       "body": {
         "type": "object",
         "properties": {
-          "person": {
+          "team": {
             "type": "object",
             "properties": {
               "parentTeamId": {
@@ -8078,7 +8078,7 @@
       "body": {
         "type": "object",
         "properties": {
-          "person": {
+          "team": {
             "type": "object",
             "properties": {
               "parentTeamId": {
@@ -8445,7 +8445,7 @@
       "body": {
         "type": "object",
         "properties": {
-          "person": {
+          "team": {
             "type": "object",
             "properties": {
               "parentTeamId": {

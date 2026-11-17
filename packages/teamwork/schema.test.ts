@@ -158,6 +158,16 @@ describe('Teamwork OpenAPI contract schemas', () => {
 		).toBe(true);
 	});
 
+	it('takes integer enums the spec lists as strings as numbers', () => {
+		const list = teamworkInputSchemas['tasks.list'];
+		expect(list?.safeParse({ query: { projectHealths: [1, 3] } }).success).toBe(
+			true,
+		);
+		expect(list?.safeParse({ query: { projectHealths: [4] } }).success).toBe(
+			false,
+		);
+	});
+
 	it('keeps the typed operation ID list in sync with the provider manifest', () => {
 		expect([...TEAMWORK_OPERATION_IDS].sort()).toEqual(
 			teamworkOperations.map((operation) => operation.id).sort(),

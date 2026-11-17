@@ -86,7 +86,13 @@ function schemaFromOpenApi(
 		schema = looseScalar;
 	} else if (Array.isArray(value.enum)) {
 		// zod enums and literals rather than a custom check, so get_schema and the docs show the allowed values.
-		const values: unknown[] = value.enum;
+		// The V3 spec lists some integer enums as strings (projectHealths: "0".."3"); take them as the numbers they are.
+		const numeric = type === 'integer' || type === 'number';
+		const values: unknown[] = value.enum.map((allowed: unknown) =>
+			numeric && typeof allowed === 'string' && /^-?\d+(\.\d+)?$/.test(allowed)
+				? Number(allowed)
+				: allowed,
+		);
 		const strings = values.filter(
 			(allowed): allowed is string => typeof allowed === 'string',
 		);
