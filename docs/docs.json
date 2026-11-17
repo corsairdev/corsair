@@ -3675,6 +3675,14 @@
                 ]
               },
               {
+                "group": "NetHunt CRM",
+                "pages": [
+                  "plugins/nethunt/overview",
+                  "plugins/nethunt/api",
+                  "plugins/nethunt/database"
+                ]
+              },
+              {
                 "group": "NetSuite",
                 "pages": [
                   "plugins/netsuite/overview",

@@ -442,6 +442,7 @@ export const BaseProviders = [
 	'nasdaq',
 	'needle',
 	'neon',
+	'nethunt',
 	'netsuite',
 	'neverbounce',
 	'newsapi',
@@ -1155,6 +1156,7 @@ export const ProviderDisplayNames = {
 	nasdaq: 'Nasdaq Data Link',
 	needle: 'Needle',
 	neon: 'Neon',
+	nethunt: 'NetHunt CRM',
 	netsuite: 'NetSuite',
 	neverbounce: 'NeverBounce',
 	newsapi: 'NewsAPI',
@@ -1875,6 +1877,7 @@ export type AllProviders =
 	| 'nasdaq'
 	| 'needle'
 	| 'neon'
+	| 'nethunt'
 	| 'netsuite'
 	| 'neverbounce'
 	| 'newsapi'
