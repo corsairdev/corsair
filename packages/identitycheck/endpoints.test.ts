@@ -14,6 +14,8 @@ const mockedRequest = jest.mocked(request);
 const plugin = identitycheck({ key: 'key-test' });
 if (!plugin.endpoints) throw new Error('Missing endpoints');
 const endpoints = plugin.endpoints;
+// The endpoints read only ctx.key, so a context holding just the key is
+// enough; a full CorsairPluginContext would need a database and hooks.
 const context = { key: 'key-test' } as never;
 
 beforeEach(() => mockedRequest.mockReset());

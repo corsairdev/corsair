@@ -91,4 +91,6 @@ it('validates Hub-verified bodies and still rejects unsigned direct deliveries',
 	await expect(
 		handler({ headers: {}, rawBody, payload: event }),
 	).resolves.toMatchObject({ success: false, statusCode: 401 });
-});
+}); // The handler reads only ctx.key (the signing secret) and the request's
+// headers, rawBody and payload, so these partial objects are cast to the
+// full context and request types instead of building them out.
