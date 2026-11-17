@@ -88,7 +88,8 @@ export const createResearch: CorsairEndpoint<
 			defined({
 				q: parsed.q,
 				outputType,
-				reasoningDepth: parsed.reasoningDepth,
+				// Linkup's own default is L ($1.50); the plugin starts at S ($0.25).
+				reasoningDepth: parsed.reasoningDepth ?? 'S',
 				mode: parsed.mode,
 				structuredOutputSchema: parsed.schema
 					? JSON.stringify(parsed.schema)

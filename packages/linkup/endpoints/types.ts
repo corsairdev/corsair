@@ -132,7 +132,7 @@ export const ResearchCreateInputSchema = z.object({
 		.enum(['S', 'M', 'L', 'XL'])
 		.optional()
 		.describe(
-			'How hard to work: S $0.25, M $0.50, L $1.50, XL $2.50 per task.',
+			'How hard to work: S $0.25 (default here), M $0.50, L $1.50, XL $2.50 per task.',
 		),
 	mode: z.enum(['auto', 'answer', 'investigate', 'research']).optional(),
 	outputType: z.enum(['sourcedAnswer', 'structured']).optional(),

@@ -61,6 +61,7 @@ const TASK = {
 	type: 'research',
 };
 
+// Tables are jest mocks of the db client; their exact type doesn't matter here.
 describe('linkup', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
@@ -215,6 +216,24 @@ describe('linkup', () => {
 		});
 	});
 
+	it('rejects a structured answer without its data envelope', async () => {
+		mockRequest.mockResolvedValue({ sources: [] });
+		await expect(
+			searchStructured(context(), {
+				q: 'x',
+				schema: { type: 'object' },
+				includeSources: true,
+			}),
+		).rejects.toThrow('missing data or sources');
+	});
+
+	it('accepts an empty page', async () => {
+		mockRequest.mockResolvedValue({ markdown: '', favicon: '' });
+		await expect(
+			fetchPage(context(), { url: 'https://example.com/blank' }),
+		).resolves.toEqual({ markdown: '' });
+	});
+
 	it('fetches a page with options', async () => {
 		mockRequest.mockResolvedValue({
 			markdown: '# Example Domain',
@@ -281,7 +300,6 @@ describe('linkup', () => {
 			});
 		const created = await createResearch(context(), {
 			q: 'When did the Oslo Opera House open?',
-			reasoningDepth: 'S',
 		});
 		const got = await getResearch(context(), { id: TASK.id });
 		const listed = await listResearch(context(), {
@@ -293,6 +311,7 @@ describe('linkup', () => {
 			outputType: 'sourcedAnswer',
 			reasoningDepth: 'S',
 		});
+		expect(mockRequest.mock.calls[0]?.[0]?.TIMEOUT).toBe(90_000);
 		expect(call(1)?.url).toBe(`/v1/research/${TASK.id}`);
 		expect(call(2)).toMatchObject({
 			url: '/v1/research',

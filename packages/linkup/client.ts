@@ -3,12 +3,17 @@ import { request } from 'corsair/http';
 
 export const LINKUP_API_BASE = 'https://api.linkup.so';
 
+// Deep searches and linkup-deep responses can take 30 s or more; core's
+// default timeout is 20 s.
+export const LINKUP_TIMEOUT_MS = 90_000;
+
 function config(apiKey: string | undefined): OpenAPIConfig {
 	return {
 		BASE: LINKUP_API_BASE,
 		VERSION: '1',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
+		TIMEOUT: LINKUP_TIMEOUT_MS,
 		HEADERS: {
 			Accept: 'application/json',
 			Authorization: `Bearer ${apiKey ?? ''}`,
@@ -55,6 +60,7 @@ export function seg(value: string): string {
 }
 
 /** Drop undefined fields so the body only carries what the caller set. */
+// fields are already-validated inputs of mixed types, copied through unchanged.
 export function defined(fields: Record<string, unknown>) {
 	return Object.fromEntries(
 		Object.entries(fields).filter(([, value]) => value !== undefined),

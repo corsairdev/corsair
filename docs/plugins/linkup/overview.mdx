@@ -6,7 +6,7 @@ description: "Web search for AI agents with Linkup - search results with page te
 
 Use **Linkup** through Corsair: one client, typed API calls, local DB sync.
 
-Create an API key under API keys in the Linkup app; it is sent as a Bearer token. New accounts get $20 of credit each month. Every call except `credits.get`, `research.get/list` and `tasks.get/list` is billed per call: searches $0.005 to $0.055 by depth, page fetches $0.001 to $0.011, research $0.25 to $2.50 by `reasoningDepth`.
+Create an API key under API keys in the Linkup app; it is sent as a Bearer token. Accounts made with a professional email address get $20 of credit, topped back up to $20 each month. Every call except `credits.get`, `research.get/list` and `tasks.get/list` is billed per call: searches $0.005 to $0.055 by depth, page fetches $0.001 to $0.011, research $0.25 to $2.50 by `reasoningDepth` (the plugin defaults to S, $0.25; Linkup's own default is L).
 `search.run`, `answers.get`, `search.structured` and `pages.fetch` are metered lookups (read). `responses.create`, `research.create` and `tasks.create` are paid generation jobs and are destructive.
 `depth`: flash, fast (default here) and standard cost the same; deep runs several searches and costs 10x. `fromDate`/`toDate` take YYYY-MM-DD and the domain filters take bare domains such as example.com.
 Research and batch tasks run in the background: create them, then poll `research.get` or `tasks.get` until `status` is `completed` (or `failed`); `output` holds the answer, results or data.

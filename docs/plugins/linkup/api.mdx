@@ -168,7 +168,7 @@ await corsair.linkup.api.research.create({ q: 'When did the Oslo Opera House ope
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `q` | `string` | Yes | The research question. |
-| `reasoningDepth` | `S \| M \| L \| XL` | No | How hard to work: S $0.25, M $0.50, L $1.50, XL $2.50 per task. |
+| `reasoningDepth` | `S \| M \| L \| XL` | No | How hard to work: S $0.25 (default here), M $0.50, L $1.50, XL $2.50 per task. |
 | `mode` | `auto \| answer \| investigate \| research` | No | — |
 | `outputType` | `sourcedAnswer \| structured` | No | — |
 | `schema` | `Record<string, any>` | No | JSON Schema for structured output; needed when outputType is structured. |

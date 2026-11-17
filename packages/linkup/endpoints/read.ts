@@ -49,6 +49,7 @@ function text(value: unknown): string | undefined {
 	return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
 
+// Resolves to whatever the table returns; the result is not used.
 async function save<T extends { id: string }>(
 	table:
 		| { upsertByEntityId: (id: string, row: T) => Promise<unknown> }
@@ -232,7 +233,12 @@ export const searchStructured: CorsairEndpoint<
 	const root = asRecord(body);
 	// With includeSources the data sits under `data` next to `sources`;
 	// without it the body is the data itself.
-	const withSources = parsed.includeSources && root && 'data' in root;
+	if (
+		parsed.includeSources &&
+		!(root && 'data' in root && Array.isArray(root.sources))
+	)
+		throw new Error('Linkup structured response was missing data or sources');
+	const withSources = parsed.includeSources && root;
 	const sources = withSources
 		? rowsOf(root.sources, (row) => SourceSchema.safeParse(row))
 		: undefined;
@@ -262,7 +268,9 @@ export const fetchPage: CorsairEndpoint<
 			}),
 		),
 	);
-	const markdown = text(body?.markdown);
+	// An empty page is valid; only a missing field is not.
+	const markdown =
+		typeof body?.markdown === 'string' ? body.markdown : undefined;
 	if (markdown === undefined)
 		throw new Error('Linkup fetch response had no markdown');
 	// The URL and the page stay out of the event and the database.
