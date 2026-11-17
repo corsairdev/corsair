@@ -1,39 +1,48 @@
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { NiftyimagesAPIError } from './client';
 
-// NiftyImages answers a bad key with a 401 and a `{ message }` body, and a wrong
-// path with a 404 HTML page. Neither is retryable, and every route here is a
-// read, so a 5xx is the only case worth another attempt.
+function statusOf(error: Error): number | undefined {
+	return error instanceof ApiError ? error.status : undefined;
+}
+
+function methodOf(error: Error): string | undefined {
+	if (error instanceof ApiError) return error.request.method;
+	if (error instanceof NiftyimagesAPIError) return error.method;
+	return undefined;
+}
+
+// NiftyImages answers a bad key with a 401 and a `{ message }` body, and a
+// missing image, map or record with a 404. Neither is retryable.
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof NiftyimagesAPIError && error.isRateLimit,
-		handler: async () => ({
-			maxRetries: 2,
+		match: (error: Error) => statusOf(error) === 429,
+		handler: async (error: Error) => ({
+			maxRetries: 3,
+			headersRetryAfterMs:
+				error instanceof ApiError ? error.retryAfter : undefined,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
 	AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof NiftyimagesAPIError && error.isAuthError,
+		match: (error: Error) => statusOf(error) === 401,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// A 400 is a malformed date, and a 404 an HTML page for a path that does not
-	// exist. Both need the caller to change something.
+	// A 400 is a malformed date or body, and a 404 a URL, id or path that does
+	// not exist. Both need the caller to change something.
 	VALIDATION_ERROR: {
 		match: (error: Error) => {
 			if (error.name === 'ZodError') return true;
-			return (
-				error instanceof NiftyimagesAPIError &&
-				(error.status === 400 || error.status === 404)
-			);
+			const status = statusOf(error);
+			return status === 400 || status === 404;
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// Every wrapped route is a GET, so a 5xx can be replayed safely.
+	// Only a read replays on a 5xx: an add, update, suspend or delete may have
+	// gone through.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof NiftyimagesAPIError && (error.status ?? 0) >= 500,
+			methodOf(error) === 'GET' && (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

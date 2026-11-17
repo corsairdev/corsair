@@ -1,5 +1,5 @@
 import type { ErrorHandlerAndMatchFunction } from 'corsair/core';
-import { NiftyimagesAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
 type HandlerName = keyof typeof errorHandlers;
@@ -23,28 +23,44 @@ async function strategy(error: Error) {
 	});
 }
 
+/** A core ApiError as the client throws it. */
+function apiError(
+	status: number,
+	{ method = 'GET', retryAfter }: { method?: string; retryAfter?: number } = {},
+): ApiError {
+	return new ApiError(
+		{ method: method as 'GET', url: '/Widgets' },
+		{
+			url: 'https://api.niftyimages.com/v1/Widgets',
+			ok: false,
+			status,
+			statusText: '',
+			body: undefined,
+		},
+		`NiftyImages ${status}`,
+		{ retryAfter },
+	);
+}
+
 describe('niftyimages error handlers', () => {
-	it('retries a 429 with backoff', async () => {
-		const error = new NiftyimagesAPIError('429', { status: 429 });
+	it('retries a 429 and passes on its Retry-After', async () => {
+		const error = apiError(429, { retryAfter: 5000 });
 		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
 		expect(await strategy(error)).toEqual({
-			maxRetries: 2,
+			maxRetries: 3,
+			headersRetryAfterMs: 5000,
 			retryStrategy: 'exponential_backoff',
 		});
 	});
 
 	it('does not retry a 401, which is a bad key', async () => {
-		const error = new NiftyimagesAPIError('401', { status: 401 });
+		const error = apiError(401);
 		expect(classify(error)).toBe('AUTH_ERROR');
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
-	it('does not retry a 404 for a path that does not exist', async () => {
-		const error = new NiftyimagesAPIError('404', {
-			status: 404,
-			htmlResponse: true,
-		});
-		expect(classify(error)).toBe('VALIDATION_ERROR');
+	it('does not retry a 404 for a url or path that does not exist', async () => {
+		expect(classify(apiError(404))).toBe('VALIDATION_ERROR');
 	});
 
 	it('does not retry a schema failure', async () => {
@@ -53,13 +69,19 @@ describe('niftyimages error handlers', () => {
 		expect(classify(error)).toBe('VALIDATION_ERROR');
 	});
 
-	it('retries a 5xx, because every wrapped route is a read', async () => {
-		const error = new NiftyimagesAPIError('500', { status: 500 });
+	it('retries a 5xx on a read', async () => {
+		const error = apiError(500);
 		expect(classify(error)).toBe('SERVER_ERROR');
 		expect(await strategy(error)).toEqual({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff',
 		});
+	});
+
+	it('never replays a 5xx on an add, update, suspend or delete', () => {
+		for (const method of ['POST', 'PUT', 'DELETE']) {
+			expect(classify(apiError(500, { method }))).toBe('DEFAULT');
+		}
 	});
 
 	it('falls back to DEFAULT for a transport failure', () => {
