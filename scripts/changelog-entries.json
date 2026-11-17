@@ -6721,5 +6721,69 @@
     "package": "cloud",
     "version": "0.1.202",
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/box",
+    "dir": "packages/box",
+    "name": "Box",
+    "version": "0.1.5",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2573,
+        "title": "Download Drive, OneDrive, Dropbox and Box files as bytes"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/dropbox",
+    "dir": "packages/dropbox",
+    "name": "Dropbox",
+    "version": "0.1.8",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2573,
+        "title": "Download Drive, OneDrive, Dropbox and Box files as bytes"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/googledrive",
+    "dir": "packages/googledrive",
+    "name": "Google Drive",
+    "version": "0.1.6",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2573,
+        "title": "Download Drive, OneDrive, Dropbox and Box files as bytes"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/onedrive",
+    "dir": "packages/onedrive",
+    "name": "OneDrive",
+    "version": "0.1.9",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2573,
+        "title": "Download Drive, OneDrive, Dropbox and Box files as bytes"
+      }
+    ]
   }
 ]
