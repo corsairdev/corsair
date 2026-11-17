@@ -1,0 +1,1671 @@
+{
+  "id": "talenthr",
+  "displayName": "TalentHR",
+  "description": "HR management with TalentHR - hire, update, terminate and rehire employees, read the directory, book and approve time off, and manage the divisions, departments, locations and job titles those records reference.",
+  "npmPackageName": "@corsair-dev/talenthr",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 25,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "talenthr.api.departments.create",
+      "shortPath": "departments.create",
+      "description": "Create a department with a name that is unique in the company",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The name, up to 255 characters. TalentHR requires it to be unique in its collection."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "field_data",
+            "optional": true,
+            "type": "{ address?: string | null, is_remote?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "talenthr.api.departments.delete",
+      "shortPath": "departments.delete",
+      "description": "Delete a department; TalentHR refuses while an active job position uses it",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The record ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "talenthr.api.departments.list",
+      "shortPath": "departments.list",
+      "description": "List the departments of the company",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name?: string | null, object_type?: string | null, field_data?: { address?: string | null, is_remote?: boolean | null } | null }[]"
+      }
+    },
+    {
+      "path": "talenthr.api.divisions.create",
+      "shortPath": "divisions.create",
+      "description": "Create a division with a name that is unique in the company",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The name, up to 255 characters. TalentHR requires it to be unique in its collection."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "field_data",
+            "optional": true,
+            "type": "{ address?: string | null, is_remote?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "talenthr.api.divisions.delete",
+      "shortPath": "divisions.delete",
+      "description": "Delete a division; TalentHR refuses while an active job position uses it, and clears it from other records",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The record ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "talenthr.api.divisions.get",
+      "shortPath": "divisions.get",
+      "description": "Read one division by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The record ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "field_data",
+            "optional": true,
+            "type": "{ address?: string | null, is_remote?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "talenthr.api.divisions.list",
+      "shortPath": "divisions.list",
+      "description": "List the divisions of the company",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name?: string | null, object_type?: string | null, field_data?: { address?: string | null, is_remote?: boolean | null } | null }[]"
+      }
+    },
+    {
+      "path": "talenthr.api.divisions.update",
+      "shortPath": "divisions.update",
+      "description": "Rename a division",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The record to rename."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The new name, up to 255 characters. TalentHR requires it to be unique in its collection."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "field_data",
+            "optional": true,
+            "type": "{ address?: string | null, is_remote?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "talenthr.api.employees.delete",
+      "shortPath": "employees.delete",
+      "description": "Permanently delete an employee; use terminate when the employment history must be kept",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "employeeId",
+            "optional": false,
+            "type": "number",
+            "description": "The employee ID, from `employees.directory` or `employees.hire`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "talenthr.api.employees.directory",
+      "shortPath": "employees.directory",
+      "description": "List employees with their job, contact and org details, filtered and paged; the response carries the total match count",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows per page. Defaults to 10; TalentHR caps it at 100."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to skip. Defaults to 0."
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "Filter IDs joined by commas, in the form `field:id` (for example `department_id:6,division_id:13`). TalentHR lists the filter IDs at `GET /directory/filters`, which this plugin does not wrap; the IDs come from the division, department, location and job title lists."
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "string",
+            "description": "Custom field slugs joined by commas, as set up in TalentHR (its `GET /custom-fields`, which this plugin does not wrap). TalentHR returns them under each row."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "rows",
+            "optional": false,
+            "type": "{ id: number, user_id?: number | null, u_id?: number | null, reports_to_employee_id?: number | null, photo_url?: string | null, first_name?: string | null, last_name?: string | null, email?: string | null, division_id?: number | null, division?: string | null, employment_status_id?: number | null, employment_status_name?: string | null, department_id?: number | null, department?: string | null, job_title_id?: number | null, job_title?: string | null, location_id?: number | null, location?: string | null, termination_date?: string | null, hire_date?: string | null, linked_in_url?: string | null, work_phone?: string | null, address?: string | null, city?: string | null, postal_code?: string | null, country?: string | null, sec_address?: string | null, sec_city?: string | null, sec_postal_code?: string | null, sec_country?: string | null, custom_fields?: { custom_field_id?: number | null, custom_field_slug?: string | null, custom_field_name?: string | null, values?: { value?: string | null }[] | null }[] | null, user_role?: { id?: number | null, name?: string | null, slug?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "talenthr.api.employees.employmentStatuses",
+      "shortPath": "employees.employmentStatuses",
+      "description": "List an employee’s employment status records, each with its effective date and status name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "employeeId",
+            "optional": false,
+            "type": "number",
+            "description": "The employee ID, from `employees.directory` or `employees.hire`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, employee_id?: number | null, cycle_id?: number | null, effective_date?: string | null, employment_status_id?: number | null, is_hire_event?: boolean | number | null, working_hours?: number | null, end_date?: string | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null, termination_reason?: string | null, termination_type?: string | null, regrettable_status?: string | null, employment_status?: { id?: number | null, name?: string | null, object_type?: string | null } | null }[]"
+      }
+    },
+    {
+      "path": "talenthr.api.employees.get",
+      "shortPath": "employees.get",
+      "description": "Read one employee, including their user role, seniority, custom fields and manager",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "employeeId",
+            "optional": false,
+            "type": "number",
+            "description": "The employee ID, from `employees.directory` or `employees.hire`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "ssn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "birth_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hire_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hire_date_utc",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "personal_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "marital_status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "nationality",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "work_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mobile_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "postal_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "linked_in_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "photo_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "citizenship",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "termination_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "job_title_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "division_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "department_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "location_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "employee_number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "user_role",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, slug?: string | null } | null"
+          },
+          {
+            "key": "seniority",
+            "optional": true,
+            "type": "{ years?: number | null, months?: number | null, days?: number | null } | null"
+          },
+          {
+            "key": "termination_reason",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "{ custom_field_id?: number | null, custom_field_slug?: string | null, custom_field_name?: string | null, values?: { value?: string | null }[] | null }[] | null"
+          },
+          {
+            "key": "default_avatar",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "location_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "division_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "department_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "job_title_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_terminated",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "visa_status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ first_name?: string | null, last_name?: string | null, middle_name?: string | null, email?: string | null, last_login_at?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "talenthr.api.employees.hire",
+      "shortPath": "employees.hire",
+      "description": "Create an employee with a hire date, employment status and optional job, pay and emergency contact records; TalentHR emails the new employee unless prevent_email is set",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first_name",
+            "optional": false,
+            "type": "string",
+            "description": "The employee first name."
+          },
+          {
+            "key": "last_name",
+            "optional": false,
+            "type": "string",
+            "description": "The employee last name."
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "The work email. TalentHR requires a valid address that no other employee uses."
+          },
+          {
+            "key": "hire_date",
+            "optional": false,
+            "type": "string",
+            "description": "The hire date."
+          },
+          {
+            "key": "employment_status",
+            "optional": false,
+            "type": "{ employment_status_id: number }",
+            "description": "The starting status. Get the ID from `referenceData.employmentStatuses`."
+          },
+          {
+            "key": "reports_to_employee_id",
+            "optional": false,
+            "type": "number | null",
+            "description": "The manager employee ID. Send `null` to make this employee the head of the company."
+          },
+          {
+            "key": "job_record",
+            "optional": true,
+            "type": "{ job_title_id?: number | null, location_id?: number | null, division_id?: number | null, department_id?: number | null }",
+            "description": "Job title, location, division and department. Get each ID from its list route."
+          },
+          {
+            "key": "compensation_record",
+            "optional": true,
+            "type": "{ pay_rate: number, pay_rate_period?: hour | day | week | month | quarter | year, pay_rate_schedule?: once-per-month | twice-per-month | every-other-week, overtime_status?: exempt | non-exempt }",
+            "description": "The initial pay record."
+          },
+          {
+            "key": "emergency_contact",
+            "optional": true,
+            "type": "{ full_name: string, relationship_type_id: number, phone?: string, address?: string }",
+            "description": "The emergency contact."
+          },
+          {
+            "key": "employee_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prevent_email",
+            "optional": true,
+            "type": "boolean",
+            "description": "When true, TalentHR sends no welcome email."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "ssn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "birth_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hire_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hire_date_utc",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "personal_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "marital_status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "nationality",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "work_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mobile_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "postal_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "linked_in_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "photo_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "citizenship",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "termination_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "job_title_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "division_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "department_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "location_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "employee_number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "user_role",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, slug?: string | null } | null"
+          },
+          {
+            "key": "seniority",
+            "optional": true,
+            "type": "{ years?: number | null, months?: number | null, days?: number | null } | null"
+          },
+          {
+            "key": "termination_reason",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "{ custom_field_id?: number | null, custom_field_slug?: string | null, custom_field_name?: string | null, values?: { value?: string | null }[] | null }[] | null"
+          },
+          {
+            "key": "default_avatar",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "location_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "division_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "department_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "job_title_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_terminated",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "visa_status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ first_name?: string | null, last_name?: string | null, middle_name?: string | null, email?: string | null, last_login_at?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "talenthr.api.employees.rehire",
+      "shortPath": "employees.rehire",
+      "description": "Return a terminated employee to active status from a new hire date, with a manager and employment status; TalentHR sends a rehire email unless prevent_email is set",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "employeeId",
+            "optional": false,
+            "type": "number",
+            "description": "The employee ID, from `employees.directory` or `employees.hire`."
+          },
+          {
+            "key": "hire_date",
+            "optional": false,
+            "type": "string",
+            "description": "The new hire date. It must fall after the latest termination date."
+          },
+          {
+            "key": "reports_to_employee_id",
+            "optional": false,
+            "type": "number",
+            "description": "The manager employee ID. It must be active and not this employee."
+          },
+          {
+            "key": "employment_status",
+            "optional": false,
+            "type": "{ employment_status_id: number }",
+            "description": "The status the employee returns to."
+          },
+          {
+            "key": "job_record",
+            "optional": true,
+            "type": "{ job_title_id?: number | null, location_id?: number | null, division_id?: number | null, department_id?: number | null }"
+          },
+          {
+            "key": "prevent_email",
+            "optional": true,
+            "type": "boolean",
+            "description": "When true, TalentHR sends no rehire notification email."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "employee_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "talenthr.api.employees.terminate",
+      "shortPath": "employees.terminate",
+      "description": "Terminate an employee from a given date, recording the reason and whether the departure was regrettable; TalentHR emails the people given offboarding tasks",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "employeeId",
+            "optional": false,
+            "type": "number",
+            "description": "The employee ID, from `employees.directory` or `employees.hire`."
+          },
+          {
+            "key": "effective_date",
+            "optional": false,
+            "type": "string",
+            "description": "The date the termination starts."
+          },
+          {
+            "key": "termination_reason",
+            "optional": false,
+            "type": "string",
+            "description": "The reason for the dismissal."
+          },
+          {
+            "key": "termination_type",
+            "optional": true,
+            "type": "string",
+            "description": "The kind of termination. TalentHR defaults it to \"termination\"."
+          },
+          {
+            "key": "regrettable_status",
+            "optional": true,
+            "type": "string",
+            "description": "Whether the termination is regrettable."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "employee_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "effective_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "employment_status_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean | number | null"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "termination_reason",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "termination_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "regrettable_status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "employment_status",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, object_type?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "talenthr.api.employees.update",
+      "shortPath": "employees.update",
+      "description": "Change an employee’s name, contact, address, SSN, birth date, manager or emergency contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "employeeId",
+            "optional": false,
+            "type": "number",
+            "description": "The employee ID, from `employees.directory` or `employees.hire`."
+          },
+          {
+            "key": "first_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ssn",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "birth_date",
+            "optional": true,
+            "type": "string",
+            "description": "A calendar date as \"YYYY-MM-DD\"."
+          },
+          {
+            "key": "personal_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "marital_status",
+            "optional": true,
+            "type": "Single | Separated | Married | Widowed"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "Male | Female | Non-binary"
+          },
+          {
+            "key": "nationality",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "citizenship",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "work_phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobile_phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postal_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reports_to_employee_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "linked_in_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "employee_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emergency_contact",
+            "optional": true,
+            "type": "{ full_name: string, relationship_type_id: number, phone?: string, address?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "ssn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "birth_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hire_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hire_date_utc",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "personal_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "marital_status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "nationality",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "work_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mobile_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "postal_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "linked_in_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "photo_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "citizenship",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "termination_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "job_title_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "division_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "department_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "location_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "employee_number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "user_role",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, slug?: string | null } | null"
+          },
+          {
+            "key": "seniority",
+            "optional": true,
+            "type": "{ years?: number | null, months?: number | null, days?: number | null } | null"
+          },
+          {
+            "key": "termination_reason",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "{ custom_field_id?: number | null, custom_field_slug?: string | null, custom_field_name?: string | null, values?: { value?: string | null }[] | null }[] | null"
+          },
+          {
+            "key": "default_avatar",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "location_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "division_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "department_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "job_title_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_terminated",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "visa_status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ first_name?: string | null, last_name?: string | null, middle_name?: string | null, email?: string | null, last_login_at?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "talenthr.api.jobTitles.list",
+      "shortPath": "jobTitles.list",
+      "description": "List the job titles of the company",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name?: string | null, object_type?: string | null, field_data?: { address?: string | null, is_remote?: boolean | null } | null }[]"
+      }
+    },
+    {
+      "path": "talenthr.api.locations.list",
+      "shortPath": "locations.list",
+      "description": "List the work locations with their address and whether they are remote",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name?: string | null, object_type?: string | null, field_data?: { address?: string | null, is_remote?: boolean | null } | null }[]"
+      }
+    },
+    {
+      "path": "talenthr.api.referenceData.employmentStatuses",
+      "shortPath": "referenceData.employmentStatuses",
+      "description": "List the employment statuses, whose IDs employees.hire and employees.rehire take",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name?: string | null }[]"
+      }
+    },
+    {
+      "path": "talenthr.api.timeOff.budgets",
+      "shortPath": "timeOff.budgets",
+      "description": "Read one employee’s time off budgets per type, including used and carried-over amounts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "employeeId",
+            "optional": false,
+            "type": "number",
+            "description": "The employee ID, from `employees.directory` or `employees.hire`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, employee_id?: number | null, budget?: string | null, time_off_cycle_id?: number | null, timeoff_type_id?: number | null, timeoff_type_name?: string | null, timeoff_type_slug?: string | null, timeoff_allow_exceeding?: boolean | number | null, original_budget?: string | null, used_budget?: string | null, paid?: boolean | number | null, has_unlimited_timeoff?: boolean | number | null, unlimited_used_budget?: string | null, employee_has_accrual?: boolean | number | null, accrual_original_budget?: string | null, accrual_budget?: string | null, accrual_used_budget?: string | null, accrual_carry_on_budget?: string | null, accrual_carry_on_used_budget?: string | null, accrual_carry_on_original_budget?: string | null }[]"
+      }
+    },
+    {
+      "path": "talenthr.api.timeOff.create",
+      "shortPath": "timeOff.create",
+      "description": "Book time off for an employee, either preapproved or sent to their manager for approval by email",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "employeeId",
+            "optional": false,
+            "type": "number",
+            "description": "The employee ID, from `employees.directory` or `employees.hire`."
+          },
+          {
+            "key": "start_date",
+            "optional": false,
+            "type": "string",
+            "description": "The first day of the absence."
+          },
+          {
+            "key": "end_date",
+            "optional": false,
+            "type": "string",
+            "description": "The last day of the absence."
+          },
+          {
+            "key": "timeoff_type_id",
+            "optional": false,
+            "type": "number",
+            "description": "The time off type. Get the ID from `timeOff.types`."
+          },
+          {
+            "key": "preapproved",
+            "optional": true,
+            "type": "boolean",
+            "description": "When true, TalentHR approves the request without manager action if the caller may. Otherwise it emails the manager for approval."
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string",
+            "description": "A note on the request."
+          },
+          {
+            "key": "amountOptions",
+            "optional": true,
+            "type": "Record<string, number | { amount_days?: number | null, amount_hours?: number | null }>",
+            "description": "Per-day amounts keyed by \"YYYY-MM-DD\", covering every day from start_date through end_date. Use a number for days, or `{ amount_days, amount_hours }`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "timeoff_type_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "employee_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "budget",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "approved",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "working_hours",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "budget_days",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "budget_hours",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "attachment_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "attachment_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "time_off_type",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, slug?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "talenthr.api.timeOff.delete",
+      "shortPath": "timeOff.delete",
+      "description": "Cancel a time off request, which frees its budget back to the employee",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "employeeId",
+            "optional": false,
+            "type": "number",
+            "description": "The employee ID, from `employees.directory` or `employees.hire`."
+          },
+          {
+            "key": "timeOffRequestId",
+            "optional": false,
+            "type": "number",
+            "description": "The time off request."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "talenthr.api.timeOff.list",
+      "shortPath": "timeOff.list",
+      "description": "List one employee’s time off requests with their type, dates, budget and approval state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "employeeId",
+            "optional": false,
+            "type": "number",
+            "description": "The employee ID, from `employees.directory` or `employees.hire`."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows per page."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to skip."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "The column to sort by, for example `start_date`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "rows",
+            "optional": false,
+            "type": "{ id: number, approved?: boolean | null, note?: string | null, budget?: string | null, is_canceled?: boolean | null, start_date?: string | null, end_date?: string | null, employee_id?: number | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null, timeoff_type_id?: number | null, timeoff_type_name?: string | null, timeoff_type_slug?: string | null, allow_cancel?: boolean | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "talenthr.api.timeOff.reply",
+      "shortPath": "timeOff.reply",
+      "description": "Approve or reject a time off request on behalf of the manager; TalentHR emails the employee the outcome",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "employeeId",
+            "optional": false,
+            "type": "number",
+            "description": "The employee ID, from `employees.directory` or `employees.hire`."
+          },
+          {
+            "key": "timeOffRequestId",
+            "optional": false,
+            "type": "number",
+            "description": "The time off request."
+          },
+          {
+            "key": "accept",
+            "optional": false,
+            "type": "boolean",
+            "description": "True approves the request, false rejects it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "talenthr.api.timeOff.types",
+      "shortPath": "timeOff.types",
+      "description": "List the time off types with their budgets, whether they are paid and whether they need approval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name?: string | null, slug?: string | null, budget?: string | null, period?: string | null, paid?: boolean | null, is_default?: boolean | null, is_disabled?: boolean | null, needs_approval?: boolean | null, calendar_blocking?: boolean | null, visible_internally?: boolean | null, allow_exceeding?: boolean | null, use_calendar_days?: boolean | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null }[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

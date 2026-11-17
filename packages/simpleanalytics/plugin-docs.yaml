@@ -1,0 +1,50 @@
+displayName: Simple Analytics
+description: Web analytics from Simple Analytics - aggregated page views, visitors, top pages, referrers, UTM values, devices and event counts, raw data point exports, and website management on the account.
+domain: simpleanalytics.com
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key in Simple Analytics under account settings. It starts with `sa_api_key_`. Pass it as the plugin's `key` option or store it on the account; the plugin sends it as the `Api-Key` header.
+
+  The Admin API also needs your user ID, which Simple Analytics shows next to the key you just created. Store it as `user_id` on the account. The Stats and Export operations work with the key alone.
+
+  Things to know before you query:
+
+  - **Stats needs an explicit fields list.** Send at least one field; an empty list falls back to the version 1 response format. Every field is optional in the output because the API returns only what you ask for.
+  - **The plugin always sends a key.** Simple Analytics lets anyone read a public website's page views, visitors and histogram without one, but this plugin needs an API key (stored on the account or passed as `key`) for every operation. When a public site hides its top pages, the `pages` field and page filters need a key with access to that site.
+  - **Some filters cost more.** A contains search, `pages=*/app/example-name/*`, needs a key even for a public site, must be the only path pattern, and only accepts the pageviews, visitors and histogram fields. It is rate limited and answers 429 with a `Retry-After`.
+  - **Metadata keys differ between APIs.** Stats filters use the bare key, as `metadata.<key>`, without a storage suffix. Export needs the suffix, such as `project_text`, and exports a metadata column only when you name it.
+  - **Export returns JSON here.** The route also serves CSV, TSV, NDJSON, Parquet and Avro, but this plugin asks for `json`, because that is the only format it can return intact.
+  - **Failures arrive in the body.** Simple Analytics answers `{ ok: false, error }` (Stats and Export) or `{ success: false, error }` (Admin) on a 200 or 400, so the plugin checks the body and throws rather than returning a failure as data: a 200 that says `ok: false` throws `SimpleanalyticsAPIError`, and a 4xx or 5xx throws core's `ApiError` unchanged, with the provider's text in `body.error`.
+  - **A locked key is a real risk.** Twenty failed authentications in fifteen minutes lock the key for up to fifteen minutes, so the plugin never retries an auth failure. A 423 means a Free-plan website is missing its Simple Analytics badge; the plugin reads that as a `BADGE_REQUIRED` permission error.
+  - **Dates.** Use `YYYY-MM-DD` or a placeholder such as `today-30d`. The Export API also takes an hourly `YYYY-MM-DDTHH`.
+examples:
+  read:
+    path: stats.get
+    title: Read page views and visitors for the last week
+    args:
+      hostname: example.com
+      start: today-7d
+      end: today
+      fields:
+        - pageviews
+        - visitors
+  write:
+    path: websites.add
+    title: Add a website to the account
+    args:
+      hostname: example.com
+      timezone: Europe/Amsterdam
+      isPublic: false
+apiExamples:
+  stats.get:
+    call: "{ hostname: 'example.com', start: 'today-7d', end: 'today', fields: ['pageviews', 'visitors'] }"
+  export.datapoints:
+    call: "{ hostname: 'example.com', start: '2026-11-01', end: '2026-11-14', fields: ['added_iso', 'path', 'country_code'], type: 'pageviews' }"
+  websites.list: {}
+  websites.add:
+    call: "{ hostname: 'example.com', timezone: 'Europe/Amsterdam', isPublic: false }"
+apiNotes:
+  stats.get: 'Send at least one field; an empty list returns the version 1 format. The path form reads one page, so pass path rather than the page filter for that; a path of `/` (the homepage) is sent as the page filter. Metadata filters use the bare key as `metadata.<key>`, without a storage suffix, and every filter given has to match.'
+  export.datapoints: 'Export asks for format=json, because the CSV, NDJSON, Parquet and Avro formats cannot be returned intact. Metadata columns appear only when named in metadata_fields, and need their storage suffix; a bare key such as project_text is sent as metadata.project_text.'
+  websites.list: 'Needs the user id as well as the API key. The response always covers every website on the account; the team has no effect on this route.'
+  websites.add: 'Needs the owner, admin or developer role, and the team must not have reached its plan website limit. An unrecognised timezone falls back to UTC.'
