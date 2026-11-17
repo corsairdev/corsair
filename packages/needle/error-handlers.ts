@@ -12,16 +12,11 @@ function statusOf(error: Error): number | undefined {
 }
 
 export const errorHandlers = {
-	// Per-account limit. Needle sends Retry-After, and core's ApiError carries
-	// it, so core's own rate-limit handling reads that header.
+	// Per-account limit. Core's request() already retried it three times with
+	// Needle's Retry-After, so it is not replayed again here.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
-		handler: async (error: Error) => ({
-			maxRetries: 2,
-			headersRetryAfterMs:
-				error instanceof ApiError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 401 is a revoked or invalid key. Retrying cannot fix it.
 	AUTH_ERROR: {

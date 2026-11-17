@@ -45,19 +45,10 @@ function apiError(
 }
 
 describe('needle error handlers', () => {
-	it('retries a 429 and passes Retry-After through', async () => {
+	it('does not replay a 429 core already retried with Retry-After', async () => {
 		const error = apiError(429, 'GET', { retryAfter: 1500 });
 		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
-		expect(await strategy(error)).toEqual({
-			maxRetries: 2,
-			headersRetryAfterMs: 1500,
-			retryStrategy: 'exponential_backoff',
-		});
-	});
-
-	it('uses no fixed delay when Needle sends no Retry-After', async () => {
-		const result = await strategy(apiError(429));
-		expect(result.headersRetryAfterMs).toBeUndefined();
+		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
 	it('does not retry a 401', async () => {

@@ -8,10 +8,11 @@ import { ApiError, request } from 'corsair/http';
 
 export const NEEDLE_API_BASE = 'https://needle.app/api/v1';
 
-// Retries belong to error-handlers.ts. Needle documents a 429 for its
-// per-account limits and sends Retry-After with it.
+// Core's request() retries a 429 three times and honours the Retry-After that
+// Needle sends with its per-account limits, so the 429 handler in
+// error-handlers.ts does not retry again.
 const NEEDLE_RATE_LIMIT_CONFIG: RateLimitConfig = {
-	maxRetries: 0,
+	maxRetries: 3,
 	enabled: true,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
