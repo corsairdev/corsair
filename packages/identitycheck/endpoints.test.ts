@@ -191,3 +191,36 @@ describe('IdentityCheck image download', () => {
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 });
+
+describe('IdentityCheck errors', () => {
+	it('drops the personal request body from a failed call but keeps the status', async () => {
+		const actual = jest.requireActual('corsair/http');
+		const failure = new actual.ApiError(
+			{
+				method: 'POST',
+				url: '/api/v1/verification/create',
+				body: { email: 'person@example.test', firstName: 'Example' },
+			},
+			{
+				url: 'https://identity.stackgo.io/api/v1/verification/create',
+				ok: false,
+				status: 400,
+				statusText: 'Bad Request',
+				body: { message: 'invalid' },
+			},
+			'invalid',
+			{ retryAfter: 1000 },
+		);
+		mockedRequest.mockRejectedValue(failure);
+		const error = await endpoints.verification
+			.create(context, {
+				body: { email: 'person@example.test', firstName: 'Example' },
+			})
+			.catch((e: unknown) => e);
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({ status: 400, retryAfter: 1000 });
+		expect(JSON.stringify((error as ApiError).request)).not.toContain(
+			'person@example.test',
+		);
+	});
+});
