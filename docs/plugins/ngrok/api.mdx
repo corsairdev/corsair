@@ -97,7 +97,7 @@ await corsair.ngrok.api.apiKeys.list({ limit: 10 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `before_id` | `string` | No | The id to start before; ngrok sends it as next_page_uri. |
+| `before_id` | `string` | No | The page cursor: the before_id from the last next_page_uri, or that whole URL. |
 | `limit` | `number` | No | Most results to return. |
 
 
@@ -154,10 +154,31 @@ await corsair.ngrok.api.domains.create({ domain: 'acme.example.com', description
 | `description` | `string` | No | — |
 | `metadata` | `string` | No | — |
 | `certificate_id` | `string` | No | Attach an uploaded certificate instead of an automatic one. |
-| `certificate_management_policy` | `string` | No | The policy for automatic certificate issuance and renewal. |
-| `resolves_to` | `string[]` | No | Only let these ngrok IP addresses serve the domain. |
+| `certificate_management_policy` | `object` | No | Automatic certificate issuance and renewal; an empty object takes the defaults. |
+| `resolves_to` | `object[]` | No | Only serve the domain from these points of presence, e.g. [&#123; value: 'us-cal-1' &#125;, &#123; value: 'eu' &#125;]. |
 
 Reserving returns a cname_target to point DNS at; certificate issuance starts once the record resolves.
+
+<AccordionGroup>
+<Accordion title="certificate_management_policy full type">
+
+```ts
+{
+  authority?: string,
+  private_key_type?: string
+}
+```
+</Accordion>
+
+<Accordion title="resolves_to full type">
+
+```ts
+{
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -174,7 +195,9 @@ Reserving returns a cname_target to point DNS at; certificate issuance starts on
 | `region` | `string \| null` | No | — |
 | `cname_target` | `string \| null` | No | — |
 | `certificate` | `object \| null` | No | — |
-| `certificate_management_policy` | `string \| null` | No | — |
+| `certificate_management_policy` | `object \| null` | No | — |
+| `resolves_to` | `object[] \| null` | No | — |
+| `is_dev` | `boolean \| null` | No | — |
 | `certificate_management_status` | `object \| null` | No | — |
 | `acme_challenge_cname_target` | `string \| null` | No | — |
 
@@ -186,6 +209,25 @@ Reserving returns a cname_target to point DNS at; certificate issuance starts on
   id?: string | null,
   uri?: string | null
 } | null
+```
+</Accordion>
+
+<Accordion title="certificate_management_policy full type">
+
+```ts
+{
+  authority?: string | null,
+  private_key_type?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="resolves_to full type">
+
+```ts
+{
+  value?: string | null
+}[] | null
 ```
 </Accordion>
 
@@ -272,7 +314,9 @@ await corsair.ngrok.api.domains.get({ id: 'rd_2f1c8d9e3a5b4c6d' });
 | `region` | `string \| null` | No | — |
 | `cname_target` | `string \| null` | No | — |
 | `certificate` | `object \| null` | No | — |
-| `certificate_management_policy` | `string \| null` | No | — |
+| `certificate_management_policy` | `object \| null` | No | — |
+| `resolves_to` | `object[] \| null` | No | — |
+| `is_dev` | `boolean \| null` | No | — |
 | `certificate_management_status` | `object \| null` | No | — |
 | `acme_challenge_cname_target` | `string \| null` | No | — |
 
@@ -284,6 +328,25 @@ await corsair.ngrok.api.domains.get({ id: 'rd_2f1c8d9e3a5b4c6d' });
   id?: string | null,
   uri?: string | null
 } | null
+```
+</Accordion>
+
+<Accordion title="certificate_management_policy full type">
+
+```ts
+{
+  authority?: string | null,
+  private_key_type?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="resolves_to full type">
+
+```ts
+{
+  value?: string | null
+}[] | null
 ```
 </Accordion>
 
@@ -322,7 +385,7 @@ await corsair.ngrok.api.domains.list({ limit: 10 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `before_id` | `string` | No | The id to start before; ngrok sends it as next_page_uri. |
+| `before_id` | `string` | No | The page cursor: the before_id from the last next_page_uri, or that whole URL. |
 | `limit` | `number` | No | Most results to return. |
 
 
@@ -352,7 +415,14 @@ await corsair.ngrok.api.domains.list({ limit: 10 });
     id?: string | null,
     uri?: string | null
   } | null,
-  certificate_management_policy?: string | null,
+  certificate_management_policy?: {
+    authority?: string | null,
+    private_key_type?: string | null
+  } | null,
+  resolves_to?: {
+    value?: string | null
+  }[] | null,
+  is_dev?: boolean | null,
   certificate_management_status?: {
     renews_at?: string | null,
     provisioning_job?: {
@@ -380,7 +450,7 @@ Change a reserved domain’s description, certificate, management policy or allo
 **Risk:** `write`
 
 ```ts
-await corsair.ngrok.api.domains.update({ id: 'rd_2f1c8d9e3a5b4c6d', description: 'Renamed' });
+await corsair.ngrok.api.domains.update({ id: 'rd_2f1c8d9e3a5b4c6d', description: 'Renamed', resolves_to: [{ value: 'eu' }] });
 ```
 
 **Input**
@@ -391,8 +461,29 @@ await corsair.ngrok.api.domains.update({ id: 'rd_2f1c8d9e3a5b4c6d', description:
 | `description` | `string` | No | — |
 | `metadata` | `string` | No | — |
 | `certificate_id` | `string` | No | — |
-| `certificate_management_policy` | `string` | No | — |
-| `resolves_to` | `string[]` | No | — |
+| `certificate_management_policy` | `object` | No | Automatic certificate issuance and renewal; an empty object takes the defaults. |
+| `resolves_to` | `object[]` | No | Only serve the domain from these points of presence, e.g. [&#123; value: 'us-cal-1' &#125;, &#123; value: 'eu' &#125;]. |
+
+<AccordionGroup>
+<Accordion title="certificate_management_policy full type">
+
+```ts
+{
+  authority?: string,
+  private_key_type?: string
+}
+```
+</Accordion>
+
+<Accordion title="resolves_to full type">
+
+```ts
+{
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -409,7 +500,9 @@ await corsair.ngrok.api.domains.update({ id: 'rd_2f1c8d9e3a5b4c6d', description:
 | `region` | `string \| null` | No | — |
 | `cname_target` | `string \| null` | No | — |
 | `certificate` | `object \| null` | No | — |
-| `certificate_management_policy` | `string \| null` | No | — |
+| `certificate_management_policy` | `object \| null` | No | — |
+| `resolves_to` | `object[] \| null` | No | — |
+| `is_dev` | `boolean \| null` | No | — |
 | `certificate_management_status` | `object \| null` | No | — |
 | `acme_challenge_cname_target` | `string \| null` | No | — |
 
@@ -421,6 +514,25 @@ await corsair.ngrok.api.domains.update({ id: 'rd_2f1c8d9e3a5b4c6d', description:
   id?: string | null,
   uri?: string | null
 } | null
+```
+</Accordion>
+
+<Accordion title="certificate_management_policy full type">
+
+```ts
+{
+  authority?: string | null,
+  private_key_type?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="resolves_to full type">
+
+```ts
+{
+  value?: string | null
+}[] | null
 ```
 </Accordion>
 
@@ -449,21 +561,21 @@ await corsair.ngrok.api.domains.update({ id: 'rd_2f1c8d9e3a5b4c6d', description:
 
 `endpoints.create`
 
-Create a cloud endpoint that forwards to an upstream URL; it starts serving on its public URL immediately
+Create a cloud endpoint at a URL you own (e.g. your ngrok dev domain); its required Traffic Policy decides what happens to requests, and it serves immediately
 
 **Risk:** `write`
 
 ```ts
-await corsair.ngrok.api.endpoints.create({ url: 'https://internal.example.com', description: 'Acme API' });
+await corsair.ngrok.api.endpoints.create({ url: 'https://acme.ngrok-free.dev', type: 'cloud', traffic_policy: '{"on_http_request":[{"actions":[{"type":"forward-internal","config":{"url":"https://api.internal"}}]}]}', description: 'Acme API' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `url` | `string` | Yes | The upstream URL the endpoint forwards to, e.g. https://example.com. |
+| `url` | `string` | Yes | The endpoint's own address, the URL clients connect to, e.g. https://your-domain.ngrok-free.dev. Where traffic goes is set in traffic_policy. |
 | `type` | `string` | No | The endpoint type. Only 'cloud' is supported; defaults to it. |
-| `traffic_policy` | `string` | No | The Traffic Policy to attach, as YAML or JSON text. An empty policy forwards everything. |
+| `traffic_policy` | `string` | Yes | The Traffic Policy, as YAML or JSON text. Required for a cloud endpoint, and it must end in a terminal action such as forward-internal, redirect or custom-response. |
 | `description` | `string` | No | — |
 | `metadata` | `string` | No | — |
 | `bindings` | `string[]` | No | — |
@@ -707,7 +819,7 @@ await corsair.ngrok.api.endpoints.list({ limit: 10, filter: 'proto="https"' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `before_id` | `string` | No | The id to start before; ngrok sends it as next_page_uri. |
+| `before_id` | `string` | No | The page cursor: the before_id from the last next_page_uri, or that whole URL. |
 | `limit` | `number` | No | Most results to return. |
 | `filter` | `string` | No | ngrok filter syntax, e.g. description="my app" or proto="https". |
 
@@ -719,7 +831,7 @@ await corsair.ngrok.api.endpoints.list({ limit: 10, filter: 'proto="https"' });
 |------|------|----------|-------------|
 | `endpoints` | `object[]` | Yes | — |
 | `uri` | `string \| null` | No | — |
-| `next_page_uri` | `string \| null` | No | Present while more results exist; pass it as before_id. |
+| `next_page_uri` | `string \| null` | No | The next page URL, null on the last page; pass it (or its before_id) as before_id. |
 
 <AccordionGroup>
 <Accordion title="endpoints full type">
@@ -1076,7 +1188,7 @@ await corsair.ngrok.api.events.list({ limit: 10 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `before_id` | `string` | No | The id to start before; ngrok sends it as next_page_uri. |
+| `before_id` | `string` | No | The page cursor: the before_id from the last next_page_uri, or that whole URL. |
 | `limit` | `number` | No | Most results to return. |
 
 
@@ -1141,7 +1253,7 @@ await corsair.ngrok.api.tunnels.list({ limit: 10 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `before_id` | `string` | No | The id to start before; ngrok sends it as next_page_uri. |
+| `before_id` | `string` | No | The page cursor: the before_id from the last next_page_uri, or that whole URL. |
 | `limit` | `number` | No | Most results to return. |
 
 
