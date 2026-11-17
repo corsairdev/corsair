@@ -710,6 +710,13 @@ export async function completeOAuthCallback(
 						'OAuth client credentials are not configured for this plugin',
 						{ missingFields: ['client_id', 'client_secret'] },
 					);
+				// Ours, not the provider's: the message names only the plugin
+				// and the caller's own tenant and account.
+				case 'account_required':
+				case 'account_unnamed':
+					throw new ManagementApiError(400, oauthErr.code, oauthErr.message);
+				case 'account_not_found':
+					throw new ManagementApiError(404, oauthErr.code, oauthErr.message);
 			}
 		}
 		// Unknown causes surface as a generic 502 — provider responses stay

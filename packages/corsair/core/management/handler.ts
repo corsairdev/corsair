@@ -519,6 +519,7 @@ const REQUEST_MODES = new Set<PermissionMode>([
 
 const MAX_SCOPES_HEADER = 8_192;
 
+// raw comes off the wire: a header or a parsed JSON value, checked here.
 function requestMode(raw: unknown): PermissionMode {
 	if (!REQUEST_MODES.has(raw as PermissionMode)) {
 		throw badRequest(
@@ -531,6 +532,7 @@ function requestMode(raw: unknown): PermissionMode {
 // x-corsair-mode-scopes: the caller's open scopes, outermost first, each a
 // mode or { mode?, accounts?: { plugin: { account: mode } } }.
 function parseScopes(raw: string): ModeScope[] {
+	// Untrusted header JSON; every field is checked before it is used.
 	let parsed: unknown;
 	try {
 		parsed = raw.length <= MAX_SCOPES_HEADER ? JSON.parse(raw) : undefined;

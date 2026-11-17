@@ -189,8 +189,8 @@ describe('createCorsair with a ck_cloud_ key', () => {
 		global.fetch = fetchMock as unknown as typeof fetch;
 		try {
 			const t = corsair.withTenant('acme', { accounts: { slack: 'a@x.com' } });
-			await (t as any).slack.api.messages.post({ channel: '#g', text: 'hi' });
-			await (t as any).slack.db.messages.list();
+			await t.slack.api.messages.post({ channel: '#g', text: 'hi' });
+			await t.slack.db.messages.list();
 			await corsair
 				.withTenant('acme')
 				.slack.api.messages.post({ channel: '#g', text: 'hi' });
@@ -198,13 +198,18 @@ describe('createCorsair with a ck_cloud_ key', () => {
 			global.fetch = prev;
 		}
 		const bodies = fetchMock.mock.calls.map(
-			(c: any[]) => JSON.parse(c[1].body) as Record<string, unknown>,
+			// The mock records fetch's own (url, init) arguments; the body is the JSON we sent.
+			(c: unknown[]) =>
+				JSON.parse(String((c[1] as RequestInit).body)) as Record<
+					string,
+					unknown
+				>,
 		);
 		expect(bodies[0]).toMatchObject({ account: 'a@x.com' });
 		expect(bodies[1]).toMatchObject({ account: 'a@x.com' });
 		expect(bodies[2]).not.toHaveProperty('account');
 		await expect(
-			(corsair.withTenant('acme') as any).slack.accounts.list(),
+			corsair.withTenant('acme').slack.accounts.list(),
 		).rejects.toThrow(/not supported in cloud mode/);
 	});
 

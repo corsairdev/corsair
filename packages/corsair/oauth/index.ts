@@ -8,12 +8,18 @@ import {
 	createIntegrationKeyManager,
 	exchangeCodeForTokens,
 } from '../core';
-import { upsertAccount } from '../core/account-lookup';
+import {
+	listAccountSummaries,
+	nextAccountLabel,
+	upsertAccount,
+} from '../core/account-lookup';
+import type { OAuthAccountTarget } from '../core/auth/state';
 import {
 	encodeOAuthState,
 	signState,
 	verifyAndDecodeState,
 } from '../core/auth/state';
+import { generateUUID } from '../core/utils';
 import {
 	getCorsairInternal,
 	requireCorsairPlugin,
@@ -49,7 +55,11 @@ export type OAuthCallbackErrorCode =
 	| 'plugin_not_found'
 	| 'plugin_has_no_oauth_config'
 	| 'credentials_not_configured'
-	| 'no_access_token';
+	| 'no_access_token'
+	// Multi-account: which account a connect is for.
+	| 'account_required'
+	| 'account_not_found'
+	| 'account_unnamed';
 
 export class OAuthCallbackError extends Error {
 	readonly code: OAuthCallbackErrorCode;
@@ -92,6 +102,76 @@ async function ensureAccount(
 	});
 }
 
+/**
+ * The account a connect writes, by the click signed into its state. Without
+ * multi-account there is one account, as before. With it the provider isn't
+ * asked who signed in, so the account is named here ("Account N") and the
+ * caller says whether this is a new one or a reconnect.
+ * @returns the account row's id, or undefined for the tenant's only account.
+ */
+async function connectAccount(
+	database: NonNullable<CorsairInternalConfig['database']>,
+	kek: string,
+	multiAccount: boolean,
+	pluginId: string,
+	tenantId: string,
+	target: OAuthAccountTarget | undefined,
+): Promise<string | undefined> {
+	if (!multiAccount) {
+		await ensureAccount(database, pluginId, tenantId, kek, false);
+		return undefined;
+	}
+	const accounts = await listAccountSummaries({
+		db: database.db,
+		kek,
+		integrationName: pluginId,
+		tenantId,
+	});
+	if (target && 'reconnect' in target) {
+		const wanted = target.reconnect.toLowerCase();
+		const found = accounts.find(
+			(a) =>
+				a.id === target.reconnect ||
+				a.ref === target.reconnect ||
+				a.label?.toLowerCase() === wanted,
+		);
+		if (!found) {
+			throw new OAuthCallbackError(
+				'account_not_found',
+				`No ${pluginId} account "${target.reconnect}" to reconnect for tenant "${tenantId}"`,
+			);
+		}
+		return found.id;
+	}
+	if (!target && accounts.length > 1) {
+		throw new OAuthCallbackError(
+			'account_required',
+			`${pluginId} has ${accounts.length} accounts for tenant "${tenantId}": say which one to reconnect, or add one`,
+		);
+	}
+	if (!target && accounts[0]?.ref) return accounts[0].id;
+	// upsertAccount gives a new identity to an unnamed row, so adding beside
+	// one would hand that account's row to the new sign-in.
+	if (target && accounts.some((a) => !a.ref)) {
+		throw new OAuthCallbackError(
+			'account_unnamed',
+			`Reconnect the existing ${pluginId} account before adding another`,
+		);
+	}
+	const { accountId } = await upsertAccount({
+		database,
+		kek,
+		integrationName: pluginId,
+		tenantId,
+		allowMany: true,
+		identity: {
+			id: `acct_${generateUUID().replace(/-/g, '').slice(0, 16)}`,
+			label: nextAccountLabel(accounts.map((a) => a.label)),
+		},
+	});
+	return accountId;
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Public API
 // ─────────────────────────────────────────────────────────────────────────────
@@ -101,6 +181,8 @@ export type GenerateOAuthUrlOptions = {
 	redirectUri: string;
 	/** Hub generates OAuth state server-side and injects it into the authorize URL. */
 	hubConnect?: boolean;
+	/** With multiAccount: add an account, or reconnect one by its id, ref or label. */
+	account?: OAuthAccountTarget;
 };
 
 export type GenerateOAuthUrlResult = {
@@ -171,7 +253,10 @@ export async function generateOAuthUrl(
 		return { url: authorizeUrl.toString(), state: '' };
 	}
 
-	const state = signState(encodeOAuthState(pluginId, tenantId), internal.kek);
+	const state = signState(
+		encodeOAuthState(pluginId, tenantId, options.account),
+		internal.kek,
+	);
 
 	return {
 		url: buildOAuthAuthorizeUrl({
@@ -247,6 +332,7 @@ export async function processOAuthCallback(
 	// the presence of plugin/tenant, so no future caller bypasses by accident.
 	let pluginId: string;
 	let tenantId: string;
+	let target: OAuthAccountTarget | undefined;
 	if (options.trusted) {
 		if (!options.plugin || !options.tenantId) {
 			throw new OAuthCallbackError(
@@ -266,6 +352,7 @@ export async function processOAuthCallback(
 		}
 		pluginId = decoded.plugin;
 		tenantId = decoded.tenantId;
+		target = decoded.account;
 	}
 
 	if (!internal.database) {
@@ -298,13 +385,14 @@ export async function processOAuthCallback(
 		);
 	}
 
-	// Ensure tenant account row exists before writing tokens
-	await ensureAccount(
+	// Before the code is spent, so a refused account costs no sign-in.
+	const accountId = await connectAccount(
 		internal.database,
-		pluginId,
-		tenantId,
 		internal.kek,
 		internal.multiAccount,
+		pluginId,
+		tenantId,
+		target,
 	);
 
 	const tokens = await exchangeCodeForTokens(
@@ -332,6 +420,7 @@ export async function processOAuthCallback(
 		// persist them (e.g. Outlook subscription_id) — without this only the
 		// base oauth_2 setters exist and extension setters throw.
 		extraAccountFields: [...(plugin.authConfig?.oauth_2?.account ?? [])],
+		...(accountId && { account: { ref: accountId } }),
 	});
 
 	await accountKm.set_access_token(tokens.access_token);
@@ -370,6 +459,7 @@ export async function processOAuthCallback(
 					link: tenantLink,
 					authType: 'oauth_2',
 					extraAccountFields,
+					...(accountId && { accountId }),
 				});
 			} catch (error) {
 				console.warn(
@@ -405,7 +495,26 @@ export async function processOAuthCallback(
 	// subscribe capability (class-2 webhooks) skip this entirely.
 	if (plugin.subscribe) {
 		try {
-			await subscribeAndReport(corsair, plugin, tenantId, accountKm);
+			const link = await subscribeAndReport(
+				corsair,
+				plugin,
+				tenantId,
+				accountKm,
+			);
+			// Renewal stores the link it gets back; so must connect, or a new
+			// account's events can't find it until the first renewal.
+			if (link) {
+				await setWebhookTenantLink({
+					database: internal.database,
+					kek: internal.kek,
+					pluginId,
+					tenantId,
+					link,
+					authType: 'oauth_2',
+					extraAccountFields: plugin.authConfig?.oauth_2?.account ?? [],
+					...(accountId && { accountId }),
+				});
+			}
 		} catch (error) {
 			console.warn(
 				`[corsair:oauth] BYO subscribe failed for '${pluginId}' tenant '${tenantId}':`,

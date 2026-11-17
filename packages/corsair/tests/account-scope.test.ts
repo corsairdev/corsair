@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { createCorsair } from '../core';
+import { upsertAccount } from '../core/account-lookup';
 import {
 	encryptConfig,
 	encryptDEK,
@@ -7,6 +8,7 @@ import {
 } from '../core/auth/encryption';
 import { createAccountKeyManager } from '../core/auth/key-manager';
 import type { CorsairTenantWrapper } from '../core/client';
+import { runWithMode } from '../core/permissions';
 import type { CorsairPlugin } from '../core/plugins';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
 import { setupCorsair } from '../setup';
@@ -100,6 +102,44 @@ describe('withTenant account scope', () => {
 		await km(ref).set_access_token(token);
 		return id;
 	}
+
+	// With multi-account off a reconnect hands the row to whoever signed in.
+	it('a client bound to an account stops when its row passes to another identity', async () => {
+		await addAccount('a', 'a@x.com', 'tok-a');
+		const t = tenants().withTenant('t1', { accounts: { demo: 'a' } });
+		expect(await t.demo.api.token()).toBe('tok-a');
+		await upsertAccount({
+			database: database(),
+			kek: KEK,
+			integrationName: 'demo',
+			tenantId: 't1',
+			identity: { id: 'b', label: 'b@x.com' },
+			allowMany: false,
+		});
+		const err = asSelectionError(
+			await t.demo.api.token().then(neverResolves, (e) => e),
+		);
+		expect(err.code).toBe('account_not_found');
+	});
+
+	it("a bound client's data writes follow its own account's mode", async () => {
+		await addAccount('a', 'a@x.com', 'tok-a');
+		await addAccount('b', 'b@x.com', 'tok-b');
+		const scope = {
+			mode: 'open' as const,
+			accounts: { demo: { b: 'readonly' as const } },
+		};
+		await runWithMode(scope, async () => {
+			const asA = tenants().withTenant('t1', { accounts: { demo: 'a' } });
+			await expect(
+				asA.demo.db.notes.upsertByEntityId('n1', { title: 'hi' }),
+			).resolves.toBeDefined();
+			const asB = tenants().withTenant('t1', { accounts: { demo: 'b' } });
+			await expect(
+				asB.demo.db.notes.upsertByEntityId('n2', { title: 'no' }),
+			).rejects.toThrow();
+		});
+	});
 
 	it("bound ref calls the provider with that account's token", async () => {
 		await addAccount('a', 'a@x.com', 'tok-a');

@@ -21,6 +21,7 @@ import { PermissionRequiredError } from '../core/permissions/errors/permission-r
 import type { CorsairPlugin } from '../core/plugins';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
 import { setupCorsair } from '../setup';
+import type { EndpointCtx, NoteRow } from './multi-account-fixtures';
 import { createTestDatabase } from './setup-db';
 
 function internalWith(
@@ -472,12 +473,12 @@ describe('call and db routes with an account', () => {
 			entities: { notes: z.object({ title: z.string() }) },
 		},
 		endpoints: {
-			token: async (ctx: any) => ctx.keys.get_access_token(),
+			token: async (ctx: EndpointCtx) => ctx.keys.get_access_token(),
 		},
 	} as unknown as CorsairPlugin;
 
 	let env: ReturnType<typeof createTestDatabase>;
-	let corsair: any;
+	let corsair: ReturnType<typeof createCorsair>;
 	let handler: (r: Request) => Promise<Response>;
 	beforeEach(async () => {
 		env = createTestDatabase();
@@ -487,7 +488,7 @@ describe('call and db routes with an account', () => {
 			kek: KEK,
 			multiTenancy: true,
 			multiAccount: true,
-		} as any);
+		});
 		getCorsairInternal(corsair).database!.isPg = false;
 		await setupCorsair(corsair, { tenantId: 't1' });
 		await env.db.deleteFrom('corsair_accounts').execute();
@@ -655,16 +656,16 @@ describe('call and db routes with an account', () => {
 			});
 			expect(res.status).toBe(200);
 		}
-		const all = await (
+		const all = (await (
 			await post('/t1/demo/db/notes/list', { args: [] })
-		).json();
-		expect(all.data.map((r: any) => [r.data.title, r.account]).sort()).toEqual([
+		).json()) as { data: NoteRow[] };
+		expect(all.data.map((r) => [r.data.title, r.account]).sort()).toEqual([
 			['a', 'a@x.com'],
 			['b', 'b@x.com'],
 		]);
-		const one = await (
+		const one = (await (
 			await post('/t1/demo/db/notes/list', { account: 'a', args: [] })
-		).json();
-		expect(one.data.map((r: any) => r.data.title)).toEqual(['a']);
+		).json()) as { data: NoteRow[] };
+		expect(one.data.map((r) => r.data.title)).toEqual(['a']);
 	});
 });

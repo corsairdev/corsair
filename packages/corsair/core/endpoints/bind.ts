@@ -19,7 +19,7 @@ import {
 	reportManagedJobCall,
 } from '../../hub/managed-pricing-jobs';
 import { reportPluginConnectionStatusFromBinding } from '../../hub/report-connection-status';
-import { readIdentity } from '../account-lookup';
+import { accountNames } from '../account-lookup';
 import { throwAuthMissingEndpointError } from '../auth/auth-missing-message';
 import { AuthMissingError } from '../auth/errors/auth-missing';
 import { CorsairKekMissingError } from '../auth/errors/kek-missing';
@@ -741,21 +741,14 @@ export function bindEndpointsRecursively({
 	}
 }
 
-// The names a call's account answers to. Without a kek only its id can match.
+// The names a call's account answers to.
 async function callAccountNames(
+	// The plugin context is an open bag; only $getAccountId is read, and checked.
 	ctx: Record<string, unknown>,
 	database: CorsairDatabase | undefined,
 	kek: string | undefined,
 ): Promise<AccountNames | undefined> {
 	const getAccountId = ctx.$getAccountId as (() => Promise<string>) | undefined;
 	if (!getAccountId || !database) return undefined;
-	const id = await getAccountId();
-	const row = kek
-		? await database.db
-				.selectFrom('corsair_accounts')
-				.select(['config', 'dek'])
-				.where('id', '=', id)
-				.executeTakeFirst()
-		: undefined;
-	return { id, ...(row && kek ? await readIdentity(row, kek) : {}) };
+	return accountNames(database.db, await getAccountId(), kek);
 }

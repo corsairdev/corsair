@@ -203,6 +203,45 @@ export async function readIdentity(
 	}
 }
 
+/**
+ * Whether a row still answers to the name a caller chose it by: its id, its
+ * ref, or its label. A reconnect with multi-account off can hand a row to a
+ * different identity, and a client pinned to the old one must not follow it.
+ */
+export async function answersTo(
+	row: { id: string; config: AccountConfig; dek?: string | null },
+	ref: string,
+	kek: string,
+): Promise<boolean> {
+	if (row.id === ref) return true;
+	const { ref: own, label } = await readIdentity(row, kek);
+	return own === ref || label?.toLowerCase() === ref.toLowerCase();
+}
+
+/** The names one account answers to. Without a kek only its id can match. */
+export async function accountNames(
+	db: Kysely<CorsairKyselyDatabase>,
+	id: string,
+	kek: string | undefined,
+): Promise<{ id: string; ref?: string; label?: string }> {
+	const row = kek
+		? await db
+				.selectFrom('corsair_accounts')
+				.select(['config', 'dek'])
+				.where('id', '=', id)
+				.executeTakeFirst()
+		: undefined;
+	return { id, ...(row && kek ? await readIdentity(row, kek) : {}) };
+}
+
+/** The lowest "Account N" no account uses, so a disconnect's gap is filled. */
+export function nextAccountLabel(labels: (string | undefined)[]): string {
+	const taken = new Set(labels);
+	let n = 1;
+	while (taken.has(`Account ${n}`)) n++;
+	return `Account ${n}`;
+}
+
 const withIdentity = (
 	rows: { id: string; config: AccountConfig; dek?: string | null }[],
 	kek: string,

@@ -9,6 +9,8 @@ import type {
 import type { HubConfig } from '../../hub';
 import type { AccountSummary } from '../account-lookup';
 import {
+	accountNames,
+	answersTo,
 	fanOutAccounts,
 	listAccountSummaries,
 	resolveIntegrationAccountIds,
@@ -31,8 +33,8 @@ import type { CorsairErrorHandler } from '../errors';
 import type { CorsairInternalConfig } from '../index';
 import type { CorsairManageNamespace } from '../management';
 import { DB_METHOD_RISK } from '../management/db';
-import type { CorsairPermissionsNamespace } from '../permissions';
-import { assertModeAllows } from '../permissions';
+import type { AccountNames, CorsairPermissionsNamespace } from '../permissions';
+import { assertModeAllows, hasAccountModes } from '../permissions';
 import type {
 	CorsairKeyBuilderBase,
 	CorsairManualConfig,
@@ -313,11 +315,19 @@ function createAccountIdResolver(
 		if (cachedAccountId) {
 			const live = await database.db
 				.selectFrom('corsair_accounts')
-				.select('id')
+				.select(['id', 'config', 'dek'])
 				.where('id', '=', cachedAccountId)
 				.where('tenant_id', '=', tenantId)
 				.executeTakeFirst();
-			if (live) return cachedAccountId;
+			// The row may since belong to someone else (a reconnect with
+			// multi-account off), so it must still answer to the bound ref.
+			if (
+				live &&
+				account?.ref &&
+				(await answersTo(live, account.ref, account.kek))
+			) {
+				return cachedAccountId;
+			}
 			cachedAccountId = null;
 		}
 		if (account?.ref && !account.kek) {
@@ -356,6 +366,8 @@ type EntityClient = PluginEntityClient<ZodTypeAny>;
 function guardEntityClients(
 	pluginId: string,
 	clients: Record<string, EntityClient>,
+	// Bound to one account: judge by its own mode rather than the strictest.
+	names?: () => Promise<AccountNames>,
 ): Record<string, EntityClient> {
 	const guarded: Record<string, EntityClient> = {};
 	for (const [entityType, client] of Object.entries(clients)) {
@@ -383,6 +395,7 @@ function guardEntityClients(
 						`${pluginId}.db.${entityType}.${method}`,
 						risk,
 						pluginId,
+						names && hasAccountModes(pluginId) ? await names() : undefined,
 					);
 					return call.apply(target, args);
 				};
@@ -594,7 +607,13 @@ export function buildCorsairClient<
 			// ctx.db stays raw: an endpoint body runs once the guard has cleared
 			// it, and re-checking its writes would ask for a second approval.
 			pluginEntitiesUnsafe[plugin.id]!.db = dbClients;
-			apiUnsafe[plugin.id]!.db = guardEntityClients(plugin.id, apiClients);
+			apiUnsafe[plugin.id]!.db = guardEntityClients(
+				plugin.id,
+				apiClients,
+				database && accounts?.[plugin.id]
+					? async () => accountNames(database.db, await getAccountId(), kek)
+					: undefined,
+			);
 		}
 
 		// Create account-level key manager BEFORE binding endpoints so keyBuilder can access it

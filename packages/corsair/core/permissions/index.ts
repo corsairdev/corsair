@@ -189,9 +189,10 @@ export function assertModeAllows(
 	endpointPath: string,
 	riskLevel: EndpointRiskLevel,
 	plugin?: string,
+	names?: AccountNames,
 ): void {
-	assertReadonlyAllowed(endpointPath, riskLevel, plugin);
-	const mode = activeMode(plugin);
+	assertReadonlyAllowed(endpointPath, riskLevel, plugin, names);
+	const mode = activeMode(plugin, names);
 	if (mode === undefined || evaluatePermission(riskLevel, mode) === 'allow') {
 		return;
 	}

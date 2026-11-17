@@ -1,6 +1,7 @@
 import { reencryptSealedAccountData } from '../../db/data-at-rest';
 import type { CorsairDatabase } from '../../db/kysely/database';
-import { findAccountRow, resolveAccount } from '../account-lookup';
+import type { AccountConfig } from '../account-lookup';
+import { answersTo, findAccountRow, resolveAccount } from '../account-lookup';
 import type { AuthTypes } from '../constants';
 import {
 	decryptConfig,
@@ -369,7 +370,7 @@ export function createAccountKeyManager<T extends AuthTypes>(
 
 				const where = { tenantId, integrationId: integration.id };
 				let account:
-					| { id: string; config: unknown; dek?: string | null }
+					| { id: string; config: AccountConfig; dek?: string | null }
 					| undefined;
 				if (!scope) {
 					account = await findAccountRow(database.db, where);
@@ -381,7 +382,13 @@ export function createAccountKeyManager<T extends AuthTypes>(
 							.where('id', '=', pinnedAccountId)
 							.where('tenant_id', '=', tenantId)
 							.executeTakeFirst();
-						if (!account) pinnedAccountId = undefined;
+						if (
+							!account ||
+							(scope.ref && !(await answersTo(account, scope.ref, kek)))
+						) {
+							account = undefined;
+							pinnedAccountId = undefined;
+						}
 					}
 					if (!account) {
 						account = await resolveAccount({
