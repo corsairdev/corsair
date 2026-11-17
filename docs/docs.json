@@ -4340,6 +4340,14 @@
                 ]
               },
               {
+                "group": "ShipStation API (formerly ShipEngine)",
+                "pages": [
+                  "plugins/shipengine/overview",
+                  "plugins/shipengine/api",
+                  "plugins/shipengine/database"
+                ]
+              },
+              {
                 "group": "Shopify",
                 "pages": [
                   "plugins/shopify/overview",

@@ -522,6 +522,7 @@ export const BaseProviders = [
 	'servicenow',
 	'sevdesk',
 	'sharepoint',
+	'shipengine',
 	'shippo',
 	'shopify',
 	'shortcut',
@@ -1151,6 +1152,7 @@ export const ProviderDisplayNames = {
 	servicenow: 'ServiceNow',
 	sevdesk: 'Sevdesk',
 	sharepoint: 'SharePoint',
+	shipengine: 'ShipStation API (formerly ShipEngine)',
 	shippo: 'Shippo',
 	shopify: 'Shopify',
 	shortcut: 'Shortcut',
@@ -1787,6 +1789,7 @@ export type AllProviders =
 	| 'servicenow'
 	| 'sevdesk'
 	| 'sharepoint'
+	| 'shipengine'
 	| 'shippo'
 	| 'shopify'
 	| 'shortcut'
