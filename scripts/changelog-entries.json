@@ -8686,5 +8686,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/ngrok",
+    "dir": "packages/ngrok",
+    "name": "ngrok",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
