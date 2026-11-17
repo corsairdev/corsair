@@ -1149,7 +1149,6 @@ await corsair.nango.api.proxy.delete({ connection_id: 'user-123', provider_confi
 | `path` | `string` | Yes | Path on the end customer's API, relative to the provider's base URL, e.g. /v1/users. |
 | `query` | `Record<string, string \| number \| boolean>` | No | — |
 | `headers` | `Record<string, string>` | No | Headers passed on to the external API (sent as Nango-Proxy-&lt;name&gt;). |
-| `retries` | `number` | No | Retries Nango makes on failure, with exponential back-off. |
 | `body` | `any` | No | JSON body sent to the external API. |
 
 
@@ -1185,7 +1184,7 @@ await corsair.nango.api.proxy.get({
 | `path` | `string` | Yes | Path on the end customer's API, relative to the provider's base URL, e.g. /v1/users. |
 | `query` | `Record<string, string \| number \| boolean>` | No | — |
 | `headers` | `Record<string, string>` | No | Headers passed on to the external API (sent as Nango-Proxy-&lt;name&gt;). |
-| `retries` | `number` | No | Retries Nango makes on failure, with exponential back-off. |
+| `retries` | `number` | No | Retries Nango makes on a 5xx or network error, with back-off (GET only). |
 
 `path` is relative to the provider's base URL. Headers in `headers` are sent on as `Nango-Proxy-<name>`.
 
@@ -1222,7 +1221,6 @@ await corsair.nango.api.proxy.patch({
 | `path` | `string` | Yes | Path on the end customer's API, relative to the provider's base URL, e.g. /v1/users. |
 | `query` | `Record<string, string \| number \| boolean>` | No | — |
 | `headers` | `Record<string, string>` | No | Headers passed on to the external API (sent as Nango-Proxy-&lt;name&gt;). |
-| `retries` | `number` | No | Retries Nango makes on failure, with exponential back-off. |
 | `body` | `any` | No | JSON body sent to the external API. |
 
 
@@ -1258,7 +1256,6 @@ await corsair.nango.api.proxy.post({
 | `path` | `string` | Yes | Path on the end customer's API, relative to the provider's base URL, e.g. /v1/users. |
 | `query` | `Record<string, string \| number \| boolean>` | No | — |
 | `headers` | `Record<string, string>` | No | Headers passed on to the external API (sent as Nango-Proxy-&lt;name&gt;). |
-| `retries` | `number` | No | Retries Nango makes on failure, with exponential back-off. |
 | `body` | `any` | No | JSON body sent to the external API. |
 
 
@@ -1289,7 +1286,6 @@ await corsair.nango.api.proxy.put({ connection_id: 'user-123', provider_config_k
 | `path` | `string` | Yes | Path on the end customer's API, relative to the provider's base URL, e.g. /v1/users. |
 | `query` | `Record<string, string \| number \| boolean>` | No | — |
 | `headers` | `Record<string, string>` | No | Headers passed on to the external API (sent as Nango-Proxy-&lt;name&gt;). |
-| `retries` | `number` | No | Retries Nango makes on failure, with exponential back-off. |
 | `body` | `any` | No | JSON body sent to the external API. |
 
 
