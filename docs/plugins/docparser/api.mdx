@@ -30,7 +30,7 @@ await corsair.docparser.api.documents.fetch({ parserId: 'balhnyuzdezt', url: 'ht
 | `url` | `string` | Yes | Publicly reachable URL of the document (PDF, image, Word, ...). |
 | `remoteId` | `string` | No | Your own id for the document; it comes back with the results. |
 
-POST /v2/document/fetch/{parserId} as form data.
+`POST /v2/document/fetch/{parserId}` as form data.
 
 
 
@@ -66,7 +66,7 @@ await corsair.docparser.api.documents.reintegrate({ parserId: 'balhnyuzdezt', do
 | `parserId` | `string` | Yes | Parser id from parsers.list. |
 | `documentIds` | `string[]` | Yes | — |
 
-POST /v1/document/reintegrate/{parserId} with document_ids[].
+`POST /v1/document/reintegrate/{parserId}` with document_ids[].
 
 
 
@@ -99,7 +99,7 @@ await corsair.docparser.api.documents.reparse({ parserId: 'balhnyuzdezt', docume
 | `parserId` | `string` | Yes | Parser id from parsers.list. |
 | `documentIds` | `string[]` | Yes | — |
 
-POST /v1/document/reparse/{parserId} with document_ids[].
+`POST /v1/document/reparse/{parserId}` with document_ids[].
 
 
 
@@ -132,7 +132,7 @@ await corsair.docparser.api.documents.status({ parserId: 'balhnyuzdezt', documen
 | `parserId` | `string` | Yes | Parser id from parsers.list. |
 | `documentId` | `string` | Yes | Document id from documents.fetch, documents.upload or results. |
 
-GET /v2/document/status/{parserId}/{documentId}. done is true once import and parsing finished.
+`GET /v2/document/status/{parserId}/{documentId}`. done is true once import and parsing finished.
 
 
 
@@ -187,7 +187,7 @@ await corsair.docparser.api.documents.upload({ parserId: 'balhnyuzdezt', fileCon
 | `fileName` | `string` | No | File name with extension, e.g. invoice.pdf. |
 | `remoteId` | `string` | No | Your own id for the document; it comes back with the results. |
 
-POST /v1/document/upload/{parserId} with file_content (base64) as form data.
+`POST /v1/document/upload/{parserId}` with file_content (base64) as form data.
 
 
 
@@ -224,7 +224,7 @@ await corsair.docparser.api.models.list({ parserId: 'balhnyuzdezt' });
 |------|------|----------|-------------|
 | `parserId` | `string` | Yes | Parser id from parsers.list. |
 
-GET /v1/parser/models/{parserId}. The stored id is parser id plus layout id.
+`GET /v1/parser/models/{parserId}`. The stored id is parser id plus layout id.
 
 
 
@@ -267,7 +267,7 @@ await corsair.docparser.api.parsers.list({});
 
 **Input:** _empty object_
 
-GET /v1/parsers. Stores id and label.
+`GET /v1/parsers`. Stores id and label.
 
 
 **Output**
@@ -308,7 +308,7 @@ await corsair.docparser.api.ping({});
 
 **Input:** _empty object_
 
-GET /v1/ping.
+`GET /v1/ping`.
 
 
 **Output**
@@ -356,7 +356,7 @@ await corsair.docparser.api.results.get({ parserId: 'balhnyuzdezt', documentId: 
 | `format` | `object \| flat` | No | object (default) keeps nested fields; flat returns key/value pairs. |
 | `includeChildren` | `boolean` | No | Also return documents split off this one during preprocessing. |
 
-GET /v1/results/{parserId}/{documentId}. Returns a list with one row (more with includeChildren).
+`GET /v1/results/{parserId}/{documentId}`. Returns a list with one row (more with includeChildren).
 
 
 
@@ -414,7 +414,7 @@ await corsair.docparser.api.results.list({ parserId: 'balhnyuzdezt', list: 'proc
 | `sortBy` | `parsed_at \| processed_at \| uploaded_at \| first_processed_at \| imported_at \| integrated_at \| dispatched_webhook_at \| preprocessed_at` | No | — |
 | `sortOrder` | `ASC \| DESC` | No | — |
 
-GET /v1/results/{parserId}. Stores id, document id, file name, page count, and timestamps.
+`GET /v1/results/{parserId}`. Stores id, document id, file name, page count, and timestamps.
 
 
 

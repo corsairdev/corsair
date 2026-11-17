@@ -1,19 +1,7 @@
-import type {
-	ApiRequestOptions,
-	OpenAPIConfig,
-	RateLimitConfig,
-} from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 
 export const DOCPARSER_API_BASE = 'https://api.docparser.com';
-
-const NO_TRANSPORT_RETRIES: RateLimitConfig = {
-	enabled: true,
-	maxRetries: 0,
-	initialRetryDelay: 0,
-	backoffMultiplier: 1,
-	headerNames: { retryAfter: 'retry-after' },
-};
 
 export type DocparserQuery = Record<
 	string,
@@ -46,9 +34,8 @@ export async function docparserRequest<T>(
 		query: options.query,
 		formData: options.formData,
 	};
-	return await request<T>(config, requestOptions, {
-		rateLimitConfig: NO_TRANSPORT_RETRIES,
-	});
+	// Core's request() retries a 429 itself, honouring Retry-After.
+	return await request<T>(config, requestOptions);
 }
 
 export async function docparserGet<T>(

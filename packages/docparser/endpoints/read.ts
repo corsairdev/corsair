@@ -71,10 +71,9 @@ export const ping: CorsairEndpoint<
 	PingResponse
 > = async (ctx) => {
 	const body = asRecord(await docparserGet<unknown>(ctx.key, '/v1/ping'));
-	const row = DocparserPingEntity.parse({
-		id: 'ping',
-		msg: text(body?.msg),
-	});
+	const msg = text(body?.msg);
+	if (!msg) throw new Error('Docparser ping response was missing msg');
+	const row = DocparserPingEntity.parse({ id: 'ping', msg });
 	await save(store(ctx)?.pings, row, 'ping');
 	await logEventFromContext(ctx, 'docparser.ping', { count: 1 }, 'completed');
 	return { ping: row };

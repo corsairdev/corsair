@@ -26,25 +26,25 @@ examples:
       remoteId: inv-1001
 apiNotes:
   ping: |
-    GET /v1/ping.
+    `GET /v1/ping`.
   parsers.list: |
-    GET /v1/parsers. Stores id and label.
+    `GET /v1/parsers`. Stores id and label.
   models.list: |
-    GET /v1/parser/models/{parserId}. The stored id is parser id plus layout id.
+    `GET /v1/parser/models/{parserId}`. The stored id is parser id plus layout id.
   results.list: |
-    GET /v1/results/{parserId}. Stores id, document id, file name, page count, and timestamps.
+    `GET /v1/results/{parserId}`. Stores id, document id, file name, page count, and timestamps.
   results.get: |
-    GET /v1/results/{parserId}/{documentId}. Returns a list with one row (more with includeChildren).
+    `GET /v1/results/{parserId}/{documentId}`. Returns a list with one row (more with includeChildren).
   documents.fetch: |
-    POST /v2/document/fetch/{parserId} as form data.
+    `POST /v2/document/fetch/{parserId}` as form data.
   documents.upload: |
-    POST /v1/document/upload/{parserId} with file_content (base64) as form data.
+    `POST /v1/document/upload/{parserId}` with file_content (base64) as form data.
   documents.status: |
-    GET /v2/document/status/{parserId}/{documentId}. done is true once import and parsing finished.
+    `GET /v2/document/status/{parserId}/{documentId}`. done is true once import and parsing finished.
   documents.reparse: |
-    POST /v1/document/reparse/{parserId} with document_ids[].
+    `POST /v1/document/reparse/{parserId}` with document_ids[].
   documents.reintegrate: |
-    POST /v1/document/reintegrate/{parserId} with document_ids[].
+    `POST /v1/document/reintegrate/{parserId}` with document_ids[].
 apiExamples:
   ping:
     call: "{}"

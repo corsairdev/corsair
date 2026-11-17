@@ -78,6 +78,17 @@ describe('docparser', () => {
 		expect(call()).toMatchObject({ method: 'GET', url: '/v1/ping' });
 	});
 
+	it('rejects a ping without msg', async () => {
+		mockRequest.mockResolvedValue('<html>ok</html>');
+		await expect(ping(context(), {})).rejects.toThrow('missing msg');
+	});
+
+	it('leaves 429 retries to core', async () => {
+		mockRequest.mockResolvedValue({ msg: 'pong' });
+		await ping(context('sekrit'), {});
+		expect(mockRequest.mock.calls[0]?.[2]).toBeUndefined();
+	});
+
 	it('lists parsers and stores them', async () => {
 		mockRequest.mockResolvedValue([{ id: 'abc123', label: 'Invoices' }]);
 		const parsers = table();
