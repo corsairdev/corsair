@@ -14,7 +14,7 @@ description: "API reference for the 2Captcha plugin in Corsair: every `twocaptch
 
 `account.balance`
 
-Read the account balance
+Read the account balance in USD
 
 **Risk:** `read`
 
@@ -24,16 +24,15 @@ await corsair.twocaptcha.api.account.balance({});
 
 **Input:** _empty object_
 
-`request` holds the amount as a number.
+`balance` is in USD.
 
 
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `number` | Yes | — |
-| `request` | `string \| number \| null` | No | — |
-| `error_text` | `string \| null` | No | — |
+| `errorId` | `number` | Yes | — |
+| `balance` | `number \| string` | Yes | — |
 
 
 
@@ -43,19 +42,19 @@ await corsair.twocaptcha.api.account.balance({});
 
 `account.reportCorrect`
 
-Report a token the site accepted, which improves the account solving rating
+Report that the site accepted a task answer
 
 **Risk:** `write`
 
 ```ts
-await corsair.twocaptcha.api.account.reportCorrect({ task_id: '734920165' });
+await corsair.twocaptcha.api.account.reportCorrect({ task_id: 734920165 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `task_id` | `string` | Yes | A task whose token the site accepted |
+| `task_id` | `number \| string` | Yes | A task whose answer the site accepted |
 
 
 
@@ -63,9 +62,8 @@ await corsair.twocaptcha.api.account.reportCorrect({ task_id: '734920165' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `number` | Yes | — |
-| `request` | `string \| number \| null` | No | — |
-| `error_text` | `string \| null` | No | — |
+| `errorId` | `number` | Yes | — |
+| `status` | `string \| null` | No | — |
 
 
 
@@ -75,21 +73,21 @@ await corsair.twocaptcha.api.account.reportCorrect({ task_id: '734920165' });
 
 `account.reportIncorrect`
 
-Report a token the site rejected, which refunds the task
+Report that the site rejected a task answer; 2Captcha reviews it and may refund the task
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
-await corsair.twocaptcha.api.account.reportIncorrect({ task_id: '734920165' });
+await corsair.twocaptcha.api.account.reportIncorrect({ task_id: 734920165 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `task_id` | `string` | Yes | A task whose token the site rejected; the account is refunded |
+| `task_id` | `number \| string` | Yes | A task whose answer the site rejected; 2Captcha reviews the complaint and may refund it |
 
-Refunds the task and asks the workers again. Use it when the site rejects a token.
+Files a complaint about the answer. 2Captcha reviews it and may refund the task; it does not solve it again.
 
 
 
@@ -97,9 +95,8 @@ Refunds the task and asks the workers again. Use it when the site rejects a toke
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `number` | Yes | — |
-| `request` | `string \| number \| null` | No | — |
-| `error_text` | `string \| null` | No | — |
+| `errorId` | `number` | Yes | — |
+| `status` | `string \| null` | No | — |
 
 
 
@@ -111,9 +108,9 @@ Refunds the task and asks the workers again. Use it when the site rejects a toke
 
 `tasks.create`
 
-Create a captcha-solving task and charge the account for it; returns the task id to poll
+Create a captcha-solving task, which the account pays for; returns the task id to poll
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.twocaptcha.api.tasks.create({ type: 'RecaptchaV2TaskProxyless', task: { websiteURL: 'https://example.com/login', websiteKey: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI' } });
@@ -123,12 +120,13 @@ await corsair.twocaptcha.api.tasks.create({ type: 'RecaptchaV2TaskProxyless', ta
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `type` | `RecaptchaV2TaskProxyless \| RecaptchaV3TaskProxyless \| RecaptchaV2EnterpriseTaskProxyless \| HCaptchaTaskProxyless \| FunCaptchaTaskProxyless \| TurnstileTaskProxyless \| GeeTestTaskProxyless \| AmazonTaskProxyless \| KeyCaptchaTaskProxyless \| LeminTaskProxyless \| CapyTaskProxyless \| AtbCaptchaTaskProxyless` | Yes | — |
-| `task` | `object` | Yes | — |
-| `soft_id` | `number` | No | Referral id; leave it out to send none |
-| `callback` | `string` | No | A URL to POST the result to instead of polling |
+| `type` | `string` | Yes | The captcha kind, such as RecaptchaV2TaskProxyless, RecaptchaV3TaskProxyless, TurnstileTaskProxyless, GeeTestTaskProxyless or ImageToTextTask; the *Task variants without "Proxyless" take your proxy fields |
+| `task` | `object` | Yes | The fields for this kind, sent inside the task object next to `type` |
+| `language_pool` | `string` | No | Worker language for image and text captchas, such as en |
+| `soft_id` | `number` | No | Software catalog id; leave it out to send none |
+| `callback` | `string` | No | A registered URL 2Captcha POSTs the result to; this plugin does not receive it, so poll tasks.result |
 
-Billable from this call. `task` takes the per-kind fields; the key is `websiteKey`, `sitekey` or `websitePublicKey` depending on the kind.
+Charges the account per task. `type` names the captcha kind and `task` carries that kind's fields; returns `taskId`.
 
 <AccordionGroup>
 <Accordion title="task full type">
@@ -137,24 +135,22 @@ Billable from this call. `task` takes the per-kind fields; the key is `websiteKe
 {
   websiteURL?: string,
   websiteKey?: string,
-  sitekey?: string,
   websitePublicKey?: string,
-  websiteSToken?: string,
   recaptchaDataSValue?: string,
   pageAction?: string,
   minScore?: number,
   enterprisePayload?: Record<string, JsonValue>,
   isInvisible?: boolean,
   userAgent?: string,
+  cookies?: string,
   proxyType?: http | https | socks4 | socks5,
   proxyAddress?: string,
-  proxyPort?: number,
+  proxyPort?: number | string,
   proxyLogin?: string,
   proxyPassword?: string,
   gt?: string,
   challenge?: string,
-  apiServer?: string,
-  jsApiKey?: string
+  body?: string
 }
 ```
 </Accordion>
@@ -166,9 +162,8 @@ Billable from this call. `task` takes the per-kind fields; the key is `websiteKe
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `number` | Yes | — |
-| `request` | `string \| number \| null` | No | — |
-| `error_text` | `string \| null` | No | — |
+| `errorId` | `number` | Yes | — |
+| `taskId` | `number \| string` | Yes | — |
 
 
 
@@ -178,21 +173,21 @@ Billable from this call. `task` takes the per-kind fields; the key is `websiteKe
 
 `tasks.result`
 
-Read a task result, returning a not-ready state while the captcha is still being solved
+Read a task result: processing while workers solve it, then ready with the solution and cost
 
 **Risk:** `read`
 
 ```ts
-await corsair.twocaptcha.api.tasks.result({ task_id: '734920165' });
+await corsair.twocaptcha.api.tasks.result({ task_id: 734920165 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `task_id` | `string` | Yes | The task id `tasks.create` returned |
+| `task_id` | `number \| string` | Yes | The task id `tasks.create` returned |
 
-A still-solving task answers `status: 0` with `CAPCHA_NOT_READY`, which is returned as a state rather than thrown. Poll until `status` is 1.
+`status` is `processing` until workers finish, then `ready` with `solution` and `cost` (USD). Poll every 5-10 seconds.
 
 
 
@@ -200,10 +195,14 @@ A still-solving task answers `status: 0` with `CAPCHA_NOT_READY`, which is retur
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `number` | Yes | — |
-| `request` | `string \| number \| null` | No | — |
-| `error_text` | `string \| null` | No | — |
+| `errorId` | `number` | Yes | — |
+| `status` | `string` | Yes | `ready` or `processing` |
 | `solution` | `Record<string, JsonValue> \| null` | No | — |
+| `cost` | `number \| string \| null` | No | — |
+| `ip` | `string \| null` | No | — |
+| `createTime` | `number \| null` | No | — |
+| `endTime` | `number \| null` | No | — |
+| `solveCount` | `number \| null` | No | — |
 
 
 
