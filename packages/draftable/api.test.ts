@@ -12,7 +12,10 @@ if (!KEY) {
 
 describeLive('Draftable live', () => {
 	it('lists comparisons', async () => {
-		const response = await makeDraftableRequest<unknown>(KEY as string, {});
+		// unknown: the live reply is checked by the schema below.
+		const response = await makeDraftableRequest<unknown>(KEY as string, {
+			path: '/comparisons',
+		});
 		const parsed = ListComparisonsResponseSchema.parse(response);
 		expect(typeof parsed.count).toBe('number');
 		expect(Array.isArray(parsed.results)).toBe(true);

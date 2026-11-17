@@ -1,20 +1,47 @@
 displayName: Draftable
-description: List document comparisons on a Draftable account. The key is sent as a Token header.
+description: Compare PDF, Word and PowerPoint documents with Draftable, view the differences and export them as PDF.
 domain: draftable.com
 recommendedAuth: api_key
 overviewNote: |
-  An empty token comes back as HTTP 401. The header is Authorization Token, not Bearer.
+  Things to know before you call:
+
+  - **The key is your auth token.** Find it in your Draftable API account under API Credentials (there is a Testing and a Live pair; testing comparisons are free and expire). The client sends `Authorization: Token <token>`, not Bearer. With no token stored, Corsair raises `AuthMissingError` before any request; a token Draftable rejects comes back as HTTP 401.
+  - **Comparisons take document URLs.** `comparisons.create` downloads each side from a public `source_url`. Supported types: pdf, docx, docm, doc, rtf, pptx, pptm, ppt, txt. Each comparison counts against the plan's monthly quota, so the operation is `destructive`.
+  - **Comparisons run asynchronously.** `comparisons.create` returns `ready: false`; poll `comparisons.get` until `ready` is true (or `failed`).
+  - **Viewing.** `comparisons.getViewerUrl` returns the viewer link. For a private comparison it signs the link with your token (valid 30 minutes by default), the way Draftable's own client libraries do; the token itself never appears in the link.
+  - **Exports.** `exports.create` starts a PDF export; poll `exports.get` until `ready`, then download `url`.
+references:
+  - title: Draftable API documentation
+    url: https://api.draftable.com/
 examples:
   read:
-    path: comparisons.list
-    title: List Draftable comparisons
+    path: comparisons.get
+    title: Check whether a comparison is ready
     args:
-      limit: 20
-      offset: 0
+      identifier: contract-v1-v2
+  write:
+    path: comparisons.create
+    title: Compare two PDF versions of a contract
+    call: "{ identifier: 'contract-v1-v2', left: { source_url: 'https://example.com/contract-v1.pdf', file_type: 'pdf' }, right: { source_url: 'https://example.com/contract-v2.pdf', file_type: 'pdf' } }"
 apiNotes:
   comparisons.list: |
-    Omit limit or offset to take the service default. The call does not create a comparison.
+    Omit limit or offset to take the service default.
+  comparisons.delete: |
+    Draftable answers a successful delete with an empty 204; the operation then returns `{ identifier, deleted: true }`.
 apiExamples:
   comparisons.list:
     limit: 20
     offset: 0
+  comparisons.get:
+    identifier: contract-v1-v2
+  comparisons.create:
+    call: "{ identifier: 'contract-v1-v2', left: { source_url: 'https://example.com/contract-v1.pdf', file_type: 'pdf', display_name: 'v1' }, right: { source_url: 'https://example.com/contract-v2.docx', file_type: 'docx' } }"
+  comparisons.delete:
+    identifier: contract-v1-v2
+  comparisons.getViewerUrl:
+    identifier: contract-v1-v2
+    valid_for_minutes: 60
+  exports.create:
+    call: "{ comparison: 'contract-v1-v2', kind: 'combined', include_cover_page: true }"
+  exports.get:
+    identifier: LDwVznhV

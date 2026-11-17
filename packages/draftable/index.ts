@@ -10,12 +10,10 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import type { DraftableContext } from './context';
-import { Comparisons } from './endpoints';
-import {
-	ListComparisonsInputSchema,
-	ListComparisonsResponseSchema,
-} from './endpoints/types';
+import { Comparisons, Exports } from './endpoints';
+import * as T from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { DraftableSchema } from './schema';
 
@@ -34,6 +32,7 @@ export type DraftableKeyBuilderContext =
 
 const draftableEndpointsNested = {
 	comparisons: Comparisons,
+	exports: Exports,
 } as const;
 
 const draftableWebhooksNested = {} as const;
@@ -44,8 +43,32 @@ export type DraftableBoundEndpoints = BindEndpoints<
 
 export const draftableEndpointSchemas = {
 	'comparisons.list': {
-		input: ListComparisonsInputSchema,
-		output: ListComparisonsResponseSchema,
+		input: T.ListComparisonsInputSchema,
+		output: T.ListComparisonsResponseSchema,
+	},
+	'comparisons.get': {
+		input: T.GetComparisonInputSchema,
+		output: T.GetComparisonResponseSchema,
+	},
+	'comparisons.create': {
+		input: T.CreateComparisonInputSchema,
+		output: T.CreateComparisonResponseSchema,
+	},
+	'comparisons.delete': {
+		input: T.DeleteComparisonInputSchema,
+		output: T.DeleteComparisonResponseSchema,
+	},
+	'comparisons.getViewerUrl': {
+		input: T.GetViewerUrlInputSchema,
+		output: T.GetViewerUrlResponseSchema,
+	},
+	'exports.create': {
+		input: T.CreateExportInputSchema,
+		output: T.CreateExportResponseSchema,
+	},
+	'exports.get': {
+		input: T.GetExportInputSchema,
+		output: T.GetExportResponseSchema,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof draftableEndpointsNested
@@ -54,7 +77,36 @@ export const draftableEndpointSchemas = {
 const draftableEndpointMeta = {
 	'comparisons.list': {
 		riskLevel: 'read',
-		description: 'Paginated list of document comparisons.',
+		description: 'List the comparisons on the Draftable account.',
+	},
+	'comparisons.get': {
+		riskLevel: 'read',
+		description:
+			'Get one comparison: both documents, page counts, and whether it is ready or failed.',
+	},
+	'comparisons.create': {
+		riskLevel: 'destructive',
+		description:
+			'Compare two documents given by URL (PDF, Word, PowerPoint, RTF or text). Uses one comparison from the plan quota.',
+	},
+	'comparisons.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a comparison and its documents from Draftable.',
+	},
+	'comparisons.getViewerUrl': {
+		riskLevel: 'read',
+		description:
+			'Get a link to view a comparison in the Draftable viewer, signed for a limited time unless the comparison is public.',
+	},
+	'exports.create': {
+		riskLevel: 'write',
+		description:
+			'Start a PDF export of a comparison. Poll exports.get until ready, then download its url.',
+	},
+	'exports.get': {
+		riskLevel: 'read',
+		description:
+			'Get an export: whether it is ready and the URL to download the PDF.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof draftableEndpointsNested
@@ -114,7 +166,10 @@ export function draftable<const T extends DraftablePluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const key = await ctx.keys.get_api_key();
-				return key ?? '';
+				if (!key) {
+					throw new AuthMissingError('draftable', 'api_key');
+				}
+				return key;
 			}
 
 			return '';
