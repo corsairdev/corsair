@@ -3,13 +3,16 @@ import { makeAirtableRequest } from '../client';
 import type { AirtableEndpoints } from '../index';
 import type { AirtableEndpointOutputs } from './types';
 
+const tablePath = (input: { baseId: string; tableIdOrName: string }) =>
+	`${encodeURIComponent(input.baseId)}/${encodeURIComponent(input.tableIdOrName)}`;
+
 export const create: AirtableEndpoints['recordsCreate'] = async (
 	ctx,
 	input,
 ) => {
 	const response = await makeAirtableRequest<
 		AirtableEndpointOutputs['recordsCreate']
-	>(`${input.baseId}/${input.tableIdOrName}`, ctx.key, {
+	>(tablePath(input), ctx.key, {
 		method: 'POST',
 		body: {
 			records: [{ fields: input.fields }],
@@ -44,7 +47,7 @@ export const createOrUpdate: AirtableEndpoints['recordsCreateOrUpdate'] =
 	async (ctx, input) => {
 		const response = await makeAirtableRequest<
 			AirtableEndpointOutputs['recordsCreateOrUpdate']
-		>(`${input.baseId}/${input.tableIdOrName}`, ctx.key, {
+		>(tablePath(input), ctx.key, {
 			method: 'PATCH',
 			body: {
 				records: [{ fields: input.fields }],
@@ -84,7 +87,7 @@ export const deleteRecord: AirtableEndpoints['recordsDelete'] = async (
 ) => {
 	const response = await makeAirtableRequest<
 		AirtableEndpointOutputs['recordsDelete']
-	>(`${input.baseId}/${input.tableIdOrName}/${input.recordId}`, ctx.key, {
+	>(`${tablePath(input)}/${encodeURIComponent(input.recordId)}`, ctx.key, {
 		method: 'DELETE',
 	});
 
@@ -108,7 +111,7 @@ export const deleteRecord: AirtableEndpoints['recordsDelete'] = async (
 export const get: AirtableEndpoints['recordsGet'] = async (ctx, input) => {
 	const response = await makeAirtableRequest<
 		AirtableEndpointOutputs['recordsGet']
-	>(`${input.baseId}/${input.tableIdOrName}/${input.recordId}`, ctx.key, {
+	>(`${tablePath(input)}/${encodeURIComponent(input.recordId)}`, ctx.key, {
 		method: 'GET',
 		query: {
 			returnFieldsByFieldId: input.returnFieldsByFieldId,
@@ -142,7 +145,7 @@ export const search: AirtableEndpoints['recordsSearch'] = async (
 ) => {
 	const response = await makeAirtableRequest<
 		AirtableEndpointOutputs['recordsSearch']
-	>(`${input.baseId}/${input.tableIdOrName}`, ctx.key, {
+	>(tablePath(input), ctx.key, {
 		method: 'GET',
 		query: {
 			...input,
@@ -182,7 +185,7 @@ export const update: AirtableEndpoints['recordsUpdate'] = async (
 ) => {
 	const response = await makeAirtableRequest<
 		AirtableEndpointOutputs['recordsUpdate']
-	>(`${input.baseId}/${input.tableIdOrName}`, ctx.key, {
+	>(tablePath(input), ctx.key, {
 		method: 'PATCH',
 		body: {
 			records: [
