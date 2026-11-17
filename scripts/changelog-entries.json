@@ -7262,5 +7262,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/signwell",
+    "dir": "packages/signwell",
+    "name": "SignWell",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
