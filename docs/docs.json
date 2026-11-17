@@ -4510,6 +4510,14 @@
                 ]
               },
               {
+                "group": "Simla.com",
+                "pages": [
+                  "plugins/simlacom/overview",
+                  "plugins/simlacom/api",
+                  "plugins/simlacom/database"
+                ]
+              },
+              {
                 "group": "Slack",
                 "pages": [
                   "plugins/slack/overview",
