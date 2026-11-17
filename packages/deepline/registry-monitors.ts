@@ -198,7 +198,7 @@ export const monitorsMeta = {
 			'Apply the retained definition of a stopped monitor upstream; may spend credits',
 	},
 	'monitors.stop': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Stop a monitor upstream while keeping its definition for monitors.start',
 	},
@@ -233,7 +233,7 @@ export const monitorsMeta = {
 		description: 'Read the logs of a Monitor Job',
 	},
 	'monitors.jobs.cancel': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Cancel a running Monitor Job',
 	},
 	'monitors.batch.get': {

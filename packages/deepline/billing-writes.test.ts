@@ -14,6 +14,8 @@ const ctx = {
 	database: {},
 	options: { key: 'wrong-option-key' },
 } as DeeplineContext;
+// Response bodies are arbitrary JSON fixtures, including deliberately malformed
+// ones, so the helper takes unknown; a stricter type would block those cases.
 function reply(value: unknown, status = 200) {
 	return new Response(JSON.stringify(value), {
 		status,

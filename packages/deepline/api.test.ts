@@ -83,8 +83,9 @@ live('Deepline live read-only API', () => {
 		).toBe(true);
 	});
 	it('reads Play cost, versions, paths and trigger inventory', async () => {
-		const [play] = (await api.plays.list({ summary_only: '1', limit: 1 }))
-			.plays;
+		const [play] = (
+			await api.plays.list({ summary_only: '1', origin: 'prebuilt', limit: 1 })
+		).plays;
 		const reference = play!.reference ?? `prebuilt/${play!.name}`;
 		expect(await api.plays.cost({ name: reference })).toBeTruthy();
 		expect(

@@ -243,12 +243,9 @@ export const rerun = defineEndpoint({
 			body: input.inputOverrides
 				? { inputOverrides: input.inputOverrides }
 				: {},
-			// One key per call, as the SDK does: core's 429 retries reuse it, so a
-			// retried request resolves to the same rerun.
-			headers: {
-				'Idempotency-Key':
-					input.idempotencyKey ?? globalThis.crypto.randomUUID(),
-			},
+			// Caller-owned key: core's 429 retries and the caller's own retry after
+			// a lost response resolve to the same rerun.
+			headers: { 'Idempotency-Key': input.idempotencyKey },
 		}),
 });
 export const resume = defineEndpoint({

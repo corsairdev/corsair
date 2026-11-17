@@ -275,7 +275,22 @@ export const StartPlayRunInputSchema = z.strictObject({
 			'With a completion wait, request the full terminal detail wrapper.',
 		),
 });
-export const StartPlayRunOutputSchema = PlayRunPackageSchema;
+// A start that waits for completion with terminalStatus 'full' returns the
+// terminal detail wrapper instead of the compact package, same as runs.get.
+const PlayRunEnvelopeSchema = z.union([
+	PlayRunPackageSchema,
+	z.looseObject({
+		status: z.string(),
+		result: z.unknown().nullish(),
+		package: PlayRunPackageSchema,
+	}),
+	z.looseObject({
+		runId: z.string(),
+		snapshot: z.record(z.string(), z.unknown()),
+		terminalStatus: z.unknown().nullish(),
+	}),
+]);
+export const StartPlayRunOutputSchema = PlayRunEnvelopeSchema;
 export const ListPlaysInputSchema = z.strictObject({
 	cursor: z
 		.string()
@@ -292,7 +307,9 @@ export const ListPlaysInputSchema = z.strictObject({
 	search: z
 		.string()
 		.optional()
-		.describe('Text to match against callable Play metadata and contracts.'),
+		.describe(
+			'Text to match against callable Play metadata and contracts. Returns every match in one response; cursor and inventory paging apply only without search.',
+		),
 	limit: z
 		.number()
 		.int()
@@ -426,19 +443,7 @@ export const GetRunInputSchema = z.strictObject({
 		.optional()
 		.describe('true returns the bounded status snapshot used by SDK watch.'),
 });
-export const GetRunOutputSchema = z.union([
-	PlayRunPackageSchema,
-	z.looseObject({
-		status: z.string(),
-		result: z.unknown().nullish(),
-		package: PlayRunPackageSchema,
-	}),
-	z.looseObject({
-		runId: z.string(),
-		snapshot: z.record(z.string(), z.unknown()),
-		terminalStatus: z.unknown().nullish(),
-	}),
-]);
+export const GetRunOutputSchema = PlayRunEnvelopeSchema;
 export const ListRunChildrenInputSchema = z.strictObject({
 	runId: PathSegmentSchema.describe(
 		'The runId returned by the related Deepline API call.',

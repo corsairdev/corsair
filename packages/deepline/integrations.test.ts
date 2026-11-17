@@ -22,6 +22,8 @@ const ctx = {
 const SECRET = 'sk-live-TOP-SECRET-9f3a';
 const OTHER_SECRET = 'client-secret-7c1e';
 
+// Response bodies are arbitrary JSON fixtures, including deliberately malformed
+// ones, so the helper takes unknown; a stricter type would block those cases.
 function reply(value: unknown, status = 200) {
 	return new Response(JSON.stringify(value), {
 		status,

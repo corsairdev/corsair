@@ -16,6 +16,8 @@ const ctx = {
 	database: {},
 	options: { key: 'wrong-option-key' },
 } as DeeplineContext;
+// Response bodies are arbitrary JSON fixtures, including deliberately malformed
+// ones, so the helper takes unknown; a stricter type would block those cases.
 function reply(value: unknown, status = 200) {
 	return new Response(JSON.stringify(value), {
 		status,
@@ -359,7 +361,7 @@ describe('path segments', () => {
 			() => runs.input(ctx, { runId }),
 			() => runs.receipts(ctx, { runId, keys: ['k'] }),
 			() => runs.stop(ctx, { runId }),
-			() => runs.rerun(ctx, { runId }),
+			() => runs.rerun(ctx, { runId, idempotencyKey: 'k' }),
 			() => runs.resume(ctx, { runId }),
 		])
 			await expect(call()).rejects.toThrow();
@@ -521,20 +523,19 @@ describe('runs.rerun', () => {
 		status: 'queued',
 		next: {},
 	};
-	it('generates a fresh Idempotency-Key per call when none is given', async () => {
-		fetchMock
-			.mockResolvedValueOnce(reply(result))
-			.mockResolvedValueOnce(reply(result));
-		await runs.rerun(ctx, { runId: RUN });
-		const first = new Headers(requestAt(0).init.headers).get('Idempotency-Key');
-		expect(JSON.parse(String(requestAt(0).init.body))).toEqual({});
-		await runs.rerun(ctx, { runId: RUN });
-		const second = new Headers(requestAt(1).init.headers).get(
-			'Idempotency-Key',
+	it('requires a caller-owned Idempotency-Key and sends it unchanged', async () => {
+		await expect(
+			runs.rerun(ctx, { runId: RUN } as unknown as Parameters<
+				typeof runs.rerun
+			>[1]),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+		fetchMock.mockResolvedValueOnce(reply(result));
+		await runs.rerun(ctx, { runId: RUN, idempotencyKey: 'rerun-1' });
+		expect(new Headers(requestAt(0).init.headers).get('Idempotency-Key')).toBe(
+			'rerun-1',
 		);
-		expect(first).toMatch(/^[0-9a-f-]{36}$/);
-		expect(second).toMatch(/^[0-9a-f-]{36}$/);
-		expect(first).not.toBe(second);
+		expect(JSON.parse(String(requestAt(0).init.body))).toEqual({});
 	});
 	it('reuses the same key when core retries a 429', async () => {
 		fetchMock
@@ -545,7 +546,7 @@ describe('runs.rerun', () => {
 				}),
 			)
 			.mockResolvedValueOnce(reply(result));
-		await runs.rerun(ctx, { runId: RUN });
+		await runs.rerun(ctx, { runId: RUN, idempotencyKey: 'rerun-1' });
 		expect(fetchMock).toHaveBeenCalledTimes(2);
 		expect(new Headers(requestAt(0).init.headers).get('Idempotency-Key')).toBe(
 			new Headers(requestAt(1).init.headers).get('Idempotency-Key'),

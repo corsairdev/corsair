@@ -2172,7 +2172,7 @@ await corsair.deepline.api.monitors.health({});
 
 Cancel a running Monitor Job
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.deepline.api.monitors.jobs.cancel({});
@@ -2536,7 +2536,7 @@ await corsair.deepline.api.monitors.preview({});
 | `name` | `string` | No | Optional human-readable name shown in listings. |
 | `payload` | `Record<string, any>` | Yes | Provider-specific payload matching the payload schema monitors.available returns for this tool. |
 | `limit` | `number` | No | Matches to sample, 1-3. The server default is 3. |
-| `idempotencyKey` | `string` | No | Reuse the key from an earlier preview to recover its result without paying again. A new key runs a new, paid preview. Generated when omitted and returned as idempotency_key. |
+| `idempotencyKey` | `string` | Yes | Required. Persist it before calling; reuse it after an uncertain result to recover the same preview without paying again. A new key runs a new, paid preview. |
 
 
 
@@ -2658,7 +2658,7 @@ await corsair.deepline.api.monitors.start({});
 
 Stop a monitor upstream while keeping its definition for monitors.start
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.deepline.api.monitors.stop({});
@@ -3577,7 +3577,7 @@ await corsair.deepline.api.plays.list({});
 | `cursor` | `string` | No | Continue with the previous page cursor and the same filters. |
 | `origin` | `prebuilt \| owned` | No | — |
 | `summary_only` | `1` | No | Load compact metadata without source or revisions. Cost and category requests still load the data they require. |
-| `search` | `string` | No | Text to match against callable Play metadata and contracts. |
+| `search` | `string` | No | Text to match against callable Play metadata and contracts. Returns every match in one response; cursor and inventory paging apply only without search. |
 | `limit` | `number` | No | Maximum Plays to return. |
 
 Uses SDK inventory pagination. Pass cursor with unchanged filters; search maps to grep on the wire.
@@ -3787,33 +3787,52 @@ May spend credits or perform external actions. A wait timeout returns the existi
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `schemaVersion` | `1` | Yes | — |
-| `kind` | `play_run` | Yes | — |
-| `run` | `object` | Yes | — |
-| `steps` | `Record<string, any>[]` | Yes | — |
-| `outputs` | `Record<string, any>` | Yes | — |
-| `datasets` | `Record<string, any>[]` | Yes | — |
-| `next` | `Record<string, any>` | Yes | — |
+**Output:** `object`
 
 <AccordionGroup>
-<Accordion title="run full type">
+<Accordion title="Output full type">
 
 ```ts
 {
-  id: string,
-  playName: string,
+  schemaVersion: 1,
+  kind: play_run,
+  run: {
+    id: string,
+    playName: string,
+    status: string,
+    dashboardUrl?: string | null,
+    runUrl?: string | null
+  },
+  steps: Record<string, any>[],
+  outputs: Record<string, any>,
+  datasets: Record<string, any>[],
+  next: Record<string, any>
+} | {
   status: string,
-  dashboardUrl?: string | null,
-  runUrl?: string | null
+  result?: any | null,
+  package: {
+    schemaVersion: 1,
+    kind: play_run,
+    run: {
+      id: string,
+      playName: string,
+      status: string,
+      dashboardUrl?: string | null,
+      runUrl?: string | null
+    },
+    steps: Record<string, any>[],
+    outputs: Record<string, any>,
+    datasets: Record<string, any>[],
+    next: Record<string, any>
+  }
+} | {
+  runId: string,
+  snapshot: Record<string, any>,
+  terminalStatus?: any | null
 }
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -5162,7 +5181,7 @@ await corsair.deepline.api.runs.rerun({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `runId` | `string` | Yes | The run id returned by plays.run, runs.list or runs.history. |
-| `idempotencyKey` | `string` | No | Sent as Idempotency-Key. The same run and key always resolve to the same rerun; reuse it to retry an uncertain call. Omitted: a fresh key is generated for this call. |
+| `idempotencyKey` | `string` | Yes | Required, sent as Idempotency-Key. Persist it before calling: the same run and key always resolve to the same rerun, so reusing it after an uncertain result never starts a second paid run. |
 | `inputOverrides` | `Record<string, string \| number \| boolean \| null>` | No | Scalar edits to fields present in the original input. They apply only to the new run. |
 
 

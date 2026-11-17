@@ -15,6 +15,8 @@ const ctx = {
 	database: {},
 	options: { key: 'wrong-option-key' },
 } as DeeplineContext;
+// Response bodies are arbitrary JSON fixtures, including deliberately malformed
+// ones, so the helper takes unknown; a stricter type would block those cases.
 function reply(value: unknown, status = 200) {
 	return new Response(JSON.stringify(value), {
 		status,
@@ -640,13 +642,13 @@ describe('Deepline monitors and notifications HTTP contracts', () => {
 			'monitors.delete',
 			'monitors.reactivate',
 			'monitors.start',
+			'monitors.stop',
+			'monitors.jobs.cancel',
 			'notifications.delete',
 			'notifications.test',
 			'notifications.dlq.update',
 		];
 		const write = [
-			'monitors.stop',
-			'monitors.jobs.cancel',
 			'notifications.configuration.change',
 			'notifications.create',
 			'notifications.update',
@@ -708,12 +710,34 @@ describe('monitor write safety', () => {
 		});
 	});
 
-	it('generates a preview idempotency key before sending and returns it for recovery', async () => {
+	it('requires a caller-owned preview key, sends it and returns it for recovery', async () => {
+		await expect(
+			monitors.preview(
+				ctx,
+				definition as unknown as Parameters<typeof monitors.preview>[1],
+			),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 		fetchMock.mockResolvedValueOnce(reply({ updates: [] }));
-		const result = await monitors.preview(ctx, definition);
-		const sent = requestAt(0).headers.get('Idempotency-Key');
-		expect(sent).toMatch(/^monitor-preview-[0-9a-f-]{36}$/);
-		expect(result.idempotency_key).toBe(sent);
+		const result = await monitors.preview(ctx, {
+			...definition,
+			idempotencyKey: 'preview-1',
+		});
+		expect(requestAt(0).headers.get('Idempotency-Key')).toBe('preview-1');
+		expect(result.idempotency_key).toBe('preview-1');
+	});
+
+	it('rejects a malformed analytics setup reply instead of reporting success', async () => {
+		fetchMock
+			.mockResolvedValueOnce(reply({ monitor: { key: 'site' } }))
+			.mockResolvedValueOnce(reply(['unexpected']));
+		await expect(
+			monitors.deploy(ctx, {
+				key: 'site',
+				tool: 'deepline.analytics',
+				payload: { domain: 'example.com' },
+			}),
+		).rejects.toThrow('malformed analytics setup');
 	});
 
 	it.each([
@@ -785,7 +809,8 @@ describe('monitor write safety', () => {
 					play: 'route',
 				} as unknown as typeof definition),
 			() => monitors.check(ctx, { ...definition, key: '  ' }),
-			() => monitors.preview(ctx, { ...definition, limit: 4 }),
+			() =>
+				monitors.preview(ctx, { ...definition, limit: 4, idempotencyKey: 'p' }),
 			() => monitors.preview(ctx, { ...definition, idempotencyKey: 'bad key' }),
 			() =>
 				monitors.start(ctx, {

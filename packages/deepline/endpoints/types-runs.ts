@@ -350,9 +350,8 @@ export const RerunInputSchema = z.strictObject({
 		.min(1)
 		.max(200)
 		.regex(/^[\x21-\x7E]+$/)
-		.optional()
 		.describe(
-			'Sent as Idempotency-Key. The same run and key always resolve to the same rerun; reuse it to retry an uncertain call. Omitted: a fresh key is generated for this call.',
+			'Required, sent as Idempotency-Key. Persist it before calling: the same run and key always resolve to the same rerun, so reusing it after an uncertain result never starts a second paid run.',
 		),
 	inputOverrides: z
 		.record(

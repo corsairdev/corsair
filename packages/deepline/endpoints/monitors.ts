@@ -146,9 +146,9 @@ export const preview = defineEndpoint({
 	input: MonitorPreviewInputSchema,
 	output: MonitorPreviewOutputSchema,
 	run: async (ctx, { idempotencyKey, ...body }) => {
-		// Fixed before sending so a caller who loses the response can recover the
-		// same paid preview with this key instead of paying for a second one.
-		const key = idempotencyKey ?? newIdempotencyKey('monitor-preview');
+		// The caller owns the key, so a lost response can be recovered with the
+		// same key instead of paying for a second preview.
+		const key = idempotencyKey;
 		const result = await makeDeeplineRequest(`${MONITORS}/preview`, ctx.key, {
 			method: 'POST',
 			body,
@@ -187,7 +187,13 @@ export const deploy = defineEndpoint({
 				body: { ...definition.payload, monitor_key: definition.key },
 			},
 		);
-		const tracker = isRecord(setup) ? setup : {};
+		// The deploy already happened; still refuse to report success without
+		// the tracker the caller needs to install it.
+		if (!isRecord(setup))
+			throw new Error(
+				'Deepline returned a malformed analytics setup response after deploy',
+			);
+		const tracker = setup;
 		return {
 			...result,
 			monitor: {

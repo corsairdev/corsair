@@ -211,8 +211,8 @@ export const MonitorPreviewInputSchema = z.strictObject({
 		.max(3)
 		.optional()
 		.describe('Matches to sample, 1-3. The server default is 3.'),
-	idempotencyKey: MonitorIdempotencyKeySchema.optional().describe(
-		'Reuse the key from an earlier preview to recover its result without paying again. A new key runs a new, paid preview. Generated when omitted and returned as idempotency_key.',
+	idempotencyKey: MonitorIdempotencyKeySchema.describe(
+		'Required. Persist it before calling; reuse it after an uncertain result to recover the same preview without paying again. A new key runs a new, paid preview.',
 	),
 });
 export const MonitorPreviewOutputSchema = z.looseObject({

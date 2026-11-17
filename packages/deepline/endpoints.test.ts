@@ -69,6 +69,8 @@ const coverage = {
 	captureCompletedAt: null,
 	reason: 'legacy_or_capture_not_enabled',
 };
+// Response bodies are arbitrary JSON fixtures, including deliberately malformed
+// ones, so the helper takes unknown; a stricter type would block those cases.
 function reply(
 	value: unknown,
 	status = 200,
@@ -556,19 +558,38 @@ describe('HTTP errors and retries', () => {
 			maxRetries: 0,
 		});
 	});
+	it('accepts the full terminal wrapper from plays.run', async () => {
+		const full = { status: 'completed', result: { rows: 1 }, package: run };
+		fetchMock.mockResolvedValueOnce(reply(full));
+		expect(
+			await endpoints.plays.run(ctx, {
+				name: 'demo',
+				waitForCompletionMs: 5000,
+				terminalStatus: 'full',
+			}),
+		).toEqual(full);
+		expect(JSON.parse(String(fetchMock.mock.calls[0]![1].body))).toMatchObject({
+			terminalStatus: 'full',
+			waitForCompletionMs: 5000,
+		});
+	});
 	it('keeps HTTP error identity and retry metadata intact', async () => {
-		const error = new ApiError(
-			{ method: 'GET', url: '/api/v2/tools' },
-			{
-				url: 'https://code.deepline.com/api/v2/tools',
-				ok: false,
-				status: 429,
-				statusText: 'rate limit',
-				body: {},
-			},
-			'rate limit',
-			{ retryAfter: 123 },
-		);
+		// Drive the 429 through makeDeeplineRequest so core builds the ApiError;
+		// core retries three times before surfacing it.
+		for (let i = 0; i < 4; i++)
+			fetchMock.mockResolvedValueOnce(
+				reply({ error: 'rate limit' }, 429, { 'Retry-After': '0' }),
+			);
+		let error: unknown;
+		try {
+			await makeDeeplineRequest('/api/v2/tools', 'key');
+		} catch (caught) {
+			error = caught;
+		}
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) throw new Error('expected ApiError');
+		expect(error.status).toBe(429);
+		expect(fetchMock).toHaveBeenCalledTimes(4);
 		// Non-HTTP thrown errors also pass through without being wrapped.
 		const network = new Error('network unavailable');
 		fetchMock.mockRejectedValueOnce(network);
@@ -576,6 +597,6 @@ describe('HTTP errors and retries', () => {
 			network,
 		);
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
-		expect(error.retryAfter).toBe(123);
+		expect(error.retryAfter).toBe(0);
 	});
 });
