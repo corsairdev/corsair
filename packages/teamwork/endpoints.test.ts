@@ -312,6 +312,7 @@ describe('documented operation routes', () => {
 			'people.create',
 			// Notifies the people in notifyIds.
 			'projectUpdates.create',
+			'projectUpdates.update',
 			// Reminders email, text or notify a person at the set time.
 			'taskReminders.create',
 			// Asks the project owner for an update by email.

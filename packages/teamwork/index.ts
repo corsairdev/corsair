@@ -421,7 +421,7 @@ const teamworkEndpointMeta = {
 			'Post a status update on a project. Notifies the people in notifyIds.',
 	},
 	'projectUpdates.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Edit a project update.',
 	},
 	'projectUpdates.delete': {

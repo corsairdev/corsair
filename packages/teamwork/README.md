@@ -105,7 +105,7 @@ Teamwork publishes no numeric rate limit. Corsair's HTTP transport retries HTTP 
 |---|---|---|---|
 | `projectUpdates.list` | read | `GET /projects/api/v3/projects/updates.json` | [v3](https://apidocs.teamwork.com/api/oas/download?slug=teamwork&api_version=v3) |
 | `projectUpdates.create` | destructive | `POST /projects/{projectId}/update.json` | [v1](https://apidocs.teamwork.com/api/oas/download?slug=teamwork&api_version=v1) |
-| `projectUpdates.update` | write | `PUT /projects/updates/{updateId}.json` | [v1](https://apidocs.teamwork.com/api/oas/download?slug=teamwork&api_version=v1) |
+| `projectUpdates.update` | destructive | `PUT /projects/updates/{updateId}.json` | [v1](https://apidocs.teamwork.com/api/oas/download?slug=teamwork&api_version=v1) |
 | `projectUpdates.delete` | destructive | `DELETE /projects/updates/{updateId}.json` | [v1](https://apidocs.teamwork.com/api/oas/download?slug=teamwork&api_version=v1) |
 | `projectUpdates.request` | destructive | `PUT /projects/{projectId}/update/request.json` | [v1](https://apidocs.teamwork.com/api/oas/download?slug=teamwork&api_version=v1) |
 
