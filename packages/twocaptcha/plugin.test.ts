@@ -59,7 +59,7 @@ describe('twocaptcha plugin definition', () => {
 			),
 		).toEqual({
 			'account.balance': 'read',
-			'account.reportCorrect': 'write',
+			'account.reportCorrect': 'destructive',
 			'account.reportIncorrect': 'destructive',
 			'tasks.create': 'destructive',
 			'tasks.result': 'read',

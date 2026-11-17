@@ -113,7 +113,7 @@ const twocaptchaEndpointMeta = {
 		description: 'Read the account balance in USD',
 	},
 	'account.reportCorrect': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Report that the site accepted a task answer',
 	},
 	'account.reportIncorrect': {

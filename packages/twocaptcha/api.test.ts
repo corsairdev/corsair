@@ -43,13 +43,17 @@ describeIfKey('2Captcha live API', () => {
 				websiteURL: 'https://2captcha.com/demo/recaptcha-v2',
 				websiteKey: '6LfD3PIbAAAAAJs_eEHvoOl75_83eXSqpPSRFJ_u',
 			},
-		}).catch((e: unknown) => e);
+		}).catch(
+			// unknown: a promise can reject with any value; narrowed below.
+			(e: unknown) => e,
+		);
 		expect(error).toBeInstanceOf(TwoCaptchaAPIError);
 		expect((error as TwoCaptchaAPIError).code).toBe('ERROR_ZERO_BALANCE');
 	});
 
 	it('answers a made-up task id with ERROR_NO_SUCH_CAPCHA_ID', async () => {
 		const error = await TasksEndpoints.result(ctx(), { task_id: 1 }).catch(
+			// unknown: a promise can reject with any value; narrowed below.
 			(e: unknown) => e,
 		);
 		expect(error).toBeInstanceOf(TwoCaptchaAPIError);

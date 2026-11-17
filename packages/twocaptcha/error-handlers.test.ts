@@ -55,9 +55,12 @@ describe('2Captcha error handlers', () => {
 		expect(firstMatch(error)).toBe(handler);
 	});
 
-	it('retries a 5xx on a read but never on createTask', () => {
+	it('retries a 5xx on the two reads only', () => {
 		expect(firstMatch(apiError(502, '/getTaskResult'))).toBe('SERVER_ERROR');
+		expect(firstMatch(apiError(502, '/getBalance'))).toBe('SERVER_ERROR');
 		expect(firstMatch(apiError(502, '/createTask'))).toBe('DEFAULT');
+		expect(firstMatch(apiError(502, '/reportCorrect'))).toBe('DEFAULT');
+		expect(firstMatch(apiError(502, '/reportIncorrect'))).toBe('DEFAULT');
 	});
 
 	it('puts caller handlers first and keeps one DEFAULT last', () => {

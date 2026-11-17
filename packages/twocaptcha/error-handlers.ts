@@ -51,13 +51,16 @@ export const errorHandlers = {
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
-	// A 5xx: the docs say wait a few seconds and repeat. createTask is not
-	// replayed, because the task may have been created and charged.
+	// A 5xx: the docs say wait a few seconds and repeat. Only the two reads
+	// are replayed: createTask may have been created and charged, and a report
+	// may already have been filed.
 	SERVER_ERROR: {
 		match: (error: Error) =>
 			error instanceof ApiError &&
 			error.status >= 500 &&
-			!String(error.url ?? '').includes('/createTask'),
+			/\/(getBalance|getTaskResult)$/.test(
+				String(error.url ?? '').split('?')[0] ?? '',
+			),
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,
