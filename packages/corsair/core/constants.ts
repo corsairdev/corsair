@@ -596,6 +596,7 @@ export const BaseProviders = [
 	'triggercmd',
 	'tripadvisor',
 	'trustpilot',
+	'truvera',
 	'turbotpipes',
 	'turso',
 	'twentyonerisk',
@@ -1248,6 +1249,7 @@ export const ProviderDisplayNames = {
 	triggercmd: 'TRIGGERcmd',
 	tripadvisor: 'Tripadvisor',
 	trustpilot: 'Trustpilot',
+	truvera: 'Truvera',
 	turbotpipes: 'Turbot Pipes',
 	turso: 'Turso',
 	twentyonerisk: 'TwentyOneRisk',
@@ -1907,6 +1909,7 @@ export type AllProviders =
 	| 'triggercmd'
 	| 'tripadvisor'
 	| 'trustpilot'
+	| 'truvera'
 	| 'turbotpipes'
 	| 'turso'
 	| 'twentyonerisk'

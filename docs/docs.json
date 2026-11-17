@@ -4928,6 +4928,14 @@
                 ]
               },
               {
+                "group": "Truvera",
+                "pages": [
+                  "plugins/truvera/overview",
+                  "plugins/truvera/api",
+                  "plugins/truvera/database"
+                ]
+              },
+              {
                 "group": "Turbot Pipes",
                 "pages": [
                   "plugins/turbotpipes/overview",
