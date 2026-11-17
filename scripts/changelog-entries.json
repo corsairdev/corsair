@@ -6938,5 +6938,23 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/certspotter",
+    "dir": "packages/certspotter",
+    "name": "SSLMate Cert Spotter",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/thanksio",
+    "dir": "packages/thanksio",
+    "name": "Thanks.io",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
