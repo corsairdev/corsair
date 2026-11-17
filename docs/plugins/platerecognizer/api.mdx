@@ -1,0 +1,249 @@
+---
+title: "Plate Recognizer API reference"
+sidebarTitle: "API"
+description: "API reference for Plate Recognizer: every `platerecognizer.api.*` operation with input and output types."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Ocr
+
+### getUsage
+
+`ocr.getUsage`
+
+Read the OCR calls used this period and the plan limit.
+
+**Risk:** `read`
+
+```ts
+await corsair.platerecognizer.api.ocr.getUsage({});
+```
+
+**Input:** _empty object_
+
+GET /v1/ocr/statistics/. Same fields as usage.get, for OCR calls.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `usage` | `object` | No | — |
+| `total_calls` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  month?: number,
+  calls?: number,
+  year?: number,
+  resets_on?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### read
+
+`ocr.read`
+
+Read a VIN, trailer id, odometer, shipping container, boat registration or C-TPAT seal from an image. Uses one OCR call; takes 20 to 30 s.
+
+**Risk:** `read`
+
+```ts
+await corsair.platerecognizer.api.ocr.read({ type: 'vin', uploadUrl: 'https://example.com/vin.jpg' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `upload` | `string` | No | Base64 image, sent as the upload form field. Or use uploadUrl. |
+| `uploadUrl` | `string` | No | Public URL of the image, instead of upload. |
+| `cameraId` | `string` | No | Your camera identifier. |
+| `timestamp` | `string` | No | UTC ISO 8601 time the image was taken, e.g. 2019-08-19T13:11:25. |
+| `type` | `vin \| trailer_id \| odometer \| shipping_container \| boat_reg_number \| seal_ctpat` | Yes | What to read: vin, trailer_id, odometer, shipping_container, boat_reg_number or seal_ctpat. |
+
+POST /v1/ocr/reader/ with a `type` (vin, trailer_id, odometer, shipping_container, boat_reg_number, seal_ctpat) and the image as `upload` or `uploadUrl`. Results differ by type. Takes 20 to 30 seconds per image.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `processing_time` | `number` | No | — |
+| `filename` | `string \| null` | No | — |
+| `camera_id` | `string \| null` | No | — |
+| `timestamp` | `string` | No | — |
+| `version` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  identifier?: {
+    type?: string,
+    props?: {
+      code?: {
+        value?: string,
+        score?: number
+      }[],
+      orientation?: {
+        value?: string,
+        score?: number
+      }[],
+      label?: {
+        value?: string,
+        score?: number
+      }[],
+      confidence?: number
+    }
+  },
+  seal_identification?: {
+    carrier_or_brand?: string | null,
+    seal_type?: string | null
+  },
+  text_ocr?: {
+    serial_number?: {
+      code?: {
+        value?: string,
+        confidence?: number
+      }
+    },
+    additional_markings?: string[] | null
+  },
+  barcode_data?: {
+    code_present?: boolean | null,
+    code_type?: string | null,
+    decoded_value?: string | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Plates
+
+### read
+
+`plates.read`
+
+Read license plates (and optionally make, model and color) from an image. Uses one Snapshot lookup. Plate text is not stored.
+
+**Risk:** `read`
+
+```ts
+await corsair.platerecognizer.api.plates.read({ uploadUrl: 'https://app.platerecognizer.com/static/demo.jpg', regions: ['us-ca'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `upload` | `string` | No | Base64 image, sent as the upload form field. Or use uploadUrl. |
+| `uploadUrl` | `string` | No | Public URL of the image, instead of upload. |
+| `cameraId` | `string` | No | Your camera identifier. |
+| `timestamp` | `string` | No | UTC ISO 8601 time the image was taken, e.g. 2019-08-19T13:11:25. |
+| `regions` | `string[]` | No | Country or state codes to match, e.g. ["us-ca", "mx"]. |
+| `mmc` | `boolean` | No | Also predict make, model, color and orientation (paid add-on). |
+| `direction` | `boolean` | No | Predict the direction of travel. Needs mmc. |
+| `config` | `Record<string, any>` | No | Engine configuration, e.g. &#123; detection_mode: "vehicle" &#125; or &#123; region: "strict" &#125;. |
+
+POST /v1/plate-reader/. Send the image as base64 in `upload` or as a public `uploadUrl`, not both. `regions` takes country or state codes. `mmc` adds make, model, color and orientation (a paid add-on); `direction` needs `mmc`. `config` takes engine settings such as `{ detection_mode: 'vehicle' }`, which also returns vehicles without a plate; in that mode each result's `plate` is an object or null instead of a string.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `processing_time` | `number` | No | — |
+| `filename` | `string` | No | — |
+| `camera_id` | `string \| null` | No | — |
+| `timestamp` | `string` | No | — |
+| `version` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  plate?: string | {
+  } | null,
+  score?: number,
+  dscore?: number,
+  region?: {
+    code?: string,
+    score?: number
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Usage
+
+### get
+
+`usage.get`
+
+Read the current Snapshot usage period.
+
+**Risk:** `read`
+
+```ts
+await corsair.platerecognizer.api.usage.get({});
+```
+
+**Input:** _empty object_
+
+GET /v1/statistics/. Fields: usage.month, usage.calls, usage.year, usage.resets_on, and total_calls (the period's limit).
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `usage` | `object` | No | — |
+| `total_calls` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  month?: number,
+  calls?: number,
+  year?: number,
+  resets_on?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

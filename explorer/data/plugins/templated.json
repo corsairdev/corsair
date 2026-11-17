@@ -1,0 +1,1124 @@
+{
+  "id": "templated",
+  "displayName": "Templated",
+  "description": "Image, PDF and video generation with Templated - render templates with layer overrides, manage templates and their layers, merge renders into one PDF, upload images, and organise renders into folders.",
+  "npmPackageName": "@corsair-dev/templated",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 23,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "templated.api.account.get",
+      "shortPath": "account.get",
+      "description": "Read the account email, plan, API usage and quota",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "apiUsage",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "apiQuota",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "usagePercentage",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "templated.api.folders.create",
+      "shortPath": "folders.create",
+      "description": "Create a folder to group templates and renders",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The folder name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "templateCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "renderCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "templated.api.folders.delete",
+      "shortPath": "folders.delete",
+      "description": "Delete a folder",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string",
+            "description": "The folder to delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "templated.api.folders.list",
+      "shortPath": "folders.list",
+      "description": "List folders with their template counts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page of results, starting at 0."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page. Templated defaults it to 15."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "Filter folders by name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, templateCount?: number | null, renderCount?: number | null, createdAt?: string | null, updatedAt?: string | null }[]"
+      }
+    },
+    {
+      "path": "templated.api.folders.update",
+      "shortPath": "folders.update",
+      "description": "Rename a folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string",
+            "description": "The folder to rename."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The new folder name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "templateCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "renderCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "templated.api.fonts.list",
+      "shortPath": "fonts.list",
+      "description": "List the fonts on the account, including uploaded ones",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ name?: string | null, isGoogleFont?: boolean | null, isUploadedFont?: boolean | null, category?: string | null, variants?: string[] | null }[]"
+      }
+    },
+    {
+      "path": "templated.api.galleryFonts.list",
+      "shortPath": "galleryFonts.list",
+      "description": "List the base fonts available in the editor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ name?: string | null, isGoogleFont?: boolean | null, isUploadedFont?: boolean | null, category?: string | null, variants?: string[] | null }[]"
+      }
+    },
+    {
+      "path": "templated.api.renders.create",
+      "shortPath": "renders.create",
+      "description": "Render a template to an image, PDF or video, spending an API credit; layer overrides fill the template",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template",
+            "optional": true,
+            "type": "string",
+            "description": "The template to render. Required unless `templates` is sent."
+          },
+          {
+            "key": "templates",
+            "optional": true,
+            "type": "string[]",
+            "description": "Batch render several templates. When present, `template` is ignored and not required."
+          },
+          {
+            "key": "layers",
+            "optional": true,
+            "type": "Record<string, Record<string, any>>",
+            "description": "Layer overrides keyed by layer name, each a map of property to value, e.g. `{ \"text-1\": { \"text\": \"Hello\" } }`."
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "jpg | png | webp | pdf | mp4 | html",
+            "description": "The output format. The API defaults it to jpg."
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number",
+            "description": "Custom width in pixels, 100 to 5000."
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number",
+            "description": "Custom height in pixels, 100 to 5000."
+          },
+          {
+            "key": "scale",
+            "optional": true,
+            "type": "number",
+            "description": "Scale factor for the final render, 0.1 to 2.0. Defaults to 1."
+          },
+          {
+            "key": "transparent",
+            "optional": true,
+            "type": "boolean",
+            "description": "A transparent background, for png only."
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number",
+            "description": "Video duration in milliseconds, for mp4, up to 90000."
+          },
+          {
+            "key": "fps",
+            "optional": true,
+            "type": "number",
+            "description": "Frames per second, for mp4, 1 to 60."
+          },
+          {
+            "key": "flatten",
+            "optional": true,
+            "type": "boolean",
+            "description": "Flatten the PDF, for print."
+          },
+          {
+            "key": "cmyk",
+            "optional": true,
+            "type": "boolean",
+            "description": "Use CMYK colour, for print."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "A name for the render."
+          },
+          {
+            "key": "background",
+            "optional": true,
+            "type": "string",
+            "description": "A hex background colour."
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string",
+            "description": "Your own identifier for this render."
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Render asynchronously and return while it is still PENDING. Defaults to false."
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string",
+            "description": "A URL Templated posts the finished render to."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, url?: string | null, storage_url?: string | null, width?: number | null, height?: number | null, status?: string | null, format?: string | null, templateId?: string | null, templateName?: string | null, name?: string | null, createdAt?: string | null, externalId?: string | null } | { id: string, url?: string | null, storage_url?: string | null, width?: number | null, height?: number | null, status?: string | null, format?: string | null, templateId?: string | null, templateName?: string | null, name?: string | null, createdAt?: string | null, externalId?: string | null }[]"
+      }
+    },
+    {
+      "path": "templated.api.renders.delete",
+      "shortPath": "renders.delete",
+      "description": "Delete a render and its file; the URL stops working and the credit is not refunded",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "renderId",
+            "optional": false,
+            "type": "string",
+            "description": "The render ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "templated.api.renders.duplicate",
+      "shortPath": "renders.duplicate",
+      "description": "Duplicate an existing render with the same template and payload, spending an API credit",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "renderId",
+            "optional": false,
+            "type": "string",
+            "description": "The render ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, url?: string | null, storage_url?: string | null, width?: number | null, height?: number | null, status?: string | null, format?: string | null, templateId?: string | null, templateName?: string | null, name?: string | null, createdAt?: string | null, externalId?: string | null } | { id: string, url?: string | null, storage_url?: string | null, width?: number | null, height?: number | null, status?: string | null, format?: string | null, templateId?: string | null, templateName?: string | null, name?: string | null, createdAt?: string | null, externalId?: string | null }[]"
+      }
+    },
+    {
+      "path": "templated.api.renders.get",
+      "shortPath": "renders.get",
+      "description": "Read one render with its URL, dimensions, format and status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "renderId",
+            "optional": false,
+            "type": "string",
+            "description": "The render ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "storage_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "templateId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "templateName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "templated.api.renders.list",
+      "shortPath": "renders.list",
+      "description": "List every render on the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, url?: string | null, storage_url?: string | null, width?: number | null, height?: number | null, status?: string | null, format?: string | null, templateId?: string | null, templateName?: string | null, name?: string | null, createdAt?: string | null, externalId?: string | null }[]"
+      }
+    },
+    {
+      "path": "templated.api.renders.merge",
+      "shortPath": "renders.merge",
+      "description": "Merge several renders, plus external PDFs when given, into one PDF and return its hosted URL",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "The renders to merge."
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "string[]",
+            "description": "External PDF URLs to merge after the renders, in order."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "A name for the merged PDF."
+          },
+          {
+            "key": "host",
+            "optional": true,
+            "type": "true",
+            "description": "Host the merged PDF and return its URL. Always on."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "templated.api.templates.addTags",
+      "shortPath": "templates.addTags",
+      "description": "Append tags to a template, keeping the ones it already has",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string",
+            "description": "The template ID."
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]",
+            "description": "Tags to add."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "templated.api.templates.create",
+      "shortPath": "templates.create",
+      "description": "Create a template from a list of layers, which renders can then use",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The template name."
+          },
+          {
+            "key": "width",
+            "optional": false,
+            "type": "number",
+            "description": "Width in pixels, up to 5000."
+          },
+          {
+            "key": "height",
+            "optional": false,
+            "type": "number",
+            "description": "Height in pixels, up to 5000."
+          },
+          {
+            "key": "layers",
+            "optional": false,
+            "type": "{ layer?: string | null, type?: string | null, text?: string | null, x?: number | null, y?: number | null, width?: number | null, height?: number | null, rotation?: number | null, color?: string | null, background?: string | null, font_family?: string | null, font_size?: string | number | null, font_weight?: string | number | null, text_align?: string | null, image_url?: string | null, locked?: boolean | null }[]",
+            "description": "The layers that make up a single-page template, each with `layer` and `type`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "thumbnail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "layersCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modifiedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "layers",
+            "optional": true,
+            "type": "{ layer?: string | null, type?: string | null, text?: string | null, x?: number | null, y?: number | null, width?: number | null, height?: number | null, rotation?: number | null, color?: string | null, background?: string | null, font_family?: string | null, font_size?: string | number | null, font_weight?: string | number | null, text_align?: string | null, image_url?: string | null, locked?: boolean | null }[] | null"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "templated.api.templates.delete",
+      "shortPath": "templates.delete",
+      "description": "Delete a template",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string",
+            "description": "The template ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "templated.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Read one template, optionally with its layers or its pages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string",
+            "description": "The template ID."
+          },
+          {
+            "key": "includeLayers",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include the template layers in the answer."
+          },
+          {
+            "key": "includePages",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include the pages and their layers."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "thumbnail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "layersCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modifiedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "layers",
+            "optional": true,
+            "type": "{ layer?: string | null, type?: string | null, text?: string | null, x?: number | null, y?: number | null, width?: number | null, height?: number | null, rotation?: number | null, color?: string | null, background?: string | null, font_family?: string | null, font_size?: string | number | null, font_weight?: string | number | null, text_align?: string | null, image_url?: string | null, locked?: boolean | null }[] | null"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "templated.api.templates.layers",
+      "shortPath": "templates.layers",
+      "description": "List a template layers, including locked ones when asked",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string",
+            "description": "The template ID."
+          },
+          {
+            "key": "includeLockedLayers",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include layers marked locked. Defaults to false."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ layer?: string | null, type?: string | null, text?: string | null, x?: number | null, y?: number | null, width?: number | null, height?: number | null, rotation?: number | null, color?: string | null, background?: string | null, font_family?: string | null, font_size?: string | number | null, font_weight?: string | number | null, text_align?: string | null, image_url?: string | null, locked?: boolean | null }[]"
+      }
+    },
+    {
+      "path": "templated.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List templates, filtered by name or tag, 25 per page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page of results, starting at 0."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page. Templated defaults it to 25 here."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "Filter templates by name."
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number",
+            "description": "Only templates this wide."
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number",
+            "description": "Only templates this tall."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only templates with these tags; sent comma-separated."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, description?: string | null, width?: number | null, height?: number | null, thumbnail?: string | null, layersCount?: number | null, folderId?: string | null, createdAt?: string | null, modifiedAt?: string | null, tags?: string[] | null, layers?: { layer?: string | null, type?: string | null, text?: string | null, x?: number | null, y?: number | null, width?: number | null, height?: number | null, rotation?: number | null, color?: string | null, background?: string | null, font_family?: string | null, font_size?: string | number | null, font_weight?: string | number | null, text_align?: string | null, image_url?: string | null, locked?: boolean | null }[] | null, pages?: Record<string, any>[] | null }[]"
+      }
+    },
+    {
+      "path": "templated.api.templates.removeTags",
+      "shortPath": "templates.removeTags",
+      "description": "Remove specific tags from a template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string",
+            "description": "The template ID."
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]",
+            "description": "Tags to remove."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "templated.api.uploads.create",
+      "shortPath": "uploads.create",
+      "description": "Upload an image, up to 2 MB, for use as a template layer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileName",
+            "optional": false,
+            "type": "string",
+            "description": "The file name, with its extension: jpg, png, webp or svg."
+          },
+          {
+            "key": "fileBase64",
+            "optional": false,
+            "type": "string",
+            "description": "The image bytes, base64 encoded. Maximum 2 MB."
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string",
+            "description": "The image media type, e.g. \"image/png\". Inferred from the name when omitted."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Tags to organise the upload."
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string",
+            "description": "Your own reference for the upload."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "templated.api.uploads.delete",
+      "shortPath": "uploads.delete",
+      "description": "Delete one or more uploads",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uploadIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "The uploads to delete, sent as repeated `ids` query values."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "templated.api.uploads.list",
+      "shortPath": "uploads.list",
+      "description": "List uploads, filtered by name or tag, 15 per page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page of results, starting at 0."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page. Templated defaults it to 15."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "Search uploads by name or tag."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only uploads with these tags."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, url?: string | null, name?: string | null, mimeType?: string | null, size?: number | null, width?: number | null, height?: number | null, tags?: string[] | null, externalId?: string | null, createdAt?: string | null }[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

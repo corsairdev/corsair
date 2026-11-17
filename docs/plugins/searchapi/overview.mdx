@@ -1,0 +1,136 @@
+---
+title: "SearchAPI plugin"
+sidebarTitle: "Overview"
+description: "Read SearchAPI account usage and locations, run a search, and read a cached search."
+---
+
+Use **SearchAPI** through Corsair: one client, typed API calls, local DB sync.
+
+The key is the api_key query parameter. GET /api/v1/me, GET /api/v1/locations, and GET /api/v1/search with an empty key returned HTTP 401 Invalid API key. GET /api/v1/searches/search_doesnotexist and the .html form returned HTTP 404 Search not found. A search spends a credit. The query, result rows, and cached HTML are not stored.
+
+**What you get:**
+
+- 5 typed API operations
+- 3 synced entities (`accounts`, `locations`, `searches`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/searchapi better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/searchapi better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/searchapi better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/searchapi better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { searchapi } from '@corsair-dev/searchapi';
+
+export const corsair = createCorsair({
+	plugins: [
+		searchapi(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the SearchAPI API key before the first call: `pnpm corsair setup --plugin=searchapi --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+searchapi()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'searchapi',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read account**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.searchapi.api.account.get({});
+```
+
+
+**Write**
+
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/searchapi/api) reference._
+
+
+See the full list on the [API](/plugins/searchapi/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.searchapi.db.<entity>.search()` and `.list()`: `accounts`, `locations`, `searches`.
+
+See [Database](/plugins/searchapi/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/searchapi/api">
+    Every `searchapi.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/searchapi/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

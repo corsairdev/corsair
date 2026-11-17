@@ -1,0 +1,1502 @@
+---
+title: "Telnyx API reference"
+sidebarTitle: "API"
+description: "API reference for the Telnyx plugin in Corsair: every `telnyx.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Available Phone Numbers
+
+### list
+
+`availablePhoneNumbers.list`
+
+Search the numbers available to buy in a country, filtered by area code, locality or type
+
+**Risk:** `read`
+
+```ts
+await corsair.telnyx.api.availablePhoneNumbers.list({ countryCode: 'US', locality: 'Chicago', limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `countryCode` | `string` | Yes | Two-letter country code to search in, e.g. "US". |
+| `locality` | `string` | No | A city to search in. |
+| `administrativeArea` | `string` | No | A state or province to search in. |
+| `nationalDestinationCode` | `string` | No | An area code to search in. |
+| `phoneNumberType` | `local \| toll_free \| mobile \| national \| shared_cost` | No | — |
+| `limit` | `number` | No | The maximum number of results, 1 to 250. |
+
+countryCode is required; every other filter, limit included, travels as a filter[..] query key.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  phone_number?: string | null,
+  record_type?: string | null,
+  region_information?: {
+    region_type?: string | null,
+    region_name?: string | null
+  }[] | null,
+  cost_information?: {
+    upfront_cost?: string | null,
+    monthly_cost?: string | null,
+    currency?: string | null
+  } | null,
+  features?: {
+    name?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_pages?: number | null,
+  total_results?: number | null,
+  page_number?: number | null,
+  page_size?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Call Control Applications
+
+### create
+
+`callControlApplications.create`
+
+Create a call control application, which is what calls.create dials through
+
+**Risk:** `write`
+
+```ts
+await corsair.telnyx.api.callControlApplications.create({ application_name: 'Voice app', webhook_event_url: 'https://example.com/webhooks/calls' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `application_name` | `string` | Yes | The application name. |
+| `webhook_event_url` | `string` | Yes | Where Telnyx sends call events for this application. |
+| `webhook_event_failover_url` | `string` | No | — |
+| `webhook_api_version` | `1 \| 2` | No | — |
+| `active` | `boolean` | No | — |
+| `anchorsite_override` | `string` | No | — |
+
+webhook_event_url is required because Telnyx delivers every call event there.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  record_type?: string | null,
+  application_name?: string | null,
+  active?: boolean | null,
+  anchorsite_override?: string | null,
+  webhook_event_url?: string | null,
+  webhook_event_failover_url?: string | null,
+  webhook_api_version?: string | null,
+  dtmf_type?: string | null,
+  first_command_timeout?: boolean | null,
+  first_command_timeout_secs?: number | null,
+  inbound?: {
+    channel_limit?: number | null
+  } | null,
+  outbound?: {
+    channel_limit?: number | null
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`callControlApplications.delete`
+
+Delete a call control application; calls that reference it stop working
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.telnyx.api.callControlApplications.delete({ applicationId: '1293384261075731500' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `applicationId` | `string` | Yes | The call control application to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  record_type?: string | null,
+  application_name?: string | null,
+  active?: boolean | null,
+  anchorsite_override?: string | null,
+  webhook_event_url?: string | null,
+  webhook_event_failover_url?: string | null,
+  webhook_api_version?: string | null,
+  dtmf_type?: string | null,
+  first_command_timeout?: boolean | null,
+  first_command_timeout_secs?: number | null,
+  inbound?: {
+    channel_limit?: number | null
+  } | null,
+  outbound?: {
+    channel_limit?: number | null
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`callControlApplications.get`
+
+Read one call control application by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.telnyx.api.callControlApplications.get({ applicationId: '1293384261075731500' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `applicationId` | `string` | Yes | The call control application ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  record_type?: string | null,
+  application_name?: string | null,
+  active?: boolean | null,
+  anchorsite_override?: string | null,
+  webhook_event_url?: string | null,
+  webhook_event_failover_url?: string | null,
+  webhook_api_version?: string | null,
+  dtmf_type?: string | null,
+  first_command_timeout?: boolean | null,
+  first_command_timeout_secs?: number | null,
+  inbound?: {
+    channel_limit?: number | null
+  } | null,
+  outbound?: {
+    channel_limit?: number | null
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`callControlApplications.list`
+
+List the call control applications with their webhook URLs
+
+**Risk:** `read`
+
+```ts
+await corsair.telnyx.api.callControlApplications.list({ pageNumber: 1, pageSize: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNumber` | `number` | No | Page of results, starting at 1. |
+| `pageSize` | `number` | No | Results per page, from 1 to 250. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  record_type?: string | null,
+  application_name?: string | null,
+  active?: boolean | null,
+  anchorsite_override?: string | null,
+  webhook_event_url?: string | null,
+  webhook_event_failover_url?: string | null,
+  webhook_api_version?: string | null,
+  dtmf_type?: string | null,
+  first_command_timeout?: boolean | null,
+  first_command_timeout_secs?: number | null,
+  inbound?: {
+    channel_limit?: number | null
+  } | null,
+  outbound?: {
+    channel_limit?: number | null
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_pages?: number | null,
+  total_results?: number | null,
+  page_number?: number | null,
+  page_size?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`callControlApplications.update`
+
+Change an application's webhook URL, name or active state
+
+**Risk:** `write`
+
+```ts
+await corsair.telnyx.api.callControlApplications.update({ applicationId: '1293384261075731500', active: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `applicationId` | `string` | Yes | — |
+| `application_name` | `string` | No | — |
+| `webhook_event_url` | `string` | No | — |
+| `webhook_event_failover_url` | `string \| null` | No | — |
+| `webhook_api_version` | `1 \| 2` | No | — |
+| `active` | `boolean` | No | — |
+| `anchorsite_override` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  record_type?: string | null,
+  application_name?: string | null,
+  active?: boolean | null,
+  anchorsite_override?: string | null,
+  webhook_event_url?: string | null,
+  webhook_event_failover_url?: string | null,
+  webhook_api_version?: string | null,
+  dtmf_type?: string | null,
+  first_command_timeout?: boolean | null,
+  first_command_timeout_secs?: number | null,
+  inbound?: {
+    channel_limit?: number | null
+  } | null,
+  outbound?: {
+    channel_limit?: number | null
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Calls
+
+### create
+
+`calls.create`
+
+Place an outbound call through a call control application, which dials the number and bills per minute
+
+**Risk:** `destructive`
+
+```ts
+await corsair.telnyx.api.calls.create({ connection_id: '1293384261075731500', to: '+13125550002', from: '+13125550001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connection_id` | `string` | Yes | The call control application that handles the call. |
+| `to` | `string` | Yes | The number to dial, in E.164 format. |
+| `from` | `string` | Yes | The number to dial from, in E.164 format. |
+| `from_display_name` | `string` | No | — |
+| `timeout_secs` | `number` | No | — |
+| `time_limit_secs` | `number` | No | — |
+| `webhook_url` | `string` | No | — |
+| `webhook_url_method` | `GET \| POST` | No | — |
+| `client_state` | `string` | No | Base64 state returned on every webhook for this call. |
+| `command_id` | `string` | No | — |
+
+connection_id is the call control application ID, and the call bills per minute once answered.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  record_type?: string | null,
+  call_control_id?: string | null,
+  call_leg_id?: string | null,
+  call_session_id?: string | null,
+  connection_id?: string | null,
+  from?: string | null,
+  to?: string | null,
+  is_alive?: boolean | null,
+  call_state?: string | null,
+  state?: string | null,
+  direction?: string | null,
+  started_at?: string | null,
+  answered_at?: string | null,
+  ended_at?: string | null,
+  recording_id?: string | null,
+  client_state?: string | null,
+  call_duration?: number | null,
+  start_time?: string | null,
+  end_time?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`calls.get`
+
+Read one call with its state, direction and timestamps
+
+**Risk:** `read`
+
+```ts
+await corsair.telnyx.api.calls.get({ callControlId: 'v3:abc123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `callControlId` | `string` | Yes | The call_control_id of the call. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  record_type?: string | null,
+  call_control_id?: string | null,
+  call_leg_id?: string | null,
+  call_session_id?: string | null,
+  connection_id?: string | null,
+  from?: string | null,
+  to?: string | null,
+  is_alive?: boolean | null,
+  call_state?: string | null,
+  state?: string | null,
+  direction?: string | null,
+  started_at?: string | null,
+  answered_at?: string | null,
+  ended_at?: string | null,
+  recording_id?: string | null,
+  client_state?: string | null,
+  call_duration?: number | null,
+  start_time?: string | null,
+  end_time?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### hangup
+
+`calls.hangup`
+
+Hang up an active call, ending it for both legs
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.telnyx.api.calls.hangup({ callControlId: 'v3:abc123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `callControlId` | `string` | Yes | The call_control_id to hang up. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  result?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### speak
+
+`calls.speak`
+
+Read text aloud on an active call using text to speech
+
+**Risk:** `destructive`
+
+```ts
+await corsair.telnyx.api.calls.speak({ callControlId: 'v3:abc123', payload: 'Hello, this is a test', voice: 'female', language: 'en-US' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `callControlId` | `string` | Yes | The call_control_id to speak on. |
+| `payload` | `string` | Yes | The text to read aloud. |
+| `voice` | `string` | Yes | The voice to use, e.g. "female", "male" or a provider voice such as "Telnyx.KokoroTTS.af". |
+| `language` | `string` | No | The language of the payload, e.g. "en-US". |
+| `loop` | `number \| infinity` | No | How many times to play the text, or "infinity" to repeat it. |
+| `stop` | `string` | No | — |
+
+payload and voice are required; language is optional.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  result?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Messages
+
+### delete
+
+`messages.delete`
+
+Cancel a scheduled message before Telnyx sends it; a message that already went out cannot be cancelled
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.telnyx.api.messages.delete({ messageId: '40385f64-5717-4562-b3fc-2c963f66afa6' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messageId` | `string` | Yes | The ID of the scheduled message to cancel. |
+
+Cancels a scheduled message that has not been sent yet; answers with the bare message, not wrapped in data.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `record_type` | `string \| null` | No | — |
+| `direction` | `string \| null` | No | — |
+| `id` | `string` | Yes | — |
+| `type` | `string \| null` | No | — |
+| `messaging_profile_id` | `string \| null` | No | — |
+| `organization_id` | `string \| null` | No | — |
+| `from` | `object \| null` | No | — |
+| `to` | `object[] \| null` | No | — |
+| `text` | `string \| null` | No | — |
+| `num_chars` | `number \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `media` | `object[] \| null` | No | — |
+| `webhook_url` | `string \| null` | No | — |
+| `encoding` | `string \| null` | No | — |
+| `parts` | `number \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `cost` | `object \| null` | No | — |
+| `received_at` | `string \| null` | No | — |
+| `sent_at` | `string \| null` | No | — |
+| `completed_at` | `string \| null` | No | — |
+| `errors` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="from full type">
+
+```ts
+{
+  phone_number?: string | null,
+  carrier?: string | null,
+  line_type?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="to full type">
+
+```ts
+{
+  phone_number?: string | null,
+  status?: string | null,
+  carrier?: string | null,
+  line_type?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="media full type">
+
+```ts
+{
+  url?: string | null,
+  content_type?: string | null,
+  sha256?: string | null,
+  size?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="cost full type">
+
+```ts
+{
+  amount?: string | null,
+  currency?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+  code?: string | null,
+  title?: string | null,
+  detail?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`messages.get`
+
+Read one message with its delivery status, parts, cost and the errors Telnyx recorded
+
+**Risk:** `read`
+
+```ts
+await corsair.telnyx.api.messages.get({ messageId: '40385f64-5717-4562-b3fc-2c963f66afa6' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messageId` | `string` | Yes | The message ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  record_type?: string | null,
+  direction?: string | null,
+  id: string,
+  type?: string | null,
+  messaging_profile_id?: string | null,
+  organization_id?: string | null,
+  from?: {
+    phone_number?: string | null,
+    carrier?: string | null,
+    line_type?: string | null
+  } | null,
+  to?: {
+    phone_number?: string | null,
+    status?: string | null,
+    carrier?: string | null,
+    line_type?: string | null
+  }[] | null,
+  text?: string | null,
+  num_chars?: number | null,
+  subject?: string | null,
+  media?: {
+    url?: string | null,
+    content_type?: string | null,
+    sha256?: string | null,
+    size?: number | null
+  }[] | null,
+  webhook_url?: string | null,
+  encoding?: string | null,
+  parts?: number | null,
+  tags?: string[] | null,
+  cost?: {
+    amount?: string | null,
+    currency?: string | null
+  } | null,
+  received_at?: string | null,
+  sent_at?: string | null,
+  completed_at?: string | null,
+  errors?: {
+    code?: string | null,
+    title?: string | null,
+    detail?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`messages.send`
+
+Send an SMS or MMS from a Telnyx number, charging the account per part; text or at least one media URL is required
+
+**Risk:** `destructive`
+
+```ts
+await corsair.telnyx.api.messages.send({ from: '+13125550001', to: '+13125550002', text: 'Hello from Telnyx' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `to` | `string` | Yes | The destination number in E.164 format, e.g. "+13125550001". |
+| `from` | `string` | No | The sending number or alphanumeric sender ID. Required when sending from a phone number or sender ID; omit it when the number pool on `messaging_profile_id` picks the sender. |
+| `text` | `string` | No | The message body. Required for SMS; required for MMS only with media. |
+| `messaging_profile_id` | `string` | No | The messaging profile to send through. Required when sending via a number pool or from an alphanumeric sender ID. |
+| `media_urls` | `string[]` | No | Media to attach, for MMS. Required for MMS. |
+| `subject` | `string` | No | — |
+| `webhook_url` | `string` | No | — |
+| `use_profile_webhooks` | `boolean` | No | — |
+| `type` | `SMS \| MMS` | No | The message type. Telnyx infers it when omitted. |
+| `send_at` | `string` | No | An ISO 8601 timestamp to schedule the message. |
+
+Charges the account per part; send from, or a messaging_profile_id so the number pool picks the sender; SMS needs text and MMS needs media_urls.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  record_type?: string | null,
+  direction?: string | null,
+  id: string,
+  type?: string | null,
+  messaging_profile_id?: string | null,
+  organization_id?: string | null,
+  from?: {
+    phone_number?: string | null,
+    carrier?: string | null,
+    line_type?: string | null
+  } | null,
+  to?: {
+    phone_number?: string | null,
+    status?: string | null,
+    carrier?: string | null,
+    line_type?: string | null
+  }[] | null,
+  text?: string | null,
+  num_chars?: number | null,
+  subject?: string | null,
+  media?: {
+    url?: string | null,
+    content_type?: string | null,
+    sha256?: string | null,
+    size?: number | null
+  }[] | null,
+  webhook_url?: string | null,
+  encoding?: string | null,
+  parts?: number | null,
+  tags?: string[] | null,
+  cost?: {
+    amount?: string | null,
+    currency?: string | null
+  } | null,
+  received_at?: string | null,
+  sent_at?: string | null,
+  completed_at?: string | null,
+  errors?: {
+    code?: string | null,
+    title?: string | null,
+    detail?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Messaging Profiles
+
+### create
+
+`messagingProfiles.create`
+
+Create a messaging profile, which groups numbers and sets where inbound messages are delivered
+
+**Risk:** `write`
+
+```ts
+await corsair.telnyx.api.messagingProfiles.create({ name: 'Primary profile', whitelisted_destinations: ['US'], webhook_url: 'https://example.com/webhooks/telnyx' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The profile name. |
+| `enabled` | `boolean` | No | — |
+| `webhook_url` | `string` | No | Where inbound messages for the profile are delivered. |
+| `webhook_failover_url` | `string` | No | — |
+| `whitelisted_destinations` | `string[]` | Yes | Two-letter country codes the profile may send to, e.g. ["US"]. Telnyx requires it. |
+
+whitelisted_destinations is required, e.g. ["US"].
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  record_type?: string | null,
+  name?: string | null,
+  enabled?: boolean | null,
+  webhook_url?: string | null,
+  webhook_failover_url?: string | null,
+  webhook_api_version?: string | null,
+  whitelisted_destinations?: string[] | null,
+  number_pool_settings?: {
+    number_pool_id?: string | null,
+    skip_unhealthy_numbers?: boolean | null
+  } | null,
+  url_shortener_settings?: {
+    domain?: string | null,
+    prefix?: string | null,
+    strategy?: string | null
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`messagingProfiles.delete`
+
+Delete a messaging profile, which detaches its numbers and stops inbound delivery
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.telnyx.api.messagingProfiles.delete({ profileId: '3fa85f64-5717-4562-b3fc-2c963f66afa6' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | The messaging profile to delete. |
+
+Detaches the profile from its numbers and stops inbound delivery.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  record_type?: string | null,
+  name?: string | null,
+  enabled?: boolean | null,
+  webhook_url?: string | null,
+  webhook_failover_url?: string | null,
+  webhook_api_version?: string | null,
+  whitelisted_destinations?: string[] | null,
+  number_pool_settings?: {
+    number_pool_id?: string | null,
+    skip_unhealthy_numbers?: boolean | null
+  } | null,
+  url_shortener_settings?: {
+    domain?: string | null,
+    prefix?: string | null,
+    strategy?: string | null
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`messagingProfiles.get`
+
+Read one messaging profile by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.telnyx.api.messagingProfiles.get({ profileId: '3fa85f64-5717-4562-b3fc-2c963f66afa6' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | The messaging profile ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  record_type?: string | null,
+  name?: string | null,
+  enabled?: boolean | null,
+  webhook_url?: string | null,
+  webhook_failover_url?: string | null,
+  webhook_api_version?: string | null,
+  whitelisted_destinations?: string[] | null,
+  number_pool_settings?: {
+    number_pool_id?: string | null,
+    skip_unhealthy_numbers?: boolean | null
+  } | null,
+  url_shortener_settings?: {
+    domain?: string | null,
+    prefix?: string | null,
+    strategy?: string | null
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`messagingProfiles.list`
+
+List the messaging profiles with their webhook destination and enabled state
+
+**Risk:** `read`
+
+```ts
+await corsair.telnyx.api.messagingProfiles.list({ pageNumber: 1, pageSize: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNumber` | `number` | No | Page of results, starting at 1. |
+| `pageSize` | `number` | No | Results per page, from 1 to 250. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  record_type?: string | null,
+  name?: string | null,
+  enabled?: boolean | null,
+  webhook_url?: string | null,
+  webhook_failover_url?: string | null,
+  webhook_api_version?: string | null,
+  whitelisted_destinations?: string[] | null,
+  number_pool_settings?: {
+    number_pool_id?: string | null,
+    skip_unhealthy_numbers?: boolean | null
+  } | null,
+  url_shortener_settings?: {
+    domain?: string | null,
+    prefix?: string | null,
+    strategy?: string | null
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_pages?: number | null,
+  total_results?: number | null,
+  page_number?: number | null,
+  page_size?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`messagingProfiles.update`
+
+Change a profile's name, webhook destination or whitelisted destinations
+
+**Risk:** `write`
+
+```ts
+await corsair.telnyx.api.messagingProfiles.update({ profileId: '3fa85f64-5717-4562-b3fc-2c963f66afa6', name: 'Renamed profile' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | The messaging profile to change. |
+| `name` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+| `webhook_url` | `string \| null` | No | — |
+| `webhook_failover_url` | `string \| null` | No | — |
+| `whitelisted_destinations` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  record_type?: string | null,
+  name?: string | null,
+  enabled?: boolean | null,
+  webhook_url?: string | null,
+  webhook_failover_url?: string | null,
+  webhook_api_version?: string | null,
+  whitelisted_destinations?: string[] | null,
+  number_pool_settings?: {
+    number_pool_id?: string | null,
+    skip_unhealthy_numbers?: boolean | null
+  } | null,
+  url_shortener_settings?: {
+    domain?: string | null,
+    prefix?: string | null,
+    strategy?: string | null
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Phone Numbers
+
+### delete
+
+`phoneNumbers.delete`
+
+Release a phone number from the account; it cannot be recovered once released
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.telnyx.api.phoneNumbers.delete({ phoneNumberId: '1293384261075731499' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phoneNumberId` | `string` | Yes | The phone number record to delete. |
+
+Releases the number permanently; it cannot be recovered.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  record_type?: string | null,
+  phone_number?: string | null,
+  country_iso_alpha2?: string | null,
+  status?: string | null,
+  connection_id?: string | null,
+  connection_name?: string | null,
+  customer_reference?: string | null,
+  messaging_profile_id?: string | null,
+  messaging_profile_name?: string | null,
+  billing_group_id?: string | null,
+  phone_number_type?: string | null,
+  emergency_enabled?: boolean | null,
+  emergency_address_id?: string | null,
+  external_pin?: string | null,
+  purchased_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  tags?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`phoneNumbers.get`
+
+Read one phone number record by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.telnyx.api.phoneNumbers.get({ phoneNumberId: '1293384261075731499' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phoneNumberId` | `string` | Yes | The phone number record ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  record_type?: string | null,
+  phone_number?: string | null,
+  country_iso_alpha2?: string | null,
+  status?: string | null,
+  connection_id?: string | null,
+  connection_name?: string | null,
+  customer_reference?: string | null,
+  messaging_profile_id?: string | null,
+  messaging_profile_name?: string | null,
+  billing_group_id?: string | null,
+  phone_number_type?: string | null,
+  emergency_enabled?: boolean | null,
+  emergency_address_id?: string | null,
+  external_pin?: string | null,
+  purchased_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  tags?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`phoneNumbers.list`
+
+List the numbers on the account with their connection and messaging profile
+
+**Risk:** `read`
+
+```ts
+await corsair.telnyx.api.phoneNumbers.list({ pageSize: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNumber` | `number` | No | Page of results, starting at 1. |
+| `pageSize` | `number` | No | Results per page, from 1 to 250. |
+| `sort` | `string` | No | The column to sort by, for example "purchased_at". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  record_type?: string | null,
+  phone_number?: string | null,
+  country_iso_alpha2?: string | null,
+  status?: string | null,
+  connection_id?: string | null,
+  connection_name?: string | null,
+  customer_reference?: string | null,
+  messaging_profile_id?: string | null,
+  messaging_profile_name?: string | null,
+  billing_group_id?: string | null,
+  phone_number_type?: string | null,
+  emergency_enabled?: boolean | null,
+  emergency_address_id?: string | null,
+  external_pin?: string | null,
+  purchased_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  tags?: string[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_pages?: number | null,
+  total_results?: number | null,
+  page_number?: number | null,
+  page_size?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`phoneNumbers.update`
+
+Attach a number to a call control application or other connection, or change its tags, billing group or customer reference
+
+**Risk:** `write`
+
+```ts
+await corsair.telnyx.api.phoneNumbers.update({ phoneNumberId: '1293384261075731499', connection_id: '1293384261075731500', tags: ['support'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phoneNumberId` | `string` | Yes | The phone number record to change. |
+| `connection_id` | `string` | No | The call control application or other connection to attach the number to. |
+| `billing_group_id` | `string` | No | — |
+| `customer_reference` | `string` | No | — |
+| `external_pin` | `string` | No | — |
+| `hd_voice_enabled` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  record_type?: string | null,
+  phone_number?: string | null,
+  country_iso_alpha2?: string | null,
+  status?: string | null,
+  connection_id?: string | null,
+  connection_name?: string | null,
+  customer_reference?: string | null,
+  messaging_profile_id?: string | null,
+  messaging_profile_name?: string | null,
+  billing_group_id?: string | null,
+  phone_number_type?: string | null,
+  emergency_enabled?: boolean | null,
+  emergency_address_id?: string | null,
+  external_pin?: string | null,
+  purchased_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  tags?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
