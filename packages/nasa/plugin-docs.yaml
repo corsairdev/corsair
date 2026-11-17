@@ -3,20 +3,20 @@ description: Astronomy Picture of the Day, near-Earth asteroid data from NeoWs, 
 domain: nasa.gov
 recommendedAuth: api_key
 overviewNote: |
-  Get a key at https://api.nasa.gov. The form asks for a name, an email and a description of your use, and the key appears on the page immediately; there is no account to create. `DEMO_KEY` works without signing up at 30 requests an hour per IP.
+  Get a key at https://api.nasa.gov. The form asks for a name, an email and a description of your use, and the key appears on the page immediately; there is no account to create. `DEMO_KEY` works without signing up, at 30 requests an hour and 50 a day per IP.
 
   Only two of the five hosts read a key. `api.nasa.gov` (Near Earth Objects, DONKI, EPIC metadata) needs one for every request. `science.nasa.gov` (APOD) accepts one and serves the same data without it. EONET, `images-api.nasa.gov` and `epic.gsfc.nasa.gov` ignore the parameter entirely, so a key is only spent where it is required.
 
   Things worth knowing before you call:
 
-  - **APOD takes a six-digit date code**, not `YYYY-MM-DD`. `apod.get` wants `240115` for 2024-01-15. `apod.list` filters with `date_from`/`date_to` in the same form, and NASA ignores either one on its own: sending only `date_from` returns today's entries rather than failing. This plugin rejects a one-sided range before sending.
-  - **APOD caps a page at 25 entries.** A larger `per_page` is served as 25, so a page-count based walk needs the cap as its page size.
+  - **APOD takes a six-digit date code**, not `YYYY-MM-DD`. `apod.get` wants `240115` for 2024-01-15. `apod.list` filters with `date_from`/`date_to` in the same form, as strings so `'050101'` keeps its leading zero, and NASA ignores either one on its own: sending only `date_from` returns today's entries rather than failing. This plugin rejects a one-sided range before sending.
+  - **APOD caps a page at 25 entries.** NASA serves 25 for any larger `per_page`, so the plugin accepts 1 to 25 and rejects a larger value rather than return fewer than asked. A page-count based walk needs 25 as its page size.
   - **The NEO feed takes at most seven days per request.** A wider window answers 400. Distances and speeds arrive as decimal strings, so `miss_distance.kilometers` is a string like `"45865643.869616206"`, not a number.
-  - **DONKI dates are inclusive on both ends** and default to the last 30 days when omitted. `donki.notification` silently shifts a window wider than 30 days to the last 30, so a long range does not fail, it returns less than you asked for.
-  - **`donki.solarFlare` is unverified against live data.** Every probe window answered `[]`, so the wrapper compiles and the request shape matches the docs, but the populated body has not been seen.
+  - **DONKI dates are inclusive on both ends.** Omitted dates default to the last 30 days, except `donki.enlilSimulation` and `donki.notification`, which default to the last seven. `donki.cme` answers 400 without both dates, so the plugin requires them. `donki.notification` silently shifts a window wider than 30 days to the last 30, so a long range does not fail, it returns less than you asked for.
+  - **`donki.solarFlare` is down at NASA's gateway.** On 2026-11-17 every `/DONKI/FLR` request, with or without dates, answered 404 from api.nasa.gov while the other DONKI routes worked. The request matches NASA's docs; the populated body has not been seen live.
   - **EONET sends JSON labelled `application/rss+xml`.** The plugin parses it; a caller never sees a string. `status` omitted means only open events, and an unknown event ID answers a 500 with an HTML body rather than a 404.
   - **EPIC timestamps are not ISO 8601.** `date` is `"2019-05-30 01:09:10"` with a space. A malformed date answers an HTML 500, and a valid date without imagery answers `[]`.
-  - **Rate limits are hourly and applied across all api.nasa.gov routes**, 1,000 per key and 30 for `DEMO_KEY`. A 429 is not retried: the window is an hour, so a retry only spends another request.
+  - **Rate limits apply across all api.nasa.gov routes**: 1,000 requests an hour per key; `DEMO_KEY` gets 30 an hour and 50 a day per IP. Waiting out the hour does not restore an exhausted daily `DEMO_KEY` allowance. Corsair's HTTP layer retries a 429 three times with backoff and then reports it.
 examples:
   read:
     path: apod.list
@@ -73,10 +73,13 @@ apiExamples:
     call: "{ nasa_id: 'as11-40-5874' }"
 apiNotes:
   apod.get: 'The date is the legacy six-digit code, so 240115 means 2024-01-15.'
-  apod.list: 'NASA serves at most 25 entries per page whatever per_page says, and applies date_from and date_to only as a pair.'
+  apod.list: 'per_page takes 1 to 25, the most NASA serves per page. date_from and date_to are six-digit YYMMDD strings and apply only as a pair.'
   neo.feed: 'NASA accepts at most seven days between start_date and end_date.'
   neo.browse: 'The response carries page.total_pages, so a caller can walk the whole catalogue.'
-  donki.notification: 'The provider caps the window at 30 days and shifts a wider range rather than rejecting it.'
+  donki.notification: 'Defaults to the last seven days. The provider caps the window at 30 days and shifts a wider range rather than rejecting it.'
+  donki.enlilSimulation: 'Omitted dates default to the last seven days, not 30.'
+  donki.cme: 'NASA answers 400 unless both startDate and endDate are sent.'
+  donki.solarFlare: 'api.nasa.gov answered 404 for every FLR request on 2026-11-17; the route matches NASA''s docs.'
   donki.cmeAnalysis: 'mostAccurateOnly and completeEntryOnly default to true at the provider, so omitting them hides most analyses.'
   epic.images: 'EPIC timestamps are "YYYY-MM-DD HH:MM:SS", not ISO 8601. A valid date without imagery answers an empty list.'
   eonet.events: 'Omitting status returns only open events.'
