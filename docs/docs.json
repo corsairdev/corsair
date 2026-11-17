@@ -1626,6 +1626,14 @@
                 ]
               },
               {
+                "group": "CurrencyScoop",
+                "pages": [
+                  "plugins/currencyscoop/overview",
+                  "plugins/currencyscoop/api",
+                  "plugins/currencyscoop/database"
+                ]
+              },
+              {
                 "group": "Currents API",
                 "pages": [
                   "plugins/currentsapi/overview",
