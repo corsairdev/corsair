@@ -1,0 +1,145 @@
+---
+title: "Superchat plugin"
+sidebarTitle: "Overview"
+description: "Multi-channel messaging from Superchat - manage contacts and contact lists, read conversations and their messages, and send text messages on WhatsApp, SMS, Instagram, Messenger, Telegram or email."
+---
+
+Use **Superchat** through Corsair: one client, typed API calls.
+
+Create an API token in Superchat under Settings, then API. You have to be an administrator to see it. Pass it as the plugin's `key` option or store it on the account; the plugin sends it as the `X-API-KEY` header.
+
+Things to know before you write:
+
+- **The API path carries `v1.0`, not `v1`.** A request to `/v1/contacts` answers 405 Method Not Allowed, which reads like a routing bug rather than a wrong path. The plugin uses `v1.0`, as Superchat's own examples do.
+- **A missing key is 401 and a wrong key is 403.** The 403 does not mean a scope is missing, so the plugin treats both as an auth failure.
+- **Sending reaches a real person.** `messages.send` delivers on WhatsApp, SMS, Instagram, Messenger, Telegram or email, depending on the `from` channel and the recipient's handle. The content has to suit that channel: a channel that only accepts templates will reject a plain text body.
+- **One recipient per message.** The spec caps `to` at one entry, and the schema enforces it.
+- **A contact needs a handle.** A handle is the email address or phone number that identifies a contact on a channel, and at least one is required. Creating a contact with none would leave Superchat nothing to reach them on.
+- **The contact update route requires three fields.** `contacts.update` is a PATCH, but it lists `first_name`, `last_name` and `gender` as required, so a caller changing one sends the other two back. Their values may be null; the keys may not be absent.
+- **Snoozing needs two fields.** Set `status: 'snoozed'` together with a `snoozed_until` time, or leave snoozing alone. The schema rejects the mismatch.
+- **Paging is by cursor.** `after` takes the last id of the previous page and `before` reads backwards. Only one may be set, and `limit` is 1 to 100, defaulting to 50.
+- **Rate limits.** Each workspace gets 2500 requests per 5-minute window, shared across its API keys, and a trial workspace is capped at 10000 calls for its whole lifetime. Both answer 429, and the plugin retries three times with backoff.
+
+**What you get:**
+
+- 22 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/superchat better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/superchat better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/superchat better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/superchat better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { superchat } from '@corsair-dev/superchat';
+
+export const corsair = createCorsair({
+	plugins: [
+		superchat(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Superchat API key before the first call: `pnpm corsair setup --plugin=superchat --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+superchat()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'superchat',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read the messages in a conversation**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.superchat.api.conversations.messages({ id: 'cv_1aBMS9FKwvSDjljRJI1aZ' });
+```
+
+
+**Send a text message to one recipient**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.superchat.api.messages.send({
+	to: [{ identifier: 'jane@example.com' }],
+	from: { channel_id: 'mc_1aBMS9FKwvSDjljRJI1aZ', name: 'Acme Support' },
+	content: { type: 'text', body: 'Hello from Corsair' },
+});
+```
+
+
+See the full list on the [API](/plugins/superchat/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/superchat/api">
+    Every `superchat.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

@@ -1,0 +1,215 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: "SwaggerHub"
+description: Registry for API definitions, for storing, validating, comparing and publishing OpenAPI specs, domains and templates.
+domain: swaggerhub.com
+recommendedAuth: api_key
+overviewNote: |
+  **SwaggerHub authenticates with one API key**, sent in the `Authorization` header with **no `Bearer` prefix**. Create a key on your account at app.swaggerhub.com under Settings, then API Key. There is no per-account host and no second credential.
+
+  Things to know before you call:
+
+  - **Every spec is addressed by `owner/api/version`**, and the owner and name are **case-sensitive**. Each segment is URL-encoded, so a version like `feature/branch` survives.
+  - **`GET /apis` and `GET /domains` answer a 303** to `/specs`, so `specs.list` is the listing route this plugin uses. `apis.list` reads one owner's APIs.
+  - **Saving takes the definition itself as the body**, not a wrapper. `format: 'yaml'` is the default; `format: 'json'` sends the JSON media type.
+  - **Defining the version twice.** For OpenAPI and AsyncAPI the version is read from `info.version`, so `version` is optional on save. GraphQL and MCP need it.
+  - **A save answers 409 on a published version** unless `force` is set, and a save replies with no body, so the plugin reports what it wrote.
+  - **`specs.validate` saves nothing.** It is the structural check to run before a save, and it returns findings with line and column positions.
+  - **`comments.list` answers a bare array**, and a 204 when the version has no comments. A 204 reads as `{ comments: [], empty: true }`.
+  - **`apis.compare` posts a definition** and answers a bare array of differences. Nothing is stored.
+  - **`projects.update` replaces the project**, so a collection left out is cleared. The plugin always sends all three collections.
+examples:
+  read:
+    path: specs.list
+    title: List API specs
+    args:
+      limit: 20
+  write:
+    path: apis.save
+    title: Save a definition
+    args:
+      owner: your-org
+      api: petstore
+      definition: |
+        openapi: 3.0.0
+        info:
+          title: Petstore
+          version: 1.0.0
+        paths: {}
+apiExamples:
+  specs.list:
+    call: "{ specType: 'API', limit: 20 }"
+  specs.validate:
+    call: "{ definition: 'openapi: 3.0.0\\ninfo:\\n  title: Petstore\\n  version: 1.0.0\\npaths: {}' }"
+  apis.list:
+    call: "{ owner: 'your-org' }"
+  apis.listVersions:
+    call: "{ owner: 'your-org', api: 'petstore' }"
+  apis.getDefinition:
+    call: "{ owner: 'your-org', api: 'petstore', version: '1.0.0' }"
+  apis.save:
+    call: "{ owner: 'your-org', api: 'petstore', definition: 'openapi: 3.0.0\\ninfo:\\n  title: Petstore\\n  version: 1.0.0\\npaths: {}' }"
+  apis.delete:
+    call: "{ owner: 'your-org', api: 'petstore' }"
+  apis.deleteVersion:
+    call: "{ owner: 'your-org', api: 'petstore', version: '1.0.0' }"
+  apis.cloneVersion:
+    call: "{ owner: 'your-org', api: 'petstore', version: '1.0.0', newVersion: '1.0.1' }"
+  apis.forkVersion:
+    call: "{ owner: 'your-org', api: 'petstore', version: '1.0.0', targetOwner: 'other-org', targetName: 'petstore-copy', targetVersion: '1.0.0' }"
+  apis.compare:
+    call: "{ owner: 'your-org', api: 'petstore', version: '1.0.0', definition: 'openapi: 3.0.0\\ninfo:\\n  title: Petstore\\n  version: 1.0.0\\npaths: {}', method: 'FULL' }"
+  apis.getCapabilities:
+    call: "{ owner: 'your-org', api: 'petstore', version: '1.0.0' }"
+  apis.getDefaultVersion:
+    call: "{ owner: 'your-org', api: 'petstore' }"
+  apis.setDefaultVersion:
+    call: "{ owner: 'your-org', api: 'petstore', version: '1.0.0' }"
+  apis.rename:
+    call: "{ owner: 'your-org', api: 'petstore', newName: 'petstore-v2' }"
+  apis.getNotifications:
+    call: "{ owner: 'your-org', api: 'petstore', scope: 'USER' }"
+  apis.setNotifications:
+    call: "{ owner: 'your-org', api: 'petstore', enabled: ['self'] }"
+  apis.disableNotifications:
+    call: "{ owner: 'your-org', api: 'petstore' }"
+  apiSettings.getLifecycle:
+    call: "{ owner: 'your-org', api: 'petstore', version: '1.0.0' }"
+  apiSettings.setLifecycle:
+    call: "{ owner: 'your-org', api: 'petstore', version: '1.0.0', published: true }"
+  apiSettings.getVisibility:
+    call: "{ owner: 'your-org', api: 'petstore', version: '1.0.0' }"
+  apiSettings.setVisibility:
+    call: "{ owner: 'your-org', api: 'petstore', version: '1.0.0', private: false }"
+  comments.list:
+    call: "{ owner: 'your-org', api: 'petstore', version: '1.0.0' }"
+  comments.create:
+    call: "{ owner: 'your-org', api: 'petstore', version: '1.0.0', body: 'This operation needs a summary' }"
+  comments.update:
+    call: "{ owner: 'your-org', api: 'petstore', version: '1.0.0', comment: 'c1', body: 'Reworded' }"
+  comments.delete:
+    call: "{ owner: 'your-org', api: 'petstore', version: '1.0.0', comment: 'c1' }"
+  comments.reply:
+    call: "{ owner: 'your-org', api: 'petstore', version: '1.0.0', comment: 'c1', body: 'Fixed in 1.0.1' }"
+  domains.list:
+    call: "{ owner: 'your-org' }"
+  domains.getVersions:
+    call: "{ owner: 'your-org', domain: 'example' }"
+  domains.getDefinition:
+    call: "{ owner: 'your-org', domain: 'example', version: '1.0.0' }"
+  domains.save:
+    call: "{ owner: 'your-org', domain: 'example', definition: 'openapi: 3.0.0\\ninfo:\\n  title: Petstore\\n  version: 1.0.0\\npaths: {}' }"
+  domains.delete:
+    call: "{ owner: 'your-org', domain: 'example' }"
+  domains.deleteVersion:
+    call: "{ owner: 'your-org', domain: 'example', version: '1.0.0' }"
+  templates.list:
+    call: "{}"
+  templates.get:
+    call: "{ owner: 'swagger-hub', templateId: 'default', version: '1.0.0', builtin: true }"
+  templates.save:
+    call: "{ owner: 'your-org', templateId: 'my-template', definition: 'openapi: 3.0.0\\ninfo:\\n  title: Petstore\\n  version: 1.0.0\\npaths: {}' }"
+  templates.delete:
+    call: "{ owner: 'your-org', templateId: 'my-template', version: '1.0.0' }"
+  projects.list:
+    call: "{ owner: 'your-org' }"
+  projects.get:
+    call: "{ owner: 'your-org', projectId: 'my-project' }"
+  projects.create:
+    call: "{ owner: 'your-org', name: 'My Project', apis: ['petstore'] }"
+  projects.update:
+    call: "{ owner: 'your-org', projectId: 'my-project', name: 'Renamed', apis: ['petstore'] }"
+  projects.delete:
+    call: "{ owner: 'your-org', projectId: 'my-project' }"
+  integrations.list:
+    call: "{ owner: 'your-org', api: 'petstore', version: '1.0.0' }"
+  integrations.execute:
+    call: "{ owner: 'your-org', api: 'petstore', version: '1.0.0', integrationId: 'i1' }"
+apiNotes:
+  specs.list: |
+    Answers the APIs.json listing `{ offset, totalCount, apis }`, one entry per spec. `specType` takes `API`, `DOMAIN`, `TEMPLATE` or `ANY`. `visibility` takes `PUBLIC`, `PRIVATE` or `ANY`, and `sort` takes `NAME`, `UPDATED`, `CREATED`, `OWNER`, `BEST_MATCH` or `TITLE`, with `order` of `ASC` or `DESC`. `filter: 'user'` narrows the result to the token's own specs.
+  specs.validate: |
+    Posts the definition and answers `{ valid, recognized, spec, summary, findings }`. `valid` is true only when the definition was recognized **and** has no error-severity finding. `maxProblems` caps the findings at 100 by default and 1000 at most. Nothing is saved.
+  apis.list: |
+    Answers an APIs.json object with an `apis` array, one entry per API rather than per version. `sort` and `order` order the entries, and `filter: 'user'` narrows to the token's own APIs.
+  apis.listVersions: |
+    Answers an APIs.json object with an `apis` array, one entry per version, plus `defaultVersion`. This is how to find a version name before calling a route that needs one.
+  apis.getDefinition: |
+    Answers `{ definition }` as text. `resolved` follows `$ref`s and `flatten` lifts inline schemas into named models; GraphQL definitions support neither. A JSON definition is re-serialized to a string, so the reply is always text.
+  apis.save: |
+    **The definition is the request body**, not a field inside an object. For OpenAPI and AsyncAPI the version comes from `info.version`; pass `version` for GraphQL and MCP. Use `format: 'graphql'` for GraphQL SDL, which is sent as `application/graphql`. `force` overwrites a published version instead of answering 409. The route replies with no body, so the result reports the owner, the name and the `version` you passed. When the version comes from the definition's `info.version` and you leave `version` out, the result has `version: null`. Core does not pass the status on, so whether the save created the version is not reported.
+  apis.delete: |
+    Deletes the API and every version of it. The route answers 200 with no body, so the plugin reports `{ owner, api, deleted: true }`.
+  apis.deleteVersion: |
+    Deletes one version and leaves the others. The API itself stays.
+  apis.cloneVersion: |
+    Creates `newVersion` as a copy of the version in the path. `private` decides the new version's visibility; without it the source setting is used.
+  apis.forkVersion: |
+    Writes the version into `targetOwner` under `targetName` and `targetVersion`, which can be another organisation. The name must be at least 3 characters and at most 60, and the version at most 128.
+  apis.compare: |
+    Posts a definition and answers a **bare array** of differences between it and the stored version, so the plugin returns `{ owner, api, version, changes }`. `method` is a required query parameter on the route and takes `FULL`, `LOGICAL` or `STRUCTURAL`; the plugin sends `FULL` when you leave it out. A response that is not an array fails rather than reading as no changes.
+  apis.getCapabilities: |
+    Answers `{ canViewStandardizationErrors }`, which says whether the token may read this version's standardization findings.
+  apis.getDefaultVersion: |
+    Answers `{ version }`, where `version` is **null** when the API has no default set.
+  apis.setDefaultVersion: |
+    Writes the default version. The version has to exist, or the route answers 404.
+  apis.rename: |
+    Sends `newName` as a query parameter, with no body. **The published URLs change**, so anything pointing at the old name breaks. SwaggerHub emails the API's designers and consumers about the rename, and the old name stays reserved, so a later save under it answers 403.
+  apis.getNotifications: |
+    Answers `{ enabled }`, the notification scopes the caller has on the API. `scope` is a required query parameter, `USER` (the default) or `ALL`, and `version` narrows it to one version.
+  apis.setNotifications: |
+    **The body is the bare list of scopes**, not an object around it. The route answers 200 with no body, so the plugin reports the scopes it sent as `{ enabled }`.
+  apis.disableNotifications: |
+    Turns off every notification the caller has on the API. The route answers 200 with no body, so the plugin reports an empty `{ enabled }`.
+  apiSettings.getLifecycle: |
+    Answers `{ published }` for one version.
+  apiSettings.setLifecycle: |
+    Publishes or unpublishes one version. `force` matters when the version is already published, and a lifecycle change is what makes a spec visible in the portal. SwaggerHub emails the users the API is shared with when it is published or unpublished.
+  apiSettings.getVisibility: |
+    Answers `{ private }` for one version.
+  apiSettings.setVisibility: |
+    Makes one version private or public. A private version leaves public view immediately.
+  comments.list: |
+    Answers a **bare array** of comments. A 204 means the version has none, so the plugin reports `{ comments: [], empty: true }` rather than failing.
+  comments.create: |
+    The route documents `replies` as required, so the plugin always sends it, as an empty array. `range` anchors the comment to a line range and takes all six offsets. The API refuses a comment without one, so a comment with no `range` goes on line 1.
+  comments.update: |
+    Sends PATCH with the new `body`. Answers the updated comment.
+  comments.delete: |
+    Deletes the comment and its replies. The route answers 200 with no body, so the plugin reports the ids.
+  comments.reply: |
+    Adds a reply under the comment in the path, with a `body`. Answers the reply as a plain comment.
+  domains.list: |
+    Answers an APIs.json object with an `apis` array, one entry per domain under the owner.
+  domains.getVersions: |
+    Answers an APIs.json object, one entry per domain version.
+  domains.getDefinition: |
+    Answers `{ definition }` as text, in whichever format the domain was stored as.
+  domains.save: |
+    **The definition is the request body.** The domain version comes from the definition when it carries one; pass `version` otherwise.
+  domains.delete: |
+    Deletes the domain and every version. `force` lets it through when another spec references it.
+  domains.deleteVersion: |
+    Deletes one domain version, leaving the others. `force` behaves as on the domain delete.
+  templates.list: |
+    Answers a **bare array** of template wrappers, including SwaggerHub's built-in templates which carry `builtIn: true`. `owner` narrows the catalog to one owner.
+  templates.get: |
+    Answers `{ definition }` as text. `builtin: true` reads a built-in template instead of one on the account, and `flatten` lifts inline schemas.
+  templates.save: |
+    **The definition is the request body.** `version` is optional where the definition carries one.
+  templates.delete: |
+    Deletes one template version, or the whole template when `version` is left out (the API will not delete a template's only version). The route answers 204, so the plugin reports the ids.
+  projects.list: |
+    Answers `{ offset, totalCount, projects }`. `order` takes `ASC` or `DESC`.
+  projects.get: |
+    Answers one project with the `apis`, `domains` and `templates` arrays it groups. Each entry is a **name**, not an id, and the specs must belong to the same organisation.
+  projects.create: |
+    The route documents all three collections as required, so the plugin sends an empty array for any left out. Names have to exist in the organisation already.
+  projects.update: |
+    Sends PUT, which **replaces** the project. A collection left out is cleared, so the plugin always sends all three. The PUT also needs `name`; when you leave it out the plugin sends the project id, which is the project's name.
+  projects.delete: |
+    Deletes the project. The specs it grouped stay on the account. The route answers 204.
+  integrations.list: |
+    Answers `{ integrations }` with each integration's id, name and enabled state. Use the id with `integrations.execute`.
+  integrations.execute: |
+    Runs the integration once, which pushes the stored definition to its target such as a repository or a gateway. A 205 means the API was updated as part of the run. `commitMessage` sets the commit text on a source-control integration.

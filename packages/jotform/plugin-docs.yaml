@@ -1,0 +1,110 @@
+displayName: Jotform
+description: Manage Jotform online forms, questions, submissions, reports and labels through the official Jotform REST API.
+domain: jotform.com
+recommendedAuth: api_key
+overviewNote: >-
+  Authenticate with a Jotform API key passed in the APIKEY header. Standard (api.jotform.com),
+  EU (eu-api.jotform.com), and HIPAA (hipaa-api.jotform.com) base URLs are supported. Daily API
+  call limits are reported via limit-left response headers.
+examples:
+  read:
+    path: user.get
+    title: Get authenticated user profile
+    args: {}
+  write:
+    path: forms.create
+    title: Create a new form
+    args:
+      properties:
+        title: Customer Feedback
+apiExamples:
+  user.get:
+    call: "{}"
+  user.getForms:
+    call: "{ limit: 20 }"
+  user.getSubmissions:
+    call: "{ limit: 20 }"
+  user.getHistory:
+    call: "{ action: 'formCreation' }"
+  user.getSettings:
+    call: "{}"
+  user.updateSettings:
+    call: "{ company: 'Acme Corp' }"
+  user.getSettingByKey:
+    call: "{ key: 'time_zone' }"
+  user.getSubusers:
+    call: "{}"
+  user.getUsage:
+    call: "{}"
+  user.getReports:
+    call: "{}"
+  user.getInvoices:
+    call: "{}"
+  user.getLabels:
+    call: "{}"
+  forms.get:
+    call: "{ id: '230000000000000' }"
+  forms.create:
+    call: "{ properties: { title: 'Feedback Form' } }"
+  forms.createForms:
+    call: "{ formContent: { properties: { title: 'Feedback Form' } } }"
+  forms.delete:
+    call: "{ id: '230000000000000' }"
+  forms.clone:
+    call: "{ id: '230000000000000' }"
+  forms.getFiles:
+    call: "{ id: '230000000000000' }"
+  forms.getQuestions:
+    call: "{ id: '230000000000000' }"
+  forms.getQuestion:
+    call: "{ id: '230000000000000', qid: '1' }"
+  forms.createQuestion:
+    call: "{ id: '230000000000000', question: { type: 'control_textbox', text: 'Full Name' } }"
+  forms.createQuestions:
+    call: "{ id: '230000000000000', questions: [{ type: 'control_textbox', text: 'Full Name' }] }"
+  forms.updateQuestion:
+    call: "{ id: '230000000000000', qid: '1', question: { text: 'Updated Name' } }"
+  forms.deleteQuestion:
+    call: "{ id: '230000000000000', qid: '1' }"
+  forms.getProperties:
+    call: "{ id: '230000000000000' }"
+  forms.getProperty:
+    call: "{ id: '230000000000000', key: 'title' }"
+  forms.setProperties:
+    call: "{ id: '230000000000000', properties: { title: 'New Form Title' } }"
+  forms.getReports:
+    call: "{ id: '230000000000000' }"
+  forms.createReport:
+    call: "{ id: '230000000000000', title: 'Submissions Grid', list_type: 'grid' }"
+  forms.getSubmissions:
+    call: "{ id: '230000000000000', limit: 20 }"
+  forms.createSubmission:
+    call: "{ id: '230000000000000', submission: { '1': 'Sample Answer' } }"
+  forms.createSubmissions:
+    call: "{ id: '230000000000000', submissions: [{ '1': 'Sample Answer' }] }"
+  submissions.get:
+    call: "{ id: '500000000000000000' }"
+  submissions.update:
+    call: "{ id: '500000000000000000', submission: { '1': 'Updated Answer' } }"
+  submissions.delete:
+    call: "{ id: '500000000000000000' }"
+  reports.get:
+    call: "{ id: '90000000000000' }"
+  reports.delete:
+    call: "{ id: '90000000000000' }"
+  labels.get:
+    call: "{ id: 'lbl-123' }"
+  labels.create:
+    call: "{ name: 'Internal Forms' }"
+  labels.update:
+    call: "{ id: 'lbl-123', name: 'General Forms' }"
+  labels.delete:
+    call: "{ id: 'lbl-123' }"
+  labels.getResources:
+    call: "{ id: 'lbl-123', limit: 20 }"
+  labels.addResources:
+    call: "{ id: 'lbl-123', resources: [{ id: '230000000000000', type: 'form' }] }"
+  labels.removeResources:
+    call: "{ id: 'lbl-123', resources: [{ id: '230000000000000', type: 'form' }] }"
+  system.getPlan:
+    call: "{ planName: 'FREE' }"

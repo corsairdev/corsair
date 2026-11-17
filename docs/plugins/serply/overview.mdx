@@ -1,0 +1,145 @@
+---
+title: "Serply plugin"
+sidebarTitle: "Overview"
+description: "Search Google (web, news, images, videos, maps, jobs, Scholar), Bing, products and eBay, read Reddit, and fetch web pages as markdown through Serply. The key is sent in X-Api-Key."
+---
+
+Use **Serply** through Corsair: one client, typed API calls, local DB sync.
+
+Copy your API key from the Serply dashboard (app.serply.io). Each uncached call spends one credit, so every operation is a metered read (`read`); new accounts get free credits for 30 days.
+
+Things to know:
+
+- **Search terms.** Every search takes `q`. `web.search` also takes Google's `num` (about 10 per page at most), `start` (offset; 10 is page two), `gl` (country) and `hl` (language). Google operators such as `site:` work in `q`.
+- **Region and device.** `proxy_location` (US, DE, GB, ...) and `device` (desktop or mobile) set where Google thinks the search comes from. Without `gl` or a region, results can change between calls.
+- **Answers.** `images.search`, `places.search` and `articles.search` return a fixed set of fields per row (the ones they store). Every other operation returns Serply's JSON as it came, with the main list typed (`results`, `jobs`, `products`, `entries`, Reddit `data.children`) and every other field kept.
+- **Reddit.** `reddit.subredditPosts` and `reddit.userPosts` page with `after` (the previous answer's `data.after`); `reddit.post` takes `with_comments`.
+- **Pages.** `pages.fetch` returns the page in `data`, as markdown (`response_type: markdown`) or HTML (`full`, which also returns the page's HTTP status).
+- **Stored rows.** Images, places and Scholar articles are stored locally; phone numbers and author names are not. Search terms are never written to events, and a failed call drops them from the error.
+
+**What you get:**
+
+- 16 typed API operations
+- 3 synced entities (`articles`, `images`, `places`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/serply better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/serply better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/serply better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/serply better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { serply } from '@corsair-dev/serply';
+
+export const corsair = createCorsair({
+	plugins: [
+		serply(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Serply API key before the first call: `pnpm corsair setup --plugin=serply --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+serply()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'serply',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Search Google**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.serply.api.web.search({ q: 'integration platform for ai agents', num: 10, gl: 'us' });
+```
+
+
+**Write**
+
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/serply/api) reference._
+
+
+See the full list on the [API](/plugins/serply/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.serply.db.<entity>.search()` and `.list()`: `articles`, `images`, `places`.
+
+See [Database](/plugins/serply/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/serply/api">
+    Every `serply.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/serply/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
