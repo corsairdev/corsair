@@ -8297,5 +8297,21 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/facebook",
+    "dir": "packages/facebook",
+    "name": "Facebook",
+    "version": "0.1.2",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2594,
+        "title": "Accept corsair 0.2.0 as a peer"
+      }
+    ]
   }
 ]
