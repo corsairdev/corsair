@@ -34,9 +34,11 @@ export async function makeOnedriveRequest<T>(
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
+		/** Return the body as bytes (`BinaryResponse`) instead of decoding it as text. */
+		responseType?: 'binary';
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, responseType } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: ONEDRIVE_API_BASE,
@@ -58,6 +60,7 @@ export async function makeOnedriveRequest<T>(
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
 		query,
+		responseType,
 	};
 
 	const response = await request<T>(config, requestOptions, {

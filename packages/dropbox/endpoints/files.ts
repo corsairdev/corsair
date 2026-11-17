@@ -1,4 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
+import type { BinaryResponse } from 'corsair/http';
+import { toFileOutput } from 'corsair/http';
 import {
 	DROPBOX_CONTENT_BASE,
 	makeAuthenticatedDropboxRequest,
@@ -79,17 +81,22 @@ export const download: DropboxEndpoints['filesDownload'] = async (
 	ctx,
 	input,
 ) => {
-	// Dropbox download uses content.dropboxapi.com with metadata in Dropbox-API-Arg header.
-	// The response body is the raw file content (text/binary), not JSON.
-	const result = await makeAuthenticatedDropboxRequest<
-		DropboxEndpointOutputs['filesDownload']
-	>('files/download', ctx, {
-		method: 'POST',
-		baseUrl: DROPBOX_CONTENT_BASE,
-		extraHeaders: {
-			'Dropbox-API-Arg': JSON.stringify({ path: input.path }),
-		},
-	});
+	// Dropbox's content endpoints take the arguments in the Dropbox-API-Arg
+	// header, and the reply is the file itself: read as bytes so a PDF or image
+	// survives.
+	const { bytes, contentType } =
+		await makeAuthenticatedDropboxRequest<BinaryResponse>(
+			'files/download',
+			ctx,
+			{
+				method: 'POST',
+				baseUrl: DROPBOX_CONTENT_BASE,
+				extraHeaders: {
+					'Dropbox-API-Arg': JSON.stringify({ path: input.path }),
+				},
+				responseType: 'binary',
+			},
+		);
 
 	await logEventFromContext(
 		ctx,
@@ -97,7 +104,11 @@ export const download: DropboxEndpoints['filesDownload'] = async (
 		{ path: input.path },
 		'completed',
 	);
-	return result;
+	// A path names the file; an `id:` or `rev:` reference doesn't.
+	const filename = input.path.startsWith('/')
+		? input.path.split('/').pop()
+		: undefined;
+	return toFileOutput(bytes, contentType, filename ? { filename } : {});
 };
 
 export const move: DropboxEndpoints['filesMove'] = async (ctx, input) => {

@@ -1,0 +1,143 @@
+---
+title: "Tapfiliate plugin"
+sidebarTitle: "Overview"
+description: "Affiliate and partner program management with Tapfiliate - create and list affiliates, add them to programs and approve them, track conversions and customers, approve or disapprove commissions, and record payments."
+---
+
+Use **Tapfiliate** through Corsair: one client, typed API calls.
+
+Create a key in Tapfiliate under Settings, API. Every request sends it as `X-Api-Key`. A key created for a team member only sees what that member's permissions allow.
+
+Things to know before you call:
+
+- **Tracking references differ per operation.** `customers.create` needs one of coupon, click ID, referral code, asset ID or tracking ID, and `source_id` only goes with `asset_id`. `conversions.create` takes the same references, or `customer_id` alone when it matches an existing customer in a recurring program (Tapfiliate answers 400 otherwise). `clicks.create` names the affiliate with `referral_code` (a `source_id` beside it overrides the code's source) or with `asset_id` plus `source_id`; a coupon, click ID or tracking ID doesn't identify a click. The plugin checks these before sending.
+- **Ranking when several are sent.** Tapfiliate uses only the highest-precedence reference: coupon, then click ID, then referral code, then asset ID with source ID, then tracking ID.
+- **A conversion creates commissions.** `conversions.create` creates the regular commission and any MLM level commissions. If you pass `commissions`, their `sub_amount`s must add up to `amount`, and you get one commission per entry instead of the program's default.
+- **Converting an amount does not move the commission.** `conversions.update` changes `amount` only. Commission amounts change when the call also sends `recalculate_commissions: true`, which travels as a query flag.
+- **Creating an affiliate may answer no body.** The reference documents a 200 with no body, so `affiliates.create` then reports `{ created: true, email }` and the id comes from `affiliates.list`. When Tapfiliate does return the affiliate with a generated `password`, store it: it is the only way into the new account.
+- **An incomplete address is dropped silently.** Tapfiliate keeps an address only when `address`, `postal_code`, `city` and `country.code` are all present. The plugin requires them together.
+- **Approval defaults to yes.** `programs.addAffiliate` approves unless you send `approved: false` for disapproved or `approved: null` for pending, and it ignores the program's auto-approve setting.
+- **Coupon updates are three-way.** In `programs.updateAffiliate`, `coupon: null` removes the coupon, a string replaces it, and leaving the field out changes nothing.
+- **Deletes.** A 204 answers with no body, so the delete endpoints report `{ success: true }`. `payments.cancel` is a DELETE route that cancels the payment (the affiliate balance goes back up by its amount, and there is no undo). `customers.cancel` stops recurring commissions and `customers.uncancel` restores them.
+- **Paging is by page number.** Lists return 25 items per page and put the next page in the `Link` header, which the plugin cannot read with the body, so pass `page` yourself and keep requesting until a page comes back short.
+- **Rate limits and plans.** Limits range from 10 to 1500 requests per window per key and endpoint. A 429 carries no `Retry-After`; the plugin retries three times with backoff. Click routes need the click-report feature, and affiliate groups need a plan that includes them, or they answer 403.
+
+**What you get:**
+
+- 41 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/tapfiliate better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/tapfiliate better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/tapfiliate better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/tapfiliate better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { tapfiliate } from '@corsair-dev/tapfiliate';
+
+export const corsair = createCorsair({
+	plugins: [
+		tapfiliate(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Tapfiliate API key before the first call: `pnpm corsair setup --plugin=tapfiliate --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+tapfiliate()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'tapfiliate',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the first page of affiliates**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.tapfiliate.api.affiliates.list({ page: 1 });
+```
+
+
+**Add an affiliate to a program and approve it**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.tapfiliate.api.programs.addAffiliate({ programId: '1', affiliateId: 'jane-jameson', coupon: 'JANE10OFF' });
+```
+
+
+See the full list on the [API](/plugins/tapfiliate/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/tapfiliate/api">
+    Every `tapfiliate.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

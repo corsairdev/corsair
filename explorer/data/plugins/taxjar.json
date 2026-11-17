@@ -1,0 +1,1241 @@
+{
+  "id": "taxjar",
+  "displayName": "TaxJar",
+  "description": "Sales tax automation with TaxJar - calculate tax for a cart, look up rates and nexus regions, validate addresses, record order and refund transactions, and manage tax-exempt customers.",
+  "npmPackageName": "@corsair-dev/taxjar",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 21,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "taxjar.api.addresses.validate",
+      "shortPath": "addresses.validate",
+      "description": "Validate a US address and get back every match TaxJar finds, with the street and ZIP normalized",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string",
+            "description": "Two-letter ISO country code."
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter ISO state code."
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string",
+            "description": "A postal code, 5 digits or ZIP+4."
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "street",
+            "optional": true,
+            "type": "string",
+            "description": "The street address, which is the part validation rewrites."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "addresses",
+            "optional": false,
+            "type": "{ zip?: string | null, street?: string | null, state?: string | null, country?: string | null, city?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "taxjar.api.categories.list",
+      "shortPath": "categories.list",
+      "description": "List the product tax categories, whose product_tax_code values a tax calculation or line item takes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "categories",
+            "optional": false,
+            "type": "{ name?: string | null, product_tax_code?: string | null, description?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "taxjar.api.customers.create",
+      "shortPath": "customers.create",
+      "description": "Create an exempt customer, whose exemption applies to later transactions that cite its customer_id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exemption_type",
+            "optional": false,
+            "type": "wholesale | government | marketplace | other | non_exempt",
+            "description": "The exemption kind."
+          },
+          {
+            "key": "exempt_regions",
+            "optional": true,
+            "type": "{ country: string, state?: string }[]",
+            "description": "The regions the exemption covers. Omit it to exempt every region."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string",
+            "description": "A postal code, 5 digits or ZIP+4."
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "street",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer_id",
+            "optional": false,
+            "type": "string",
+            "description": "The unique customer ID you assigned."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer",
+            "optional": false,
+            "type": "{ customer_id: string, exemption_type?: string | null, exempt_regions?: { country?: string | null, state?: string | null }[] | null, name?: string | null, country?: string | null, state?: string | null, zip?: string | null, city?: string | null, street?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "taxjar.api.customers.delete",
+      "shortPath": "customers.delete",
+      "description": "Delete a customer, which removes the exemption from future transactions",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "The unique customer ID you assigned."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "taxjar.api.customers.get",
+      "shortPath": "customers.get",
+      "description": "Read one customer with its exemption type and exempt regions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "The unique customer ID you assigned."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer",
+            "optional": false,
+            "type": "{ customer_id: string, exemption_type?: string | null, exempt_regions?: { country?: string | null, state?: string | null }[] | null, name?: string | null, country?: string | null, state?: string | null, zip?: string | null, city?: string | null, street?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "taxjar.api.customers.list",
+      "shortPath": "customers.list",
+      "description": "List the customer IDs recorded through the API",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customers",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "taxjar.api.customers.update",
+      "shortPath": "customers.update",
+      "description": "Change a customer's exemption or address",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "The unique customer ID you assigned."
+          },
+          {
+            "key": "exemption_type",
+            "optional": false,
+            "type": "wholesale | government | marketplace | other | non_exempt",
+            "description": "The exemption kind."
+          },
+          {
+            "key": "exempt_regions",
+            "optional": true,
+            "type": "{ country: string, state?: string }[]",
+            "description": "The regions the exemption covers. Omit it to exempt every region."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string",
+            "description": "A postal code, 5 digits or ZIP+4."
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "street",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer",
+            "optional": false,
+            "type": "{ customer_id: string, exemption_type?: string | null, exempt_regions?: { country?: string | null, state?: string | null }[] | null, name?: string | null, country?: string | null, state?: string | null, zip?: string | null, city?: string | null, street?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "taxjar.api.nexusRegions.list",
+      "shortPath": "nexusRegions.list",
+      "description": "List the regions where the account has sales tax nexus",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "regions",
+            "optional": false,
+            "type": "{ country_code?: string | null, country?: string | null, region_code?: string | null, region?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "taxjar.api.orders.create",
+      "shortPath": "orders.create",
+      "description": "Record an order transaction for tax reporting; shipping is required even when it is zero",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from_country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_zip",
+            "optional": true,
+            "type": "string",
+            "description": "A postal code, 5 digits or ZIP+4."
+          },
+          {
+            "key": "from_state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_street",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to_country",
+            "optional": false,
+            "type": "string",
+            "description": "The destination country."
+          },
+          {
+            "key": "to_zip",
+            "optional": true,
+            "type": "string",
+            "description": "A postal code, 5 digits or ZIP+4."
+          },
+          {
+            "key": "to_state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to_city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to_street",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number",
+            "description": "The total amount of the order including shipping, excluding sales tax."
+          },
+          {
+            "key": "shipping",
+            "optional": false,
+            "type": "number",
+            "description": "The shipping charge. TaxJar requires this field, even as 0."
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string",
+            "description": "The unique customer ID you assigned."
+          },
+          {
+            "key": "exemption_type",
+            "optional": true,
+            "type": "wholesale | government | marketplace | other | non_exempt"
+          },
+          {
+            "key": "line_items",
+            "optional": true,
+            "type": "{ id?: string, quantity?: number, product_identifier?: string, product_tax_code?: string, description?: string, unit_price?: number, discount?: number, sales_tax?: number }[]"
+          },
+          {
+            "key": "transaction_id",
+            "optional": false,
+            "type": "string",
+            "description": "The unique transaction ID you assigned."
+          },
+          {
+            "key": "transaction_date",
+            "optional": false,
+            "type": "string",
+            "description": "A date as \"YYYY/MM/DD\" or \"YYYY-MM-DD\". TaxJar documents both and accepts either."
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sales_tax",
+            "optional": true,
+            "type": "number",
+            "description": "The sales tax collected."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order",
+            "optional": false,
+            "type": "{ transaction_id: string, user_id?: number | null, transaction_date?: string | null, transaction_reference_id?: string | null, provider?: string | null, from_country?: string | null, from_zip?: string | null, from_state?: string | null, from_city?: string | null, from_street?: string | null, to_country?: string | null, to_zip?: string | null, to_state?: string | null, to_city?: string | null, to_street?: string | null, amount?: number | string | null, shipping?: number | string | null, sales_tax?: number | string | null, customer_id?: string | null, exemption_type?: string | null, line_items?: { id?: string | number | null, quantity?: number | null, product_identifier?: string | null, product_tax_code?: string | null, description?: string | null, unit_price?: number | string | null, discount?: number | string | null, sales_tax?: number | string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "taxjar.api.orders.delete",
+      "shortPath": "orders.delete",
+      "description": "Delete an order transaction, which removes it from tax reporting and cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactionId",
+            "optional": false,
+            "type": "string",
+            "description": "The unique transaction ID you assigned."
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string",
+            "description": "The source the transaction came from, such as api or pos. Defaults to api; pass the one it was created with."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "taxjar.api.orders.get",
+      "shortPath": "orders.get",
+      "description": "Read one order transaction by its ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactionId",
+            "optional": false,
+            "type": "string",
+            "description": "The unique transaction ID you assigned."
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string",
+            "description": "The source the transaction came from, such as api or pos. Defaults to api; pass the one it was created with."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order",
+            "optional": false,
+            "type": "{ transaction_id: string, user_id?: number | null, transaction_date?: string | null, transaction_reference_id?: string | null, provider?: string | null, from_country?: string | null, from_zip?: string | null, from_state?: string | null, from_city?: string | null, from_street?: string | null, to_country?: string | null, to_zip?: string | null, to_state?: string | null, to_city?: string | null, to_street?: string | null, amount?: number | string | null, shipping?: number | string | null, sales_tax?: number | string | null, customer_id?: string | null, exemption_type?: string | null, line_items?: { id?: string | number | null, quantity?: number | null, product_identifier?: string | null, product_tax_code?: string | null, description?: string | null, unit_price?: number | string | null, discount?: number | string | null, sales_tax?: number | string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "taxjar.api.orders.list",
+      "shortPath": "orders.list",
+      "description": "List the order transaction IDs recorded through the API, by date or date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_date",
+            "optional": true,
+            "type": "string",
+            "description": "A date as \"YYYY/MM/DD\" or \"YYYY-MM-DD\". TaxJar documents both and accepts either."
+          },
+          {
+            "key": "from_transaction_date",
+            "optional": true,
+            "type": "string",
+            "description": "A date as \"YYYY/MM/DD\" or \"YYYY-MM-DD\". TaxJar documents both and accepts either."
+          },
+          {
+            "key": "to_transaction_date",
+            "optional": true,
+            "type": "string",
+            "description": "A date as \"YYYY/MM/DD\" or \"YYYY-MM-DD\". TaxJar documents both and accepts either."
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string",
+            "description": "Where the transactions were recorded. Defaults to \"api\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orders",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "taxjar.api.orders.update",
+      "shortPath": "orders.update",
+      "description": "Change an order transaction; a transaction that has been filed may refuse the change",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactionId",
+            "optional": false,
+            "type": "string",
+            "description": "The unique transaction ID you assigned."
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string",
+            "description": "The source the transaction came from, such as api or pos. Defaults to api; pass the one it was created with."
+          },
+          {
+            "key": "sales_tax",
+            "optional": true,
+            "type": "number",
+            "description": "The sales tax collected."
+          },
+          {
+            "key": "transaction_date",
+            "optional": true,
+            "type": "string",
+            "description": "A date as \"YYYY/MM/DD\" or \"YYYY-MM-DD\". TaxJar documents both and accepts either."
+          },
+          {
+            "key": "from_country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_zip",
+            "optional": true,
+            "type": "string",
+            "description": "A postal code, 5 digits or ZIP+4."
+          },
+          {
+            "key": "from_state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_street",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to_country",
+            "optional": true,
+            "type": "string",
+            "description": "The destination country."
+          },
+          {
+            "key": "to_zip",
+            "optional": true,
+            "type": "string",
+            "description": "A postal code, 5 digits or ZIP+4."
+          },
+          {
+            "key": "to_state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to_city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to_street",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number",
+            "description": "The total amount of the order including shipping, excluding sales tax."
+          },
+          {
+            "key": "shipping",
+            "optional": true,
+            "type": "number",
+            "description": "The shipping charge. TaxJar requires this field on a create, even as 0."
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string",
+            "description": "The unique customer ID you assigned."
+          },
+          {
+            "key": "exemption_type",
+            "optional": true,
+            "type": "wholesale | government | marketplace | other | non_exempt"
+          },
+          {
+            "key": "line_items",
+            "optional": true,
+            "type": "{ id?: string, quantity?: number, product_identifier?: string, product_tax_code?: string, description?: string, unit_price?: number, discount?: number, sales_tax?: number }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order",
+            "optional": false,
+            "type": "{ transaction_id: string, user_id?: number | null, transaction_date?: string | null, transaction_reference_id?: string | null, provider?: string | null, from_country?: string | null, from_zip?: string | null, from_state?: string | null, from_city?: string | null, from_street?: string | null, to_country?: string | null, to_zip?: string | null, to_state?: string | null, to_city?: string | null, to_street?: string | null, amount?: number | string | null, shipping?: number | string | null, sales_tax?: number | string | null, customer_id?: string | null, exemption_type?: string | null, line_items?: { id?: string | number | null, quantity?: number | null, product_identifier?: string | null, product_tax_code?: string | null, description?: string | null, unit_price?: number | string | null, discount?: number | string | null, sales_tax?: number | string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "taxjar.api.rates.get",
+      "shortPath": "rates.get",
+      "description": "Read the combined and per-jurisdiction rates for a postal code, with an optional street address for rooftop accuracy",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "zip",
+            "optional": false,
+            "type": "string",
+            "description": "The postal code to read rates for."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter ISO country code."
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter ISO state code."
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "street",
+            "optional": true,
+            "type": "string",
+            "description": "A street address, which improves rooftop accuracy."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rate",
+            "optional": false,
+            "type": "{ zip?: string | null, country?: string | null, country_rate?: number | string | null, state?: string | null, state_rate?: number | string | null, county?: string | null, county_rate?: number | string | null, city?: string | null, city_rate?: number | string | null, combined_district_rate?: number | string | null, combined_rate?: number | string | null, freight_taxable?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "taxjar.api.refunds.create",
+      "shortPath": "refunds.create",
+      "description": "Record a refund transaction, linked to its original order by transaction_reference_id",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from_country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_zip",
+            "optional": true,
+            "type": "string",
+            "description": "A postal code, 5 digits or ZIP+4."
+          },
+          {
+            "key": "from_state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_street",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to_country",
+            "optional": false,
+            "type": "string",
+            "description": "The destination country."
+          },
+          {
+            "key": "to_zip",
+            "optional": true,
+            "type": "string",
+            "description": "A postal code, 5 digits or ZIP+4."
+          },
+          {
+            "key": "to_state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to_city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to_street",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number",
+            "description": "The total amount of the order including shipping, excluding sales tax."
+          },
+          {
+            "key": "shipping",
+            "optional": false,
+            "type": "number",
+            "description": "The shipping charge. TaxJar requires this field, even as 0."
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string",
+            "description": "The unique customer ID you assigned."
+          },
+          {
+            "key": "exemption_type",
+            "optional": true,
+            "type": "wholesale | government | marketplace | other | non_exempt"
+          },
+          {
+            "key": "line_items",
+            "optional": true,
+            "type": "{ id?: string, quantity?: number, product_identifier?: string, product_tax_code?: string, description?: string, unit_price?: number, discount?: number, sales_tax?: number }[]"
+          },
+          {
+            "key": "transaction_id",
+            "optional": false,
+            "type": "string",
+            "description": "The unique transaction ID you assigned."
+          },
+          {
+            "key": "transaction_reference_id",
+            "optional": true,
+            "type": "string",
+            "description": "The transaction_id of the order this refund applies to."
+          },
+          {
+            "key": "transaction_date",
+            "optional": false,
+            "type": "string",
+            "description": "A date as \"YYYY/MM/DD\" or \"YYYY-MM-DD\". TaxJar documents both and accepts either."
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sales_tax",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "refund",
+            "optional": false,
+            "type": "{ transaction_id: string, transaction_reference_id?: string | null, user_id?: number | null, transaction_date?: string | null, provider?: string | null, from_country?: string | null, from_zip?: string | null, from_state?: string | null, from_city?: string | null, from_street?: string | null, to_country?: string | null, to_zip?: string | null, to_state?: string | null, to_city?: string | null, to_street?: string | null, amount?: number | string | null, shipping?: number | string | null, sales_tax?: number | string | null, line_items?: { id?: string | number | null, quantity?: number | null, product_identifier?: string | null, product_tax_code?: string | null, description?: string | null, unit_price?: number | string | null, discount?: number | string | null, sales_tax?: number | string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "taxjar.api.refunds.delete",
+      "shortPath": "refunds.delete",
+      "description": "Delete a refund transaction, which removes it from tax reporting and cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactionId",
+            "optional": false,
+            "type": "string",
+            "description": "The unique transaction ID you assigned."
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string",
+            "description": "The source the transaction came from, such as api or pos. Defaults to api; pass the one it was created with."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "taxjar.api.refunds.get",
+      "shortPath": "refunds.get",
+      "description": "Read one refund transaction by its ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactionId",
+            "optional": false,
+            "type": "string",
+            "description": "The unique transaction ID you assigned."
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string",
+            "description": "The source the transaction came from, such as api or pos. Defaults to api; pass the one it was created with."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "refund",
+            "optional": false,
+            "type": "{ transaction_id: string, transaction_reference_id?: string | null, user_id?: number | null, transaction_date?: string | null, provider?: string | null, from_country?: string | null, from_zip?: string | null, from_state?: string | null, from_city?: string | null, from_street?: string | null, to_country?: string | null, to_zip?: string | null, to_state?: string | null, to_city?: string | null, to_street?: string | null, amount?: number | string | null, shipping?: number | string | null, sales_tax?: number | string | null, line_items?: { id?: string | number | null, quantity?: number | null, product_identifier?: string | null, product_tax_code?: string | null, description?: string | null, unit_price?: number | string | null, discount?: number | string | null, sales_tax?: number | string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "taxjar.api.refunds.list",
+      "shortPath": "refunds.list",
+      "description": "List the refund transaction IDs recorded through the API, by date or date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_date",
+            "optional": true,
+            "type": "string",
+            "description": "A date as \"YYYY/MM/DD\" or \"YYYY-MM-DD\". TaxJar documents both and accepts either."
+          },
+          {
+            "key": "from_transaction_date",
+            "optional": true,
+            "type": "string",
+            "description": "A date as \"YYYY/MM/DD\" or \"YYYY-MM-DD\". TaxJar documents both and accepts either."
+          },
+          {
+            "key": "to_transaction_date",
+            "optional": true,
+            "type": "string",
+            "description": "A date as \"YYYY/MM/DD\" or \"YYYY-MM-DD\". TaxJar documents both and accepts either."
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "refunds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "taxjar.api.refunds.update",
+      "shortPath": "refunds.update",
+      "description": "Change a refund transaction",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactionId",
+            "optional": false,
+            "type": "string",
+            "description": "The unique transaction ID you assigned."
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string",
+            "description": "The source the transaction came from, such as api or pos. Defaults to api; pass the one it was created with."
+          },
+          {
+            "key": "sales_tax",
+            "optional": true,
+            "type": "number",
+            "description": "The sales tax collected."
+          },
+          {
+            "key": "transaction_date",
+            "optional": true,
+            "type": "string",
+            "description": "A date as \"YYYY/MM/DD\" or \"YYYY-MM-DD\". TaxJar documents both and accepts either."
+          },
+          {
+            "key": "transaction_reference_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_zip",
+            "optional": true,
+            "type": "string",
+            "description": "A postal code, 5 digits or ZIP+4."
+          },
+          {
+            "key": "from_state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_street",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to_country",
+            "optional": true,
+            "type": "string",
+            "description": "The destination country."
+          },
+          {
+            "key": "to_zip",
+            "optional": true,
+            "type": "string",
+            "description": "A postal code, 5 digits or ZIP+4."
+          },
+          {
+            "key": "to_state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to_city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to_street",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number",
+            "description": "The total amount of the order including shipping, excluding sales tax."
+          },
+          {
+            "key": "shipping",
+            "optional": true,
+            "type": "number",
+            "description": "The shipping charge. TaxJar requires this field on a create, even as 0."
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string",
+            "description": "The unique customer ID you assigned."
+          },
+          {
+            "key": "exemption_type",
+            "optional": true,
+            "type": "wholesale | government | marketplace | other | non_exempt"
+          },
+          {
+            "key": "line_items",
+            "optional": true,
+            "type": "{ id?: string, quantity?: number, product_identifier?: string, product_tax_code?: string, description?: string, unit_price?: number, discount?: number, sales_tax?: number }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "refund",
+            "optional": false,
+            "type": "{ transaction_id: string, transaction_reference_id?: string | null, user_id?: number | null, transaction_date?: string | null, provider?: string | null, from_country?: string | null, from_zip?: string | null, from_state?: string | null, from_city?: string | null, from_street?: string | null, to_country?: string | null, to_zip?: string | null, to_state?: string | null, to_city?: string | null, to_street?: string | null, amount?: number | string | null, shipping?: number | string | null, sales_tax?: number | string | null, line_items?: { id?: string | number | null, quantity?: number | null, product_identifier?: string | null, product_tax_code?: string | null, description?: string | null, unit_price?: number | string | null, discount?: number | string | null, sales_tax?: number | string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "taxjar.api.summaryRates.list",
+      "shortPath": "summaryRates.list",
+      "description": "List the minimum and average tax rate per region, for display rather than calculation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "summary_rates",
+            "optional": false,
+            "type": "{ country_code?: string | null, country?: string | null, region_code?: string | null, region?: string | null, minimum_rate?: { label?: string | null, rate?: number | string | null } | null, average_rate?: { label?: string | null, rate?: number | string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "taxjar.api.taxes.calculate",
+      "shortPath": "taxes.calculate",
+      "description": "Calculate the tax for an order from an origin and destination, optionally per line item, without recording a transaction",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from_country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_zip",
+            "optional": true,
+            "type": "string",
+            "description": "A postal code, 5 digits or ZIP+4."
+          },
+          {
+            "key": "from_state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_street",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to_country",
+            "optional": false,
+            "type": "string",
+            "description": "The destination country."
+          },
+          {
+            "key": "to_zip",
+            "optional": true,
+            "type": "string",
+            "description": "A postal code, 5 digits or ZIP+4."
+          },
+          {
+            "key": "to_state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to_city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to_street",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number",
+            "description": "The order amount, excluding shipping."
+          },
+          {
+            "key": "shipping",
+            "optional": true,
+            "type": "number",
+            "description": "The shipping charge."
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string",
+            "description": "The unique customer ID you assigned."
+          },
+          {
+            "key": "exemption_type",
+            "optional": true,
+            "type": "wholesale | government | marketplace | other | non_exempt"
+          },
+          {
+            "key": "nexus_addresses",
+            "optional": true,
+            "type": "{ id?: string, country: string, zip?: string, state?: string, city?: string, street?: string }[]"
+          },
+          {
+            "key": "line_items",
+            "optional": true,
+            "type": "{ id?: string, quantity?: number, product_tax_code?: string, unit_price?: number, discount?: number, description?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tax",
+            "optional": false,
+            "type": "{ order_total_amount?: number | string | null, shipping?: number | string | null, taxable_amount?: number | string | null, amount_to_collect?: number | string | null, rate?: number | string | null, has_nexus?: boolean | null, freight_taxable?: boolean | null, tax_source?: string | null, jurisdictions?: { country?: string | null, state?: string | null, county?: string | null, city?: string | null } | null, breakdown?: { taxable_amount?: number | string | null, tax_collectable?: number | string | null, combined_tax_rate?: number | string | null, state_taxable_amount?: number | string | null, state_tax_rate?: number | string | null, state_tax_collectable?: number | string | null, county_taxable_amount?: number | string | null, county_tax_rate?: number | string | null, county_tax_collectable?: number | string | null, city_taxable_amount?: number | string | null, city_tax_rate?: number | string | null, city_tax_collectable?: number | string | null, special_district_taxable_amount?: number | string | null, special_tax_rate?: number | string | null, special_district_tax_collectable?: number | string | null, line_items?: { id?: string | number | null, taxable_amount?: number | string | null, tax_collectable?: number | string | null, combined_tax_rate?: number | string | null, state_taxable_amount?: number | string | null, state_tax_rate?: number | string | null, state_tax_collectable?: number | string | null, county_taxable_amount?: number | string | null, county_tax_rate?: number | string | null, county_tax_collectable?: number | string | null, city_taxable_amount?: number | string | null, city_tax_rate?: number | string | null, city_tax_collectable?: number | string | null, special_district_taxable_amount?: number | string | null, special_tax_rate?: number | string | null, special_district_tax_collectable?: number | string | null }[] | null } | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
