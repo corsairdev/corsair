@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-17T17:01:23.944Z",
+  "generatedAt": "2026-11-17T17:17:17.608Z",
   "primarySource": "https://twenty-icons.com",
   "fallbackSource": "https://www.google.com/s2/favicons",
   "size": 128,
@@ -1224,7 +1224,7 @@
     "postiz": "twenty-icons",
     "postman": "url-override",
     "postmark": "twenty-icons",
-    "postonce": "curated",
+    "postonce": "url-override",
     "prerender": "twenty-icons",
     "prisma": "curated",
     "prismic": "twenty-icons",
@@ -1596,7 +1596,6 @@
     "perplexityai",
     "polygon",
     "posthog",
-    "postonce",
     "prisma",
     "qdrant",
     "quaderno",

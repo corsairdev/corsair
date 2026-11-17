@@ -470,10 +470,6 @@
   "posthog": {
     "from": "https://svgl.app/library/posthog.svg"
   },
-  "postonce": {
-    "from": "https://media.brand.dev/11957209-e211-4712-969b-fc8103b728b7.svg",
-    "note": "found with the context.dev Brand API for postonce.to"
-  },
   "prisma": {
     "from": "https://svgl.app/library/prisma.svg"
   },
@@ -588,7 +584,7 @@
   },
   "snowflake": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/snowflake.svg",
-    "note": "® removed"
+    "note": "\u00ae removed"
   },
   "sourcegraph": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/sourcegraph.svg"

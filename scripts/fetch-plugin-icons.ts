@@ -202,6 +202,9 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	// CurrencyScoop is now CurrencyBeacon; its site's favicon link 404s and the
 	// Brand API only has the wide wordmark. The GitHub org avatar is the same mark.
 	currencyscoop: 'https://github.com/currencybeacon.png?size=200',
+	// postonce.to's icon.svg is a potrace trace (refused) and rendered as a blank
+	// blue square; the site's own 500px icon.png is the mark.
+	postonce: 'https://postonce.to/icon.png',
 	zoom: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/fc/d0/96/fcd09664-56c3-f856-4311-da9dcbae1fd2/AppIcon-0-0-1x_U007epad-0-1-0-0-85-220.png/512x512bb.png',
 	// twenty-icons has an old blue and green mark; typesafe.ai's apple touch icon
 	// is the current black knot on pink.
