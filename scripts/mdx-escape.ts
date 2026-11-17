@@ -28,8 +28,10 @@ export function escapeMdxText(s: string | undefined): string {
 		}
 		const badUrl = invalidBareUrlAt(s, i);
 		if (badUrl) {
-			out += `\`${badUrl}\``;
 			i += badUrl.length;
+			// A backtick right after would join the closing one into a longer run,
+			// and the span would close somewhere else.
+			out += `\`${badUrl}\`${s[i] === '`' ? ' ' : ''}`;
 			continue;
 		}
 		if (ch !== '`') {
@@ -50,14 +52,15 @@ export function escapeMdxText(s: string | undefined): string {
  * GFM turns a bare http(s):// address into a link, and Mintlify drops the whole
  * page when that link isn't a valid URL, such as the example
  * `http://user:pass@host:port`. Returns such an address starting at `at`, to be
- * shown as code; null when there's none or it is a valid URL. The address ends
- * where GFM's autolink does: at whitespace or `<`, minus trailing punctuation
- * and an unbalanced closing parenthesis.
+ * shown as code; null when there's none or it is a valid URL. Like GFM's
+ * autolink, the address starts at the beginning of the text or after
+ * whitespace, `*`, `_`, `~` or `(`, and ends at whitespace or `<`, minus
+ * trailing punctuation and an unbalanced closing parenthesis.
  */
 function invalidBareUrlAt(s: string, at: number): string | null {
 	if (!s.startsWith('http://', at) && !s.startsWith('https://', at))
 		return null;
-	if (at > 0 && /[\p{L}\p{N}_]/u.test(s[at - 1]!)) return null;
+	if (at > 0 && !/[\s*_~(]/.test(s[at - 1]!)) return null;
 	const found = /^https?:\/\/[^\s<`]+/.exec(s.slice(at));
 	if (!found) return null;
 	let url = found[0];
