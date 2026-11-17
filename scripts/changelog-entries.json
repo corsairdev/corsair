@@ -6956,5 +6956,32 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/simplekpi",
+    "dir": "packages/simplekpi",
+    "name": "SimpleKPI",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/textcortex",
+    "dir": "packages/textcortex",
+    "name": "TextCortex",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/triggercmd",
+    "dir": "packages/triggercmd",
+    "name": "TRIGGERcmd",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
