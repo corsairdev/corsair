@@ -3,7 +3,7 @@ title: Corsair MCP
 description: One address, https://mcp.corsair.dev/mcp, that lets Claude, ChatGPT, Cursor and other agents use the apps you've connected to Corsair.
 ---
 
-Corsair MCP lets an AI agent use the apps you've connected to Corsair. It can read your inbox, post in Slack, open a GitHub issue, search data Corsair has synced, or set up an automation that runs when something happens in one of your apps.
+Corsair MCP lets an AI agent use the apps you've connected to Corsair. It can read your inbox, post in Slack, open a GitHub issue, search data Corsair has synced, hand a file to one of your apps, or set up an automation that runs when something happens in one of your apps.
 
 Every client uses the same address:
 
@@ -127,10 +127,11 @@ Some clients can't sign in to an MCP server, such as GitHub Copilot's coding age
 | `get_connect_link` | Returns the sign-in link for an app, adding the app first if it isn't here. Apps that run on Corsair's own account come back ready, with no link. Shows a [connect card](#cards) where the chat supports it | Write |
 | `list_operations` | Shows what connected apps can do, with each action's risk and price. Searched by what you want to do, it returns the matching actions with the arguments they require | Read |
 | `get_schema` | Shows the full arguments and return shape of one or more actions | Read |
-| `search` | Searches everything Corsair has synced from your apps in one call, such as email, chat, issues, docs and calendar, and opens results in full | Read |
+| `search` | Answers a question about your data, usually in one call: Corsair's own PM, CRM, routines and files, and the email, chat, issues, docs and calendars of your connected apps. When an app's synced copy is behind, it reads that app live. When nothing matches, it says so instead of offering the closest records as an answer. It also opens results in full | Read |
 | `read_data` | Reads your apps live with a short script, for what `search` doesn't have or what must be current. It stops before any action that would change something | Read |
 | `run_script` | Makes changes in your apps with a short script: send, create, update or delete | Sensitive write |
 | `get_job` | Waits for a [long job](#long-jobs) a script started, such as a crawl or a document parse, and returns its result. Shows a [job card](#cards) where the chat supports it | Read |
+| `upload_file` | Adds a file to your [Files](#files) so your apps can use it: a file you attached in the chat, a public URL or a file on your computer. With none of these, it gives you a link to pick the file. It only adds files and never replaces one. Shows an [upload card](#cards) where the chat supports it | Write |
 | `view_routines` | Lists the routines on this link and their recent runs, or shows one run step by step with its error | Read |
 | `update_routine` | Creates, changes, pauses or removes a routine, an automation that runs on an app event or a schedule. Describe it in plain words and Corsair writes and tests it | Sensitive write |
 | `use_skill` | Loads one of your saved [skills](#skills) by name: its `SKILL.md`, then any file that comes with it | Read |
@@ -138,7 +139,7 @@ Some clients can't sign in to an MCP server, such as GitHub Copilot's coding age
 | `save_skill` | Saves a skill for every agent on your link, from text, a GitHub URL or a skills.sh id. For a folder on your computer, such as `~/.claude/skills`, it gives you one command that uploads it | Write |
 | `submit_feedback` | Sends the Corsair team a short note about Corsair itself. The agent sends one on its own when Corsair lacks an app or action you asked for, or when a reply says the fault is on Corsair's side, and tells you it did. For a wrong or confusing answer it asks you first. A note never includes your app data | Write |
 
-Read tools never change anything in your apps. A read can still use [credits](#corsair-credits): `read_data` on an app that runs on Corsair's account is billed like any other call there. Write tools change only your Corsair setup, which you can undo, or send Corsair a note. Sensitive writes act in your apps, or set up a routine that will act later without asking, so a client should ask you before every call.
+Read tools never change anything in your apps. A read can still use [credits](#corsair-credits): `read_data` on an app that runs on Corsair's account is billed like any other call there. Write tools change only your Corsair setup and files, which you can undo, or send Corsair a note. Sensitive writes act in your apps, or set up a routine that will act later without asking, so a client should ask you before every call.
 
 Scripts run in a sandbox that can only call your connected apps' actions. They have no network, filesystem or other system access, and the agent never sees your app credentials.
 
@@ -151,6 +152,22 @@ Not every link shows every tool. A link that isn't allowed to add apps has no `g
 Some actions start work that takes longer than one call: a site crawl, an async document parse, an agent run, an image or video prediction. Corsair notices when a script starts one and waits a few seconds. If the job finishes in that time, the result comes back with the script's. If not, the reply names the job, and the agent calls `get_job` to wait for it and get the result. The reply also gives a line to stop the job, where the app has one.
 
 This works whether the app is connected with your own account or runs on Corsair's.
+
+## Files
+
+Every link has Files, where Corsair keeps files for your apps to use, up to 25 MB each. A script can't carry a file itself, so the agent first adds the file with `upload_file`, then passes its id (`fil_…`) to the app. Corsair gives the app a short-lived link to the file in its place.
+
+How a file gets in depends on where you're chatting:
+
+- **ChatGPT.** A file you attach goes straight to Files.
+- **Claude.** The agent sends a file you attached from its code sandbox with one command. If the sandbox can't reach Corsair, you pick the file in the upload card instead, and the agent tells you which address to allow in **Settings > Capabilities > Allowed websites** so it can send files itself next time.
+- **An agent with a shell**, such as Claude Code or Codex, sends a file from your computer with one command. The file goes straight to Corsair without passing through the chat.
+- **Anywhere else**, you pick the file in the upload card, or on the upload page its link opens. The link works for 10 minutes.
+- **A public URL**: Corsair fetches it.
+
+`upload_file` only adds files, and sending the same file twice keeps one copy. A file is private to the link that added it until you share it with your workspace. In a script, the agent can read text files and the text of PDFs, change part of a text file, and save an app's output, such as a filled-in PDF, as a new file or a new version of one. Search finds files by name, and by what they say when they have text.
+
+See, share and delete your files on your link's **Files** page: open the link at [hub.corsair.dev/me](https://hub.corsair.dev/me).
 
 ## Skills
 
@@ -167,11 +184,12 @@ See, switch off or roll back your skills at [hub.corsair.dev/me/skills](https://
 
 ## Cards
 
-In chats that show MCP Apps, such as Claude, three tools add a small card to the conversation:
+In chats that show MCP Apps, such as Claude, four tools add a small card to the conversation:
 
 - **Connect card** (`get_connect_link`): the app's logo, its name and one button. **Connect** opens the sign-in. The card shows when the sign-in has landed and offers **Continue** so the agent carries on. If the link runs out (after 10 minutes) it shows **New link** and gets a fresh one itself.
 - **Job card** (`get_job`): a job that is still running, which keeps checking until the job finishes, fails or is cancelled, then offers **Continue**.
 - **Skills card** (`find_skill`): the skills it found, each with an **Add** button that saves it to your library. It shows only on links that can save skills.
+- **Upload card** (`upload_file`): a place to choose or drop files. It shows each file as it's saved, then offers **Continue**. When the agent is sending the file itself, the card says so and still lets you pick it if that doesn't work.
 
 Clients without cards get the same information as text, so nothing is lost.
 
