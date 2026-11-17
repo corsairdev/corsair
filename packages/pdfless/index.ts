@@ -9,9 +9,12 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import type { PdfLessContext } from './context';
-import { getWorkspace, listTemplates } from './endpoints';
+import { generatePdf, getWorkspace, listTemplates } from './endpoints';
 import {
+	GeneratePdfInputSchema,
+	GeneratePdfResponseSchema,
 	GetWorkspaceInputSchema,
 	GetWorkspaceResponseSchema,
 	ListTemplatesInputSchema,
@@ -35,6 +38,7 @@ export type PdfLessKeyBuilderContext = KeyBuilderContext<PdfLessPluginOptions>;
 const pdfLessEndpointsNested = {
 	workspace: { get: getWorkspace },
 	templates: { list: listTemplates },
+	pdfs: { generate: generatePdf },
 } as const;
 
 const pdfLessWebhooksNested = {} as const;
@@ -48,6 +52,10 @@ export const pdfLessEndpointSchemas = {
 		input: ListTemplatesInputSchema,
 		output: ListTemplatesResponseSchema,
 	},
+	'pdfs.generate': {
+		input: GeneratePdfInputSchema,
+		output: GeneratePdfResponseSchema,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof pdfLessEndpointsNested
 >;
@@ -60,6 +68,11 @@ const pdfLessEndpointMeta = {
 	'templates.list': {
 		riskLevel: 'read',
 		description: 'List document templates in the PDFLess workspace.',
+	},
+	'pdfs.generate': {
+		riskLevel: 'destructive',
+		description:
+			'Render a PDF from a document template and return its download link. Uses one document from the workspace quota.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof pdfLessEndpointsNested>;
 
@@ -113,7 +126,10 @@ export function pdfless<const T extends PdfLessPluginOptions>(
 			}
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const key = await ctx.keys.get_api_key();
-				return key ?? '';
+				if (!key) {
+					throw new AuthMissingError('pdfless', 'api_key');
+				}
+				return key;
 			}
 			return '';
 		},

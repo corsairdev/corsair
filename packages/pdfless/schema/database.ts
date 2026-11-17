@@ -7,11 +7,11 @@ import { z } from 'zod';
  */
 export const PdfLessWorkspaceEntity = z.object({
 	name: z.string().min(1),
-	active: z.boolean().optional(),
-	created: z.string().optional(),
-	modified: z.string().optional(),
-	quota: z.number().optional(),
-	remainingQuota: z.number().optional(),
+	active: z.boolean().nullish(),
+	created: z.string().nullish(),
+	modified: z.string().nullish(),
+	quota: z.number().nullish(),
+	remainingQuota: z.number().nullish(),
 });
 
 export type PdfLessWorkspaceEntity = z.infer<typeof PdfLessWorkspaceEntity>;
@@ -22,11 +22,11 @@ export type PdfLessWorkspaceEntity = z.infer<typeof PdfLessWorkspaceEntity>;
  */
 export const PdfLessTemplateEntity = z.object({
 	id: z.string().min(1),
-	name: z.string().optional(),
-	imagePreviewUrl: z.string().optional(),
-	pdfPreviewUrl: z.string().optional(),
-	created: z.string().optional(),
-	modified: z.string().optional(),
+	name: z.string().nullish(),
+	imagePreviewUrl: z.string().nullish(),
+	pdfPreviewUrl: z.string().nullish(),
+	created: z.string().nullish(),
+	modified: z.string().nullish(),
 });
 
 export type PdfLessTemplateEntity = z.infer<typeof PdfLessTemplateEntity>;

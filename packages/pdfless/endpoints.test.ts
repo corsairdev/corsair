@@ -1,6 +1,7 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
 import type { PdfLessContext } from './context';
+import { generatePdf } from './endpoints/pdfs';
 import { listTemplates } from './endpoints/templates';
 import { getWorkspace } from './endpoints/workspace';
 
@@ -24,6 +25,7 @@ const mockRequest = jest.mocked(request);
 const mockLog = jest.mocked(logEventFromContext);
 
 function context(key: string, db?: PdfLessContext['db']): PdfLessContext {
+	// unknown: a partial test double of the plugin context.
 	return { key, db } as unknown as PdfLessContext;
 }
 
@@ -165,5 +167,147 @@ describe('templates.list', () => {
 			),
 		).rejects.toThrow();
 		expect(upsert).not.toHaveBeenCalled();
+	});
+});
+
+describe('documented nulls', () => {
+	beforeEach(() => {
+		jest.clearAllMocks();
+	});
+
+	it('accepts a workspace with modified null', async () => {
+		const reply = {
+			name: 'Main',
+			active: true,
+			created: '2024-01-01T00:00:00Z',
+			modified: null,
+			quota: 100,
+			remainingQuota: 80,
+		};
+		mockRequest.mockResolvedValue(reply);
+		await expect(getWorkspace(context('ak_test'), {})).resolves.toEqual(reply);
+	});
+
+	it('accepts templates with null previews, name and modified', async () => {
+		mockRequest.mockResolvedValue([
+			{
+				id: '6f9619ff-8b86-d011-b42d-00cf4fc964ff',
+				name: null,
+				imagePreviewUrl: null,
+				pdfPreviewUrl: null,
+				created: '2024-01-01T00:00:00Z',
+				modified: null,
+			},
+		]);
+		const result = await listTemplates(context('ak_test'), {});
+		expect(result.templates).toHaveLength(1);
+	});
+});
+
+describe('pdfs.generate', () => {
+	const TEMPLATE = '6f9619ff-8b86-d011-b42d-00cf4fc964ff';
+	const REPLY = {
+		status: 'success',
+		data: {
+			reference_id: 'inv-42',
+			template_id: TEMPLATE,
+			download_url: 'https://files.pdfless.com/x.pdf',
+			expires: '2026-11-18T00:00:00Z',
+			created_at: '2026-11-17T00:00:00Z',
+		},
+	};
+
+	beforeEach(() => {
+		jest.clearAllMocks();
+		mockRequest.mockReset();
+	});
+
+	it('POSTs the template, payload and options and returns the download link', async () => {
+		mockRequest.mockResolvedValue(REPLY);
+		const input = {
+			template_id: TEMPLATE,
+			payload: { customer: { name: 'Ada' }, total: 42 },
+			reference_id: 'inv-42',
+			encryption_user_password: 'open-sesame',
+			encryption_allow_printing: true,
+		};
+		await expect(generatePdf(context('ak_test'), input)).resolves.toEqual(
+			REPLY,
+		);
+		const config = mockRequest.mock.calls[0]?.[0];
+		const options = mockRequest.mock.calls[0]?.[1];
+		expect(config?.HEADERS).toMatchObject({ apikey: 'ak_test' });
+		expect(options).toMatchObject({
+			method: 'POST',
+			url: '/v1/pdfs',
+			body: input,
+			mediaType: 'application/json',
+		});
+		// Core's own 429 retries stay on: no rate-limit override is passed.
+		expect(mockRequest.mock.calls[0]?.[2]).toBeUndefined();
+		const logged = JSON.stringify(mockLog.mock.calls.map((call) => call[2]));
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'pdfless.pdfs.generate',
+			{ template_id: TEMPLATE },
+			'completed',
+		);
+		expect(logged).not.toMatch(/Ada|open-sesame|ak_test/);
+	});
+
+	it('throws AuthMissingError without a key', async () => {
+		await expect(
+			generatePdf(context(''), { template_id: TEMPLATE, payload: {} }),
+		).rejects.toBeInstanceOf(AuthMissingError);
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('rejects a template id that is not a UUID before calling the API', async () => {
+		await expect(
+			generatePdf(context('k'), { template_id: 'nope', payload: {} }),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('rejects a reply without a download_url', async () => {
+		mockRequest.mockResolvedValue({ status: 'success', data: {} });
+		await expect(
+			generatePdf(context('k'), { template_id: TEMPLATE, payload: {} }),
+		).rejects.toThrow();
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
+	it('keeps template data and passwords out of a failed request error', async () => {
+		// never: the mock rejects the way core's request() does on a 403.
+		mockRequest.mockImplementation(((_config: unknown, options: never) => {
+			throw new ApiError(
+				options,
+				{
+					url: 'https://api.pdfless.com/v1/pdfs',
+					ok: false,
+					status: 403,
+					statusText: 'Forbidden',
+					body: { message: 'Quota exceeded', error_code: 'quota' },
+				},
+				'Forbidden',
+				{ retryAfter: 7 },
+			);
+		}) as never);
+		const error = await generatePdf(context('k'), {
+			template_id: TEMPLATE,
+			payload: { customer: { email: 'ada@example.com' } },
+			encryption_owner_password: 'owner-secret',
+		}).catch((e: unknown) => e);
+		expect(error).toBeInstanceOf(ApiError);
+		const apiError = error as ApiError;
+		expect(apiError.status).toBe(403);
+		expect(apiError.retryAfter).toBe(7);
+		expect(apiError.body).toEqual({
+			message: 'Quota exceeded',
+			error_code: 'quota',
+		});
+		expect(JSON.stringify(apiError.request)).not.toMatch(
+			/ada@example|owner-secret/,
+		);
 	});
 });
