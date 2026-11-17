@@ -565,6 +565,7 @@ export const BaseProviders = [
 	'tally',
 	'thanksio',
 	'tavily',
+	'taxjar',
 	'tavilymcp',
 	'templated',
 	'textcortex',
@@ -1215,6 +1216,7 @@ export const ProviderDisplayNames = {
 	tally: 'Tally',
 	thanksio: 'Thanks.io',
 	tavily: 'Tavily',
+	taxjar: 'TaxJar',
 	tavilymcp: 'Tavily MCP',
 	templated: 'Templated',
 	textcortex: 'TextCortex',
@@ -1872,6 +1874,7 @@ export type AllProviders =
 	| 'tally'
 	| 'thanksio'
 	| 'tavily'
+	| 'taxjar'
 	| 'tavilymcp'
 	| 'templated'
 	| 'textcortex'

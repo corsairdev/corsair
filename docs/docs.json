@@ -4679,6 +4679,14 @@
                 ]
               },
               {
+                "group": "TaxJar",
+                "pages": [
+                  "plugins/taxjar/overview",
+                  "plugins/taxjar/api",
+                  "plugins/taxjar/database"
+                ]
+              },
+              {
                 "group": "Teamcamp",
                 "pages": [
                   "plugins/teamcamp/overview",
