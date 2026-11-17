@@ -456,6 +456,7 @@ export const BaseProviders = [
 	'pagerduty',
 	'parallel',
 	'parma',
+	'parsehub',
 	'parseur',
 	'pdfapi',
 	'pdfco',
@@ -1154,6 +1155,7 @@ export const ProviderDisplayNames = {
 	pagerduty: 'PagerDuty',
 	parallel: 'Parallel',
 	parma: 'Parma',
+	parsehub: 'ParseHub',
 	parseur: 'Parseur',
 	pdfapi: 'PDF-API.io',
 	pdfco: 'PDF.co',
@@ -1859,6 +1861,7 @@ export type AllProviders =
 	| 'pagerduty'
 	| 'parallel'
 	| 'parma'
+	| 'parsehub'
 	| 'parseur'
 	| 'pdfapi'
 	| 'pdfco'
