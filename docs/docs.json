@@ -4694,6 +4694,14 @@
                 ]
               },
               {
+                "group": "SwaggerHub",
+                "pages": [
+                  "plugins/swaggerhub/overview",
+                  "plugins/swaggerhub/api",
+                  "plugins/swaggerhub/database"
+                ]
+              },
+              {
                 "group": "Synthflow AI",
                 "pages": [
                   "plugins/synthflowai/overview",

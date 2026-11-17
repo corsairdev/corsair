@@ -565,6 +565,7 @@ export const BaseProviders = [
 	'supportbee',
 	'surf',
 	'surveymonkey',
+	'swaggerhub',
 	'suzanne',
 	'svix',
 	'synthflowai',
@@ -1225,6 +1226,7 @@ export const ProviderDisplayNames = {
 	supportbee: 'Supportbee',
 	surf: 'Surf',
 	surveymonkey: 'SurveyMonkey',
+	swaggerhub: 'SwaggerHub',
 	suzanne: 'Suzanne',
 	svix: 'Svix',
 	synthflowai: 'Synthflow AI',
@@ -1892,6 +1894,7 @@ export type AllProviders =
 	| 'supportbee'
 	| 'surf'
 	| 'surveymonkey'
+	| 'swaggerhub'
 	| 'suzanne'
 	| 'svix'
 	| 'synthflowai'
