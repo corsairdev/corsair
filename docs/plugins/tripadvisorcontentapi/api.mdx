@@ -1,0 +1,249 @@
+---
+title: "Tripadvisor Content API API reference"
+sidebarTitle: "API"
+description: "API reference for Tripadvisor Content API: every `tripadvisorcontentapi.api.*` operation with input and output types."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Locations
+
+### get
+
+`locations.get`
+
+Read one location. The address and description are not stored.
+
+**Risk:** `read`
+
+```ts
+await corsair.tripadvisorcontentapi.api.locations.get({ locationId: '187147' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `locationId` | `string` | Yes | — |
+| `language` | `string` | No | — |
+
+GET /api/v1/location/{locationId}/details.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  rating?: number,
+  reviewCount?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### nearby
+
+`locations.nearby`
+
+Search locations near a coordinate. The coordinate is not stored.
+
+**Risk:** `read`
+
+```ts
+await corsair.tripadvisorcontentapi.api.locations.nearby({ latLong: '51.5072,-0.1276' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `latLong` | `string` | Yes | — |
+| `language` | `string` | No | — |
+
+GET /api/v1/location/nearby_search. latLong is latitude,longitude.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `locations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="locations full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  rating?: number,
+  reviewCount?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`locations.search`
+
+Search locations by name. The query is not stored.
+
+**Risk:** `read`
+
+```ts
+await corsair.tripadvisorcontentapi.api.locations.search({ searchQuery: 'london' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `searchQuery` | `string` | Yes | — |
+| `language` | `string` | No | — |
+
+GET /api/v1/location/search. Stores location id, name, rating, and review count.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `locations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="locations full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  rating?: number,
+  reviewCount?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Photos
+
+### list
+
+`photos.list`
+
+List photos for a location. Image URLs and captions are not stored.
+
+**Risk:** `read`
+
+```ts
+await corsair.tripadvisorcontentapi.api.photos.list({ locationId: '187147' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `locationId` | `string` | Yes | — |
+| `language` | `string` | No | — |
+
+GET /api/v1/location/{locationId}/photos. Stores id, width, and height.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `photos` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="photos full type">
+
+```ts
+{
+  id: string,
+  width?: number,
+  height?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reviews
+
+### list
+
+`reviews.list`
+
+List reviews for a location. Review text and usernames are not stored.
+
+**Risk:** `read`
+
+```ts
+await corsair.tripadvisorcontentapi.api.reviews.list({ locationId: '187147' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `locationId` | `string` | Yes | — |
+| `language` | `string` | No | — |
+
+GET /api/v1/location/{locationId}/reviews. Stores id, rating, and published date.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reviews` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="reviews full type">
+
+```ts
+{
+  id: string,
+  rating?: number,
+  publishedDate?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

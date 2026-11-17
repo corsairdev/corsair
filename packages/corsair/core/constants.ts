@@ -636,6 +636,7 @@ export const BaseProviders = [
 	'trello',
 	'triggercmd',
 	'tripadvisor',
+	'tripadvisorcontentapi',
 	'trustpilot',
 	'truvera',
 	'turbotpipes',
@@ -1331,6 +1332,7 @@ export const ProviderDisplayNames = {
 	trello: 'Trello',
 	triggercmd: 'TRIGGERcmd',
 	tripadvisor: 'Tripadvisor',
+	tripadvisorcontentapi: 'Tripadvisor Content API',
 	trustpilot: 'Trustpilot',
 	truvera: 'Truvera',
 	turbotpipes: 'Turbot Pipes',
@@ -2033,6 +2035,7 @@ export type AllProviders =
 	| 'trello'
 	| 'triggercmd'
 	| 'tripadvisor'
+	| 'tripadvisorcontentapi'
 	| 'trustpilot'
 	| 'truvera'
 	| 'turbotpipes'

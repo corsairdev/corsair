@@ -5249,6 +5249,14 @@
                 ]
               },
               {
+                "group": "Tripadvisor Content API",
+                "pages": [
+                  "plugins/tripadvisorcontentapi/overview",
+                  "plugins/tripadvisorcontentapi/api",
+                  "plugins/tripadvisorcontentapi/database"
+                ]
+              },
+              {
                 "group": "Trustpilot",
                 "pages": [
                   "plugins/trustpilot/overview",

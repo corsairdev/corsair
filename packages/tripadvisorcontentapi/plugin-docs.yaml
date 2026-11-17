@@ -1,0 +1,34 @@
+displayName: Tripadvisor Content API
+description: Search Tripadvisor locations and read details, photos, and reviews.
+domain: tripadvisor.com
+recommendedAuth: api_key
+overviewNote: |
+  The key is the key query parameter. Empty-key requests for search, nearby search, details, photos, and reviews each returned HTTP 401 Unauthorized. Address, description, photo URLs, captions, review text, and usernames are not stored. The search query and the coordinate are not written to the event.
+examples:
+  read:
+    path: locations.search
+    title: Search locations
+    args:
+      searchQuery: london
+apiNotes:
+  locations.search: |
+    GET /api/v1/location/search. Stores location id, name, rating, and review count.
+  locations.nearby: |
+    GET /api/v1/location/nearby_search. latLong is latitude,longitude.
+  locations.get: |
+    GET /api/v1/location/{locationId}/details.
+  photos.list: |
+    GET /api/v1/location/{locationId}/photos. Stores id, width, and height.
+  reviews.list: |
+    GET /api/v1/location/{locationId}/reviews. Stores id, rating, and published date.
+apiExamples:
+  locations.search:
+    call: "{ searchQuery: 'london' }"
+  locations.nearby:
+    call: "{ latLong: '51.5072,-0.1276' }"
+  locations.get:
+    call: "{ locationId: '187147' }"
+  photos.list:
+    call: "{ locationId: '187147' }"
+  reviews.list:
+    call: "{ locationId: '187147' }"
