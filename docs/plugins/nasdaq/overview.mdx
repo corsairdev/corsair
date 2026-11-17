@@ -1,7 +1,7 @@
 ---
 title: "Nasdaq Data Link plugin"
 sidebarTitle: "Overview"
-description: "Query Nasdaq Data Link tables with column filters and cursor paging, read a table's columns and filterable fields, queue bulk csv exports, and browse the database catalogue."
+description: "Query Nasdaq Data Link tables with column filters and cursor paging, read a table's columns and filterable fields, and queue bulk csv exports."
 ---
 
 Use **Nasdaq Data Link** through Corsair: one client, typed API calls.
@@ -13,18 +13,18 @@ Four things decide whether a call works:
 - **A table is addressed as `{vendor}/{table}`**, e.g. `NDAQ/RTAT10`. Both parts are required, and the slash stays literal in the path.
 - **Rows are arrays, not objects.** Nasdaq sends `datatable.data` as a list of arrays whose positions match `datatable.columns`, so a caller reads a cell by column index. Use `tables.metadata` first to get the column order and the names that can filter.
 - **Only some columns can filter a query.** `tables.metadata` lists them in `filters`. Operators append to the column name and pass through `filters` untouched: `{ 'date.gte': '2024-01-01', 'ticker.in[]': 'AAPL,MSFT' }`.
-- **Paging is a signed cursor, not a page number.** Pass the `next_cursor_id` from one response as `cursor_id` on the next. It is null on the last page, which is the only end signal. An expired cursor answers 400 `QESx06`, so a stored cursor cannot be reused later.
+- **Paging is a signed cursor, not a page number.** Pass the `next_cursor_id` from one response as `cursor_id` on the next. It is null (or absent) on the last page, so check for either; that is the only end signal. An expired cursor answers 400 `QESx06`, so a stored cursor cannot be reused later.
 
 Worth knowing before you call:
 
-- **A 403 may not be an auth failure.** Nasdaq answers a bad key with a 400 carrying `quandl_error.code` `QEAx01`, while its Incapsula gateway answers 403 with an HTML page and no JSON on the `/datasets/` time-series routes for non-browser clients. This plugin wraps the `/datatables/` routes, which work. A 403 is reported as a gateway block rather than a bad key, because telling a caller to re-enter a working key is the wrong fix.
-- **A bulk export is a two-step**: the first call usually answers `Creating` with a null link, and a later poll answers `Fresh` with a signed URL valid for 30 minutes. Nasdaq caps this endpoint at 60 calls an hour.
+- **A 403 may not be an auth failure.** Nasdaq answers a bad key with a 400 carrying `quandl_error.code` `QEAx01`, while its Incapsula gateway answers 403 with an HTML page and no JSON on the `/datasets/` time-series routes for non-browser clients. This plugin wraps the `/datatables/` routes, which work. The old `/databases` catalogue route answers 410 Gone, so it is not wrapped. A 403 is reported as a gateway block rather than a bad key, because telling a caller to re-enter a working key is the wrong fix.
+- **A bulk export is a two-step**: the first call usually answers `status: 'creating'` with a null link, and a later poll answers `'fresh'` with a signed URL valid for 30 minutes. The values arrive lowercase although Nasdaq's docs capitalise them. Nasdaq caps this endpoint at 60 calls an hour.
 - **The Tables API caps a page at 10,000 rows** whatever `per_page` says. A larger table needs the cursor or the export endpoint.
 - **Rate limits differ by plan**: 50 calls a day on the free tier, 300 per 10 seconds and 50,000 a day for a key without premium subscriptions. `QEAx06` is the daily cap, which no retry clears, and `QEAx07` asks for a 30-second wait, which the plugin retries twice.
 
 **What you get:**
 
-- 4 typed API operations
+- 3 typed API operations
 
 ## Setup
 

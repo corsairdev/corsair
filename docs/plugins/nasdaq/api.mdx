@@ -8,76 +8,6 @@ description: "API reference for the Nasdaq Data Link plugin in Corsair: every `n
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
 
-## Databases
-
-### list
-
-`databases.list`
-
-List the database catalogue with each database code, description and dataset count, paged by number
-
-**Risk:** `read`
-
-```ts
-await corsair.nasdaq.api.databases.list({ query: 'economic', per_page: 10 });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `query` | `string` | No | Only databases whose code or name contains this text. Nasdaq answers the whole catalogue when omitted. |
-| `per_page` | `number` | No | Databases per page. |
-| `page` | `number` | No | 1-based page number. |
-
-The database code from each entry is the first half of a table code.
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `databases` | `object[]` | Yes | — |
-| `meta` | `object \| null` | No | — |
-
-<AccordionGroup>
-<Accordion title="databases full type">
-
-```ts
-{
-  id?: number | null,
-  name?: string | null,
-  database_code?: string | null,
-  description?: string | null,
-  datasets_count?: number | null,
-  downloads?: number | null,
-  premium?: boolean | null,
-  image?: string | null,
-  favorite?: boolean | null
-}[]
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-  per_page?: number | null,
-  current_page?: number | null,
-  next_page?: number | null,
-  prev_page?: number | null,
-  total_count?: number | null,
-  total_pages?: number | null
-} | null
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
 ## Tables
 
 ### export
@@ -100,7 +30,7 @@ await corsair.nasdaq.api.tables.export({ table: 'NDAQ/RTAT10', filters: { 'date.
 | `filters` | `Record<string, string \| number \| boolean>` | No | Row filters as column name to value, e.g. &#123; ticker: "AAPL" &#125;. Operators append to the name: `date.gte`, `date.lte`, `ticker.in[]`. Only columns the table marks filterable are accepted. |
 | `columns` | `string[]` | No | Only these columns in the export. |
 
-The first call usually answers Creating with a null link; poll until Fresh. The link expires after 30 minutes.
+The first call usually answers status creating with a null link; poll until fresh (lowercase, as sent). The link expires after 30 minutes.
 
 
 
@@ -110,7 +40,7 @@ The first call usually answers Creating with a null link; poll until Fresh. The 
 |------|------|----------|-------------|
 | `file` | `object \| null` | No | — |
 | `datatable` | `object \| null` | No | — |
-| `status` | `string \| null` | No | Fresh, Creating or Regenerating. Nasdaq documents that only Fresh means the link is ready; the nested file.status repeats it. |
+| `status` | `string \| null` | No | fresh, creating or regenerating, lowercase as Nasdaq sends it (its docs capitalise them). Only fresh means the link is ready. |
 
 <AccordionGroup>
 <Accordion title="file full type">
@@ -246,7 +176,7 @@ Rows are arrays aligned to columns, not objects. Pass next_cursor_id back as cur
 |------|------|----------|-------------|
 | `columns` | `object[]` | Yes | — |
 | `rows` | `(string \| number \| boolean \| null)[][]` | Yes | — |
-| `next_cursor_id` | `string \| null` | No | The cursor for the next page, or null once this is the last page. Nasdaq sends no other paging state. |
+| `next_cursor_id` | `string \| null` | No | The cursor for the next page. Null or absent on the last page; check for either. Nasdaq sends no other paging state. |
 
 <AccordionGroup>
 <Accordion title="columns full type">
