@@ -1,0 +1,216 @@
+{
+  "id": "triggercmd",
+  "displayName": "TRIGGERcmd",
+  "description": "List registered computers and their commands, run a command remotely, read run history, and press panel buttons.",
+  "npmPackageName": "@corsair-dev/triggercmd",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 6,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "triggercmd.api.commands.history",
+      "shortPath": "commands.history",
+      "description": "Read the run history of one command, newest first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "command_id",
+            "optional": false,
+            "type": "string | number",
+            "description": "The command whose runs to read, from `commands.list`"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ id?: string | number | null, status?: string | null, createdAt?: string | null, command?: { id?: string | number | null, name?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "triggercmd.api.commands.list",
+      "shortPath": "commands.list",
+      "description": "List the commands configured on every computer, with the computer each belongs to",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "computer_id",
+            "optional": true,
+            "type": "string | number",
+            "description": "Only commands on this computer, from `computers.list`"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ id?: string | number | null, name?: string | null, allowParams?: boolean | null, icon?: string | null, voice?: string | null, ground?: string | null, command?: string | null, computer?: { id?: string | number | null, name?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "triggercmd.api.commands.run",
+      "shortPath": "commands.run",
+      "description": "Run a configured command on one of the account's computers, with optional parameters",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "computer",
+            "optional": false,
+            "type": "string",
+            "description": "The computer's name, as `computers.list` reports it"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "string",
+            "description": "The command name, which is its trigger"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "string",
+            "description": "Only takes effect when the command has Allow Params on"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "triggercmd.api.computers.list",
+      "shortPath": "computers.list",
+      "description": "List the computers the agent has registered",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ id?: string | number | null, name?: string | null, connected?: boolean | null, platform?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "triggercmd.api.panels.list",
+      "shortPath": "panels.list",
+      "description": "List the dashboard panel buttons and the parameters each carries",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ id?: string | number | null, name?: string | null, params?: string | null, panel?: { id?: string | number | null, name?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "triggercmd.api.panels.trigger",
+      "shortPath": "panels.trigger",
+      "description": "Press a panel button, which runs the command it is configured for",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "panel",
+            "optional": false,
+            "type": "string",
+            "description": "The panel name"
+          },
+          {
+            "key": "button",
+            "optional": false,
+            "type": "string",
+            "description": "The button name within that panel"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "string",
+            "description": "Only for a button that takes them"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

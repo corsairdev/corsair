@@ -1,7 +1,26 @@
+import type { ElorusRegisteredOperation } from './operation';
 import { createElorusOperation } from './operation';
+import type { ElorusOperationKey } from './types';
 import { elorusOperationSchemas } from './types';
 
-const v11Endpoints = {
+// Named types keep the emitted declarations small: inferred, every operation's schemas would be expanded inline
+// and the declaration of these objects would exceed what the compiler can serialize.
+type ElorusVersionEndpoints<V extends 'v11' | 'v12'> = {
+	readonly [K in ElorusOperationKey as K extends `${V}.${infer Name}`
+		? Name
+		: never]: ElorusRegisteredOperation<
+		K,
+		(typeof elorusOperationSchemas)[K]['input'],
+		(typeof elorusOperationSchemas)[K]['output']
+	>;
+};
+export type ElorusV11Endpoints = ElorusVersionEndpoints<'v11'>;
+export type ElorusV12Endpoints = ElorusVersionEndpoints<'v12'>;
+export type ElorusRegisteredHandler =
+	| ElorusV11Endpoints[keyof ElorusV11Endpoints]
+	| ElorusV12Endpoints[keyof ElorusV12Endpoints];
+
+const v11Endpoints: ElorusV11Endpoints = {
 	bills_list: createElorusOperation(
 		'v11.bills_list',
 		elorusOperationSchemas['v11.bills_list'],
@@ -500,7 +519,7 @@ const v11Endpoints = {
 	),
 } as const;
 
-const v12Endpoints = {
+const v12Endpoints: ElorusV12Endpoints = {
 	bills_list: createElorusOperation(
 		'v12.bills_list',
 		elorusOperationSchemas['v12.bills_list'],
@@ -1835,7 +1854,7 @@ const v12Endpoints = {
 	),
 } as const;
 
-export const ElorusRegisteredHandlers = [
+export const ElorusRegisteredHandlers: readonly ElorusRegisteredHandler[] = [
 	v11Endpoints['bills_list'],
 	v11Endpoints['bills_create'],
 	v11Endpoints['bills_read'],

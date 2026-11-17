@@ -1,0 +1,1066 @@
+---
+title: "Templated API reference"
+sidebarTitle: "API"
+description: "API reference for the Templated plugin in Corsair: every `templated.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Read the account email, plan, API usage and quota
+
+**Risk:** `read`
+
+```ts
+await corsair.templated.api.account.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `apiUsage` | `number \| null` | No | — |
+| `apiQuota` | `number \| null` | No | — |
+| `usagePercentage` | `number \| null` | No | — |
+| `plan` | `string \| null` | No | — |
+
+
+
+---
+
+## Folders
+
+### create
+
+`folders.create`
+
+Create a folder to group templates and renders
+
+**Risk:** `write`
+
+```ts
+await corsair.templated.api.folders.create({ name: 'Campaigns' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The folder name. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `templateCount` | `number \| null` | No | — |
+| `renderCount` | `number \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`folders.delete`
+
+Delete a folder
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.templated.api.folders.delete({ folderId: 'fld_123abc' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folderId` | `string` | Yes | The folder to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### list
+
+`folders.list`
+
+List folders with their template counts
+
+**Risk:** `read`
+
+```ts
+await corsair.templated.api.folders.list({ page: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results, starting at 0. |
+| `limit` | `number` | No | Items per page. Templated defaults it to 15. |
+| `query` | `string` | No | Filter folders by name. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  templateCount?: number | null,
+  renderCount?: number | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`folders.update`
+
+Rename a folder
+
+**Risk:** `write`
+
+```ts
+await corsair.templated.api.folders.update({ folderId: 'fld_123abc', name: 'Q4 campaigns' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folderId` | `string` | Yes | The folder to rename. |
+| `name` | `string` | Yes | The new folder name. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `templateCount` | `number \| null` | No | — |
+| `renderCount` | `number \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+## Fonts
+
+### list
+
+`fonts.list`
+
+List the fonts on the account, including uploaded ones
+
+**Risk:** `read`
+
+```ts
+await corsair.templated.api.fonts.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string | null,
+  isGoogleFont?: boolean | null,
+  isUploadedFont?: boolean | null,
+  category?: string | null,
+  variants?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Gallery Fonts
+
+### list
+
+`galleryFonts.list`
+
+List the base fonts available in the editor
+
+**Risk:** `read`
+
+```ts
+await corsair.templated.api.galleryFonts.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string | null,
+  isGoogleFont?: boolean | null,
+  isUploadedFont?: boolean | null,
+  category?: string | null,
+  variants?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Renders
+
+### create
+
+`renders.create`
+
+Render a template to an image, PDF or video, spending an API credit; layer overrides fill the template
+
+**Risk:** `destructive`
+
+```ts
+await corsair.templated.api.renders.create({ template: '306c724a-d138-486a-a601-0b2a9ced52be', format: 'pdf', layers: { 'text-1': { text: 'Hello' } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template` | `string` | No | The template to render. Required unless `templates` is sent. |
+| `templates` | `string[]` | No | Batch render several templates. When present, `template` is ignored and not required. |
+| `layers` | `Record<string, Record<string, any>>` | No | Layer overrides keyed by layer name, each a map of property to value, e.g. `{ "text-1": { "text": "Hello" } }`. |
+| `format` | `jpg \| png \| webp \| pdf \| mp4 \| html` | No | The output format. The API defaults it to jpg. |
+| `width` | `number` | No | Custom width in pixels, 100 to 5000. |
+| `height` | `number` | No | Custom height in pixels, 100 to 5000. |
+| `scale` | `number` | No | Scale factor for the final render, 0.1 to 2.0. Defaults to 1. |
+| `transparent` | `boolean` | No | A transparent background, for png only. |
+| `duration` | `number` | No | Video duration in milliseconds, for mp4, up to 90000. |
+| `fps` | `number` | No | Frames per second, for mp4, 1 to 60. |
+| `flatten` | `boolean` | No | Flatten the PDF, for print. |
+| `cmyk` | `boolean` | No | Use CMYK colour, for print. |
+| `name` | `string` | No | A name for the render. |
+| `background` | `string` | No | A hex background colour. |
+| `external_id` | `string` | No | Your own identifier for this render. |
+| `async` | `boolean` | No | Render asynchronously and return while it is still PENDING. Defaults to false. |
+| `webhook_url` | `string` | No | A URL Templated posts the finished render to. |
+
+Spends one credit per render; send template, or templates for a batch which answers an array; width and height run from 100 to 5000 and format defaults to jpg.
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  url?: string | null,
+  storage_url?: string | null,
+  width?: number | null,
+  height?: number | null,
+  status?: string | null,
+  format?: string | null,
+  templateId?: string | null,
+  templateName?: string | null,
+  name?: string | null,
+  createdAt?: string | null,
+  externalId?: string | null
+} | {
+  id: string,
+  url?: string | null,
+  storage_url?: string | null,
+  width?: number | null,
+  height?: number | null,
+  status?: string | null,
+  format?: string | null,
+  templateId?: string | null,
+  templateName?: string | null,
+  name?: string | null,
+  createdAt?: string | null,
+  externalId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`renders.delete`
+
+Delete a render and its file; the URL stops working and the credit is not refunded
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.templated.api.renders.delete({ renderId: 'ce424057-6b54-41bb-afec-adc35a2b9175' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `renderId` | `string` | Yes | The render ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### duplicate
+
+`renders.duplicate`
+
+Duplicate an existing render with the same template and payload, spending an API credit
+
+**Risk:** `destructive`
+
+```ts
+await corsair.templated.api.renders.duplicate({ renderId: 'ce424057-6b54-41bb-afec-adc35a2b9175' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `renderId` | `string` | Yes | The render ID. |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  url?: string | null,
+  storage_url?: string | null,
+  width?: number | null,
+  height?: number | null,
+  status?: string | null,
+  format?: string | null,
+  templateId?: string | null,
+  templateName?: string | null,
+  name?: string | null,
+  createdAt?: string | null,
+  externalId?: string | null
+} | {
+  id: string,
+  url?: string | null,
+  storage_url?: string | null,
+  width?: number | null,
+  height?: number | null,
+  status?: string | null,
+  format?: string | null,
+  templateId?: string | null,
+  templateName?: string | null,
+  name?: string | null,
+  createdAt?: string | null,
+  externalId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`renders.get`
+
+Read one render with its URL, dimensions, format and status
+
+**Risk:** `read`
+
+```ts
+await corsair.templated.api.renders.get({ renderId: 'ce424057-6b54-41bb-afec-adc35a2b9175' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `renderId` | `string` | Yes | The render ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `url` | `string \| null` | No | — |
+| `storage_url` | `string \| null` | No | — |
+| `width` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `format` | `string \| null` | No | — |
+| `templateId` | `string \| null` | No | — |
+| `templateName` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `externalId` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`renders.list`
+
+List every render on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.templated.api.renders.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  url?: string | null,
+  storage_url?: string | null,
+  width?: number | null,
+  height?: number | null,
+  status?: string | null,
+  format?: string | null,
+  templateId?: string | null,
+  templateName?: string | null,
+  name?: string | null,
+  createdAt?: string | null,
+  externalId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### merge
+
+`renders.merge`
+
+Merge several renders, plus external PDFs when given, into one PDF and return its hosted URL
+
+**Risk:** `destructive`
+
+```ts
+await corsair.templated.api.renders.merge({ ids: ['ce424057-6b54-41bb-afec-adc35a2b9175', 'aa112233-4455-6677-8899-aabbccddeeff'], name: 'packet' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | The renders to merge. |
+| `urls` | `string[]` | No | External PDF URLs to merge after the renders, in order. |
+| `name` | `string` | No | A name for the merged PDF. |
+| `host` | `true` | No | Host the merged PDF and return its URL. Always on. |
+
+Always asked to host the merged PDF, because the direct-download form answers the file rather than JSON.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+
+
+
+---
+
+## Templates
+
+### addTags
+
+`templates.addTags`
+
+Append tags to a template, keeping the ones it already has
+
+**Risk:** `write`
+
+```ts
+await corsair.templated.api.templates.addTags({ templateId: '306c724a-d138-486a-a601-0b2a9ced52be', tags: ['instagram', 'story'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `string` | Yes | The template ID. |
+| `tags` | `string[]` | Yes | Tags to add. |
+
+The body is a bare JSON array of strings, not an object with a tags key.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+
+
+
+---
+
+### create
+
+`templates.create`
+
+Create a template from a list of layers, which renders can then use
+
+**Risk:** `write`
+
+```ts
+await corsair.templated.api.templates.create({ name: 'Square post', width: 1024, height: 1024, layers: [{ layer: 'text-1', type: 'text', text: 'Hello' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The template name. |
+| `width` | `number` | Yes | Width in pixels, up to 5000. |
+| `height` | `number` | Yes | Height in pixels, up to 5000. |
+| `layers` | `object[]` | Yes | The layers that make up a single-page template, each with `layer` and `type`. |
+
+<AccordionGroup>
+<Accordion title="layers full type">
+
+```ts
+{
+  layer?: string | null,
+  type?: string | null,
+  text?: string | null,
+  x?: number | null,
+  y?: number | null,
+  width?: number | null,
+  height?: number | null,
+  rotation?: number | null,
+  color?: string | null,
+  background?: string | null,
+  font_family?: string | null,
+  font_size?: string | number | null,
+  font_weight?: string | number | null,
+  text_align?: string | null,
+  image_url?: string | null,
+  locked?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `width` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `thumbnail` | `string \| null` | No | — |
+| `layersCount` | `number \| null` | No | — |
+| `folderId` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `modifiedAt` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `layers` | `object[] \| null` | No | — |
+| `pages` | `Record<string, any>[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="layers full type">
+
+```ts
+{
+  layer?: string | null,
+  type?: string | null,
+  text?: string | null,
+  x?: number | null,
+  y?: number | null,
+  width?: number | null,
+  height?: number | null,
+  rotation?: number | null,
+  color?: string | null,
+  background?: string | null,
+  font_family?: string | null,
+  font_size?: string | number | null,
+  font_weight?: string | number | null,
+  text_align?: string | null,
+  image_url?: string | null,
+  locked?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`templates.delete`
+
+Delete a template
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.templated.api.templates.delete({ templateId: '306c724a-d138-486a-a601-0b2a9ced52be' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `string` | Yes | The template ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`templates.get`
+
+Read one template, optionally with its layers or its pages
+
+**Risk:** `read`
+
+```ts
+await corsair.templated.api.templates.get({ templateId: '306c724a-d138-486a-a601-0b2a9ced52be', includeLayers: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `string` | Yes | The template ID. |
+| `includeLayers` | `boolean` | No | Include the template layers in the answer. |
+| `includePages` | `boolean` | No | Include the pages and their layers. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `width` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `thumbnail` | `string \| null` | No | — |
+| `layersCount` | `number \| null` | No | — |
+| `folderId` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `modifiedAt` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `layers` | `object[] \| null` | No | — |
+| `pages` | `Record<string, any>[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="layers full type">
+
+```ts
+{
+  layer?: string | null,
+  type?: string | null,
+  text?: string | null,
+  x?: number | null,
+  y?: number | null,
+  width?: number | null,
+  height?: number | null,
+  rotation?: number | null,
+  color?: string | null,
+  background?: string | null,
+  font_family?: string | null,
+  font_size?: string | number | null,
+  font_weight?: string | number | null,
+  text_align?: string | null,
+  image_url?: string | null,
+  locked?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### layers
+
+`templates.layers`
+
+List a template layers, including locked ones when asked
+
+**Risk:** `read`
+
+```ts
+await corsair.templated.api.templates.layers({ templateId: '306c724a-d138-486a-a601-0b2a9ced52be' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `string` | Yes | The template ID. |
+| `includeLockedLayers` | `boolean` | No | Include layers marked locked. Defaults to false. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  layer?: string | null,
+  type?: string | null,
+  text?: string | null,
+  x?: number | null,
+  y?: number | null,
+  width?: number | null,
+  height?: number | null,
+  rotation?: number | null,
+  color?: string | null,
+  background?: string | null,
+  font_family?: string | null,
+  font_size?: string | number | null,
+  font_weight?: string | number | null,
+  text_align?: string | null,
+  image_url?: string | null,
+  locked?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`templates.list`
+
+List templates, filtered by name or tag, 25 per page
+
+**Risk:** `read`
+
+```ts
+await corsair.templated.api.templates.list({ page: 0, limit: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results, starting at 0. |
+| `limit` | `number` | No | Items per page. Templated defaults it to 25 here. |
+| `query` | `string` | No | Filter templates by name. |
+| `width` | `number` | No | Only templates this wide. |
+| `height` | `number` | No | Only templates this tall. |
+| `tags` | `string[]` | No | Only templates with these tags; sent comma-separated. |
+
+page starts at 0 and limit defaults to 25 here; filters are query, width and height.
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  description?: string | null,
+  width?: number | null,
+  height?: number | null,
+  thumbnail?: string | null,
+  layersCount?: number | null,
+  folderId?: string | null,
+  createdAt?: string | null,
+  modifiedAt?: string | null,
+  tags?: string[] | null,
+  layers?: {
+    layer?: string | null,
+    type?: string | null,
+    text?: string | null,
+    x?: number | null,
+    y?: number | null,
+    width?: number | null,
+    height?: number | null,
+    rotation?: number | null,
+    color?: string | null,
+    background?: string | null,
+    font_family?: string | null,
+    font_size?: string | number | null,
+    font_weight?: string | number | null,
+    text_align?: string | null,
+    image_url?: string | null,
+    locked?: boolean | null
+  }[] | null,
+  pages?: Record<string, any>[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### removeTags
+
+`templates.removeTags`
+
+Remove specific tags from a template
+
+**Risk:** `write`
+
+```ts
+await corsair.templated.api.templates.removeTags({ templateId: '306c724a-d138-486a-a601-0b2a9ced52be', tags: ['story'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `string` | Yes | The template ID. |
+| `tags` | `string[]` | Yes | Tags to remove. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+
+
+
+---
+
+## Uploads
+
+### create
+
+`uploads.create`
+
+Upload an image, up to 2 MB, for use as a template layer
+
+**Risk:** `write`
+
+```ts
+await corsair.templated.api.uploads.create({ fileName: 'logo.png', fileBase64: 'iVBORw0KGgo=', contentType: 'image/png', tags: ['brand'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileName` | `string` | Yes | The file name, with its extension: jpg, png, webp or svg. |
+| `fileBase64` | `string` | Yes | The image bytes, base64 encoded. Maximum 2 MB. |
+| `contentType` | `string` | No | The image media type, e.g. "image/png". Inferred from the name when omitted. |
+| `tags` | `string[]` | No | Tags to organise the upload. |
+| `externalId` | `string` | No | Your own reference for the upload. |
+
+The route takes multipart file bytes up to 2 MB; pass fileName and fileBase64, and contentType when the extension is ambiguous.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `url` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `mimeType` | `string \| null` | No | — |
+| `size` | `number \| null` | No | — |
+| `width` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `externalId` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`uploads.delete`
+
+Delete one or more uploads
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.templated.api.uploads.delete({ uploadIds: ['upl_123abc', 'upl_def456'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uploadIds` | `string[]` | Yes | The uploads to delete, sent as repeated `ids` query values. |
+
+ids is sent once per upload as a repeated query value.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### list
+
+`uploads.list`
+
+List uploads, filtered by name or tag, 15 per page
+
+**Risk:** `read`
+
+```ts
+await corsair.templated.api.uploads.list({ query: 'banner', page: 0, limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results, starting at 0. |
+| `limit` | `number` | No | Items per page. Templated defaults it to 15. |
+| `query` | `string` | No | Search uploads by name or tag. |
+| `tags` | `string[]` | No | Only uploads with these tags. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  url?: string | null,
+  name?: string | null,
+  mimeType?: string | null,
+  size?: number | null,
+  width?: number | null,
+  height?: number | null,
+  tags?: string[] | null,
+  externalId?: string | null,
+  createdAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

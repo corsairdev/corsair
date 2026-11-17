@@ -17,6 +17,8 @@ type GoogleDriveRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 	body?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
+	/** Return the body as bytes (`BinaryResponse`) instead of decoding it as text. */
+	responseType?: 'binary';
 };
 
 export async function makeGoogleDriveRequest<T>(
@@ -24,7 +26,7 @@ export async function makeGoogleDriveRequest<T>(
 	credentials: string,
 	options: GoogleDriveRequestOptions = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, responseType } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: GOOGLE_DRIVE_API_BASE,
@@ -46,6 +48,7 @@ export async function makeGoogleDriveRequest<T>(
 				: undefined,
 		mediaType: 'application/json',
 		query,
+		responseType,
 	};
 
 	const response = await request<T>(config, requestOptions);
