@@ -313,20 +313,24 @@ describe('paperform', () => {
 			expect(result).toEqual({ deleted: true });
 		});
 
-		it('treats a 404 as already deleted and drops the local row', async () => {
-			mockRequest.mockRejectedValue(
-				new ApiError(
-					{ method: 'DELETE', url: '/v1/forms/eqadkzns/submissions/x' },
-					{
-						url: 'https://api.paperform.co/v1/forms/eqadkzns/submissions/x',
-						ok: false,
-						status: 404,
-						statusText: 'Not Found',
-						body: { status: 'error', error_type: 'not_found' },
-					},
-					'Not Found',
-				),
+		function notFound(url: string) {
+			return new ApiError(
+				{ method: 'GET', url },
+				{
+					url: `https://api.paperform.co${url}`,
+					ok: false,
+					status: 404,
+					statusText: 'Not Found',
+					body: { status: 'error', error_type: 'not_found' },
+				},
+				'Not Found',
 			);
+		}
+
+		it('treats a 404 as deleted only when the submission is gone everywhere', async () => {
+			mockRequest
+				.mockRejectedValueOnce(notFound('/v1/forms/eqadkzns/submissions/x'))
+				.mockRejectedValueOnce(notFound('/v1/submissions/x'));
 			const submissions = table();
 			await expect(
 				deleteSubmission(context(undefined, { submissions }), {
@@ -334,7 +338,26 @@ describe('paperform', () => {
 					id: 'x',
 				}),
 			).resolves.toEqual({ deleted: true });
+			expect(call(1)).toMatchObject({
+				method: 'GET',
+				url: '/v1/submissions/x',
+			});
 			expect(submissions.deleteByEntityId).toHaveBeenCalledWith('x');
+		});
+
+		it('keeps the local row when a 404 came from the wrong form', async () => {
+			const wrongForm = notFound('/v1/forms/other/submissions/x');
+			mockRequest
+				.mockRejectedValueOnce(wrongForm)
+				.mockResolvedValueOnce({ results: { submission: SUBMISSION } });
+			const submissions = table();
+			await expect(
+				deleteSubmission(context(undefined, { submissions }), {
+					form: 'other',
+					id: 'x',
+				}),
+			).rejects.toBe(wrongForm);
+			expect(submissions.deleteByEntityId).not.toHaveBeenCalled();
 		});
 
 		it('refuses a delete Paperform did not confirm', async () => {

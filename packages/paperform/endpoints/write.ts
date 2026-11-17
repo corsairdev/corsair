@@ -70,9 +70,21 @@ export const deleteSubmission: CorsairEndpoint<
 			'submission',
 		);
 	} catch (error) {
-		// A 404 means it is already gone on Paperform's side; still drop the
-		// local row so a retry can clean up.
 		if (!(error instanceof ApiError && error.status === 404)) throw error;
+		// A 404 can also mean the wrong form was given. Look the id up without
+		// the form: only if Paperform has no such submission at all is it gone.
+		const stillThere = await paperformRequest<unknown>(
+			ctx.key,
+			'GET',
+			`/v1/submissions/${seg(parsed.id)}`,
+		).then(
+			() => true,
+			(lookup: unknown) => {
+				if (lookup instanceof ApiError && lookup.status === 404) return false;
+				throw lookup;
+			},
+		);
+		if (stillThere) throw error;
 	}
 	// Drop the local row only after Paperform confirmed the delete.
 	if (ctx.database) {
