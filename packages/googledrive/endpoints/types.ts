@@ -1,3 +1,5 @@
+import type { FileOutput } from 'corsair/http';
+import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
 import type {
 	File,
@@ -373,7 +375,7 @@ export const GoogleDriveEndpointOutputSchemas = {
 	filesDelete: z.void(),
 	filesCopy: FileSchema,
 	filesMove: FileSchema,
-	filesDownload: z.any(), // Using any because download returns a raw binary stream whose shape depends on file type
+	filesDownload: FileOutputSchema,
 	filesShare: PermissionSchema,
 	foldersCreate: FileSchema,
 	foldersGet: FileSchema,
@@ -398,7 +400,7 @@ export type GoogleDriveEndpointOutputs = {
 	filesDelete: void;
 	filesCopy: File;
 	filesMove: File;
-	filesDownload: any;
+	filesDownload: FileOutput;
 	filesShare: Permission;
 	foldersCreate: File;
 	foldersGet: File;

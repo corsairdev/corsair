@@ -1,0 +1,2693 @@
+{
+  "id": "tapfiliate",
+  "displayName": "Tapfiliate",
+  "description": "Affiliate and partner program management with Tapfiliate - create and list affiliates, add them to programs and approve them, track conversions and customers, approve or disapprove commissions, and record payments.",
+  "npmPackageName": "@corsair-dev/tapfiliate",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 41,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "tapfiliate.api.affiliates.balances",
+      "shortPath": "affiliates.balances",
+      "description": "Read one affiliate's balance per currency",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "affiliateId",
+            "optional": false,
+            "type": "string",
+            "description": "The affiliate ID, an `id` from `affiliates.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, number>"
+      }
+    },
+    {
+      "path": "tapfiliate.api.affiliates.create",
+      "shortPath": "affiliates.create",
+      "description": "Create an affiliate and run the Affiliate created triggers; the new affiliate joins no program until you add it to one",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "The affiliate's email."
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "The account password. Tapfiliate generates one and returns it when this is omitted."
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string",
+            "description": "The affiliate's first name."
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string",
+            "description": "The affiliate's last name."
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "{ name?: string, description?: string }",
+            "description": "The affiliate's company."
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ address: string, postal_code: string, city: string, country: { code: string }, address_two?: string, state?: string }",
+            "description": "The address. `address`, `postal_code`, `city` and `country.code` are required together, because Tapfiliate drops a partial address without an error."
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Custom field values keyed by the field ID from `affiliates.customFields`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, firstname?: string | null, lastname?: string | null, email?: string | null, company?: { name?: string | null, description?: string | null } | null, address?: { address?: string | null, address_two?: string | null, postal_code?: string | null, city?: string | null, state?: string | null, country?: { code?: string | null, name?: string | null } | null } | null, meta_data?: Record<string, string> | null, parent_id?: string | null, affiliate_group_id?: string | null, created_at?: string | null, promoted_at?: string | null, promotion_method?: string | null, custom_fields?: Record<string, string> | null, fraud?: boolean | null, password?: string | null } | { created: true, email: string }"
+      }
+    },
+    {
+      "path": "tapfiliate.api.affiliates.customFields",
+      "shortPath": "affiliates.customFields",
+      "description": "List the custom fields on your signup form, whose IDs affiliate creates take",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, title?: string | null, choices?: string[] | null }[]"
+      }
+    },
+    {
+      "path": "tapfiliate.api.affiliates.delete",
+      "shortPath": "affiliates.delete",
+      "description": "Permanently delete an affiliate; their personal data is cleared and the record is locked",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "affiliateId",
+            "optional": false,
+            "type": "string",
+            "description": "The affiliate ID, an `id` from `affiliates.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tapfiliate.api.affiliates.get",
+      "shortPath": "affiliates.get",
+      "description": "Read one affiliate with their company, address, custom fields and metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "affiliateId",
+            "optional": false,
+            "type": "string",
+            "description": "The affiliate ID, an `id` from `affiliates.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "{ name?: string | null, description?: string | null } | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ address?: string | null, address_two?: string | null, postal_code?: string | null, city?: string | null, state?: string | null, country?: { code?: string | null, name?: string | null } | null } | null"
+          },
+          {
+            "key": "meta_data",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "affiliate_group_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "promoted_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "promotion_method",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "fraud",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tapfiliate.api.affiliates.list",
+      "shortPath": "affiliates.list",
+      "description": "List affiliates, newest first, 25 per page, filtered by email, referral code, click, parent or group",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting at 1. Each page holds 25 items."
+          },
+          {
+            "key": "click_id",
+            "optional": true,
+            "type": "string",
+            "description": "Only affiliates for this click."
+          },
+          {
+            "key": "source_id",
+            "optional": true,
+            "type": "string",
+            "description": "Only affiliates for this click source."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Only affiliates with this email."
+          },
+          {
+            "key": "referral_code",
+            "optional": true,
+            "type": "string",
+            "description": "Only the affiliate whose referral code this is."
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string",
+            "description": "Only affiliates under this parent."
+          },
+          {
+            "key": "affiliate_group_id",
+            "optional": true,
+            "type": "string",
+            "description": "Only affiliates in this group."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, firstname?: string | null, lastname?: string | null, email?: string | null, company?: { name?: string | null, description?: string | null } | null, address?: { address?: string | null, address_two?: string | null, postal_code?: string | null, city?: string | null, state?: string | null, country?: { code?: string | null, name?: string | null } | null } | null, meta_data?: Record<string, string> | null, parent_id?: string | null, affiliate_group_id?: string | null, created_at?: string | null, promoted_at?: string | null, promotion_method?: string | null, custom_fields?: Record<string, string> | null, fraud?: boolean | null }[]"
+      }
+    },
+    {
+      "path": "tapfiliate.api.affiliates.payments",
+      "shortPath": "affiliates.payments",
+      "description": "List one affiliate's payments, newest first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "affiliateId",
+            "optional": false,
+            "type": "string",
+            "description": "The affiliate ID, an `id` from `affiliates.list`."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting at 1. Each page holds 25 items."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, created_at?: string | null, affiliate?: { id?: string | null, firstname?: string | null, lastname?: string | null } | null, amount?: number | null, currency?: string | null }[]"
+      }
+    },
+    {
+      "path": "tapfiliate.api.affiliates.programs",
+      "shortPath": "affiliates.programs",
+      "description": "List the programs an affiliate belongs to, with the coupon, approval state and referral link for each",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "affiliateId",
+            "optional": false,
+            "type": "string",
+            "description": "The affiliate ID, an `id` from `affiliates.list`."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting at 1. Each page holds 25 items."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ applied_at?: string | null, approved?: boolean | null, coupon?: string | null, id?: string | null, referral_link?: { asset_id?: string | null, link?: string | null, source_id?: string | null } | null }[]"
+      }
+    },
+    {
+      "path": "tapfiliate.api.balances.list",
+      "shortPath": "balances.list",
+      "description": "List what you owe each affiliate with a non-zero balance, per currency",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting at 1. Each page holds 25 items."
+          },
+          {
+            "key": "include_fraud",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include balances held back for suspected fraud."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ affiliate_id: string, balances: Record<string, number> }[]"
+      }
+    },
+    {
+      "path": "tapfiliate.api.clicks.create",
+      "shortPath": "clicks.create",
+      "description": "Record a click and return its ID for use as click_id when creating a conversion",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "referral_code",
+            "optional": true,
+            "type": "string",
+            "description": "An affiliate's referral code, the `ref=` value in their link."
+          },
+          {
+            "key": "tracking_id",
+            "optional": true,
+            "type": "string",
+            "description": "The tracking ID from the Tapfiliate JavaScript library."
+          },
+          {
+            "key": "click_id",
+            "optional": true,
+            "type": "string",
+            "description": "A click ID from `clicks.create`."
+          },
+          {
+            "key": "coupon",
+            "optional": true,
+            "type": "string",
+            "description": "A coupon code to attribute by."
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string",
+            "description": "The tracking asset ID."
+          },
+          {
+            "key": "source_id",
+            "optional": true,
+            "type": "string",
+            "description": "The click source ID. Pair it with `asset_id`; on a click it can also override the source of a `referral_code`."
+          },
+          {
+            "key": "ip",
+            "optional": true,
+            "type": "string",
+            "description": "Stored as sent."
+          },
+          {
+            "key": "user_agent",
+            "optional": true,
+            "type": "string",
+            "description": "Stored as sent."
+          },
+          {
+            "key": "referrer",
+            "optional": true,
+            "type": "string",
+            "description": "Stored as sent."
+          },
+          {
+            "key": "landing_page",
+            "optional": true,
+            "type": "string",
+            "description": "Stored as sent."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tapfiliate.api.clicks.get",
+      "shortPath": "clicks.get",
+      "description": "Read one click with its device details, country and metadata, plus its affiliate and program",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "clickId",
+            "optional": false,
+            "type": "string",
+            "description": "The click ID, the `id` that `clicks.create` returned."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "meta_data",
+            "optional": true,
+            "type": "{ key?: string | null, value?: string | null }[] | null"
+          },
+          {
+            "key": "details",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "affiliate",
+            "optional": true,
+            "type": "{ id?: string | null, firstname?: string | null, lastname?: string | null } | null"
+          },
+          {
+            "key": "program",
+            "optional": true,
+            "type": "{ id?: string | null, title?: string | null, currency?: string | null } | null"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "source_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tapfiliate.api.clicks.list",
+      "shortPath": "clicks.list",
+      "description": "List clicks on your programs, filtered by program, affiliate or date; needs the click-report feature on your plan",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting at 1. Each page holds 25 items."
+          },
+          {
+            "key": "program_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "affiliate_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_from",
+            "optional": true,
+            "type": "string",
+            "description": "A date as \"YYYY-MM-DD\"."
+          },
+          {
+            "key": "date_to",
+            "optional": true,
+            "type": "string",
+            "description": "A date as \"YYYY-MM-DD\"."
+          },
+          {
+            "key": "meta_data",
+            "optional": true,
+            "type": "{ key: string, value: string }",
+            "description": "Only clicks whose meta data has this key and value; sent as meta_data[key] and meta_data[value]."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, created_at?: string | null, meta_data?: { key?: string | null, value?: string | null }[] | null, details?: Record<string, string> | null }[]"
+      }
+    },
+    {
+      "path": "tapfiliate.api.commissions.approve",
+      "shortPath": "commissions.approve",
+      "description": "Approve a commission, also when it was disapproved before, and fire the commission triggers",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "commissionId",
+            "optional": false,
+            "type": "number",
+            "description": "The numeric commission ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "conversion_sub_amount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "commission_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "approved",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "affiliate",
+            "optional": true,
+            "type": "{ id?: string | null, firstname?: string | null, lastname?: string | null } | null"
+          },
+          {
+            "key": "conversion",
+            "optional": true,
+            "type": "{ id?: number | null } | null"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "payout",
+            "optional": true,
+            "type": "number | string | boolean | null"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "final",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "finalization_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "commission_name",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tapfiliate.api.commissions.disapprove",
+      "shortPath": "commissions.disapprove",
+      "description": "Disapprove a commission from pending or approved, which removes it from the affiliate balance",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "commissionId",
+            "optional": false,
+            "type": "number",
+            "description": "The numeric commission ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "conversion_sub_amount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "commission_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "approved",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "affiliate",
+            "optional": true,
+            "type": "{ id?: string | null, firstname?: string | null, lastname?: string | null } | null"
+          },
+          {
+            "key": "conversion",
+            "optional": true,
+            "type": "{ id?: number | null } | null"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "payout",
+            "optional": true,
+            "type": "number | string | boolean | null"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "final",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "finalization_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "commission_name",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tapfiliate.api.commissions.get",
+      "shortPath": "commissions.get",
+      "description": "Read one commission of any kind: regular, recurring, MLM level or bonus",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "commissionId",
+            "optional": false,
+            "type": "number",
+            "description": "The numeric commission ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "conversion_sub_amount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "commission_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "approved",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "affiliate",
+            "optional": true,
+            "type": "{ id?: string | null, firstname?: string | null, lastname?: string | null } | null"
+          },
+          {
+            "key": "conversion",
+            "optional": true,
+            "type": "{ id?: number | null } | null"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "payout",
+            "optional": true,
+            "type": "number | string | boolean | null"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "final",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "finalization_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "commission_name",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tapfiliate.api.commissions.list",
+      "shortPath": "commissions.list",
+      "description": "List commissions, filtered by affiliate, status or whether they are paid",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting at 1. Each page holds 25 items."
+          },
+          {
+            "key": "affiliate_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string",
+            "description": "Only commissions in this status."
+          },
+          {
+            "key": "paid",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only commissions in a paid payout (true), or all others (false). Sent as 1 or 0."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, conversion_sub_amount?: number | null, amount?: number | null, commission_type?: string | null, approved?: boolean | null, affiliate?: { id?: string | null, firstname?: string | null, lastname?: string | null } | null, conversion?: { id?: number | null } | null, kind?: string | null, currency?: string | null, created_at?: string | null, payout?: number | string | boolean | null, comment?: string | null, final?: boolean | null, finalization_date?: string | null, commission_name?: string | null }[]"
+      }
+    },
+    {
+      "path": "tapfiliate.api.commissions.update",
+      "shortPath": "commissions.update",
+      "description": "Change a commission's amount or comment",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "commissionId",
+            "optional": false,
+            "type": "number",
+            "description": "The numeric commission ID."
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number",
+            "description": "The new commission amount."
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string",
+            "description": "A comment on the commission."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "conversion_sub_amount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "commission_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "approved",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "affiliate",
+            "optional": true,
+            "type": "{ id?: string | null, firstname?: string | null, lastname?: string | null } | null"
+          },
+          {
+            "key": "conversion",
+            "optional": true,
+            "type": "{ id?: number | null } | null"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "payout",
+            "optional": true,
+            "type": "number | string | boolean | null"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "final",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "finalization_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "commission_name",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tapfiliate.api.conversions.create",
+      "shortPath": "conversions.create",
+      "description": "Track a conversion and create its commissions, attributed through a coupon, click, referral code, asset or tracking ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "referral_code",
+            "optional": true,
+            "type": "string",
+            "description": "An affiliate's referral code, the `ref=` value in their link."
+          },
+          {
+            "key": "tracking_id",
+            "optional": true,
+            "type": "string",
+            "description": "The tracking ID from the Tapfiliate JavaScript library."
+          },
+          {
+            "key": "click_id",
+            "optional": true,
+            "type": "string",
+            "description": "A click ID from `clicks.create`."
+          },
+          {
+            "key": "coupon",
+            "optional": true,
+            "type": "string",
+            "description": "A coupon code to attribute by."
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string",
+            "description": "The tracking asset ID."
+          },
+          {
+            "key": "source_id",
+            "optional": true,
+            "type": "string",
+            "description": "The click source ID. Pair it with `asset_id`; on a click it can also override the source of a `referral_code`."
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number",
+            "description": "The conversion amount."
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string",
+            "description": "The three-letter ISO currency code."
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string",
+            "description": "An ID meaningful to you, such as an order number."
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string",
+            "description": "Your own customer ID (`customer.customer_id`, not the `cu_...` id). On its own it attributes the conversion only when it matches an existing customer in a recurring program; otherwise send a tracking reference too."
+          },
+          {
+            "key": "commissions",
+            "optional": true,
+            "type": "{ sub_amount: number, commission_type?: string, comment?: string }[]",
+            "description": "One commission per entry, whose `sub_amount`s must add up to `amount`. When omitted, Tapfiliate creates the single commission the program defines."
+          },
+          {
+            "key": "meta_data",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Up to 40 key/value pairs."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "click",
+            "optional": true,
+            "type": "{ created_at?: string | null, referrer?: string | null, landing_page?: string | null } | null"
+          },
+          {
+            "key": "commissions",
+            "optional": true,
+            "type": "{ id: number, conversion_sub_amount?: number | null, amount?: number | null, commission_type?: string | null, approved?: boolean | null, affiliate?: { id?: string | null, firstname?: string | null, lastname?: string | null } | null, conversion?: { id?: number | null } | null, kind?: string | null, currency?: string | null, created_at?: string | null, payout?: number | string | boolean | null, comment?: string | null, final?: boolean | null, finalization_date?: string | null, commission_name?: string | null }[] | null"
+          },
+          {
+            "key": "program",
+            "optional": true,
+            "type": "{ id?: string | null, title?: string | null, currency?: string | null } | null"
+          },
+          {
+            "key": "affiliate",
+            "optional": true,
+            "type": "{ id?: string | null, firstname?: string | null, lastname?: string | null } | null"
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "{ id?: string | null, customer_id?: string | null, status?: string | null } | null"
+          },
+          {
+            "key": "affiliate_meta_data",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "meta_data",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tapfiliate.api.conversions.delete",
+      "shortPath": "conversions.delete",
+      "description": "Permanently delete a conversion with all of its commissions and metadata",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversionId",
+            "optional": false,
+            "type": "number",
+            "description": "The numeric conversion ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tapfiliate.api.conversions.get",
+      "shortPath": "conversions.get",
+      "description": "Read one conversion with every commission, including MLM levels, and its fraud warnings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversionId",
+            "optional": false,
+            "type": "number",
+            "description": "The numeric conversion ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "click",
+            "optional": true,
+            "type": "{ created_at?: string | null, referrer?: string | null, landing_page?: string | null } | null"
+          },
+          {
+            "key": "commissions",
+            "optional": true,
+            "type": "{ id: number, conversion_sub_amount?: number | null, amount?: number | null, commission_type?: string | null, approved?: boolean | null, affiliate?: { id?: string | null, firstname?: string | null, lastname?: string | null } | null, conversion?: { id?: number | null } | null, kind?: string | null, currency?: string | null, created_at?: string | null, payout?: number | string | boolean | null, comment?: string | null, final?: boolean | null, finalization_date?: string | null, commission_name?: string | null }[] | null"
+          },
+          {
+            "key": "program",
+            "optional": true,
+            "type": "{ id?: string | null, title?: string | null, currency?: string | null } | null"
+          },
+          {
+            "key": "affiliate",
+            "optional": true,
+            "type": "{ id?: string | null, firstname?: string | null, lastname?: string | null } | null"
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "{ id?: string | null, customer_id?: string | null, status?: string | null } | null"
+          },
+          {
+            "key": "affiliate_meta_data",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "meta_data",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tapfiliate.api.conversions.list",
+      "shortPath": "conversions.list",
+      "description": "List conversions with their commissions, newest first, filtered by program, affiliate, external ID or date",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting at 1. Each page holds 25 items."
+          },
+          {
+            "key": "program_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "affiliate_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pending",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only conversions that have at least one pending commission."
+          },
+          {
+            "key": "date_from",
+            "optional": true,
+            "type": "string",
+            "description": "A date as \"YYYY-MM-DD\"."
+          },
+          {
+            "key": "date_to",
+            "optional": true,
+            "type": "string",
+            "description": "A date as \"YYYY-MM-DD\"."
+          },
+          {
+            "key": "use_profile_timezone",
+            "optional": true,
+            "type": "boolean",
+            "description": "Read the dates in the account's timezone instead of UTC."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, external_id?: string | null, amount?: number | null, click?: { created_at?: string | null, referrer?: string | null, landing_page?: string | null } | null, commissions?: { id: number, conversion_sub_amount?: number | null, amount?: number | null, commission_type?: string | null, approved?: boolean | null, affiliate?: { id?: string | null, firstname?: string | null, lastname?: string | null } | null, conversion?: { id?: number | null } | null, kind?: string | null, currency?: string | null, created_at?: string | null, payout?: number | string | boolean | null, comment?: string | null, final?: boolean | null, finalization_date?: string | null, commission_name?: string | null }[] | null, program?: { id?: string | null, title?: string | null, currency?: string | null } | null, affiliate?: { id?: string | null, firstname?: string | null, lastname?: string | null } | null, customer?: { id?: string | null, customer_id?: string | null, status?: string | null } | null, affiliate_meta_data?: Record<string, string> | null, meta_data?: Record<string, string> | null, created_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "tapfiliate.api.conversions.update",
+      "shortPath": "conversions.update",
+      "description": "Change a conversion's amount, external ID or metadata; commissions change only with recalculate_commissions and a numeric amount",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversionId",
+            "optional": false,
+            "type": "number",
+            "description": "The numeric conversion ID."
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number",
+            "description": "The new conversion amount."
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta_data",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Replaces the whole set. Up to 40 keys."
+          },
+          {
+            "key": "recalculate_commissions",
+            "optional": true,
+            "type": "boolean",
+            "description": "Recalculate the commission amounts from the new amount. Without this, `amount` changes but the commissions do not."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, external_id?: string | null, amount?: number | null, click?: { created_at?: string | null, referrer?: string | null, landing_page?: string | null } | null, commissions?: { id: number, conversion_sub_amount?: number | null, amount?: number | null, commission_type?: string | null, approved?: boolean | null, affiliate?: { id?: string | null, firstname?: string | null, lastname?: string | null } | null, conversion?: { id?: number | null } | null, kind?: string | null, currency?: string | null, created_at?: string | null, payout?: number | string | boolean | null, comment?: string | null, final?: boolean | null, finalization_date?: string | null, commission_name?: string | null }[] | null, program?: { id?: string | null, title?: string | null, currency?: string | null } | null, affiliate?: { id?: string | null, firstname?: string | null, lastname?: string | null } | null, customer?: { id?: string | null, customer_id?: string | null, status?: string | null } | null, affiliate_meta_data?: Record<string, string> | null, meta_data?: Record<string, string> | null, created_at?: string | null } | { id: number, updated: true }"
+      }
+    },
+    {
+      "path": "tapfiliate.api.customers.cancel",
+      "shortPath": "customers.cancel",
+      "description": "Cancel a customer, which stops its automatic recurring commissions; another call can reactivate it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "The customer ID, a `cu_...` value."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "click",
+            "optional": true,
+            "type": "{ created_at?: string | null, referrer?: string | null, landing_page?: string | null } | null"
+          },
+          {
+            "key": "program",
+            "optional": true,
+            "type": "{ id?: string | null, title?: string | null, currency?: string | null } | null"
+          },
+          {
+            "key": "affiliate",
+            "optional": true,
+            "type": "{ id?: string | null, firstname?: string | null, lastname?: string | null } | null"
+          },
+          {
+            "key": "affiliate_meta_data",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "meta_data",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tapfiliate.api.customers.create",
+      "shortPath": "customers.create",
+      "description": "Create a customer attributed to an affiliate; no commission is created until a conversion arrives",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "referral_code",
+            "optional": true,
+            "type": "string",
+            "description": "An affiliate's referral code, the `ref=` value in their link."
+          },
+          {
+            "key": "tracking_id",
+            "optional": true,
+            "type": "string",
+            "description": "The tracking ID from the Tapfiliate JavaScript library."
+          },
+          {
+            "key": "click_id",
+            "optional": true,
+            "type": "string",
+            "description": "A click ID from `clicks.create`."
+          },
+          {
+            "key": "coupon",
+            "optional": true,
+            "type": "string",
+            "description": "A coupon code to attribute by."
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string",
+            "description": "The tracking asset ID."
+          },
+          {
+            "key": "source_id",
+            "optional": true,
+            "type": "string",
+            "description": "The click source ID. Pair it with `asset_id`; on a click it can also override the source of a `referral_code`."
+          },
+          {
+            "key": "customer_id",
+            "optional": false,
+            "type": "string",
+            "description": "Your own customer ID. It must be unique in the account."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "new | trial | lead",
+            "description": "The starting status. Tapfiliate defaults to `new`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "click",
+            "optional": true,
+            "type": "{ created_at?: string | null, referrer?: string | null, landing_page?: string | null } | null"
+          },
+          {
+            "key": "program",
+            "optional": true,
+            "type": "{ id?: string | null, title?: string | null, currency?: string | null } | null"
+          },
+          {
+            "key": "affiliate",
+            "optional": true,
+            "type": "{ id?: string | null, firstname?: string | null, lastname?: string | null } | null"
+          },
+          {
+            "key": "affiliate_meta_data",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "meta_data",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tapfiliate.api.customers.delete",
+      "shortPath": "customers.delete",
+      "description": "Permanently delete a customer and its metadata; its conversions and commissions stay but lose the link",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "The customer ID, a `cu_...` value."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tapfiliate.api.customers.get",
+      "shortPath": "customers.get",
+      "description": "Read one customer with the click it was tracked from and its current fraud warnings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "The customer ID, a `cu_...` value."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "click",
+            "optional": true,
+            "type": "{ created_at?: string | null, referrer?: string | null, landing_page?: string | null } | null"
+          },
+          {
+            "key": "program",
+            "optional": true,
+            "type": "{ id?: string | null, title?: string | null, currency?: string | null } | null"
+          },
+          {
+            "key": "affiliate",
+            "optional": true,
+            "type": "{ id?: string | null, firstname?: string | null, lastname?: string | null } | null"
+          },
+          {
+            "key": "affiliate_meta_data",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "meta_data",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tapfiliate.api.customers.list",
+      "shortPath": "customers.list",
+      "description": "List customers, newest first, filtered by program, customer ID, affiliate or date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting at 1. Each page holds 25 items."
+          },
+          {
+            "key": "program_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "affiliate_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, customer_id?: string | null, status?: string | null, created_at?: string | null, click?: { created_at?: string | null, referrer?: string | null, landing_page?: string | null } | null, program?: { id?: string | null, title?: string | null, currency?: string | null } | null, affiliate?: { id?: string | null, firstname?: string | null, lastname?: string | null } | null, affiliate_meta_data?: Record<string, string> | null, meta_data?: Record<string, string> | null, warnings?: string | null }[]"
+      }
+    },
+    {
+      "path": "tapfiliate.api.customers.uncancel",
+      "shortPath": "customers.uncancel",
+      "description": "Reactivate a canceled customer, restoring recurring commissions from now without back-filling",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "The customer ID, a `cu_...` value."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "click",
+            "optional": true,
+            "type": "{ created_at?: string | null, referrer?: string | null, landing_page?: string | null } | null"
+          },
+          {
+            "key": "program",
+            "optional": true,
+            "type": "{ id?: string | null, title?: string | null, currency?: string | null } | null"
+          },
+          {
+            "key": "affiliate",
+            "optional": true,
+            "type": "{ id?: string | null, firstname?: string | null, lastname?: string | null } | null"
+          },
+          {
+            "key": "affiliate_meta_data",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "meta_data",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tapfiliate.api.customers.update",
+      "shortPath": "customers.update",
+      "description": "Change a customer's customer_id or replace its metadata",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "The customer ID, a `cu_...` value."
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string",
+            "description": "The new customer ID."
+          },
+          {
+            "key": "meta_data",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Replaces the whole set."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "click",
+            "optional": true,
+            "type": "{ created_at?: string | null, referrer?: string | null, landing_page?: string | null } | null"
+          },
+          {
+            "key": "program",
+            "optional": true,
+            "type": "{ id?: string | null, title?: string | null, currency?: string | null } | null"
+          },
+          {
+            "key": "affiliate",
+            "optional": true,
+            "type": "{ id?: string | null, firstname?: string | null, lastname?: string | null } | null"
+          },
+          {
+            "key": "affiliate_meta_data",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "meta_data",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tapfiliate.api.payments.cancel",
+      "shortPath": "payments.cancel",
+      "description": "Cancel a payment. It stops counting against the affiliate balance, so the balance goes back up by its amount; an outside payout already sent is not reversed, and there is no undo",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "paymentId",
+            "optional": false,
+            "type": "string",
+            "description": "The payment ID, a `pa_...` value."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tapfiliate.api.payments.create",
+      "shortPath": "payments.create",
+      "description": "Record one payment or an array of payments; an affiliate on an automated payout method is also paid out through that provider. Tapfiliate creates none when any entry is invalid",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "inline",
+        "type": "{ affiliate_id: string, amount: number, currency: string } | { affiliate_id: string, amount: number, currency: string }[]"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, created_at?: string | null, affiliate?: { id?: string | null, firstname?: string | null, lastname?: string | null } | null, amount?: number | null, currency?: string | null }[]"
+      }
+    },
+    {
+      "path": "tapfiliate.api.payments.get",
+      "shortPath": "payments.get",
+      "description": "Read one payment with its affiliate, amount and currency",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "paymentId",
+            "optional": false,
+            "type": "string",
+            "description": "The payment ID, a `pa_...` value."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "affiliate",
+            "optional": true,
+            "type": "{ id?: string | null, firstname?: string | null, lastname?: string | null } | null"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tapfiliate.api.payments.list",
+      "shortPath": "payments.list",
+      "description": "List payments that were not canceled, newest first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting at 1. Each page holds 25 items."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, created_at?: string | null, affiliate?: { id?: string | null, firstname?: string | null, lastname?: string | null } | null, amount?: number | null, currency?: string | null }[]"
+      }
+    },
+    {
+      "path": "tapfiliate.api.programs.addAffiliate",
+      "shortPath": "programs.addAffiliate",
+      "description": "Add an existing affiliate to a program, approved by default (which sends the approval email when the program notifies on approval), or pending or disapproved explicitly",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "programId",
+            "optional": false,
+            "type": "string",
+            "description": "The program ID, an `id` from `programs.list`."
+          },
+          {
+            "key": "affiliateId",
+            "optional": false,
+            "type": "string",
+            "description": "The affiliate ID, an `id` from `affiliates.list`."
+          },
+          {
+            "key": "approved",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "The approval state: true approves, false disapproves, and `null` leaves it pending. Tapfiliate approves by default and does not apply the program auto-approve setting."
+          },
+          {
+            "key": "coupon",
+            "optional": true,
+            "type": "string",
+            "description": "A coupon for this affiliate. It must be unique across all programs."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "{ name?: string | null, description?: string | null } | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ address?: string | null, address_two?: string | null, postal_code?: string | null, city?: string | null, state?: string | null, country?: { code?: string | null, name?: string | null } | null } | null"
+          },
+          {
+            "key": "meta_data",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "affiliate_group_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "promoted_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "promotion_method",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "fraud",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "coupon",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "approved",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "applied_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "referral_link",
+            "optional": true,
+            "type": "{ asset_id?: string | null, link?: string | null, source_id?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tapfiliate.api.programs.affiliates",
+      "shortPath": "programs.affiliates",
+      "description": "List a program's affiliates in every approval state, with each one's coupon and referral link",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "programId",
+            "optional": false,
+            "type": "string",
+            "description": "The program ID, an `id` from `programs.list`."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting at 1. Each page holds 25 items."
+          },
+          {
+            "key": "source_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, firstname?: string | null, lastname?: string | null, email?: string | null, company?: { name?: string | null, description?: string | null } | null, address?: { address?: string | null, address_two?: string | null, postal_code?: string | null, city?: string | null, state?: string | null, country?: { code?: string | null, name?: string | null } | null } | null, meta_data?: Record<string, string> | null, parent_id?: string | null, affiliate_group_id?: string | null, created_at?: string | null, promoted_at?: string | null, promotion_method?: string | null, custom_fields?: Record<string, string> | null, fraud?: boolean | null, coupon?: string | null, approved?: boolean | null, applied_at?: string | null, referral_link?: { asset_id?: string | null, link?: string | null, source_id?: string | null } | null }[]"
+      }
+    },
+    {
+      "path": "tapfiliate.api.programs.approveAffiliate",
+      "shortPath": "programs.approveAffiliate",
+      "description": "Approve an affiliate for a program and email them when the program notifies on approval",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "programId",
+            "optional": false,
+            "type": "string",
+            "description": "The program ID, an `id` from `programs.list`."
+          },
+          {
+            "key": "affiliateId",
+            "optional": false,
+            "type": "string",
+            "description": "The affiliate ID, an `id` from `affiliates.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "{ name?: string | null, description?: string | null } | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ address?: string | null, address_two?: string | null, postal_code?: string | null, city?: string | null, state?: string | null, country?: { code?: string | null, name?: string | null } | null } | null"
+          },
+          {
+            "key": "meta_data",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "affiliate_group_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "promoted_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "promotion_method",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "fraud",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "coupon",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "approved",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "applied_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "referral_link",
+            "optional": true,
+            "type": "{ asset_id?: string | null, link?: string | null, source_id?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tapfiliate.api.programs.disapproveAffiliate",
+      "shortPath": "programs.disapproveAffiliate",
+      "description": "Disapprove an affiliate for a program; they keep the record but earn nothing there",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "programId",
+            "optional": false,
+            "type": "string",
+            "description": "The program ID, an `id` from `programs.list`."
+          },
+          {
+            "key": "affiliateId",
+            "optional": false,
+            "type": "string",
+            "description": "The affiliate ID, an `id` from `affiliates.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "{ name?: string | null, description?: string | null } | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ address?: string | null, address_two?: string | null, postal_code?: string | null, city?: string | null, state?: string | null, country?: { code?: string | null, name?: string | null } | null } | null"
+          },
+          {
+            "key": "meta_data",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "affiliate_group_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "promoted_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "promotion_method",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "fraud",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "coupon",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "approved",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "applied_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "referral_link",
+            "optional": true,
+            "type": "{ asset_id?: string | null, link?: string | null, source_id?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tapfiliate.api.programs.get",
+      "shortPath": "programs.get",
+      "description": "Read one program, including an archived one, with its currency, cookie time and status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "programId",
+            "optional": false,
+            "type": "string",
+            "description": "The program ID, an `id` from `programs.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cookie_time",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "default_landing_page_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recurring",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tapfiliate.api.programs.getAffiliate",
+      "shortPath": "programs.getAffiliate",
+      "description": "Read one affiliate within a program, with their program-specific coupon and approval state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "programId",
+            "optional": false,
+            "type": "string",
+            "description": "The program ID, an `id` from `programs.list`."
+          },
+          {
+            "key": "affiliateId",
+            "optional": false,
+            "type": "string",
+            "description": "The affiliate ID, an `id` from `affiliates.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "{ name?: string | null, description?: string | null } | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ address?: string | null, address_two?: string | null, postal_code?: string | null, city?: string | null, state?: string | null, country?: { code?: string | null, name?: string | null } | null } | null"
+          },
+          {
+            "key": "meta_data",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "affiliate_group_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "promoted_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "promotion_method",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "fraud",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "coupon",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "approved",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "applied_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "referral_link",
+            "optional": true,
+            "type": "{ asset_id?: string | null, link?: string | null, source_id?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tapfiliate.api.programs.list",
+      "shortPath": "programs.list",
+      "description": "List your programs, archived ones included, 25 per page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting at 1. Each page holds 25 items."
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string",
+            "description": "An `<id>-<secret>` asset ID from a tracking link. Tapfiliate returns only the program that owns it, or every program when the value is not in that two-part form."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, currency?: string | null, title?: string | null, cookie_time?: number | null, default_landing_page_url?: string | null, recurring?: boolean | null, status?: string | null }[]"
+      }
+    },
+    {
+      "path": "tapfiliate.api.programs.updateAffiliate",
+      "shortPath": "programs.updateAffiliate",
+      "description": "Change an affiliate's coupon in a program; null removes it and omitting it changes nothing",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "programId",
+            "optional": false,
+            "type": "string",
+            "description": "The program ID, an `id` from `programs.list`."
+          },
+          {
+            "key": "affiliateId",
+            "optional": false,
+            "type": "string",
+            "description": "The affiliate ID, an `id` from `affiliates.list`."
+          },
+          {
+            "key": "coupon",
+            "optional": true,
+            "type": "string | null",
+            "description": "The new coupon for this program. `null` removes it, and leaving the field out changes nothing. An empty string is rejected."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "{ name?: string | null, description?: string | null } | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ address?: string | null, address_two?: string | null, postal_code?: string | null, city?: string | null, state?: string | null, country?: { code?: string | null, name?: string | null } | null } | null"
+          },
+          {
+            "key": "meta_data",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "affiliate_group_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "promoted_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "promotion_method",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "fraud",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "coupon",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "approved",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "applied_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "referral_link",
+            "optional": true,
+            "type": "{ asset_id?: string | null, link?: string | null, source_id?: string | null } | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
