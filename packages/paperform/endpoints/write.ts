@@ -1,6 +1,7 @@
 import type { CorsairEndpoint } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
+import { z } from 'zod';
 import { asRecord, paperformRequest, seg } from '../client';
 import type { PaperformContext } from '../context';
 import { parseWebhook, productOf } from './read';
@@ -22,6 +23,7 @@ import {
 	CouponInputSchema,
 	CouponSchema,
 	CouponUpdateInputSchema,
+	DeletedResponseSchema,
 	ProductUpdateInputSchema,
 	SubmissionInputSchema,
 	WebhookCreateInputSchema,
@@ -44,9 +46,11 @@ function defined(fields: Record<string, unknown>) {
 }
 
 /** Paperform answers a delete with { status: 'ok' }; anything else is not a delete. */
+const DeleteConfirmationSchema = z.object({ status: z.literal('ok') }).loose();
+
 // body is the raw JSON response.
 function confirmDeleted(body: unknown, what: string) {
-	if (asRecord(body)?.status !== 'ok')
+	if (!DeleteConfirmationSchema.safeParse(body).success)
 		throw new Error(`Paperform did not confirm the ${what} delete`);
 }
 
@@ -95,7 +99,7 @@ export const deleteSubmission: CorsairEndpoint<
 		}
 	}
 	await done(ctx, 'paperform.submissions.delete');
-	return { deleted: true };
+	return DeletedResponseSchema.parse({ deleted: true });
 };
 
 export const updateProduct: CorsairEndpoint<
@@ -170,7 +174,7 @@ export const deleteCoupon: CorsairEndpoint<
 		'coupon',
 	);
 	await done(ctx, 'paperform.coupons.delete');
-	return { deleted: true };
+	return DeletedResponseSchema.parse({ deleted: true });
 };
 
 export const createWebhook: CorsairEndpoint<
@@ -208,5 +212,5 @@ export const deleteWebhook: CorsairEndpoint<
 		'webhook',
 	);
 	await done(ctx, 'paperform.webhooks.delete');
-	return { deleted: true };
+	return DeletedResponseSchema.parse({ deleted: true });
 };
