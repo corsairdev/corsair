@@ -445,6 +445,7 @@ export const BaseProviders = [
 	'nethunt',
 	'netsuite',
 	'neutrino',
+	'newrelic',
 	'neverbounce',
 	'newsapi',
 	'nextdns',
@@ -1160,6 +1161,7 @@ export const ProviderDisplayNames = {
 	nethunt: 'NetHunt CRM',
 	netsuite: 'NetSuite',
 	neutrino: 'Neutrino API',
+	newrelic: 'New Relic',
 	neverbounce: 'NeverBounce',
 	newsapi: 'NewsAPI',
 	nextdns: 'NextDNS',
@@ -1882,6 +1884,7 @@ export type AllProviders =
 	| 'nethunt'
 	| 'netsuite'
 	| 'neutrino'
+	| 'newrelic'
 	| 'neverbounce'
 	| 'newsapi'
 	| 'nextdns'

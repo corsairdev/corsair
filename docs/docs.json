@@ -3675,6 +3675,14 @@
                 ]
               },
               {
+                "group": "New Relic",
+                "pages": [
+                  "plugins/newrelic/overview",
+                  "plugins/newrelic/api",
+                  "plugins/newrelic/database"
+                ]
+              },
+              {
                 "group": "Neon",
                 "pages": [
                   "plugins/neon/overview",
