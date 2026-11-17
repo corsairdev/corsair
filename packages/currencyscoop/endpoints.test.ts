@@ -3,6 +3,7 @@ import { ApiError, request } from 'corsair/http';
 import type { CurrencyScoopContext } from './context';
 import {
 	convertQuote,
+	historicalQuotes,
 	latestQuotes,
 	listCurrencies,
 	timeseriesQuotes,
@@ -126,6 +127,48 @@ describe('currencyscoop reads', () => {
 			base: 'USD',
 		});
 		expect(result.quotes.map((row) => row.id)).toEqual(['2024-01-01:USD:EUR']);
+	});
+
+	it('reads historical rates for one date and stores them', async () => {
+		// Trimmed from a live GET /v1/historical on 11-17.
+		const upsert = jest.fn().mockResolvedValue(undefined);
+		mockRequest.mockResolvedValue({
+			meta: { code: 200 },
+			response: { date: '2024-01-02', base: 'USD', rates: { EUR: 0.91239926 } },
+		});
+		const result = await historicalQuotes(
+			context('sekrit', {
+				quotes: { upsertByEntityId: upsert },
+			} as unknown as CurrencyScoopContext['db']),
+			{ date: '2024-01-02', base: 'usd', symbols: 'EUR' },
+		);
+		expect(result.quotes).toEqual([
+			{
+				id: '2024-01-02:USD:EUR',
+				date: '2024-01-02',
+				base: 'USD',
+				code: 'EUR',
+				rate: 0.91239926,
+			},
+		]);
+		expect(upsert).toHaveBeenCalledWith('2024-01-02:USD:EUR', result.quotes[0]);
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'GET',
+			url: '/historical',
+			query: {
+				date: '2024-01-02',
+				base: 'USD',
+				symbols: 'EUR',
+				api_key: 'sekrit',
+			},
+		});
+	});
+
+	it('rejects a historical read with no date before calling the API', async () => {
+		await expect(
+			historicalQuotes(context('sekrit'), {} as never),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
 	it('reads the live timeseries shape (dates directly under response)', async () => {
