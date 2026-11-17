@@ -37,9 +37,11 @@ export async function makeBoxRequest<T>(
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 		headers?: Record<string, string>;
+		/** Return the body as bytes (`BinaryResponse`) instead of decoding it as text. */
+		responseType?: 'binary';
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query, headers } = options;
+	const { method = 'GET', body, query, headers, responseType } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: BOX_API_BASE,
@@ -63,6 +65,7 @@ export async function makeBoxRequest<T>(
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
 		query,
+		responseType,
 	};
 
 	try {

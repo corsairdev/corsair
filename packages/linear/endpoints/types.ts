@@ -8,10 +8,76 @@ export const IssuePrioritySchema = z.union([
 	z.literal(4),
 ]);
 
+const DateComparatorSchema = z
+	.object({
+		eq: z.string(),
+		neq: z.string(),
+		lt: z.string(),
+		lte: z.string(),
+		gt: z.string(),
+		gte: z.string(),
+	})
+	.partial()
+	.strict();
+
+const StringComparatorSchema = z
+	.object({
+		eq: z.string(),
+		neq: z.string(),
+		in: z.array(z.string()),
+		nin: z.array(z.string()),
+		contains: z.string(),
+		containsIgnoreCase: z.string(),
+		notContains: z.string(),
+		notContainsIgnoreCase: z.string(),
+		startsWith: z.string(),
+		endsWith: z.string(),
+	})
+	.partial()
+	.strict();
+
+const IdComparatorSchema = z
+	.object({
+		eq: z.string(),
+		neq: z.string(),
+		in: z.array(z.string()),
+		nin: z.array(z.string()),
+	})
+	.partial()
+	.strict();
+
+// The subset of Linear's IssueFilter this plugin supports; unsupported keys are rejected.
+export type IssueFilter = {
+	createdAt?: z.infer<typeof DateComparatorSchema>;
+	updatedAt?: z.infer<typeof DateComparatorSchema>;
+	title?: z.infer<typeof StringComparatorSchema>;
+	description?: z.infer<typeof StringComparatorSchema>;
+	team?: { id?: z.infer<typeof IdComparatorSchema> };
+	and?: IssueFilter[];
+	or?: IssueFilter[];
+};
+
+export const IssueFilterSchema: z.ZodType<IssueFilter> = z.lazy(() =>
+	z
+		.object({
+			createdAt: DateComparatorSchema,
+			updatedAt: DateComparatorSchema,
+			title: StringComparatorSchema,
+			description: StringComparatorSchema,
+			team: z.object({ id: IdComparatorSchema }).partial().strict(),
+			and: z.array(IssueFilterSchema),
+			or: z.array(IssueFilterSchema),
+		})
+		.partial()
+		.strict(),
+);
+
 const IssuesListInputSchema = z.object({
 	teamId: z.string().optional(),
 	first: z.number().optional(),
 	after: z.string().optional(),
+	filter: IssueFilterSchema.optional(),
+	orderBy: z.enum(['createdAt', 'updatedAt']).optional(),
 });
 
 const IssuesGetInputSchema = z.object({
