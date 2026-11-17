@@ -1,0 +1,138 @@
+---
+title: "Spotlightr plugin"
+sidebarTitle: "Overview"
+description: "Host and manage videos, projects and embed domains, run course access, and read view analytics."
+---
+
+Use **Spotlightr** through Corsair: one client, typed API calls.
+
+Create an API key in Spotlightr under Settings, Integrations and APIs, then Get API key. The plugin sends it as the `vooKey` parameter on every request, which is the only form the API reads, and masks it in errors and in the page URLs Spotlightr echoes back.
+
+Things to know:
+
+- **The REST API is narrow.** It covers videos, projects, embed domains, course students and access records, and view analytics. Playlist, quiz and lead management have no REST route and are not exposed.
+- **Response bodies are barely documented.** Spotlightr's reference lists request parameters and gives one sample response, the metrics object. The plugin types that object exactly (including Spotlightr's `completitionRate` spelling) and accepts the other routes' answers as open objects, rather than inventing fields.
+- **Booleans are 1 and 0.** The reference documents flags that way, so the plugin converts `true` to `1` before sending.
+- **Uploads are multipart.** `videos.create` and `assets.upload` take a `Blob`, so the file never passes through JSON.
+- **`videos.delete` cannot be undone.** There is no restore route.
+- **A wrong key reads as a plain string.** A 401 body is literally `"Unauthorized."`, and a missing one is `"Missing token."`. Some routes answer an HTML 500 for a bad key instead of a 401.
+
+**What you get:**
+
+- 18 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/spotlightr better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/spotlightr better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/spotlightr better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/spotlightr better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { spotlightr } from '@corsair-dev/spotlightr';
+
+export const corsair = createCorsair({
+	plugins: [
+		spotlightr(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Spotlightr API key before the first call: `pnpm corsair setup --plugin=spotlightr --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+spotlightr()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'spotlightr',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List your videos**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.spotlightr.api.videos.list({});
+```
+
+
+**Create a project**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.spotlightr.api.projects.create({ name: 'Marketing' });
+```
+
+
+See the full list on the [API](/plugins/spotlightr/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/spotlightr/api">
+    Every `spotlightr.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

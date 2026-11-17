@@ -1,0 +1,476 @@
+{
+  "id": "textcortex",
+  "displayName": "TextCortex",
+  "description": "Text generation with TextCortex - list the models, read the credit balance and enabled capabilities, run chat completions and single responses, generate images, and search the web.",
+  "npmPackageName": "@corsair-dev/textcortex",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 7,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "textcortex.api.balance.get",
+      "shortPath": "balance.get",
+      "description": "Read the remaining API credits, the funding source and the wallet amount",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "remaining_credits",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "api_credit_purchases_allowed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "billing_source",
+            "optional": true,
+            "type": "{ available?: boolean | null, type?: string | null } | null"
+          },
+          {
+            "key": "wallet",
+            "optional": true,
+            "type": "{ currency?: string | null, remaining_amount?: number | null, seat_id?: string | null, wallet_id?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textcortex.api.capabilities.get",
+      "shortPath": "capabilities.get",
+      "description": "Read the features enabled for the key, such as image generation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "openai_compatible",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "textcortex",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textcortex.api.chat.completions",
+      "shortPath": "chat.completions",
+      "description": "Generate a chat completion from a conversation, which spends credits on every call",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "A model ID from `models.list`. Use the base ID and set `reasoning_effort` rather than a `-thinking` variant, which is deprecated."
+          },
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ role: system | user | assistant | tool, content: string, name?: string }[]",
+            "description": "The conversation, oldest first."
+          },
+          {
+            "key": "max_tokens",
+            "optional": true,
+            "type": "number",
+            "description": "Cap the tokens generated."
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number",
+            "description": "Sampling temperature, 0 to 2."
+          },
+          {
+            "key": "top_p",
+            "optional": true,
+            "type": "number",
+            "description": "Nucleus sampling probability, 0 to 1."
+          },
+          {
+            "key": "n",
+            "optional": true,
+            "type": "number",
+            "description": "How many completions to generate."
+          },
+          {
+            "key": "stop",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "A stop sequence, or a list of them."
+          },
+          {
+            "key": "presence_penalty",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "frequency_penalty",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "seed",
+            "optional": true,
+            "type": "number",
+            "description": "A seed for reproducible output."
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string",
+            "description": "A caller-side user identifier for abuse tracking."
+          },
+          {
+            "key": "reasoning_effort",
+            "optional": true,
+            "type": "none | low | medium | high",
+            "description": "How much reasoning the model should spend, for models that grade it."
+          },
+          {
+            "key": "response_format",
+            "optional": true,
+            "type": "{ type: string }",
+            "description": "Ask for a structured answer, e.g. `{ type: \"json_object\" }`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "choices",
+            "optional": false,
+            "type": "{ index?: number | null, finish_reason?: string | null, message?: { role?: string | null, content?: string | any[] | null } | null }[]"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ completion_tokens?: number | null, prompt_tokens?: number | null, total_tokens?: number | null, prompt_tokens_details?: { cached_tokens?: number | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textcortex.api.images.create",
+      "shortPath": "images.create",
+      "description": "Generate an image from a prompt, returning its URL, and spend credits per image",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string",
+            "description": "What the image should show."
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string",
+            "description": "An image model ID. The API picks its default when omitted."
+          },
+          {
+            "key": "n",
+            "optional": true,
+            "type": "1",
+            "description": "How many images to generate. TextCortex accepts only 1."
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "string",
+            "description": "The output size as \"WIDTHxHEIGHT\", e.g. \"1024x1024\"."
+          },
+          {
+            "key": "response_format",
+            "optional": true,
+            "type": "url",
+            "description": "TextCortex returns a URL only; base64 is not offered."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ url?: string | null, image_id?: string | null, model?: string | null, file_type?: string | null, width?: number | null, height?: number | null, revised_prompt?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textcortex.api.models.list",
+      "shortPath": "models.list",
+      "description": "List the chat models available to the key, with their IDs and owners",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, created?: number | null, object?: string | null, owned_by?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textcortex.api.responses.create",
+      "shortPath": "responses.create",
+      "description": "Generate one response from a prompt and optional instructions, which spends credits",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "A model ID from `models.list`. Use the base ID; `-thinking` variants are deprecated."
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string",
+            "description": "The prompt or conversation text."
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string",
+            "description": "A system instruction that applies to the whole response."
+          },
+          {
+            "key": "max_output_tokens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "top_p",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "store",
+            "optional": true,
+            "type": "false",
+            "description": "TextCortex requires this to be false, since it stores no conversation."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "{ type?: string | null, text?: string | null, id?: string | null, role?: string | null, status?: string | null, content?: { type?: string | null, text?: string | null }[] | null }[] | null"
+          },
+          {
+            "key": "incomplete_details",
+            "optional": true,
+            "type": "{ reason?: string | null } | null"
+          },
+          {
+            "key": "output_text",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ input_tokens?: number | null, output_tokens?: number | null, total_tokens?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textcortex.api.web.search",
+      "shortPath": "web.search",
+      "description": "Search the web and return matching sources with snippets; each search spends credits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "What to search for."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "How many results to return, 1 to 10; TextCortex defaults to 5."
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string",
+            "description": "Only return results from this website, e.g. \"example.com\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object?: string | null, url?: string | null, snippet?: string | null, score?: number | null, published_at?: string | null }[]"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ billing?: string | null, cost?: number | null, currency?: string | null } | null"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ filtered_result_count?: number | null } | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

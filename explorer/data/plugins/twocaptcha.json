@@ -1,0 +1,232 @@
+{
+  "id": "twocaptcha",
+  "displayName": "2Captcha",
+  "description": "Create captcha-solving tasks, read their results, check the account balance, and report tasks as correct or incorrect.",
+  "npmPackageName": "@corsair-dev/twocaptcha",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 5,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "twocaptcha.api.account.balance",
+      "shortPath": "account.balance",
+      "description": "Read the account balance in USD",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "errorId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "balance",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twocaptcha.api.account.reportCorrect",
+      "shortPath": "account.reportCorrect",
+      "description": "Report that the site accepted a task answer",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number | string",
+            "description": "A task whose answer the site accepted"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "errorId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twocaptcha.api.account.reportIncorrect",
+      "shortPath": "account.reportIncorrect",
+      "description": "Report that the site rejected a task answer; 2Captcha reviews it and may refund the task",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number | string",
+            "description": "A task whose answer the site rejected; 2Captcha reviews the complaint and may refund it"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "errorId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twocaptcha.api.tasks.create",
+      "shortPath": "tasks.create",
+      "description": "Create a captcha-solving task, which the account pays for; returns the task id to poll",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string",
+            "description": "The captcha kind, such as RecaptchaV2TaskProxyless, RecaptchaV3TaskProxyless, TurnstileTaskProxyless, GeeTestTaskProxyless or ImageToTextTask; the *Task variants without \"Proxyless\" take your proxy fields"
+          },
+          {
+            "key": "task",
+            "optional": false,
+            "type": "{ websiteURL?: string, websiteKey?: string, websitePublicKey?: string, recaptchaDataSValue?: string, pageAction?: string, minScore?: number, enterprisePayload?: Record<string, JsonValue>, isInvisible?: boolean, userAgent?: string, cookies?: string, proxyType?: http | https | socks4 | socks5, proxyAddress?: string, proxyPort?: number | string, proxyLogin?: string, proxyPassword?: string, gt?: string, challenge?: string, body?: string }",
+            "description": "The fields for this kind, sent inside the task object next to `type`"
+          },
+          {
+            "key": "language_pool",
+            "optional": true,
+            "type": "string",
+            "description": "Worker language for image and text captchas, such as en"
+          },
+          {
+            "key": "soft_id",
+            "optional": true,
+            "type": "number",
+            "description": "Software catalog id; leave it out to send none"
+          },
+          {
+            "key": "callback",
+            "optional": true,
+            "type": "string",
+            "description": "A registered URL 2Captcha POSTs the result to; this plugin does not receive it, so poll tasks.result"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "errorId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twocaptcha.api.tasks.result",
+      "shortPath": "tasks.result",
+      "description": "Read a task result: processing while workers solve it, then ready with the solution and cost",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number | string",
+            "description": "The task id `tasks.create` returned"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "errorId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "`ready` or `processing`"
+          },
+          {
+            "key": "solution",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "ip",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createTime",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "endTime",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "solveCount",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -20,6 +20,18 @@ export const LinearIssue = z.object({
 	teamId: z.string(),
 	assigneeId: z.string().nullable().optional(),
 	creatorId: z.string(),
+	assignee: z
+		.object({
+			id: z.string(),
+			name: z.string().nullable().optional(),
+			email: z.string().nullable().optional(),
+		})
+		.nullable()
+		.optional(),
+	state: z
+		.object({ id: z.string(), name: z.string(), type: z.string() })
+		.nullable()
+		.optional(),
 	projectId: z.string().nullable().optional(),
 	cycleId: z.string().nullable().optional(),
 	parentId: z.string().nullable().optional(),
