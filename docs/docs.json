@@ -1918,6 +1918,14 @@
                 ]
               },
               {
+                "group": "Draftable",
+                "pages": [
+                  "plugins/draftable/overview",
+                  "plugins/draftable/api",
+                  "plugins/draftable/database"
+                ]
+              },
+              {
                 "group": "DreamStudio",
                 "pages": [
                   "plugins/dreamstudio/overview",
