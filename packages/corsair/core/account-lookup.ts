@@ -424,12 +424,24 @@ export async function upsertAccount(i: {
 			i.identity.label === undefined && i.nameNew
 				? { ...i.identity, label: nextAccountLabel(known.map((k) => k.label)) }
 				: i.identity;
+		if (i.rowId) {
+			const requested = known.find((k) => k.row.id === i.rowId);
+			if (!requested) {
+				throw new AccountSelectionError(
+					'account_not_found',
+					`Account "${i.rowId}" is no longer connected for "${i.integrationName}" (tenant "${tenantId}").`,
+				);
+			}
+			// Named by another reconnect since this one planned: keep that name
+			// and the row's tokens rather than starting it clean.
+			if (requested.ref) return { accountId: requested.row.id, created: false };
+			await writeIdentity(trx, requested.row, identity, kek);
+			return { accountId: requested.row.id, created: false };
+		}
+
 		const same = known.find((k) => k.ref === identity.id);
 		const target =
-			(i.rowId ? known.find((k) => k.row.id === i.rowId) : undefined) ??
-			same ??
-			known.find((k) => !k.ref) ??
-			(i.allowMany ? undefined : known[0]);
+			same ?? known.find((k) => !k.ref) ?? (i.allowMany ? undefined : known[0]);
 		if (target) {
 			if (!same || (identity.label && target.label !== identity.label)) {
 				// Another known identity taking the row starts it clean: its old

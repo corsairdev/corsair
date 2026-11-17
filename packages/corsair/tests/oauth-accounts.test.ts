@@ -3,6 +3,7 @@ import {
 	createCorsair,
 	createIntegrationKeyManager,
 } from '../core';
+import { upsertAccount } from '../core/account-lookup';
 import { exchangeCodeForTokens } from '../core/auth/exchange';
 import type { CorsairPlugin } from '../core/plugins';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
@@ -169,7 +170,7 @@ describe('self-hosted OAuth with several accounts', () => {
 		await connect();
 		await env.db
 			.updateTable('corsair_accounts')
-			.set({ config: '{}', dek: null })
+			.set({ config: {}, dek: null })
 			.execute();
 		const [row] = await rows();
 		expect(await codeOf(connect({ add: true }))).toBe('account_unnamed');
@@ -199,5 +200,34 @@ describe('self-hosted OAuth with several accounts', () => {
 		expect(await rows()).toHaveLength(3);
 		expect(await tokenOf('Account 2')).toBeDefined();
 		expect(await tokenOf('Account 3')).toBeDefined();
+	});
+
+	it('two reconnects of one unnamed account at once keep a single name and its tokens', async () => {
+		await connect();
+		await env.db
+			.updateTable('corsair_accounts')
+			.set({ config: {}, dek: null })
+			.execute();
+		const [row] = await rows();
+		await Promise.all([
+			connect({ reconnect: row!.id }),
+			connect({ reconnect: row!.id }),
+		]);
+		expect(await rows()).toHaveLength(1);
+		expect(await tokenOf('Account 1')).toMatch(/^at-/);
+	});
+
+	it('naming an account that was disconnected meanwhile is refused', async () => {
+		await expect(
+			upsertAccount({
+				database: getCorsairInternal(corsair).database!,
+				kek: KEK,
+				integrationName: 'demo',
+				tenantId: 't1',
+				allowMany: true,
+				rowId: 'gone',
+				identity: { id: 'acct_x' },
+			}),
+		).rejects.toMatchObject({ code: 'account_not_found' });
 	});
 });

@@ -7,6 +7,9 @@ import { renewAccounts, renewSubscriptions } from '../oauth/renewal';
 import { resolveAccountFromWebhookLink } from '../webhooks/tenant-links';
 import { createTestDatabase } from './setup-db';
 
+// The keys renewal hands subscribe are the account's key manager; these stubs read only its token.
+type AccountKeys = { get_access_token(): Promise<string | null> };
+
 const internalBase = {
 	plugins: [] as any[],
 	kek: 'k'.repeat(64),
@@ -29,8 +32,9 @@ describe('renewAccounts (BYO subscription renewal)', () => {
 				{ tenantId: 't1', integrationName: 'unknown' },
 			],
 			subscribeAndReport: async (_c, plugin, tenantId, keys) => {
-				expect(keys.get_access_token).toBeDefined();
+				expect((keys as AccountKeys).get_access_token).toBeDefined();
 				called.push(`${plugin.id}/${tenantId}`);
+				return undefined;
 			},
 		});
 
@@ -64,6 +68,7 @@ describe('renewAccounts (BYO subscription renewal)', () => {
 			rows: [{ tenantId: 't1', integrationName: 'outlook' }],
 			subscribeAndReport: async () => {
 				order.push('subscribe');
+				return undefined;
 			},
 		});
 
@@ -82,6 +87,7 @@ describe('renewAccounts (BYO subscription renewal)', () => {
 			],
 			subscribeAndReport: async (_c, _p, tenantId) => {
 				if (tenantId === 'bad') throw new Error('provider 500');
+				return undefined;
 			},
 		});
 
@@ -123,7 +129,7 @@ describe('renewAccounts (BYO subscription renewal)', () => {
 				plugins: [outlook],
 			},
 			rows: [{ tenantId: 't1', integrationName: 'outlook' }],
-			subscribeAndReport: async () => {},
+			subscribeAndReport: async () => undefined,
 		});
 
 		expect(seen).toEqual([
@@ -186,7 +192,10 @@ describe('renewal per account', () => {
 					{ tenantId: 't1', integrationName: 'outlook', accountId: 'a2' },
 				],
 				subscribeAndReport: async (_c, _p, _t, keys) => {
-					tokens.push((await keys.get_access_token()) as string);
+					tokens.push(
+						(await (keys as AccountKeys).get_access_token()) as string,
+					);
+					return undefined;
 				},
 			});
 			expect(result).toEqual({
@@ -242,7 +251,7 @@ describe('renewal per account', () => {
 			corsair: {},
 			internal: { ...internalBase, plugins: [plugin] },
 			rows: [{ tenantId: 't1', integrationName: 'outlook' }],
-			subscribeAndReport: async () => {},
+			subscribeAndReport: async () => undefined,
 		});
 		expect(result.renewed).toEqual(['outlook/t1']);
 	});
@@ -258,6 +267,7 @@ describe('renewal per account', () => {
 			],
 			subscribeAndReport: async () => {
 				if (n++ === 0) throw new Error('boom');
+				return undefined;
 			},
 		});
 		expect(result).toEqual({
