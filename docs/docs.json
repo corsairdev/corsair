@@ -2810,6 +2810,14 @@
                 ]
               },
               {
+                "group": "Hex",
+                "pages": [
+                  "plugins/hex/overview",
+                  "plugins/hex/api",
+                  "plugins/hex/database"
+                ]
+              },
+              {
                 "group": "HeyGen",
                 "pages": [
                   "plugins/heygen/overview",
