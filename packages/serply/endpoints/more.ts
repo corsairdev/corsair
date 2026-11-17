@@ -42,6 +42,8 @@ function op<I extends z.ZodType, O extends z.ZodType>(spec: {
 	// unknown: the JSON body of a POST.
 	body?: (parsed: z.output<I>) => Record<string, unknown>;
 	count?: (result: z.output<O>) => number | undefined;
+	// unknown: the raw answer, reshaped before the output schema runs.
+	shape?: (raw: unknown) => unknown;
 }): CorsairEndpoint<SerplyContext, z.input<I>, z.output<O>> {
 	return async (ctx, input) => {
 		const parsed = spec.input.parse(input ?? {});
@@ -56,7 +58,7 @@ function op<I extends z.ZodType, O extends z.ZodType>(spec: {
 				device: located.device,
 			},
 		});
-		const result = spec.output.parse(raw);
+		const result = spec.output.parse(spec.shape ? spec.shape(raw) : raw);
 		await logEventFromContext(
 			ctx,
 			`serply.${spec.event}`,
@@ -188,7 +190,11 @@ export const redditComments = op({
 	query: (p) => ({ sort: p.sort }),
 });
 
-/** POST /v1/request: fetch a page through Serply as markdown or HTML. */
+/**
+ * POST /v1/request: fetch a page through Serply. `full` answers a JSON
+ * envelope `{ data, status, headers }`; `markdown` answers the markdown as
+ * plain text, which is wrapped as `{ data }` (seen live 11-17).
+ */
 export const pageFetch = op({
 	event: 'pages.fetch',
 	input: PageFetchInputSchema,
@@ -196,4 +202,5 @@ export const pageFetch = op({
 	method: 'POST',
 	path: () => '/v1/request',
 	body: (p) => ({ url: p.url, response_type: p.response_type }),
+	shape: (raw) => (typeof raw === 'string' ? { data: raw } : raw),
 });

@@ -269,8 +269,11 @@ describe.each(rows)(
 			mockRequest.mockResolvedValueOnce(response);
 			const result = await endpoint(ctx(), input as never);
 			expect(sent().method).toBe('GET');
-			expect(sent().url).toBe(url);
-			expect(sent().query).toEqual(query);
+			const [path, search] = (sent().url ?? '').split('?');
+			expect(path).toBe(url);
+			expect(Object.fromEntries(new URLSearchParams(search ?? ''))).toEqual(
+				query ?? {},
+			);
 			expect(sent().headers['X-Api-Key']).toBe('sk-test');
 			expect(result).toMatchObject(expected);
 		});
@@ -299,6 +302,30 @@ describe('pages.fetch', () => {
 	});
 });
 
+describe('query encoding', () => {
+	it('writes spaces as + the way Serply parses them', async () => {
+		mockRequest.mockResolvedValueOnce({ products: [] });
+		await More.productSearch(ctx(), { q: 'mechanical keyboard' });
+		expect(sent().url).toBe('/v1/product/search/?q=mechanical+keyboard');
+		expect(sent().query).toBeUndefined();
+	});
+});
+
+describe('pages.fetch in markdown mode', () => {
+	it('wraps the plain-text markdown answer as data', async () => {
+		mockRequest.mockResolvedValueOnce(
+			'Google Search API for AI Agents - Serply.io',
+		);
+		const result = await More.pageFetch(ctx(), {
+			url: 'https://serply.io/',
+			response_type: 'markdown',
+		});
+		expect(result).toEqual({
+			data: 'Google Search API for AI Agents - Serply.io',
+		});
+	});
+});
+
 describe('headers, validation and privacy', () => {
 	it('sends the proxy region and device as headers, not query values', async () => {
 		mockRequest.mockResolvedValueOnce(SERP);
@@ -309,7 +336,7 @@ describe('headers, validation and privacy', () => {
 		});
 		expect(sent().headers['X-Proxy-Location']).toBe('DE');
 		expect(sent().headers['X-User-Agent']).toBe('mobile');
-		expect(sent().query).toEqual({ q: 'search api' });
+		expect(sent().url).toBe('/v1/search/?q=search+api');
 	});
 
 	it('refuses a subreddit name that would change the route', async () => {

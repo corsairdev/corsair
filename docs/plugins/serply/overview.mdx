@@ -1,16 +1,25 @@
 ---
 title: "Serply plugin"
 sidebarTitle: "Overview"
-description: "Search Google images, maps, and Scholar through Serply. The key is sent in X-Api-Key."
+description: "Search Google (web, news, images, videos, maps, jobs, Scholar), Bing, products and eBay, read Reddit, and fetch web pages as markdown through Serply. The key is sent in X-Api-Key."
 ---
 
 Use **Serply** through Corsair: one client, typed API calls, local DB sync.
 
-Empty-key GET requests to /v1/image, /v1/maps/search/test, and /v1/scholar each returned HTTP 401 with detail "API key missing". A successful uncached search spends one credit. The query is not written to the event. Phone numbers and author names are not stored.
+Copy your API key from the Serply dashboard (app.serply.io). Each uncached call spends one credit, so every operation is a metered read (`read`); new accounts get free credits for 30 days.
+
+Things to know:
+
+- **Search terms.** Every search takes `q`. `web.search` also takes Google's `num` (about 10 per page at most), `start` (offset; 10 is page two), `gl` (country) and `hl` (language). Google operators such as `site:` work in `q`.
+- **Region and device.** `proxy_location` (US, DE, GB, ...) and `device` (desktop or mobile) set where Google thinks the search comes from. Without `gl` or a region, results can change between calls.
+- **Answers are passed through.** Each operation returns Serply's JSON with the main list typed (`results`, `jobs`, `products`, `entries`, Reddit `data.children`) and every other field kept as is.
+- **Reddit.** `reddit.subredditPosts` and `reddit.userPosts` page with `after` (the previous answer's `data.after`); `reddit.post` takes `with_comments`.
+- **Pages.** `pages.fetch` returns the page in `data`, as markdown (`response_type: markdown`) or HTML (`full`, which also returns the page's HTTP status).
+- **Stored rows.** Images, places and Scholar articles are stored locally; phone numbers and author names are not. Search terms are never written to events.
 
 **What you get:**
 
-- 3 typed API operations
+- 16 typed API operations
 - 3 synced entities (`articles`, `images`, `places`) for fast `.search()` / `.list()`
 
 ## Setup
@@ -97,20 +106,17 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**Search images**
+**Search Google**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.serply.api.images.search({ q: 'bicycle', num: 5 });
+await tenant.serply.api.web.search({ q: 'integration platform for ai agents', num: 10, gl: 'us' });
 ```
 
 
-**`articles.search`**
+**Write**
 
-```ts
-const tenant = corsair.withTenant('acme');
-await tenant.serply.api.articles.search({});
-```
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/serply/api) reference._
 
 
 See the full list on the [API](/plugins/serply/api) page.

@@ -83,8 +83,7 @@ describe('serply searches', () => {
 		);
 		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
 			method: 'GET',
-			url: '/v1/image',
-			query: { q: 'secret-query', num: '5' },
+			url: '/v1/image?q=secret-query&num=5',
 		});
 	});
 

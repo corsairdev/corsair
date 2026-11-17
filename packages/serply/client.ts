@@ -42,17 +42,18 @@ export async function serplyRequest<T>(
 				: {}),
 		},
 	};
-	const query = options.query
-		? Object.fromEntries(
-				Object.entries(options.query)
-					.filter(([, value]) => value !== undefined)
-					.map(([key, value]) => [key, String(value)]),
-			)
-		: undefined;
+	// The query string is built here with `+` for spaces, as Serply's docs
+	// write it: /v1/product/search answered a different, empty shape for
+	// `q=mechanical%20keyboard` and 16 products for `q=mechanical+keyboard`
+	// (live, 11-17).
+	const search = new URLSearchParams();
+	for (const [key, value] of Object.entries(options.query ?? {})) {
+		if (value !== undefined) search.append(key, String(value));
+	}
+	const queryString = search.toString();
 	const requestOptions: ApiRequestOptions = {
 		method: options.method ?? 'GET',
-		url,
-		query,
+		url: queryString ? `${url}?${queryString}` : url,
 		...(options.body
 			? { body: options.body, mediaType: 'application/json' }
 			: {}),
