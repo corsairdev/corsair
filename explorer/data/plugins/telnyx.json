@@ -1,0 +1,1057 @@
+{
+  "id": "telnyx",
+  "displayName": "Telnyx",
+  "description": "Voice and SMS with Telnyx - send SMS and MMS, manage messaging profiles and phone numbers, search numbers to buy, place and control calls, and manage the call control applications calls dial through.",
+  "npmPackageName": "@corsair-dev/telnyx",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 22,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "telnyx.api.availablePhoneNumbers.list",
+      "shortPath": "availablePhoneNumbers.list",
+      "description": "Search the numbers available to buy in a country, filtered by area code, locality or type",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "countryCode",
+            "optional": false,
+            "type": "string",
+            "description": "Two-letter country code to search in, e.g. \"US\"."
+          },
+          {
+            "key": "locality",
+            "optional": true,
+            "type": "string",
+            "description": "A city to search in."
+          },
+          {
+            "key": "administrativeArea",
+            "optional": true,
+            "type": "string",
+            "description": "A state or province to search in."
+          },
+          {
+            "key": "nationalDestinationCode",
+            "optional": true,
+            "type": "string",
+            "description": "An area code to search in."
+          },
+          {
+            "key": "phoneNumberType",
+            "optional": true,
+            "type": "local | toll_free | mobile | national | shared_cost"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The maximum number of results, 1 to 250."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ phone_number?: string | null, record_type?: string | null, region_information?: { region_type?: string | null, region_name?: string | null }[] | null, cost_information?: { upfront_cost?: string | null, monthly_cost?: string | null, currency?: string | null } | null, features?: { name?: string | null }[] | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_pages?: number | null, total_results?: number | null, page_number?: number | null, page_size?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "telnyx.api.callControlApplications.create",
+      "shortPath": "callControlApplications.create",
+      "description": "Create a call control application, which is what calls.create dials through",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "application_name",
+            "optional": false,
+            "type": "string",
+            "description": "The application name."
+          },
+          {
+            "key": "webhook_event_url",
+            "optional": false,
+            "type": "string",
+            "description": "Where Telnyx sends call events for this application."
+          },
+          {
+            "key": "webhook_event_failover_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_api_version",
+            "optional": true,
+            "type": "1 | 2"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "anchorsite_override",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, record_type?: string | null, application_name?: string | null, active?: boolean | null, anchorsite_override?: string | null, webhook_event_url?: string | null, webhook_event_failover_url?: string | null, webhook_api_version?: string | null, dtmf_type?: string | null, first_command_timeout?: boolean | null, first_command_timeout_secs?: number | null, inbound?: { channel_limit?: number | null } | null, outbound?: { channel_limit?: number | null } | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "telnyx.api.callControlApplications.delete",
+      "shortPath": "callControlApplications.delete",
+      "description": "Delete a call control application; calls that reference it stop working",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "applicationId",
+            "optional": false,
+            "type": "string",
+            "description": "The call control application to delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, record_type?: string | null, application_name?: string | null, active?: boolean | null, anchorsite_override?: string | null, webhook_event_url?: string | null, webhook_event_failover_url?: string | null, webhook_api_version?: string | null, dtmf_type?: string | null, first_command_timeout?: boolean | null, first_command_timeout_secs?: number | null, inbound?: { channel_limit?: number | null } | null, outbound?: { channel_limit?: number | null } | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "telnyx.api.callControlApplications.get",
+      "shortPath": "callControlApplications.get",
+      "description": "Read one call control application by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "applicationId",
+            "optional": false,
+            "type": "string",
+            "description": "The call control application ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, record_type?: string | null, application_name?: string | null, active?: boolean | null, anchorsite_override?: string | null, webhook_event_url?: string | null, webhook_event_failover_url?: string | null, webhook_api_version?: string | null, dtmf_type?: string | null, first_command_timeout?: boolean | null, first_command_timeout_secs?: number | null, inbound?: { channel_limit?: number | null } | null, outbound?: { channel_limit?: number | null } | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "telnyx.api.callControlApplications.list",
+      "shortPath": "callControlApplications.list",
+      "description": "List the call control applications with their webhook URLs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number",
+            "description": "Page of results, starting at 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, from 1 to 250."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, record_type?: string | null, application_name?: string | null, active?: boolean | null, anchorsite_override?: string | null, webhook_event_url?: string | null, webhook_event_failover_url?: string | null, webhook_api_version?: string | null, dtmf_type?: string | null, first_command_timeout?: boolean | null, first_command_timeout_secs?: number | null, inbound?: { channel_limit?: number | null } | null, outbound?: { channel_limit?: number | null } | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_pages?: number | null, total_results?: number | null, page_number?: number | null, page_size?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "telnyx.api.callControlApplications.update",
+      "shortPath": "callControlApplications.update",
+      "description": "Change an application's webhook URL, name or active state",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "applicationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "application_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_event_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_event_failover_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "webhook_api_version",
+            "optional": true,
+            "type": "1 | 2"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "anchorsite_override",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, record_type?: string | null, application_name?: string | null, active?: boolean | null, anchorsite_override?: string | null, webhook_event_url?: string | null, webhook_event_failover_url?: string | null, webhook_api_version?: string | null, dtmf_type?: string | null, first_command_timeout?: boolean | null, first_command_timeout_secs?: number | null, inbound?: { channel_limit?: number | null } | null, outbound?: { channel_limit?: number | null } | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "telnyx.api.calls.create",
+      "shortPath": "calls.create",
+      "description": "Place an outbound call through a call control application, which dials the number and bills per minute",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "connection_id",
+            "optional": false,
+            "type": "string",
+            "description": "The call control application that handles the call."
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string",
+            "description": "The number to dial, in E.164 format."
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string",
+            "description": "The number to dial from, in E.164 format."
+          },
+          {
+            "key": "from_display_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeout_secs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_limit_secs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_url_method",
+            "optional": true,
+            "type": "GET | POST"
+          },
+          {
+            "key": "client_state",
+            "optional": true,
+            "type": "string",
+            "description": "Base64 state returned on every webhook for this call."
+          },
+          {
+            "key": "command_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ record_type?: string | null, call_control_id?: string | null, call_leg_id?: string | null, call_session_id?: string | null, connection_id?: string | null, from?: string | null, to?: string | null, is_alive?: boolean | null, call_state?: string | null, state?: string | null, direction?: string | null, started_at?: string | null, answered_at?: string | null, ended_at?: string | null, recording_id?: string | null, client_state?: string | null, call_duration?: number | null, start_time?: string | null, end_time?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "telnyx.api.calls.get",
+      "shortPath": "calls.get",
+      "description": "Read one call with its state, direction and timestamps",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "callControlId",
+            "optional": false,
+            "type": "string",
+            "description": "The call_control_id of the call."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ record_type?: string | null, call_control_id?: string | null, call_leg_id?: string | null, call_session_id?: string | null, connection_id?: string | null, from?: string | null, to?: string | null, is_alive?: boolean | null, call_state?: string | null, state?: string | null, direction?: string | null, started_at?: string | null, answered_at?: string | null, ended_at?: string | null, recording_id?: string | null, client_state?: string | null, call_duration?: number | null, start_time?: string | null, end_time?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "telnyx.api.calls.hangup",
+      "shortPath": "calls.hangup",
+      "description": "Hang up an active call, ending it for both legs",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "callControlId",
+            "optional": false,
+            "type": "string",
+            "description": "The call_control_id to hang up."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ result?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "telnyx.api.calls.speak",
+      "shortPath": "calls.speak",
+      "description": "Read text aloud on an active call using text to speech",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "callControlId",
+            "optional": false,
+            "type": "string",
+            "description": "The call_control_id to speak on."
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "string",
+            "description": "The text to read aloud."
+          },
+          {
+            "key": "voice",
+            "optional": false,
+            "type": "string",
+            "description": "The voice to use, e.g. \"female\", \"male\" or a provider voice such as \"Telnyx.KokoroTTS.af\"."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "The language of the payload, e.g. \"en-US\"."
+          },
+          {
+            "key": "loop",
+            "optional": true,
+            "type": "number | infinity",
+            "description": "How many times to play the text, or \"infinity\" to repeat it."
+          },
+          {
+            "key": "stop",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ result?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "telnyx.api.messages.delete",
+      "shortPath": "messages.delete",
+      "description": "Cancel a scheduled message before Telnyx sends it; a message that already went out cannot be cancelled",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the scheduled message to cancel."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "record_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "messaging_profile_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "organization_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ phone_number?: string | null, carrier?: string | null, line_type?: string | null } | null"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "{ phone_number?: string | null, status?: string | null, carrier?: string | null, line_type?: string | null }[] | null"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "num_chars",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "media",
+            "optional": true,
+            "type": "{ url?: string | null, content_type?: string | null, sha256?: string | null, size?: number | null }[] | null"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "encoding",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "parts",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "{ amount?: string | null, currency?: string | null } | null"
+          },
+          {
+            "key": "received_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sent_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{ code?: string | null, title?: string | null, detail?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "telnyx.api.messages.get",
+      "shortPath": "messages.get",
+      "description": "Read one message with its delivery status, parts, cost and the errors Telnyx recorded",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "string",
+            "description": "The message ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ record_type?: string | null, direction?: string | null, id: string, type?: string | null, messaging_profile_id?: string | null, organization_id?: string | null, from?: { phone_number?: string | null, carrier?: string | null, line_type?: string | null } | null, to?: { phone_number?: string | null, status?: string | null, carrier?: string | null, line_type?: string | null }[] | null, text?: string | null, num_chars?: number | null, subject?: string | null, media?: { url?: string | null, content_type?: string | null, sha256?: string | null, size?: number | null }[] | null, webhook_url?: string | null, encoding?: string | null, parts?: number | null, tags?: string[] | null, cost?: { amount?: string | null, currency?: string | null } | null, received_at?: string | null, sent_at?: string | null, completed_at?: string | null, errors?: { code?: string | null, title?: string | null, detail?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "telnyx.api.messages.send",
+      "shortPath": "messages.send",
+      "description": "Send an SMS or MMS from a Telnyx number, charging the account per part; text or at least one media URL is required",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string",
+            "description": "The destination number in E.164 format, e.g. \"+13125550001\"."
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "The sending number or alphanumeric sender ID. Required when sending from a phone number or sender ID; omit it when the number pool on `messaging_profile_id` picks the sender."
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string",
+            "description": "The message body. Required for SMS; required for MMS only with media."
+          },
+          {
+            "key": "messaging_profile_id",
+            "optional": true,
+            "type": "string",
+            "description": "The messaging profile to send through. Required when sending via a number pool or from an alphanumeric sender ID."
+          },
+          {
+            "key": "media_urls",
+            "optional": true,
+            "type": "string[]",
+            "description": "Media to attach, for MMS. Required for MMS."
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "use_profile_webhooks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "SMS | MMS",
+            "description": "The message type. Telnyx infers it when omitted."
+          },
+          {
+            "key": "send_at",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO 8601 timestamp to schedule the message."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ record_type?: string | null, direction?: string | null, id: string, type?: string | null, messaging_profile_id?: string | null, organization_id?: string | null, from?: { phone_number?: string | null, carrier?: string | null, line_type?: string | null } | null, to?: { phone_number?: string | null, status?: string | null, carrier?: string | null, line_type?: string | null }[] | null, text?: string | null, num_chars?: number | null, subject?: string | null, media?: { url?: string | null, content_type?: string | null, sha256?: string | null, size?: number | null }[] | null, webhook_url?: string | null, encoding?: string | null, parts?: number | null, tags?: string[] | null, cost?: { amount?: string | null, currency?: string | null } | null, received_at?: string | null, sent_at?: string | null, completed_at?: string | null, errors?: { code?: string | null, title?: string | null, detail?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "telnyx.api.messagingProfiles.create",
+      "shortPath": "messagingProfiles.create",
+      "description": "Create a messaging profile, which groups numbers and sets where inbound messages are delivered",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The profile name."
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string",
+            "description": "Where inbound messages for the profile are delivered."
+          },
+          {
+            "key": "webhook_failover_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "whitelisted_destinations",
+            "optional": false,
+            "type": "string[]",
+            "description": "Two-letter country codes the profile may send to, e.g. [\"US\"]. Telnyx requires it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, record_type?: string | null, name?: string | null, enabled?: boolean | null, webhook_url?: string | null, webhook_failover_url?: string | null, webhook_api_version?: string | null, whitelisted_destinations?: string[] | null, number_pool_settings?: { number_pool_id?: string | null, skip_unhealthy_numbers?: boolean | null } | null, url_shortener_settings?: { domain?: string | null, prefix?: string | null, strategy?: string | null } | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "telnyx.api.messagingProfiles.delete",
+      "shortPath": "messagingProfiles.delete",
+      "description": "Delete a messaging profile, which detaches its numbers and stops inbound delivery",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string",
+            "description": "The messaging profile to delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, record_type?: string | null, name?: string | null, enabled?: boolean | null, webhook_url?: string | null, webhook_failover_url?: string | null, webhook_api_version?: string | null, whitelisted_destinations?: string[] | null, number_pool_settings?: { number_pool_id?: string | null, skip_unhealthy_numbers?: boolean | null } | null, url_shortener_settings?: { domain?: string | null, prefix?: string | null, strategy?: string | null } | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "telnyx.api.messagingProfiles.get",
+      "shortPath": "messagingProfiles.get",
+      "description": "Read one messaging profile by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string",
+            "description": "The messaging profile ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, record_type?: string | null, name?: string | null, enabled?: boolean | null, webhook_url?: string | null, webhook_failover_url?: string | null, webhook_api_version?: string | null, whitelisted_destinations?: string[] | null, number_pool_settings?: { number_pool_id?: string | null, skip_unhealthy_numbers?: boolean | null } | null, url_shortener_settings?: { domain?: string | null, prefix?: string | null, strategy?: string | null } | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "telnyx.api.messagingProfiles.list",
+      "shortPath": "messagingProfiles.list",
+      "description": "List the messaging profiles with their webhook destination and enabled state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number",
+            "description": "Page of results, starting at 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, from 1 to 250."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, record_type?: string | null, name?: string | null, enabled?: boolean | null, webhook_url?: string | null, webhook_failover_url?: string | null, webhook_api_version?: string | null, whitelisted_destinations?: string[] | null, number_pool_settings?: { number_pool_id?: string | null, skip_unhealthy_numbers?: boolean | null } | null, url_shortener_settings?: { domain?: string | null, prefix?: string | null, strategy?: string | null } | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_pages?: number | null, total_results?: number | null, page_number?: number | null, page_size?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "telnyx.api.messagingProfiles.update",
+      "shortPath": "messagingProfiles.update",
+      "description": "Change a profile's name, webhook destination or whitelisted destinations",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string",
+            "description": "The messaging profile to change."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "webhook_failover_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "whitelisted_destinations",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, record_type?: string | null, name?: string | null, enabled?: boolean | null, webhook_url?: string | null, webhook_failover_url?: string | null, webhook_api_version?: string | null, whitelisted_destinations?: string[] | null, number_pool_settings?: { number_pool_id?: string | null, skip_unhealthy_numbers?: boolean | null } | null, url_shortener_settings?: { domain?: string | null, prefix?: string | null, strategy?: string | null } | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "telnyx.api.phoneNumbers.delete",
+      "shortPath": "phoneNumbers.delete",
+      "description": "Release a phone number from the account; it cannot be recovered once released",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "phoneNumberId",
+            "optional": false,
+            "type": "string",
+            "description": "The phone number record to delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, record_type?: string | null, phone_number?: string | null, country_iso_alpha2?: string | null, status?: string | null, connection_id?: string | null, connection_name?: string | null, customer_reference?: string | null, messaging_profile_id?: string | null, messaging_profile_name?: string | null, billing_group_id?: string | null, phone_number_type?: string | null, emergency_enabled?: boolean | null, emergency_address_id?: string | null, external_pin?: string | null, purchased_at?: string | null, created_at?: string | null, updated_at?: string | null, tags?: string[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "telnyx.api.phoneNumbers.get",
+      "shortPath": "phoneNumbers.get",
+      "description": "Read one phone number record by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "phoneNumberId",
+            "optional": false,
+            "type": "string",
+            "description": "The phone number record ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, record_type?: string | null, phone_number?: string | null, country_iso_alpha2?: string | null, status?: string | null, connection_id?: string | null, connection_name?: string | null, customer_reference?: string | null, messaging_profile_id?: string | null, messaging_profile_name?: string | null, billing_group_id?: string | null, phone_number_type?: string | null, emergency_enabled?: boolean | null, emergency_address_id?: string | null, external_pin?: string | null, purchased_at?: string | null, created_at?: string | null, updated_at?: string | null, tags?: string[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "telnyx.api.phoneNumbers.list",
+      "shortPath": "phoneNumbers.list",
+      "description": "List the numbers on the account with their connection and messaging profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number",
+            "description": "Page of results, starting at 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, from 1 to 250."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "The column to sort by, for example \"purchased_at\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, record_type?: string | null, phone_number?: string | null, country_iso_alpha2?: string | null, status?: string | null, connection_id?: string | null, connection_name?: string | null, customer_reference?: string | null, messaging_profile_id?: string | null, messaging_profile_name?: string | null, billing_group_id?: string | null, phone_number_type?: string | null, emergency_enabled?: boolean | null, emergency_address_id?: string | null, external_pin?: string | null, purchased_at?: string | null, created_at?: string | null, updated_at?: string | null, tags?: string[] | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_pages?: number | null, total_results?: number | null, page_number?: number | null, page_size?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "telnyx.api.phoneNumbers.update",
+      "shortPath": "phoneNumbers.update",
+      "description": "Attach a number to a call control application or other connection, or change its tags, billing group or customer reference",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "phoneNumberId",
+            "optional": false,
+            "type": "string",
+            "description": "The phone number record to change."
+          },
+          {
+            "key": "connection_id",
+            "optional": true,
+            "type": "string",
+            "description": "The call control application or other connection to attach the number to."
+          },
+          {
+            "key": "billing_group_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer_reference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_pin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hd_voice_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, record_type?: string | null, phone_number?: string | null, country_iso_alpha2?: string | null, status?: string | null, connection_id?: string | null, connection_name?: string | null, customer_reference?: string | null, messaging_profile_id?: string | null, messaging_profile_name?: string | null, billing_group_id?: string | null, phone_number_type?: string | null, emergency_enabled?: boolean | null, emergency_address_id?: string | null, external_pin?: string | null, purchased_at?: string | null, created_at?: string | null, updated_at?: string | null, tags?: string[] | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

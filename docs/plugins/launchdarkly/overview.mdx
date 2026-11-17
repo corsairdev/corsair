@@ -1,0 +1,129 @@
+---
+title: "LaunchDarkly plugin"
+sidebarTitle: "Overview"
+description: "Manage LaunchDarkly feature flags, environments, projects, user segments, audit logs, account members, teams, custom roles, and contexts via the LaunchDarkly REST API."
+---
+
+Use **LaunchDarkly** through Corsair: one client, typed API calls.
+
+This plugin exposes 53 selected stable API v2 operations, not the complete LaunchDarkly API. It sends personal or service access tokens in the Authorization header and pins `LD-API-Version` to `20240415`. It currently uses the commercial default host only; EU and Federal hosts are not configurable. Pagination is caller-controlled through the documented page parameters or response links. LaunchDarkly publishes variable rate limits; the client honors `Retry-After` on 429 responses. No webhook receiver or webhook delivery behavior is implemented.
+
+**What you get:**
+
+- 53 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/launchdarkly better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/launchdarkly better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/launchdarkly better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/launchdarkly better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { launchdarkly } from '@corsair-dev/launchdarkly';
+
+export const corsair = createCorsair({
+	plugins: [
+		launchdarkly(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the LaunchDarkly API key before the first call: `pnpm corsair setup --plugin=launchdarkly --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+launchdarkly()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'launchdarkly',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List projects in the account**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.launchdarkly.api.projects.list({ limit: 10 });
+```
+
+
+**Create a new boolean feature flag**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.launchdarkly.api.featureFlags.create({ projectKey: 'default', key: 'new-search-algorithm', name: 'New Search Algorithm' });
+```
+
+
+See the full list on the [API](/plugins/launchdarkly/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/launchdarkly/api">
+    Every `launchdarkly.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

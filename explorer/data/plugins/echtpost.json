@@ -1,0 +1,1762 @@
+{
+  "id": "echtpost",
+  "displayName": "Echtpost",
+  "description": "Send real printed postcards with EchtPost. Manage contacts and groups, pick motives and templates, create, list and cancel cards, and check the credit balance.",
+  "npmPackageName": "@corsair-dev/echtpost",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 22,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "echtpost.api.account.credits",
+      "shortPath": "account.credits",
+      "description": "Get the credit balance, cards left and price per card.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credits_eur",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cards_regular",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "cards_foreign",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "price_per_card_eur",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "price_per_foreign_card_eur",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "echtpost.api.account.get",
+      "shortPath": "account.get",
+      "description": "Get the account, user, API key metadata and balance.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, country_code?: string | null, default_greeting_style?: string | null } | null"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id?: number | null, email?: string | null } | null"
+          },
+          {
+            "key": "api_key",
+            "optional": true,
+            "type": "{ id?: number | null, last_used_on?: string | null, created_at?: string | null } | null"
+          },
+          {
+            "key": "balance",
+            "optional": true,
+            "type": "{ credits_eur?: string | null, cards_regular?: number | null, cards_foreign?: number | null, currency?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "echtpost.api.cards.cancel",
+      "shortPath": "cards.cancel",
+      "description": "Cancel a card that has not been printed yet; it cannot be restored.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Card id (UUID)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cancelable",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "echtpost.api.cards.create",
+      "shortPath": "cards.create",
+      "description": "Print and post a real postcard to each recipient; the account is billed per card.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "motive_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "Card text; {anrede} becomes each recipient salutation"
+          },
+          {
+            "key": "content_ps",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_vertical",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "qr_code_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deduplicate_recipients",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "font",
+            "optional": true,
+            "type": "{ family?: string, size?: number, color?: string, line_height?: number }",
+            "description": "Optional; EchtPost picks architects_daughter at a middle size"
+          },
+          {
+            "key": "notifications",
+            "optional": true,
+            "type": "{ type: after_sent | before_send, email: string, send_on?: string }[]"
+          },
+          {
+            "key": "deliver_at",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD, today, asap, tomorrow or N-days-from-now; at most 90 days out"
+          },
+          {
+            "key": "move_to_next_print_date",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "recipient_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "group_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "{ first_name?: string, last_name: string, title?: string, greeting_style?: informal | formal | official | dear_first_name | dear_last_name | good_day_first_name | good_day_last_name | custom, custom_salutation?: string, gender?: string, company_name?: string, department?: string, street: string, zip: string, city: string, state_code?: string, country_code: string, birthdate?: string, external_id?: string }[]",
+            "description": "New recipients by postal address"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "motive_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "pending, scheduled, sent or canceled"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "content_ps",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "content_vertical",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "font",
+            "optional": true,
+            "type": "{ family?: string | null, size?: number | null, color?: string | null, line_height?: number | null } | null"
+          },
+          {
+            "key": "contacts_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "deliver_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cancelable",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "echtpost.api.cards.createFromTemplate",
+      "shortPath": "cards.createFromTemplate",
+      "description": "Print and post a real postcard from a saved template; the account is billed per card.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "content_vertical",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deliver_at",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD, today, asap, tomorrow or N-days-from-now; at most 90 days out"
+          },
+          {
+            "key": "move_to_next_print_date",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "recipient_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "group_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "{ first_name?: string, last_name: string, title?: string, greeting_style?: informal | formal | official | dear_first_name | dear_last_name | good_day_first_name | good_day_last_name | custom, custom_salutation?: string, gender?: string, company_name?: string, department?: string, street: string, zip: string, city: string, state_code?: string, country_code: string, birthdate?: string, external_id?: string }[]",
+            "description": "New recipients by postal address"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "motive_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "pending, scheduled, sent or canceled"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "content_ps",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "content_vertical",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "font",
+            "optional": true,
+            "type": "{ family?: string | null, size?: number | null, color?: string | null, line_height?: number | null } | null"
+          },
+          {
+            "key": "contacts_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "deliver_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cancelable",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "echtpost.api.cards.get",
+      "shortPath": "cards.get",
+      "description": "Get one card and its status.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Card id (UUID)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "motive_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "pending, scheduled, sent or canceled"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "content_ps",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "content_vertical",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "font",
+            "optional": true,
+            "type": "{ family?: string | null, size?: number | null, color?: string | null, line_height?: number | null } | null"
+          },
+          {
+            "key": "contacts_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "deliver_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cancelable",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "echtpost.api.cards.list",
+      "shortPath": "cards.list",
+      "description": "List cards, filtered by status, delivery date or motive.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string",
+            "description": "pending, scheduled, sent or canceled"
+          },
+          {
+            "key": "deliver_at",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD"
+          },
+          {
+            "key": "motive_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "created_at | deliver_at"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cards",
+            "optional": false,
+            "type": "{ id: string, motive_id?: number | null, template_id?: number | null, status?: string | null, type?: string | null, content?: string | null, content_ps?: string | null, content_vertical?: string | null, font?: { family?: string | null, size?: number | null, color?: string | null, line_height?: number | null } | null, contacts_count?: number | null, deliver_at?: string | null, cancelable?: boolean | null, web_url?: string | null, created_at?: string | null, updated_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "echtpost.api.cards.previewFit",
+      "shortPath": "cards.previewFit",
+      "description": "Check whether card text fits at a font and size, without creating a card.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sample_greeting",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "font",
+            "optional": true,
+            "type": "{ family?: string, size?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fits",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "lines_used",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "max_lines",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "overflow_line",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "suggested_font_size",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "echtpost.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a contact with a postal address.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "greeting_style",
+            "optional": true,
+            "type": "informal | formal | official | dear_first_name | dear_last_name | good_day_first_name | good_day_last_name | custom",
+            "description": "How {anrede} is written for this recipient"
+          },
+          {
+            "key": "custom_salutation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "department",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "street",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country_code",
+            "optional": false,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2, e.g. DE"
+          },
+          {
+            "key": "birthdate",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "group_names",
+            "optional": true,
+            "type": "string[]",
+            "description": "Group names; missing groups are created"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "street",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "greeting_style",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "greeting",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "group_ids",
+            "optional": true,
+            "type": "number[] | null"
+          },
+          {
+            "key": "card_ids",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "echtpost.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Delete a contact.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "echtpost.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Get one contact by id.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "street",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "greeting_style",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "greeting",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "group_ids",
+            "optional": true,
+            "type": "number[] | null"
+          },
+          {
+            "key": "card_ids",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "echtpost.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contacts (postcard recipients), with filters and paging.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Substring of first name, last name, company or city"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "street",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "last_name | created_at | updated_at"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string",
+            "description": "groups and/or cards, comma separated, to add group_ids/card_ids"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ id: number, first_name?: string | null, last_name?: string | null, company_name?: string | null, street?: string | null, zip?: string | null, city?: string | null, country_code?: string | null, greeting_style?: string | null, greeting?: string | null, external_id?: string | null, group_ids?: number[] | null, card_ids?: string[] | null, created_at?: string | null, updated_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "echtpost.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update a contact; fields left out stay as they are.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "greeting_style",
+            "optional": true,
+            "type": "informal | formal | official | dear_first_name | dear_last_name | good_day_first_name | good_day_last_name | custom",
+            "description": "How {anrede} is written for this recipient"
+          },
+          {
+            "key": "custom_salutation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "department",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "street",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "birthdate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "street",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "greeting_style",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "greeting",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "group_ids",
+            "optional": true,
+            "type": "number[] | null"
+          },
+          {
+            "key": "card_ids",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "echtpost.api.groups.create",
+      "shortPath": "groups.create",
+      "description": "Create a contact group.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recipient_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "echtpost.api.groups.delete",
+      "shortPath": "groups.delete",
+      "description": "Delete a group.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "echtpost.api.groups.get",
+      "shortPath": "groups.get",
+      "description": "Get one group by id.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recipient_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "echtpost.api.groups.list",
+      "shortPath": "groups.list",
+      "description": "List contact groups.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "name | created_at | updated_at"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groups",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, external_id?: string | null, recipient_count?: number | null, created_at?: string | null, updated_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "echtpost.api.groups.update",
+      "shortPath": "groups.update",
+      "description": "Rename a group or change its external id.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recipient_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "echtpost.api.motives.get",
+      "shortPath": "motives.get",
+      "description": "Get one motive and what text fields it allows.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "desc",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "orientation",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "content_available",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "content_ps_available",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "vertical_text_available",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "qr_code_available",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "has_back_side",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "preview_image_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "temporary",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "echtpost.api.motives.list",
+      "shortPath": "motives.list",
+      "description": "List the postcard motives (front designs) the account can use.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "temporary",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only uploaded temporary motives"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "name | created_at"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "motives",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, desc?: string | null, orientation?: string | null, content_available?: boolean | null, content_ps_available?: boolean | null, vertical_text_available?: boolean | null, qr_code_available?: boolean | null, has_back_side?: boolean | null, preview_image_url?: string | null, tags?: string[] | null, temporary?: boolean | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "echtpost.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Get one saved template by id.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "motive_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "content_ps",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "content_vertical",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "font",
+            "optional": true,
+            "type": "{ family?: string | null, size?: number | null, color?: string | null, line_height?: number | null } | null"
+          },
+          {
+            "key": "qr_code_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "preview_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "echtpost.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List saved Echtpost postcard templates.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templates",
+            "optional": false,
+            "type": "{ id: string, motive_id?: number, content?: string, content_ps?: string, content_vertical?: string, font?: { family?: string, size?: number, color?: string, line_height?: number }, qr_code_url?: string, preview_url?: string, source?: string, created_at?: string, updated_at?: string }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "echtpost.db.templates.search",
+      "entityName": "templates",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "motive_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "content",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "content_ps",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "content_vertical",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "qr_code_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "preview_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "source",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+displayName: Splitwise
+description: 'Read and write a Splitwise account: groups, friends, expenses, comments and notifications.'
+domain: splitwise.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a personal key on your app's details page at https://secure.splitwise.com/apps, or use an OAuth access token. Send it as a Bearer token. Registering an app needs an active Splitwise Pro subscription (as of 11-2026).
+
+  Things to know before you write:
+
+  - **Money is a string.** Splitwise sends every amount as a decimal string such as `"25.0"`, and this plugin keeps that type in its outputs. Inputs take a number and send it as a two-decimal string.
+  - **A 200 can mean the write failed.** `groups.delete`, `groups.undelete`, `groups.addUser`, `groups.removeUser` and the expense writes answer 200 with `success: false` or a populated `errors` map. The plugin throws `SplitwiseOperationError` in that case, so a resolved promise means the write applied.
+  - **Updates replace shares.** Passing `users` to `expenses.update` replaces every share on the expense. The schema requires `cost` alongside it.
+  - **Splitting.** `expenses.create` takes either `split_equally: true` with a `group_id`, or a `users` list whose paid and owed amounts add up to `cost` in whole cents. Amounts take at most two decimal places. Both are checked before the request.
+  - **Writes that reach people are destructive.** Adding friends or group members invites them by email, and creating or editing an expense or commenting notifies the people on it. `friends.add`, `friends.addMany`, `groups.create`, `groups.addUser`, `expenses.create`, `expenses.update` and `comments.create` are `destructive`.
+  - **Errors.** HTTP failures are core's `ApiError`. `describeSplitwiseError` reads the message out of either error body, and `isNotLoggedIn` spots the 401 for a missing or revoked key.
+  - **Categories.** An expense must use a subcategory from `categories.list`; a parent category is rejected by the API.
+  - **Rate limits.** Splitwise answers 429 when you exceed them and does not publish the exact limits. Core retries a 429 up to three times, honouring `Retry-After`.
+  - **Reads only are replayed.** A 5xx is retried for a read. `expenses.create` is not idempotent, so a failed write is returned rather than sent again.
+examples:
+  read:
+    path: groups.list
+    title: List your groups
+  write:
+    path: expenses.create
+    title: Split a brunch bill between two people
+    args:
+      description: Brunch
+      cost: 25
+      users:
+        - user_id: 270896089
+          paid_share: 25
+          owed_share: 12.5
+        - user_id: 491923
+          paid_share: 0
+          owed_share: 12.5
+apiExamples:
+  users.getCurrentUser: {}
+  users.get:
+    call: "{ user_id: 491923 }"
+  users.update:
+    call: "{ user_id: 491923, default_currency: 'EUR' }"
+  groups.list: {}
+  groups.get:
+    call: "{ group_id: 321 }"
+  groups.create:
+    call: "{ name: 'Housemates 2026', group_type: 'home', users: [{ first_name: 'Grace', last_name: 'Hopper', email: 'grace@example.com' }] }"
+  groups.delete:
+    call: "{ group_id: 321 }"
+  groups.undelete:
+    call: "{ group_id: 321 }"
+  groups.addUser:
+    call: "{ group_id: 321, user_id: 491923 }"
+  groups.removeUser:
+    call: "{ group_id: 321, user_id: 491923 }"
+  friends.list: {}
+  friends.get:
+    call: "{ friend_id: 491923 }"
+  friends.add:
+    call: "{ user_email: 'grace@example.com', user_first_name: 'Grace' }"
+  friends.addMany:
+    call: "{ users: [{ email: 'grace@example.com', first_name: 'Grace' }, { email: 'alan@example.com' }] }"
+  friends.delete:
+    call: "{ friend_id: 491923 }"
+  expenses.list:
+    call: "{ group_id: 321, limit: 50 }"
+  expenses.get:
+    call: "{ expense_id: 51023 }"
+  expenses.create:
+    call: "{ description: 'Internet', cost: 60, group_id: 321, split_equally: true }"
+  expenses.update:
+    call: "{ expense_id: 51023, description: 'Brunch (updated)' }"
+  expenses.delete:
+    call: "{ expense_id: 51023 }"
+  expenses.undelete:
+    call: "{ expense_id: 51023 }"
+  comments.list:
+    call: "{ expense_id: 51023 }"
+  comments.create:
+    call: "{ expense_id: 51023, content: 'Does this include the delivery fee?' }"
+  comments.delete:
+    call: "{ comment_id: 79800950 }"
+  notifications.list:
+    call: "{ limit: 20 }"
+  currencies.list: {}
+  categories.list: {}
+apiNotes:
+  users.get: 'Splitwise only answers for people you share a group or an expense with; anyone else is a 403.'
+  users.update: 'The ID travels in the path, so it cannot also be changed through the body.'
+  groups.create: 'Members are sent as `users__<index>__<property>` keys. A member needs either `user_id` or `email`; add `first_name` and `last_name` for someone without an account.'
+  groups.delete: 'Deletes the group and every expense in it. The group can be restored with `groups.undelete`.'
+  groups.undelete: 'This route reports `errors` as an array of strings rather than the map every other write uses.'
+  groups.removeUser: 'Splitwise refuses while the user has a non-zero balance.'
+  expenses.create: 'Pass either `split_equally: true` with a `group_id`, or a `users` list whose paid and owed amounts add up to `cost`.'
+  expenses.update: 'Passing `users` replaces every share, so `cost` is required with it. Omitted fields stay as they were.'
+  expenses.delete: 'Soft delete: the expense can be restored with `expenses.undelete`.'
+  comments.delete: 'A deleted comment cannot be restored.'
+  friends.delete: 'There is no undelete call for a friendship.'
+  categories.list: 'An expense must reference a subcategory. A parent category ID is rejected.'
+  notifications.list: 'Omit `limit` to get the provider maximum; Splitwise imposes its own cap on very old `updated_after` values.'

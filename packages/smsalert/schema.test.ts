@@ -1,0 +1,20 @@
+import { SmsalertSchema } from './schema';
+
+describe('Smsalert schema', () => {
+	it('declares a semver version', () => {
+		expect(SmsalertSchema.version).toBeDefined();
+		expect(SmsalertSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
+	});
+
+	it('declares an entities map', () => {
+		expect(typeof SmsalertSchema.entities).toBe('object');
+		expect(SmsalertSchema.entities).not.toBeNull();
+		expect(Array.isArray(Object.keys(SmsalertSchema.entities))).toBe(true);
+		for (const entity of Object.values(SmsalertSchema.entities)) {
+			expect(entity).toBeDefined();
+		}
+	});
+});
+
+// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
+// needs a corresponding test.

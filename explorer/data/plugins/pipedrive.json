@@ -1,0 +1,2899 @@
+{
+  "id": "pipedrive",
+  "displayName": "Pipedrive",
+  "description": "Manage selected Pipedrive v2 deals, contacts, activities, tasks, and product catalog operations with validated requests, responses, and cursor pagination.",
+  "npmPackageName": "@corsair-dev/pipedrive",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 44,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "pipedrive.api.activities.create",
+      "shortPath": "activities.create",
+      "description": "Create a calendar activity; attendees get an email invitation when calendar sync is on",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "deal_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lead_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "org_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "busy",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "done",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ value?: string, country?: string, admin_area_level_1?: string, admin_area_level_2?: string, locality?: string, sublocality?: string, route?: string, street_number?: string, subpremise?: string, postal_code?: string }"
+          },
+          {
+            "key": "participants",
+            "optional": true,
+            "type": "{ person_id?: number, primary?: boolean }[]"
+          },
+          {
+            "key": "attendees",
+            "optional": true,
+            "type": "{ email?: string, name?: string, status?: string, is_organizer?: boolean, person_id?: number, user_id?: number }[]"
+          },
+          {
+            "key": "public_description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "outcome",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, subject?: string | null, type?: string | null, owner_id?: number | null, creator_user_id?: number | null, is_deleted?: boolean | null, add_time?: string | null, update_time?: string | null, deal_id?: number | null, lead_id?: string | null, person_id?: number | null, org_id?: number | null, project_id?: number | null, due_date?: string | null, due_time?: string | null, duration?: string | null, busy?: boolean | null, done?: boolean | null, marked_as_done_time?: string | null, location?: { value?: string | null, country?: string | null, admin_area_level_1?: string | null, admin_area_level_2?: string | null, locality?: string | null, sublocality?: string | null, route?: string | null, street_number?: string | null, subpremise?: string | null, postal_code?: string | null } | null, participants?: { person_id?: number | null, primary?: boolean | null }[] | null, attendees?: { email?: string | null, name?: string | null, status?: string | null, is_organizer?: boolean | null, person_id?: number | null, user_id?: number | null }[] | null, conference_meeting_client?: string | null, conference_meeting_url?: string | null, conference_meeting_id?: string | null, public_description?: string | null, priority?: number | null, outcome?: number | null, note?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.activities.delete",
+      "shortPath": "activities.delete",
+      "description": "Mark an activity deleted",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.activities.get",
+      "shortPath": "activities.get",
+      "description": "Get an activity by its numeric ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "include_fields",
+            "optional": true,
+            "type": "attendees[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, subject?: string | null, type?: string | null, owner_id?: number | null, creator_user_id?: number | null, is_deleted?: boolean | null, add_time?: string | null, update_time?: string | null, deal_id?: number | null, lead_id?: string | null, person_id?: number | null, org_id?: number | null, project_id?: number | null, due_date?: string | null, due_time?: string | null, duration?: string | null, busy?: boolean | null, done?: boolean | null, marked_as_done_time?: string | null, location?: { value?: string | null, country?: string | null, admin_area_level_1?: string | null, admin_area_level_2?: string | null, locality?: string | null, sublocality?: string | null, route?: string | null, street_number?: string | null, subpremise?: string | null, postal_code?: string | null } | null, participants?: { person_id?: number | null, primary?: boolean | null }[] | null, attendees?: { email?: string | null, name?: string | null, status?: string | null, is_organizer?: boolean | null, person_id?: number | null, user_id?: number | null }[] | null, conference_meeting_client?: string | null, conference_meeting_url?: string | null, conference_meeting_id?: string | null, public_description?: string | null, priority?: number | null, outcome?: number | null, note?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.activities.list",
+      "shortPath": "activities.list",
+      "description": "List activities with cursor pagination and filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "deal_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lead_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "person_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "org_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "done",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "updated_since",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_until",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "id | update_time | add_time | due_date"
+          },
+          {
+            "key": "sort_direction",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "include_fields",
+            "optional": true,
+            "type": "attendees[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, subject?: string | null, type?: string | null, owner_id?: number | null, creator_user_id?: number | null, is_deleted?: boolean | null, add_time?: string | null, update_time?: string | null, deal_id?: number | null, lead_id?: string | null, person_id?: number | null, org_id?: number | null, project_id?: number | null, due_date?: string | null, due_time?: string | null, duration?: string | null, busy?: boolean | null, done?: boolean | null, marked_as_done_time?: string | null, location?: { value?: string | null, country?: string | null, admin_area_level_1?: string | null, admin_area_level_2?: string | null, locality?: string | null, sublocality?: string | null, route?: string | null, street_number?: string | null, subpremise?: string | null, postal_code?: string | null } | null, participants?: { person_id?: number | null, primary?: boolean | null }[] | null, attendees?: { email?: string | null, name?: string | null, status?: string | null, is_organizer?: boolean | null, person_id?: number | null, user_id?: number | null }[] | null, conference_meeting_client?: string | null, conference_meeting_url?: string | null, conference_meeting_id?: string | null, public_description?: string | null, priority?: number | null, outcome?: number | null, note?: string | null }[] | null"
+          },
+          {
+            "key": "additional_data",
+            "optional": true,
+            "type": "{ next_cursor?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.activities.update",
+      "shortPath": "activities.update",
+      "description": "Update a calendar activity; attendees get updated invitations when calendar sync is on",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "deal_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lead_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "org_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "busy",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "done",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ value?: string, country?: string, admin_area_level_1?: string, admin_area_level_2?: string, locality?: string, sublocality?: string, route?: string, street_number?: string, subpremise?: string, postal_code?: string }"
+          },
+          {
+            "key": "participants",
+            "optional": true,
+            "type": "{ person_id?: number, primary?: boolean }[]"
+          },
+          {
+            "key": "attendees",
+            "optional": true,
+            "type": "{ email?: string, name?: string, status?: string, is_organizer?: boolean, person_id?: number, user_id?: number }[]"
+          },
+          {
+            "key": "public_description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "outcome",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, subject?: string | null, type?: string | null, owner_id?: number | null, creator_user_id?: number | null, is_deleted?: boolean | null, add_time?: string | null, update_time?: string | null, deal_id?: number | null, lead_id?: string | null, person_id?: number | null, org_id?: number | null, project_id?: number | null, due_date?: string | null, due_time?: string | null, duration?: string | null, busy?: boolean | null, done?: boolean | null, marked_as_done_time?: string | null, location?: { value?: string | null, country?: string | null, admin_area_level_1?: string | null, admin_area_level_2?: string | null, locality?: string | null, sublocality?: string | null, route?: string | null, street_number?: string | null, subpremise?: string | null, postal_code?: string | null } | null, participants?: { person_id?: number | null, primary?: boolean | null }[] | null, attendees?: { email?: string | null, name?: string | null, status?: string | null, is_organizer?: boolean | null, person_id?: number | null, user_id?: number | null }[] | null, conference_meeting_client?: string | null, conference_meeting_url?: string | null, conference_meeting_id?: string | null, public_description?: string | null, priority?: number | null, outcome?: number | null, note?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.deals.create",
+      "shortPath": "deals.create",
+      "description": "Create a deal",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "person_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "org_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "pipeline_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stage_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "archive_time",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "probability",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lost_reason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visible_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "close_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "won_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lost_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expected_close_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "label_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "channel_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "origin_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, title?: string | null, owner_id?: number | null, person_id?: number | null, org_id?: number | null, pipeline_id?: number | null, stage_id?: number | null, value?: number | null, currency?: string | null, add_time?: string | null, update_time?: string | null, stage_change_time?: string | null, is_deleted?: boolean | null, is_archived?: boolean | null, status?: string | null, probability?: number | null, lost_reason?: string | null, visible_to?: number | null, close_time?: string | null, won_time?: string | null, lost_time?: string | null, expected_close_date?: string | null, label_ids?: number[] | null, origin?: string | null, origin_id?: string | null, channel?: number | null, channel_id?: string | null, source_lead_id?: string | null, arr?: number | null, mrr?: number | null, acv?: number | null, custom_fields?: Record<string, any> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.deals.delete",
+      "shortPath": "deals.delete",
+      "description": "Delete a deal",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.deals.get",
+      "shortPath": "deals.get",
+      "description": "Get a deal by its numeric ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "include_fields",
+            "optional": true,
+            "type": "(next_activity_id | last_activity_id | first_won_time | products_count | files_count | notes_count | followers_count | email_messages_count | activities_count | done_activities_count | undone_activities_count | participants_count | last_incoming_mail_time | last_outgoing_mail_time | smart_bcc_email | source_lead_id)[]"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "include_option_labels",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_labels",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, title?: string | null, owner_id?: number | null, person_id?: number | null, org_id?: number | null, pipeline_id?: number | null, stage_id?: number | null, value?: number | null, currency?: string | null, add_time?: string | null, update_time?: string | null, stage_change_time?: string | null, is_deleted?: boolean | null, is_archived?: boolean | null, status?: string | null, probability?: number | null, lost_reason?: string | null, visible_to?: number | null, close_time?: string | null, won_time?: string | null, lost_time?: string | null, expected_close_date?: string | null, label_ids?: number[] | null, origin?: string | null, origin_id?: string | null, channel?: number | null, channel_id?: string | null, source_lead_id?: string | null, arr?: number | null, mrr?: number | null, acv?: number | null, custom_fields?: Record<string, any> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.deals.list",
+      "shortPath": "deals.list",
+      "description": "List deals with cursor pagination and filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "person_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "org_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pipeline_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stage_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "(open | won | lost | deleted)[]"
+          },
+          {
+            "key": "updated_since",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_until",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "id | update_time | add_time"
+          },
+          {
+            "key": "sort_direction",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "include_fields",
+            "optional": true,
+            "type": "(next_activity_id | last_activity_id | first_won_time | products_count | files_count | notes_count | followers_count | email_messages_count | activities_count | done_activities_count | undone_activities_count | participants_count | last_incoming_mail_time | last_outgoing_mail_time | smart_bcc_email | source_lead_id)[]"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "include_option_labels",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_labels",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, title?: string | null, owner_id?: number | null, person_id?: number | null, org_id?: number | null, pipeline_id?: number | null, stage_id?: number | null, value?: number | null, currency?: string | null, add_time?: string | null, update_time?: string | null, stage_change_time?: string | null, is_deleted?: boolean | null, is_archived?: boolean | null, status?: string | null, probability?: number | null, lost_reason?: string | null, visible_to?: number | null, close_time?: string | null, won_time?: string | null, lost_time?: string | null, expected_close_date?: string | null, label_ids?: number[] | null, origin?: string | null, origin_id?: string | null, channel?: number | null, channel_id?: string | null, source_lead_id?: string | null, arr?: number | null, mrr?: number | null, acv?: number | null, custom_fields?: Record<string, any> | null }[] | null"
+          },
+          {
+            "key": "additional_data",
+            "optional": true,
+            "type": "{ next_cursor?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.deals.update",
+      "shortPath": "deals.update",
+      "description": "Update a deal",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "person_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "org_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "pipeline_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stage_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "archive_time",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "probability",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lost_reason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visible_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "close_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "won_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lost_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expected_close_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "label_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "channel_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "origin_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "is_deleted",
+            "optional": true,
+            "type": "false"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, title?: string | null, owner_id?: number | null, person_id?: number | null, org_id?: number | null, pipeline_id?: number | null, stage_id?: number | null, value?: number | null, currency?: string | null, add_time?: string | null, update_time?: string | null, stage_change_time?: string | null, is_deleted?: boolean | null, is_archived?: boolean | null, status?: string | null, probability?: number | null, lost_reason?: string | null, visible_to?: number | null, close_time?: string | null, won_time?: string | null, lost_time?: string | null, expected_close_date?: string | null, label_ids?: number[] | null, origin?: string | null, origin_id?: string | null, channel?: number | null, channel_id?: string | null, source_lead_id?: string | null, arr?: number | null, mrr?: number | null, acv?: number | null, custom_fields?: Record<string, any> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.organizations.create",
+      "shortPath": "organizations.create",
+      "description": "Create an organization",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "add_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "visible_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "label_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ value?: string, country?: string | null, admin_area_level_1?: string | null, admin_area_level_2?: string | null, locality?: string | null, sublocality?: string | null, route?: string | null, street_number?: string | null, subpremise?: string | null, postal_code?: string | null } | null"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "linkedin",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "industry",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "annual_revenue",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "employee_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, owner_id?: number | null, add_time?: string | null, update_time?: string | null, is_deleted?: boolean | null, visible_to?: number | null, address?: { value?: string | null, country?: string | null, admin_area_level_1?: string | null, admin_area_level_2?: string | null, locality?: string | null, sublocality?: string | null, route?: string | null, street_number?: string | null, subpremise?: string | null, postal_code?: string | null } | null, label_ids?: number[] | null, website?: string | null, linkedin?: string | null, industry?: number | null, annual_revenue?: number | null, employee_count?: number | null, custom_fields?: Record<string, any> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.organizations.delete",
+      "shortPath": "organizations.delete",
+      "description": "Delete an organization",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.organizations.get",
+      "shortPath": "organizations.get",
+      "description": "Get an organization by its numeric ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "include_fields",
+            "optional": true,
+            "type": "(next_activity_id | last_activity_id | open_deals_count | related_open_deals_count | closed_deals_count | related_closed_deals_count | email_messages_count | people_count | activities_count | done_activities_count | undone_activities_count | files_count | notes_count | followers_count | won_deals_count | related_won_deals_count | lost_deals_count | related_lost_deals_count | smart_bcc_email)[]"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "include_option_labels",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_labels",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, owner_id?: number | null, add_time?: string | null, update_time?: string | null, is_deleted?: boolean | null, visible_to?: number | null, address?: { value?: string | null, country?: string | null, admin_area_level_1?: string | null, admin_area_level_2?: string | null, locality?: string | null, sublocality?: string | null, route?: string | null, street_number?: string | null, subpremise?: string | null, postal_code?: string | null } | null, label_ids?: number[] | null, website?: string | null, linkedin?: string | null, industry?: number | null, annual_revenue?: number | null, employee_count?: number | null, custom_fields?: Record<string, any> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.organizations.list",
+      "shortPath": "organizations.list",
+      "description": "List organizations with cursor pagination and filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_since",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_until",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "id | update_time | add_time"
+          },
+          {
+            "key": "sort_direction",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "include_fields",
+            "optional": true,
+            "type": "(next_activity_id | last_activity_id | open_deals_count | related_open_deals_count | closed_deals_count | related_closed_deals_count | email_messages_count | people_count | activities_count | done_activities_count | undone_activities_count | files_count | notes_count | followers_count | won_deals_count | related_won_deals_count | lost_deals_count | related_lost_deals_count | smart_bcc_email)[]"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "include_option_labels",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_labels",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, owner_id?: number | null, add_time?: string | null, update_time?: string | null, is_deleted?: boolean | null, visible_to?: number | null, address?: { value?: string | null, country?: string | null, admin_area_level_1?: string | null, admin_area_level_2?: string | null, locality?: string | null, sublocality?: string | null, route?: string | null, street_number?: string | null, subpremise?: string | null, postal_code?: string | null } | null, label_ids?: number[] | null, website?: string | null, linkedin?: string | null, industry?: number | null, annual_revenue?: number | null, employee_count?: number | null, custom_fields?: Record<string, any> | null }[] | null"
+          },
+          {
+            "key": "additional_data",
+            "optional": true,
+            "type": "{ next_cursor?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.organizations.update",
+      "shortPath": "organizations.update",
+      "description": "Update an organization",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "visible_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "label_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ value?: string, country?: string | null, admin_area_level_1?: string | null, admin_area_level_2?: string | null, locality?: string | null, sublocality?: string | null, route?: string | null, street_number?: string | null, subpremise?: string | null, postal_code?: string | null } | null"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "linkedin",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "industry",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "annual_revenue",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "employee_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, owner_id?: number | null, add_time?: string | null, update_time?: string | null, is_deleted?: boolean | null, visible_to?: number | null, address?: { value?: string | null, country?: string | null, admin_area_level_1?: string | null, admin_area_level_2?: string | null, locality?: string | null, sublocality?: string | null, route?: string | null, street_number?: string | null, subpremise?: string | null, postal_code?: string | null } | null, label_ids?: number[] | null, website?: string | null, linkedin?: string | null, industry?: number | null, annual_revenue?: number | null, employee_count?: number | null, custom_fields?: Record<string, any> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.persons.create",
+      "shortPath": "persons.create",
+      "description": "Create a person",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "add_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "org_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "{ value?: string, primary?: boolean, label?: string }[]"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "{ value?: string, primary?: boolean, label?: string }[]"
+          },
+          {
+            "key": "visible_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "label_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "postal_address",
+            "optional": true,
+            "type": "{ value?: string, country?: string | null, admin_area_level_1?: string | null, admin_area_level_2?: string | null, locality?: string | null, sublocality?: string | null, route?: string | null, street_number?: string | null, subpremise?: string | null, postal_code?: string | null } | null"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "im",
+            "optional": true,
+            "type": "{ value?: string, primary?: boolean, label?: string }[]"
+          },
+          {
+            "key": "birthday",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "job_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "marketing_status",
+            "optional": true,
+            "type": "no_consent | unsubscribed | subscribed | archived"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, first_name?: string | null, last_name?: string | null, owner_id?: number | null, org_id?: number | null, add_time?: string | null, update_time?: string | null, emails?: { value?: string | null, primary?: boolean | null, label?: string | null }[] | null, phones?: { value?: string | null, primary?: boolean | null, label?: string | null }[] | null, is_deleted?: boolean | null, visible_to?: number | null, label_ids?: number[] | null, picture_id?: number | null, postal_address?: { value?: string | null, country?: string | null, admin_area_level_1?: string | null, admin_area_level_2?: string | null, locality?: string | null, sublocality?: string | null, route?: string | null, street_number?: string | null, subpremise?: string | null, postal_code?: string | null } | null, notes?: string | null, im?: { value?: string | null, primary?: boolean | null, label?: string | null }[] | null, birthday?: string | null, job_title?: string | null, custom_fields?: Record<string, any> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.persons.delete",
+      "shortPath": "persons.delete",
+      "description": "Delete a person",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.persons.get",
+      "shortPath": "persons.get",
+      "description": "Get a person by its numeric ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "include_fields",
+            "optional": true,
+            "type": "(next_activity_id | last_activity_id | open_deals_count | related_open_deals_count | closed_deals_count | related_closed_deals_count | participant_open_deals_count | participant_closed_deals_count | email_messages_count | activities_count | done_activities_count | undone_activities_count | files_count | notes_count | followers_count | won_deals_count | related_won_deals_count | lost_deals_count | related_lost_deals_count | last_incoming_mail_time | last_outgoing_mail_time | marketing_status | doi_status | smart_bcc_email)[]"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "include_option_labels",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_labels",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, first_name?: string | null, last_name?: string | null, owner_id?: number | null, org_id?: number | null, add_time?: string | null, update_time?: string | null, emails?: { value?: string | null, primary?: boolean | null, label?: string | null }[] | null, phones?: { value?: string | null, primary?: boolean | null, label?: string | null }[] | null, is_deleted?: boolean | null, visible_to?: number | null, label_ids?: number[] | null, picture_id?: number | null, postal_address?: { value?: string | null, country?: string | null, admin_area_level_1?: string | null, admin_area_level_2?: string | null, locality?: string | null, sublocality?: string | null, route?: string | null, street_number?: string | null, subpremise?: string | null, postal_code?: string | null } | null, notes?: string | null, im?: { value?: string | null, primary?: boolean | null, label?: string | null }[] | null, birthday?: string | null, job_title?: string | null, custom_fields?: Record<string, any> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.persons.list",
+      "shortPath": "persons.list",
+      "description": "List persons with cursor pagination and filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "org_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "deal_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_since",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_until",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "id | update_time | add_time"
+          },
+          {
+            "key": "sort_direction",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "include_fields",
+            "optional": true,
+            "type": "(next_activity_id | last_activity_id | open_deals_count | related_open_deals_count | closed_deals_count | related_closed_deals_count | participant_open_deals_count | participant_closed_deals_count | email_messages_count | activities_count | done_activities_count | undone_activities_count | files_count | notes_count | followers_count | won_deals_count | related_won_deals_count | lost_deals_count | related_lost_deals_count | last_incoming_mail_time | last_outgoing_mail_time | marketing_status | doi_status | smart_bcc_email)[]"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "include_option_labels",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_labels",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, first_name?: string | null, last_name?: string | null, owner_id?: number | null, org_id?: number | null, add_time?: string | null, update_time?: string | null, emails?: { value?: string | null, primary?: boolean | null, label?: string | null }[] | null, phones?: { value?: string | null, primary?: boolean | null, label?: string | null }[] | null, is_deleted?: boolean | null, visible_to?: number | null, label_ids?: number[] | null, picture_id?: number | null, postal_address?: { value?: string | null, country?: string | null, admin_area_level_1?: string | null, admin_area_level_2?: string | null, locality?: string | null, sublocality?: string | null, route?: string | null, street_number?: string | null, subpremise?: string | null, postal_code?: string | null } | null, notes?: string | null, im?: { value?: string | null, primary?: boolean | null, label?: string | null }[] | null, birthday?: string | null, job_title?: string | null, custom_fields?: Record<string, any> | null }[] | null"
+          },
+          {
+            "key": "additional_data",
+            "optional": true,
+            "type": "{ next_cursor?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.persons.update",
+      "shortPath": "persons.update",
+      "description": "Update a person",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "org_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "{ value?: string, primary?: boolean, label?: string }[]"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "{ value?: string, primary?: boolean, label?: string }[]"
+          },
+          {
+            "key": "visible_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "label_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "postal_address",
+            "optional": true,
+            "type": "{ value?: string, country?: string | null, admin_area_level_1?: string | null, admin_area_level_2?: string | null, locality?: string | null, sublocality?: string | null, route?: string | null, street_number?: string | null, subpremise?: string | null, postal_code?: string | null } | null"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "im",
+            "optional": true,
+            "type": "{ value?: string, primary?: boolean, label?: string }[]"
+          },
+          {
+            "key": "birthday",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "job_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "marketing_status",
+            "optional": true,
+            "type": "no_consent | unsubscribed | subscribed | archived"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, first_name?: string | null, last_name?: string | null, owner_id?: number | null, org_id?: number | null, add_time?: string | null, update_time?: string | null, emails?: { value?: string | null, primary?: boolean | null, label?: string | null }[] | null, phones?: { value?: string | null, primary?: boolean | null, label?: string | null }[] | null, is_deleted?: boolean | null, visible_to?: number | null, label_ids?: number[] | null, picture_id?: number | null, postal_address?: { value?: string | null, country?: string | null, admin_area_level_1?: string | null, admin_area_level_2?: string | null, locality?: string | null, sublocality?: string | null, route?: string | null, street_number?: string | null, subpremise?: string | null, postal_code?: string | null } | null, notes?: string | null, im?: { value?: string | null, primary?: boolean | null, label?: string | null }[] | null, birthday?: string | null, job_title?: string | null, custom_fields?: Record<string, any> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.products.create",
+      "shortPath": "products.create",
+      "description": "Create a product",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_linkable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "visible_to",
+            "optional": true,
+            "type": "1 | 3 | 5 | 7"
+          },
+          {
+            "key": "prices",
+            "optional": true,
+            "type": "{ price: number, currency: string, cost?: number, direct_cost?: number, notes?: string }[]"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "billing_frequency",
+            "optional": true,
+            "type": "one-time | annually | semi-annually | quarterly | monthly | weekly"
+          },
+          {
+            "key": "billing_frequency_cycles",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, unit?: string | null, tax?: number | null, is_deleted?: boolean | null, is_linkable?: boolean | null, visible_to?: 1 | 3 | 5 | 7 | null, owner_id?: number | null, add_time?: string | null, update_time?: string | null, description?: string | null, category?: string | null, custom_fields?: Record<string, any> | null, billing_frequency?: one-time | annually | semi-annually | quarterly | monthly | weekly | null, billing_frequency_cycles?: number | null | null, prices?: { price?: number | null, cost?: number | null, product_id?: number | null, product_variation_id?: number | null, currency?: string | null, direct_cost?: number | null, notes?: string | null }[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.products.delete",
+      "shortPath": "products.delete",
+      "description": "Delete a product",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.products.duplicate",
+      "shortPath": "products.duplicate",
+      "description": "Duplicate a product and its documented fields",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, unit?: string | null, tax?: number | null, is_deleted?: boolean | null, is_linkable?: boolean | null, visible_to?: 1 | 3 | 5 | 7 | null, owner_id?: number | null, add_time?: string | null, update_time?: string | null, description?: string | null, category?: string | null, custom_fields?: Record<string, any> | null, billing_frequency?: one-time | annually | semi-annually | quarterly | monthly | weekly | null, billing_frequency_cycles?: number | null | null, prices?: { price?: number | null, cost?: number | null, product_id?: number | null, product_variation_id?: number | null, currency?: string | null, direct_cost?: number | null, notes?: string | null }[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.products.followers.changelog",
+      "shortPath": "products.followers.changelog",
+      "description": "List product follower changes with cursor pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ action?: string | null, actor_user_id?: number | null, follower_user_id?: number | null, time?: string | null }[] | null"
+          },
+          {
+            "key": "additional_data",
+            "optional": true,
+            "type": "{ next_cursor?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.products.followers.create",
+      "shortPath": "products.followers.create",
+      "description": "Add a user as a product follower",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ user_id?: number | null, add_time?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.products.followers.delete",
+      "shortPath": "products.followers.delete",
+      "description": "Remove a product follower",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "follower_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ user_id?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.products.followers.list",
+      "shortPath": "products.followers.list",
+      "description": "List product followers with cursor pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ user_id?: number | null, add_time?: string | null }[] | null"
+          },
+          {
+            "key": "additional_data",
+            "optional": true,
+            "type": "{ next_cursor?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.products.get",
+      "shortPath": "products.get",
+      "description": "Get a product by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, unit?: string | null, tax?: number | null, is_deleted?: boolean | null, is_linkable?: boolean | null, visible_to?: 1 | 3 | 5 | 7 | null, owner_id?: number | null, add_time?: string | null, update_time?: string | null, description?: string | null, category?: string | null, custom_fields?: Record<string, any> | null, billing_frequency?: one-time | annually | semi-annually | quarterly | monthly | weekly | null, billing_frequency_cycles?: number | null | null, prices?: { price?: number | null, cost?: number | null, product_id?: number | null, product_variation_id?: number | null, currency?: string | null, direct_cost?: number | null, notes?: string | null }[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.products.images.delete",
+      "shortPath": "products.images.delete",
+      "description": "Delete a product image",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.products.images.get",
+      "shortPath": "products.images.get",
+      "description": "Get product image metadata and public URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, product_id?: number | null, company_id?: string | null, public_url?: string | null, add_time?: string | null, mime_type?: string | null, name?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.products.images.update",
+      "shortPath": "products.images.update",
+      "description": "Replace a product image with binary data",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "custom"
+          },
+          {
+            "key": "file_name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, product_id?: number | null, company_id?: string | null, public_url?: string | null, add_time?: string | null, mime_type?: string | null, name?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.products.images.upload",
+      "shortPath": "products.images.upload",
+      "description": "Upload a binary image for a product",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "custom"
+          },
+          {
+            "key": "file_name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, product_id?: number | null, company_id?: string | null, public_url?: string | null, add_time?: string | null, mime_type?: string | null, name?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.products.list",
+      "shortPath": "products.list",
+      "description": "List products with filters and cursor pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "filter_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "id | name | add_time | update_time"
+          },
+          {
+            "key": "sort_direction",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "updated_since",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, unit?: string | null, tax?: number | null, is_deleted?: boolean | null, is_linkable?: boolean | null, visible_to?: 1 | 3 | 5 | 7 | null, owner_id?: number | null, add_time?: string | null, update_time?: string | null, description?: string | null, category?: string | null, custom_fields?: Record<string, any> | null, billing_frequency?: one-time | annually | semi-annually | quarterly | monthly | weekly | null, billing_frequency_cycles?: number | null | null, prices?: { price?: number | null, cost?: number | null, product_id?: number | null, product_variation_id?: number | null, currency?: string | null, direct_cost?: number | null, notes?: string | null }[] | null }[] | null"
+          },
+          {
+            "key": "additional_data",
+            "optional": true,
+            "type": "{ next_cursor?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.products.search",
+      "shortPath": "products.search",
+      "description": "Search products by term",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "term",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "(code | custom_fields | name)[]"
+          },
+          {
+            "key": "exact_match",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_fields",
+            "optional": true,
+            "type": "product.price[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ items?: { result_score?: number | null, item?: { id?: number | null, type?: string | null, name?: string | null, code?: string | null, visible_to?: number | null, owner?: { id?: number | null } | null, custom_fields?: string[] | null } | null }[] | null } | null"
+          },
+          {
+            "key": "additional_data",
+            "optional": true,
+            "type": "{ next_cursor?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.products.update",
+      "shortPath": "products.update",
+      "description": "Update a product",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_linkable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "visible_to",
+            "optional": true,
+            "type": "1 | 3 | 5 | 7"
+          },
+          {
+            "key": "prices",
+            "optional": true,
+            "type": "{ price: number, currency: string, cost?: number, direct_cost?: number, notes?: string }[]"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "billing_frequency",
+            "optional": true,
+            "type": "one-time | annually | semi-annually | quarterly | monthly | weekly"
+          },
+          {
+            "key": "billing_frequency_cycles",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, unit?: string | null, tax?: number | null, is_deleted?: boolean | null, is_linkable?: boolean | null, visible_to?: 1 | 3 | 5 | 7 | null, owner_id?: number | null, add_time?: string | null, update_time?: string | null, description?: string | null, category?: string | null, custom_fields?: Record<string, any> | null, billing_frequency?: one-time | annually | semi-annually | quarterly | monthly | weekly | null, billing_frequency_cycles?: number | null | null, prices?: { price?: number | null, cost?: number | null, product_id?: number | null, product_variation_id?: number | null, currency?: string | null, direct_cost?: number | null, notes?: string | null }[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.products.variations.create",
+      "shortPath": "products.variations.create",
+      "description": "Create a product variation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "prices",
+            "optional": true,
+            "type": "{ price: number, currency: string, cost?: number, direct_cost?: number, notes?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, product_id?: number | null, prices?: { price?: number | null, cost?: number | null, product_id?: number | null, product_variation_id?: number | null, currency?: string | null, direct_cost?: number | null, notes?: string | null }[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.products.variations.delete",
+      "shortPath": "products.variations.delete",
+      "description": "Delete a product variation",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "product_variation_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.products.variations.list",
+      "shortPath": "products.variations.list",
+      "description": "List product variations with cursor pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, product_id?: number | null, prices?: { price?: number | null, cost?: number | null, product_id?: number | null, product_variation_id?: number | null, currency?: string | null, direct_cost?: number | null, notes?: string | null }[] | null }[] | null"
+          },
+          {
+            "key": "additional_data",
+            "optional": true,
+            "type": "{ next_cursor?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.products.variations.update",
+      "shortPath": "products.variations.update",
+      "description": "Update a product variation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "product_variation_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prices",
+            "optional": true,
+            "type": "{ price: number, currency: string, cost?: number, direct_cost?: number, notes?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, product_id?: number | null, prices?: { price?: number | null, cost?: number | null, product_id?: number | null, product_variation_id?: number | null, currency?: string | null, direct_cost?: number | null, notes?: string | null }[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.tasks.create",
+      "shortPath": "tasks.create",
+      "description": "Create a task in a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "parent_task_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "done",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "milestone",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "assignee_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "assignee_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, title?: string | null, creator_id?: number | null, description?: string | null, project_id?: number | null, is_done?: boolean | null, is_milestone?: boolean | null, due_date?: string | null, start_date?: string | null, parent_task_id?: number | null, assignee_ids?: number[] | null, priority?: number | null, add_time?: string | null, update_time?: string | null, marked_as_done_time?: string | null } | null"
+          },
+          {
+            "key": "additional_data",
+            "optional": true,
+            "type": "{} | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.tasks.delete",
+      "shortPath": "tasks.delete",
+      "description": "Delete a project task and its subtasks",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null } | null"
+          },
+          {
+            "key": "additional_data",
+            "optional": true,
+            "type": "{} | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.tasks.get",
+      "shortPath": "tasks.get",
+      "description": "Get a task by its numeric ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, title?: string | null, creator_id?: number | null, description?: string | null, project_id?: number | null, is_done?: boolean | null, is_milestone?: boolean | null, due_date?: string | null, start_date?: string | null, parent_task_id?: number | null, assignee_ids?: number[] | null, priority?: number | null, add_time?: string | null, update_time?: string | null, marked_as_done_time?: string | null } | null"
+          },
+          {
+            "key": "additional_data",
+            "optional": true,
+            "type": "{} | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "List project tasks with cursor pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_done",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_milestone",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "assignee_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "parent_task_id",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, title?: string | null, creator_id?: number | null, description?: string | null, project_id?: number | null, is_done?: boolean | null, is_milestone?: boolean | null, due_date?: string | null, start_date?: string | null, parent_task_id?: number | null, assignee_ids?: number[] | null, priority?: number | null, add_time?: string | null, update_time?: string | null, marked_as_done_time?: string | null }[] | null"
+          },
+          {
+            "key": "additional_data",
+            "optional": true,
+            "type": "{ next_cursor?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipedrive.api.tasks.update",
+      "shortPath": "tasks.update",
+      "description": "Update a project task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "parent_task_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "done",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "milestone",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "assignee_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "assignee_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, title?: string | null, creator_id?: number | null, description?: string | null, project_id?: number | null, is_done?: boolean | null, is_milestone?: boolean | null, due_date?: string | null, start_date?: string | null, parent_task_id?: number | null, assignee_ids?: number[] | null, priority?: number | null, add_time?: string | null, update_time?: string | null, marked_as_done_time?: string | null } | null"
+          },
+          {
+            "key": "additional_data",
+            "optional": true,
+            "type": "{} | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

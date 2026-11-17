@@ -1,0 +1,109 @@
+import { AuthMissingError } from 'corsair/core';
+import type { ApiRequestOptions } from 'corsair/http';
+import { ApiError } from 'corsair/http';
+
+const BASE_URL = 'https://restapi.fromdoppler.com';
+const REQUEST_TIMEOUT_MS = 30_000;
+
+export type DopplerRequestOptions = {
+	method: ApiRequestOptions['method'];
+	query?: Record<string, string | number | boolean | undefined>;
+	headers?: Record<string, string | undefined>;
+	// Bodies have different endpoint-validated JSON shapes or raw text; no single
+	// stricter type covers all provider payloads without duplicating those schemas.
+	body?: unknown;
+	mediaType?: string;
+	responseType?: 'json' | 'text' | 'bytes' | 'void';
+};
+
+// Apostrophes are allowed: o'brien@example.com is a valid address.
+const EMAIL = /[^\s/"?&=<>]+(?:@|%40)[^\s/"?&=<>]+/gi;
+/** Masks email addresses, raw or percent-encoded, in strings, arrays and objects. */
+// unknown: provider error bodies have no fixed shape; only strings are changed.
+function redactEmails<T>(value: T): T {
+	if (typeof value === 'string') return value.replace(EMAIL, '[email]') as T;
+	if (Array.isArray(value)) return value.map(redactEmails) as T;
+	if (value && typeof value === 'object')
+		return Object.fromEntries(
+			Object.entries(value).map(([k, v]) => [k, redactEmails(v)]),
+		) as T;
+	return value;
+}
+
+/** Performs exactly one request. In particular, writes are never replayed. */
+export async function makeDopplerMarketingAutomationRequest<T>(
+	path: string,
+	apiKey: string,
+	options: DopplerRequestOptions,
+): Promise<T> {
+	if (!apiKey?.trim())
+		throw new AuthMissingError('dopplermarketingautomation', 'api_key');
+	const url = new URL(path, BASE_URL);
+	for (const [name, value] of Object.entries(options.query ?? {})) {
+		if (value !== undefined) url.searchParams.append(name, String(value));
+	}
+	const headers = new Headers({ Authorization: `token ${apiKey}` });
+	for (const [name, value] of Object.entries(options.headers ?? {})) {
+		if (value !== undefined) headers.set(name, value);
+	}
+	let body: string | undefined;
+	if (options.body !== undefined) {
+		const mediaType = options.mediaType ?? 'application/json';
+		headers.set('Content-Type', mediaType);
+		body =
+			mediaType === 'application/json'
+				? JSON.stringify(options.body)
+				: (options.body as string);
+	}
+	// One deadline for the request and its body read, like core's transport.
+	const response = await fetch(url, {
+		method: options.method,
+		headers,
+		body,
+		signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+	});
+	if (!response.ok) {
+		const text = await response.text();
+		// Provider errors can be arbitrary JSON or plain text, so their shape is
+		// not known until inspected by the caller.
+		let payload: unknown = text;
+		try {
+			payload = JSON.parse(text);
+		} catch {
+			/* Non-JSON provider error. */
+		}
+		const retryAfter = response.headers.get('retry-after');
+		const seconds = retryAfter === null ? NaN : Number(retryAfter);
+		const retryDate = retryAfter === null ? NaN : Date.parse(retryAfter);
+		const delay = Number.isFinite(seconds)
+			? Math.max(0, seconds * 1000)
+			: Number.isFinite(retryDate)
+				? Math.max(0, retryDate - Date.now())
+				: undefined;
+		// Subscriber emails sit in the path (and the account name is an email
+		// too); core only redacts query keys, so they are masked here before the
+		// error leaves the plugin (R8).
+		throw new ApiError(
+			{ method: options.method, url: redactEmails(path) },
+			{
+				url: redactEmails(url.toString()),
+				ok: false,
+				status: response.status,
+				statusText: response.statusText,
+				body: redactEmails(payload),
+			},
+			response.statusText || 'Doppler API error',
+			delay === undefined ? undefined : { retryAfter: delay },
+		);
+	}
+	if (
+		options.responseType === 'void' ||
+		response.status === 204 ||
+		options.method === 'HEAD'
+	)
+		return undefined as T;
+	if (options.responseType === 'bytes')
+		return new Uint8Array(await response.arrayBuffer()) as T;
+	if (options.responseType === 'text') return (await response.text()) as T;
+	return (await response.json()) as T;
+}

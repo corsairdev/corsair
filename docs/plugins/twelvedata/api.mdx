@@ -1,0 +1,1869 @@
+---
+title: "Twelve Data API reference"
+sidebarTitle: "API"
+description: "API reference for the Twelve Data plugin in Corsair: every `twelvedata.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Indicators
+
+### adx
+
+`indicators.adx`
+
+Read the ADX technical indicator for a symbol over an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.indicators.adx({ symbol: 'AAPL', interval: '1day', time_period: 14 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | Candle size |
+| `time_period` | `number` | No | Look-back period; the provider default depends on the indicator |
+| `series_type` | `close \| open \| high \| low` | No | Which price the indicator reads; default close |
+| `outputsize` | `number` | No | — |
+| `exchange` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `values` | `Record<string, string \| null>[] \| null` | No | — |
+| `status` | `string \| null` | No | ok or error |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  symbol?: string | null,
+  interval?: string | null,
+  indicator?: string | Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### apo
+
+`indicators.apo`
+
+Read the APO technical indicator for a symbol over an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.indicators.apo({ symbol: 'AAPL', interval: '1day', time_period: 14 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | Candle size |
+| `time_period` | `number` | No | Look-back period; the provider default depends on the indicator |
+| `series_type` | `close \| open \| high \| low` | No | Which price the indicator reads; default close |
+| `outputsize` | `number` | No | — |
+| `exchange` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `values` | `Record<string, string \| null>[] \| null` | No | — |
+| `status` | `string \| null` | No | ok or error |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  symbol?: string | null,
+  interval?: string | null,
+  indicator?: string | Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### atr
+
+`indicators.atr`
+
+Read the ATR technical indicator for a symbol over an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.indicators.atr({ symbol: 'AAPL', interval: '1day', time_period: 14 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | Candle size |
+| `time_period` | `number` | No | Look-back period; the provider default depends on the indicator |
+| `series_type` | `close \| open \| high \| low` | No | Which price the indicator reads; default close |
+| `outputsize` | `number` | No | — |
+| `exchange` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `values` | `Record<string, string \| null>[] \| null` | No | — |
+| `status` | `string \| null` | No | ok or error |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  symbol?: string | null,
+  interval?: string | null,
+  indicator?: string | Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bbands
+
+`indicators.bbands`
+
+Read the BBANDS technical indicator for a symbol over an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.indicators.bbands({ symbol: 'AAPL', interval: '1day', time_period: 14 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | Candle size |
+| `time_period` | `number` | No | Look-back period; the provider default depends on the indicator |
+| `series_type` | `close \| open \| high \| low` | No | Which price the indicator reads; default close |
+| `outputsize` | `number` | No | — |
+| `exchange` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `values` | `Record<string, string \| null>[] \| null` | No | — |
+| `status` | `string \| null` | No | ok or error |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  symbol?: string | null,
+  interval?: string | null,
+  indicator?: string | Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### beta
+
+`indicators.beta`
+
+Read the BETA technical indicator for a symbol over an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.indicators.beta({ symbol: 'AAPL', interval: '1day', time_period: 14 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | Candle size |
+| `time_period` | `number` | No | Look-back period; the provider default depends on the indicator |
+| `outputsize` | `number` | No | — |
+| `exchange` | `string` | No | — |
+| `series_type_1` | `close \| open \| high \| low` | No | First price series; default open |
+| `series_type_2` | `close \| open \| high \| low` | No | Second price series; default close |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `values` | `Record<string, string \| null>[] \| null` | No | — |
+| `status` | `string \| null` | No | ok or error |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  symbol?: string | null,
+  interval?: string | null,
+  indicator?: string | Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### cci
+
+`indicators.cci`
+
+Read the CCI technical indicator for a symbol over an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.indicators.cci({ symbol: 'AAPL', interval: '1day', time_period: 14 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | Candle size |
+| `time_period` | `number` | No | Look-back period; the provider default depends on the indicator |
+| `series_type` | `close \| open \| high \| low` | No | Which price the indicator reads; default close |
+| `outputsize` | `number` | No | — |
+| `exchange` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `values` | `Record<string, string \| null>[] \| null` | No | — |
+| `status` | `string \| null` | No | ok or error |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  symbol?: string | null,
+  interval?: string | null,
+  indicator?: string | Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### correl
+
+`indicators.correl`
+
+Read the CORREL technical indicator for a symbol over an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.indicators.correl({ symbol: 'AAPL', interval: '1day', time_period: 14 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | Candle size |
+| `time_period` | `number` | No | Look-back period; the provider default depends on the indicator |
+| `outputsize` | `number` | No | — |
+| `exchange` | `string` | No | — |
+| `series_type_1` | `close \| open \| high \| low` | No | First price series; default open |
+| `series_type_2` | `close \| open \| high \| low` | No | Second price series; default close |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `values` | `Record<string, string \| null>[] \| null` | No | — |
+| `status` | `string \| null` | No | ok or error |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  symbol?: string | null,
+  interval?: string | null,
+  indicator?: string | Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ema
+
+`indicators.ema`
+
+Read the EMA technical indicator for a symbol over an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.indicators.ema({ symbol: 'AAPL', interval: '1day', time_period: 14 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | Candle size |
+| `time_period` | `number` | No | Look-back period; the provider default depends on the indicator |
+| `series_type` | `close \| open \| high \| low` | No | Which price the indicator reads; default close |
+| `outputsize` | `number` | No | — |
+| `exchange` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `values` | `Record<string, string \| null>[] \| null` | No | — |
+| `status` | `string \| null` | No | ok or error |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  symbol?: string | null,
+  interval?: string | null,
+  indicator?: string | Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### macd
+
+`indicators.macd`
+
+Read the MACD technical indicator for a symbol over an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.indicators.macd({ symbol: 'AAPL', interval: '1day', time_period: 14 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | Candle size |
+| `time_period` | `number` | No | Look-back period; the provider default depends on the indicator |
+| `series_type` | `close \| open \| high \| low` | No | Which price the indicator reads; default close |
+| `outputsize` | `number` | No | — |
+| `exchange` | `string` | No | — |
+
+Returns `macd`, `macd_signal` and `macd_hist` per candle, all as strings.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `values` | `Record<string, string \| null>[] \| null` | No | — |
+| `status` | `string \| null` | No | ok or error |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  symbol?: string | null,
+  interval?: string | null,
+  indicator?: string | Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### max
+
+`indicators.max`
+
+Read the MAX technical indicator for a symbol over an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.indicators.max({ symbol: 'AAPL', interval: '1day', time_period: 14 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | Candle size |
+| `time_period` | `number` | No | Look-back period; the provider default depends on the indicator |
+| `series_type` | `close \| open \| high \| low` | No | Which price the indicator reads; default close |
+| `outputsize` | `number` | No | — |
+| `exchange` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `values` | `Record<string, string \| null>[] \| null` | No | — |
+| `status` | `string \| null` | No | ok or error |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  symbol?: string | null,
+  interval?: string | null,
+  indicator?: string | Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### mfi
+
+`indicators.mfi`
+
+Read the MFI technical indicator for a symbol over an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.indicators.mfi({ symbol: 'AAPL', interval: '1day', time_period: 14 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | Candle size |
+| `time_period` | `number` | No | Look-back period; the provider default depends on the indicator |
+| `series_type` | `close \| open \| high \| low` | No | Which price the indicator reads; default close |
+| `outputsize` | `number` | No | — |
+| `exchange` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `values` | `Record<string, string \| null>[] \| null` | No | — |
+| `status` | `string \| null` | No | ok or error |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  symbol?: string | null,
+  interval?: string | null,
+  indicator?: string | Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### min
+
+`indicators.min`
+
+Read the MIN technical indicator for a symbol over an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.indicators.min({ symbol: 'AAPL', interval: '1day', time_period: 14 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | Candle size |
+| `time_period` | `number` | No | Look-back period; the provider default depends on the indicator |
+| `series_type` | `close \| open \| high \| low` | No | Which price the indicator reads; default close |
+| `outputsize` | `number` | No | — |
+| `exchange` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `values` | `Record<string, string \| null>[] \| null` | No | — |
+| `status` | `string \| null` | No | ok or error |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  symbol?: string | null,
+  interval?: string | null,
+  indicator?: string | Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ppo
+
+`indicators.ppo`
+
+Read the PPO technical indicator for a symbol over an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.indicators.ppo({ symbol: 'AAPL', interval: '1day', time_period: 14 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | Candle size |
+| `time_period` | `number` | No | Look-back period; the provider default depends on the indicator |
+| `series_type` | `close \| open \| high \| low` | No | Which price the indicator reads; default close |
+| `outputsize` | `number` | No | — |
+| `exchange` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `values` | `Record<string, string \| null>[] \| null` | No | — |
+| `status` | `string \| null` | No | ok or error |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  symbol?: string | null,
+  interval?: string | null,
+  indicator?: string | Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### roc
+
+`indicators.roc`
+
+Read the ROC technical indicator for a symbol over an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.indicators.roc({ symbol: 'AAPL', interval: '1day', time_period: 14 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | Candle size |
+| `time_period` | `number` | No | Look-back period; the provider default depends on the indicator |
+| `series_type` | `close \| open \| high \| low` | No | Which price the indicator reads; default close |
+| `outputsize` | `number` | No | — |
+| `exchange` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `values` | `Record<string, string \| null>[] \| null` | No | — |
+| `status` | `string \| null` | No | ok or error |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  symbol?: string | null,
+  interval?: string | null,
+  indicator?: string | Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### rsi
+
+`indicators.rsi`
+
+Read the RSI technical indicator for a symbol over an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.indicators.rsi({ symbol: 'AAPL', interval: '1day', time_period: 14 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | Candle size |
+| `time_period` | `number` | No | Look-back period; the provider default depends on the indicator |
+| `series_type` | `close \| open \| high \| low` | No | Which price the indicator reads; default close |
+| `outputsize` | `number` | No | — |
+| `exchange` | `string` | No | — |
+
+Each indicator answers its own field names as decimal strings; `rsi` returns `values[].rsi`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `values` | `Record<string, string \| null>[] \| null` | No | — |
+| `status` | `string \| null` | No | ok or error |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  symbol?: string | null,
+  interval?: string | null,
+  indicator?: string | Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sma
+
+`indicators.sma`
+
+Read the SMA technical indicator for a symbol over an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.indicators.sma({ symbol: 'AAPL', interval: '1day', time_period: 14 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | Candle size |
+| `time_period` | `number` | No | Look-back period; the provider default depends on the indicator |
+| `series_type` | `close \| open \| high \| low` | No | Which price the indicator reads; default close |
+| `outputsize` | `number` | No | — |
+| `exchange` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `values` | `Record<string, string \| null>[] \| null` | No | — |
+| `status` | `string \| null` | No | ok or error |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  symbol?: string | null,
+  interval?: string | null,
+  indicator?: string | Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stddev
+
+`indicators.stddev`
+
+Read the STDDEV technical indicator for a symbol over an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.indicators.stddev({ symbol: 'AAPL', interval: '1day', time_period: 14 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | Candle size |
+| `time_period` | `number` | No | Look-back period; the provider default depends on the indicator |
+| `series_type` | `close \| open \| high \| low` | No | Which price the indicator reads; default close |
+| `outputsize` | `number` | No | — |
+| `exchange` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `values` | `Record<string, string \| null>[] \| null` | No | — |
+| `status` | `string \| null` | No | ok or error |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  symbol?: string | null,
+  interval?: string | null,
+  indicator?: string | Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stoch
+
+`indicators.stoch`
+
+Read the STOCH technical indicator for a symbol over an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.indicators.stoch({ symbol: 'AAPL', interval: '1day', time_period: 14 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | Candle size |
+| `time_period` | `number` | No | Look-back period; the provider default depends on the indicator |
+| `series_type` | `close \| open \| high \| low` | No | Which price the indicator reads; default close |
+| `outputsize` | `number` | No | — |
+| `exchange` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `values` | `Record<string, string \| null>[] \| null` | No | — |
+| `status` | `string \| null` | No | ok or error |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  symbol?: string | null,
+  interval?: string | null,
+  indicator?: string | Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stochrsi
+
+`indicators.stochrsi`
+
+Read the STOCHRSI technical indicator for a symbol over an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.indicators.stochrsi({ symbol: 'AAPL', interval: '1day', time_period: 14 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | Candle size |
+| `time_period` | `number` | No | Look-back period; the provider default depends on the indicator |
+| `series_type` | `close \| open \| high \| low` | No | Which price the indicator reads; default close |
+| `outputsize` | `number` | No | — |
+| `exchange` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `values` | `Record<string, string \| null>[] \| null` | No | — |
+| `status` | `string \| null` | No | ok or error |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  symbol?: string | null,
+  interval?: string | null,
+  indicator?: string | Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### supertrend
+
+`indicators.supertrend`
+
+Read the SUPERTREND technical indicator for a symbol over an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.indicators.supertrend({ symbol: 'AAPL', interval: '1day', time_period: 14 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | Candle size |
+| `time_period` | `number` | No | Look-back period; the provider default depends on the indicator |
+| `series_type` | `close \| open \| high \| low` | No | Which price the indicator reads; default close |
+| `outputsize` | `number` | No | — |
+| `exchange` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `values` | `Record<string, string \| null>[] \| null` | No | — |
+| `status` | `string \| null` | No | ok or error |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  symbol?: string | null,
+  interval?: string | null,
+  indicator?: string | Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### tsf
+
+`indicators.tsf`
+
+Read the TSF technical indicator for a symbol over an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.indicators.tsf({ symbol: 'AAPL', interval: '1day', time_period: 14 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | Candle size |
+| `time_period` | `number` | No | Look-back period; the provider default depends on the indicator |
+| `series_type` | `close \| open \| high \| low` | No | Which price the indicator reads; default close |
+| `outputsize` | `number` | No | — |
+| `exchange` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `values` | `Record<string, string \| null>[] \| null` | No | — |
+| `status` | `string \| null` | No | ok or error |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  symbol?: string | null,
+  interval?: string | null,
+  indicator?: string | Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ultosc
+
+`indicators.ultosc`
+
+Read the ULTOSC technical indicator for a symbol over an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.indicators.ultosc({ symbol: 'AAPL', interval: '1day', time_period: 14 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | Candle size |
+| `time_period` | `number` | No | Look-back period; the provider default depends on the indicator |
+| `series_type` | `close \| open \| high \| low` | No | Which price the indicator reads; default close |
+| `outputsize` | `number` | No | — |
+| `exchange` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `values` | `Record<string, string \| null>[] \| null` | No | — |
+| `status` | `string \| null` | No | ok or error |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  symbol?: string | null,
+  interval?: string | null,
+  indicator?: string | Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### willr
+
+`indicators.willr`
+
+Read the WILLR technical indicator for a symbol over an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.indicators.willr({ symbol: 'AAPL', interval: '1day', time_period: 14 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | Candle size |
+| `time_period` | `number` | No | Look-back period; the provider default depends on the indicator |
+| `series_type` | `close \| open \| high \| low` | No | Which price the indicator reads; default close |
+| `outputsize` | `number` | No | — |
+| `exchange` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `values` | `Record<string, string \| null>[] \| null` | No | — |
+| `status` | `string \| null` | No | ok or error |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  symbol?: string | null,
+  interval?: string | null,
+  indicator?: string | Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### wma
+
+`indicators.wma`
+
+Read the WMA technical indicator for a symbol over an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.indicators.wma({ symbol: 'AAPL', interval: '1day', time_period: 14 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | Candle size |
+| `time_period` | `number` | No | Look-back period; the provider default depends on the indicator |
+| `series_type` | `close \| open \| high \| low` | No | Which price the indicator reads; default close |
+| `outputsize` | `number` | No | — |
+| `exchange` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `values` | `Record<string, string \| null>[] \| null` | No | — |
+| `status` | `string \| null` | No | ok or error |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  symbol?: string | null,
+  interval?: string | null,
+  indicator?: string | Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Market
+
+### apiUsage
+
+`market.apiUsage`
+
+Read how many API calls the key has made, and the plan limit
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.market.apiUsage({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string \| null` | No | — |
+| `current_usage` | `number \| null` | No | — |
+| `plan_limit` | `number \| null` | No | — |
+
+
+
+---
+
+### exchangeRate
+
+`market.exchangeRate`
+
+Read the current exchange rate of one currency pair
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.market.exchangeRate({ symbol: 'EUR/USD' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | A pair such as EUR/USD |
+
+The symbol is a pair such as EUR/USD, not a single currency.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string \| null` | No | — |
+| `rate` | `number \| string \| null` | No | — |
+| `timestamp` | `number \| string \| null` | No | — |
+
+
+
+---
+
+### price
+
+`market.price`
+
+Read the latest price for a symbol, the smallest of the market-data answers
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.market.price({ symbol: 'AAPL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | One symbol, such as AAPL or EUR/USD |
+| `exchange` | `string` | No | Narrow to one exchange |
+| `country` | `string` | No | Narrow to one country |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `price` | `string` | Yes | A decimal number, sent as a string |
+
+
+
+---
+
+### quote
+
+`market.quote`
+
+Read the latest quote for a symbol: open, high, low, close, change and 52-week range
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.market.quote({ symbol: 'AAPL', exchange: 'NASDAQ' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | One symbol, such as AAPL or EUR/USD |
+| `exchange` | `string` | No | Narrow to one exchange |
+| `country` | `string` | No | Narrow to one country |
+
+Takes one symbol. Call once per symbol for several: a comma list is rejected before any request.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `exchange` | `string \| null` | No | — |
+| `mic_code` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `datetime` | `string \| null` | No | — |
+| `timestamp` | `number \| string \| null` | No | — |
+| `open` | `string \| null` | No | A decimal number, sent as a string |
+| `high` | `string \| null` | No | A decimal number, sent as a string |
+| `low` | `string \| null` | No | A decimal number, sent as a string |
+| `close` | `string \| null` | No | A decimal number, sent as a string |
+| `volume` | `string \| null` | No | A decimal number, sent as a string |
+| `previous_close` | `string \| null` | No | A decimal number, sent as a string |
+| `change` | `string \| null` | No | A decimal number, sent as a string |
+| `percent_change` | `string \| null` | No | A decimal number, sent as a string |
+| `average_volume` | `string \| null` | No | A decimal number, sent as a string |
+| `is_market_open` | `boolean \| null` | No | — |
+| `fifty_two_week` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="fifty_two_week full type">
+
+```ts
+{
+  low?: string | null,
+  high?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### timeSeries
+
+`market.timeSeries`
+
+Read OHLC candles for a symbol over an interval, with a date window and ordering
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.market.timeSeries({ symbol: 'AAPL', interval: '1day', outputsize: 30 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | Candle size |
+| `exchange` | `string` | No | — |
+| `outputsize` | `number` | No | How many candles; default 30, plan-dependent above 5000 |
+| `start_date` | `string` | No | ISO date or date-time |
+| `end_date` | `string` | No | ISO date or date-time |
+| `order` | `asc \| desc` | No | Default desc |
+| `timezone` | `string` | No | Exchange timezone, or UTC |
+
+`outputsize` caps the candles and `order` sets newest-first or oldest-first. The free plan caps the history depth.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `values` | `object[]` | Yes | — |
+| `status` | `string \| null` | No | ok or error |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  symbol?: string | null,
+  interval?: string | null,
+  currency?: string | null,
+  exchange?: string | null,
+  type?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="values full type">
+
+```ts
+{
+  datetime: string,
+  open: string,
+  high: string,
+  low: string,
+  close: string,
+  volume?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reference
+
+### bonds
+
+`reference.bonds`
+
+List the bonds Twelve Data covers, filtered by symbol, exchange or country
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.reference.bonds({ symbol: 'ABXL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | No | — |
+| `exchange` | `string` | No | — |
+| `country` | `string` | No | — |
+| `page` | `number` | No | Page number; default 1 |
+| `outputsize` | `number` | No | Rows per page; default 50 |
+
+Answers `{ result: { count, list } }` rather than the `{ data }` array the other lists use.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object` | Yes | — |
+| `status` | `string \| null` | No | ok or error |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  count?: number | null,
+  list: {
+    symbol: string,
+    name?: string | null,
+    currency?: string | null,
+    exchange?: string | null,
+    mic_code?: string | null,
+    country?: string | null,
+    type?: string | null,
+    figi_code?: string | null,
+    cfi_code?: string | null,
+    isin?: string | null,
+    cusip?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### cryptocurrencies
+
+`reference.cryptocurrencies`
+
+List the cryptocurrency pairs available
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.reference.cryptocurrencies({ symbol: '0xBTC/USD' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | No | — |
+| `exchange` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  symbol: string,
+  available_exchanges?: string[] | null,
+  currency_base?: string | null,
+  currency_quote?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### etf
+
+`reference.etf`
+
+List the ETFs Twelve Data covers, filtered by symbol, exchange or country
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.reference.etf({ symbol: '0000D0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | No | One symbol, or several separated by commas |
+| `exchange` | `string` | No | — |
+| `country` | `string` | No | — |
+
+Uses the same `{ data }` envelope and fields as `reference.stocks`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  symbol: string,
+  name?: string | null,
+  currency?: string | null,
+  exchange?: string | null,
+  mic_code?: string | null,
+  country?: string | null,
+  type?: string | null,
+  figi_code?: string | null,
+  cfi_code?: string | null,
+  isin?: string | null,
+  cusip?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### exchanges
+
+`reference.exchanges`
+
+List the exchanges Twelve Data covers, with their timezone
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.reference.exchanges({ country: 'United States' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  title?: string | null,
+  name?: string | null,
+  code?: string | null,
+  country?: string | null,
+  timezone?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### forexPairs
+
+`reference.forexPairs`
+
+List the currency pairs available, by base or quote currency
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.reference.forexPairs({ currency_base: 'EUR' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `currency_base` | `string` | No | — |
+| `currency_quote` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  symbol: string,
+  currency_group?: string | null,
+  currency_base?: string | null,
+  currency_quote?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### funds
+
+`reference.funds`
+
+List the mutual funds Twelve Data covers, by country or symbol
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.reference.funds({ country: 'United States' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | No | — |
+| `symbol` | `string` | No | — |
+| `page` | `number` | No | Page number; default 1 |
+| `outputsize` | `number` | No | Rows per page; default 50 |
+
+Answers `{ result: { count, list } }` rather than the `{ data }` array the other lists use.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object` | Yes | — |
+| `status` | `string \| null` | No | ok or error |
+| `code` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  count?: number | null,
+  list: {
+    symbol: string,
+    name?: string | null,
+    currency?: string | null,
+    exchange?: string | null,
+    mic_code?: string | null,
+    country?: string | null,
+    type?: string | null,
+    figi_code?: string | null,
+    cfi_code?: string | null,
+    isin?: string | null,
+    cusip?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stocks
+
+`reference.stocks`
+
+List the stocks Twelve Data covers, filtered by symbol, exchange or country
+
+**Risk:** `read`
+
+```ts
+await corsair.twelvedata.api.reference.stocks({ symbol: 'AAPL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | No | One symbol, or several separated by commas |
+| `exchange` | `string` | No | — |
+| `country` | `string` | No | — |
+| `type` | `string` | No | Common Stock, ETF, Depository Receipt, and so on |
+
+Filter by symbol, exchange, country or type. Twelve Data serves this list without a key, but the plugin still needs a configured key and sends it.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  symbol: string,
+  name?: string | null,
+  currency?: string | null,
+  exchange?: string | null,
+  mic_code?: string | null,
+  country?: string | null,
+  type?: string | null,
+  figi_code?: string | null,
+  cfi_code?: string | null,
+  isin?: string | null,
+  cusip?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
