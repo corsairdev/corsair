@@ -94,6 +94,25 @@ describe('domain.lookup', () => {
 		);
 	});
 
+	it('returns the registrar and contact blocks the docs list', async () => {
+		mockRequest.mockResolvedValue({
+			...DOMAIN_SAMPLE,
+			registrar: {
+				iana_id: '146',
+				name: 'GoDaddy.com, LLC',
+				url: 'https://www.godaddy.com',
+			},
+			registrant: { name: 'Registration Private', country: 'US' },
+			billing: { name: '', organization: '' },
+		});
+		const result = await lookupDomain(context('test-key'), {
+			domain: 'example.com',
+		});
+		expect(result.registrar?.iana_id).toBe('146');
+		expect(result.registrant?.country).toBe('US');
+		expect(result.billing?.name).toBe('');
+	});
+
 	it('throws when the key is missing and does not call the API', async () => {
 		await expect(
 			lookupDomain(context(''), { domain: 'example.com' }),

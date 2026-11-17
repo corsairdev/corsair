@@ -16,7 +16,7 @@ description: "API reference for the IP2WHOIS plugin in Corsair: every `ip2whois.
 
 Look up WHOIS registration data for a domain.
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.ip2whois.api.domain.lookup({ domain: 'example.com' });
@@ -28,7 +28,7 @@ await corsair.ip2whois.api.domain.lookup({ domain: 'example.com' });
 |------|------|----------|-------------|
 | `domain` | `string` | Yes | Domain name, without a scheme or www. |
 
-Pass the registrable domain, without a scheme or www. The call spends credits.
+Pass the registrable domain, without a scheme or www. The response includes the registrar and the registrant, admin, tech and billing contacts as the registry publishes them (often redacted). Only the registration fields are saved to the `domains` table, not the contacts.
 
 
 
@@ -45,6 +45,96 @@ Pass the registrable domain, without a scheme or www. The call spends credits.
 | `domain_age` | `number` | No | — |
 | `whois_server` | `string` | No | — |
 | `nameservers` | `string[]` | No | — |
+| `registrar` | `object` | No | — |
+| `registrant` | `object` | No | — |
+| `admin` | `object` | No | — |
+| `tech` | `object` | No | — |
+| `billing` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="registrar full type">
+
+```ts
+{
+  iana_id?: string,
+  name?: string,
+  url?: string
+}
+```
+</Accordion>
+
+<Accordion title="registrant full type">
+
+```ts
+{
+  name?: string,
+  organization?: string,
+  street_address?: string,
+  city?: string,
+  region?: string,
+  zip_code?: string,
+  country?: string,
+  phone?: string,
+  fax?: string,
+  email?: string
+}
+```
+</Accordion>
+
+<Accordion title="admin full type">
+
+```ts
+{
+  name?: string,
+  organization?: string,
+  street_address?: string,
+  city?: string,
+  region?: string,
+  zip_code?: string,
+  country?: string,
+  phone?: string,
+  fax?: string,
+  email?: string
+}
+```
+</Accordion>
+
+<Accordion title="tech full type">
+
+```ts
+{
+  name?: string,
+  organization?: string,
+  street_address?: string,
+  city?: string,
+  region?: string,
+  zip_code?: string,
+  country?: string,
+  phone?: string,
+  fax?: string,
+  email?: string
+}
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  name?: string,
+  organization?: string,
+  street_address?: string,
+  city?: string,
+  region?: string,
+  zip_code?: string,
+  country?: string,
+  phone?: string,
+  fax?: string,
+  email?: string
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -58,7 +148,7 @@ Pass the registrable domain, without a scheme or www. The call spends credits.
 
 List domains hosted on an IP address.
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.ip2whois.api.hosted.lookup({ ip: '8.8.8.8', page: 1 });
@@ -71,7 +161,7 @@ await corsair.ip2whois.api.hosted.lookup({ ip: '8.8.8.8', page: 1 });
 | `ip` | `string` | Yes | IPv4 or IPv6 address. |
 | `page` | `number` | No | Page number, starting at 1. |
 
-Pass an IPv4 or IPv6 address. Page starts at 1 when you set it. The call spends credits.
+Pass an IPv4 or IPv6 address. `domains` is a list of domain names. Page size depends on the plan: 1 domain per page on the free plan, up to 100 on Security. Page starts at 1.
 
 
 
@@ -84,18 +174,7 @@ Pass an IPv4 or IPv6 address. Page starts at 1 when you set it. The call spends 
 | `page` | `number` | Yes | — |
 | `per_page` | `number` | Yes | — |
 | `total_pages` | `number` | Yes | — |
-| `domains` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="domains full type">
-
-```ts
-{
-  domain?: string
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `domains` | `string[]` | Yes | — |
 
 
 

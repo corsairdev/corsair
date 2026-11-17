@@ -1,5 +1,8 @@
 import { makeIp2whoisRequest } from './client';
-import { DomainLookupResponseSchema } from './endpoints/types';
+import {
+	DomainLookupResponseSchema,
+	HostedLookupResponseSchema,
+} from './endpoints/types';
 
 const KEY = process.env.IP2WHOIS_API_KEY;
 const describeLive = KEY ? describe : describe.skip;
@@ -17,5 +20,16 @@ describeLive('IP2WHOIS live', () => {
 		});
 		const parsed = DomainLookupResponseSchema.parse(response);
 		expect(parsed.domain).toBe('example.com');
+	});
+
+	it('lists domains hosted on 8.8.8.8', async () => {
+		const response = await makeIp2whoisRequest<unknown>(
+			KEY as string,
+			'/domains',
+			{ ip: '8.8.8.8' },
+		);
+		const parsed = HostedLookupResponseSchema.parse(response);
+		expect(parsed.ip).toBe('8.8.8.8');
+		expect(Array.isArray(parsed.domains)).toBe(true);
 	});
 });

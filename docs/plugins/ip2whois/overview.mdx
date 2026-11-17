@@ -6,7 +6,7 @@ description: "Look up WHOIS registration for a domain, and list the domains host
 
 Use **IP2WHOIS** through Corsair: one client, typed API calls, local DB sync.
 
-Each lookup spends credits. The client always sends format=json. An empty key comes back as HTTP 401 with error code 10001.
+Each lookup counts against the plan's monthly quota (the IP2Location.io free plan includes 500 WHOIS lookups a month). Keys come from ip2location.io. The client always sends format=json. An empty key comes back as HTTP 401 with error code 10001.
 
 **What you get:**
 
@@ -97,17 +97,17 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**Read**
-
-_No read-style endpoint inferred; pick any operation from the [API](/plugins/ip2whois/api) reference._
-
-
 **Look up WHOIS for a domain**
 
 ```ts
 const tenant = corsair.withTenant('acme');
 await tenant.ip2whois.api.domain.lookup({ domain: 'example.com' });
 ```
+
+
+**Write**
+
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/ip2whois/api) reference._
 
 
 See the full list on the [API](/plugins/ip2whois/api) page.

@@ -12,8 +12,8 @@ pnpm add @corsair-dev/ip2whois
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `domain.lookup` | `ip2whois.api.domain.lookup` | `destructive` | Look up WHOIS registration data for a domain. |
-| `hosted.lookup` | `ip2whois.api.hosted.lookup` | `destructive` | List domains hosted on an IP address. |
+| `domain.lookup` | `ip2whois.api.domain.lookup` | `read` | Look up WHOIS registration data for a domain. |
+| `hosted.lookup` | `ip2whois.api.hosted.lookup` | `read` | List domains hosted on an IP address. |
 
 ## Auth
 
