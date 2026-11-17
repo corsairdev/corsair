@@ -209,7 +209,7 @@ await corsair.currencyscoop.api.quotes.timeseries({ start_date: '2024-01-01', en
 | `start_date` | `string` | Yes | — |
 | `end_date` | `string` | Yes | — |
 
-GET /timeseries. Stores one quote per date and currency code.
+GET /timeseries. The API lists rates by date under response with no base, so the stored base is the one you asked for (USD when omitted). Stores one quote per date and currency code.
 
 
 
