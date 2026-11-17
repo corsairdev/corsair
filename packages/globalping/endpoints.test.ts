@@ -28,6 +28,7 @@ function context(
 	key?: string,
 	db?: GlobalpingContext['db'],
 ): GlobalpingContext {
+	// unknown: a partial context with only the fields these endpoints read.
 	return { key, db } as unknown as GlobalpingContext;
 }
 
@@ -73,6 +74,7 @@ describe('globalping', () => {
 		const result = await getLimits(
 			context(undefined, {
 				limits: { upsertByEntityId: upsert },
+				// unknown: a stub table with only the upsert the endpoint calls.
 			} as unknown as GlobalpingContext['db']),
 			{},
 		);

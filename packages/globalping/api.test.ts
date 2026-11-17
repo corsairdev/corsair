@@ -13,6 +13,7 @@ if (!enabled) {
 const live = enabled ? it : it.skip;
 
 function context(): GlobalpingContext {
+	// unknown: a partial context with only the key these endpoints read.
 	return { key: apiKey } as unknown as GlobalpingContext;
 }
 
