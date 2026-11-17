@@ -1,0 +1,174 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: "Pipedrive"
+description: "Manage selected Pipedrive v2 deals, contacts, activities, tasks, and product catalog operations with validated requests, responses, and cursor pagination."
+overviewNote: "This deliberately partial implementation covers selected list, get, create, update, delete, search, product-variation, image, and follower operations for deals, persons, organizations, activities, tasks, and products. Configure an API token or OAuth 2.0 credentials before making calls. API tokens use the x-api-token header. OAuth access tokens refresh automatically using Pipedrive's documented token endpoint; the app must have the requested resource :full scopes configured in Pipedrive. Product image upload/update accept a runtime Blob or File as data and send the documented multipart field. Pipedrive marks the v2 Tasks routes as beta. Contact-sync-only person fields may be rejected with 403 when contact sync is disabled."
+examples:
+  read:
+    path: deals.get
+    title: Get a deal by ID
+    args:
+      id: 1
+  write:
+    path: deals.create
+    title: Create a deal
+    args:
+      title: Sample opportunity
+  person:
+    path: persons.get
+    title: Get a person by ID
+    args:
+      id: 1
+  organization:
+    path: organizations.get
+    title: Get an organization by ID
+    args:
+      id: 1
+  activity:
+    path: activities.get
+    title: Get an activity by ID
+    args:
+      id: 1
+  task:
+    path: tasks.get
+    title: Get a task by ID
+    args:
+      id: 1
+  product:
+    path: products.get
+    title: Get a product by ID
+    args:
+      id: 1
+apiNotes:
+  deals.list: "The list operation forwards Pipedrive's opaque cursor and returns additional_data.next_cursor; pass that value as cursor to request the next page. List array query parameters are serialized as comma-separated values as required by the OpenAPI form/explode=false contract. Its documented API token cost is 10 tokens."
+  deals.get: "OAuth requires the deals:read or deals:full scope. The documented API token cost is 1 token."
+  deals.create: "API-token authentication is sent using Pipedrive's documented x-api-token header. OAuth 2.0 uses a Bearer access token and requires deals:full. The documented API token cost is 5 tokens."
+  deals.update: "OAuth requires the deals:full scope. The documented API token cost is 5 tokens."
+  deals.delete: "OAuth requires the deals:full scope. The documented API token cost is 3 tokens."
+  persons.list: "OAuth requires contacts:read or contacts:full. List arrays are comma-separated; forward additional_data.next_cursor as cursor. The documented API token cost is 10 tokens."
+  persons.get: "OAuth requires contacts:read or contacts:full. The documented API token cost is 1 token."
+  persons.create: "OAuth requires contacts:full. The im, postal_address, notes, birthday, and job_title fields require company contact sync; marketing_status requires the Campaigns product. The documented API token cost is 5 tokens."
+  persons.update: "OAuth requires contacts:full. The im, postal_address, notes, birthday, and job_title fields require company contact sync; marketing_status requires the Campaigns product. The documented API token cost is 5 tokens."
+  persons.delete: "OAuth requires contacts:full. The documented API token cost is 3 tokens."
+  organizations.list: "OAuth requires contacts:read or contacts:full. List arrays are comma-separated; forward additional_data.next_cursor as cursor. The documented API token cost is 10 tokens."
+  organizations.get: "OAuth requires contacts:read or contacts:full. The documented API token cost is 1 token."
+  organizations.create: "OAuth requires contacts:full. Organization custom_fields values are arbitrary JSON; set a custom field to null to clear it, and do not send an empty array to clear a multi-option set field. The documented API token cost is 5 tokens."
+  organizations.update: "OAuth requires contacts:full. Organization custom_fields values are arbitrary JSON; set a custom field to null to clear it, and do not send an empty array to clear a multi-option set field. The documented API token cost is 5 tokens."
+  organizations.delete: "OAuth requires contacts:full. Deletion marks the organization deleted; Pipedrive permanently removes it after 30 days. The documented API token cost is 3 tokens."
+  activities.list: "OAuth requires activities:read or activities:full. The limit is 1–500; use the opaque additional_data.next_cursor value as cursor. Array filters are comma-separated. The documented API token cost is 10 tokens."
+  activities.get: "OAuth requires activities:read or activities:full. include_fields currently accepts attendees. To associate a person on create/update, use participants with primary: true; person_id is not an accepted body field. The documented API token cost is 1 token."
+  activities.create: "OAuth requires activities:full. All request properties are optional in the v2 schema. Use participants to set the person; the response data is an activity object. When the owner has calendar sync on, Pipedrive emails an invitation to every attendee, so this operation needs approval. The documented API token cost is 5 tokens."
+  activities.update: "OAuth requires activities:full. The path ID is supplied as the input id and omitted from the JSON body. With calendar sync on, changed guests, time or place email updated invitations or cancellations to attendees. The documented API token cost is 5 tokens."
+  activities.delete: "OAuth requires activities:full. Deletion marks an activity deleted; Pipedrive permanently deletes it after 30 days. The documented API token cost is 3 tokens."
+  tasks.list: "OAuth requires projects:read or projects:full. The Tasks endpoints are marked beta by Pipedrive. The limit is 1–500; pass additional_data.next_cursor as cursor. parent_task_id accepts a parent ID or null to filter root tasks. The documented API token cost is 10 tokens."
+  tasks.get: "OAuth requires projects:read or projects:full. The Tasks endpoints are marked beta by Pipedrive. The response includes additional_data: null. The documented API token cost is 1 token."
+  tasks.create: "OAuth requires projects:full. The Tasks endpoints are marked beta by Pipedrive. title and project_id are required; done and milestone use 0/1 integers, and assignee_ids accepts up to 10 IDs. The documented API token cost is 5 tokens."
+  tasks.update: "OAuth requires projects:full. The Tasks endpoints are marked beta by Pipedrive. The path ID is supplied as input id and omitted from the JSON body; done and milestone use 0/1 integers. The documented API token cost is 5 tokens."
+  tasks.delete: "OAuth requires projects:full. The Tasks endpoints are marked beta by Pipedrive. Deleting a task also deletes its subtasks. The documented API token cost is 3 tokens."
+  products.list: "OAuth requires products:read or products:full. The maximum page size is 500; pass additional_data.next_cursor as cursor. ids accepts up to 100 IDs and custom_fields up to 15 unique keys. The documented API token cost is 10 tokens."
+  products.create: "OAuth requires products:full. name is required and cannot be empty; prices require both price and currency. billing_frequency and billing_frequency_cycles are available on Growth and above, and cycles are limited to 1–208 when non-null. The documented API token cost is 5 tokens."
+  products.search: "OAuth accepts products:read, products:full, or search:read. term is 2–100 characters, or one character with exact_match: true; the limit is at most 100 and pagination uses next_cursor. Search has a separate burst limit of 10 requests per 2-second window across plans and authentication types. The documented API token cost is 20 tokens."
+  products.get: "OAuth requires products:read or products:full. The documented API token cost is 1 token."
+  products.update: "OAuth requires products:full. This is a partial PATCH; prices require price and currency when supplied. Billing frequency fields are available on Growth and above. The documented API token cost is 5 tokens."
+  products.delete: "OAuth requires products:full. Deletion marks the product deleted; Pipedrive permanently removes it after 30 days. The documented API token cost is 3 tokens."
+  products.duplicate: "OAuth requires products:full. This creates a duplicate including all variations, prices, and custom fields using `POST /products/{id}/duplicate` with an empty JSON body. The documented API token cost is 5 tokens."
+  products.variations.list: "OAuth requires products:read or products:full. The maximum page size is 500; pass additional_data.next_cursor as cursor. The documented API token cost is 10 tokens."
+  products.variations.create: "OAuth requires products:full. name is required and limited to 255 characters; each supplied price requires price and currency. The documented API token cost is 5 tokens."
+  products.variations.update: "OAuth requires products:full. The parent product ID and product_variation_id are both required; supplied prices require price and currency. The documented API token cost is 5 tokens."
+  products.variations.delete: "OAuth requires products:full. This removes the specified product variation. The documented API token cost is 3 tokens."
+  products.images.get: "OAuth requires products:read or products:full. The response is image metadata and a public URL, not image bytes; Pipedrive says the public URL is valid for 7 days. The documented API token cost is 10 tokens."
+  products.images.upload: "OAuth requires products:full. In this example, file is an existing runtime File containing the image; its actual bytes are wrapped in a Blob for the required multipart/form-data binary field data. Pass real image bytes. Pipedrive needs a file name with an extension: pass file_name, or the plugin names it `image.<type>` from the Blob type (a name without an extension saves an image Pipedrive then fails to read). The documented API token cost is 20 tokens."
+  products.images.update: "OAuth requires products:full. In this example, file is an existing runtime File containing the image; its actual bytes are wrapped in a Blob for the required multipart/form-data binary field data. Pass real image bytes. Pipedrive needs a file name with an extension: pass file_name, or the plugin names it `image.<type>` from the Blob type (a name without an extension saves an image Pipedrive then fails to read). The documented API token cost is 20 tokens."
+  products.images.delete: "OAuth requires products:full. This deletes the product's image. The documented API token cost is 6 tokens."
+  products.followers.list: "OAuth requires products:read or products:full. The maximum page size is 500; pass additional_data.next_cursor as cursor. The documented API token cost is 10 tokens."
+  products.followers.create: "OAuth requires products:full. The request body requires the user_id of the user to add as a follower. The documented API token cost is 5 tokens."
+  products.followers.changelog: "OAuth requires products:read or products:full. The maximum page size is 500; pass additional_data.next_cursor as cursor. The documented API token cost is 10 tokens."
+  products.followers.delete: "OAuth requires products:full. follower_id identifies the following user in the path. The documented API token cost is 3 tokens."
+apiExamples:
+  deals.list:
+    call: "{}"
+  deals.get:
+    call: "{ id: 1 }"
+  deals.create:
+    call: "{ title: 'Sample opportunity' }"
+  deals.update:
+    call: "{ id: 1, title: 'Updated opportunity' }"
+  deals.delete:
+    call: "{ id: 1 }"
+  persons.list:
+    call: "{}"
+  persons.get:
+    call: "{ id: 1 }"
+  persons.create:
+    call: "{ name: 'Sample contact' }"
+  persons.update:
+    call: "{ id: 1, name: 'Updated contact' }"
+  persons.delete:
+    call: "{ id: 1 }"
+  organizations.list:
+    call: "{}"
+  organizations.get:
+    call: "{ id: 1 }"
+  organizations.create:
+    call: "{ name: 'Sample organization' }"
+  organizations.update:
+    call: "{ id: 1, name: 'Updated organization' }"
+  organizations.delete:
+    call: "{ id: 1 }"
+  activities.list:
+    call: "{}"
+  activities.get:
+    call: "{ id: 1 }"
+  activities.create:
+    call: "{ subject: 'Follow up', type: 'call' }"
+  activities.update:
+    call: "{ id: 1, done: true }"
+  activities.delete:
+    call: "{ id: 1 }"
+  tasks.list:
+    call: "{}"
+  tasks.get:
+    call: "{ id: 1 }"
+  tasks.create:
+    call: "{ title: 'Review proposal', project_id: 1 }"
+  tasks.update:
+    call: "{ id: 1, done: 1 }"
+  tasks.delete:
+    call: "{ id: 1 }"
+  products.list:
+    call: "{ limit: 100 }"
+  products.create:
+    call: "{ name: 'Sample product', prices: [{ price: 20, currency: 'USD' }] }"
+  products.search:
+    call: "{ term: 'sample' }"
+  products.get:
+    call: "{ id: 1 }"
+  products.update:
+    call: "{ id: 1, name: 'Updated product' }"
+  products.delete:
+    call: "{ id: 1 }"
+  products.duplicate:
+    call: "{ id: 1 }"
+  products.variations.list:
+    call: "{ id: 1, limit: 100 }"
+  products.variations.create:
+    call: "{ id: 1, name: 'Small' }"
+  products.variations.update:
+    call: "{ id: 1, product_variation_id: 2, name: 'Medium' }"
+  products.variations.delete:
+    call: "{ id: 1, product_variation_id: 2 }"
+  products.images.get:
+    call: "{ id: 1 }"
+  products.images.upload:
+    call: "{ id: 1, data: new Blob([await file.arrayBuffer()], { type: file.type }) }"
+  products.images.update:
+    call: "{ id: 1, data: new Blob([await file.arrayBuffer()], { type: file.type }) }"
+  products.images.delete:
+    call: "{ id: 1 }"
+  products.followers.list:
+    call: "{ id: 1, limit: 100 }"
+  products.followers.create:
+    call: "{ id: 1, user_id: 2 }"
+  products.followers.changelog:
+    call: "{ id: 1, limit: 100 }"
+  products.followers.delete:
+    call: "{ id: 1, follower_id: 2 }"

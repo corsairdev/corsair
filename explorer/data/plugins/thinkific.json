@@ -1,0 +1,3142 @@
+{
+  "id": "thinkific",
+  "displayName": "Thinkific",
+  "description": "Manage Thinkific users, enrollments, courses, products, groups, orders, promotions, and related Admin API v1 resources.",
+  "npmPackageName": "@corsair-dev/thinkific",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 73,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "subdomain"]
+    }
+  ],
+  "api": [
+    {
+      "path": "thinkific.api.bundles.createEnrollment",
+      "shortPath": "bundles.createEnrollment",
+      "description": "Create an Enrollment in a Bundle of Courses (Thinkific can email the learner)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ user_id: number, activated_at?: string, expiry_date?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "thinkific.api.bundles.get",
+      "shortPath": "bundles.get",
+      "description": "List a bundle",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tagline",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "banner_image_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "course_ids",
+            "optional": false,
+            "type": "number[]"
+          },
+          {
+            "key": "bundle_card_image_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.bundles.listCourses",
+      "shortPath": "bundles.listCourses",
+      "description": "List Courses by bundle ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ page?: number, limit?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id: number, name: string, slug?: string, subtitle?: string, product_id: number, description?: string, course_card_text?: string, intro_video_youtube?: string, contact_information?: string, keywords?: string, duration?: string, banner_image_url?: string, course_card_image_url?: string, intro_video_wistia_identifier?: string, administrator_user_ids?: number[], chapter_ids: number[], reviews_enabled: boolean, user_id?: number, instructor_id: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { current_page?: number, next_page?: number, prev_page?: number, total_pages?: number, total_items?: number, entries_info?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.bundles.listEnrollments",
+      "shortPath": "bundles.listEnrollments",
+      "description": "List a enrollments in a bundle",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ page?: number, limit?: number, query[user_id]?: number, query[email]?: string, query[completed]?: string, query[expired]?: string, query[created_after]?: string, query[created_before]?: string, query[created_on]?: string, query[created_on_or_after]?: string, query[created_on_or_before]?: string, query[updated_after]?: string, query[updated_before]?: string, query[updated_on]?: string, query[updated_on_or_after]?: string, query[updated_on_or_before]?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: number, user_email: string, user_name: string, user_id: number, course_name: string, course_id: number, percentage_completed: number, expired: boolean, is_free_trial: boolean, completed: boolean, started_at: string, activated_at: string, completed_at: string, updated_at: string, expiry_date: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ pagination?: { current_page?: number, next_page?: number, prev_page?: number, total_pages?: number, total_items?: number, entries_info?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.bundles.updateEnrollments",
+      "shortPath": "bundles.updateEnrollments",
+      "description": "Update Enrollments in a Bundle",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ user_id: number, activated_at?: string, expiry_date?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "thinkific.api.categories.create",
+      "shortPath": "categories.create",
+      "description": "Create a new Category",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ name: string, description: string, slug: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "product_ids",
+            "optional": false,
+            "type": "number[]"
+          },
+          {
+            "key": "default",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.categories.get",
+      "shortPath": "categories.get",
+      "description": "Get Collections by Id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "product_ids",
+            "optional": false,
+            "type": "number[]"
+          },
+          {
+            "key": "default",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.categories.list",
+      "shortPath": "categories.list",
+      "description": "Get Collections",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ page?: number, limit?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: number, name: string, description: string, slug?: string, created_at: string, product_ids: number[], default: boolean }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ pagination?: { current_page?: number, next_page?: number, prev_page?: number, total_pages?: number, total_items?: number, entries_info?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.categories.listProducts",
+      "shortPath": "categories.listProducts",
+      "description": "Get products by Collections id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ page?: number, limit?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id?: number, created_at?: string, productable_id?: number, productable_type?: string, price?: number, position?: number, status?: string, name?: string, private?: boolean, hidden?: boolean, subscription?: boolean, days_until_expiry?: number, has_certificate?: boolean, keywords?: string, seo_title?: string, seo_description?: string, collection_ids?: number[], related_product_ids?: number[], description?: string, card_image_url?: string, slug?: string, product_prices?: { id?: number, is_primary?: boolean, payment_type?: free | one-time | subscription | payment-plan, label?: string | null, price?: string, days_until_expiry?: string | null, pay_button_text?: string | null, number_of_payments?: string | null, interval?: month | year, interval_count?: string, trial_interval?: day | month | null, trial_interval_count?: string | null, custom_first_price?: string | null, price_name?: string, currency?: string }[] }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ pagination?: { current_page?: number, next_page?: number, prev_page?: number, total_pages?: number, total_items?: number, entries_info?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.categories.remove",
+      "shortPath": "categories.remove",
+      "description": "Delete collection by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "thinkific.api.categories.update",
+      "shortPath": "categories.update",
+      "description": "Update collection by ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ name: string, description: string, slug: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "thinkific.api.categoryMemberships.addProducts",
+      "shortPath": "categoryMemberships.addProducts",
+      "description": "Add Product to Category",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ product_ids: number[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "thinkific.api.categoryMemberships.removeProducts",
+      "shortPath": "categoryMemberships.removeProducts",
+      "description": "Delete Products by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ product_ids: number[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "thinkific.api.chapters.get",
+      "shortPath": "chapters.get",
+      "description": "Get Chapters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration_in_seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "content_ids",
+            "optional": false,
+            "type": "number[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.chapters.listContents",
+      "shortPath": "chapters.listContents",
+      "description": "Get Contents by Chapter id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ page?: number, limit?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: number, name: string, position: number, chapter_id: number, contentable_type: Assignment | Audio | Download | BrilliumExam | Disqus | HtmlItem | Iframe | LiveLesson | Lesson | Pdf | Presentation | Quiz | Survey, free: boolean, take_url: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ pagination?: { current_page?: number, next_page?: number, prev_page?: number, total_pages?: number, total_items?: number, entries_info?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.contents.get",
+      "shortPath": "contents.get",
+      "description": "Get Contents by Id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "chapter_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "contentable_type",
+            "optional": false,
+            "type": "Assignment | Audio | Download | BrilliumExam | Disqus | HtmlItem | Iframe | LiveLesson | Lesson | Pdf | Presentation | Quiz | Survey"
+          },
+          {
+            "key": "free",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "take_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.coupons.bulkCreate",
+      "shortPath": "coupons.bulkCreate",
+      "description": "Bulk Create Coupons",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "{ promotion_id: number }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ bulk_quantity_per_coupon?: number, bulk_coupon_code_length?: number, bulk_quantity?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id: number, code: string, note: string, quantity_used: number, quantity: number, promotion_id: number, created_at: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.coupons.create",
+      "shortPath": "coupons.create",
+      "description": "Create a Coupon",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "{ promotion_id: number }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ code: string, note?: string, quantity?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "quantity_used",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "quantity",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "promotion_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.coupons.get",
+      "shortPath": "coupons.get",
+      "description": "Get a Coupon by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "quantity_used",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "quantity",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "promotion_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.coupons.list",
+      "shortPath": "coupons.list",
+      "description": "Get Coupons",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "{ promotion_id: number, page?: number, limit?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id: number, code: string, note: string, quantity_used: number, quantity: number, promotion_id: number, created_at: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { current_page?: number, next_page?: number, prev_page?: number, total_pages?: number, total_items?: number, entries_info?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.coupons.remove",
+      "shortPath": "coupons.remove",
+      "description": "Delete Coupon by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "thinkific.api.coupons.update",
+      "shortPath": "coupons.update",
+      "description": "Update a Coupon",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ code: string, note?: string, quantity_used?: string, quantity?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "thinkific.api.courseReviews.create",
+      "shortPath": "courseReviews.create",
+      "description": "Create a course review",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "{ course_id: number }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ rating: number, title: string, review_text: string, user_id: number, approved: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "rating",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "review_text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "course_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "approved",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.courseReviews.get",
+      "shortPath": "courseReviews.get",
+      "description": "Get Course Reviews By ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "rating",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "review_text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "course_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "approved",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.courseReviews.list",
+      "shortPath": "courseReviews.list",
+      "description": "Get Course Reviews",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "{ course_id: number, page?: number, limit?: number, approved?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: number, rating: number, title: string, review_text: string, user_id: number, course_id: number, approved: boolean, created_at?: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ pagination?: { current_page?: number, next_page?: number, prev_page?: number, total_pages?: number, total_items?: number, entries_info?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.courses.get",
+      "shortPath": "courses.get",
+      "description": "Get courses by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subtitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "course_card_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "intro_video_youtube",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact_information",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "keywords",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "banner_image_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "course_card_image_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "intro_video_wistia_identifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "administrator_user_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "chapter_ids",
+            "optional": false,
+            "type": "number[]"
+          },
+          {
+            "key": "reviews_enabled",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "instructor_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.courses.list",
+      "shortPath": "courses.list",
+      "description": "Get Courses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ page?: number, limit?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id: number, name: string, slug?: string, subtitle?: string, product_id: number, description?: string, course_card_text?: string, intro_video_youtube?: string, contact_information?: string, keywords?: string, duration?: string, banner_image_url?: string, course_card_image_url?: string, intro_video_wistia_identifier?: string, administrator_user_ids?: number[], chapter_ids: number[], reviews_enabled: boolean, user_id?: number, instructor_id: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { current_page?: number, next_page?: number, prev_page?: number, total_pages?: number, total_items?: number, entries_info?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.courses.listChapters",
+      "shortPath": "courses.listChapters",
+      "description": "Get Chapters by Course ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ page?: number, limit?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: number, name: string, position: number, description?: string, duration_in_seconds?: number, content_ids: number[] }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ pagination?: { current_page?: number, next_page?: number, prev_page?: number, total_pages?: number, total_items?: number, entries_info?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.customProfileFields.list",
+      "shortPath": "customProfileFields.list",
+      "description": "Get Custom profile field definition",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ page?: number, limit?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: number, label: string, field_type: string, required: boolean }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ pagination?: { current_page?: number, next_page?: number, prev_page?: number, total_pages?: number, total_items?: number, entries_info?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.enrollments.create",
+      "shortPath": "enrollments.create",
+      "description": "Create enrollment (Thinkific can email the learner)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ course_id?: number, user_id?: number, activated_at?: string, expiry_date?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "user_email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "course_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "course_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "percentage_completed",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "expired",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "is_free_trial",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "completed",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "started_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "activated_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expiry_date",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.enrollments.get",
+      "shortPath": "enrollments.get",
+      "description": "Get enrollments by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "user_email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "course_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "course_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "percentage_completed",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "expired",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "is_free_trial",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "completed",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "started_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "activated_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expiry_date",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.enrollments.list",
+      "shortPath": "enrollments.list",
+      "description": "Get Enrollments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ page?: number, limit?: number, query[user_id]?: number, query[course_id]?: number, query[email]?: string, query[free_trial]?: boolean, query[full]?: boolean, query[completed]?: boolean, query[expired]?: boolean, query[created_on]?: string, query[created_before]?: string, query[created_on_or_before]?: string, query[created_after]?: string, query[created_on_or_after]?: string, query[updated_on]?: string, query[updated_before]?: string, query[updated_on_or_before]?: string, query[updated_after]?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: number, user_email: string, user_name: string, user_id: number, course_name: string, course_id: number, percentage_completed: number, expired: boolean, is_free_trial: boolean, completed: boolean, started_at: string, activated_at: string, completed_at: string, updated_at: string, expiry_date: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ pagination?: { current_page?: number, next_page?: number, prev_page?: number, total_pages?: number, total_items?: number, entries_info?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.enrollments.update",
+      "shortPath": "enrollments.update",
+      "description": "Update enrollment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ activated_at?: string, expiry_date?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "thinkific.api.externalOrders.create",
+      "shortPath": "externalOrders.create",
+      "description": "Create a new external order",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ payment_provider: string, user_id: number, product_id: number, order_type: one-time | subscription | payment-plan, transaction?: { amount: number, currency: string, reference?: string, action?: string } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.externalOrders.purchase",
+      "shortPath": "externalOrders.purchase",
+      "description": "purchase transaction",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: string }"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ amount: number, currency: string, reference?: string, action?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "thinkific.api.externalOrders.refund",
+      "shortPath": "externalOrders.refund",
+      "description": "refund transaction",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ amount: number, currency: string, reference?: string, action?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "thinkific.api.groupAnalysts.addGroup",
+      "shortPath": "groupAnalysts.addGroup",
+      "description": "Add Analyst to Groups",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ user_id: number }"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ group_ids: number[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "thinkific.api.groupAnalysts.removeGroup",
+      "shortPath": "groupAnalysts.removeGroup",
+      "description": "Delete Analyst",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ user_id: number, group_id: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "thinkific.api.groups.assignAnalysts",
+      "shortPath": "groups.assignAnalysts",
+      "description": "Assign Analysts to a Group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ group_id: number }"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ user_ids: number[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "thinkific.api.groups.create",
+      "shortPath": "groups.create",
+      "description": "Create Group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ name: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.groups.get",
+      "shortPath": "groups.get",
+      "description": "Get Group",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.groups.list",
+      "shortPath": "groups.list",
+      "description": "Get Groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ page?: number, limit?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: number, name: string, token: string, created_at: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ pagination?: { current_page?: number, next_page?: number, prev_page?: number, total_pages?: number, total_items?: number, entries_info?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.groups.listAnalysts",
+      "shortPath": "groups.listAnalysts",
+      "description": "Get Group Analysts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ group_id: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_analysts",
+            "optional": false,
+            "type": "number[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.groups.remove",
+      "shortPath": "groups.remove",
+      "description": "Delete Group by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "thinkific.api.groups.removeAnalyst",
+      "shortPath": "groups.removeAnalyst",
+      "description": "Delete Analyst",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ group_id: number, user_id: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "thinkific.api.groupUsers.addUsers",
+      "shortPath": "groupUsers.addUsers",
+      "description": "Create a User to existing Groups",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ user_id: number, group_names: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "thinkific.api.instructors.create",
+      "shortPath": "instructors.create",
+      "description": "Create instructor",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ user_id?: number, title?: string, first_name: string, last_name: string, bio?: string, slug: string, avatar_url?: string, email?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "bio",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "avatar_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.instructors.get",
+      "shortPath": "instructors.get",
+      "description": "Get Instructor by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "bio",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "avatar_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.instructors.list",
+      "shortPath": "instructors.list",
+      "description": "Get Instructors",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ page?: number, limit?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: number, user_id?: number, title?: string, first_name: string, last_name: string, bio?: string, slug?: string, avatar_url?: string, email?: string, created_at: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ pagination?: { current_page?: number, next_page?: number, prev_page?: number, total_pages?: number, total_items?: number, entries_info?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.instructors.remove",
+      "shortPath": "instructors.remove",
+      "description": "Delete instructor",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "thinkific.api.instructors.update",
+      "shortPath": "instructors.update",
+      "description": "Update instructor",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ user_id?: number, title?: string, first_name: string, last_name: string, bio?: string, slug: string, avatar_url?: string, email?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "thinkific.api.orders.get",
+      "shortPath": "orders.get",
+      "description": "Get orders by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "user_email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "product_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "amount_dollars",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "amount_cents",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "subscription",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "coupon_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "coupon_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ product_id?: number, product_name?: string, amount_dollars?: number, amount_cents?: number }[]"
+          },
+          {
+            "key": "affiliate_referral_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.orders.list",
+      "shortPath": "orders.list",
+      "description": "Get Orders",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ page?: number, limit?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ user_id: number, user_email: string, user_name: string, product_name: string, product_id: number, amount_dollars: string, amount_cents: number, subscription: boolean, coupon_code?: string, coupon_id?: number, items?: { product_id?: number, product_name?: string, amount_dollars?: number, amount_cents?: number }[], affiliate_referral_code?: string, status: string, created at?: string, id: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ pagination?: { current_page?: number, next_page?: number, prev_page?: number, total_pages?: number, total_items?: number, entries_info?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.productPublishRequests.approve",
+      "shortPath": "productPublishRequests.approve",
+      "description": "Approves Product Publish Request",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ user_id: number, response_text?: string, notify_requester?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "thinkific.api.productPublishRequests.deny",
+      "shortPath": "productPublishRequests.deny",
+      "description": "Denies Product Publish Request",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ user_id: number, response_text?: string, notify_requester?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "thinkific.api.productPublishRequests.get",
+      "shortPath": "productPublishRequests.get",
+      "description": "Get product publish request by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "response_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "requesting_user_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "responding_user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.productPublishRequests.list",
+      "shortPath": "productPublishRequests.list",
+      "description": "Get List of unhandled product publish requests",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ page?: number, limit?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ product_id: number, status: string, response_text?: string, requesting_user_id: number, responding_user_id?: number, completed_at?: string, created_at?: string, updated_at?: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ pagination?: { current_page?: number, next_page?: number, prev_page?: number, total_pages?: number, total_items?: number, entries_info?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.products.get",
+      "shortPath": "products.get",
+      "description": "Get product by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "productable_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "productable_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "subscription",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "days_until_expiry",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "has_certificate",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "keywords",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "seo_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "seo_description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "related_product_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "card_image_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "product_prices",
+            "optional": true,
+            "type": "{ id?: number, is_primary?: boolean, payment_type?: free | one-time | subscription | payment-plan, label?: string | null, price?: string, days_until_expiry?: string | null, pay_button_text?: string | null, number_of_payments?: string | null, interval?: month | year, interval_count?: string, trial_interval?: day | month | null, trial_interval_count?: string | null, custom_first_price?: string | null, price_name?: string, currency?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.products.list",
+      "shortPath": "products.list",
+      "description": "List products",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ page?: number, limit?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id?: number, created_at?: string, productable_id?: number, productable_type?: string, price?: number, position?: number, status?: string, name?: string, private?: boolean, hidden?: boolean, subscription?: boolean, days_until_expiry?: number, has_certificate?: boolean, keywords?: string, seo_title?: string, seo_description?: string, collection_ids?: number[], related_product_ids?: number[], description?: string, card_image_url?: string, slug?: string, product_prices?: { id?: number, is_primary?: boolean, payment_type?: free | one-time | subscription | payment-plan, label?: string | null, price?: string, days_until_expiry?: string | null, pay_button_text?: string | null, number_of_payments?: string | null, interval?: month | year, interval_count?: string, trial_interval?: day | month | null, trial_interval_count?: string | null, custom_first_price?: string | null, price_name?: string, currency?: string }[] }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ pagination?: { current_page?: number, next_page?: number, prev_page?: number, total_pages?: number, total_items?: number, entries_info?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.products.listRelated",
+      "shortPath": "products.listRelated",
+      "description": "Get related products",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ page?: number, limit?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id?: number, created_at?: string, productable_id?: number, productable_type?: string, price?: number, position?: number, status?: string, name?: string, private?: boolean, hidden?: boolean, subscription?: boolean, days_until_expiry?: number, has_certificate?: boolean, keywords?: string, seo_title?: string, seo_description?: string, collection_ids?: number[], related_product_ids?: number[], description?: string, card_image_url?: string, slug?: string, product_prices?: { id?: number, is_primary?: boolean, payment_type?: free | one-time | subscription | payment-plan, label?: string | null, price?: string, days_until_expiry?: string | null, pay_button_text?: string | null, number_of_payments?: string | null, interval?: month | year, interval_count?: string, trial_interval?: day | month | null, trial_interval_count?: string | null, custom_first_price?: string | null, price_name?: string, currency?: string }[] }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ pagination?: { current_page?: number, next_page?: number, prev_page?: number, total_pages?: number, total_items?: number, entries_info?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.promotions.create",
+      "shortPath": "promotions.create",
+      "description": "Create a new promotion",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ name: string, description?: string, starts_at?: string, expires_at?: string, discount_type: fixed | percentage, amount: number, product_ids?: number[], coupon_ids?: number[], duration?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "starts_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "discount_type",
+            "optional": true,
+            "type": "fixed | percentage"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "coupon_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.promotions.get",
+      "shortPath": "promotions.get",
+      "description": "Get promotion by provided ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "starts_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "discount_type",
+            "optional": true,
+            "type": "fixed | percentage"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "coupon_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.promotions.getByCoupon",
+      "shortPath": "promotions.getByCoupon",
+      "description": "Get Promotion associated with the provided Coupon code.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "{ product_id: number, coupon_code: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "starts_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "discount_type",
+            "optional": true,
+            "type": "fixed | percentage"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "coupon_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.promotions.list",
+      "shortPath": "promotions.list",
+      "description": "List promotions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ page?: number, limit?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id?: number, name?: string, description?: string, starts_at?: string, expires_at?: string, discount_type?: fixed | percentage, amount?: number, coupon_ids?: number[], duration?: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ pagination?: { current_page?: number, next_page?: number, prev_page?: number, total_pages?: number, total_items?: number, entries_info?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.promotions.remove",
+      "shortPath": "promotions.remove",
+      "description": "Delete promotion by provided ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "thinkific.api.promotions.update",
+      "shortPath": "promotions.update",
+      "description": "Update promotion by provided ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ name: string, description?: string, starts_at?: string, expires_at?: string, discount_type: fixed | percentage, amount: number, product_ids?: number[], coupon_ids?: number[], duration?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "thinkific.api.users.create",
+      "shortPath": "users.create",
+      "description": "Create user",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ first_name: string, last_name: string, email: string, password?: string, roles?: (affiliate | course_admin | group_analyst | site_admin)[], bio?: string, company?: string, headline?: string, affiliate_code?: string, affiliate_commission?: number, affiliate_commission_type?: string, affiliate_payout_email?: string, custom_profile_fields?: { value?: string, custom_profile_field_definition_id: number }[], skip_custom_fields_validation?: boolean, send_welcome_email?: boolean, external_id?: string, provider?: SSO | OPENID_CONNECT }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "full_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "(affiliate | course_admin | group_analyst | site_admin)[]"
+          },
+          {
+            "key": "avatar_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bio",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "headline",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "affiliate_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "affiliate_commission",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "affiliate_commission_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "affiliate_payout_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "administered_course_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "custom_profile_fields",
+            "optional": true,
+            "type": "{ id?: number, value?: string, label?: string, custom_profile_field_definition_id?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.users.createExpressSignInLink",
+      "shortPath": "users.createExpressSignInLink",
+      "description": "Get a learner's Express Sign In Link",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.users.get",
+      "shortPath": "users.get",
+      "description": "List Users by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: string }"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ provider?: SSO | OPENID_CONNECT }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "full_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "(affiliate | course_admin | group_analyst | site_admin)[]"
+          },
+          {
+            "key": "avatar_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bio",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "headline",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "affiliate_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "affiliate_commission",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "affiliate_commission_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "affiliate_payout_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "administered_course_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "custom_profile_fields",
+            "optional": true,
+            "type": "{ id?: number, value?: string, label?: string, custom_profile_field_definition_id?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.users.getAuthentication",
+      "shortPath": "users.getAuthentication",
+      "description": "Get User Auth data by ID and Provider",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: string, provider: SSO | OPENID_CONNECT }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "SSO | OPENID_CONNECT"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.users.list",
+      "shortPath": "users.list",
+      "description": "List Users",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ page?: number, limit?: number, query[email]?: string, query[role]?: string, query[external_source]?: string, query[custom_profile_field_label]?: string, query[custom_profile_field_value]?: string, query[group_id]?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id?: number, created_at?: string, first_name?: string, last_name?: string, full_name?: string, company?: string, email?: string, roles?: (affiliate | course_admin | group_analyst | site_admin)[], avatar_url?: string, bio?: string, headline?: string, affiliate_code?: string, external_source?: string, affiliate_commission?: number, affiliate_commission_type?: string, affiliate_payout_email?: string, administered_course_ids?: number[], custom_profile_fields?: { id?: number, value?: string, label?: string, custom_profile_field_definition_id?: number }[] }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ pagination?: { current_page?: number, next_page?: number, prev_page?: number, total_pages?: number, total_items?: number, entries_info?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thinkific.api.users.remove",
+      "shortPath": "users.remove",
+      "description": "Delete user by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: string }"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ provider?: SSO | OPENID_CONNECT }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "thinkific.api.users.update",
+      "shortPath": "users.update",
+      "description": "Update user by ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "{ id: string }"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ provider?: SSO | OPENID_CONNECT }"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ first_name?: string, last_name?: string, email?: string, password?: string, roles?: (affiliate | course_admin | group_analyst | site_admin)[], avatar_url?: string, bio?: string, company?: string, headline?: string, external_source?: string, affiliate_code?: string, affiliate_commission?: number, affiliate_commission_type?: string, affiliate_payout_email?: string, custom_profile_fields?: { value?: string, custom_profile_field_definition_id: number }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
