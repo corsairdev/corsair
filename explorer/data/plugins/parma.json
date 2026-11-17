@@ -1,0 +1,757 @@
+{
+  "id": "parma",
+  "displayName": "Parma",
+  "description": "Manage Parma CRM relationships, notes, groups, deals, pipelines, stages, and users.",
+  "npmPackageName": "@corsair-dev/parma",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 22,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "tenant_external_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "parma.api.deals.get",
+      "shortPath": "deals.get",
+      "description": "Get a deal",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, name: string, amount: number | string | null, status: string, relationship_id: number | null, pipeline_id: number | null, stage_id: number | null, owned_by_id: number | null, created_at: string, updated_at: string, closed_at: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parma.api.deals.list",
+      "shortPath": "deals.list",
+      "description": "List deals",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, name: string, amount: number | string | null, status: string, relationship_id: number | null, pipeline_id: number | null, stage_id: number | null, owned_by_id: number | null, created_at: string, updated_at: string, closed_at: string | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ count: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parma.api.groups.list",
+      "shortPath": "groups.list",
+      "description": "List groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, name: string, properties: { id: number, name: string, type: string }[] }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ count: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parma.api.notes.create",
+      "shortPath": "notes.create",
+      "description": "Create a note",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datetime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "relationship_ids",
+            "optional": false,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, body: string, datetime: string, relationship_ids: number[], created_at: string, updated_at: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parma.api.notes.list",
+      "shortPath": "notes.list",
+      "description": "List notes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, body: string, datetime: string, relationship_ids: number[], created_at: string, updated_at: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ count: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parma.api.notes.update",
+      "shortPath": "notes.update",
+      "description": "Update a note",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "datetime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "relationship_ids",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, body: string, datetime: string, relationship_ids: number[], created_at: string, updated_at: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parma.api.pipelines.get",
+      "shortPath": "pipelines.get",
+      "description": "Get a pipeline",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, name: string, position: number, created_at: string, updated_at: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parma.api.pipelines.list",
+      "shortPath": "pipelines.list",
+      "description": "List pipelines",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, name: string, position: number, created_at: string, updated_at: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ count: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parma.api.relationships.addGroup",
+      "shortPath": "relationships.addGroup",
+      "description": "Add a relationship to a group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "relationship_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, group_id: number, created_at: string, updated_at: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parma.api.relationships.create",
+      "shortPath": "relationships.create",
+      "description": "Create a relationship",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "person | company"
+          },
+          {
+            "key": "company_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "group_ids",
+            "optional": false,
+            "type": "number[]"
+          },
+          {
+            "key": "about",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, name: string, type: string, about: string | null, company_id: number | null, group_ids: number[], contact_details: { type: string, value: string }[], properties: { id: number, name: string, value: string | null }[], created_at: string, updated_at: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parma.api.relationships.delete",
+      "shortPath": "relationships.delete",
+      "description": "Delete a relationship",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "parma.api.relationships.get",
+      "shortPath": "relationships.get",
+      "description": "Get a relationship",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, name: string, type: string, about: string | null, company_id: number | null, group_ids: number[], contact_details: { type: string, value: string }[], properties: { id: number, name: string, value: string | null }[], created_at: string, updated_at: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parma.api.relationships.list",
+      "shortPath": "relationships.list",
+      "description": "List relationships",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "schedulinglink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instagram",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "twitter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "telegram",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sms",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "whatsapp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, name: string, type: string, about: string | null, company_id: number | null, group_ids: number[], contact_details: { type: string, value: string }[], properties: { id: number, name: string, value: string | null }[], created_at: string, updated_at: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ count: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parma.api.relationships.listGroups",
+      "shortPath": "relationships.listGroups",
+      "description": "List relationship groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "relationship_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, group_id: number, created_at: string, updated_at: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ count: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parma.api.relationships.listNotes",
+      "shortPath": "relationships.listNotes",
+      "description": "List relationship notes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "relationship_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, body: string, datetime: string, relationship_ids: number[], created_at: string, updated_at: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ count: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parma.api.relationships.removeGroup",
+      "shortPath": "relationships.removeGroup",
+      "description": "Remove a relationship from a group",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "relationship_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "relationship_group_id",
+            "optional": false,
+            "type": "string",
+            "description": "Membership id: the `id` from relationships.listGroups, not the `group_id`"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "parma.api.relationships.update",
+      "shortPath": "relationships.update",
+      "description": "Update a relationship",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "person | company"
+          },
+          {
+            "key": "company_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "group_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "about",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ id: number, value: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, name: string, type: string, about: string | null, company_id: number | null, group_ids: number[], contact_details: { type: string, value: string }[], properties: { id: number, name: string, value: string | null }[], created_at: string, updated_at: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parma.api.stages.get",
+      "shortPath": "stages.get",
+      "description": "Get a stage",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, name: string, position: number, created_at: string, updated_at: string, pipeline_id: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parma.api.stages.list",
+      "shortPath": "stages.list",
+      "description": "List stages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, name: string, position: number, created_at: string, updated_at: string, pipeline_id: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ count: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parma.api.users.get",
+      "shortPath": "users.get",
+      "description": "Get a user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "parma.api.users.list",
+      "shortPath": "users.list",
+      "description": "List users",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, name: string, email: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ count: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parma.api.users.me",
+      "shortPath": "users.me",
+      "description": "Get the current user and account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ user: { id: number, name: string, email: string }, account: { id: number, name: string } }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

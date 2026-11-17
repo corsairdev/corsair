@@ -1,0 +1,2136 @@
+---
+title: "SwaggerHub API reference"
+sidebarTitle: "API"
+description: "API reference for the SwaggerHub plugin in Corsair: every `swaggerhub.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Apis
+
+### cloneVersion
+
+`apis.cloneVersion`
+
+Create a version that starts as a copy of an existing one
+
+**Risk:** `write`
+
+```ts
+await corsair.swaggerhub.api.apis.cloneVersion({ owner: 'your-org', api: 'petstore', version: '1.0.0', newVersion: '1.0.1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+| `newVersion` | `string` | Yes | — |
+| `private` | `boolean` | No | — |
+
+Creates `newVersion` as a copy of the version in the path. `private` decides the new version's visibility; without it the source setting is used.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `sourceVersion` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+| `created` | `true` | Yes | — |
+
+
+
+---
+
+### compare
+
+`apis.compare`
+
+Compare a definition against the stored version and list the differences
+
+**Risk:** `read`
+
+```ts
+await corsair.swaggerhub.api.apis.compare({ owner: 'your-org', api: 'petstore', version: '1.0.0', definition: 'openapi: 3.0.0\ninfo:\n  title: Petstore\n  version: 1.0.0\npaths: {}', method: 'FULL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+| `definition` | `string` | Yes | — |
+| `format` | `yaml \| json` | No | — |
+| `method` | `FULL \| LOGICAL \| STRUCTURAL` | No | Defaults to "FULL". |
+
+Posts a definition and answers a **bare array** of differences between it and the stored version, so the plugin returns `{ owner, api, version, changes }`. `method` is a required query parameter on the route and takes `FULL`, `LOGICAL` or `STRUCTURAL`; the plugin sends `FULL` when you leave it out. A response that is not an array fails rather than reading as no changes.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+| `changes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="changes full type">
+
+```ts
+{
+  description?: string | null,
+  breaking?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`apis.delete`
+
+Delete an API and every version of it. There is no undo and the comments go with it
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.swaggerhub.api.apis.delete({ owner: 'your-org', api: 'petstore' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+
+Deletes the API and every version of it. The route answers 200 with no body, so the plugin reports `{ owner, api, deleted: true }`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### deleteVersion
+
+`apis.deleteVersion`
+
+Delete one version of an API. The other versions stay, and there is no undo
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.swaggerhub.api.apis.deleteVersion({ owner: 'your-org', api: 'petstore', version: '1.0.0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+
+Deletes one version and leaves the others. The API itself stays.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### disableNotifications
+
+`apis.disableNotifications`
+
+Disable every notification the caller has on one API. Nothing else about the API changes
+
+**Risk:** `write`
+
+```ts
+await corsair.swaggerhub.api.apis.disableNotifications({ owner: 'your-org', api: 'petstore' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+
+Turns off every notification the caller has on the API. The route answers 200 with no body, so the plugin reports an empty `{ enabled }`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `enabled` | `string[] \| null` | No | — |
+
+
+
+---
+
+### forkVersion
+
+`apis.forkVersion`
+
+Fork a version into another owner and name, including another organisation
+
+**Risk:** `write`
+
+```ts
+await corsair.swaggerhub.api.apis.forkVersion({ owner: 'your-org', api: 'petstore', version: '1.0.0', targetOwner: 'other-org', targetName: 'petstore-copy', targetVersion: '1.0.0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+| `targetOwner` | `string` | Yes | — |
+| `targetName` | `string` | Yes | — |
+| `targetVersion` | `string` | Yes | — |
+| `project` | `string` | No | — |
+| `private` | `boolean` | No | — |
+
+Writes the version into `targetOwner` under `targetName` and `targetVersion`, which can be another organisation. The name must be at least 3 characters and at most 60, and the version at most 128.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `targetOwner` | `string` | Yes | — |
+| `targetName` | `string` | Yes | — |
+| `targetVersion` | `string` | Yes | — |
+| `forked` | `true` | Yes | — |
+
+
+
+---
+
+### getCapabilities
+
+`apis.getCapabilities`
+
+Read what the token may do with one API version, such as seeing standardization errors
+
+**Risk:** `read`
+
+```ts
+await corsair.swaggerhub.api.apis.getCapabilities({ owner: 'your-org', api: 'petstore', version: '1.0.0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+
+Answers `{ canViewStandardizationErrors }`, which says whether the token may read this version's standardization findings.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `canViewStandardizationErrors` | `boolean \| null` | No | — |
+
+
+
+---
+
+### getDefaultVersion
+
+`apis.getDefaultVersion`
+
+Read which version the API shows by default. Null when none is set
+
+**Risk:** `read`
+
+```ts
+await corsair.swaggerhub.api.apis.getDefaultVersion({ owner: 'your-org', api: 'petstore' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+
+Answers `{ version }`, where `version` is **null** when the API has no default set.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `version` | `string \| null` | No | — |
+
+
+
+---
+
+### getDefinition
+
+`apis.getDefinition`
+
+Read the stored definition of one API version as text, optionally resolved or flattened
+
+**Risk:** `read`
+
+```ts
+await corsair.swaggerhub.api.apis.getDefinition({ owner: 'your-org', api: 'petstore', version: '1.0.0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+| `resolved` | `boolean` | No | — |
+| `flatten` | `boolean` | No | — |
+
+Answers `{ definition }` as text. `resolved` follows `$ref`s and `flatten` lifts inline schemas into named models; GraphQL definitions support neither. A JSON definition is re-serialized to a string, so the reply is always text.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+| `definition` | `string` | Yes | — |
+
+
+
+---
+
+### getNotifications
+
+`apis.getNotifications`
+
+Read which notification scopes are enabled for one API, and for the caller
+
+**Risk:** `read`
+
+```ts
+await corsair.swaggerhub.api.apis.getNotifications({ owner: 'your-org', api: 'petstore', scope: 'USER' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `scope` | `USER \| ALL` | No | Defaults to "USER". |
+| `version` | `string` | No | — |
+
+Answers `{ enabled }`, the notification scopes the caller has on the API. `scope` is a required query parameter, `USER` (the default) or `ALL`, and `version` narrows it to one version.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `enabled` | `string[] \| null` | No | — |
+
+
+
+---
+
+### list
+
+`apis.list`
+
+List the APIs under one owner, with paging, sorting and a filter for the token user own APIs
+
+**Risk:** `read`
+
+```ts
+await corsair.swaggerhub.api.apis.list({ owner: 'your-org' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `filter` | `user` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `sort` | `NAME \| UPDATED \| CREATED \| OWNER \| BEST_MATCH \| TITLE` | No | — |
+| `order` | `ASC \| DESC` | No | — |
+
+Answers an APIs.json object with an `apis` array, one entry per API rather than per version. `sort` and `order` order the entries, and `filter: 'user'` narrows to the token's own APIs.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `modified` | `string \| null` | No | — |
+| `specificationVersion` | `string \| null` | No | — |
+| `defaultVersion` | `string \| null` | No | — |
+| `offset` | `number \| null` | No | — |
+| `totalCount` | `number \| null` | No | — |
+| `blocked` | `boolean \| null` | No | — |
+| `apis` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="apis full type">
+
+```ts
+{
+  name?: string | null,
+  description?: string | null,
+  summary?: string | null,
+  tags?: string[] | null,
+  properties?: {
+    type: string,
+    url?: string | null,
+    value?: string | null
+  }[] | null,
+  totalCount?: {
+    errors?: number | null,
+    warnings?: number | null,
+    hints?: number | null,
+    infos?: number | null
+  } | null,
+  contractTesting?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listVersions
+
+`apis.listVersions`
+
+List every version of one API, with its default version and metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.swaggerhub.api.apis.listVersions({ owner: 'your-org', api: 'petstore' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+
+Answers an APIs.json object with an `apis` array, one entry per version, plus `defaultVersion`. This is how to find a version name before calling a route that needs one.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `modified` | `string \| null` | No | — |
+| `specificationVersion` | `string \| null` | No | — |
+| `defaultVersion` | `string \| null` | No | — |
+| `offset` | `number \| null` | No | — |
+| `totalCount` | `number \| null` | No | — |
+| `blocked` | `boolean \| null` | No | — |
+| `apis` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="apis full type">
+
+```ts
+{
+  name?: string | null,
+  description?: string | null,
+  summary?: string | null,
+  tags?: string[] | null,
+  properties?: {
+    type: string,
+    url?: string | null,
+    value?: string | null
+  }[] | null,
+  totalCount?: {
+    errors?: number | null,
+    warnings?: number | null,
+    hints?: number | null,
+    infos?: number | null
+  } | null,
+  contractTesting?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### rename
+
+`apis.rename`
+
+Rename an API. Its published URLs change, so anything pointing at the old name breaks
+
+**Risk:** `destructive`
+
+```ts
+await corsair.swaggerhub.api.apis.rename({ owner: 'your-org', api: 'petstore', newName: 'petstore-v2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `newName` | `string` | Yes | — |
+
+Sends `newName` as a query parameter, with no body. **The published URLs change**, so anything pointing at the old name breaks. SwaggerHub emails the API's designers and consumers about the rename, and the old name stays reserved, so a later save under it answers 403.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `newName` | `string` | Yes | — |
+| `renamed` | `true` | Yes | — |
+
+
+
+---
+
+### save
+
+`apis.save`
+
+Save a definition to one API, creating the version or updating it. Answers 409 on a published version unless force is set
+
+**Risk:** `write`
+
+```ts
+await corsair.swaggerhub.api.apis.save({ owner: 'your-org', api: 'petstore', definition: 'openapi: 3.0.0\ninfo:\n  title: Petstore\n  version: 1.0.0\npaths: {}' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `definition` | `string` | Yes | — |
+| `format` | `yaml \| json \| graphql` | No | — |
+| `version` | `string` | No | — |
+| `isPrivate` | `boolean` | No | — |
+| `force` | `boolean` | No | — |
+| `projectName` | `string` | No | — |
+| `noReconcile` | `boolean` | No | — |
+
+**The definition is the request body**, not a field inside an object. For OpenAPI and AsyncAPI the version comes from `info.version`; pass `version` for GraphQL and MCP. Use `format: 'graphql'` for GraphQL SDL, which is sent as `application/graphql`. `force` overwrites a published version instead of answering 409. The route replies with no body, so the result reports the owner, the name and the `version` you passed. When the version comes from the definition's `info.version` and you leave `version` out, the result has `version: null`. Core does not pass the status on, so whether the save created the version is not reported.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `version` | `string \| null` | No | — |
+| `saved` | `true` | Yes | — |
+
+
+
+---
+
+### setDefaultVersion
+
+`apis.setDefaultVersion`
+
+Change which version the API shows by default. The version has to exist
+
+**Risk:** `write`
+
+```ts
+await corsair.swaggerhub.api.apis.setDefaultVersion({ owner: 'your-org', api: 'petstore', version: '1.0.0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+
+Writes the default version. The version has to exist, or the route answers 404.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+
+
+
+---
+
+### setNotifications
+
+`apis.setNotifications`
+
+Turn on notification scopes for one API. The body is the bare list of scopes
+
+**Risk:** `write`
+
+```ts
+await corsair.swaggerhub.api.apis.setNotifications({ owner: 'your-org', api: 'petstore', enabled: ['self'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `enabled` | `string[]` | Yes | — |
+
+**The body is the bare list of scopes**, not an object around it. The route answers 200 with no body, so the plugin reports the scopes it sent as `{ enabled }`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `enabled` | `string[] \| null` | No | — |
+
+
+
+---
+
+## Api Settings
+
+### getLifecycle
+
+`apiSettings.getLifecycle`
+
+Read whether one API version is published
+
+**Risk:** `read`
+
+```ts
+await corsair.swaggerhub.api.apiSettings.getLifecycle({ owner: 'your-org', api: 'petstore', version: '1.0.0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+
+Answers `{ published }` for one version.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `published` | `boolean \| null` | No | — |
+
+
+
+---
+
+### getVisibility
+
+`apiSettings.getVisibility`
+
+Read whether one API version is private
+
+**Risk:** `read`
+
+```ts
+await corsair.swaggerhub.api.apiSettings.getVisibility({ owner: 'your-org', api: 'petstore', version: '1.0.0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+
+Answers `{ private }` for one version.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `private` | `boolean` | Yes | — |
+
+
+
+---
+
+### setLifecycle
+
+`apiSettings.setLifecycle`
+
+Publish or unpublish one API version. Publishing exposes it to everyone it is visible to
+
+**Risk:** `destructive`
+
+```ts
+await corsair.swaggerhub.api.apiSettings.setLifecycle({ owner: 'your-org', api: 'petstore', version: '1.0.0', published: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+| `published` | `boolean` | Yes | — |
+| `force` | `boolean` | No | — |
+
+Publishes or unpublishes one version. `force` matters when the version is already published, and a lifecycle change is what makes a spec visible in the portal. SwaggerHub emails the users the API is shared with when it is published or unpublished.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `published` | `boolean \| null` | No | — |
+
+
+
+---
+
+### setVisibility
+
+`apiSettings.setVisibility`
+
+Make one API version private or public. A private version leaves public view immediately
+
+**Risk:** `write`
+
+```ts
+await corsair.swaggerhub.api.apiSettings.setVisibility({ owner: 'your-org', api: 'petstore', version: '1.0.0', private: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+| `private` | `boolean` | Yes | — |
+
+Makes one version private or public. A private version leaves public view immediately.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `private` | `boolean` | Yes | — |
+
+
+
+---
+
+## Comments
+
+### create
+
+`comments.create`
+
+Post a comment on one API version, optionally anchored to a line range. Collaborators with notifications on are told about it
+
+**Risk:** `destructive`
+
+```ts
+await corsair.swaggerhub.api.comments.create({ owner: 'your-org', api: 'petstore', version: '1.0.0', body: 'This operation needs a summary' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+| `range` | `object` | No | — |
+
+The route documents `replies` as required, so the plugin always sends it, as an empty array. `range` anchors the comment to a line range and takes all six offsets. The API refuses a comment without one, so a comment with no `range` goes on line 1.
+
+<AccordionGroup>
+<Accordion title="range full type">
+
+```ts
+{
+  startLine?: number,
+  endLine?: number,
+  startColumn?: number,
+  endColumn?: number,
+  startOffset?: number,
+  endOffset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `user` | `object` | Yes | — |
+| `created` | `string \| null` | No | — |
+| `modified` | `string \| null` | No | — |
+| `body` | `string` | Yes | — |
+| `status` | `string \| null` | No | — |
+| `replies` | `object[] \| null` | No | — |
+| `range` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: string | null,
+  email?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="replies full type">
+
+```ts
+{
+  id: string,
+  user: {
+    id?: string | null,
+    email?: string | null,
+    name?: string | null
+  },
+  created?: string | null,
+  modified?: string | null,
+  body: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="range full type">
+
+```ts
+{
+  startLine?: number,
+  endLine?: number,
+  startColumn?: number,
+  endColumn?: number,
+  startOffset?: number,
+  endOffset?: number
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`comments.delete`
+
+Delete one comment and its replies. There is no undo
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.swaggerhub.api.comments.delete({ owner: 'your-org', api: 'petstore', version: '1.0.0', comment: 'c1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+| `comment` | `string` | Yes | — |
+
+Deletes the comment and its replies. The route answers 200 with no body, so the plugin reports the ids.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+| `comment` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### list
+
+`comments.list`
+
+List the comments on one API version with their replies and open or resolved status
+
+**Risk:** `read`
+
+```ts
+await corsair.swaggerhub.api.comments.list({ owner: 'your-org', api: 'petstore', version: '1.0.0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+
+Answers a **bare array** of comments. A 204 means the version has none, so the plugin reports `{ comments: [], empty: true }` rather than failing.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+| `comments` | `object[]` | Yes | — |
+| `empty` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="comments full type">
+
+```ts
+{
+  id: string,
+  user: {
+    id?: string | null,
+    email?: string | null,
+    name?: string | null
+  },
+  created?: string | null,
+  modified?: string | null,
+  body: string,
+  status?: string | null,
+  replies?: {
+    id: string,
+    user: {
+      id?: string | null,
+      email?: string | null,
+      name?: string | null
+    },
+    created?: string | null,
+    modified?: string | null,
+    body: string
+  }[] | null,
+  range?: {
+    startLine?: number,
+    endLine?: number,
+    startColumn?: number,
+    endColumn?: number,
+    startOffset?: number,
+    endOffset?: number
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reply
+
+`comments.reply`
+
+Post a reply to an existing comment. Collaborators with notifications on are told about it
+
+**Risk:** `destructive`
+
+```ts
+await corsair.swaggerhub.api.comments.reply({ owner: 'your-org', api: 'petstore', version: '1.0.0', comment: 'c1', body: 'Fixed in 1.0.1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+| `comment` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+
+Adds a reply under the comment in the path, with a `body`. Answers the reply as a plain comment.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `user` | `object` | Yes | — |
+| `created` | `string \| null` | No | — |
+| `modified` | `string \| null` | No | — |
+| `body` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: string | null,
+  email?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`comments.update`
+
+Change the text of one comment
+
+**Risk:** `write`
+
+```ts
+await corsair.swaggerhub.api.comments.update({ owner: 'your-org', api: 'petstore', version: '1.0.0', comment: 'c1', body: 'Reworded' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+| `comment` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+
+Sends PATCH with the new `body`. Answers the updated comment.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `user` | `object` | Yes | — |
+| `created` | `string \| null` | No | — |
+| `modified` | `string \| null` | No | — |
+| `body` | `string` | Yes | — |
+| `status` | `string \| null` | No | — |
+| `replies` | `object[] \| null` | No | — |
+| `range` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: string | null,
+  email?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="replies full type">
+
+```ts
+{
+  id: string,
+  user: {
+    id?: string | null,
+    email?: string | null,
+    name?: string | null
+  },
+  created?: string | null,
+  modified?: string | null,
+  body: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="range full type">
+
+```ts
+{
+  startLine?: number,
+  endLine?: number,
+  startColumn?: number,
+  endColumn?: number,
+  startOffset?: number,
+  endOffset?: number
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Domains
+
+### delete
+
+`domains.delete`
+
+Delete a domain and every version of it. There is no undo
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.swaggerhub.api.domains.delete({ owner: 'your-org', domain: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `force` | `boolean` | No | — |
+
+Deletes the domain and every version. `force` lets it through when another spec references it.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### deleteVersion
+
+`domains.deleteVersion`
+
+Delete one version of a domain. The other versions stay, and there is no undo
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.swaggerhub.api.domains.deleteVersion({ owner: 'your-org', domain: 'example', version: '1.0.0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+| `force` | `boolean` | No | — |
+
+Deletes one domain version, leaving the others. `force` behaves as on the domain delete.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### getDefinition
+
+`domains.getDefinition`
+
+Read the stored definition of one domain version as text
+
+**Risk:** `read`
+
+```ts
+await corsair.swaggerhub.api.domains.getDefinition({ owner: 'your-org', domain: 'example', version: '1.0.0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+
+Answers `{ definition }` as text, in whichever format the domain was stored as.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+| `definition` | `string` | Yes | — |
+
+
+
+---
+
+### getVersions
+
+`domains.getVersions`
+
+List every version of one domain
+
+**Risk:** `read`
+
+```ts
+await corsair.swaggerhub.api.domains.getVersions({ owner: 'your-org', domain: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+
+Answers an APIs.json object, one entry per domain version.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `modified` | `string \| null` | No | — |
+| `specificationVersion` | `string \| null` | No | — |
+| `defaultVersion` | `string \| null` | No | — |
+| `offset` | `number \| null` | No | — |
+| `totalCount` | `number \| null` | No | — |
+| `blocked` | `boolean \| null` | No | — |
+| `apis` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="apis full type">
+
+```ts
+{
+  name?: string | null,
+  description?: string | null,
+  summary?: string | null,
+  tags?: string[] | null,
+  properties?: {
+    type: string,
+    url?: string | null,
+    value?: string | null
+  }[] | null,
+  totalCount?: {
+    errors?: number | null,
+    warnings?: number | null,
+    hints?: number | null,
+    infos?: number | null
+  } | null,
+  contractTesting?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`domains.list`
+
+List the domains under one owner
+
+**Risk:** `read`
+
+```ts
+await corsair.swaggerhub.api.domains.list({ owner: 'your-org' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `sort` | `NAME \| UPDATED \| CREATED \| OWNER \| BEST_MATCH \| TITLE` | No | — |
+| `order` | `ASC \| DESC` | No | — |
+
+Answers an APIs.json object with an `apis` array, one entry per domain under the owner.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `modified` | `string \| null` | No | — |
+| `specificationVersion` | `string \| null` | No | — |
+| `defaultVersion` | `string \| null` | No | — |
+| `offset` | `number \| null` | No | — |
+| `totalCount` | `number \| null` | No | — |
+| `blocked` | `boolean \| null` | No | — |
+| `apis` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="apis full type">
+
+```ts
+{
+  name?: string | null,
+  description?: string | null,
+  summary?: string | null,
+  tags?: string[] | null,
+  properties?: {
+    type: string,
+    url?: string | null,
+    value?: string | null
+  }[] | null,
+  totalCount?: {
+    errors?: number | null,
+    warnings?: number | null,
+    hints?: number | null,
+    infos?: number | null
+  } | null,
+  contractTesting?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### save
+
+`domains.save`
+
+Save a definition to one domain, creating the version or updating it
+
+**Risk:** `write`
+
+```ts
+await corsair.swaggerhub.api.domains.save({ owner: 'your-org', domain: 'example', definition: 'openapi: 3.0.0\ninfo:\n  title: Petstore\n  version: 1.0.0\npaths: {}' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `definition` | `string` | Yes | — |
+| `format` | `yaml \| json` | No | — |
+| `version` | `string` | No | — |
+| `isPrivate` | `boolean` | No | — |
+| `force` | `boolean` | No | — |
+| `projectName` | `string` | No | — |
+
+**The definition is the request body.** The domain version comes from the definition when it carries one; pass `version` otherwise.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `version` | `string \| null` | No | — |
+| `saved` | `true` | Yes | — |
+
+
+
+---
+
+## Integrations
+
+### execute
+
+`integrations.execute`
+
+Run one integration once, which pushes the stored definition to its target such as a repository or gateway
+
+**Risk:** `destructive`
+
+```ts
+await corsair.swaggerhub.api.integrations.execute({ owner: 'your-org', api: 'petstore', version: '1.0.0', integrationId: 'i1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+| `integrationId` | `string` | Yes | — |
+| `commitMessage` | `string` | No | — |
+
+Runs the integration once, which pushes the stored definition to its target such as a repository or a gateway. A 205 means the API was updated as part of the run. `commitMessage` sets the commit text on a source-control integration.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+| `integrationId` | `string` | Yes | — |
+| `executed` | `true` | Yes | — |
+
+
+
+---
+
+### list
+
+`integrations.list`
+
+List the integrations configured on one API version, with their ids and enabled state
+
+**Risk:** `read`
+
+```ts
+await corsair.swaggerhub.api.integrations.list({ owner: 'your-org', api: 'petstore', version: '1.0.0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+
+Answers `{ integrations }` with each integration's id, name and enabled state. Use the id with `integrations.execute`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `api` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+| `integrations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="integrations full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  pluginIdentifier?: string | null,
+  enabled?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a project from a list of API, domain and template names that already exist in the organisation
+
+**Risk:** `write`
+
+```ts
+await corsair.swaggerhub.api.projects.create({ owner: 'your-org', name: 'My Project', apis: ['petstore'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `apis` | `string[]` | No | — |
+| `domains` | `string[]` | No | — |
+| `templates` | `string[]` | No | — |
+
+The route documents all three collections as required, so the plugin sends an empty array for any left out. Names have to exist in the organisation already.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `apis` | `string[] \| null` | No | — |
+| `domains` | `string[] \| null` | No | — |
+| `templates` | `string[] \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Delete a project. The APIs, domains and templates it grouped stay on the account
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.swaggerhub.api.projects.delete({ owner: 'your-org', projectId: 'my-project' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `projectId` | `string` | Yes | — |
+
+Deletes the project. The specs it grouped stay on the account. The route answers 204.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `projectId` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Read one project with the APIs, domains and templates it groups
+
+**Risk:** `read`
+
+```ts
+await corsair.swaggerhub.api.projects.get({ owner: 'your-org', projectId: 'my-project' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `projectId` | `string` | Yes | — |
+
+Answers one project with the `apis`, `domains` and `templates` arrays it groups. Each entry is a **name**, not an id, and the specs must belong to the same organisation.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `apis` | `string[] \| null` | No | — |
+| `domains` | `string[] \| null` | No | — |
+| `templates` | `string[] \| null` | No | — |
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List the projects in one organisation
+
+**Risk:** `read`
+
+```ts
+await corsair.swaggerhub.api.projects.list({ owner: 'your-org' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `order` | `ASC \| DESC` | No | — |
+
+Answers `{ offset, totalCount, projects }`. `order` takes `ASC` or `DESC`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number \| null` | No | — |
+| `totalCount` | `number \| null` | No | — |
+| `projects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  owner?: string | null,
+  name?: string | null,
+  description?: string | null,
+  apis?: string[] | null,
+  domains?: string[] | null,
+  templates?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`projects.update`
+
+Replace a project definition. A collection left out is cleared, so send all three
+
+**Risk:** `write`
+
+```ts
+await corsair.swaggerhub.api.projects.update({ owner: 'your-org', projectId: 'my-project', name: 'Renamed', apis: ['petstore'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `projectId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `apis` | `string[]` | No | — |
+| `domains` | `string[]` | No | — |
+| `templates` | `string[]` | No | — |
+
+Sends PUT, which **replaces** the project. A collection left out is cleared, so the plugin always sends all three. The PUT also needs `name`; when you leave it out the plugin sends the project id, which is the project's name.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `apis` | `string[] \| null` | No | — |
+| `domains` | `string[] \| null` | No | — |
+| `templates` | `string[] \| null` | No | — |
+
+
+
+---
+
+## Specs
+
+### list
+
+`specs.list`
+
+List the specs visible to the account, filtered by type, owner, visibility, state or free text
+
+**Risk:** `read`
+
+```ts
+await corsair.swaggerhub.api.specs.list({ specType: 'API', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `specType` | `API \| DOMAIN \| TEMPLATE \| ANY` | No | — |
+| `visibility` | `PUBLIC \| PRIVATE \| ANY` | No | — |
+| `state` | `string` | No | — |
+| `owner` | `string` | No | — |
+| `project` | `string` | No | — |
+| `specification` | `string` | No | — |
+| `oas` | `string` | No | — |
+| `filter` | `user` | No | — |
+| `query` | `string` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `sort` | `NAME \| UPDATED \| CREATED \| OWNER \| BEST_MATCH \| TITLE` | No | — |
+| `order` | `ASC \| DESC` | No | — |
+| `ignoreCount` | `boolean` | No | — |
+
+Answers the APIs.json listing `{ offset, totalCount, apis }`, one entry per spec. `specType` takes `API`, `DOMAIN`, `TEMPLATE` or `ANY`. `visibility` takes `PUBLIC`, `PRIVATE` or `ANY`, and `sort` takes `NAME`, `UPDATED`, `CREATED`, `OWNER`, `BEST_MATCH` or `TITLE`, with `order` of `ASC` or `DESC`. `filter: 'user'` narrows the result to the token's own specs.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `modified` | `string \| null` | No | — |
+| `specificationVersion` | `string \| null` | No | — |
+| `defaultVersion` | `string \| null` | No | — |
+| `offset` | `number \| null` | No | — |
+| `totalCount` | `number \| null` | No | — |
+| `blocked` | `boolean \| null` | No | — |
+| `apis` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="apis full type">
+
+```ts
+{
+  name?: string | null,
+  description?: string | null,
+  summary?: string | null,
+  tags?: string[] | null,
+  properties?: {
+    type: string,
+    url?: string | null,
+    value?: string | null
+  }[] | null,
+  totalCount?: {
+    errors?: number | null,
+    warnings?: number | null,
+    hints?: number | null,
+    infos?: number | null
+  } | null,
+  contractTesting?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### validate
+
+`specs.validate`
+
+Validate an OpenAPI or AsyncAPI definition and get findings with line and column positions. Nothing is saved
+
+**Risk:** `read`
+
+```ts
+await corsair.swaggerhub.api.specs.validate({ definition: 'openapi: 3.0.0\ninfo:\n  title: Petstore\n  version: 1.0.0\npaths: {}' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `definition` | `string` | Yes | — |
+| `maxProblems` | `number` | No | — |
+| `uri` | `string` | No | — |
+
+Posts the definition and answers `{ valid, recognized, spec, summary, findings }`. `valid` is true only when the definition was recognized **and** has no error-severity finding. `maxProblems` caps the findings at 100 by default and 1000 at most. Nothing is saved.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `valid` | `boolean \| null` | No | — |
+| `recognized` | `boolean \| null` | No | — |
+| `spec` | `object \| null` | No | — |
+| `summary` | `object \| null` | No | — |
+| `findings` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="spec full type">
+
+```ts
+{
+  namespace?: string | null,
+  version?: string | null,
+  format?: string | null,
+  mediaType?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="summary full type">
+
+```ts
+{
+  errors?: number | null,
+  warnings?: number | null,
+  total?: number | null,
+  durationMs?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="findings full type">
+
+```ts
+(
+  {
+  }& {
+    severity?: string | null,
+    message?: string | null,
+    path?: string | null,
+    range?: {
+      start?: {
+        line?: number | null,
+        column?: number | null,
+        offset?: number | null
+      } | null,
+      end?: {
+        line?: number | null,
+        column?: number | null,
+        offset?: number | null
+      } | null
+    } | null
+  }
+)[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Templates
+
+### delete
+
+`templates.delete`
+
+Delete one template version, or the whole template when no version is given. There is no undo
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.swaggerhub.api.templates.delete({ owner: 'your-org', templateId: 'my-template', version: '1.0.0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `templateId` | `string` | Yes | — |
+| `version` | `string` | No | — |
+
+Deletes one template version, or the whole template when `version` is left out (the API will not delete a template's only version). The route answers 204, so the plugin reports the ids.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `templateId` | `string` | Yes | — |
+| `version` | `string` | No | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`templates.get`
+
+Read one template definition as text, optionally a built-in template
+
+**Risk:** `read`
+
+```ts
+await corsair.swaggerhub.api.templates.get({ owner: 'swagger-hub', templateId: 'default', version: '1.0.0', builtin: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `templateId` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+| `flatten` | `boolean` | No | — |
+| `builtin` | `boolean` | No | — |
+
+Answers `{ definition }` as text. `builtin: true` reads a built-in template instead of one on the account, and `flatten` lifts inline schemas.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `templateId` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+| `definition` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`templates.list`
+
+List the template catalog, optionally narrowed to one owner, including the built-in templates
+
+**Risk:** `read`
+
+```ts
+await corsair.swaggerhub.api.templates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | No | — |
+
+Answers a **bare array** of template wrappers, including SwaggerHub's built-in templates which carry `builtIn: true`. `owner` narrows the catalog to one owner.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templates` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="templates full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  specification?: string | null,
+  builtIn?: boolean | null,
+  defaultVersion?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### save
+
+`templates.save`
+
+Create or update a template and its version
+
+**Risk:** `write`
+
+```ts
+await corsair.swaggerhub.api.templates.save({ owner: 'your-org', templateId: 'my-template', definition: 'openapi: 3.0.0\ninfo:\n  title: Petstore\n  version: 1.0.0\npaths: {}' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `templateId` | `string` | Yes | — |
+| `definition` | `string` | Yes | — |
+| `format` | `yaml \| json` | No | — |
+| `version` | `string` | No | — |
+| `isPrivate` | `boolean` | No | — |
+| `force` | `boolean` | No | — |
+
+**The definition is the request body.** `version` is optional where the definition carries one.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `templateId` | `string` | Yes | — |
+| `version` | `string \| null` | No | — |
+| `saved` | `true` | Yes | — |
+
+
+
+---
+

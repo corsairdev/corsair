@@ -1,0 +1,2769 @@
+{
+  "id": "trustpilot",
+  "displayName": "Trustpilot",
+  "description": "Read Trustpilot business, service review, product review, invitation, consumer profile and Data Solutions API data.",
+  "npmPackageName": "@corsair-dev/trustpilot",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 53,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "tenant_external_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "trustpilot.api.businessUnits.allReviews",
+      "shortPath": "businessUnits.allReviews",
+      "description": "Page through public business unit reviews without private contact data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reviews",
+            "optional": false,
+            "type": "{ id?: string | null, stars?: number | null, title?: string | null, text?: string | null, language?: string | null, createdAt?: string | null, updatedAt?: string | null, experiencedAt?: string | null, isVerified?: boolean, numberOfLikes?: number, consumer?: { id?: string | null, displayName?: string | null, displayLocation?: string | null, numberOfReviews?: number | null, links?: { href: string | null, method: string | null, rel: string | null }[] }, companyReply?: { text: string | null, createdAt: string | null, updatedAt?: string | null } | null, links?: { href: string | null, method: string | null, rel: string | null }[] }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.businessUnits.customerGuarantee",
+      "shortPath": "businessUnits.customerGuarantee",
+      "description": "Get customer guarantee content for a business unit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnitId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ href: string | null, method: string | null, rel: string | null }[]"
+          },
+          {
+            "key": "header",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "teaser",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "display",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "image",
+            "optional": false,
+            "type": "{ image184x0: { url: string, width: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.businessUnits.find",
+      "shortPath": "businessUnits.find",
+      "description": "Find a public business unit by domain name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "websiteUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "numberOfReviews",
+            "optional": true,
+            "type": "{ total: number, usedForTrustScoreCalculation?: number, oneStar?: number, twoStars?: number, threeStars?: number, fourStars?: number, fiveStars?: number } | null"
+          },
+          {
+            "key": "score",
+            "optional": true,
+            "type": "{ trustScore?: number | null, stars?: number | null } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ href: string | null, method: string | null, rel: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.businessUnits.get",
+      "shortPath": "businessUnits.get",
+      "description": "Get a business unit public profile and TrustScore",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnitId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "websiteUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "numberOfReviews",
+            "optional": true,
+            "type": "{ total: number, usedForTrustScoreCalculation?: number, oneStar?: number, twoStars?: number, threeStars?: number, fourStars?: number, fiveStars?: number } | null"
+          },
+          {
+            "key": "score",
+            "optional": true,
+            "type": "{ trustScore?: number | null, stars?: number | null } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ href: string | null, method: string | null, rel: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.businessUnits.headerImage",
+      "shortPath": "businessUnits.headerImage",
+      "description": "Get a business unit profile-header image URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnitId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "headerUrl",
+            "optional": false,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.businessUnits.listCategories",
+      "shortPath": "businessUnits.listCategories",
+      "description": "List the categories associated with a business unit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "categories",
+            "optional": false,
+            "type": "{ categoryId: string, displayName: string, name: string, isPrimary?: boolean, source?: string, relevance?: number }[]"
+          },
+          {
+            "key": "predictedTopCategory",
+            "optional": true,
+            "type": "{ categoryId: string, displayName: string, name: string, isPrimary?: boolean, source?: string, relevance?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.businessUnits.logo",
+      "shortPath": "businessUnits.logo",
+      "description": "Get a business unit or location logo URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "locationId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ href: string | null, method: string | null, rel: string | null }[]"
+          },
+          {
+            "key": "logoUrl",
+            "optional": false,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.businessUnits.privateReviews",
+      "shortPath": "businessUnits.privateReviews",
+      "description": "List private business unit reviews and customer details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stars",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "internalLocationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "externalLocationIds",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "noLocation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "(createdat.asc | createdat.desc | stars.asc | stars.desc)[]"
+          },
+          {
+            "key": "tagGroup",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tagValue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ignoreTagValueCase",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "responded",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "referenceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "referralEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reported",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "startDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "findReviewer",
+            "optional": true,
+            "type": "contacted | notContacted"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reviews",
+            "optional": false,
+            "type": "{ id?: string | null, stars?: number | null, title?: string | null, text?: string | null, language?: string | null, createdAt?: string | null, updatedAt?: string | null, experiencedAt?: string | null, isVerified?: boolean, numberOfLikes?: number, consumer?: { id?: string | null, displayName?: string | null, displayLocation?: string | null, numberOfReviews?: number | null, links?: { href: string | null, method: string | null, rel: string | null }[] }, companyReply?: { text: string | null, createdAt: string | null, updatedAt?: string | null } | null, links?: { href: string | null, method: string | null, rel: string | null }[], referenceId?: string | null, referralEmail?: string | null, reportData?: { source?: string | null, publicComment?: string | null, createdAt?: string | null, reasons?: string[], reason?: string | null, reviewVisibility?: string | null }, findReviewer?: { isEligible?: boolean, requests?: { id?: string | null, created?: string | null, status?: string | null, businessUserMessage?: string | null, consumerResponse?: { submittedAt?: string | null, name?: string | null, email?: string | null, address?: string | null, phoneNumber?: string | null, referenceId?: string | null, message?: string | null } }[] } }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ href: string | null, method: string | null, rel: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.businessUnits.profileInfo",
+      "shortPath": "businessUnits.profileInfo",
+      "description": "Get a business unit company profile and contact details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnitId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ href: string | null, method: string | null, rel: string | null }[]"
+          },
+          {
+            "key": "isSubscriber",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isClaimed",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.businessUnits.profilePromotion",
+      "shortPath": "businessUnits.profilePromotion",
+      "description": "Get a business unit profile promotion and key brand messages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnitId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ href: string | null, method: string | null, rel: string | null }[]"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contactInfoTitle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "{ header: string, text: string }"
+          },
+          {
+            "key": "sellingPoints",
+            "optional": false,
+            "type": "{ header: string, text: string }[]"
+          },
+          {
+            "key": "image",
+            "optional": false,
+            "type": "{ url: string, width: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.businessUnits.promotionBoxImage",
+      "shortPath": "businessUnits.promotionBoxImage",
+      "description": "Get a business unit promotion-box image URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnitId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "promotionBoxUrl",
+            "optional": false,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.businessUnits.publicAll",
+      "shortPath": "businessUnits.publicAll",
+      "description": "List public business units with cursor pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnits",
+            "optional": false,
+            "type": "{ id: string, displayName: string, name: { identifying: string, referring: string[] }, country?: string | null, links?: { href: string | null, method: string | null, rel: string | null }[] }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ href: string | null, method: string | null, rel: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.businessUnits.publicPromotionBox",
+      "shortPath": "businessUnits.publicPromotionBox",
+      "description": "Get public promotion-box content for a business unit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnitId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "header",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "textColor",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "backgroundColor",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "buttonText",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "buttonColor",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "buttonTextColor",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "buttonLink",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "imageUrl",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "isPublished",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.businessUnits.reviews",
+      "shortPath": "businessUnits.reviews",
+      "description": "List public reviews for a business unit with filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stars",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "internalLocationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "(createdat.asc | createdat.desc | stars.asc | stars.desc)[]"
+          },
+          {
+            "key": "tagGroup",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tagValue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "responded",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeReportedReviews",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reviews",
+            "optional": false,
+            "type": "{ id?: string | null, stars?: number | null, title?: string | null, text?: string | null, language?: string | null, createdAt?: string | null, updatedAt?: string | null, experiencedAt?: string | null, isVerified?: boolean, numberOfLikes?: number, consumer?: { id?: string | null, displayName?: string | null, displayLocation?: string | null, numberOfReviews?: number | null, links?: { href: string | null, method: string | null, rel: string | null }[] }, companyReply?: { text: string | null, createdAt: string | null, updatedAt?: string | null } | null, links?: { href: string | null, method: string | null, rel: string | null }[] }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ href: string | null, method: string | null, rel: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.businessUnits.search",
+      "shortPath": "businessUnits.search",
+      "description": "Search public business units by name or domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perpage",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnits",
+            "optional": false,
+            "type": "{ id?: string | null, displayName?: string | null, websiteUrl?: string | null, country?: string | null, status?: string | null, numberOfReviews?: { total: number, usedForTrustScoreCalculation?: number, oneStar?: number, twoStars?: number, threeStars?: number, fourStars?: number, fiveStars?: number } | null, score?: { trustScore?: number | null, stars?: number | null } | null, links?: { href: string | null, method: string | null, rel: string | null }[] }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ href: string | null, method: string | null, rel: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.businessUnits.webLinks",
+      "shortPath": "businessUnits.webLinks",
+      "description": "Get localized public profile and invitation links for a business unit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "locale",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ href: string | null, method: string | null, rel: string | null }[]"
+          },
+          {
+            "key": "locale",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "profileUrl",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "evaluateUrl",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "evaluateEmbedUrl",
+            "optional": false,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.consumerProfiles.bulk",
+      "shortPath": "consumerProfiles.bulk",
+      "description": "Get multiple consumer profiles in one request",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "consumerIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "consumers",
+            "optional": false,
+            "type": "Record<string, { id?: string | null, city?: string | null, about?: string | null, displayName?: string | null, locale?: string | null, gender?: string | null, country?: string | null, createdAt?: string | null, hasImage?: boolean, birthYear?: number | null }>"
+          },
+          {
+            "key": "notFoundConsumerIds",
+            "optional": false,
+            "type": "(string | null)[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.consumerProfiles.createDisplayName",
+      "shortPath": "consumerProfiles.createDisplayName",
+      "description": "Create a valid consumer display name from input text",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "displayName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string | null"
+      }
+    },
+    {
+      "path": "trustpilot.api.consumerProfiles.get",
+      "shortPath": "consumerProfiles.get",
+      "description": "Get a consumer profile by consumer ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "consumerId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "about",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hasImage",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "birthYear",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.consumerProfiles.getWithReviews",
+      "shortPath": "consumerProfiles.getWithReviews",
+      "description": "Get a consumer profile and review count",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "consumerId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "about",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hasImage",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "birthYear",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "numberOfReviews",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ href: string | null, method: string | null, rel: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.consumerProfiles.validateDisplayName",
+      "shortPath": "consumerProfiles.validateDisplayName",
+      "description": "Validate a consumer display name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "displayName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string | null"
+      }
+    },
+    {
+      "path": "trustpilot.api.consumerProfiles.webLinks",
+      "shortPath": "consumerProfiles.webLinks",
+      "description": "Get localized links to a consumer profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "consumerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "profileUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ href: string | null, method: string | null, rel: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.consumers.reviews",
+      "shortPath": "consumers.reviews",
+      "description": "List reviews written by a Trustpilot consumer",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "consumerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stars",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "internalLocationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "businessUnitId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "(createdat.asc | createdat.desc | stars.asc | stars.desc)[]"
+          },
+          {
+            "key": "includeReportedReviews",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reviews",
+            "optional": false,
+            "type": "{ id?: string | null, stars?: number | null, title?: string | null, text?: string | null, language?: string | null, createdAt?: string | null, updatedAt?: string | null, experiencedAt?: string | null, isVerified?: boolean, numberOfLikes?: number, consumer?: { id?: string | null, displayName?: string | null, displayLocation?: string | null, numberOfReviews?: number | null, links?: { href: string | null, method: string | null, rel: string | null }[] }, companyReply?: { text: string | null, createdAt: string | null, updatedAt?: string | null } | null, links?: { href: string | null, method: string | null, rel: string | null }[] }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ href: string | null, method: string | null, rel: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.dataSolutions.businessUnitDetails",
+      "shortPath": "dataSolutions.businessUnitDetails",
+      "description": "Get Data Solutions business details and review statistics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnitId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "{ display?: string, identifying?: string, referring?: string[] }"
+          },
+          {
+            "key": "score",
+            "optional": true,
+            "type": "{ stars?: number, trustScore?: number }"
+          },
+          {
+            "key": "numberOfReviews",
+            "optional": true,
+            "type": "number | { total: number, usedForTrustScoreCalculation?: number, oneStar?: number, twoStars?: number, threeStars?: number, fourStars?: number, fiveStars?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.dataSolutions.categories",
+      "shortPath": "dataSolutions.categories",
+      "description": "List Data Solutions business categories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "countryCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "totalNumberOfCategories",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "categories",
+            "optional": false,
+            "type": "{ categoryId: string, parentId?: string | null, childrenCategories?: string[], numberOfBusinessUnits?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.dataSolutions.findBusinessUnits",
+      "shortPath": "dataSolutions.findBusinessUnits",
+      "description": "Find Data Solutions business units by domain or category",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "countryCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnits",
+            "optional": false,
+            "type": "{ id: string, name: { display?: string, identifying?: string }, address?: { countryCode?: string } }[]"
+          },
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.dataSolutions.latestReviews",
+      "shortPath": "dataSolutions.latestReviews",
+      "description": "Get up to five recent Data Solutions service reviews",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reviews",
+            "optional": false,
+            "type": "{ id?: string | null, stars?: number | null, title?: string | null, text?: string | null, language?: string | null, createdAt?: string | null, updatedAt?: string | null, experiencedAt?: string | null, isVerified?: boolean, numberOfLikes?: number, consumer?: { id?: string | null, displayName?: string | null, displayLocation?: string | null, numberOfReviews?: number | null, links?: { href: string | null, method: string | null, rel: string | null }[] }, companyReply?: { text: string | null, createdAt: string | null, updatedAt?: string | null } | null, links?: { href: string | null, method: string | null, rel: string | null }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.dataSolutions.searchBusinessUnits",
+      "shortPath": "dataSolutions.searchBusinessUnits",
+      "description": "Search Data Solutions business units by name or domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "countryCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnits",
+            "optional": false,
+            "type": "{ id: string, name: { display?: string, identifying?: string, referring?: string[] }, address?: { countryCode?: string }, score?: { trustScore?: number, stars?: number }, numberOfReviews?: number }[]"
+          },
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.dataSolutions.serviceReviews",
+      "shortPath": "dataSolutions.serviceReviews",
+      "description": "Page through Data Solutions service reviews",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reviews",
+            "optional": false,
+            "type": "{ id?: string | null, stars?: number | null, title?: string | null, text?: string | null, language?: string | null, createdAt?: string | null, updatedAt?: string | null, experiencedAt?: string | null, isVerified?: boolean, numberOfLikes?: number, consumer?: { id?: string | null, displayName?: string | null, displayLocation?: string | null, numberOfReviews?: number | null, links?: { href: string | null, method: string | null, rel: string | null }[] }, companyReply?: { text: string | null, createdAt: string | null, updatedAt?: string | null } | null, links?: { href: string | null, method: string | null, rel: string | null }[] }[]"
+          },
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.invitations.link",
+      "shortPath": "invitations.link",
+      "description": "Create a service review invitation link and consume invitation allowance",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "locationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "referenceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "locale",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "redirectUri",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.invitations.templates",
+      "shortPath": "invitations.templates",
+      "description": "List invitation templates available to a business unit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnitId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templates",
+            "optional": false,
+            "type": "{ id: string, name: string, isDefaultTemplate: boolean, locale: string, language: string, type: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.productReviews.attributeSummaries",
+      "shortPath": "productReviews.attributeSummaries",
+      "description": "Get aggregated product attribute ratings for SKUs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "skus",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "summaries",
+            "optional": false,
+            "type": "{ sku: string | null, attributes: { id: string, name: string, type: string, options?: (string | null)[], totalOccurrences: number, occurrences: { one: number, two: number, three: number, four: number, five: number }, average: number }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.productReviews.batchSummaries",
+      "shortPath": "productReviews.batchSummaries",
+      "description": "Get public product review summaries for several SKUs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "skus",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "summaries",
+            "optional": false,
+            "type": "{ sku?: string | null, starsAverage?: number | null, numberOfReviews?: { total: number, usedForTrustScoreCalculation?: number, oneStar?: number, twoStars?: number, threeStars?: number, fourStars?: number, fiveStars?: number } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.productReviews.createComment",
+      "shortPath": "productReviews.createComment",
+      "description": "Publish a business comment on a product review conversation (public, seen by the reviewer)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "integrationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "commentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "author",
+            "optional": false,
+            "type": "{ id: string, type: string }"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.productReviews.createConversation",
+      "shortPath": "productReviews.createConversation",
+      "description": "Create a conversation for a product review",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reviewId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.productReviews.getComment",
+      "shortPath": "productReviews.getComment",
+      "description": "Get one comment from a product review conversation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "commentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "commentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "author",
+            "optional": false,
+            "type": "{ id: string, type: string }"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.productReviews.getConversation",
+      "shortPath": "productReviews.getConversation",
+      "description": "Get a private product review conversation and comments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "businessUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "consumerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sourceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comments",
+            "optional": false,
+            "type": "{ commentId: string, createdAt: string, author: { id: string, type: string }, content: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.productReviews.importedReviews",
+      "shortPath": "productReviews.importedReviews",
+      "description": "List imported product reviews for one or more SKUs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sku",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "stars",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "productReviews",
+            "optional": false,
+            "type": "{ createdAt: string | null, stars: number, content: string | null, consumer: { name: string | null }, source: { name: string | null }, language: string | null }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ href: string | null, method: string | null, rel: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.productReviews.importedSummary",
+      "shortPath": "productReviews.importedSummary",
+      "description": "Get rating counts for imported product reviews",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sku",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "numberOfReviews",
+            "optional": false,
+            "type": "{ total: number, usedForTrustScoreCalculation?: number, oneStar?: number, twoStars?: number, threeStars?: number, fourStars?: number, fiveStars?: number }"
+          },
+          {
+            "key": "starsAverage",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ href: string | null, method: string | null, rel: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.productReviews.invitationLink",
+      "shortPath": "productReviews.invitationLink",
+      "description": "Create a product review invitation link and consume invitation allowance",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "consumer",
+            "optional": false,
+            "type": "{ email: string, name: string }"
+          },
+          {
+            "key": "referenceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirectUri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "products",
+            "optional": true,
+            "type": "{ productUrl: string, imageUrl?: string, name: string, sku?: string, gtin?: string, mpn?: string, brand?: string }[]"
+          },
+          {
+            "key": "productIds",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reviewLinkId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reviewUrl",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.productReviews.list",
+      "shortPath": "productReviews.list",
+      "description": "List public product reviews by SKU or product URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "productUrl",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "customerProductId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stars",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attributeIds",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "productReviews",
+            "optional": false,
+            "type": "{ id?: string | null, createdAt?: string | null, updatedAt?: string | null, stars?: number | null, content?: string | null, language?: string | null, consumer?: { id?: string | null, displayName?: string | null, displayLocation?: string | null, numberOfReviews?: number | null, links?: { href: string | null, method: string | null, rel: string | null }[] }, attributeRatings?: { attributeId: string, attributeName: string, rating: number }[], links?: { href: string | null, method: string | null, rel: string | null }[] }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ href: string | null, method: string | null, rel: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.productReviews.privateGet",
+      "shortPath": "productReviews.privateGet",
+      "description": "Get one private product review and customer details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reviewId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "stars",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "consumer",
+            "optional": true,
+            "type": "{ id?: string | null, email?: string | null, name?: string | null }"
+          },
+          {
+            "key": "attributeRatings",
+            "optional": true,
+            "type": "{ attributeId: string, attributeName: string, rating: number }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ href: string | null, method: string | null, rel: string | null }[]"
+          },
+          {
+            "key": "businessUnitId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "product",
+            "optional": true,
+            "type": "{ id?: string | null, productUrl?: string | null, productImages?: { type: string, url: string }[], name?: string | null, sku?: string | null, gtin?: string | null, mpn?: string | null, brand?: string | null }"
+          },
+          {
+            "key": "referenceId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "redirectUri",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hasModerationHistory",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "conversationId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.productReviews.privateList",
+      "shortPath": "productReviews.privateList",
+      "description": "List private product reviews including customer details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "customerProductId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "productReviews",
+            "optional": false,
+            "type": "{ id?: string | null, createdAt?: string | null, updatedAt?: string | null, stars?: number | null, content?: string | null, language?: string | null, consumer?: { id?: string | null, email?: string | null, name?: string | null }, attributeRatings?: { attributeId: string, attributeName: string, rating: number }[], links?: { href: string | null, method: string | null, rel: string | null }[], businessUnitId?: string | null, product?: { id?: string | null, productUrl?: string | null, productImages?: { type: string, url: string }[], name?: string | null, sku?: string | null, gtin?: string | null, mpn?: string | null, brand?: string | null }, referenceId?: string | null, locale?: string | null, redirectUri?: string | null, state?: string | null, hasModerationHistory?: boolean, conversationId?: string | null, total?: number }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ href: string | null, method: string | null, rel: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.productReviews.publicConversation",
+      "shortPath": "productReviews.publicConversation",
+      "description": "Get a public product review conversation and comments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "businessUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "consumerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comments",
+            "optional": false,
+            "type": "{ commentId: string, createdAt: string, author: { id: string, type: string }, content: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.productReviews.summaries",
+      "shortPath": "productReviews.summaries",
+      "description": "List private product review summaries for a business unit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "summaries",
+            "optional": false,
+            "type": "{ sku?: string | null, starsAverage?: number | null, numberOfReviews?: { total: number, usedForTrustScoreCalculation?: number, oneStar?: number, twoStars?: number, threeStars?: number, fourStars?: number, fiveStars?: number } }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ href: string | null, method: string | null, rel: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.productReviews.summary",
+      "shortPath": "productReviews.summary",
+      "description": "Get product review rating counts and average stars",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "customerProductId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "starsAverage",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "numberOfReviews",
+            "optional": true,
+            "type": "{ total: number, usedForTrustScoreCalculation?: number, oneStar?: number, twoStars?: number, threeStars?: number, fourStars?: number, fiveStars?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.productReviews.updateComment",
+      "shortPath": "productReviews.updateComment",
+      "description": "Replace the text of a published business comment on a product review conversation",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "commentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "integrationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "commentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "author",
+            "optional": false,
+            "type": "{ id: string, type: string }"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.reviews.get",
+      "shortPath": "reviews.get",
+      "description": "Get the public details of a service review",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reviewId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "stars",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "experiencedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isVerified",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "numberOfLikes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "consumer",
+            "optional": true,
+            "type": "{ id?: string | null, displayName?: string | null, displayLocation?: string | null, numberOfReviews?: number | null, links?: { href: string | null, method: string | null, rel: string | null }[] }"
+          },
+          {
+            "key": "companyReply",
+            "optional": true,
+            "type": "{ text: string | null, createdAt: string | null, updatedAt?: string | null } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ href: string | null, method: string | null, rel: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.reviews.getPrivate",
+      "shortPath": "reviews.getPrivate",
+      "description": "Get private review information including customer data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reviewId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "stars",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "experiencedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isVerified",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "numberOfLikes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "consumer",
+            "optional": true,
+            "type": "{ id?: string | null, displayName?: string | null, displayLocation?: string | null, numberOfReviews?: number | null, links?: { href: string | null, method: string | null, rel: string | null }[] }"
+          },
+          {
+            "key": "companyReply",
+            "optional": true,
+            "type": "{ text: string | null, createdAt: string | null, updatedAt?: string | null } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ href: string | null, method: string | null, rel: string | null }[]"
+          },
+          {
+            "key": "referenceId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "referralEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "reportData",
+            "optional": true,
+            "type": "{ source?: string | null, publicComment?: string | null, createdAt?: string | null, reasons?: string[], reason?: string | null, reviewVisibility?: string | null }"
+          },
+          {
+            "key": "findReviewer",
+            "optional": true,
+            "type": "{ isEligible?: boolean, requests?: { id?: string | null, created?: string | null, status?: string | null, businessUserMessage?: string | null, consumerResponse?: { submittedAt?: string | null, name?: string | null, email?: string | null, address?: string | null, phoneNumber?: string | null, referenceId?: string | null, message?: string | null } }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.reviews.getTags",
+      "shortPath": "reviews.getTags",
+      "description": "Get tags assigned to a service review",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reviewId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "{ group: string, value: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.reviews.latest",
+      "shortPath": "reviews.latest",
+      "description": "Get the latest service reviews for selected languages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "language",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "filterUsersWithoutImages",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reviews",
+            "optional": false,
+            "type": "{ id?: string | null, stars?: number | null, title?: string | null, text?: string | null, language?: string | null, createdAt?: string | null, updatedAt?: string | null, experiencedAt?: string | null, isVerified?: boolean, numberOfLikes?: number, consumer?: { id?: string | null, displayName?: string | null, displayLocation?: string | null, numberOfReviews?: number | null, links?: { href: string | null, method: string | null, rel: string | null }[] }, companyReply?: { text: string | null, createdAt: string | null, updatedAt?: string | null } | null, links?: { href: string | null, method: string | null, rel: string | null }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.reviews.likes",
+      "shortPath": "reviews.likes",
+      "description": "List consumers who liked a service review",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reviewId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "likes",
+            "optional": false,
+            "type": "{ consumer: { id: string | null, displayName: string | null } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trustpilot.api.reviews.webLinks",
+      "shortPath": "reviews.webLinks",
+      "description": "Get localized links to a public service review",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reviewId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "locale",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "locale",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "reviewUrl",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ href: string | null, method: string | null, rel: string | null } | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
