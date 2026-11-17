@@ -45,8 +45,32 @@ export const nangoEndpointSchemas = {
 	'connections.delete': schema('connections.delete'),
 	'sessions.create': schema('sessions.create'),
 	'sessions.reconnect': schema('sessions.reconnect'),
-	'sessions.get': schema('sessions.get'),
-	'sessions.delete': schema('sessions.delete'),
+	'integrations.list': schema('integrations.list'),
+	'integrations.get': schema('integrations.get'),
+	'integrations.create': schema('integrations.create'),
+	'integrations.update': schema('integrations.update'),
+	'integrations.delete': schema('integrations.delete'),
+	'functions.list': schema('functions.list'),
+	'functions.get': schema('functions.get'),
+	'functions.getCode': schema('functions.getCode'),
+	'functions.delete': schema('functions.delete'),
+	'scripts.getConfig': schema('scripts.getConfig'),
+	'providers.list': schema('providers.list'),
+	'providers.get': schema('providers.get'),
+	'syncs.trigger': schema('syncs.trigger'),
+	'syncs.start': schema('syncs.start'),
+	'syncs.pause': schema('syncs.pause'),
+	'syncs.status': schema('syncs.status'),
+	'syncs.updateFrequency': schema('syncs.updateFrequency'),
+	'records.list': schema('records.list'),
+	'tools.call': schema('tools.call'),
+	'actions.trigger': schema('actions.trigger'),
+	'environment.getVariables': schema('environment.getVariables'),
+	'proxy.get': schema('proxy.get'),
+	'proxy.post': schema('proxy.post'),
+	'proxy.put': schema('proxy.put'),
+	'proxy.patch': schema('proxy.patch'),
+	'proxy.delete': schema('proxy.delete'),
 } satisfies RequiredPluginEndpointSchemas<typeof endpoints>;
 export type NangoEndpointInputs = {
 	[K in keyof typeof nangoEndpointSchemas]: z.input<
@@ -61,42 +85,178 @@ export type NangoEndpointOutputs = {
 
 const endpointMeta = {
 	'connections.import': {
-		riskLevel: 'write',
-		description: 'Import or update a connection with existing credentials',
+		riskLevel: 'destructive',
+		irreversible: true,
+		description:
+			"Create a connection from credentials you already hold, or overwrite an existing connection's credentials when connection_id matches. The credentials are not returned.",
 	},
-	'connections.list': { riskLevel: 'read', description: 'List connections' },
+	'connections.list': {
+		riskLevel: 'read',
+		description:
+			'List connections (no credentials), filtered by connection ID or tags, with page and limit.',
+	},
 	'connections.get': {
 		riskLevel: 'read',
-		description: 'Get a connection and its credentials',
+		description:
+			'Get one connection. Pass include_credentials: true to also return its live third-party credentials (access token, API key, password); they are dropped otherwise.',
 	},
-	'connections.patch': { riskLevel: 'write', description: 'Edit a connection' },
-	'connections.setMetadata': {
+	'connections.patch': {
 		riskLevel: 'write',
-		description: 'Replace connection metadata',
+		description:
+			'Edit a connection: replace its tags or set a webhook URL override.',
+	},
+	'connections.setMetadata': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description:
+			'Replace the whole metadata object of one or more connections; keys not passed are removed.',
 	},
 	'connections.updateMetadata': {
 		riskLevel: 'write',
-		description: 'Update connection metadata',
+		description: 'Merge keys into the metadata of one or more connections.',
 	},
 	'connections.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a connection',
+		irreversible: true,
+		description: 'Delete a connection and its stored credentials.',
 	},
 	'sessions.create': {
 		riskLevel: 'write',
-		description: 'Create a connect session',
+		description:
+			'Create a Connect session; returns a short-lived token and a connect link an end user opens to authorize an integration.',
 	},
 	'sessions.reconnect': {
 		riskLevel: 'write',
-		description: 'Create a reconnect session',
+		description:
+			'Create a Connect session that re-authorizes an existing connection, keeping its connection ID.',
 	},
-	'sessions.get': {
+	'integrations.list': {
 		riskLevel: 'read',
-		description: 'Get a connect session using its token',
+		description: 'List the integrations configured in this environment.',
 	},
-	'sessions.delete': {
+	'integrations.get': {
+		riskLevel: 'read',
+		description:
+			'Get an integration. include: ["credentials"] also returns the developer app client secret and private key.',
+	},
+	'integrations.create': {
+		riskLevel: 'write',
+		description:
+			'Create an integration for a provider, optionally with developer app credentials or integration_config.',
+	},
+	'integrations.update': {
+		riskLevel: 'write',
+		description: 'Edit an integration; fields left out keep their value.',
+	},
+	'integrations.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a connect session using its token',
+		irreversible: true,
+		description: 'Delete an integration and every connection that uses it.',
+	},
+	'functions.list': {
+		riskLevel: 'read',
+		description:
+			"List an integration's functions (syncs, tools, on-event functions), including Nango catalog tools.",
+	},
+	'functions.get': {
+		riskLevel: 'read',
+		description:
+			'Get one function of an integration, with its schema and deployment state.',
+	},
+	'functions.getCode': {
+		riskLevel: 'read',
+		description: "Get a function's TypeScript source code.",
+	},
+	'functions.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description:
+			'Delete a deployed function (not repo-deployed or catalog ones).',
+	},
+	'scripts.getConfig': {
+		riskLevel: 'read',
+		description:
+			'Get the configuration of every deployed function in the environment, in Nango or OpenAI tool format.',
+	},
+	'providers.list': {
+		riskLevel: 'read',
+		description:
+			'List the APIs Nango supports; filter with search (the full list has over 1,000).',
+	},
+	'providers.get': {
+		riskLevel: 'read',
+		description:
+			"Get one provider's auth mode, proxy settings and required connection fields.",
+	},
+	'syncs.trigger': {
+		riskLevel: 'write',
+		description:
+			'Run syncs once now, for one connection or all; reset starts from scratch.',
+	},
+	'syncs.start': {
+		riskLevel: 'write',
+		description:
+			'Start the schedule of syncs for one connection or all; they run now and then on their frequency.',
+	},
+	'syncs.pause': {
+		riskLevel: 'write',
+		description: 'Pause the schedule of syncs for one connection or all.',
+	},
+	'syncs.status': {
+		riskLevel: 'read',
+		description:
+			'Get the status, schedule, last result and record counts of syncs.',
+	},
+	'syncs.updateFrequency': {
+		riskLevel: 'write',
+		description:
+			"Override a sync's frequency for one connection, or restore the default with null.",
+	},
+	'records.list': {
+		riskLevel: 'read',
+		description:
+			'List the records a sync stored for a connection and model, paginated with next_cursor.',
+	},
+	'tools.call': {
+		riskLevel: 'destructive',
+		description:
+			"Call a deployed tool for a connection and return its output. Tools can write to the end customer's account.",
+	},
+	'actions.trigger': {
+		riskLevel: 'destructive',
+		description:
+			"Run a legacy action for a connection synchronously. Actions can write to the end customer's account.",
+	},
+	'environment.getVariables': {
+		riskLevel: 'read',
+		description:
+			'Get the environment variables set in the Nango dashboard, values in plain text (they often hold secrets).',
+	},
+	'proxy.get': {
+		riskLevel: 'read',
+		description:
+			"Send a GET through Nango's proxy to the end customer's API with the connection's credentials.",
+	},
+	'proxy.post': {
+		riskLevel: 'destructive',
+		description:
+			"Send a POST through Nango's proxy to the end customer's API with the connection's credentials.",
+	},
+	'proxy.put': {
+		riskLevel: 'destructive',
+		description:
+			"Send a PUT through Nango's proxy to the end customer's API with the connection's credentials.",
+	},
+	'proxy.patch': {
+		riskLevel: 'destructive',
+		description:
+			"Send a PATCH through Nango's proxy to the end customer's API with the connection's credentials.",
+	},
+	'proxy.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description:
+			"Send a DELETE through Nango's proxy to the end customer's API with the connection's credentials.",
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof endpoints>;
 export const nangoAuthConfig = {
@@ -138,18 +298,12 @@ export function nango(
 		endpointSchemas: nangoEndpointSchemas,
 		errorHandlers: {
 			RATE_LIMIT_ERROR: errorHandlers.RATE_LIMIT_ERROR,
+			AUTH_ERROR: errorHandlers.AUTH_ERROR,
 			...options.errorHandlers,
 			DEFAULT: options.errorHandlers?.DEFAULT ?? errorHandlers.DEFAULT,
 		},
 		keyBuilder: async (ctx: NangoKeyBuilderContext, source) => {
 			if (source !== 'endpoint') return '';
-			// These two routes use the session token supplied in the input instead
-			// of an environment key; do not require both credentials.
-			if (
-				ctx.meteredOperationId === 'sessions.get' ||
-				ctx.meteredOperationId === 'sessions.delete'
-			)
-				return '';
 			if (options.key?.trim()) return options.key;
 			if (!ctx.keys) throw new AuthMissingError('nango', options.authType);
 			const key = await ctx.keys.get_api_key();

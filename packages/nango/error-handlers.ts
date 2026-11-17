@@ -1,15 +1,27 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { NangoError } from './client';
+import { ApiError } from 'corsair/http';
 
-// A timed-out write may already have taken effect; never replay it automatically.
+function statusOf(error: Error): number | undefined {
+	return error instanceof ApiError ? error.status : undefined;
+}
+
+// Core's request() has already retried a 429 three times, honouring
+// Retry-After, before an error reaches these handlers, so none retries again.
+// A 5xx or a timeout is not replayed either: most operations write, and a
+// proxy or tool call may already have changed the end customer's account.
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
-		match: (error) => error instanceof NangoError && error.status === 429,
-		handler: async (error) => ({
+		match: (error: Error) => statusOf(error) === 429,
+		handler: async (error: Error) => ({
 			maxRetries: 0,
 			headersRetryAfterMs:
-				error instanceof NangoError ? error.retryAfter : undefined,
+				error instanceof ApiError ? error.retryAfter : undefined,
 		}),
+	},
+	// A missing, revoked or under-scoped environment key.
+	AUTH_ERROR: {
+		match: (error: Error) => [401, 403].includes(statusOf(error) ?? 0),
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	DEFAULT: {
 		match: () => true,

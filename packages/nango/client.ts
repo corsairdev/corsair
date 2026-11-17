@@ -1,97 +1,184 @@
-import { AuthMissingError } from 'corsair/core';
+import { asRecord } from 'corsair/core';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
+export const NANGO_API_BASE = 'https://api.nango.dev';
+
+/**
+ * A transport failure (timeout, DNS, reset) that never got a response. An HTTP
+ * error stays core's `ApiError` (see `sanitizeApiError`), so its status and
+ * Retry-After reach core's retry logic and the plugin's error handlers.
+ */
 export class NangoError extends Error {
+	readonly method?: string;
+
 	constructor(
 		message: string,
-		public readonly status?: number,
-		public readonly retryAfter?: number,
-		public readonly providerCode?: string,
-		public readonly providerMessage?: string,
+		options: { cause?: Error; method?: string } = {},
 	) {
-		super(message);
+		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'NangoError';
+		this.method = options.method;
 	}
 }
 
-/** Response JSON varies by operation and is untrusted until its output schema validates it. */
-export async function nangoRequest(
+// unknown: the record is an untyped error body; one field is read at a time.
+function readString(
+	record: Record<string, unknown> | null | undefined,
 	key: string,
-	method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
-	path: string,
-	query: Record<string, string | number | boolean | undefined> = {},
-	// Each endpoint validates its own differently shaped body before transport;
-	// this shared serializer cannot impose one more specific body type.
-	body?: unknown,
+): string | undefined {
+	const value = record?.[key];
+	return typeof value === 'string' && value.length > 0 ? value : undefined;
+}
+
+/**
+ * Reads Nango's `{ error: { code, message } }` envelope. Older routes answer
+ * `{ error: "text" }` or `{ message }`; a proxied upstream error can be any
+ * body, so only these fields are kept.
+ */
+// unknown: the body is whatever Nango or the proxied API sent.
+export function readNangoError(body: unknown): {
+	code?: string;
+	message?: string;
+} {
+	if (typeof body === 'string')
+		return { message: body.length > 500 ? `${body.slice(0, 500)}…` : body };
+	const record = asRecord(body);
+	const error = record?.error;
+	if (typeof error === 'string') return { message: error };
+	const nested = asRecord(error);
+	return {
+		code: readString(nested, 'code'),
+		message: readString(nested, 'message') ?? readString(record, 'message'),
+	};
+}
+
+/**
+ * Rebuilds an HTTP error as a core `ApiError` (R8) without the request body,
+ * query and headers: an import sends third-party credentials, a proxy call
+ * sends whatever the caller passes on to the end customer's account, and
+ * neither may end up in an error log. Anything that equals the environment key
+ * is cut from the message.
+ */
+function sanitizeApiError(error: ApiError, apiKey: string): ApiError {
+	const redact = (text: string): string =>
+		apiKey.length > 0 ? text.split(apiKey).join('[REDACTED]') : text;
+	const {
+		body: _body,
+		formData: _formData,
+		query: _query,
+		headers: _headers,
+		...requestInfo
+	} = error.request;
+	const { code, message } = readNangoError(error.body);
+	const label = [error.status, code].filter((part) => part !== undefined);
+	const text = message ? redact(message) : error.message;
+	return new ApiError(
+		requestInfo,
+		{
+			url: error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body:
+				code === undefined && message === undefined
+					? undefined
+					: { error: { code, message: message ? redact(message) : undefined } },
+		},
+		`Nango ${label.join(' ')}: ${text}`,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+}
+
+/** Nango's error code on a core ApiError, e.g. `unknown_connection`. */
+export function nangoErrorCode(error: Error): string | undefined {
+	if (!(error instanceof ApiError)) return undefined;
+	return readNangoError(error.body).code;
+}
+
+export type NangoQuery = Record<
+	string,
+	| string
+	| number
+	| boolean
+	| readonly string[]
+	| Readonly<Record<string, string>>
+	| undefined
+>;
+
+export type NangoRequest = {
+	method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+	path: string;
+	query?: NangoQuery;
+	headers?: Record<string, string | undefined>;
+	// unknown: the endpoint's input schema has already validated the body, and a
+	// proxy body is whatever the end customer's API expects.
+	body?: unknown;
+};
+
+// unknown: callers parse the body with the endpoint's zod output schema. It is
+// undefined for a 204, and a string when the proxied API answers non-JSON.
+export async function nangoRequest(
+	apiKey: string,
+	{ method, path, query, headers, body }: NangoRequest,
 ): Promise<unknown> {
-	if (!key.trim()) throw new AuthMissingError('nango', 'api_key');
-	const url = new URL(path, 'https://api.nango.dev');
-	for (const [name, value] of Object.entries(query)) {
-		if (value !== undefined) url.searchParams.set(name, String(value));
-	}
-	let response: Response;
+	const config: OpenAPIConfig = {
+		BASE: NANGO_API_BASE,
+		VERSION: '1.0.0',
+		WITH_CREDENTIALS: false,
+		CREDENTIALS: 'omit',
+		HEADERS: {
+			Accept: 'application/json',
+			Authorization: `Bearer ${apiKey}`,
+		},
+	};
+	const definedHeaders = Object.fromEntries(
+		Object.entries(headers ?? {}).filter(([, value]) => value !== undefined),
+	);
+	const requestOptions: ApiRequestOptions = {
+		method,
+		url: path,
+		query,
+		headers: definedHeaders,
+		body,
+		mediaType: body === undefined ? undefined : 'application/json',
+	};
+
 	try {
-		response = await fetch(url.toString(), {
-			method,
-			redirect: 'error',
-			credentials: 'omit',
-			signal: AbortSignal.timeout(20_000),
-			headers: {
-				Accept: 'application/json',
-				Authorization: `Bearer ${key}`,
-				...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
-			},
-			...(body === undefined ? {} : { body: JSON.stringify(body) }),
-		});
-	} catch {
-		throw new NangoError('Nango request failed');
-	}
-	if (!response.ok) {
-		const retry = response.headers.get('retry-after');
-		const seconds = retry && /^\d+$/.test(retry) ? Number(retry) : undefined;
-		const date =
-			retry && seconds === undefined ? Date.parse(retry) : Number.NaN;
-		const retryAfter =
-			seconds !== undefined
-				? seconds * 1000
-				: Number.isFinite(date)
-					? Math.max(0, date - Date.now())
-					: undefined;
-		let providerCode: string | undefined;
-		let providerMessage: string | undefined;
-		try {
-			// Error JSON is untrusted and may not match Nango's standard error shape.
-			const payload: unknown = await response.json();
-			if (payload && typeof payload === 'object') {
-				if (
-					'error' in payload &&
-					payload.error &&
-					typeof payload.error === 'object'
-				) {
-					if ('code' in payload.error && typeof payload.error.code === 'string')
-						providerCode = payload.error.code;
-					if (
-						'message' in payload.error &&
-						typeof payload.error.message === 'string'
-					)
-						providerMessage = payload.error.message;
-				} else if ('message' in payload && typeof payload.message === 'string')
-					providerMessage = payload.message;
-			}
-		} catch {
-			// Error responses can be empty or non-JSON.
+		// Core retries a 429 up to three times and honours Retry-After.
+		return await request<unknown>(config, requestOptions);
+	} catch (error) {
+		if (error instanceof ApiError) throw sanitizeApiError(error, apiKey);
+		// DOMException (fetch timeouts) can fail instanceof Error across realms.
+		if (error instanceof Error || error instanceof DOMException) {
+			throw new NangoError(`Nango request failed: ${error.message}`, {
+				cause: error,
+				method,
+			});
 		}
-		throw new NangoError(
-			'Nango HTTP request failed',
-			response.status,
-			retryAfter,
-			providerCode,
-			providerMessage,
-		);
+		throw new NangoError('Nango request failed', { method });
 	}
-	if (response.status === 204) return undefined;
-	try {
-		return await response.json();
-	} catch {
-		throw new NangoError('Nango returned invalid JSON', response.status);
-	}
+}
+
+/** Encodes one path segment. */
+export function segment(value: string): string {
+	return encodeURIComponent(value);
+}
+
+/**
+ * Encodes a proxy path segment by segment. `.` and `..` segments are refused so
+ * a path cannot climb out of `/proxy/` onto Nango's own API with the
+ * environment key.
+ */
+export function proxyPath(path: string): string {
+	const trimmed = path.replace(/^\/+/, '');
+	const segments = trimmed.split('/');
+	if (segments.some((part) => part === '.' || part === '..'))
+		throw new Error('Proxy path may not contain "." or ".." segments');
+	return `/proxy/${segments.map((part) => encodeURIComponent(part)).join('/')}`;
 }
