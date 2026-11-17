@@ -22,9 +22,11 @@ import {
 	CreateComparisonInputSchema,
 	CreateComparisonResponseSchema,
 	DeleteComparisonInputSchema,
+	DeleteComparisonResponseSchema,
 	GetComparisonInputSchema,
 	GetComparisonResponseSchema,
 	GetViewerUrlInputSchema,
+	GetViewerUrlResponseSchema,
 	ListComparisonsInputSchema,
 	ListComparisonsResponseSchema,
 } from './types';
@@ -119,7 +121,10 @@ export const deleteComparison: CorsairEndpoint<
 		{ identifier: parsed.identifier },
 		'completed',
 	);
-	return { identifier: parsed.identifier, deleted: true as const };
+	return DeleteComparisonResponseSchema.parse({
+		identifier: parsed.identifier,
+		deleted: true,
+	});
 };
 
 /**
@@ -173,13 +178,14 @@ export const getViewerUrl: CorsairEndpoint<
 			valid_until: new Date(validUntil * 1000).toISOString(),
 		};
 	}
+	const checked = GetViewerUrlResponseSchema.parse(result);
 	await logEventFromContext(
 		ctx,
 		'draftable.comparisons.getViewerUrl',
 		{ identifier: parsed.identifier },
 		'completed',
 	);
-	return result;
+	return checked;
 };
 
 /**

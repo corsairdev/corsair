@@ -246,11 +246,11 @@ describe('comparisons.getViewerUrl', () => {
 			wait: true,
 		});
 		const validUntil = 1_800_000_000 + 600;
-		const signature = await signViewerPolicy('test-key', {
-			account_id: 'acct-test',
-			identifier: 'cmp-1',
-			valid_until: validUntil,
-		});
+		// Fixed vector from Draftable's Python client algorithm (signing.py:
+		// OrderedDict account_id, identifier, valid_until; json.dumps with
+		// separators (',', ':'); hex HMAC-SHA256 keyed with the token).
+		const signature =
+			'18a47a0cf327b207fa581223551bfe139189ee9bdcd908280c43b50dec020b0e';
 		expect(result).toEqual({
 			identifier: 'cmp-1',
 			url: `${COMPARISON.viewer_url}?valid_until=${validUntil}&signature=${signature}&wait`,
