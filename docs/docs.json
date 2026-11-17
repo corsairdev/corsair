@@ -2364,6 +2364,14 @@
                 ]
               },
               {
+                "group": "FreeAgent",
+                "pages": [
+                  "plugins/freeagent/overview",
+                  "plugins/freeagent/api",
+                  "plugins/freeagent/database"
+                ]
+              },
+              {
                 "group": "Freshdesk",
                 "pages": [
                   "plugins/freshdesk/overview",
