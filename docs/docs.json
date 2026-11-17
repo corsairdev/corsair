@@ -5063,6 +5063,14 @@
                 ]
               },
               {
+                "group": "ToneDen",
+                "pages": [
+                  "plugins/toneden/overview",
+                  "plugins/toneden/api",
+                  "plugins/toneden/database"
+                ]
+              },
+              {
                 "group": "TPSCheck",
                 "pages": [
                   "plugins/tpscheck/overview",

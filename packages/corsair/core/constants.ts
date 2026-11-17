@@ -613,6 +613,7 @@ export const BaseProviders = [
 	'tomtom',
 	'toggl',
 	'tokenmetrics',
+	'toneden',
 	'tpscheck',
 	'trello',
 	'triggercmd',
@@ -1289,6 +1290,7 @@ export const ProviderDisplayNames = {
 	tomtom: 'TomTom',
 	toggl: 'Toggl',
 	tokenmetrics: 'Token Metrics',
+	toneden: 'ToneDen',
 	tpscheck: 'TPSCheck',
 	trello: 'Trello',
 	triggercmd: 'TRIGGERcmd',
@@ -1972,6 +1974,7 @@ export type AllProviders =
 	| 'tomtom'
 	| 'toggl'
 	| 'tokenmetrics'
+	| 'toneden'
 	| 'tpscheck'
 	| 'trello'
 	| 'triggercmd'
