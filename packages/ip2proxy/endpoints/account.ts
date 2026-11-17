@@ -15,6 +15,7 @@ export const getCredits: CorsairEndpoint<
 	}
 
 	GetCreditsInputSchema.parse(input ?? {});
+	// `unknown` until GetCreditsResponseSchema parses it: the body is untrusted provider JSON.
 	const body = await makeIp2proxyRequest<unknown>(ctx.key, { check: true });
 	// An unknown key gets HTTP 200 with a bare `null` body instead of a 401.
 	if (body === null || body === undefined) {

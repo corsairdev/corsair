@@ -16,6 +16,7 @@ export const checkProxy: CorsairEndpoint<
 	}
 
 	const parsed = CheckProxyInputSchema.parse(input);
+	// `unknown` until CheckProxyResponseSchema parses it: the body is untrusted provider JSON.
 	const body = await makeIp2proxyRequest<unknown>(ctx.key, {
 		ip: parsed.ip,
 		package: parsed.package,
