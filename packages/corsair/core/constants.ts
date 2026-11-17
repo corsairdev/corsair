@@ -465,6 +465,7 @@ export const BaseProviders = [
 	'pipedrive',
 	'placid',
 	'plain',
+	'platerecognizer',
 	'ploid',
 	'pointagram',
 	'polygon',
@@ -1155,6 +1156,7 @@ export const ProviderDisplayNames = {
 	pipedrive: 'Pipedrive',
 	placid: 'Placid',
 	plain: 'Plain',
+	platerecognizer: 'Plate Recognizer',
 	ploid: 'Ploid',
 	pointagram: 'Pointagram',
 	polygon: 'Polygon OMS',
@@ -1852,6 +1854,7 @@ export type AllProviders =
 	| 'pipedrive'
 	| 'placid'
 	| 'plain'
+	| 'platerecognizer'
 	| 'ploid'
 	| 'pointagram'
 	| 'polygon'

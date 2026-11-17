@@ -3863,6 +3863,14 @@
                 ]
               },
               {
+                "group": "Plate Recognizer",
+                "pages": [
+                  "plugins/platerecognizer/overview",
+                  "plugins/platerecognizer/api",
+                  "plugins/platerecognizer/database"
+                ]
+              },
+              {
                 "group": "Ploid",
                 "pages": [
                   "plugins/ploid/overview",
