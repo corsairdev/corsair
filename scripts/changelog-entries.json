@@ -6893,5 +6893,32 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/godial",
+    "dir": "packages/godial",
+    "name": "GoDial",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/modelry",
+    "dir": "packages/modelry",
+    "name": "Modelry",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/parma",
+    "dir": "packages/parma",
+    "name": "Parma",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
