@@ -44,7 +44,9 @@ describeIfKey('ngrok live API', () => {
 			expect(typeof domain.id).toBe('string');
 			expect(typeof domain.domain).toBe('string');
 			// The CNAME target is what the caller points DNS at.
-			expect(typeof domain.cname_target).toBe('string');
+			// The free dev domain has no CNAME target; a custom domain does.
+			if (domain.is_dev) expect(domain.cname_target).toBeNull();
+			else expect(typeof domain.cname_target).toBe('string');
 		}
 	}, 30_000);
 

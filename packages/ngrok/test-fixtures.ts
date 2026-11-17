@@ -59,7 +59,10 @@ export const reservedDomains = {
 			region: 'us',
 			cname_target: 'abc123.cname.us.ngrok-cname.com',
 			certificate: null,
-			certificate_management_policy: 'automatic',
+			certificate_management_policy: {
+				authority: 'letsencrypt',
+				private_key_type: 'ecdsa',
+			},
 			certificate_management_status: {
 				renews_at: null,
 				provisioning_job: null,

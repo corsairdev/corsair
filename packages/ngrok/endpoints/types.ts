@@ -5,15 +5,29 @@ import { z } from 'zod';
 // fail a call that has already happened.
 
 /**
- * ngrok pages by id, not by number: pass the `next_page_uri` from one response
- * as `before_id` on the next. It is null on the last page.
+ * ngrok pages by id, not by number. A list answers `next_page_uri`, the full
+ * URL of the next page (null on the last page), whose `before_id` query value
+ * is the cursor. This field takes either that id or the whole URL, and sends
+ * only the id.
  */
+export function cursorFromNextPage(value: string): string {
+	if (!/^https?:\/\//i.test(value)) return value;
+	try {
+		return new URL(value).searchParams.get('before_id') ?? value;
+	} catch {
+		return value;
+	}
+}
+
 const PagingSchema = {
 	before_id: z
 		.string()
 		.min(1)
+		.transform(cursorFromNextPage)
 		.optional()
-		.describe('The id to start before; ngrok sends it as next_page_uri.'),
+		.describe(
+			'The page cursor: the before_id from the last next_page_uri, or that whole URL.',
+		),
 	limit: z.number().int().min(1).optional().describe('Most results to return.'),
 };
 
@@ -78,7 +92,9 @@ const EndpointsListResponseSchema = z.object({
 	next_page_uri: z
 		.string()
 		.nullish()
-		.describe('Present while more results exist; pass it as before_id.'),
+		.describe(
+			'The next page URL, null on the last page; pass it (or its before_id) as before_id.',
+		),
 });
 
 export type EndpointsListResponse = z.infer<typeof EndpointsListResponseSchema>;
@@ -94,19 +110,19 @@ const EndpointsCreateInputSchema = z.object({
 		.string()
 		.min(1)
 		.describe(
-			'The upstream URL the endpoint forwards to, e.g. https://example.com.',
+			"The endpoint's own address, the URL clients connect to, e.g. https://your-domain.ngrok-free.dev. Where traffic goes is set in traffic_policy.",
 		),
 	type: z
 		.string()
 		.min(1)
 		.optional()
 		.describe("The endpoint type. Only 'cloud' is supported; defaults to it."),
+	// ngrok answers 400 ERR_NGROK_18015 to a cloud endpoint without a policy.
 	traffic_policy: z
 		.string()
 		.min(1)
-		.optional()
 		.describe(
-			'The Traffic Policy to attach, as YAML or JSON text. An empty policy forwards everything.',
+			'The Traffic Policy, as YAML or JSON text. Required for a cloud endpoint, and it must end in a terminal action such as forward-internal, redirect or custom-response.',
 		),
 	description: z.string().optional(),
 	metadata: z.string().max(4096).optional(),
@@ -150,6 +166,40 @@ const DomainsListInputSchema = z.object({ ...PagingSchema });
 
 export type DomainsListInput = z.input<typeof DomainsListInputSchema>;
 
+/** ngrok's automatic-certificate policy, e.g. `{ authority: 'letsencrypt' }`. */
+const CertificatePolicyOutputSchema = z
+	.object({
+		authority: z.string().nullish(),
+		private_key_type: z.string().nullish(),
+	})
+	.loose();
+
+const CertificatePolicyInputSchema = z
+	.object({
+		authority: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('The certificate authority, e.g. letsencrypt.'),
+		private_key_type: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('The key type, e.g. ecdsa or rsa.'),
+	})
+	.describe(
+		'Automatic certificate issuance and renewal; an empty object takes the defaults.',
+	);
+
+/** One point of presence the domain is pinned to, e.g. `{ value: 'eu' }`. */
+const ResolvesToSchema = z.object({ value: z.string().nullish() }).loose();
+
+const ResolvesToInputSchema = z
+	.array(z.object({ value: z.string().min(1) }))
+	.describe(
+		"Only serve the domain from these points of presence, e.g. [{ value: 'us-cal-1' }, { value: 'eu' }].",
+	);
+
 const CertificateSchema = z
 	.object({ id: z.string().nullish(), uri: z.string().nullish() })
 	.loose();
@@ -165,7 +215,10 @@ export const ReservedDomainSchema = z
 		region: z.string().nullish(),
 		cname_target: z.string().nullish(),
 		certificate: CertificateSchema.nullish(),
-		certificate_management_policy: z.string().nullish(),
+		certificate_management_policy: CertificatePolicyOutputSchema.nullish(),
+		resolves_to: z.array(ResolvesToSchema).nullish(),
+		/** True for the free dev domain every account gets. */
+		is_dev: z.boolean().nullish(),
 		certificate_management_status: z
 			.object({
 				renews_at: z.string().nullish(),
@@ -212,14 +265,8 @@ const DomainsCreateInputSchema = z.object({
 		.string()
 		.optional()
 		.describe('Attach an uploaded certificate instead of an automatic one.'),
-	certificate_management_policy: z
-		.string()
-		.optional()
-		.describe('The policy for automatic certificate issuance and renewal.'),
-	resolves_to: z
-		.array(z.string().min(1))
-		.optional()
-		.describe('Only let these ngrok IP addresses serve the domain.'),
+	certificate_management_policy: CertificatePolicyInputSchema.optional(),
+	resolves_to: ResolvesToInputSchema.optional(),
 });
 
 export type DomainsCreateInput = z.input<typeof DomainsCreateInputSchema>;
@@ -231,8 +278,8 @@ const DomainsUpdateInputSchema = z.object({
 	description: z.string().optional(),
 	metadata: z.string().max(4096).optional(),
 	certificate_id: z.string().optional(),
-	certificate_management_policy: z.string().optional(),
-	resolves_to: z.array(z.string().min(1)).optional(),
+	certificate_management_policy: CertificatePolicyInputSchema.optional(),
+	resolves_to: ResolvesToInputSchema.optional(),
 });
 
 export type DomainsUpdateInput = z.input<typeof DomainsUpdateInputSchema>;

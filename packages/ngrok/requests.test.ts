@@ -135,6 +135,15 @@ describe('endpoints', () => {
 		expect(parsed.searchParams.get('filter')).toBe('proto="https"');
 	});
 
+	it('takes the whole next_page_uri and sends only its before_id', async () => {
+		const { url } = await capture(
+			endpointsNested.endpoints.list,
+			{ before_id: endpoints.next_page_uri ?? '' },
+			endpoints,
+		);
+		expect(new URL(url).searchParams.get('before_id')).toBe('ep_next');
+	});
+
 	it('reads one endpoint with its nested references', async () => {
 		const { result, url } = await capture(
 			endpointsNested.endpoints.get,
@@ -148,10 +157,16 @@ describe('endpoints', () => {
 		expect(asRecord(endpoint?.tunnel)?.id).toBe('tn_1');
 	});
 
-	it('creates an endpoint with the upstream url', async () => {
+	it('creates an endpoint with its url and traffic policy', async () => {
+		const policy =
+			'{"on_http_request":[{"actions":[{"type":"custom-response","config":{"status_code":200}}]}]}';
 		const { result, url, init } = await capture(
 			endpointsNested.endpoints.create,
-			{ url: 'https://internal.example.com', description: 'Acme API' },
+			{
+				url: 'https://internal.example.com',
+				description: 'Acme API',
+				traffic_policy: policy,
+			},
 			singleEndpoint,
 			{ status: 201 },
 		);
@@ -160,7 +175,19 @@ describe('endpoints', () => {
 		expect(init.method).toBe('POST');
 		const body = sentBody(init);
 		expect(body.url).toBe('https://internal.example.com');
+		expect(body.traffic_policy).toBe(policy);
 		expect(asRecord(result)?.id).toBe(singleEndpoint?.id);
+	});
+
+	it('rejects a cloud endpoint without a traffic policy', async () => {
+		// Live 11-17: ngrok answers 400 ERR_NGROK_18015 without one.
+		await expect(
+			endpointsNested.endpoints.create(
+				makeContext() as never,
+				// The missing policy is the point of the test.
+				{ url: 'https://x.ngrok-free.dev' } as never,
+			),
+		).rejects.toThrow();
 	});
 
 	it('rejects a create without an upstream url', async () => {
@@ -246,6 +273,39 @@ describe('domains', () => {
 		);
 	});
 
+	it('updates a domain with the documented resolves_to and policy shapes', async () => {
+		const { result, url, init } = await capture(
+			endpointsNested.domains.update,
+			{
+				id: 'rd_1',
+				description: 'pinned',
+				resolves_to: [{ value: 'eu' }],
+				certificate_management_policy: { authority: 'letsencrypt' },
+			},
+			singleDomain,
+		);
+		expect(url).toBe('https://api.ngrok.com/reserved_domains/rd_1');
+		expect(init.method).toBe('PATCH');
+		expect(sentBody(init)).toEqual({
+			description: 'pinned',
+			resolves_to: [{ value: 'eu' }],
+			certificate_management_policy: { authority: 'letsencrypt' },
+		});
+		expect(
+			asRecord(asRecord(result)?.certificate_management_policy)?.authority,
+		).toBe('letsencrypt');
+	});
+
+	it('rejects resolves_to given as bare strings', async () => {
+		await expect(
+			endpointsNested.domains.update(
+				makeContext() as never,
+				// The old string form is the point of the test.
+				{ id: 'rd_1', resolves_to: ['eu'] } as never,
+			),
+		).rejects.toThrow();
+	});
+
 	it('keeps the certificate provisioning status', async () => {
 		const { result } = await capture(
 			endpointsNested.domains.get,
@@ -329,6 +389,19 @@ describe('events', () => {
 		const sources = first?.sources;
 		const source = asRecord(Array.isArray(sources) ? sources[0] : null);
 		expect(source?.type).toBe('endpoint.created');
+	});
+
+	it('reads one subscription by id', async () => {
+		const { result, url, init } = await capture(
+			endpointsNested.events.get,
+			{ id: singleEventSubscription?.id ?? 'esb_1' },
+			singleEventSubscription,
+		);
+		expect(url).toBe(
+			`https://api.ngrok.com/event_subscriptions/${singleEventSubscription?.id}`,
+		);
+		expect(init.method).toBe('GET');
+		expect(asRecord(result)?.id).toBe(singleEventSubscription?.id);
 	});
 
 	it('creates a subscription from source types and destination ids', async () => {
