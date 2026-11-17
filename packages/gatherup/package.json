@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/gatherup",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "GatherUp plugin for Corsair: manage the businesses on an account, add customers and send them feedback requests, and read the feedback and ratings they leave.",
   "type": "module",
   "main": "./dist/index.js",
