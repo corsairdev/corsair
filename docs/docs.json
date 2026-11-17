@@ -2818,6 +2818,14 @@
                 ]
               },
               {
+                "group": "Helpwise",
+                "pages": [
+                  "plugins/helpwise/overview",
+                  "plugins/helpwise/api",
+                  "plugins/helpwise/database"
+                ]
+              },
+              {
                 "group": "Hex",
                 "pages": [
                   "plugins/hex/overview",
