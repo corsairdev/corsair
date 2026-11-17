@@ -43,6 +43,18 @@ type Endpoint = CorsairEndpoint<never, unknown, unknown>;
 
 const endpoints = niftyimagesEndpointsNested;
 
+// No test may reach the network: a fetch that capture() did not mock throws,
+// so a validation test can only pass on the schema's own rejection.
+const realFetch = globalThis.fetch;
+beforeEach(() => {
+	globalThis.fetch = (async () => {
+		throw new Error('unmocked fetch');
+	}) as typeof fetch;
+});
+afterAll(() => {
+	globalThis.fetch = realFetch;
+});
+
 /**
  * Runs one endpoint and returns the response and the request that made it.
  * unknown: `input`, `body` and `result` differ per endpoint; each test passes a
@@ -198,7 +210,7 @@ describe('widgets.userStats', () => {
 					widgetKey: WIDGET_KEY,
 				} as never,
 			),
-		).rejects.toThrow();
+		).rejects.toMatchObject({ name: 'ZodError' });
 	});
 });
 
@@ -269,7 +281,7 @@ describe('store', () => {
 	it('rejects an empty record', async () => {
 		await expect(
 			endpoints.store.addRecord(makeContext() as never, { record: {} }),
-		).rejects.toThrow();
+		).rejects.toMatchObject({ name: 'ZodError' });
 	});
 
 	it('deletes by id in the query and reports success on an empty 200', async () => {
@@ -346,7 +358,7 @@ describe('maps', () => {
 	it('refuses a search with nothing to search by', async () => {
 		await expect(
 			endpoints.maps.searchLocations(makeContext() as never, { url: MAP_URL }),
-		).rejects.toThrow();
+		).rejects.toMatchObject({ name: 'ZodError' });
 	});
 
 	it('adds a location with the url in the query and the rest as the body', async () => {
