@@ -77,6 +77,9 @@ await corsair.needle.api.campaigns.create({ name: 'EMEA logistics Q4', graph: { 
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `graph` | `object` | Yes | — |
+| `schedule` | `object` | No | The sending window. |
+| `limits` | `object` | No | The gap between two actions, in seconds. Defaults 30 to 60. |
+| `suppressionPolicy` | `object` | No | Who the campaign skips and when a lead counts as unresponsive. |
 
 The campaign starts in draft and contacts nobody until campaigns.update sets status active.
 
@@ -87,9 +90,22 @@ The campaign starts in draft and contacts nobody until campaigns.update sets sta
 {
   nodes: {
     id: string,
-    kind: start | end | delay | action,
+    kind: start | end | delay | action | condition | wait_until,
     label?: string,
     duration?: {
+      days?: number,
+      hours?: number,
+      minutes?: number
+    },
+    test?: {
+      predicate: is_connection
+    } | {
+      predicate: has_attribute,
+      attribute: string,
+      equals?: string
+    },
+    event?: linkedin_invite_accepted | linkedin_message_received | instagram_message_received,
+    timeout?: {
       days?: number,
       hours?: number,
       minutes?: number
@@ -115,6 +131,39 @@ The campaign starts in draft and contacts nobody until campaigns.update sets sta
     to: string,
     label?: next | yes | no | on_event | on_timeout
   }[]
+}
+```
+</Accordion>
+
+<Accordion title="schedule full type">
+
+```ts
+{
+  workingDays?: number[],
+  startTime?: string,
+  endTime?: string
+}
+```
+</Accordion>
+
+<Accordion title="limits full type">
+
+```ts
+{
+  minGapSeconds?: number,
+  maxGapSeconds?: number
+}
+```
+</Accordion>
+
+<Accordion title="suppressionPolicy full type">
+
+```ts
+{
+  bypassSuppressionReasons?: (manual | unsubscribed | not_interested | existing_customer | open_opportunity | competitor | employee | invalid_recipient | complained | recently_contacted | unresponsive)[],
+  cooldownDays?: number,
+  unresponsiveAfterTouches?: number,
+  autoSuppressKeywords?: string[]
 }
 ```
 </Accordion>
@@ -504,6 +553,9 @@ await corsair.needle.api.campaigns.update({ campaignId: '4d5e6f7a-8b9c-4d0e-9f1a
 | `name` | `string` | No | — |
 | `status` | `active \| paused` | No | Set active to start or resume, paused to halt contact. |
 | `graph` | `object` | No | — |
+| `schedule` | `object` | No | The sending window. |
+| `limits` | `object` | No | The gap between two actions, in seconds. Defaults 30 to 60. |
+| `suppressionPolicy` | `object` | No | Who the campaign skips and when a lead counts as unresponsive. |
 
 <AccordionGroup>
 <Accordion title="graph full type">
@@ -512,9 +564,22 @@ await corsair.needle.api.campaigns.update({ campaignId: '4d5e6f7a-8b9c-4d0e-9f1a
 {
   nodes: {
     id: string,
-    kind: start | end | delay | action,
+    kind: start | end | delay | action | condition | wait_until,
     label?: string,
     duration?: {
+      days?: number,
+      hours?: number,
+      minutes?: number
+    },
+    test?: {
+      predicate: is_connection
+    } | {
+      predicate: has_attribute,
+      attribute: string,
+      equals?: string
+    },
+    event?: linkedin_invite_accepted | linkedin_message_received | instagram_message_received,
+    timeout?: {
       days?: number,
       hours?: number,
       minutes?: number
@@ -540,6 +605,39 @@ await corsair.needle.api.campaigns.update({ campaignId: '4d5e6f7a-8b9c-4d0e-9f1a
     to: string,
     label?: next | yes | no | on_event | on_timeout
   }[]
+}
+```
+</Accordion>
+
+<Accordion title="schedule full type">
+
+```ts
+{
+  workingDays?: number[],
+  startTime?: string,
+  endTime?: string
+}
+```
+</Accordion>
+
+<Accordion title="limits full type">
+
+```ts
+{
+  minGapSeconds?: number,
+  maxGapSeconds?: number
+}
+```
+</Accordion>
+
+<Accordion title="suppressionPolicy full type">
+
+```ts
+{
+  bypassSuppressionReasons?: (manual | unsubscribed | not_interested | existing_customer | open_opportunity | competitor | employee | invalid_recipient | complained | recently_contacted | unresponsive)[],
+  cooldownDays?: number,
+  unresponsiveAfterTouches?: number,
+  autoSuppressKeywords?: string[]
 }
 ```
 </Accordion>
@@ -1139,7 +1237,11 @@ await corsair.needle.api.places.search({ query: 'dentists in Munich', limit: 10 
 | `query` | `string` | No | Free text such as "dentists in Munich". |
 | `location` | `object` | No | Centre point for a nearby search. |
 | `radiusMeters` | `number` | No | — |
+| `type` | `string` | No | Place type for a nearby search, e.g. restaurant. |
+| `language` | `string` | No | — |
+| `region` | `string` | No | — |
 | `limit` | `number` | No | — |
+| `cursor` | `string` | No | The cursor from the previous text-search page. Nearby search does not page. |
 
 <AccordionGroup>
 <Accordion title="location full type">
@@ -1160,6 +1262,8 @@ await corsair.needle.api.places.search({ query: 'dentists in Munich', limit: 10 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `hits` | `object[]` | Yes | — |
+| `cursor` | `string \| null` | No | Pass as `cursor` for the next text-search page; absent on the last. |
+| `remainingUsage` | `any` | No | What is left of the account's places quota. |
 
 <AccordionGroup>
 <Accordion title="hits full type">
