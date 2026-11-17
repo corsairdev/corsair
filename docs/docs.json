@@ -2524,6 +2524,14 @@
                 ]
               },
               {
+                "group": "Globalping",
+                "pages": [
+                  "plugins/globalping/overview",
+                  "plugins/globalping/api",
+                  "plugins/globalping/database"
+                ]
+              },
+              {
                 "group": "Klipfolio",
                 "pages": [
                   "plugins/klipfolio/overview",

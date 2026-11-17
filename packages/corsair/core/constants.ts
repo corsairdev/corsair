@@ -309,6 +309,7 @@ export const BaseProviders = [
 	'givebutter',
 	'gladia',
 	'gleap',
+	'globalping',
 	'gmail',
 	'gmicloud',
 	'godial',
@@ -1002,6 +1003,7 @@ export const ProviderDisplayNames = {
 	givebutter: 'Givebutter',
 	gladia: 'Gladia',
 	gleap: 'Gleap',
+	globalping: 'Globalping',
 	gmail: 'Gmail',
 	gmicloud: 'GMI Cloud',
 	godial: 'GoDial',
@@ -1702,6 +1704,7 @@ export type AllProviders =
 	| 'givebutter'
 	| 'gladia'
 	| 'gleap'
+	| 'globalping'
 	| 'gmail'
 	| 'gmicloud'
 	| 'godial'
