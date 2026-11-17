@@ -73,6 +73,15 @@ async function capture(
 	}
 }
 
+/**
+ * Returns what a rejected call threw.
+ * unknown: a rejection reason has no static type; each test narrows it with
+ * toBeInstanceOf or String() before reading it.
+ */
+function caughtError(caught: unknown): unknown {
+	return caught;
+}
+
 function sentBody(init: RequestInit): Record<string, unknown> {
 	// unknown: the body is the JSON the endpoint built; read as a record.
 	const parsed = JSON.parse(String(init.body)) as unknown;
@@ -251,6 +260,7 @@ describe('records.changes', () => {
 
 describe('timeline triggers', () => {
 	it('lists recent comments, call logs and Drive files from their triggers', async () => {
+		// unknown: each case's fixture body, validated by that op's schema.
 		const cases: Array<[Endpoint, string, string, unknown]> = [
 			[
 				endpoints.records.recentComments,
@@ -410,6 +420,16 @@ describe('records.delete', () => {
 		expect(asRecord(result)?.deleted).toBe(true);
 		expect(asRecord(result)?.recordId).toBe('596f644b8f6d05e16c24b830');
 	});
+
+	it('fails instead of reporting a delete when the answer is not an object', async () => {
+		await expect(
+			capture(
+				endpoints.records.delete,
+				{ recordId: '596f644b8f6d05e16c24b830' },
+				'null',
+			),
+		).rejects.toThrow(/delete-record to answer an object/);
+	});
 });
 
 describe('records.comment and callLog', () => {
@@ -492,7 +512,7 @@ describe('nethunt error reporting', () => {
 		const error = await capture(endpoints.folders.list, {}, badCredentials, {
 			status: 401,
 			contentType: 'text/plain;charset=UTF-8',
-		}).catch((caught: unknown) => caught);
+		}).catch(caughtError);
 
 		// Core's ApiError comes through unchanged, with the text body on it.
 		expect(error).toBeInstanceOf(ApiError);
@@ -511,7 +531,7 @@ describe('nethunt error reporting', () => {
 				status: 404,
 				contentType: 'text/plain',
 			},
-		).catch((caught: unknown) => caught);
+		).catch(caughtError);
 
 		expect(error).toBeInstanceOf(ApiError);
 		expect((error as ApiError).status).toBe(404);
@@ -521,7 +541,7 @@ describe('nethunt error reporting', () => {
 		const error = await capture(endpoints.folders.list, {}, badCredentials, {
 			status: 401,
 			contentType: 'text/plain',
-		}).catch((caught: unknown) => caught);
+		}).catch(caughtError);
 
 		expect(String(error)).not.toContain(API_KEY);
 		expect(String(error)).not.toContain(EMAIL);

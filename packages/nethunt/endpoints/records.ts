@@ -22,6 +22,20 @@ function asArray(
 	return raw;
 }
 
+/**
+ * Delete and link answer `{}`. The acknowledgement carries no data, but it must
+ * be an object: null or a bare value means the contract changed.
+ */
+function expectAck(
+	// unknown: the provider's answer, checked here before a success is built.
+	raw: unknown,
+	name: string,
+): void {
+	if (raw === null || typeof raw !== 'object' || Array.isArray(raw)) {
+		throw new Error(`Expected NetHunt ${name} to answer an object`);
+	}
+}
+
 /** Finds records by id or a text query such as `Name:Doe`. */
 export const find: NethuntEndpoints['recordsFind'] = (ctx, input) =>
 	call(
@@ -189,8 +203,12 @@ export const remove: NethuntEndpoints['recordsDelete'] = (ctx, input) =>
 			path: `/zapier/actions/delete-record/${segment(recordId)}`,
 		}),
 		{
-			// The body is `{}`; a failure would have thrown before this runs.
-			shape: (_, { recordId }) => ({ deleted: true, recordId }),
+			// NetHunt documents `{}`; anything that is not an object means the
+			// contract changed, so the call fails instead of reporting a delete.
+			shape: (raw, { recordId }) => {
+				expectAck(raw, 'delete-record');
+				return { deleted: true, recordId };
+			},
 			log: ({ recordId }) => ({ recordId }),
 		},
 	);
@@ -258,11 +276,14 @@ export const linkThread: NethuntEndpoints['recordsLinkThread'] = (ctx, input) =>
 			body: { gmailThreadId },
 		}),
 		{
-			shape: (_, { recordId, gmailThreadId }) => ({
-				linked: true,
-				recordId,
-				gmailThreadId,
-			}),
+			shape: (raw, { recordId, gmailThreadId }) => {
+				expectAck(raw, 'link-gmail-thread');
+				return {
+					linked: true,
+					recordId,
+					gmailThreadId,
+				};
+			},
 			log: ({ recordId }) => ({ recordId }),
 		},
 	);
