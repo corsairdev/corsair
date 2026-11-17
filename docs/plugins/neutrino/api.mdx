@@ -616,7 +616,7 @@ Sends a real SMS and spends a credit. A 5xx on this route is not retried.
 
 Check a code a person typed against the codes smsVerify and phoneVerify sent, optionally capping failed attempts per user
 
-**Risk:** `read`
+**Risk:** `write`
 
 ```ts
 await corsair.neutrino.api.messaging.verifySecurityCode({ securityCode: '123456', limitBy: 'user-42' });
@@ -788,7 +788,7 @@ await corsair.neutrino.api.web.browserBot({ url: 'https://example.com', selector
 | `timeout` | `number` | No | Seconds to wait for the page to load (Neutrino defaults to 30). |
 | `delay` | `number` | No | Seconds to wait after the page loads, for scripts to finish. |
 | `selector` | `string` | No | A CSS selector; the matching elements come back in `elements`. |
-| `exec` | `string[]` | No | JavaScript statements to run on the page in order, e.g. click or fill a field; their values come back in `exec-results`. |
+| `exec` | `string[]` | No | JavaScript statements to run on the page in order, e.g. click or fill a field; each one gets its own entry in `exec-results`. |
 | `userAgent` | `string` | No | — |
 | `ignoreCertificateErrors` | `boolean` | No | — |
 

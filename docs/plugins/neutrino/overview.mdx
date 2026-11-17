@@ -24,6 +24,7 @@ Worth knowing before you call:
 
 - **`web.urlInfo` and the phone HLR lookup make Neutrino do outside work.** The first fetches the page themselves, and the second queries a carrier, so both cost more and can fail on a target that refuses them.
 - **`messaging.smsVerify` and `messaging.phoneVerify` reach a real person** and spend credits, so both are `destructive`. Neutrino keeps the code it sent, and `messaging.verifySecurityCode` checks what the person types. A 5xx on these routes is never retried, because the message or call may already have gone out.
+- **`messaging.verifySecurityCode` is `write`.** With `limitBy`, each failed check counts toward a lockout for that identifier.
 - **`web.browserBot` is `write`.** Loading a page only reads, but its `exec` statements run on the third-party page and can click or submit forms there.
 - **Parameters are hyphenated.** `country-code`, `bin-number`, `from-value`, `fetch-content`, `code-length`. The plugin maps its own camelCase inputs onto those names, so a caller writes `countryCode` and `binNumber`.
 - **A convert result comes twice.** `result` is a string and `result-float` a number; use the one the surrounding code needs rather than parsing the first.
