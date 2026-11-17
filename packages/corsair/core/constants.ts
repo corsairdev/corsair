@@ -598,6 +598,7 @@ export const BaseProviders = [
 	'swaggerhub',
 	'suzanne',
 	'svix',
+	'sympla',
 	'synthflowai',
 	'taggun',
 	'talenthr',
@@ -1297,6 +1298,7 @@ export const ProviderDisplayNames = {
 	swaggerhub: 'SwaggerHub',
 	suzanne: 'Suzanne',
 	svix: 'Svix',
+	sympla: 'Sympla',
 	synthflowai: 'Synthflow AI',
 	taggun: 'Taggun',
 	talenthr: 'TalentHR',
@@ -2003,6 +2005,7 @@ export type AllProviders =
 	| 'swaggerhub'
 	| 'suzanne'
 	| 'svix'
+	| 'sympla'
 	| 'synthflowai'
 	| 'taggun'
 	| 'talenthr'
