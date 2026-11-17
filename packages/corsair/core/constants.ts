@@ -207,6 +207,7 @@ export const BaseProviders = [
 	'datadog',
 	'dataforseo',
 	'datarobot',
+	'deepline',
 	'deepseek',
 	'demio',
 	'deployhq',
@@ -237,6 +238,8 @@ export const BaseProviders = [
 	'dropcontact',
 	'dynapictures',
 	'e2b',
+	'echtpost',
+	'ecologi',
 	'elevenlabs',
 	'elorus',
 	'emailoctopus',
@@ -340,6 +343,7 @@ export const BaseProviders = [
 	'happyscribe',
 	'harvest',
 	'hashnode',
+	'helpscout',
 	'helpwise',
 	'here',
 	'hex',
@@ -366,6 +370,8 @@ export const BaseProviders = [
 	'instagram',
 	'instantly',
 	'intercom',
+	'ip2proxy',
+	'ip2whois',
 	'jigsawstack',
 	'jira',
 	'jobnimbus',
@@ -456,6 +462,7 @@ export const BaseProviders = [
 	'pagerduty',
 	'parallel',
 	'parma',
+	'parsehub',
 	'parseur',
 	'pdfapi',
 	'pdfco',
@@ -483,6 +490,7 @@ export const BaseProviders = [
 	'posthog',
 	'postman',
 	'prisma',
+	'proofly',
 	'pushbullet',
 	'pushover',
 	'qdrant',
@@ -541,10 +549,12 @@ export const BaseProviders = [
 	'scrapingant',
 	'screenshotone',
 	'search1api',
+	'searchapi',
 	'securitytrails',
 	'semanticscholar',
 	'sendbird',
 	'sendgrid',
+	'sensibo',
 	'sentry',
 	'serpapi',
 	'serply',
@@ -596,6 +606,7 @@ export const BaseProviders = [
 	'swaggerhub',
 	'suzanne',
 	'svix',
+	'sympla',
 	'synthflowai',
 	'taggun',
 	'talenthr',
@@ -612,6 +623,7 @@ export const BaseProviders = [
 	'textcortex',
 	'teamcamp',
 	'teams',
+	'teamwork',
 	'telegram',
 	'textit',
 	'textrazor',
@@ -646,6 +658,7 @@ export const BaseProviders = [
 	'twilio',
 	'twitter',
 	'twitterapiio',
+	'twocaptcha',
 	'twochat',
 	'typeform',
 	'typesafe',
@@ -903,6 +916,7 @@ export const ProviderDisplayNames = {
 	datadog: 'Datadog',
 	dataforseo: 'DataForSEO',
 	datarobot: 'DataRobot',
+	deepline: 'Deepline',
 	deepseek: 'DeepSeek',
 	demio: 'Demio',
 	deployhq: 'DeployHQ',
@@ -933,6 +947,8 @@ export const ProviderDisplayNames = {
 	dropcontact: 'Dropcontact',
 	dynapictures: 'Dynapictures',
 	e2b: 'E2B',
+	echtpost: 'Echtpost',
+	ecologi: 'Ecologi',
 	elevenlabs: 'ElevenLabs',
 	elorus: 'Elorus',
 	emailoctopus: 'EmailOctopus',
@@ -1036,6 +1052,7 @@ export const ProviderDisplayNames = {
 	happyscribe: 'Happy Scribe',
 	harvest: 'Harvest',
 	hashnode: 'Hashnode',
+	helpscout: 'Help Scout',
 	helpwise: 'Helpwise',
 	here: 'HERE',
 	hex: 'Hex',
@@ -1062,6 +1079,8 @@ export const ProviderDisplayNames = {
 	instagram: 'Instagram',
 	instantly: 'Instantly',
 	intercom: 'Intercom',
+	ip2proxy: 'IP2Proxy',
+	ip2whois: 'IP2WHOIS',
 	jigsawstack: 'JigsawStack',
 	jira: 'Jira',
 	jobnimbus: 'JobNimbus',
@@ -1152,6 +1171,7 @@ export const ProviderDisplayNames = {
 	pagerduty: 'PagerDuty',
 	parallel: 'Parallel',
 	parma: 'Parma',
+	parsehub: 'ParseHub',
 	parseur: 'Parseur',
 	pdfapi: 'PDF-API.io',
 	pdfco: 'PDF.co',
@@ -1179,6 +1199,7 @@ export const ProviderDisplayNames = {
 	posthog: 'PostHog',
 	postman: 'Postman',
 	prisma: 'Prisma',
+	proofly: 'Proofly',
 	pushbullet: 'Pushbullet',
 	pushover: 'Pushover',
 	qdrant: 'Qdrant',
@@ -1237,10 +1258,12 @@ export const ProviderDisplayNames = {
 	scrapingant: 'ScrapingAnt',
 	screenshotone: 'ScreenshotOne',
 	search1api: 'Search1API',
+	searchapi: 'SearchAPI',
 	securitytrails: 'SecurityTrails',
 	semanticscholar: 'Semantic Scholar',
 	sendbird: 'Sendbird',
 	sendgrid: 'SendGrid',
+	sensibo: 'Sensibo',
 	sentry: 'Sentry',
 	serpapi: 'Serpapi',
 	serply: 'Serply',
@@ -1292,6 +1315,7 @@ export const ProviderDisplayNames = {
 	swaggerhub: 'SwaggerHub',
 	suzanne: 'Suzanne',
 	svix: 'Svix',
+	sympla: 'Sympla',
 	synthflowai: 'Synthflow AI',
 	taggun: 'Taggun',
 	talenthr: 'TalentHR',
@@ -1308,6 +1332,7 @@ export const ProviderDisplayNames = {
 	textcortex: 'TextCortex',
 	teamcamp: 'Teamcamp',
 	teams: 'Teams',
+	teamwork: 'Teamwork',
 	telegram: 'Telegram',
 	textit: 'TextIt',
 	textrazor: 'TextRazor',
@@ -1342,6 +1367,7 @@ export const ProviderDisplayNames = {
 	twilio: 'Twilio',
 	twitter: 'Twitter',
 	twitterapiio: 'Twitter API IO',
+	twocaptcha: '2Captcha',
 	twochat: 'TwoChat',
 	typeform: 'Typeform',
 	typesafe: 'TypeSafe',
@@ -1606,6 +1632,7 @@ export type AllProviders =
 	| 'datadog'
 	| 'dataforseo'
 	| 'datarobot'
+	| 'deepline'
 	| 'deepseek'
 	| 'demio'
 	| 'deployhq'
@@ -1636,6 +1663,8 @@ export type AllProviders =
 	| 'dropcontact'
 	| 'dynapictures'
 	| 'e2b'
+	| 'echtpost'
+	| 'ecologi'
 	| 'elevenlabs'
 	| 'elorus'
 	| 'emailoctopus'
@@ -1739,6 +1768,7 @@ export type AllProviders =
 	| 'happyscribe'
 	| 'harvest'
 	| 'hashnode'
+	| 'helpscout'
 	| 'helpwise'
 	| 'here'
 	| 'hex'
@@ -1765,6 +1795,8 @@ export type AllProviders =
 	| 'instagram'
 	| 'instantly'
 	| 'intercom'
+	| 'ip2proxy'
+	| 'ip2whois'
 	| 'jigsawstack'
 	| 'jira'
 	| 'jobnimbus'
@@ -1855,6 +1887,7 @@ export type AllProviders =
 	| 'pagerduty'
 	| 'parallel'
 	| 'parma'
+	| 'parsehub'
 	| 'parseur'
 	| 'pdfapi'
 	| 'pdfco'
@@ -1882,6 +1915,7 @@ export type AllProviders =
 	| 'posthog'
 	| 'postman'
 	| 'prisma'
+	| 'proofly'
 	| 'pushbullet'
 	| 'pushover'
 	| 'qdrant'
@@ -1940,10 +1974,12 @@ export type AllProviders =
 	| 'scrapingant'
 	| 'screenshotone'
 	| 'search1api'
+	| 'searchapi'
 	| 'securitytrails'
 	| 'semanticscholar'
 	| 'sendbird'
 	| 'sendgrid'
+	| 'sensibo'
 	| 'sentry'
 	| 'serpapi'
 	| 'serply'
@@ -1995,6 +2031,7 @@ export type AllProviders =
 	| 'swaggerhub'
 	| 'suzanne'
 	| 'svix'
+	| 'sympla'
 	| 'synthflowai'
 	| 'taggun'
 	| 'talenthr'
@@ -2011,6 +2048,7 @@ export type AllProviders =
 	| 'textcortex'
 	| 'teamcamp'
 	| 'teams'
+	| 'teamwork'
 	| 'telegram'
 	| 'textit'
 	| 'textrazor'
@@ -2045,6 +2083,7 @@ export type AllProviders =
 	| 'twilio'
 	| 'twitter'
 	| 'twitterapiio'
+	| 'twocaptcha'
 	| 'twochat'
 	| 'typeform'
 	| 'typesafe'

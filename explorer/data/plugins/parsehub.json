@@ -1,0 +1,510 @@
+{
+  "id": "parsehub",
+  "displayName": "ParseHub",
+  "description": "Run ParseHub scraping projects and get the data they extract.",
+  "npmPackageName": "@corsair-dev/parsehub",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 8,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "parsehub.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Get one project with its last run, last ready run and the 20 most recent runs.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_token",
+            "optional": false,
+            "type": "string",
+            "description": "Project token from projects.list (not the API key)."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Offset into run_list (the 20 most recent runs). Default 0."
+          },
+          {
+            "key": "include_options",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include options_json and related fields. Sent as 1 or 0."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "templates_json",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "main_template",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "main_site",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "options_json",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_run",
+            "optional": true,
+            "type": "{ project_token?: string | null, run_token: string, status?: string | null, data_ready?: boolean | number | null, start_time?: string | null, end_time?: string | null, pages?: number | null, md5sum?: string | null, start_url?: string | null, start_template?: string | null, start_value?: string | null } | null"
+          },
+          {
+            "key": "last_ready_run",
+            "optional": true,
+            "type": "{ project_token?: string | null, run_token: string, status?: string | null, data_ready?: boolean | number | null, start_time?: string | null, end_time?: string | null, pages?: number | null, md5sum?: string | null, start_url?: string | null, start_template?: string | null, start_value?: string | null } | null"
+          },
+          {
+            "key": "run_list",
+            "optional": true,
+            "type": "{ project_token?: string | null, run_token: string, status?: string | null, data_ready?: boolean | number | null, start_time?: string | null, end_time?: string | null, pages?: number | null, md5sum?: string | null, start_url?: string | null, start_template?: string | null, start_value?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsehub.api.projects.getLastReadyData",
+      "shortPath": "projects.getLastReadyData",
+      "description": "Get the extracted data of the most recent run of a project that has data ready.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_token",
+            "optional": false,
+            "type": "string",
+            "description": "Project token from projects.list (not the API key)."
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json | csv",
+            "description": "json (default) returns the extracted data as JSON; csv returns it as CSV text."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | any[] | string"
+      }
+    },
+    {
+      "path": "parsehub.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List the scraping projects on the ParseHub account, 20 at a time.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-based start index. Default 0."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size, 1 to 20. Default 20."
+          },
+          {
+            "key": "include_options",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include options_json and related fields. Sent as 1 or 0."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projects",
+            "optional": false,
+            "type": "{ token: string, title?: string | null, templates_json?: string | null, main_template?: string | null, main_site?: string | null, options_json?: string | null, webhook?: string | null, last_run?: { project_token?: string | null, run_token: string, status?: string | null, data_ready?: boolean | number | null, start_time?: string | null, end_time?: string | null, pages?: number | null, md5sum?: string | null, start_url?: string | null, start_template?: string | null, start_value?: string | null } | null, last_ready_run?: { project_token?: string | null, run_token: string, status?: string | null, data_ready?: boolean | number | null, start_time?: string | null, end_time?: string | null, pages?: number | null, md5sum?: string | null, start_url?: string | null, start_template?: string | null, start_value?: string | null } | null, run_list?: { project_token?: string | null, run_token: string, status?: string | null, data_ready?: boolean | number | null, start_time?: string | null, end_time?: string | null, pages?: number | null, md5sum?: string | null, start_url?: string | null, start_template?: string | null, start_value?: string | null }[] | null }[]"
+          },
+          {
+            "key": "total_projects",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsehub.api.projects.run",
+      "shortPath": "projects.run",
+      "description": "Start a run of a project on the ParseHub cloud. Returns the new run; poll runs.get until data_ready.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_token",
+            "optional": false,
+            "type": "string",
+            "description": "Project token from projects.list (not the API key)."
+          },
+          {
+            "key": "start_url",
+            "optional": true,
+            "type": "string",
+            "description": "URL to start on. Defaults to the project start site."
+          },
+          {
+            "key": "start_template",
+            "optional": true,
+            "type": "string",
+            "description": "Template to start with. Defaults to the project main template."
+          },
+          {
+            "key": "start_value_override",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Starting global scope for the run, e.g. { \"query\": \"San Francisco\" }. Sent as a JSON string."
+          },
+          {
+            "key": "send_email",
+            "optional": true,
+            "type": "boolean",
+            "description": "Email the account owner when the run completes or fails. Default false."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_token",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "run_token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data_ready",
+            "optional": true,
+            "type": "boolean | number | null"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "md5sum",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "start_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "start_template",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "start_value",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsehub.api.runs.cancel",
+      "shortPath": "runs.cancel",
+      "description": "Cancel a running run. Data extracted so far stays available.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_token",
+            "optional": false,
+            "type": "string",
+            "description": "Run token from projects.run or projects.get."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_token",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "run_token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data_ready",
+            "optional": true,
+            "type": "boolean | number | null"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "md5sum",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "start_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "start_template",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "start_value",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsehub.api.runs.delete",
+      "shortPath": "runs.delete",
+      "description": "Delete a run and its data, cancelling it first if it is running.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_token",
+            "optional": false,
+            "type": "string",
+            "description": "Run token from projects.run or projects.get."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_token",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsehub.api.runs.get",
+      "shortPath": "runs.get",
+      "description": "Get one run: status, data_ready, page count and timing.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_token",
+            "optional": false,
+            "type": "string",
+            "description": "Run token from projects.run or projects.get."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_token",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "run_token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data_ready",
+            "optional": true,
+            "type": "boolean | number | null"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "md5sum",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "start_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "start_template",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "start_value",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsehub.api.runs.getData",
+      "shortPath": "runs.getData",
+      "description": "Get the data a run extracted, as JSON or CSV.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_token",
+            "optional": false,
+            "type": "string",
+            "description": "Run token from projects.run or projects.get."
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json | csv",
+            "description": "json (default) returns the extracted data as JSON; csv returns it as CSV text."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | any[] | string"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "parsehub.db.projects.search",
+      "entityName": "projects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "token",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

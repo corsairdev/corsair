@@ -1,0 +1,247 @@
+{
+  "id": "ip2whois",
+  "displayName": "IP2WHOIS",
+  "description": "Look up WHOIS registration for a domain, and list the domains hosted on an IP address.",
+  "npmPackageName": "@corsair-dev/ip2whois",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 2,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "ip2whois.api.domain.lookup",
+      "shortPath": "domain.lookup",
+      "description": "Look up WHOIS registration data for a domain.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "Domain name, without a scheme or www."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "create_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "update_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expire_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain_age",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "whois_server",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nameservers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "registrar",
+            "optional": true,
+            "type": "{ iana_id?: string, name?: string, url?: string }"
+          },
+          {
+            "key": "registrant",
+            "optional": true,
+            "type": "{ name?: string, organization?: string, street_address?: string, city?: string, region?: string, zip_code?: string, country?: string, phone?: string, fax?: string, email?: string }"
+          },
+          {
+            "key": "admin",
+            "optional": true,
+            "type": "{ name?: string, organization?: string, street_address?: string, city?: string, region?: string, zip_code?: string, country?: string, phone?: string, fax?: string, email?: string }"
+          },
+          {
+            "key": "tech",
+            "optional": true,
+            "type": "{ name?: string, organization?: string, street_address?: string, city?: string, region?: string, zip_code?: string, country?: string, phone?: string, fax?: string, email?: string }"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ name?: string, organization?: string, street_address?: string, city?: string, region?: string, zip_code?: string, country?: string, phone?: string, fax?: string, email?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ip2whois.api.hosted.lookup",
+      "shortPath": "hosted.lookup",
+      "description": "List domains hosted on an IP address.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip",
+            "optional": false,
+            "type": "string",
+            "description": "IPv4 or IPv6 address."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting at 1."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "total_domains",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_pages",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "domains",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "ip2whois.db.domains.search",
+      "entityName": "domains",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "create_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "update_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "expire_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain_age",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "whois_server",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "ip2whois.db.hostedDomains.search",
+      "entityName": "hostedDomains",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "hostIp",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}
