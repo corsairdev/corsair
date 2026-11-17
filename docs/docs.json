@@ -4453,6 +4453,14 @@
                 ]
               },
               {
+                "group": "Simplesat",
+                "pages": [
+                  "plugins/simplesat/overview",
+                  "plugins/simplesat/api",
+                  "plugins/simplesat/database"
+                ]
+              },
+              {
                 "group": "Slack",
                 "pages": [
                   "plugins/slack/overview",

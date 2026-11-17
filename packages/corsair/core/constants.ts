@@ -537,6 +537,7 @@ export const BaseProviders = [
 	'simpleanalytics',
 	'simplekpi',
 	'simplero',
+	'simplesat',
 	'slack',
 	'slackbot',
 	'snapchat',
@@ -1186,6 +1187,7 @@ export const ProviderDisplayNames = {
 	simpleanalytics: 'Simple Analytics',
 	simplekpi: 'SimpleKPI',
 	simplero: 'Simplero',
+	simplesat: 'Simplesat',
 	slack: 'Slack',
 	slackbot: 'Slackbot',
 	snapchat: 'Snapchat',
@@ -1842,6 +1844,7 @@ export type AllProviders =
 	| 'simpleanalytics'
 	| 'simplekpi'
 	| 'simplero'
+	| 'simplesat'
 	| 'slack'
 	| 'slackbot'
 	| 'snapchat'
