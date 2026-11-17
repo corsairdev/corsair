@@ -364,6 +364,7 @@ export const BaseProviders = [
 	'intercom',
 	'jigsawstack',
 	'jira',
+	'jobnimbus',
 	'jotform',
 	'junglescout',
 	'kadoa',
@@ -1043,6 +1044,7 @@ export const ProviderDisplayNames = {
 	intercom: 'Intercom',
 	jigsawstack: 'JigsawStack',
 	jira: 'Jira',
+	jobnimbus: 'JobNimbus',
 	jotform: 'Jotform',
 	junglescout: 'Jungle Scout',
 	kadoa: 'Kadoa',
@@ -1729,6 +1731,7 @@ export type AllProviders =
 	| 'intercom'
 	| 'jigsawstack'
 	| 'jira'
+	| 'jobnimbus'
 	| 'jotform'
 	| 'junglescout'
 	| 'kadoa'

@@ -3052,6 +3052,14 @@
                 ]
               },
               {
+                "group": "JobNimbus",
+                "pages": [
+                  "plugins/jobnimbus/overview",
+                  "plugins/jobnimbus/api",
+                  "plugins/jobnimbus/database"
+                ]
+              },
+              {
                 "group": "Jotform",
                 "pages": [
                   "plugins/jotform/overview",
