@@ -3683,6 +3683,14 @@
                 ]
               },
               {
+                "group": "ngrok",
+                "pages": [
+                  "plugins/ngrok/overview",
+                  "plugins/ngrok/api",
+                  "plugins/ngrok/database"
+                ]
+              },
+              {
                 "group": "Neon",
                 "pages": [
                   "plugins/neon/overview",
