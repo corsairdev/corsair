@@ -340,6 +340,10 @@
   "huggingface": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/hugging_face.svg"
   },
+  "identitycheck": {
+    "from": "https://media.brand.dev/baeb30ed-6c4a-4d66-a5cf-db3df3444426.svg",
+    "note": "found with the context.dev Brand API for stackgo.io"
+  },
   "instagram": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/instagram.svg"
   },
@@ -402,8 +406,20 @@
     "from": "https://media.brand.dev/549cc934-c570-47ce-99fb-2ac226c2a33d.svg",
     "note": "found with the context.dev Brand API for nanonets.com"
   },
+  "nasa": {
+    "from": "https://media.brand.dev/7624049d-d0a0-4714-9f1d-a20a1f339879.svg",
+    "note": "found with the context.dev Brand API for nasa.gov"
+  },
+  "needle": {
+    "from": "https://media.brand.dev/8367e93d-c080-4bfd-8cd3-23b792014a44.svg",
+    "note": "found with the context.dev Brand API for needle.app"
+  },
   "neon": {
     "from": "https://svgl.app/library/neon.svg"
+  },
+  "neutrino": {
+    "from": "https://media.brand.dev/fe22f5c9-601d-496b-92e3-79d5bfe688ee.svg",
+    "note": "found with the context.dev Brand API for neutrinoapi.com"
   },
   "newsapi": {
     "from": "https://media.brand.dev/165fd9e1-c7d2-4e13-992d-b1507dbcd925.svg",
@@ -568,7 +584,7 @@
   },
   "snowflake": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/snowflake.svg",
-    "note": "® removed"
+    "note": "\u00ae removed"
   },
   "sourcegraph": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/sourcegraph.svg"

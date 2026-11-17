@@ -1,0 +1,59 @@
+{
+  "id": "microsoftclarity",
+  "displayName": "Microsoft Clarity",
+  "description": "Export Microsoft Clarity project dashboard metrics with optional dimension breakdowns.",
+  "npmPackageName": "@corsair-dev/microsoftclarity",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 1,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "microsoftclarity.api.insights.get",
+      "shortPath": "insights.get",
+      "description": "Export project dashboard metrics for the past 1 to 3 days with optional dimension breakdowns",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "numOfDays",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "dimension1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dimension2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dimension3",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ metricName: string, information: { totalSessionCount?: string | number | null, totalBotSessionCount?: string | number | null, distinctUserCount?: string | number | null, distantUserCount?: string | number | null, pagesPerSessionPercentage?: number | null, PagesPerSessionPercentage?: number | null, OS?: string | null }[] }[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

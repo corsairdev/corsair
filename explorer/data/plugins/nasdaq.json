@@ -1,0 +1,208 @@
+{
+  "id": "nasdaq",
+  "displayName": "Nasdaq Data Link",
+  "description": "Query Nasdaq Data Link tables with column filters and cursor paging, read a table's columns and filterable fields, and queue bulk csv exports.",
+  "npmPackageName": "@corsair-dev/nasdaq",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 3,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "nasdaq.api.tables.export",
+      "shortPath": "tables.export",
+      "description": "Queue a bulk export of a table and return the signed zip link, valid for 30 minutes; the first call usually reports the file as still being built",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "table",
+            "optional": false,
+            "type": "string",
+            "description": "The table code, e.g. NDAQ/RTAT10."
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>",
+            "description": "Row filters as column name to value, e.g. { ticker: \"AAPL\" }. Operators append to the name: `date.gte`, `date.lte`, `ticker.in[]`. Only columns the table marks filterable are accepted."
+          },
+          {
+            "key": "columns",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only these columns in the export."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{ link?: string | null, status?: string | null, data_snapshot_time?: string | null } | null"
+          },
+          {
+            "key": "datatable",
+            "optional": true,
+            "type": "{ last_refreshed_time?: string | null } | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "fresh, creating or regenerating, lowercase as Nasdaq sends it (its docs capitalise them). Only fresh means the link is ready."
+          }
+        ]
+      }
+    },
+    {
+      "path": "nasdaq.api.tables.metadata",
+      "shortPath": "tables.metadata",
+      "description": "Read a table definition: its columns and types, the columns that can filter a query, its primary key and when it last refreshed",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "table",
+            "optional": false,
+            "type": "string",
+            "description": "The table code, e.g. NDAQ/RTAT10."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "vendor_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "datatable_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "columns",
+            "optional": false,
+            "type": "{ name: string, type?: string | null }[]"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "primary_key",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "premium",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ refreshed_at?: string | null, status?: string | null, expected_at?: string | null, update_frequency?: string | null } | null"
+          },
+          {
+            "key": "data_version",
+            "optional": true,
+            "type": "{ code?: string | null, default?: boolean | null, description?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nasdaq.api.tables.rows",
+      "shortPath": "tables.rows",
+      "description": "Read one page of rows from a Nasdaq Data Link table, filtered by the columns that table marks filterable; page with the returned cursor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "table",
+            "optional": false,
+            "type": "string",
+            "description": "The table code, e.g. NDAQ/RTAT10."
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>",
+            "description": "Row filters as column name to value, e.g. { ticker: \"AAPL\" }. Operators append to the name: `date.gte`, `date.lte`, `ticker.in[]`. Only columns the table marks filterable are accepted."
+          },
+          {
+            "key": "columns",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only these columns, sent as qopts.columns."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Rows per page, up to 10000. Nasdaq returns at most 10000 rows per call whatever this says."
+          },
+          {
+            "key": "cursor_id",
+            "optional": true,
+            "type": "string",
+            "description": "The `next_cursor_id` from the previous page. Nasdaq answers 400 QESx06 for an expired cursor."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "columns",
+            "optional": false,
+            "type": "{ name: string, type?: string | null }[]"
+          },
+          {
+            "key": "rows",
+            "optional": false,
+            "type": "(string | number | boolean | null)[][]"
+          },
+          {
+            "key": "next_cursor_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "The cursor for the next page. Null or absent on the last page; check for either. Nasdaq sends no other paging state."
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

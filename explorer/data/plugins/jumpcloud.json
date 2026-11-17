@@ -1,0 +1,4540 @@
+{
+  "id": "jumpcloud",
+  "displayName": "JumpCloud",
+  "description": "Manage JumpCloud directory resources — system users, systems, groups, policies, commands and organizations — through the official API 1.0/2.0 with x-api-key auth.",
+  "npmPackageName": "@corsair-dev/jumpcloud",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 48,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "region", "org_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "jumpcloud.api.applications.get",
+      "shortPath": "applications.get",
+      "description": "Get a JumpCloud application by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "id (path)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "beta",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "\"\" | #202D38 | #005466 | #3E8696 | #006CAC | #0617AC | #7C6ADA | #D5779D | #9E2F00 | #FFB000 | #58C469 | #57C49F | #FF6C03 | string | null"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "{ spErrorFlow?: any | null, signAssertion?: any | null, signResponse?: any | null, acsUrl?: { label?: string | null, options?: any | null, position?: number | null, readOnly?: boolean | null, required?: boolean | null, toggle?: any | null, tooltip?: any | null, type?: string | null, value?: string | null, visible?: boolean | null } | null, constantAttributes?: any | null, databaseAttributes?: { position?: number | null } | null, idpCertificate?: { label?: string | null, options?: any | null, position?: number | null, readOnly?: boolean | null, required?: boolean | null, toggle?: any | null, tooltip?: any | null, type?: string | null, value?: string | null, visible?: boolean | null } | null, idpEntityId?: { label?: string | null, options?: any | null, position?: number | null, readOnly?: boolean | null, required?: boolean | null, toggle?: any | null, tooltip?: any | null, type?: string | null, value?: string | null, visible?: boolean | null } | null, idpPrivateKey?: { label?: string | null, options?: any | null, position?: number | null, readOnly?: boolean | null, required?: boolean | null, toggle?: any | null, tooltip?: any | null, type?: string | null, value?: string | null, visible?: boolean | null } | null, spEntityId?: { label?: string | null, options?: any | null, position?: number | null, readOnly?: boolean | null, required?: boolean | null, toggle?: any | null, tooltip?: any | null, type?: string | null, value?: string | null, visible?: boolean | null } | null, authClaimConfiguration?: any | null } | null",
+            "description": "Only required for SAML configuration (not required for Bookmarks)"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "databaseAttributes",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "displayLabel",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "learnMore",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "{ color?: \"\" | #202D38 | #005466 | #3E8696 | #006CAC | #0617AC | #7C6ADA | #D5779D | #9E2F00 | #FFB000 | #58C469 | #57C49F | #FF6C03 | string | null, url?: string | null } | null"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sso",
+            "optional": true,
+            "type": "{ type?: string | null, beta?: boolean | null, jit?: boolean | null, idpCertExpirationAt?: string | null, idpCertificateUpdatedAt?: string | null, idpPrivateKeyUpdatedAt?: string | null, spCertificateUpdatedAt?: string | null, hidden?: boolean | null } | null"
+          },
+          {
+            "key": "ssoUrl",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parentApp",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "referenceApplications",
+            "optional": true,
+            "type": "{ id: string, orgId: string }[] | null",
+            "description": "Organization-specific copies of this shared SSO application chain. Returned only for all-organizations list requests (x-org-id '-')."
+          },
+          {
+            "key": "aiReady",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Admin opt-in that this application instance should appear as AI Ready in the User Portal. Informational only — does not grant access. Setting to true requires at least one configured MCP connection. Gated by feature flag DC-4194-app-ai-ready."
+          }
+        ]
+      }
+    },
+    {
+      "path": "jumpcloud.api.applications.list",
+      "shortPath": "applications.list",
+      "description": "List JumpCloud applications with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "The space separated fields included in the returned records. If omitted the default list of fields will be returned."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The number of records to return at once."
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "The offset into the records to return."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "The space separated fields used to sort the collection. Default sort is ascending, prefix with - to sort descending."
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "A filter to apply to the query. See the supported operators below. For more complex searches,\nsee the related `/search/<domain>` endpoints,\ne.g. `/search/systems`.\n\n**Filter structure**: The filter syntax follows a consistent pattern of `<field>:<operator>:<value>` (e.g. `department:$eq:Finance`)\n\n*"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "The list of applications."
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of applications."
+          }
+        ]
+      }
+    },
+    {
+      "path": "jumpcloud.api.commands.create",
+      "shortPath": "commands.create",
+      "description": "Create a JumpCloud command",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name: string, command: string, commandType: string, user?: string, sudo?: boolean, shell?: string, launchType?: string, timeout?: string | number, schedule?: string, trigger?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "command",
+            "optional": false,
+            "type": "string",
+            "description": "The command to execute on the server."
+          },
+          {
+            "key": "commandRunners",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "An array of IDs of the Command Runner Users that can execute this command."
+          },
+          {
+            "key": "commandTarget",
+            "optional": true,
+            "type": "enterprise | organization | string | null",
+            "description": "EP create target when enterprise command sharing is enabled. `enterprise`\ncreates a default-shared Enterprise command (grants all current child orgs).\n`organization` creates a local command in `targetOrganizationId` (or the\npinned org). Ignored when sharing is disabled.\n"
+          },
+          {
+            "key": "targetOrganizationId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Child organization ID for a local command when `commandTarget` is\n`organization` in Enterprise / View All context. Ignored for Enterprise\ncreate and when sharing is disabled.\n"
+          },
+          {
+            "key": "commandType",
+            "optional": false,
+            "type": "string",
+            "description": "The Command OS"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "An array of file IDs to include with the command."
+          },
+          {
+            "key": "launchType",
+            "optional": true,
+            "type": "string | null",
+            "description": "How the command will execute."
+          },
+          {
+            "key": "listensTo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string | null",
+            "description": "The ID of the organization."
+          },
+          {
+            "key": "schedule",
+            "optional": true,
+            "type": "string | null",
+            "description": "A crontab that consists of: [ (seconds) (minutes) (hours) (days of month) (months) (weekdays) ] or [ immediate ]. If you send this as an empty string, it will run immediately.\n"
+          },
+          {
+            "key": "scheduleRepeatType",
+            "optional": true,
+            "type": "string | null",
+            "description": "When the command will repeat."
+          },
+          {
+            "key": "sudo",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "systems",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Not used. Use /api/v2/commands/{id}/associations to bind commands to systems."
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "string | null",
+            "description": "The template this command was created from"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "string | null",
+            "description": "The time in seconds to allow the command to run for. The maximum value is 86400 seconds (1 day)."
+          },
+          {
+            "key": "trigger",
+            "optional": true,
+            "type": "string | null",
+            "description": "The name of the command trigger."
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string | null",
+            "description": "The ID of the system user to run the command as. This field is required when creating a command with a commandType of \"mac\" or \"linux\"."
+          },
+          {
+            "key": "shell",
+            "optional": true,
+            "type": "string | null",
+            "description": "The shell used to run the command."
+          },
+          {
+            "key": "timeToLiveSeconds",
+            "optional": true,
+            "type": "number | null",
+            "description": "Time in seconds a command can wait in the queue to be run before timing out"
+          },
+          {
+            "key": "scheduleYear",
+            "optional": true,
+            "type": "number | null",
+            "description": "The year that a scheduled command will launch in."
+          },
+          {
+            "key": "filesS3",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "An array of file stored in S3 to include with the command."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Description of the command."
+          },
+          {
+            "key": "aiGenerated",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether this command was generated with AI assistance."
+          },
+          {
+            "key": "templatingRequired",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether this command requires templating before execution."
+          },
+          {
+            "key": "managedBy",
+            "optional": true,
+            "type": "enterprise | organization | string | null",
+            "description": "Command owner type (`enterprise` or `organization`)."
+          }
+        ]
+      }
+    },
+    {
+      "path": "jumpcloud.api.commands.get",
+      "shortPath": "commands.get",
+      "description": "Get a JumpCloud command by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "id (path)"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Use a space seperated string of field parameters to include the data in the response. If omitted, the default list of fields will be returned.\n"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "command",
+            "optional": true,
+            "type": "string | null",
+            "description": "The command to execute on the server."
+          },
+          {
+            "key": "commandRunners",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "An array of IDs of the Command Runner Users that can execute this command."
+          },
+          {
+            "key": "commandTarget",
+            "optional": true,
+            "type": "enterprise | organization | string | null",
+            "description": "EP create target when enterprise command sharing is enabled. `enterprise`\ncreates a default-shared Enterprise command (grants all current child orgs).\n`organization` creates a local command in `targetOrganizationId` (or the\npinned org). Ignored when sharing is disabled.\n"
+          },
+          {
+            "key": "targetOrganizationId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Child organization ID for a local command when `commandTarget` is\n`organization` in Enterprise / View All context. Ignored for Enterprise\ncreate and when sharing is disabled.\n"
+          },
+          {
+            "key": "commandType",
+            "optional": true,
+            "type": "string | null",
+            "description": "The Command OS"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "An array of file IDs to include with the command."
+          },
+          {
+            "key": "launchType",
+            "optional": true,
+            "type": "string | null",
+            "description": "How the command will execute."
+          },
+          {
+            "key": "listensTo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string | null",
+            "description": "The ID of the organization."
+          },
+          {
+            "key": "schedule",
+            "optional": true,
+            "type": "string | null",
+            "description": "A crontab that consists of: [ (seconds) (minutes) (hours) (days of month) (months) (weekdays) ] or [ immediate ]. If you send this as an empty string, it will run immediately.\n"
+          },
+          {
+            "key": "scheduleRepeatType",
+            "optional": true,
+            "type": "string | null",
+            "description": "When the command will repeat."
+          },
+          {
+            "key": "sudo",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "systems",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Not used. Use /api/v2/commands/{id}/associations to bind commands to systems."
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "string | null",
+            "description": "The template this command was created from"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "string | null",
+            "description": "The time in seconds to allow the command to run for. The maximum value is 86400 seconds (1 day)."
+          },
+          {
+            "key": "trigger",
+            "optional": true,
+            "type": "string | null",
+            "description": "The name of the command trigger."
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string | null",
+            "description": "The ID of the system user to run the command as. This field is required when creating a command with a commandType of \"mac\" or \"linux\"."
+          },
+          {
+            "key": "shell",
+            "optional": true,
+            "type": "string | null",
+            "description": "The shell used to run the command."
+          },
+          {
+            "key": "timeToLiveSeconds",
+            "optional": true,
+            "type": "number | null",
+            "description": "Time in seconds a command can wait in the queue to be run before timing out"
+          },
+          {
+            "key": "scheduleYear",
+            "optional": true,
+            "type": "number | null",
+            "description": "The year that a scheduled command will launch in."
+          },
+          {
+            "key": "filesS3",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "An array of file stored in S3 to include with the command."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Description of the command."
+          },
+          {
+            "key": "aiGenerated",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether this command was generated with AI assistance."
+          },
+          {
+            "key": "templatingRequired",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether this command requires templating before execution."
+          },
+          {
+            "key": "managedBy",
+            "optional": true,
+            "type": "enterprise | organization | string | null",
+            "description": "Command owner type (`enterprise` or `organization`)."
+          }
+        ]
+      }
+    },
+    {
+      "path": "jumpcloud.api.commands.list",
+      "shortPath": "commands.list",
+      "description": "List JumpCloud commands with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Use a space seperated string of field parameters to include the data in the response. If omitted, the default list of fields will be returned.\n"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "A filter to apply to the query. See the supported operators below. For more complex searches,\nsee the related `/search/<domain>` endpoints,\ne.g. `/search/systems`.\n\n**Filter structure**: The filter syntax follows a consistent pattern of `<field>:<operator>:<value>` (e.g. `department:$eq:Finance`)\n\n*"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The number of records to return at once. Limited to 100."
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "The offset into the records to return."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Use space separated sort parameters to sort the collection.\nDefault sort is ascending. Prefix with `-` to sort descending.\n"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ _id?: string | null, command?: string | null, commandType?: string | null, launchType?: string | null, listensTo?: string | null, name?: string | null, organization?: string | null, schedule?: string | null, scheduleRepeatType?: string | null, trigger?: string | null, description?: string | null, aiGenerated?: boolean | null, templatingRequired?: boolean | null, managedBy?: enterprise | organization | string | null }[] | null"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of commands"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jumpcloud.api.commands.run",
+      "shortPath": "commands.run",
+      "description": "Run a command against target systems",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ _id?: string, systemIds?: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "queueIds",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "workflowInstanceId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jumpcloud.api.organizations.get",
+      "shortPath": "organizations.get",
+      "description": "Get a JumpCloud organization by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "id (path)"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Use a space seperated string of field parameters to include the data in the response. If omitted, the default list of fields will be returned.\n"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "A filter to apply to the query. See the supported operators below. For more complex searches,\nsee the related `/search/<domain>` endpoints,\ne.g. `/search/systems`.\n\n**Filter structure**: The filter syntax follows a consistent pattern of `<field>:<operator>:<value>` (e.g. `department:$eq:Finance`)\n\n*"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customEmailSettings",
+            "optional": true,
+            "type": "{ enabled?: boolean | null } | null",
+            "description": "Custom email settings for an organization"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "entitlement",
+            "optional": true,
+            "type": "{ billingModel?: string | null, capUserQuantity?: boolean | null, maxUserQuantity?: number | null, purchaseChannel?: string | null, entitlementProducts?: Record<string, any>[] | null, isManuallyBilled?: boolean | null, pricePerUserSum?: number | null } | null"
+          },
+          {
+            "key": "hasStripeCustomerId",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "hasCreditCard",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "lastEstimateCalculationTimeStamp",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastSfdcSyncStatus",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "accountsReceivable",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "accessRestriction",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "accountType",
+            "optional": true,
+            "type": "Alliance | Distributor | MSP | VAR | Direct | Indirect | Tenant | Deleted Organization | Partner | Customer | Prospective Customer | Prospective Partner | string | null",
+            "description": "Salesforce Account Type (`Account_Type__c`) written back to the org via BSS sync. Returned only when requested via the `fields` query parameter."
+          },
+          {
+            "key": "logoUrl",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ agentVersion?: string | null, betaFeatures?: Record<string, any> | null, chromeDTCEnabled?: boolean | null, contactEmail?: string | null, contactName?: string | null, disableCommandRunner?: boolean | null, disableLdap?: boolean | null, disableUM?: boolean | null, duplicateLDAPGroups?: boolean | null, emailDisclaimer?: string | null, enableGoogleApps?: boolean | null, enableManagedUID?: boolean | null, enableO365?: boolean | null, enableUserPortalAgentInstall?: boolean | null, features?: Record<string, any> | null, growthData?: Record<string, any> | null, logo?: string | null, name?: string | null, newSystemUserStateDefaults?: Record<string, any> | null, passwordCompliance?: custom | pci3 | windows | string | null, passwordPolicy?: Record<string, any> | null, pendingDelete?: boolean | null, requireAdminMFA?: boolean | null, showIntro?: boolean | null, systemUserDefaults?: Record<string, any> | null, systemUserPasswordExpirationInDays?: number | null, systemUsersCanEdit?: boolean | null, disableGoogleLogin?: boolean | null, userPortal?: Record<string, any> | null, deviceIdentificationEnabled?: boolean | null, trustedAppConfig?: any | null, maxSystemUsers?: number | null, windowsMDM?: Record<string, any> | null } | null"
+          },
+          {
+            "key": "totalBillingEstimate",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jumpcloud.api.organizations.list",
+      "shortPath": "organizations.list",
+      "description": "List JumpCloud organizations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Use a space seperated string of field parameters to include the data in the response. If omitted, the default list of fields will be returned.\n"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "A filter to apply to the query. See the supported operators below. For more complex searches,\nsee the related `/search/<domain>` endpoints,\ne.g. `/search/systems`.\n\n**Filter structure**: The filter syntax follows a consistent pattern of `<field>:<operator>:<value>` (e.g. `department:$eq:Finance`)\n\n*"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The number of records to return at once. Limited to 100."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "A nested object containing a `searchTerm` string or array of strings and a list of `fields` to search on."
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "The offset into the records to return."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Use space separated sort parameters to sort the collection.\nDefault sort is ascending. Prefix with `-` to sort descending.\n"
+          },
+          {
+            "key": "sortIgnoreCase",
+            "optional": true,
+            "type": "string",
+            "description": "Use space separated sort parameters to sort the collection, ignoring case.\nDefault sort is ascending. Prefix with `-` to sort descending.\n"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ _id?: string | null, displayName?: string | null, logoUrl?: any | null }[] | null",
+            "description": "The list of organizations."
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of organizations. "
+          }
+        ]
+      }
+    },
+    {
+      "path": "jumpcloud.api.policies.create",
+      "shortPath": "policies.create",
+      "description": "Create a JumpCloud policy",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name: string, notes?: string, template: { id: string }, values?: any[] }",
+            "description": "A request to create an instance of a policy template."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "configFields",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "ObjectId uniquely identifying a Policy."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "The description for this specific Policy."
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string | null",
+            "description": "The notes for this specific Policy."
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "{ activation?: string | null, behavior?: string | null, deliveryTypes?: (agent | mdm | string)[] | null, description?: string | null, displayName?: string | null, id?: string | null, name?: string | null, osMetaFamily?: linux | darwin | windows | ios | universal | android | string | null, state?: string | null, alert?: any | null, reference?: any | null, osRestrictions?: any[] | null } | null",
+            "description": "The shallow information about a Policy Template."
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "any[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jumpcloud.api.policies.delete",
+      "shortPath": "policies.delete",
+      "description": "Delete a JumpCloud policy",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ObjectID of the Policy object."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "jumpcloud.api.policies.get",
+      "shortPath": "policies.get",
+      "description": "Get a JumpCloud policy by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ObjectID of the Policy object."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "configFields",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "ObjectId uniquely identifying a Policy."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "The description for this specific Policy."
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string | null",
+            "description": "The notes for this specific Policy."
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "{ activation?: string | null, behavior?: string | null, deliveryTypes?: (agent | mdm | string)[] | null, description?: string | null, displayName?: string | null, id?: string | null, name?: string | null, osMetaFamily?: linux | darwin | windows | ios | universal | android | string | null, state?: string | null, alert?: any | null, reference?: any | null, osRestrictions?: any[] | null } | null",
+            "description": "The shallow information about a Policy Template."
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "any[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jumpcloud.api.policies.list",
+      "shortPath": "policies.list",
+      "description": "List JumpCloud policies with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "(string | number)[]",
+            "description": "The comma separated fields included in the returned records.\nIf omitted, the default list of fields will be returned.\n"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "(string | number)[]",
+            "description": "A filter to apply to the query.\n\n**Filter structure**: `<field>:<operator>:<value>`.\n\n**field** = Populate with a valid field from an endpoint response.\n\n**operator** =  Supported operators are: eq, ne, gt, ge, lt, le, between, search, in.\n_Note: v1 operators differ from v2 operators._\n\n**value** = "
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The number of records to return at once. Limited to 100."
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "The offset into the records to return."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "(string | number)[]",
+            "description": "The comma separated fields used to sort the collection.\nDefault sort is ascending, prefix with `-` to sort descending.\n"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, name?: string | null, template?: any | null }[]"
+      }
+    },
+    {
+      "path": "jumpcloud.api.policies.listStatuses",
+      "shortPath": "policies.listStatuses",
+      "description": "List policy statuses for a policy",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "policy_id",
+            "optional": false,
+            "type": "string",
+            "description": "policy_id (path)"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "(string | number)[]",
+            "description": "The comma separated fields included in the returned records.\nIf omitted, the default list of fields will be returned.\n"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "(string | number)[]",
+            "description": "A filter to apply to the query.\n\n**Filter structure**: `<field>:<operator>:<value>`.\n\n**field** = Populate with a valid field from an endpoint response.\n\n**operator** =  Supported operators are: eq, ne, gt, ge, lt, le, between, search, in.\n_Note: v1 operators differ from v2 operators._\n\n**value** = "
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The number of records to return at once. Limited to 100."
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "The offset into the records to return."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "(string | number)[]",
+            "description": "The comma separated fields used to sort the collection.\nDefault sort is ascending, prefix with `-` to sort descending.\n"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ detail?: string | null, endedAt?: string | null, exitStatus?: number | null, id?: string | null, policyID?: string | null, startedAt?: string | null, state?: string | null, stdErr?: string | null, stdOut?: string | null, success?: boolean | null, systemID?: string | null, userObjectId?: string | null }[]"
+      }
+    },
+    {
+      "path": "jumpcloud.api.policies.update",
+      "shortPath": "policies.update",
+      "description": "Update a JumpCloud policy",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ObjectID of the Policy object."
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name: string, notes?: string, values?: any[] }",
+            "description": "A request to update an instance of a policy template."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "ObjectId uniquely identifying a Policy."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "The description for this specific Policy."
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "{ activation?: string | null, behavior?: string | null, deliveryTypes?: (agent | mdm | string)[] | null, description?: string | null, displayName?: string | null, id?: string | null, name?: string | null, osMetaFamily?: linux | darwin | windows | ios | universal | android | string | null, state?: string | null, alert?: any | null, reference?: any | null, osRestrictions?: any[] | null } | null",
+            "description": "The shallow information about a Policy Template."
+          }
+        ]
+      }
+    },
+    {
+      "path": "jumpcloud.api.search.systems",
+      "shortPath": "search.systems",
+      "description": "Search JumpCloud systems (POST body search)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Use a space seperated string of field parameters to include the data in the response. If omitted, the default list of fields will be returned.\n"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The number of records to return at once. Limited to 100."
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "The offset into the records to return."
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "A filter to apply to the query. See the supported operators below. For more complex searches,\nsee the related `/search/<domain>` endpoints,\ne.g. `/search/systems`.\n\n**Filter structure**: The filter syntax follows a consistent pattern of `<field>:<operator>:<value>` (e.g. `department:$eq:Finance`)\n\n*"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ filter?: Record<string, any>[] | { and?: Record<string, any>[], or?: Record<string, any>[] }, searchFilter?: { searchTerm: string | string[], fields: string[] }, fields?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "The list of systems."
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of systems."
+          }
+        ]
+      }
+    },
+    {
+      "path": "jumpcloud.api.search.systemUsers",
+      "shortPath": "search.systemUsers",
+      "description": "Search JumpCloud system users (POST body search)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Use a space seperated string of field parameters to include the data in the response. If omitted, the default list of fields will be returned.\n"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "A filter to apply to the query. See the supported operators below. For more complex searches,\nsee the related `/search/<domain>` endpoints,\ne.g. `/search/systems`.\n\n**Filter structure**: The filter syntax follows a consistent pattern of `<field>:<operator>:<value>` (e.g. `department:$eq:Finance`)\n\n*"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The number of records to return at once. Limited to 100."
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "The offset into the records to return."
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ filter?: Record<string, any>[] | { and?: Record<string, any>[], or?: Record<string, any>[] }, searchFilter?: { searchTerm: string | string[], fields: string[] }, fields?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "The list of system users."
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of system users."
+          }
+        ]
+      }
+    },
+    {
+      "path": "jumpcloud.api.systemGroups.create",
+      "shortPath": "systemGroups.create",
+      "description": "Create a JumpCloud system group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ attributes?: any, email?: string, description?: string, name: string, memberQuery?: any, membershipMethod?: NOTSET | STATIC | DYNAMIC_REVIEW_REQUIRED | DYNAMIC_AUTOMATED, memberSuggestionsNotify?: boolean, memberQueryExemptions?: any[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "any | null",
+            "description": "The graph attributes."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Description of a System Group"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "E-mail address associated with a System Group"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "ObjectId uniquely identifying a System Group."
+          },
+          {
+            "key": "memberQuery",
+            "optional": true,
+            "type": "any | null",
+            "description": "Dynamic group member query. v1 (default): include queryType (FilterQuery, Filter, or Search). v2 (x-query-dsl: v2): omit queryType; filters use field, operation, and value."
+          },
+          {
+            "key": "memberQueryErrorFlags",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Group error flags indicating errors encountered during member query evaluation.\n\nPossible flag values:\n- CYCLE: A cyclic dependency was detected in group membership\n- INVALID_GROUP_REFERENCE: The group reference is invalid or does not exist\n\nThe `member_query_error_flags` as a field supports array-b"
+          },
+          {
+            "key": "memberQueryExemptions",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Array of GraphObjects exempted from the query"
+          },
+          {
+            "key": "membershipMethod",
+            "optional": true,
+            "type": "NOTSET | STATIC | DYNAMIC_REVIEW_REQUIRED | DYNAMIC_AUTOMATED | string | null",
+            "description": "The type of membership method for this group. Valid values include NOTSET, STATIC, DYNAMIC_REVIEW_REQUIRED, and DYNAMIC_AUTOMATED.\n\nNote DYNAMIC_AUTOMATED and DYNAMIC_REVIEW_REQUIRED group rules will supersede any group enrollment for [group-associated MDM-enrolled devices](https://jumpcloud.com/sup"
+          },
+          {
+            "key": "memberSuggestionsNotify",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True if notification emails are to be sent for membership suggestions."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Display name of a System Group."
+          },
+          {
+            "key": "organizationObjectId",
+            "optional": true,
+            "type": "any | null",
+            "description": "id of the organization owning this group"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "system_group | string | null",
+            "description": "The type of the group; always 'system' for a System Group."
+          }
+        ]
+      }
+    },
+    {
+      "path": "jumpcloud.api.systemGroups.delete",
+      "shortPath": "systemGroups.delete",
+      "description": "Delete a JumpCloud system group",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ObjectID of the System Group."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "any | null",
+            "description": "The graph attributes."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Description of a System Group"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "E-mail address associated with a System Group"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "ObjectId uniquely identifying a System Group."
+          },
+          {
+            "key": "memberQuery",
+            "optional": true,
+            "type": "any | null",
+            "description": "Dynamic group member query. v1 (default): include queryType (FilterQuery, Filter, or Search). v2 (x-query-dsl: v2): omit queryType; filters use field, operation, and value."
+          },
+          {
+            "key": "memberQueryErrorFlags",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Group error flags indicating errors encountered during member query evaluation.\n\nPossible flag values:\n- CYCLE: A cyclic dependency was detected in group membership\n- INVALID_GROUP_REFERENCE: The group reference is invalid or does not exist\n\nThe `member_query_error_flags` as a field supports array-b"
+          },
+          {
+            "key": "memberQueryExemptions",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Array of GraphObjects exempted from the query"
+          },
+          {
+            "key": "membershipMethod",
+            "optional": true,
+            "type": "NOTSET | STATIC | DYNAMIC_REVIEW_REQUIRED | DYNAMIC_AUTOMATED | string | null",
+            "description": "The type of membership method for this group. Valid values include NOTSET, STATIC, DYNAMIC_REVIEW_REQUIRED, and DYNAMIC_AUTOMATED.\n\nNote DYNAMIC_AUTOMATED and DYNAMIC_REVIEW_REQUIRED group rules will supersede any group enrollment for [group-associated MDM-enrolled devices](https://jumpcloud.com/sup"
+          },
+          {
+            "key": "memberSuggestionsNotify",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True if notification emails are to be sent for membership suggestions."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Display name of a System Group."
+          },
+          {
+            "key": "organizationObjectId",
+            "optional": true,
+            "type": "any | null",
+            "description": "id of the organization owning this group"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "system_group | string | null",
+            "description": "The type of the group; always 'system' for a System Group."
+          }
+        ]
+      }
+    },
+    {
+      "path": "jumpcloud.api.systemGroups.get",
+      "shortPath": "systemGroups.get",
+      "description": "Get a JumpCloud system group by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ObjectID of the System Group."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "any | null",
+            "description": "The graph attributes."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Description of a System Group"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "E-mail address associated with a System Group"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "ObjectId uniquely identifying a System Group."
+          },
+          {
+            "key": "memberQuery",
+            "optional": true,
+            "type": "any | null",
+            "description": "Dynamic group member query. v1 (default): include queryType (FilterQuery, Filter, or Search). v2 (x-query-dsl: v2): omit queryType; filters use field, operation, and value."
+          },
+          {
+            "key": "memberQueryErrorFlags",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Group error flags indicating errors encountered during member query evaluation.\n\nPossible flag values:\n- CYCLE: A cyclic dependency was detected in group membership\n- INVALID_GROUP_REFERENCE: The group reference is invalid or does not exist\n\nThe `member_query_error_flags` as a field supports array-b"
+          },
+          {
+            "key": "memberQueryExemptions",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Array of GraphObjects exempted from the query"
+          },
+          {
+            "key": "membershipMethod",
+            "optional": true,
+            "type": "NOTSET | STATIC | DYNAMIC_REVIEW_REQUIRED | DYNAMIC_AUTOMATED | string | null",
+            "description": "The type of membership method for this group. Valid values include NOTSET, STATIC, DYNAMIC_REVIEW_REQUIRED, and DYNAMIC_AUTOMATED.\n\nNote DYNAMIC_AUTOMATED and DYNAMIC_REVIEW_REQUIRED group rules will supersede any group enrollment for [group-associated MDM-enrolled devices](https://jumpcloud.com/sup"
+          },
+          {
+            "key": "memberSuggestionsNotify",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True if notification emails are to be sent for membership suggestions."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Display name of a System Group."
+          },
+          {
+            "key": "organizationObjectId",
+            "optional": true,
+            "type": "any | null",
+            "description": "id of the organization owning this group"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "system_group | string | null",
+            "description": "The type of the group; always 'system' for a System Group."
+          }
+        ]
+      }
+    },
+    {
+      "path": "jumpcloud.api.systemGroups.list",
+      "shortPath": "systemGroups.list",
+      "description": "List JumpCloud system groups with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "(string | number)[]",
+            "description": "The comma separated fields included in the returned records.\nIf omitted, the default list of fields will be returned.\n"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "(string | number)[]",
+            "description": "A filter to apply to the query.\n\n**Filter structure**: `<field>:<operator>:<value>`.\n\n**field** = Populate with a valid field from an endpoint response.\n\n**operator** =  Supported operators are: eq, ne, gt, ge, lt, le, between, search, in.\n_Note: v1 operators differ from v2 operators._\n\n**value** = "
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The number of records to return at once. Limited to 100."
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "The offset into the records to return."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "(string | number)[]",
+            "description": "The comma separated fields used to sort the collection.\nDefault sort is ascending, prefix with `-` to sort descending.\n"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ attributes?: any | null, description?: string | null, email?: string | null, id?: string | null, memberQuery?: any | null, memberQueryErrorFlags?: any | null, memberQueryExemptions?: any[] | null, membershipMethod?: any | null, memberSuggestionsNotify?: boolean | null, name?: string | null, organizationObjectId?: any | null, type?: system_group | string | null }[]"
+      }
+    },
+    {
+      "path": "jumpcloud.api.systemGroups.manageMembers",
+      "shortPath": "systemGroups.manageMembers",
+      "description": "Manage (add or remove) members of a system group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string",
+            "description": "ObjectID of the System Group."
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ id: string, op: add | remove | update, type: system, attributes?: Record<string, any> | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "jumpcloud.api.systemGroups.update",
+      "shortPath": "systemGroups.update",
+      "description": "Update a JumpCloud system group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ObjectID of the System Group."
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ attributes?: any, email?: string, description?: string, name: string, memberQuery?: any, membershipMethod?: NOTSET | STATIC | DYNAMIC_REVIEW_REQUIRED | DYNAMIC_AUTOMATED, memberSuggestionsNotify?: boolean, memberQueryExemptions?: any[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "any | null",
+            "description": "The graph attributes."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Description of a System Group"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "E-mail address associated with a System Group"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "ObjectId uniquely identifying a System Group."
+          },
+          {
+            "key": "memberQuery",
+            "optional": true,
+            "type": "any | null",
+            "description": "Dynamic group member query. v1 (default): include queryType (FilterQuery, Filter, or Search). v2 (x-query-dsl: v2): omit queryType; filters use field, operation, and value."
+          },
+          {
+            "key": "memberQueryErrorFlags",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Group error flags indicating errors encountered during member query evaluation.\n\nPossible flag values:\n- CYCLE: A cyclic dependency was detected in group membership\n- INVALID_GROUP_REFERENCE: The group reference is invalid or does not exist\n\nThe `member_query_error_flags` as a field supports array-b"
+          },
+          {
+            "key": "memberQueryExemptions",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Array of GraphObjects exempted from the query"
+          },
+          {
+            "key": "membershipMethod",
+            "optional": true,
+            "type": "NOTSET | STATIC | DYNAMIC_REVIEW_REQUIRED | DYNAMIC_AUTOMATED | string | null",
+            "description": "The type of membership method for this group. Valid values include NOTSET, STATIC, DYNAMIC_REVIEW_REQUIRED, and DYNAMIC_AUTOMATED.\n\nNote DYNAMIC_AUTOMATED and DYNAMIC_REVIEW_REQUIRED group rules will supersede any group enrollment for [group-associated MDM-enrolled devices](https://jumpcloud.com/sup"
+          },
+          {
+            "key": "memberSuggestionsNotify",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True if notification emails are to be sent for membership suggestions."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Display name of a System Group."
+          },
+          {
+            "key": "organizationObjectId",
+            "optional": true,
+            "type": "any | null",
+            "description": "id of the organization owning this group"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "system_group | string | null",
+            "description": "The type of the group; always 'system' for a System Group."
+          }
+        ]
+      }
+    },
+    {
+      "path": "jumpcloud.api.systems.delete",
+      "shortPath": "systems.delete",
+      "description": "Delete a JumpCloud system",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "id (path)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "agentHasFullDiskAccess",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "agentVersion",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "allowMultiFactorAuthentication",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "allowPublicKeyAuthentication",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "allowSshPasswordAuthentication",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "allowSshRootLogin",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "amazonInstanceID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "arch",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "archFamily",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "connectionHistory",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "desktopCapable",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fde",
+            "optional": true,
+            "type": "{ active?: boolean | null, keyPresent?: boolean | null } | null",
+            "description": "Indicates if the Full Disk Encryption is active in the system"
+          },
+          {
+            "key": "fileSystem",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "hasServiceAccount",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "hostname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hwVendor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isPolicyBound",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "lastContact",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "modifySSHDConfig",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "networkInterfaces",
+            "optional": true,
+            "type": "{ address?: string | null, family?: IPv4 | IPv6 | string | null, internal?: boolean | null, name?: string | null }[] | null"
+          },
+          {
+            "key": "networkInfo",
+            "optional": true,
+            "type": "{ imei?: string | null, macAddress?: string | null, simInfo?: Record<string, any>[] | null } | null"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "os",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "osVersionDetail",
+            "optional": true,
+            "type": "{ osName?: string | null, releaseName?: string | null, major?: string | null, minor?: string | null, patch?: string | null, majorNumber?: number | null, minorNumber?: number | null, patchNumber?: number | null, revision?: string | null, distributionName?: string | null, version?: string | null } | null"
+          },
+          {
+            "key": "policyStats",
+            "optional": true,
+            "type": "{ duplicate?: number | null, failed?: number | null, pending?: number | null, success?: number | null, total?: number | null, unsupportedOs?: number | null } | null"
+          },
+          {
+            "key": "provisionMetadata",
+            "optional": true,
+            "type": "{ provisioner?: { type?: administrator | mdm | user | string | null, provisionerId?: string | null } | null } | null"
+          },
+          {
+            "key": "primarySystemUser",
+            "optional": true,
+            "type": "{ id?: any | null } | null"
+          },
+          {
+            "key": "remoteIP",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "serialNumber",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sshRootEnabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "sshdParams",
+            "optional": true,
+            "type": "{ name?: string | null, value?: string | null }[] | null"
+          },
+          {
+            "key": "systemInsights",
+            "optional": true,
+            "type": "{ state?: enabled | disabled | deferred | string | null } | null"
+          },
+          {
+            "key": "systemTimezone",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "templateName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mdm",
+            "optional": true,
+            "type": "{ vendor?: unknown | none | internal | external | string | null, internal?: { deviceId?: string | null, windowsDeviceId?: string | null } | null, profileIdentifier?: string | null, dep?: boolean | null, userApproved?: boolean | null, enrollmentType?: unknown | automated device | device | user | string | null, providerId?: string | null, windows?: { upn?: string | null } | null, lostModeStatus?: string | null, deviceLockStatus?: number | null, enrollmentStatus?: number | null } | null"
+          },
+          {
+            "key": "builtInCommands",
+            "optional": true,
+            "type": "{ type?: security | string | null, name?: erase | lock | restart | shutdown | string | null }[] | null"
+          },
+          {
+            "key": "osFamily",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domainInfo",
+            "optional": true,
+            "type": "{ partOfDomain?: boolean | null, domainName?: string | null } | null"
+          },
+          {
+            "key": "userMetrics",
+            "optional": true,
+            "type": "{ userName?: string | null, admin?: boolean | null, managed?: boolean | null, suspended?: boolean | null, secureTokenEnabled?: boolean | null }[] | null"
+          },
+          {
+            "key": "serviceAccountState",
+            "optional": true,
+            "type": "{ hasSecureToken?: boolean | null, passwordODValid?: boolean | null, passwordAPFSValid?: boolean | null } | null"
+          },
+          {
+            "key": "azureAdJoined",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "displayManager",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "secureLogin",
+            "optional": true,
+            "type": "{ supported?: boolean | null, enabled?: boolean | null } | null"
+          },
+          {
+            "key": "remoteAssistAgentVersion",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jumpcloud.api.systems.get",
+      "shortPath": "systems.get",
+      "description": "Get a JumpCloud system by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "id (path)"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Use a space seperated string of field parameters to include the data in the response. If omitted, the default list of fields will be returned.\n"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "A filter to apply to the query. See the supported operators below. For more complex searches,\nsee the related `/search/<domain>` endpoints,\ne.g. `/search/systems`.\n\n**Filter structure**: The filter syntax follows a consistent pattern of `<field>:<operator>:<value>` (e.g. `department:$eq:Finance`)\n\n*"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "agentHasFullDiskAccess",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "agentVersion",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "allowMultiFactorAuthentication",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "allowPublicKeyAuthentication",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "allowSshPasswordAuthentication",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "allowSshRootLogin",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "amazonInstanceID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "arch",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "archFamily",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "connectionHistory",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "desktopCapable",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fde",
+            "optional": true,
+            "type": "{ active?: boolean | null, keyPresent?: boolean | null } | null",
+            "description": "Indicates if the Full Disk Encryption is active in the system"
+          },
+          {
+            "key": "fileSystem",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "hasServiceAccount",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "hostname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hwVendor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isPolicyBound",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "lastContact",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "modifySSHDConfig",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "networkInterfaces",
+            "optional": true,
+            "type": "{ address?: string | null, family?: IPv4 | IPv6 | string | null, internal?: boolean | null, name?: string | null }[] | null"
+          },
+          {
+            "key": "networkInfo",
+            "optional": true,
+            "type": "{ imei?: string | null, macAddress?: string | null, simInfo?: Record<string, any>[] | null } | null"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "os",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "osVersionDetail",
+            "optional": true,
+            "type": "{ osName?: string | null, releaseName?: string | null, major?: string | null, minor?: string | null, patch?: string | null, majorNumber?: number | null, minorNumber?: number | null, patchNumber?: number | null, revision?: string | null, distributionName?: string | null, version?: string | null } | null"
+          },
+          {
+            "key": "policyStats",
+            "optional": true,
+            "type": "{ duplicate?: number | null, failed?: number | null, pending?: number | null, success?: number | null, total?: number | null, unsupportedOs?: number | null } | null"
+          },
+          {
+            "key": "provisionMetadata",
+            "optional": true,
+            "type": "{ provisioner?: { type?: administrator | mdm | user | string | null, provisionerId?: string | null } | null } | null"
+          },
+          {
+            "key": "primarySystemUser",
+            "optional": true,
+            "type": "{ id?: any | null } | null"
+          },
+          {
+            "key": "remoteIP",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "serialNumber",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sshRootEnabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "sshdParams",
+            "optional": true,
+            "type": "{ name?: string | null, value?: string | null }[] | null"
+          },
+          {
+            "key": "systemInsights",
+            "optional": true,
+            "type": "{ state?: enabled | disabled | deferred | string | null } | null"
+          },
+          {
+            "key": "systemTimezone",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "templateName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mdm",
+            "optional": true,
+            "type": "{ vendor?: unknown | none | internal | external | string | null, internal?: { deviceId?: string | null, windowsDeviceId?: string | null } | null, profileIdentifier?: string | null, dep?: boolean | null, userApproved?: boolean | null, enrollmentType?: unknown | automated device | device | user | string | null, providerId?: string | null, windows?: { upn?: string | null } | null, lostModeStatus?: string | null, deviceLockStatus?: number | null, enrollmentStatus?: number | null } | null"
+          },
+          {
+            "key": "builtInCommands",
+            "optional": true,
+            "type": "{ type?: security | string | null, name?: erase | lock | restart | shutdown | string | null }[] | null"
+          },
+          {
+            "key": "osFamily",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domainInfo",
+            "optional": true,
+            "type": "{ partOfDomain?: boolean | null, domainName?: string | null } | null"
+          },
+          {
+            "key": "userMetrics",
+            "optional": true,
+            "type": "{ userName?: string | null, admin?: boolean | null, managed?: boolean | null, suspended?: boolean | null, secureTokenEnabled?: boolean | null }[] | null"
+          },
+          {
+            "key": "serviceAccountState",
+            "optional": true,
+            "type": "{ hasSecureToken?: boolean | null, passwordODValid?: boolean | null, passwordAPFSValid?: boolean | null } | null"
+          },
+          {
+            "key": "azureAdJoined",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "displayManager",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "secureLogin",
+            "optional": true,
+            "type": "{ supported?: boolean | null, enabled?: boolean | null } | null"
+          },
+          {
+            "key": "remoteAssistAgentVersion",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jumpcloud.api.systems.list",
+      "shortPath": "systems.list",
+      "description": "List JumpCloud systems with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Use a space seperated string of field parameters to include the data in the response. If omitted, the default list of fields will be returned.\n"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The number of records to return at once. Limited to 100."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "A nested object containing a `searchTerm` string or array of strings and a list of `fields` to search on."
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "The offset into the records to return."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Use space separated sort parameters to sort the collection.\nDefault sort is ascending. Prefix with `-` to sort descending.\n"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "A filter to apply to the query. See the supported operators below. For more complex searches,\nsee the related `/search/<domain>` endpoints,\ne.g. `/search/systems`.\n\n**Filter structure**: The filter syntax follows a consistent pattern of `<field>:<operator>:<value>` (e.g. `department:$eq:Finance`)\n\n*"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "The list of systems."
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of systems."
+          }
+        ]
+      }
+    },
+    {
+      "path": "jumpcloud.api.systems.listAssociations",
+      "shortPath": "systems.listAssociations",
+      "description": "List associations for a system",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "system_id",
+            "optional": false,
+            "type": "string",
+            "description": "ObjectID of the System."
+          },
+          {
+            "key": "targets",
+            "optional": true,
+            "type": "(string | number)[]",
+            "description": "Targets which a \"system\" can be associated to."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The number of records to return at once. Limited to 100."
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "The offset into the records to return."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ attributes?: any | null, from?: any | null, to: any }[]"
+      }
+    },
+    {
+      "path": "jumpcloud.api.systems.listPolicyStatuses",
+      "shortPath": "systems.listPolicyStatuses",
+      "description": "List policy statuses for a system",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "system_id",
+            "optional": false,
+            "type": "string",
+            "description": "ObjectID of the System."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "(string | number)[]",
+            "description": "The comma separated fields included in the returned records.\nIf omitted, the default list of fields will be returned.\n"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "(string | number)[]",
+            "description": "A filter to apply to the query.\n\n**Filter structure**: `<field>:<operator>:<value>`.\n\n**field** = Populate with a valid field from an endpoint response.\n\n**operator** =  Supported operators are: eq, ne, gt, ge, lt, le, between, search, in.\n_Note: v1 operators differ from v2 operators._\n\n**value** = "
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The number of records to return at once. Limited to 100."
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "The offset into the records to return."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "(string | number)[]",
+            "description": "The comma separated fields used to sort the collection.\nDefault sort is ascending, prefix with `-` to sort descending.\n"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ detail?: string | null, endedAt?: string | null, exitStatus?: number | null, id?: string | null, policyID?: string | null, startedAt?: string | null, state?: string | null, stdErr?: string | null, stdOut?: string | null, success?: boolean | null, systemID?: string | null, userObjectId?: string | null }[]"
+      }
+    },
+    {
+      "path": "jumpcloud.api.systems.listUsers",
+      "shortPath": "systems.listUsers",
+      "description": "List users bound to a system",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "system_id",
+            "optional": false,
+            "type": "string",
+            "description": "ObjectID of the System."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The number of records to return at once. Limited to 100."
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "The offset into the records to return."
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "(string | number)[]",
+            "description": "A filter to apply to the query.\n\n**Filter structure**: `<field>:<operator>:<value>`.\n\n**field** = Populate with a valid field from an endpoint response.\n\n**operator** =  Supported operators are: eq, ne, gt, ge, lt, le, between, search, in.\n_Note: v1 operators differ from v2 operators._\n\n**value** = "
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ compiledAttributes?: any | null, id: string, paths: any[][], type: any, externalId?: string | null, syncStatus?: any | null }[]"
+      }
+    },
+    {
+      "path": "jumpcloud.api.userGroups.create",
+      "shortPath": "userGroups.create",
+      "description": "Create a JumpCloud user group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ attributes?: any, email?: string, description?: string, memberQuery?: any, memberQueryExemptions?: any[], memberSuggestionsNotify?: boolean, membershipMethod?: NOTSET | STATIC | DYNAMIC_REVIEW_REQUIRED | DYNAMIC_AUTOMATED, name: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "any | null",
+            "description": "The graph attributes for a UserGroup."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "Email address of a User Group"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Description of a User Group"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "ObjectId uniquely identifying a User Group."
+          },
+          {
+            "key": "memberQuery",
+            "optional": true,
+            "type": "any | null",
+            "description": "Dynamic group member query. v1 (default): include queryType (FilterQuery, Filter, or Search). v2 (x-query-dsl: v2): omit queryType; filters use field, operation, and value."
+          },
+          {
+            "key": "memberQueryExemptions",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Array of GraphObjects exempted from the query"
+          },
+          {
+            "key": "memberSuggestionsNotify",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True if notification emails are to be sent for membership suggestions."
+          },
+          {
+            "key": "memberQueryErrorFlags",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Group error flags indicating errors encountered during member query evaluation.\n\nPossible flag values:\n- CYCLE: A cyclic dependency was detected in group membership\n- INVALID_GROUP_REFERENCE: The group reference is invalid or does not exist\n\nThe `member_query_error_flags` as a field supports array-b"
+          },
+          {
+            "key": "membershipMethod",
+            "optional": true,
+            "type": "NOTSET | STATIC | DYNAMIC_REVIEW_REQUIRED | DYNAMIC_AUTOMATED | string | null",
+            "description": "The type of membership method for this group. Valid values include NOTSET, STATIC, DYNAMIC_REVIEW_REQUIRED, and DYNAMIC_AUTOMATED.\n\nNote DYNAMIC_AUTOMATED and DYNAMIC_REVIEW_REQUIRED group rules will supersede any group enrollment for [group-associated MDM-enrolled devices](https://jumpcloud.com/sup"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Display name of a User Group."
+          },
+          {
+            "key": "organizationObjectId",
+            "optional": true,
+            "type": "any | null",
+            "description": "id of the organization owning this group"
+          },
+          {
+            "key": "suggestionCounts",
+            "optional": true,
+            "type": "{ add?: number | null, remove?: number | null, total?: number | null } | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "user_group | string | null",
+            "description": "The type of the group."
+          }
+        ]
+      }
+    },
+    {
+      "path": "jumpcloud.api.userGroups.delete",
+      "shortPath": "userGroups.delete",
+      "description": "Delete a JumpCloud user group",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ObjectID of the User Group."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "any | null",
+            "description": "The graph attributes for a UserGroup."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "Email address of a User Group"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Description of a User Group"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "ObjectId uniquely identifying a User Group."
+          },
+          {
+            "key": "memberQuery",
+            "optional": true,
+            "type": "any | null",
+            "description": "Dynamic group member query. v1 (default): include queryType (FilterQuery, Filter, or Search). v2 (x-query-dsl: v2): omit queryType; filters use field, operation, and value."
+          },
+          {
+            "key": "memberQueryExemptions",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Array of GraphObjects exempted from the query"
+          },
+          {
+            "key": "memberSuggestionsNotify",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True if notification emails are to be sent for membership suggestions."
+          },
+          {
+            "key": "memberQueryErrorFlags",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Group error flags indicating errors encountered during member query evaluation.\n\nPossible flag values:\n- CYCLE: A cyclic dependency was detected in group membership\n- INVALID_GROUP_REFERENCE: The group reference is invalid or does not exist\n\nThe `member_query_error_flags` as a field supports array-b"
+          },
+          {
+            "key": "membershipMethod",
+            "optional": true,
+            "type": "NOTSET | STATIC | DYNAMIC_REVIEW_REQUIRED | DYNAMIC_AUTOMATED | string | null",
+            "description": "The type of membership method for this group. Valid values include NOTSET, STATIC, DYNAMIC_REVIEW_REQUIRED, and DYNAMIC_AUTOMATED.\n\nNote DYNAMIC_AUTOMATED and DYNAMIC_REVIEW_REQUIRED group rules will supersede any group enrollment for [group-associated MDM-enrolled devices](https://jumpcloud.com/sup"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Display name of a User Group."
+          },
+          {
+            "key": "organizationObjectId",
+            "optional": true,
+            "type": "any | null",
+            "description": "id of the organization owning this group"
+          },
+          {
+            "key": "suggestionCounts",
+            "optional": true,
+            "type": "{ add?: number | null, remove?: number | null, total?: number | null } | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "user_group | string | null",
+            "description": "The type of the group."
+          }
+        ]
+      }
+    },
+    {
+      "path": "jumpcloud.api.userGroups.get",
+      "shortPath": "userGroups.get",
+      "description": "Get a JumpCloud user group by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ObjectID of the User Group."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "any | null",
+            "description": "The graph attributes for a UserGroup."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "Email address of a User Group"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Description of a User Group"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "ObjectId uniquely identifying a User Group."
+          },
+          {
+            "key": "memberQuery",
+            "optional": true,
+            "type": "any | null",
+            "description": "Dynamic group member query. v1 (default): include queryType (FilterQuery, Filter, or Search). v2 (x-query-dsl: v2): omit queryType; filters use field, operation, and value."
+          },
+          {
+            "key": "memberQueryExemptions",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Array of GraphObjects exempted from the query"
+          },
+          {
+            "key": "memberSuggestionsNotify",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True if notification emails are to be sent for membership suggestions."
+          },
+          {
+            "key": "memberQueryErrorFlags",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Group error flags indicating errors encountered during member query evaluation.\n\nPossible flag values:\n- CYCLE: A cyclic dependency was detected in group membership\n- INVALID_GROUP_REFERENCE: The group reference is invalid or does not exist\n\nThe `member_query_error_flags` as a field supports array-b"
+          },
+          {
+            "key": "membershipMethod",
+            "optional": true,
+            "type": "NOTSET | STATIC | DYNAMIC_REVIEW_REQUIRED | DYNAMIC_AUTOMATED | string | null",
+            "description": "The type of membership method for this group. Valid values include NOTSET, STATIC, DYNAMIC_REVIEW_REQUIRED, and DYNAMIC_AUTOMATED.\n\nNote DYNAMIC_AUTOMATED and DYNAMIC_REVIEW_REQUIRED group rules will supersede any group enrollment for [group-associated MDM-enrolled devices](https://jumpcloud.com/sup"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Display name of a User Group."
+          },
+          {
+            "key": "organizationObjectId",
+            "optional": true,
+            "type": "any | null",
+            "description": "id of the organization owning this group"
+          },
+          {
+            "key": "suggestionCounts",
+            "optional": true,
+            "type": "{ add?: number | null, remove?: number | null, total?: number | null } | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "user_group | string | null",
+            "description": "The type of the group."
+          }
+        ]
+      }
+    },
+    {
+      "path": "jumpcloud.api.userGroups.list",
+      "shortPath": "userGroups.list",
+      "description": "List JumpCloud user groups with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "(string | number)[]",
+            "description": "The comma separated fields included in the returned records.\nIf omitted, the default list of fields will be returned.\n"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "(string | number)[]",
+            "description": "A filter to apply to the query.\n\n**Filter structure**: `<field>:<operator>:<value>`.\n\n**field** = Populate with a valid field from an endpoint response.\n\n**operator** =  Supported operators are: eq, ne, gt, ge, lt, le, between, search, in.\n_Note: v1 operators differ from v2 operators._\n\n**value** = "
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The number of records to return at once. Limited to 100."
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "The offset into the records to return."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "(string | number)[]",
+            "description": "The comma separated fields used to sort the collection.\nDefault sort is ascending, prefix with `-` to sort descending.\n"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ attributes?: any | null, email?: string | null, description?: string | null, id?: string | null, memberQuery?: any | null, memberQueryExemptions?: any[] | null, memberSuggestionsNotify?: boolean | null, memberQueryErrorFlags?: any | null, membershipMethod?: any | null, name?: string | null, organizationObjectId?: any | null, suggestionCounts?: any | null, type?: user_group | string | null }[]"
+      }
+    },
+    {
+      "path": "jumpcloud.api.userGroups.listMembers",
+      "shortPath": "userGroups.listMembers",
+      "description": "List members of a user group",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string",
+            "description": "ObjectID of the User Group."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The number of records to return at once. Limited to 100."
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "The offset into the records to return."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ attributes?: any | null, from?: any | null, to: any }[]"
+      }
+    },
+    {
+      "path": "jumpcloud.api.userGroups.listMembership",
+      "shortPath": "userGroups.listMembership",
+      "description": "List a user group's membership graph",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string",
+            "description": "ObjectID of the User Group."
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "(string | number)[]",
+            "description": "A filter to apply to the query.\n\n**Filter structure**: `<field>:<operator>:<value>`.\n\n**field** = Populate with a valid field from an endpoint response.\n\n**operator** =  Supported operators are: eq, ne, gt, ge, lt, le, between, search, in.\n_Note: v1 operators differ from v2 operators._\n\n**value** = "
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The number of records to return at once. Limited to 100."
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "The offset into the records to return."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "(string | number)[]",
+            "description": "The comma separated fields used to sort the collection.\nDefault sort is ascending, prefix with `-` to sort descending.\n"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ compiledAttributes?: any | null, id: string, paths: any[][], type: any, externalId?: string | null, syncStatus?: any | null }[]"
+      }
+    },
+    {
+      "path": "jumpcloud.api.userGroups.manageMembers",
+      "shortPath": "userGroups.manageMembers",
+      "description": "Manage (add or remove) members of a user group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string",
+            "description": "ObjectID of the User Group."
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ id: string, op: add | remove | update, type: user, attributes?: Record<string, any> | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "jumpcloud.api.userGroups.update",
+      "shortPath": "userGroups.update",
+      "description": "Update a JumpCloud user group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "ObjectID of the User Group."
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ attributes?: any, email?: string, description?: string, memberQuery?: any, memberQueryExemptions?: any[], memberSuggestionsNotify?: boolean, membershipMethod?: NOTSET | STATIC | DYNAMIC_REVIEW_REQUIRED | DYNAMIC_AUTOMATED, name: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "any | null",
+            "description": "The graph attributes for a UserGroup."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "Email address of a User Group"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Description of a User Group"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "ObjectId uniquely identifying a User Group."
+          },
+          {
+            "key": "memberQuery",
+            "optional": true,
+            "type": "any | null",
+            "description": "Dynamic group member query. v1 (default): include queryType (FilterQuery, Filter, or Search). v2 (x-query-dsl: v2): omit queryType; filters use field, operation, and value."
+          },
+          {
+            "key": "memberQueryExemptions",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Array of GraphObjects exempted from the query"
+          },
+          {
+            "key": "memberSuggestionsNotify",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True if notification emails are to be sent for membership suggestions."
+          },
+          {
+            "key": "memberQueryErrorFlags",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Group error flags indicating errors encountered during member query evaluation.\n\nPossible flag values:\n- CYCLE: A cyclic dependency was detected in group membership\n- INVALID_GROUP_REFERENCE: The group reference is invalid or does not exist\n\nThe `member_query_error_flags` as a field supports array-b"
+          },
+          {
+            "key": "membershipMethod",
+            "optional": true,
+            "type": "NOTSET | STATIC | DYNAMIC_REVIEW_REQUIRED | DYNAMIC_AUTOMATED | string | null",
+            "description": "The type of membership method for this group. Valid values include NOTSET, STATIC, DYNAMIC_REVIEW_REQUIRED, and DYNAMIC_AUTOMATED.\n\nNote DYNAMIC_AUTOMATED and DYNAMIC_REVIEW_REQUIRED group rules will supersede any group enrollment for [group-associated MDM-enrolled devices](https://jumpcloud.com/sup"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Display name of a User Group."
+          },
+          {
+            "key": "organizationObjectId",
+            "optional": true,
+            "type": "any | null",
+            "description": "id of the organization owning this group"
+          },
+          {
+            "key": "suggestionCounts",
+            "optional": true,
+            "type": "{ add?: number | null, remove?: number | null, total?: number | null } | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "user_group | string | null",
+            "description": "The type of the group."
+          }
+        ]
+      }
+    },
+    {
+      "path": "jumpcloud.api.users.create",
+      "shortPath": "users.create",
+      "description": "Create a JumpCloud system user; unless state is STAGED, JumpCloud emails the user a welcome or activation link",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fullValidationDetails",
+            "optional": true,
+            "type": "string",
+            "description": "Pass this query parameter when a client wants all validation errors\nto be returned with a detailed error response for the form field\nspecified. The current form fields are allowed:\n\n* `password`\n\n#### Password validation flag\nUse the `password` validation flag to receive details on a possible\nbad re"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ account_locked?: boolean, activated?: boolean, addresses?: { country?: string, extendedAddress?: string, locality?: string, poBox?: string, postalCode?: string, region?: string, streetAddress?: string, type?: string }[], allow_public_key?: boolean, alternateEmail?: string, attributes?: { name?: string, value?: string }[], company?: string, costCenter?: string, department?: string, description?: string, disableDeviceMaxLoginAttempts?: boolean, displayname?: string, email: string, employeeIdentifier?: string, employeeType?: string, enable_managed_uid?: boolean, enable_user_portal_multifactor?: boolean, external_dn?: string, external_password_expiration_date?: string, external_source_type?: string, externally_managed?: boolean, firstname?: string, jobTitle?: string, lastname?: string, ldap_binding_user?: boolean, location?: string, manager?: string, mfa?: { configured?: boolean, exclusion?: boolean, exclusionUntil?: string, exclusionDays?: number }, middlename?: string, password?: string, password_never_expires?: boolean, passwordless_sudo?: boolean, phoneNumbers?: { number?: string, type?: string }[], public_key?: string, recoveryEmail?: { address?: string }, relationships?: { type?: string, value?: string }[], samba_service_user?: boolean, state?: STAGED | ACTIVATED | SUSPENDED, sudo?: boolean, suspended?: boolean, tags?: string[], unix_guid?: number, unix_uid?: number, username: string, managedAppleId?: string, delegatedAuthority?: any, restrictedFields?: any[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "account_locked",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "account_locked_date",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "activated",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "admin",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{ country?: string | null, extendedAddress?: string | null, id?: string | null, locality?: string | null, poBox?: string | null, postalCode?: string | null, region?: string | null, streetAddress?: string | null, type?: string | null }[] | null"
+          },
+          {
+            "key": "allow_public_key",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "alternateEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "badLoginAttempts",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "costCenter",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "department",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "disableDeviceMaxLoginAttempts",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "displayname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "employeeIdentifier",
+            "optional": true,
+            "type": "string | null",
+            "description": "Must be unique per user. "
+          },
+          {
+            "key": "employeeType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "enable_managed_uid",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "enable_user_portal_multifactor",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "external_dn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "external_password_expiration_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "external_source_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "externally_managed",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "The externally_managed property has been deprecated. Whenever a user has their externally_managed field modified their restrictedFields property gets populated with the appropriate value, even if it is already set to a value an administrator manually set."
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ldap_binding_user",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "manager",
+            "optional": true,
+            "type": "string | null",
+            "description": "Relation with another systemuser to identify the last as a manager."
+          },
+          {
+            "key": "mfa",
+            "optional": true,
+            "type": "{ configured?: boolean | null, exclusion?: boolean | null, exclusionUntil?: string | null, exclusionDays?: number | null } | null"
+          },
+          {
+            "key": "mfaEnrollment",
+            "optional": true,
+            "type": "{ totpStatus?: any | null, webAuthnStatus?: any | null, pushStatus?: any | null, smsStatus?: any | null, overallStatus?: any | null, jcGoStatus?: any | null } | null"
+          },
+          {
+            "key": "middlename",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "password_date",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "password_expiration_date",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "password_expired",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "password_never_expires",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "passwordless_sudo",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "phoneNumbers",
+            "optional": true,
+            "type": "{ id?: string | null, number?: string | null, type?: string | null }[] | null"
+          },
+          {
+            "key": "public_key",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recoveryEmail",
+            "optional": true,
+            "type": "{ address?: string | null, verified?: boolean | null, verifiedAt?: string | null } | null"
+          },
+          {
+            "key": "relationships",
+            "optional": true,
+            "type": "{ type?: string | null, value?: string | null }[] | null"
+          },
+          {
+            "key": "samba_service_user",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "ssh_keys",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "STAGED | ACTIVATED | SUSPENDED | string | null"
+          },
+          {
+            "key": "sudo",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "suspended",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "totp_enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "unix_guid",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "unix_uid",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "managedAppleId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "creationSource",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "delegatedAuthority",
+            "optional": true,
+            "type": "any | null",
+            "description": "Used by auth to determine password delegation authority"
+          },
+          {
+            "key": "restrictedFields",
+            "optional": true,
+            "type": "any[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jumpcloud.api.users.delete",
+      "shortPath": "users.delete",
+      "description": "Delete a JumpCloud system user",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "id (path)"
+          },
+          {
+            "key": "cascade_manager",
+            "optional": true,
+            "type": "string",
+            "description": "This is an optional flag that can be enabled on the DELETE call, DELETE /systemusers/{id}?cascade_manager=null. This parameter will clear the Manager attribute on all direct reports and then delete the account."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "account_locked",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "account_locked_date",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "activated",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "admin",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{ country?: string | null, extendedAddress?: string | null, id?: string | null, locality?: string | null, poBox?: string | null, postalCode?: string | null, region?: string | null, streetAddress?: string | null, type?: string | null }[] | null"
+          },
+          {
+            "key": "allow_public_key",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "alternateEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "badLoginAttempts",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "costCenter",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "department",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "disableDeviceMaxLoginAttempts",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "displayname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "employeeIdentifier",
+            "optional": true,
+            "type": "string | null",
+            "description": "Must be unique per user. "
+          },
+          {
+            "key": "employeeType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "enable_managed_uid",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "enable_user_portal_multifactor",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "external_dn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "external_password_expiration_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "external_source_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "externally_managed",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "The externally_managed property has been deprecated. Whenever a user has their externally_managed field modified their restrictedFields property gets populated with the appropriate value, even if it is already set to a value an administrator manually set."
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ldap_binding_user",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "manager",
+            "optional": true,
+            "type": "string | null",
+            "description": "Relation with another systemuser to identify the last as a manager."
+          },
+          {
+            "key": "mfa",
+            "optional": true,
+            "type": "{ configured?: boolean | null, exclusion?: boolean | null, exclusionUntil?: string | null, exclusionDays?: number | null } | null"
+          },
+          {
+            "key": "mfaEnrollment",
+            "optional": true,
+            "type": "{ totpStatus?: any | null, webAuthnStatus?: any | null, pushStatus?: any | null, smsStatus?: any | null, overallStatus?: any | null, jcGoStatus?: any | null } | null"
+          },
+          {
+            "key": "middlename",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "password_date",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "password_expiration_date",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "password_expired",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "password_never_expires",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "passwordless_sudo",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "phoneNumbers",
+            "optional": true,
+            "type": "{ id?: string | null, number?: string | null, type?: string | null }[] | null"
+          },
+          {
+            "key": "public_key",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recoveryEmail",
+            "optional": true,
+            "type": "{ address?: string | null, verified?: boolean | null, verifiedAt?: string | null } | null"
+          },
+          {
+            "key": "relationships",
+            "optional": true,
+            "type": "{ type?: string | null, value?: string | null }[] | null"
+          },
+          {
+            "key": "samba_service_user",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "ssh_keys",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "STAGED | ACTIVATED | SUSPENDED | string | null"
+          },
+          {
+            "key": "sudo",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "suspended",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "totp_enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "unix_guid",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "unix_uid",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "managedAppleId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "creationSource",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "delegatedAuthority",
+            "optional": true,
+            "type": "any | null",
+            "description": "Used by auth to determine password delegation authority"
+          },
+          {
+            "key": "restrictedFields",
+            "optional": true,
+            "type": "any[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jumpcloud.api.users.enforceMfa",
+      "shortPath": "users.enforceMfa",
+      "description": "Update a system user's MFA requirement; an unenrolled user is locked out of MFA-protected resources once any exclusion ends",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "id (path)"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ enable_user_portal_multifactor?: boolean, mfa?: { configured?: boolean, exclusion?: boolean, exclusionUntil?: string, exclusionDays?: number } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "jumpcloud.api.users.expirePassword",
+      "shortPath": "users.expirePassword",
+      "description": "Expire a system user's password so they must reset it at next login",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "id (path)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string | { orgPasswordPolicyUpdate?: boolean | null }"
+      }
+    },
+    {
+      "path": "jumpcloud.api.users.get",
+      "shortPath": "users.get",
+      "description": "Get a JumpCloud system user by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "id (path)"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Use a space seperated string of field parameters to include the data in the response. If omitted, the default list of fields will be returned.\n"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "A filter to apply to the query. See the supported operators below. For more complex searches,\nsee the related `/search/<domain>` endpoints,\ne.g. `/search/systems`.\n\n**Filter structure**: The filter syntax follows a consistent pattern of `<field>:<operator>:<value>` (e.g. `department:$eq:Finance`)\n\n*"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "account_locked",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "account_locked_date",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "activated",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "admin",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{ country?: string | null, extendedAddress?: string | null, id?: string | null, locality?: string | null, poBox?: string | null, postalCode?: string | null, region?: string | null, streetAddress?: string | null, type?: string | null }[] | null"
+          },
+          {
+            "key": "allow_public_key",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "alternateEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "badLoginAttempts",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "costCenter",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "department",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "disableDeviceMaxLoginAttempts",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "displayname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "employeeIdentifier",
+            "optional": true,
+            "type": "string | null",
+            "description": "Must be unique per user. "
+          },
+          {
+            "key": "employeeType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "enable_managed_uid",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "enable_user_portal_multifactor",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "external_dn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "external_password_expiration_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "external_source_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "externally_managed",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "The externally_managed property has been deprecated. Whenever a user has their externally_managed field modified their restrictedFields property gets populated with the appropriate value, even if it is already set to a value an administrator manually set."
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ldap_binding_user",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "manager",
+            "optional": true,
+            "type": "string | null",
+            "description": "Relation with another systemuser to identify the last as a manager."
+          },
+          {
+            "key": "mfa",
+            "optional": true,
+            "type": "{ configured?: boolean | null, exclusion?: boolean | null, exclusionUntil?: string | null, exclusionDays?: number | null } | null"
+          },
+          {
+            "key": "mfaEnrollment",
+            "optional": true,
+            "type": "{ totpStatus?: any | null, webAuthnStatus?: any | null, pushStatus?: any | null, smsStatus?: any | null, overallStatus?: any | null, jcGoStatus?: any | null } | null"
+          },
+          {
+            "key": "middlename",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "password_date",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "password_expiration_date",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "password_expired",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "password_never_expires",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "passwordless_sudo",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "phoneNumbers",
+            "optional": true,
+            "type": "{ id?: string | null, number?: string | null, type?: string | null }[] | null"
+          },
+          {
+            "key": "public_key",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recoveryEmail",
+            "optional": true,
+            "type": "{ address?: string | null, verified?: boolean | null, verifiedAt?: string | null } | null"
+          },
+          {
+            "key": "relationships",
+            "optional": true,
+            "type": "{ type?: string | null, value?: string | null }[] | null"
+          },
+          {
+            "key": "samba_service_user",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "ssh_keys",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "STAGED | ACTIVATED | SUSPENDED | string | null"
+          },
+          {
+            "key": "sudo",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "suspended",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "totp_enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "unix_guid",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "unix_uid",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "managedAppleId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "creationSource",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "delegatedAuthority",
+            "optional": true,
+            "type": "any | null",
+            "description": "Used by auth to determine password delegation authority"
+          },
+          {
+            "key": "restrictedFields",
+            "optional": true,
+            "type": "any[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jumpcloud.api.users.list",
+      "shortPath": "users.list",
+      "description": "List JumpCloud system users with limit/skip pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The number of records to return at once."
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "The offset into the records to return."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "The space separated fields used to sort the collection.\nUser-entered text fields such as lastname, firstname, and jobTitle are sorted ignoring case.\nEmail, status, and category fields use stored ordering.\nDefault sort is ascending, prefix with `-` to sort descending.\n"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "The space separated fields included in the returned records.\nIf omitted the default list of fields will be returned.\n"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "A filter to apply to the query. See the supported operators below. For more complex searches,\nsee the related `/search/<domain>` endpoints,\ne.g. `/search/systems`.\n\n**Filter structure**: The filter syntax follows a consistent pattern of `<field>:<operator>:<value>` (e.g. `department:$eq:Finance`)\n\n*"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "A nested object containing a `searchTerm` string or array of strings and a list of `fields` to search on."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "The list of system users."
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of system users."
+          }
+        ]
+      }
+    },
+    {
+      "path": "jumpcloud.api.users.listSshKeys",
+      "shortPath": "users.listSshKeys",
+      "description": "List SSH keys of a system user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "id (path)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id?: string | null, create_date?: string | null, name?: string | null, public_key?: string | null }[]"
+      }
+    },
+    {
+      "path": "jumpcloud.api.users.resetMfa",
+      "shortPath": "users.resetMfa",
+      "description": "Reset a system user's MFA (TOTP key) and start a new enrollment period",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "id (path)"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ exclusion?: boolean, exclusionUntil?: string, exclusionDays?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "jumpcloud.api.users.setPassword",
+      "shortPath": "users.setPassword",
+      "description": "Force-set a system user's password, replacing the current one",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "id (path)"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ password?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "jumpcloud.api.users.syncMfa",
+      "shortPath": "users.syncMfa",
+      "description": "Sync system user MFA",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "id (path)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "jumpcloud.api.users.unlock",
+      "shortPath": "users.unlock",
+      "description": "Unlock a locked system user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "id (path)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "jumpcloud.api.users.update",
+      "shortPath": "users.update",
+      "description": "Update a JumpCloud system user; setting state to ACTIVATED on a staged user emails them an activation link",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "id (path)"
+          },
+          {
+            "key": "fullValidationDetails",
+            "optional": true,
+            "type": "string",
+            "description": "This endpoint can take in a query when a client wants all validation errors to be returned with error response for the form field specified, i.e. 'password'\n#### Password validation flag\nUse the \"password\" validation flag to receive details on a possible bad request response\nWithout the `password` f"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ account_locked?: boolean, addresses?: { country?: string, extendedAddress?: string, locality?: string, poBox?: string, postalCode?: string, region?: string, streetAddress?: string, type?: string }[], allow_public_key?: boolean, alternateEmail?: string, attributes?: { name?: string, value?: string }[], company?: string, costCenter?: string, department?: string, description?: string, disableDeviceMaxLoginAttempts?: boolean, displayname?: string, email?: string, employeeIdentifier?: string, employeeType?: string, enable_managed_uid?: boolean, enable_user_portal_multifactor?: boolean, external_dn?: string, external_password_expiration_date?: string, external_source_type?: string, externally_managed?: boolean, firstname?: string, jobTitle?: string, lastname?: string, ldap_binding_user?: boolean, location?: string, manager?: string, mfa?: { configured?: boolean, exclusion?: boolean, exclusionUntil?: string, exclusionDays?: number }, middlename?: string, password?: string, password_never_expires?: boolean, phoneNumbers?: { number?: string, type?: string }[], public_key?: string, relationships?: { type?: string, value?: string }[], samba_service_user?: boolean, ssh_keys?: any[], state?: ACTIVATED | SUSPENDED, sudo?: boolean, suspended?: boolean, tags?: string[], unix_guid?: number, unix_uid?: number, username?: string, managedAppleId?: string, delegatedAuthority?: any, restrictedFields?: any[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "account_locked",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "account_locked_date",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "activated",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "admin",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{ country?: string | null, extendedAddress?: string | null, id?: string | null, locality?: string | null, poBox?: string | null, postalCode?: string | null, region?: string | null, streetAddress?: string | null, type?: string | null }[] | null"
+          },
+          {
+            "key": "allow_public_key",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "alternateEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "badLoginAttempts",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "costCenter",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "department",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "disableDeviceMaxLoginAttempts",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "displayname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "employeeIdentifier",
+            "optional": true,
+            "type": "string | null",
+            "description": "Must be unique per user. "
+          },
+          {
+            "key": "employeeType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "enable_managed_uid",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "enable_user_portal_multifactor",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "external_dn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "external_password_expiration_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "external_source_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "externally_managed",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "The externally_managed property has been deprecated. Whenever a user has their externally_managed field modified their restrictedFields property gets populated with the appropriate value, even if it is already set to a value an administrator manually set."
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ldap_binding_user",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "manager",
+            "optional": true,
+            "type": "string | null",
+            "description": "Relation with another systemuser to identify the last as a manager."
+          },
+          {
+            "key": "mfa",
+            "optional": true,
+            "type": "{ configured?: boolean | null, exclusion?: boolean | null, exclusionUntil?: string | null, exclusionDays?: number | null } | null"
+          },
+          {
+            "key": "mfaEnrollment",
+            "optional": true,
+            "type": "{ totpStatus?: any | null, webAuthnStatus?: any | null, pushStatus?: any | null, smsStatus?: any | null, overallStatus?: any | null, jcGoStatus?: any | null } | null"
+          },
+          {
+            "key": "middlename",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "password_date",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "password_expiration_date",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "password_expired",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "password_never_expires",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "passwordless_sudo",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "phoneNumbers",
+            "optional": true,
+            "type": "{ id?: string | null, number?: string | null, type?: string | null }[] | null"
+          },
+          {
+            "key": "public_key",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recoveryEmail",
+            "optional": true,
+            "type": "{ address?: string | null, verified?: boolean | null, verifiedAt?: string | null } | null"
+          },
+          {
+            "key": "relationships",
+            "optional": true,
+            "type": "{ type?: string | null, value?: string | null }[] | null"
+          },
+          {
+            "key": "samba_service_user",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "ssh_keys",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "STAGED | ACTIVATED | SUSPENDED | string | null"
+          },
+          {
+            "key": "sudo",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "suspended",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "totp_enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "unix_guid",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "unix_uid",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "managedAppleId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "creationSource",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "delegatedAuthority",
+            "optional": true,
+            "type": "any | null",
+            "description": "Used by auth to determine password delegation authority"
+          },
+          {
+            "key": "restrictedFields",
+            "optional": true,
+            "type": "any[] | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
