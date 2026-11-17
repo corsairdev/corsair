@@ -22,18 +22,20 @@ export function donkiList(key: string) {
 	};
 }
 
-/** The six DONKI routes that take only an inclusive date range. */
+/** The DONKI routes that take only an inclusive date range. */
 function dateRange<Output extends z.ZodType>(
 	ctx: NasaContext,
 	path: string,
 	event: string,
 	key: string,
+	// unknown: the caller's raw input, parsed by `inputSchema` before use.
 	input: unknown,
 	output: Output,
+	inputSchema: DateRangeSchema = Inputs.geomagneticStormList,
 ): Promise<z.output<Output>> {
 	return call(
 		ctx,
-		{ event, input: Inputs.cmeList, output },
+		{ event, input: inputSchema, output },
 		input,
 		({ startDate, endDate }) => ({
 			method: 'GET',
@@ -45,8 +47,22 @@ function dateRange<Output extends z.ZodType>(
 	);
 }
 
+/** Any of the date-only input schemas: they differ in defaults, not fields. */
+type DateRangeSchema =
+	| typeof Inputs.geomagneticStormList
+	| typeof Inputs.cmeList
+	| typeof Inputs.enlilSimulationList;
+
 export const cmeList: NasaEndpoints['cmeList'] = (ctx, input) =>
-	dateRange(ctx, '/DONKI/CME', 'donki.cme', 'events', input, Outputs.cmeList);
+	dateRange(
+		ctx,
+		'/DONKI/CME',
+		'donki.cme',
+		'events',
+		input,
+		Outputs.cmeList,
+		Inputs.cmeList,
+	);
 
 /**
  * CME analyses carry their own filters, and `mostAccurateOnly` and
@@ -190,6 +206,7 @@ export const enlilSimulationList: NasaEndpoints['enlilSimulationList'] = (
 		'simulations',
 		input,
 		Outputs.enlilSimulationList,
+		Inputs.enlilSimulationList,
 	);
 
 /**

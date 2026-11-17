@@ -38,7 +38,7 @@ const DonkiActivityFields = {
 	instruments: z.array(InstrumentSchema).nullish(),
 };
 
-/** The four DONKI queries that take only a date range. */
+/** The DONKI queries that take only a date range and default to 30 days. */
 const DateRangeInputSchema = z.object({
 	startDate: DateSchema.optional().describe(
 		'First day to include. Defaults at the provider to 30 days before today.',
@@ -49,6 +49,29 @@ const DateRangeInputSchema = z.object({
 });
 
 export type DateRangeInput = z.infer<typeof DateRangeInputSchema>;
+
+/**
+ * The CME listing answers 400 when either bound is missing (checked live
+ * 11-17), although NASA's docs give both a default, so both are required.
+ */
+const CmeListInputSchema = z.object({
+	startDate: DateSchema.describe('First day to include.'),
+	endDate: DateSchema.describe('Last day to include, inclusive.'),
+});
+
+export type CmeListInput = z.infer<typeof CmeListInputSchema>;
+
+/** ENLIL runs default to the last seven days, not the 30 the others use. */
+const EnlilSimulationInputSchema = z.object({
+	startDate: DateSchema.optional().describe(
+		'First day to include. Defaults at the provider to seven days before today (UTC).',
+	),
+	endDate: DateSchema.optional().describe(
+		'Last day to include, inclusive. Defaults at the provider to today.',
+	),
+});
+
+export type EnlilSimulationInput = z.infer<typeof EnlilSimulationInputSchema>;
 
 // ── apod.list ─────────────────────────────────────────────────────────────
 
@@ -64,21 +87,21 @@ const ApodListInputSchema = z
 			.max(NASA_APOD_MAX_PER_PAGE)
 			.optional()
 			.describe(
-				`Entries per page. NASA caps this at ${NASA_APOD_MAX_PER_PAGE}; a larger value is served as ${NASA_APOD_MAX_PER_PAGE}.`,
+				`Entries per page, 1 to ${NASA_APOD_MAX_PER_PAGE}. NASA serves at most ${NASA_APOD_MAX_PER_PAGE}, so the plugin rejects a larger value instead of returning fewer than asked.`,
 			),
 		date_from: z
-			.number()
-			.int()
+			.string()
+			.regex(/^\d{6}$/, 'Expected the legacy YYMMDD date code')
 			.optional()
 			.describe(
-				'Oldest day in the legacy YYMMDD form, e.g. 240115. Only honoured when date_to is also sent.',
+				"Oldest day as the six-digit YYMMDD code, e.g. '240115' or '050101'. A string, so the leading zero of a 2000-2009 date survives. Only honoured when date_to is also sent.",
 			),
 		date_to: z
-			.number()
-			.int()
+			.string()
+			.regex(/^\d{6}$/, 'Expected the legacy YYMMDD date code')
 			.optional()
 			.describe(
-				'Newest day in the legacy YYMMDD form, e.g. 240117. Only honoured when date_from is also sent.',
+				"Newest day as the six-digit YYMMDD code, e.g. '240117'. Only honoured when date_from is also sent.",
 			),
 	})
 	.superRefine((value, ctx) => {
@@ -1073,7 +1096,7 @@ export type NasaEndpointInputs = {
 	neoFeed: NeoFeedInput;
 	neoLookup: NeoLookupInput;
 	neoBrowse: NeoBrowseInput;
-	cmeList: DateRangeInput;
+	cmeList: CmeListInput;
 	cmeAnalysisList: CmeAnalysisInput;
 	geomagneticStormList: DateRangeInput;
 	solarFlareList: DateRangeInput;
@@ -1082,7 +1105,7 @@ export type NasaEndpointInputs = {
 	radiationBeltList: DateRangeInput;
 	highSpeedStreamList: DateRangeInput;
 	interplanetaryShockList: InterplanetaryShockInput;
-	enlilSimulationList: DateRangeInput;
+	enlilSimulationList: EnlilSimulationInput;
 	notificationList: NotificationInput;
 	epicImages: EpicImagesInput;
 	epicAvailableDates: EpicAvailableInput;
@@ -1127,7 +1150,7 @@ export const NasaEndpointInputSchemas = {
 	neoFeed: NeoFeedInputSchema,
 	neoLookup: NeoLookupInputSchema,
 	neoBrowse: NeoBrowseInputSchema,
-	cmeList: DateRangeInputSchema,
+	cmeList: CmeListInputSchema,
 	cmeAnalysisList: CmeAnalysisInputSchema,
 	geomagneticStormList: DateRangeInputSchema,
 	solarFlareList: DateRangeInputSchema,
@@ -1136,7 +1159,7 @@ export const NasaEndpointInputSchemas = {
 	radiationBeltList: DateRangeInputSchema,
 	highSpeedStreamList: DateRangeInputSchema,
 	interplanetaryShockList: InterplanetaryShockInputSchema,
-	enlilSimulationList: DateRangeInputSchema,
+	enlilSimulationList: EnlilSimulationInputSchema,
 	notificationList: NotificationInputSchema,
 	epicImages: EpicImagesInputSchema,
 	epicAvailableDates: EpicAvailableInputSchema,
