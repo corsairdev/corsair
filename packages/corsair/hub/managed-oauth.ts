@@ -47,6 +47,9 @@ export type ProcessManagedOAuthDeliveryOptions = {
 	providerData?: Record<string, unknown>;
 	// Provider account identity; absent = the tenant's default account.
 	account?: { id: string; label?: string };
+	// Every account the hub holds for this plugin and tenant, oldest first, so
+	// an account from before names can be told apart from the one being delivered.
+	accounts?: { id: string; label?: string }[];
 };
 
 export type ProcessManagedOAuthDeliveryResult = {
@@ -79,6 +82,18 @@ export async function processManagedOAuthDelivery(
 					}),
 				}
 			: undefined;
+	const hubAccounts = Array.isArray(options.accounts)
+		? options.accounts.flatMap((a) =>
+				typeof a?.id === 'string' && a.id.trim()
+					? [
+							{
+								id: a.id,
+								...(typeof a.label === 'string' && { label: a.label }),
+							},
+						]
+					: [],
+			)
+		: undefined;
 
 	if (!accessToken.trim()) {
 		throw new ManagedOAuthDeliveryError(
@@ -136,6 +151,7 @@ export async function processManagedOAuthDelivery(
 				tenantId,
 				identity: account,
 				allowMany: internal.multiAccount,
+				...(hubAccounts && { hubAccounts }),
 			}));
 		} catch (error) {
 			if (error instanceof AccountSelectionError) {

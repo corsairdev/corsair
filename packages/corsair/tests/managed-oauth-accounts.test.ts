@@ -74,12 +74,14 @@ describe('managed oauth delivery by account identity', () => {
 	const deliver = (
 		accessToken: string,
 		account?: { id: string; label?: string },
+		accounts?: { id: string; label?: string }[],
 	) =>
 		processManagedOAuthDelivery(corsair, {
 			plugin: 'gmail',
 			tenantId: 't1',
 			accessToken,
 			account,
+			accounts,
 		});
 
 	it('stores the subscription link on the account the delivery is for', async () => {
@@ -146,6 +148,51 @@ describe('managed oauth delivery by account identity', () => {
 		expect(await km('a').get_access_token()).toBe('at-new');
 	});
 
+	// An account connected before accounts had names, then a second one added:
+	// the hub's list says the unnamed row is the first account, not the new one.
+	it('a new account beside an unnamed one is added, and the unnamed one takes its name', async () => {
+		await deliver('at-first');
+		const both = [
+			{ id: 'a', label: 'a@x.com' },
+			{ id: 'b', label: 'b@x.com' },
+		];
+		await deliver('at-second', { id: 'b', label: 'b@x.com' }, both);
+		expect(await rows()).toHaveLength(2);
+		expect(await km('a').get_access_token()).toBe('at-first');
+		expect(await km('b').get_access_token()).toBe('at-second');
+	});
+
+	// The hub holds a second account whose delivery never landed: the unnamed
+	// row is still the first account's, so reconnecting it keeps that row.
+	it('reconnecting the first account adopts the unnamed row even when the hub knows another', async () => {
+		await deliver('at-first');
+		await deliver('at-first-again', { id: 'a', label: 'a@x.com' }, [
+			{ id: 'a', label: 'a@x.com' },
+			{ id: 'b', label: 'b@x.com' },
+		]);
+		expect(await rows()).toHaveLength(1);
+		expect(await km('a').get_access_token()).toBe('at-first-again');
+	});
+
+	// Setup leaves an empty row; it holds no account, so the delivery takes it.
+	it('an empty unnamed row from setup is taken by the delivered account, not named after another', async () => {
+		await deliver('at-b', { id: 'b', label: 'b@x.com' }, [
+			{ id: 'a', label: 'a@x.com' },
+			{ id: 'b', label: 'b@x.com' },
+		]);
+		expect(await rows()).toHaveLength(1);
+		expect(await km('b').get_access_token()).toBe('at-b');
+	});
+
+	it('an unnamed row is still adopted when the hub knows only the account being delivered', async () => {
+		await deliver('at-legacy');
+		await deliver('at-new', { id: 'a', label: 'a@x.com' }, [
+			{ id: 'a', label: 'a@x.com' },
+		]);
+		expect(await rows()).toHaveLength(1);
+		expect(await km('a').get_access_token()).toBe('at-new');
+	});
+
 	it('a sixth account is refused with ManagedOAuthDeliveryError account_limit and the existing five are untouched', async () => {
 		for (const n of [1, 2, 3, 4, 5]) {
 			await deliver(`at-${n}`, { id: `id${n}` });
@@ -189,6 +236,28 @@ describe('managed oauth delivery by account identity', () => {
 		);
 		expect(ack.status).toBe('ok');
 		expect(await km('a@x.com').get_access_token()).toBe('at-tunnel');
+	});
+
+	it('tunnel oauth.tokens payload carries the hub account list to the delivery', async () => {
+		await deliver('at-first');
+		const { body, headers } = signDeliveryEnvelope({
+			projectId: 'proj_acc',
+			signingSecret: SECRET,
+			type: 'oauth.tokens',
+			payload: {
+				plugin: 'gmail',
+				tenantId: 't1',
+				accessToken: 'at-second',
+				account: { id: 'b', label: 'b@x.com' },
+				accounts: [
+					{ id: 'a', label: 'a@x.com' },
+					{ id: 'b', label: 'b@x.com' },
+				],
+			},
+		});
+		await processCorsair(corsair, { headers, body }, { signingSecret: SECRET });
+		expect(await rows()).toHaveLength(2);
+		expect(await km('a').get_access_token()).toBe('at-first');
 	});
 
 	it('a payload with no account behaves as before', async () => {
