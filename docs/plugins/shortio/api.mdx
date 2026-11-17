@@ -1,0 +1,825 @@
+---
+title: "Short.io API reference"
+sidebarTitle: "API"
+description: "API reference for the Short.io plugin in Corsair: every `shortio.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Domains
+
+### get
+
+`domains.get`
+
+Get a domain by its ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.shortio.api.domains.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domainId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `hostname` | `string` | Yes | — |
+| `unicodeHostname` | `string \| null` | No | — |
+| `state` | `extra_records \| not_registered \| configured \| not_configured \| registration_pending \| not_verified \| string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `TeamId` | `number \| null` | No | — |
+| `hasFavicon` | `boolean \| null` | No | — |
+| `segmentKey` | `string \| null` | No | — |
+| `hideReferer` | `boolean \| null` | No | — |
+| `linkType` | `increment \| random \| secure \| four-char \| eight-char \| ten-char \| string \| null` | No | — |
+| `cloaking` | `boolean \| null` | No | — |
+| `hideVisitorIp` | `boolean \| null` | No | — |
+| `enableAI` | `boolean \| null` | No | — |
+| `httpsLevel` | `none \| redirect \| hsts \| string \| null` | No | — |
+| `httpsLinks` | `boolean \| null` | No | — |
+| `redirect404` | `string \| null` | No | — |
+| `webhookURL` | `string \| null` | No | — |
+| `integrationGA` | `string \| null` | No | — |
+| `integrationFB` | `string \| null` | No | — |
+| `integrationAdroll` | `string \| null` | No | — |
+| `integrationGTM` | `string \| null` | No | — |
+| `clientStorage` | `Record<string, any> \| null` | No | — |
+| `caseSensitive` | `boolean \| null` | No | — |
+| `incrementCounter` | `string \| number \| null` | No | — |
+| `robots` | `allow \| disallow \| noindex \| string \| null` | No | — |
+| `sslCertExpirationDate` | `string \| null` | No | — |
+| `sslCertInstalledSuccess` | `boolean \| null` | No | — |
+| `domainRegistrationId` | `number \| null` | No | — |
+| `UserId` | `number \| null` | No | — |
+| `exportEnabled` | `boolean \| null` | No | — |
+| `isFavorite` | `boolean \| null` | No | — |
+| `ipExclusions` | `string[] \| null` | No | — |
+| `userPlan` | `tiny \| hobby \| small \| standard \| large \| string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`domains.list`
+
+List domains with limit and offset.
+
+**Risk:** `read`
+
+```ts
+await corsair.shortio.api.domains.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `noTeamId` | `boolean` | No | — |
+| `pattern` | `string` | No | — |
+| `teamId` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  hostname: string,
+  unicodeHostname?: string | null,
+  state?: extra_records | not_registered | configured | not_configured | registration_pending | not_verified | string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  TeamId?: number | null,
+  hasFavicon?: boolean | null,
+  segmentKey?: string | null,
+  hideReferer?: boolean | null,
+  linkType?: increment | random | secure | four-char | eight-char | ten-char | string | null,
+  cloaking?: boolean | null,
+  hideVisitorIp?: boolean | null,
+  enableAI?: boolean | null,
+  httpsLevel?: none | redirect | hsts | string | null,
+  httpsLinks?: boolean | null,
+  redirect404?: string | null,
+  webhookURL?: string | null,
+  integrationGA?: string | null,
+  integrationFB?: string | null,
+  integrationAdroll?: string | null,
+  integrationGTM?: string | null,
+  clientStorage?: Record<string, any> | null,
+  caseSensitive?: boolean | null,
+  incrementCounter?: string | number | null,
+  robots?: allow | disallow | noindex | string | null,
+  sslCertExpirationDate?: string | null,
+  sslCertInstalledSuccess?: boolean | null,
+  domainRegistrationId?: number | null,
+  UserId?: number | null,
+  exportEnabled?: boolean | null,
+  isFavorite?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Links
+
+### archive
+
+`links.archive`
+
+Archive a link.
+
+**Risk:** `write`
+
+```ts
+await corsair.shortio.api.links.archive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `link_id` | `string` | Yes | — |
+| `domain_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+### archiveBulk
+
+`links.archiveBulk`
+
+Archive up to 150 links.
+
+**Risk:** `write`
+
+```ts
+await corsair.shortio.api.links.archiveBulk({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `link_ids` | `string[]` | Yes | — |
+| `domain_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+### create
+
+`links.create`
+
+Create a branded short link.
+
+**Risk:** `write`
+
+```ts
+await corsair.shortio.api.links.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cloaking` | `boolean` | No | — |
+| `password` | `string` | No | — |
+| `expiresAt` | `string \| number \| null` | No | — |
+| `expiredURL` | `string \| null` | No | — |
+| `title` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `utmSource` | `string` | No | — |
+| `utmMedium` | `string` | No | — |
+| `utmCampaign` | `string` | No | — |
+| `utmTerm` | `string` | No | — |
+| `utmContent` | `string` | No | — |
+| `ttl` | `string \| number \| null` | No | — |
+| `path` | `string \| null` | No | — |
+| `androidURL` | `string \| null` | No | — |
+| `iphoneURL` | `string \| null` | No | — |
+| `createdAt` | `string \| number \| null` | No | — |
+| `clicksLimit` | `number \| null` | No | — |
+| `passwordContact` | `boolean \| null` | No | — |
+| `skipQS` | `boolean` | No | — |
+| `archived` | `boolean` | No | — |
+| `splitURL` | `string \| null` | No | — |
+| `splitPercent` | `number \| null` | No | — |
+| `integrationAdroll` | `string \| null` | No | — |
+| `integrationFB` | `string \| null` | No | — |
+| `integrationGA` | `string \| null` | No | — |
+| `integrationGTM` | `string \| null` | No | — |
+| `redirectType` | `301 \| 302 \| 307 \| 308 \| null` | No | — |
+| `originalURL` | `string` | Yes | — |
+| `domain` | `string` | Yes | — |
+| `allowDuplicates` | `boolean` | No | — |
+| `folderId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `originalURL` | `string` | Yes | — |
+| `path` | `string \| null` | Yes | — |
+| `idString` | `string` | Yes | — |
+| `id` | `string \| number` | Yes | — |
+| `shortURL` | `string` | Yes | — |
+| `secureShortURL` | `string` | Yes | — |
+| `cloaking` | `boolean \| null` | No | — |
+| `password` | `string \| null` | No | — |
+| `expiresAt` | `string \| number \| null` | No | — |
+| `expiredURL` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `utmSource` | `string \| null` | No | — |
+| `utmMedium` | `string \| null` | No | — |
+| `utmCampaign` | `string \| null` | No | — |
+| `utmTerm` | `string \| null` | No | — |
+| `utmContent` | `string \| null` | No | — |
+| `ttl` | `string \| number \| null` | No | — |
+| `androidURL` | `string \| null` | No | — |
+| `iphoneURL` | `string \| null` | No | — |
+| `createdAt` | `string \| number \| null` | No | — |
+| `clicksLimit` | `number \| null` | No | — |
+| `passwordContact` | `boolean \| null` | No | — |
+| `skipQS` | `boolean \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `splitURL` | `string \| null` | No | — |
+| `splitPercent` | `number \| null` | No | — |
+| `integrationAdroll` | `string \| null` | No | — |
+| `integrationFB` | `string \| null` | No | — |
+| `integrationGA` | `string \| null` | No | — |
+| `integrationGTM` | `string \| null` | No | — |
+| `redirectType` | `string \| number \| null` | No | — |
+| `FolderId` | `string \| null` | No | — |
+| `DomainId` | `number \| null` | No | — |
+| `OwnerId` | `number \| null` | No | — |
+| `hasPassword` | `boolean \| null` | No | — |
+| `User` | `object \| null` | No | — |
+| `success` | `boolean` | No | — |
+| `duplicate` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="User full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  email?: string | null,
+  photoURL?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`links.delete`
+
+Delete a link by its ID.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.shortio.api.links.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `link_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `idString` | `string` | No | — |
+
+
+
+---
+
+### deleteBulk
+
+`links.deleteBulk`
+
+Delete up to 150 links.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.shortio.api.links.deleteBulk({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `link_ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+### expand
+
+`links.expand`
+
+Expand a short link by domain and path.
+
+**Risk:** `read`
+
+```ts
+await corsair.shortio.api.links.expand({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `originalURL` | `string` | Yes | — |
+| `path` | `string \| null` | Yes | — |
+| `idString` | `string` | Yes | — |
+| `id` | `string \| number` | Yes | — |
+| `shortURL` | `string` | Yes | — |
+| `secureShortURL` | `string` | Yes | — |
+| `cloaking` | `boolean \| null` | No | — |
+| `password` | `string \| null` | No | — |
+| `expiresAt` | `string \| number \| null` | No | — |
+| `expiredURL` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `utmSource` | `string \| null` | No | — |
+| `utmMedium` | `string \| null` | No | — |
+| `utmCampaign` | `string \| null` | No | — |
+| `utmTerm` | `string \| null` | No | — |
+| `utmContent` | `string \| null` | No | — |
+| `ttl` | `string \| number \| null` | No | — |
+| `androidURL` | `string \| null` | No | — |
+| `iphoneURL` | `string \| null` | No | — |
+| `createdAt` | `string \| number \| null` | No | — |
+| `clicksLimit` | `number \| null` | No | — |
+| `passwordContact` | `boolean \| null` | No | — |
+| `skipQS` | `boolean \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `splitURL` | `string \| null` | No | — |
+| `splitPercent` | `number \| null` | No | — |
+| `integrationAdroll` | `string \| null` | No | — |
+| `integrationFB` | `string \| null` | No | — |
+| `integrationGA` | `string \| null` | No | — |
+| `integrationGTM` | `string \| null` | No | — |
+| `redirectType` | `string \| number \| null` | No | — |
+| `FolderId` | `string \| null` | No | — |
+| `DomainId` | `number \| null` | No | — |
+| `OwnerId` | `number \| null` | No | — |
+| `hasPassword` | `boolean \| null` | No | — |
+| `User` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="User full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  email?: string | null,
+  photoURL?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`links.get`
+
+Get a link by its ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.shortio.api.links.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `linkId` | `string` | Yes | — |
+| `domainId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `originalURL` | `string` | Yes | — |
+| `path` | `string \| null` | Yes | — |
+| `idString` | `string` | Yes | — |
+| `id` | `string \| number` | Yes | — |
+| `shortURL` | `string` | Yes | — |
+| `secureShortURL` | `string` | Yes | — |
+| `cloaking` | `boolean \| null` | No | — |
+| `password` | `string \| null` | No | — |
+| `expiresAt` | `string \| number \| null` | No | — |
+| `expiredURL` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `utmSource` | `string \| null` | No | — |
+| `utmMedium` | `string \| null` | No | — |
+| `utmCampaign` | `string \| null` | No | — |
+| `utmTerm` | `string \| null` | No | — |
+| `utmContent` | `string \| null` | No | — |
+| `ttl` | `string \| number \| null` | No | — |
+| `androidURL` | `string \| null` | No | — |
+| `iphoneURL` | `string \| null` | No | — |
+| `createdAt` | `string \| number \| null` | No | — |
+| `clicksLimit` | `number \| null` | No | — |
+| `passwordContact` | `boolean \| null` | No | — |
+| `skipQS` | `boolean \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `splitURL` | `string \| null` | No | — |
+| `splitPercent` | `number \| null` | No | — |
+| `integrationAdroll` | `string \| null` | No | — |
+| `integrationFB` | `string \| null` | No | — |
+| `integrationGA` | `string \| null` | No | — |
+| `integrationGTM` | `string \| null` | No | — |
+| `redirectType` | `string \| number \| null` | No | — |
+| `FolderId` | `string \| null` | No | — |
+| `DomainId` | `number \| null` | No | — |
+| `OwnerId` | `number \| null` | No | — |
+| `hasPassword` | `boolean \| null` | No | — |
+| `User` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="User full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  email?: string | null,
+  photoURL?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`links.list`
+
+List links for a domain with cursor pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.shortio.api.links.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain_id` | `number` | Yes | — |
+| `limit` | `number \| null` | No | — |
+| `idString` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `beforeDate` | `string` | No | — |
+| `afterDate` | `string` | No | — |
+| `dateSortOrder` | `asc \| desc` | No | — |
+| `pageToken` | `string` | No | — |
+| `folderId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | Yes | — |
+| `links` | `object[]` | Yes | — |
+| `nextPageToken` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  originalURL: string,
+  path: string | null,
+  idString: string,
+  id: string | number,
+  shortURL: string,
+  secureShortURL: string,
+  cloaking?: boolean | null,
+  password?: string | null,
+  expiresAt?: string | number | null,
+  expiredURL?: string | null,
+  title?: string | null,
+  tags?: string[] | null,
+  utmSource?: string | null,
+  utmMedium?: string | null,
+  utmCampaign?: string | null,
+  utmTerm?: string | null,
+  utmContent?: string | null,
+  ttl?: string | number | null,
+  androidURL?: string | null,
+  iphoneURL?: string | null,
+  createdAt?: string | number | null,
+  clicksLimit?: number | null,
+  passwordContact?: boolean | null,
+  skipQS?: boolean | null,
+  archived?: boolean | null,
+  splitURL?: string | null,
+  splitPercent?: number | null,
+  integrationAdroll?: string | null,
+  integrationFB?: string | null,
+  integrationGA?: string | null,
+  integrationGTM?: string | null,
+  redirectType?: string | number | null,
+  FolderId?: string | null,
+  DomainId?: number | null,
+  OwnerId?: number | null,
+  hasPassword?: boolean | null,
+  User?: {
+    id?: number | null,
+    name?: string | null,
+    email?: string | null,
+    photoURL?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unarchive
+
+`links.unarchive`
+
+Unarchive a link.
+
+**Risk:** `write`
+
+```ts
+await corsair.shortio.api.links.unarchive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `link_id` | `string` | Yes | — |
+| `domain_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+### unarchiveBulk
+
+`links.unarchiveBulk`
+
+Unarchive up to 150 links.
+
+**Risk:** `write`
+
+```ts
+await corsair.shortio.api.links.unarchiveBulk({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `link_ids` | `string[]` | Yes | — |
+| `domain_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`links.update`
+
+Update a link by its ID.
+
+**Risk:** `write`
+
+```ts
+await corsair.shortio.api.links.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `linkId` | `string` | Yes | — |
+| `domain_id` | `string` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  cloaking?: boolean,
+  password?: string,
+  expiresAt?: string | number | null,
+  expiredURL?: string | null,
+  title?: string,
+  tags?: string[],
+  utmSource?: string,
+  utmMedium?: string,
+  utmCampaign?: string,
+  utmTerm?: string,
+  utmContent?: string,
+  ttl?: string | number | null,
+  path?: string | null,
+  androidURL?: string | null,
+  iphoneURL?: string | null,
+  createdAt?: string | number | null,
+  clicksLimit?: number | null,
+  passwordContact?: boolean | null,
+  skipQS?: boolean,
+  archived?: boolean,
+  splitURL?: string | null,
+  splitPercent?: number | null,
+  integrationAdroll?: string | null,
+  integrationFB?: string | null,
+  integrationGA?: string | null,
+  integrationGTM?: string | null,
+  redirectType?: 301 | 302 | 307 | 308 | null,
+  originalURL?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `originalURL` | `string` | Yes | — |
+| `path` | `string \| null` | Yes | — |
+| `idString` | `string` | Yes | — |
+| `id` | `string \| number` | Yes | — |
+| `shortURL` | `string` | Yes | — |
+| `secureShortURL` | `string` | Yes | — |
+| `cloaking` | `boolean \| null` | No | — |
+| `password` | `string \| null` | No | — |
+| `expiresAt` | `string \| number \| null` | No | — |
+| `expiredURL` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `utmSource` | `string \| null` | No | — |
+| `utmMedium` | `string \| null` | No | — |
+| `utmCampaign` | `string \| null` | No | — |
+| `utmTerm` | `string \| null` | No | — |
+| `utmContent` | `string \| null` | No | — |
+| `ttl` | `string \| number \| null` | No | — |
+| `androidURL` | `string \| null` | No | — |
+| `iphoneURL` | `string \| null` | No | — |
+| `createdAt` | `string \| number \| null` | No | — |
+| `clicksLimit` | `number \| null` | No | — |
+| `passwordContact` | `boolean \| null` | No | — |
+| `skipQS` | `boolean \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `splitURL` | `string \| null` | No | — |
+| `splitPercent` | `number \| null` | No | — |
+| `integrationAdroll` | `string \| null` | No | — |
+| `integrationFB` | `string \| null` | No | — |
+| `integrationGA` | `string \| null` | No | — |
+| `integrationGTM` | `string \| null` | No | — |
+| `redirectType` | `string \| number \| null` | No | — |
+| `FolderId` | `string \| null` | No | — |
+| `DomainId` | `number \| null` | No | — |
+| `OwnerId` | `number \| null` | No | — |
+| `hasPassword` | `boolean \| null` | No | — |
+| `User` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="User full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  email?: string | null,
+  photoURL?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

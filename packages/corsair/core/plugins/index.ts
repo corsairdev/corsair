@@ -189,6 +189,12 @@ export type PluginPermissionsConfig<T extends EndpointTree = EndpointTree> = {
 	 * Only valid paths for this specific plugin compile — typos are type errors.
 	 */
 	overrides?: Partial<Record<EndpointPathsOf<T>, PermissionPolicy>>;
+	/**
+	 * A mode per account, keyed by its id or ref (e.g. its email). It
+	 * stands in for `mode` on that account's calls; the caller's mode still
+	 * tightens either.
+	 */
+	accounts?: Record<string, PermissionMode>;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -565,6 +571,14 @@ export type CorsairPlugin<
 	 */
 	keyBuilder?: CorsairKeyBuilder<Options, AuthConfig>;
 	/**
+	 * When an endpoint fails with HTTP 401 and does not refresh the token
+	 * itself, core refreshes it once (through the keyBuilder's `_refreshAuth`)
+	 * and calls the endpoint again. Set false for a plugin whose endpoints
+	 * decide on their own which 401s are worth a refresh.
+	 * @default true
+	 */
+	refreshOnUnauthorized?: boolean;
+	/**
 	 * @internal Type-only field for inference. Do not set at runtime.
 	 * Specifies the default auth type when authType is optional and not provided.
 	 */
@@ -804,6 +818,11 @@ export type CorsairIntegration<Plugins extends readonly CorsairPlugin[]> = {
 	plugins: Plugins;
 	/** If true, enables tenant-scoped access via `withTenant()` */
 	multiTenancy?: boolean;
+	/**
+	 * Allow several accounts per tenant and plugin. Off (default): one account,
+	 * and connecting a different identity replaces it.
+	 */
+	multiAccount?: boolean;
 	/** Root-level error handlers that apply when plugin-specific handlers are not defined */
 	errorHandlers?: CorsairErrorHandler;
 	/**

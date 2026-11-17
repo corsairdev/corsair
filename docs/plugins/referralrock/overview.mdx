@@ -6,7 +6,7 @@ description: "Referral program management with Referral Rock - read programs, ad
 
 Use **Referral Rock** through Corsair: one client, typed API calls.
 
-Create a key under **Settings > API Keys** in the Referral Rock dashboard. Referral Rock shows a **public** key, a **private** key (once only) and a **Basic Auth Key**. Store either `publicKey:privateKey` or the Basic Auth Key as the plugin's API key. Things to know before you call:
+Create a key under **Settings &gt; API Keys** in the Referral Rock dashboard. Referral Rock shows a **public** key, a **private** key (once only) and a **Basic Auth Key**. Store either `publicKey:privateKey` or the Basic Auth Key as the plugin's API key. Things to know before you call:
 
 - **The credential is Basic with both keys.** The public key is the username and the private key the password; a single key with an empty password answers 401. The plugin builds the `Authorization` header from the stored value.
 - **Two different 401 bodies.** A request with no credential answers a JSON wrapper, `{ response: { status_code, status_message, body } }`. A credential the host rejects answers **HTML** before the request reaches the API, so the status is all there is. The plugin reads both.
@@ -76,7 +76,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+Store the Referral Rock API key before the first call: `pnpm corsair setup --plugin=referralrock --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
 
 ```ts
 referralrock()

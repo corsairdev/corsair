@@ -1,0 +1,239 @@
+{
+  "id": "ip2proxy",
+  "displayName": "IP2Proxy",
+  "description": "Detect whether an IP address is a proxy, VPN, Tor exit, or data-center address, and return the location fields for the selected package.",
+  "npmPackageName": "@corsair-dev/ip2proxy",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 2,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "ip2proxy.api.account.getCredits",
+      "shortPath": "account.getCredits",
+      "description": "Get the credits left on the API key. The balance lags by about 10 minutes.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "response",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ip2proxy.api.proxy.checkProxy",
+      "shortPath": "proxy.checkProxy",
+      "description": "Check whether an IP address is a proxy, VPN, Tor exit, or data-center address.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip",
+            "optional": true,
+            "type": "string",
+            "description": "IPv4 or IPv6 address. Omit it and the service looks up the caller address."
+          },
+          {
+            "key": "package",
+            "optional": true,
+            "type": "PX1 | PX2 | PX3 | PX4 | PX5 | PX6 | PX7 | PX8 | PX9 | PX10 | PX11",
+            "description": "PX1 through PX11. Omit it and the service uses PX1. PX1 spends 1 credit and PX11 spends 11."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "response",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "countryCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "countryName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "regionName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cityName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "usageType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asn",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "as",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastSeen",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "proxyType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isProxy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "threat",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creditsConsumed",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "ip2proxy.db.checks.search",
+      "entityName": "checks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ip",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "response",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "countryCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "countryName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "regionName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cityName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isp",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "usageType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "as",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "proxyType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isProxy",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "threat",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "provider",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "creditsConsumed",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}

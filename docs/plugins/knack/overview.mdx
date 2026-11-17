@@ -8,7 +8,7 @@ Use **Knack** through Corsair: one client, typed API calls.
 
 Knack issues a per-app Application ID and API key, and every request carries both headers. Connect with the pair together: an account connects to one Knack app, because both values identify that app.
 
-- **Where the pair comes from.** An account Owner copies both from the Builder under **Settings > API** (Next-Gen apps: **Settings > API & Code > API**). The same page shows the plan's daily call limit.
+- **Where the pair comes from.** An account Owner copies both from the Builder under **Settings &gt; API** (Next-Gen apps: **Settings &gt; API & Code &gt; API**). The same page shows the plan's daily call limit.
 - **Field names, not labels.** Knack stores each column as `field_1`, `field_2`, and so on. `applications.get` and `objects.get` return each field's key beside its name, so read those first to learn which `field_N` to send.
 - **Read-only mirrors.** Every value comes back twice: `field_23` is the display string and `field_23_raw` is the typed form. Only the plain `field_N` is writable; the plugin rejects a `_raw` or `_html` key in a write rather than sending it.
 - **A missing record is not a 404.** Knack answers 200 with an empty records list for an id that does not exist, and 200 with `{}` for an object key that is not in the app. `records.get` and `objects.get` raise on those answers, so a missing record cannot look like one with no fields.
@@ -76,7 +76,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+Store the Knack API key before the first call: `pnpm corsair setup --plugin=knack --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
 
 ```ts
 knack()

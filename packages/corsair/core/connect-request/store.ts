@@ -6,6 +6,7 @@ import {
 	sealJson,
 } from '../../db/data-at-rest';
 import type { CorsairDatabase } from '../../db/kysely/database';
+import { findAccountRow } from '../account-lookup';
 import type { ConnectRequest } from '../management/types';
 
 // A connect-request is the bridge between a server-side auth-missing failure and
@@ -52,12 +53,10 @@ async function resolveAccountId(
 		.executeTakeFirst();
 	if (!integration) return null;
 
-	const account = await database.db
-		.selectFrom('corsair_accounts')
-		.select('id')
-		.where('tenant_id', '=', tenantId)
-		.where('integration_id', '=', integration.id)
-		.executeTakeFirst();
+	const account = await findAccountRow(database.db, {
+		tenantId,
+		integrationId: integration.id,
+	});
 	return account?.id ?? null;
 }
 

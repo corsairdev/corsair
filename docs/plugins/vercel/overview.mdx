@@ -1,14 +1,24 @@
 ---
 title: "Vercel plugin"
 sidebarTitle: "Overview"
-description: "Frontend cloud platform for deploying sites, serverless functions, and edge web applications."
+description: "Manage Vercel projects, deployments, environment variables, domains, DNS, aliases, teams, webhooks and Edge Config."
 ---
 
 Use **Vercel** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
 
+The plugin calls Vercel's REST API (`https://api.vercel.com`) with a bearer token. Things to know before you call it:
+
+- **Access token.** Create one under [Account Settings → Tokens](https://vercel.com/account/settings/tokens). Pick the team it may reach (or full account) and an expiry. It's the connection's API key; in code you can pass it as `key`.
+- **Teams.** Most resources belong to a team. Every operation takes an optional `teamId`, which can be the team id (`team_…`) or its slug. Without it, a call uses the connection's `team_id` field, then the plugin's `teamId` option, then the token's own scope (your default team). `teams.getTeams` lists the teams a token can reach.
+- **OAuth.** `authType: 'oauth_2'` and `'managed'` send an OAuth access token. An integration install token (from Vercel's integration flow) never expires; the team the install was made for is saved as the connection's `team_id` automatically. A token that expires (Sign in with Vercel) is refreshed through Corsair.
+- **Paging.** List operations that take `limit`, `since` and `until` (timestamps in ms) page by time: pass the previous page's `pagination.next` as `until` to get the next page. `envs.getEnvVariables` and the Edge Config lists return everything in one call.
+- **Rate limits.** Vercel answers 429 with `Retry-After`; Corsair waits and retries up to three times.
+- **Secrets.** `envs.getEnvVariable` returns a variable's decrypted value; list operations return most values encrypted. Env values, file contents and webhook secrets are kept out of the event log and the local store.
+- **Can't be undone.** Deleting a project, a deployment or an environment variable is permanent. Promotions and rollbacks can be reversed with another promotion.
+
 **What you get:**
 
-- 14 typed API operations
+- 55 typed API operations
 - 6 synced entities (`aliases`, `deployments`, `domains`, `envs`, `projects`, `teams`) for fast `.search()` / `.list()`
 - 4 incoming webhook event types
 
@@ -66,7 +76,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+Store the Vercel API key before the first call: `pnpm corsair setup --plugin=vercel --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
 
 Provider walkthrough: [Get Credentials](/plugins/vercel/get-credentials).
 
@@ -75,6 +85,36 @@ vercel()
 ```
 
 More: [API Key](/concepts/api-key)
+
+</Tab>
+<Tab title="Managed OAuth">
+
+No setup required. Corsair hosts the OAuth app for **Vercel** — your tenants connect through Hub when they sign in.
+
+Provider walkthrough: [Get Credentials](/plugins/vercel/get-credentials).
+
+```ts
+vercel({
+	authType: 'managed',
+})
+```
+
+More: [Managed OAuth](/concepts/auth#managed)
+
+</Tab>
+<Tab title="OAuth 2.0">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Vercel OAuth app.
+
+Provider walkthrough: [Get Credentials](/plugins/vercel/get-credentials).
+
+```ts
+vercel({
+	authType: 'oauth_2',
+})
+```
+
+More: [OAuth 2.0](/concepts/oauth)
 
 </Tab>
 </Tabs>
@@ -98,19 +138,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`aliases.getAliases`**
+**List projects**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.vercel.api.aliases.getAliases({});
+await tenant.vercel.api.projects.getProjects({ limit: 10 });
 ```
 
 
-**`aliases.assignAlias`**
+**Change a project's build command**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.vercel.api.aliases.assignAlias({});
+await tenant.vercel.api.projects.updateProject({ idOrName: 'my-site', buildCommand: 'pnpm build' });
 ```
 
 
@@ -118,9 +158,17 @@ See the full list on the [API](/plugins/vercel/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.vercel.db.<entity>.search()` and `.list()`: `aliases`, `deployments`, `domains`, `envs`, `projects`, `teams`.
+Projects fetched through the API are stored locally (without their environment variable values).
 
-See [Database](/plugins/vercel/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.vercel.db.projects.search({
+	data: { name: 'my-site' },
+	limit: 50,
+});
+```
+
+Synced entities: `aliases`, `deployments`, `domains`, `envs`, `projects`, `teams`. See [Database](/plugins/vercel/database) for filters and operators.
 
 ## Webhooks
 

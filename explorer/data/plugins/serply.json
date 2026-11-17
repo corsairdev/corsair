@@ -1,0 +1,821 @@
+{
+  "id": "serply",
+  "displayName": "Serply",
+  "description": "Search Google (web, news, images, videos, maps, jobs, Scholar), Bing, products and eBay, read Reddit, and fetch web pages as markdown through Serply. The key is sent in X-Api-Key.",
+  "npmPackageName": "@corsair-dev/serply",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 16,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "serply.api.articles.search",
+      "shortPath": "articles.search",
+      "description": "Search Google Scholar articles and store them. Each uncached call spends Serply credits.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "num",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, up to 200"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-based offset for the next page"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "articles",
+            "optional": false,
+            "type": "{ id: string, title?: string, link?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serply.api.bing.search",
+      "shortPath": "bing.search",
+      "description": "Search Bing. Each uncached call spends Serply credits.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "proxy_location",
+            "optional": true,
+            "type": "EU | CA | US | IE | GB | FR | DE | SE | IN | JP | KR | SG | AU | BR",
+            "description": "Region the search runs from (X-Proxy-Location)"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | mobile",
+            "description": "Device Google sees (X-User-Agent); desktop by default"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ title?: string | null, link?: string | null, description?: string | null, position?: number | null, realPosition?: number | null, result_type?: string | null }[]"
+          },
+          {
+            "key": "ads",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "shoppingAds",
+            "optional": true,
+            "type": "{}[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serply.api.ebay.search",
+      "shortPath": "ebay.search",
+      "description": "Search eBay listings with price, condition and seller. Each uncached call spends Serply credits.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "proxy_location",
+            "optional": true,
+            "type": "EU | CA | US | IE | GB | FR | DE | SE | IN | JP | KR | SG | AU | BR",
+            "description": "Region the search runs from (X-Proxy-Location)"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | mobile",
+            "description": "Device Google sees (X-User-Agent); desktop by default"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ title?: string | null, link?: string | null, description?: string | null, position?: number | null, realPosition?: number | null, result_type?: string | null }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serply.api.images.search",
+      "shortPath": "images.search",
+      "description": "Search Google Images (up to 20 per call) and store the results. Each uncached call spends Serply credits.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "num",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "images",
+            "optional": false,
+            "type": "{ id: string, src?: string, alt?: string, title?: string, domain?: string, originalSrc?: string, width?: string, height?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serply.api.jobs.search",
+      "shortPath": "jobs.search",
+      "description": "Search Google Jobs by title and location. Each uncached call spends Serply credits.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "proxy_location",
+            "optional": true,
+            "type": "EU | CA | US | IE | GB | FR | DE | SE | IN | JP | KR | SG | AU | BR",
+            "description": "Region the search runs from (X-Proxy-Location)"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | mobile",
+            "description": "Device Google sees (X-User-Agent); desktop by default"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobs",
+            "optional": false,
+            "type": "{ position?: string | null, employer?: string | null, location?: string | null, link?: string | null, posted_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serply.api.news.search",
+      "shortPath": "news.search",
+      "description": "Search Google News, optionally resolving links to the publisher URL. Each uncached call spends Serply credits.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ceid",
+            "optional": true,
+            "type": "string",
+            "description": "Country and language edition, e.g. US:en or GB:en"
+          },
+          {
+            "key": "resolve_links",
+            "optional": true,
+            "type": "boolean",
+            "description": "Replace Google News redirect links with the publisher URL (2-3 s slower)"
+          },
+          {
+            "key": "proxy_location",
+            "optional": true,
+            "type": "EU | CA | US | IE | GB | FR | DE | SE | IN | JP | KR | SG | AU | BR",
+            "description": "Region the search runs from (X-Proxy-Location)"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | mobile",
+            "description": "Device Google sees (X-User-Agent); desktop by default"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "feed",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "entries",
+            "optional": true,
+            "type": "{ title?: string | null, link?: string | null, published?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serply.api.pages.fetch",
+      "shortPath": "pages.fetch",
+      "description": "Fetch a web page through Serply as markdown or HTML. Each uncached call spends Serply credits.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Page to fetch"
+          },
+          {
+            "key": "response_type",
+            "optional": false,
+            "type": "markdown | full",
+            "description": "markdown (good for agents) or full HTML"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string",
+            "description": "Page content as markdown or HTML"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | null",
+            "description": "HTTP status of the fetched page"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{} | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serply.api.places.search",
+      "shortPath": "places.search",
+      "description": "Search Google Maps places and store them. Each uncached call spends Serply credits.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "places",
+            "optional": false,
+            "type": "{ id: string, name?: string, latitude?: number, longitude?: number, rating?: number, address?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serply.api.products.search",
+      "shortPath": "products.search",
+      "description": "Search products with prices, ratings and links. Each uncached call spends Serply credits.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "proxy_location",
+            "optional": true,
+            "type": "EU | CA | US | IE | GB | FR | DE | SE | IN | JP | KR | SG | AU | BR",
+            "description": "Region the search runs from (X-Proxy-Location)"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | mobile",
+            "description": "Device Google sees (X-User-Agent); desktop by default"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "products",
+            "optional": false,
+            "type": "{ title?: string | null, link?: string | null, price?: number | string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serply.api.reddit.comments",
+      "shortPath": "reddit.comments",
+      "description": "Get the comment thread of a Reddit post. Each uncached call spends Serply credits.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Post id from the post URL, e.g. 1vfemi1"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "confidence (default), top, new, ..."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ kind?: string | null, data: { after?: string | null, children?: { kind?: string | null, data?: {} | null }[] | null } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serply.api.reddit.post",
+      "shortPath": "reddit.post",
+      "description": "Get one Reddit post, optionally with its comments. Each uncached call spends Serply credits.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Post id from the post URL, e.g. 1vfemi1"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "with_comments",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "serply.api.reddit.subredditAbout",
+      "shortPath": "reddit.subredditAbout",
+      "description": "Get a subreddit description and subscriber count. Each uncached call spends Serply credits.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subreddit",
+            "optional": false,
+            "type": "string",
+            "description": "Subreddit name without r/"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "serply.api.reddit.subredditPosts",
+      "shortPath": "reddit.subredditPosts",
+      "description": "List posts in a subreddit, sorted and paged. Each uncached call spends Serply credits.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subreddit",
+            "optional": false,
+            "type": "string",
+            "description": "Subreddit name without r/"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "hot, new, top, ..."
+          },
+          {
+            "key": "t",
+            "optional": true,
+            "type": "hour | day | week | month | year | all",
+            "description": "Time window for top"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: the previous page data.after"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ after?: string | null, children?: { kind?: string | null, data?: {} | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serply.api.reddit.userPosts",
+      "shortPath": "reddit.userPosts",
+      "description": "List a Reddit user public posts and comments. Each uncached call spends Serply credits.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "Username without u/"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "hot, new, top, ..."
+          },
+          {
+            "key": "t",
+            "optional": true,
+            "type": "hour | day | week | month | year | all",
+            "description": "Time window for top"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: the previous page data.after"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ after?: string | null, children?: { kind?: string | null, data?: {} | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serply.api.videos.search",
+      "shortPath": "videos.search",
+      "description": "Search Google Videos. Each uncached call spends Serply credits.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "proxy_location",
+            "optional": true,
+            "type": "EU | CA | US | IE | GB | FR | DE | SE | IN | JP | KR | SG | AU | BR",
+            "description": "Region the search runs from (X-Proxy-Location)"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | mobile",
+            "description": "Device Google sees (X-User-Agent); desktop by default"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ title?: string | null, link?: string | null, description?: string | null, position?: number | null, realPosition?: number | null, result_type?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serply.api.web.search",
+      "shortPath": "web.search",
+      "description": "Search Google: organic results, ads, AI overview and related questions. Each uncached call spends Serply credits.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "Search terms; Google operators work"
+          },
+          {
+            "key": "num",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page; Google serves about 10 at most"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-based offset: 10 for the second page"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string",
+            "description": "Country code, e.g. us or de"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string",
+            "description": "Interface language, e.g. en"
+          },
+          {
+            "key": "proxy_location",
+            "optional": true,
+            "type": "EU | CA | US | IE | GB | FR | DE | SE | IN | JP | KR | SG | AU | BR",
+            "description": "Region the search runs from (X-Proxy-Location)"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | mobile",
+            "description": "Device Google sees (X-User-Agent); desktop by default"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ title?: string | null, link?: string | null, description?: string | null, position?: number | null, realPosition?: number | null, result_type?: string | null }[]"
+          },
+          {
+            "key": "ads",
+            "optional": true,
+            "type": "{ title?: string | null, link?: string | null, description?: string | null, position?: number | null, realPosition?: number | null, result_type?: string | null }[] | null"
+          },
+          {
+            "key": "ai_overview",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "related_questions",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "serply.db.articles.search",
+      "entityName": "articles",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "link",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "serply.db.images.search",
+      "entityName": "images",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "src",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "alt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "originalSrc",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "width",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "height",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "serply.db.places.search",
+      "entityName": "places",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "latitude",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "longitude",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "rating",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "address",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

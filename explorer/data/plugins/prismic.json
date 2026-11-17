@@ -1,0 +1,458 @@
+{
+  "id": "prismic",
+  "displayName": "Prismic",
+  "description": "Headless CMS API for querying published documents and migrating content into a repository.",
+  "npmPackageName": "@corsair-dev/prismic",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 5,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": [
+        "api_key",
+        "webhook_signature",
+        "repository",
+        "access_token"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "prismic.api.documents.get",
+      "shortPath": "documents.get",
+      "description": "Read one published document by id, at the master ref or a given one",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The document id."
+          },
+          {
+            "key": "ref",
+            "optional": true,
+            "type": "string",
+            "description": "Pins the query to a ref, such as a release preview. Defaults to the repository's master ref, which the plugin reads from the repository metadata first."
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string",
+            "description": "Only a document in this locale, such as `en-us`. Defaults to `*`, any locale."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null",
+            "description": "The custom type id."
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "slugs",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Absent on a document with no route set."
+          },
+          {
+            "key": "first_publication_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_publication_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "alternate_languages",
+            "optional": true,
+            "type": "{ id?: string | null, lang?: string | null, type?: string | null, uid?: string | null }[] | null"
+          },
+          {
+            "key": "linked_documents",
+            "optional": true,
+            "type": "JsonValue[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "prismic.api.documents.search",
+      "shortPath": "documents.search",
+      "description": "Query published documents with Prismic predicates, ordering, tags and locale at the master ref or a given one, paged by number or by `next_page`",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page number."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Documents per page. Prismic caps this at 100 on most plans, so a full page means another page may exist."
+          },
+          {
+            "key": "orderings",
+            "optional": true,
+            "type": "string",
+            "description": "An ordering such as `[my.page.date desc]`; several fields go comma-separated in one pair of brackets, such as `[my.page.date desc,my.page.title]`."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "A Prismic predicate expression such as `[[at(document.type, \"page\")]]`."
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string",
+            "description": "Only documents in this locale, such as `en-us`. Also accepts `*`."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only documents carrying every one of these tags. Sent as an `at(document.tags, [...])` predicate added to `q`."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "The `id` of the last document on the previous page; returns the documents after it, with the same `q`, `orderings` and other filters. More reliable than `page` for a changing dataset."
+          },
+          {
+            "key": "ref",
+            "optional": true,
+            "type": "string",
+            "description": "Pins the query to a ref, such as a release preview. Defaults to the repository's master ref, which the plugin reads from the repository metadata first."
+          },
+          {
+            "key": "nextPage",
+            "optional": true,
+            "type": "string",
+            "description": "The previous answer's `next_page`. It already carries the ref and every filter, so the other fields are ignored when it is set."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "results_per_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "results_size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_results_size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "string | null",
+            "description": "The absolute next page URL. Absent on the last page."
+          },
+          {
+            "key": "prev_page",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id?: string | null, uid?: string | null, type?: string | null, lang?: string | null, tags?: string[] | null, data?: Record<string, JsonValue> | null, slugs?: string[] | null, href?: string | null, url?: string | null, first_publication_date?: string | null, last_publication_date?: string | null, alternate_languages?: { id?: string | null, lang?: string | null, type?: string | null, uid?: string | null }[] | null, linked_documents?: JsonValue[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "prismic.api.migration.create",
+      "shortPath": "migration.create",
+      "description": "Create one page as a draft in a migration release. It is not published until the release is published, and Prismic accepts one page per request at one request per second",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string",
+            "description": "The display title shown in the page list."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string",
+            "description": "The custom type id."
+          },
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "string",
+            "description": "The document UID, unique within its type. Required if the type has one."
+          },
+          {
+            "key": "lang",
+            "optional": false,
+            "type": "string",
+            "description": "The locale code, such as `en-us`."
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>",
+            "description": "The document's fields and slices. Each key is a field or slice zone on the type."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "alternate_language_id",
+            "optional": true,
+            "type": "string",
+            "description": "The document this one translates."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "prismic.api.migration.update",
+      "shortPath": "migration.update",
+      "description": "Update one existing page. The type, locale and translation link cannot be changed, and omitting `tags` deletes them all",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The id of the document to update."
+          },
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "string",
+            "description": "The document UID, unique within its type. Required if the type has one."
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>",
+            "description": "The document's full content. Prismic requires it on every update and replaces the stored content with it."
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Replaces the existing tags; omitting it deletes them all."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "prismic.api.repository.info",
+      "shortPath": "repository.info",
+      "description": "Read the repository's refs, custom types, languages and tags. Document reads use the master ref unless given another one",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repository",
+            "optional": true,
+            "type": "string",
+            "description": "Overrides the plugin option for this call."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "refs",
+            "optional": false,
+            "type": "{ id?: string | null, ref?: string | null, label?: string | null, isMasterRef?: boolean | null }[]",
+            "description": "Every ref, including `master` and any open releases."
+          },
+          {
+            "key": "bookmarks",
+            "optional": true,
+            "type": "Record<string, string> | null",
+            "description": "Saved queries by name."
+          },
+          {
+            "key": "types",
+            "optional": true,
+            "type": "Record<string, string> | null",
+            "description": "Custom type ids to their display labels."
+          },
+          {
+            "key": "languages",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null }[] | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "integrationFieldsRef",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "license",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -1,0 +1,2807 @@
+{
+  "id": "thanksio",
+  "displayName": "Thanks.io",
+  "description": "Manage direct-mail recipients, mailing lists, orders, creatives, and webhook destinations with Thanks.io.",
+  "npmPackageName": "@corsair-dev/thanksio",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 52,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "thanksio.api.creatives.get",
+      "shortPath": "creatives.get",
+      "description": "Get a saved creative.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "creativeId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number, name?: string, mailer_type?: string | null, postcard_size?: string | null, sub_account_id?: number | null, source?: string | null, hidden?: boolean, default?: boolean, preview_image_url?: string | null, thumbnail_url?: string | null, share_url?: string | null, is_complete?: boolean, needs?: string[], image_template?: Record<string, any> | null, message_template?: Record<string, any> | null, back_background?: Record<string, any> | null, created_at?: string, updated_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.creatives.list",
+      "shortPath": "creatives.list",
+      "description": "List saved creatives.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sub_account_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "mailer_type",
+            "optional": true,
+            "type": "postcard | postcard6x9 | postcard6x11 | letter | windowlessletter | notecard | giftcard | magnacard"
+          },
+          {
+            "key": "complete_only",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_hidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number, name?: string, mailer_type?: string | null, postcard_size?: string | null, sub_account_id?: number | null, source?: string | null, hidden?: boolean, default?: boolean, preview_image_url?: string | null, thumbnail_url?: string | null, share_url?: string | null, is_complete?: boolean, needs?: string[], image_template?: Record<string, any> | null, message_template?: Record<string, any> | null, back_background?: Record<string, any> | null, created_at?: string, updated_at?: string }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ current_page?: number, from?: number | null, last_page?: number, path?: string, per_page?: number | string, to?: number | null, total?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.estimate.giftcard",
+      "shortPath": "estimate.giftcard",
+      "description": "Estimate gift-card costs without sending.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ preview?: boolean, mailing_list_ids?: number[], recipients?: { name?: string | null, company?: string | null, address?: string | null, address2?: string | null, city?: string | null, province?: string | null, postal_code?: string | null, country?: string | null, dob?: string | null, anniversary?: string | null, email?: string | null, phone?: string | null, custom1?: string | null, custom2?: string | null, custom3?: string | null, custom4?: string | null, custom5?: string | null, custom6?: string | null, custom7?: string | null, custom8?: string | null, custom9?: string | null, custom10?: string | null, absentee_address?: string | null, absentee_city?: string | null, absentee_province?: string | null, absentee_postal_code?: string | null }[], radius_search?: { preview?: boolean, address?: string, record_count?: number, record_types?: all | likelytomove | apartmentcomplex | likelytodownsize | likelytorefi | absenteeowner | highnetworth | majorityhomeequity | homefreeclear | underwater | kidsinhousehold | newhomeowner | firsttimehomebuyer | renters | retiring | retired | pool | onlybusinesses | newbusiness, include_condos?: boolean, append_data?: boolean, use_property_owner?: boolean, include_search_address?: boolean }, handwriting_style_id?: number, handwriting_color?: string, handwriting_realism?: boolean, sub_account?: number, notification_emails?: string, email_lookup?: boolean, postage_class?: first_class | standard, return_name?: string, return_address?: string, return_address2?: string, return_city?: string, return_state?: string, return_postal_code?: string, metadata?: Record<string, any> | null, creative_id?: number, image_template_id?: number, front_image_url?: string, message?: string, message_template_id?: number, giftcard_brand?: string, giftcard_amount_in_cents?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ type?: string, size?: string | null, total_recipients?: number, recipients?: { united_states?: number, international?: number }, pending_email_lookups?: number, costs_in_cents?: { united_states?: number, international?: number, additional_pages?: number, giftcard_face_value?: number, grand_total?: number }, total_cost_in_cents?: number, total_cost?: string, current_balance_in_cents?: number, covered_by_balance?: boolean, test_mode?: boolean, notes?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.estimate.magnacard",
+      "shortPath": "estimate.magnacard",
+      "description": "Estimate magnacard costs without sending.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ preview?: boolean, mailing_list_ids?: number[], recipients?: { name?: string | null, company?: string | null, address?: string | null, address2?: string | null, city?: string | null, province?: string | null, postal_code?: string | null, country?: string | null, dob?: string | null, anniversary?: string | null, email?: string | null, phone?: string | null, custom1?: string | null, custom2?: string | null, custom3?: string | null, custom4?: string | null, custom5?: string | null, custom6?: string | null, custom7?: string | null, custom8?: string | null, custom9?: string | null, custom10?: string | null, absentee_address?: string | null, absentee_city?: string | null, absentee_province?: string | null, absentee_postal_code?: string | null }[], radius_search?: { preview?: boolean, address?: string, record_count?: number, record_types?: all | likelytomove | apartmentcomplex | likelytodownsize | likelytorefi | absenteeowner | highnetworth | majorityhomeequity | homefreeclear | underwater | kidsinhousehold | newhomeowner | firsttimehomebuyer | renters | retiring | retired | pool | onlybusinesses | newbusiness, include_condos?: boolean, append_data?: boolean, use_property_owner?: boolean, include_search_address?: boolean }, handwriting_style_id?: number, handwriting_color?: string, handwriting_realism?: boolean, sub_account?: number, notification_emails?: string, email_lookup?: boolean, postage_class?: first_class | standard, return_name?: string, return_address?: string, return_address2?: string, return_city?: string, return_state?: string, return_postal_code?: string, metadata?: Record<string, any> | null, creative_id?: number, image_template_id?: number, front_image_url?: string, message?: string, message_template_id?: number, use_custom_background?: boolean, custom_background_image?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ type?: string, size?: string | null, total_recipients?: number, recipients?: { united_states?: number, international?: number }, pending_email_lookups?: number, costs_in_cents?: { united_states?: number, international?: number, additional_pages?: number, giftcard_face_value?: number, grand_total?: number }, total_cost_in_cents?: number, total_cost?: string, current_balance_in_cents?: number, covered_by_balance?: boolean, test_mode?: boolean, notes?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.estimate.notecard",
+      "shortPath": "estimate.notecard",
+      "description": "Estimate notecard costs without sending.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ preview?: boolean, mailing_list_ids?: number[], recipients?: { name?: string | null, company?: string | null, address?: string | null, address2?: string | null, city?: string | null, province?: string | null, postal_code?: string | null, country?: string | null, dob?: string | null, anniversary?: string | null, email?: string | null, phone?: string | null, custom1?: string | null, custom2?: string | null, custom3?: string | null, custom4?: string | null, custom5?: string | null, custom6?: string | null, custom7?: string | null, custom8?: string | null, custom9?: string | null, custom10?: string | null, absentee_address?: string | null, absentee_city?: string | null, absentee_province?: string | null, absentee_postal_code?: string | null }[], radius_search?: { preview?: boolean, address?: string, record_count?: number, record_types?: all | likelytomove | apartmentcomplex | likelytodownsize | likelytorefi | absenteeowner | highnetworth | majorityhomeequity | homefreeclear | underwater | kidsinhousehold | newhomeowner | firsttimehomebuyer | renters | retiring | retired | pool | onlybusinesses | newbusiness, include_condos?: boolean, append_data?: boolean, use_property_owner?: boolean, include_search_address?: boolean }, handwriting_style_id?: number, handwriting_color?: string, handwriting_realism?: boolean, sub_account?: number, notification_emails?: string, email_lookup?: boolean, postage_class?: first_class | standard, return_name?: string, return_address?: string, return_address2?: string, return_city?: string, return_state?: string, return_postal_code?: string, metadata?: Record<string, any> | null, creative_id?: number, image_template_id?: number, front_image_url?: string, message?: string, message_template_id?: number, use_custom_background?: boolean, custom_background_image?: string, qrcode_url?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ type?: string, size?: string | null, total_recipients?: number, recipients?: { united_states?: number, international?: number }, pending_email_lookups?: number, costs_in_cents?: { united_states?: number, international?: number, additional_pages?: number, giftcard_face_value?: number, grand_total?: number }, total_cost_in_cents?: number, total_cost?: string, current_balance_in_cents?: number, covered_by_balance?: boolean, test_mode?: boolean, notes?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.estimate.postcard",
+      "shortPath": "estimate.postcard",
+      "description": "Estimate postcard costs without sending.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ preview?: boolean, mailing_list_ids?: number[], recipients?: { name?: string | null, company?: string | null, address?: string | null, address2?: string | null, city?: string | null, province?: string | null, postal_code?: string | null, country?: string | null, dob?: string | null, anniversary?: string | null, email?: string | null, phone?: string | null, custom1?: string | null, custom2?: string | null, custom3?: string | null, custom4?: string | null, custom5?: string | null, custom6?: string | null, custom7?: string | null, custom8?: string | null, custom9?: string | null, custom10?: string | null, absentee_address?: string | null, absentee_city?: string | null, absentee_province?: string | null, absentee_postal_code?: string | null }[], radius_search?: { preview?: boolean, address?: string, record_count?: number, record_types?: all | likelytomove | apartmentcomplex | likelytodownsize | likelytorefi | absenteeowner | highnetworth | majorityhomeequity | homefreeclear | underwater | kidsinhousehold | newhomeowner | firsttimehomebuyer | renters | retiring | retired | pool | onlybusinesses | newbusiness, include_condos?: boolean, append_data?: boolean, use_property_owner?: boolean, include_search_address?: boolean }, handwriting_style_id?: number, handwriting_color?: string, handwriting_realism?: boolean, sub_account?: number, notification_emails?: string, email_lookup?: boolean, postage_class?: first_class | standard, return_name?: string, return_address?: string, return_address2?: string, return_city?: string, return_state?: string, return_postal_code?: string, metadata?: Record<string, any> | null, creative_id?: number, image_template_id?: number, front_image_url?: string, message?: string, message_template_id?: number, use_custom_background?: boolean, custom_background_image?: string, qrcode_url?: string, size?: 4x6 | 6x9 | 6x11 }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ type?: string, size?: string | null, total_recipients?: number, recipients?: { united_states?: number, international?: number }, pending_email_lookups?: number, costs_in_cents?: { united_states?: number, international?: number, additional_pages?: number, giftcard_face_value?: number, grand_total?: number }, total_cost_in_cents?: number, total_cost?: string, current_balance_in_cents?: number, covered_by_balance?: boolean, test_mode?: boolean, notes?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.estimate.windowedLetter",
+      "shortPath": "estimate.windowedLetter",
+      "description": "Estimate windowed-letter costs without sending.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ preview?: boolean, mailing_list_ids?: number[], recipients?: { name?: string | null, company?: string | null, address?: string | null, address2?: string | null, city?: string | null, province?: string | null, postal_code?: string | null, country?: string | null, dob?: string | null, anniversary?: string | null, email?: string | null, phone?: string | null, custom1?: string | null, custom2?: string | null, custom3?: string | null, custom4?: string | null, custom5?: string | null, custom6?: string | null, custom7?: string | null, custom8?: string | null, custom9?: string | null, custom10?: string | null, absentee_address?: string | null, absentee_city?: string | null, absentee_province?: string | null, absentee_postal_code?: string | null }[], radius_search?: { preview?: boolean, address?: string, record_count?: number, record_types?: all | likelytomove | apartmentcomplex | likelytodownsize | likelytorefi | absenteeowner | highnetworth | majorityhomeequity | homefreeclear | underwater | kidsinhousehold | newhomeowner | firsttimehomebuyer | renters | retiring | retired | pool | onlybusinesses | newbusiness, include_condos?: boolean, append_data?: boolean, use_property_owner?: boolean, include_search_address?: boolean }, handwriting_style_id?: number, handwriting_color?: string, handwriting_realism?: boolean, sub_account?: number, notification_emails?: string, email_lookup?: boolean, postage_class?: first_class | standard, return_name?: string, return_address?: string, return_address2?: string, return_city?: string, return_state?: string, return_postal_code?: string, metadata?: Record<string, any> | null, creative_id?: number, image_template_id?: number, front_image_url?: string, message?: string, message_template_id?: number, qrcode_url?: string, additional_pages_url?: string, pdf_only_url?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ type?: string, size?: string | null, total_recipients?: number, recipients?: { united_states?: number, international?: number }, pending_email_lookups?: number, costs_in_cents?: { united_states?: number, international?: number, additional_pages?: number, giftcard_face_value?: number, grand_total?: number }, total_cost_in_cents?: number, total_cost?: string, current_balance_in_cents?: number, covered_by_balance?: boolean, test_mode?: boolean, notes?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.estimate.windowlessLetter",
+      "shortPath": "estimate.windowlessLetter",
+      "description": "Estimate windowless-letter costs without sending.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ preview?: boolean, mailing_list_ids?: number[], recipients?: { name?: string | null, company?: string | null, address?: string | null, address2?: string | null, city?: string | null, province?: string | null, postal_code?: string | null, country?: string | null, dob?: string | null, anniversary?: string | null, email?: string | null, phone?: string | null, custom1?: string | null, custom2?: string | null, custom3?: string | null, custom4?: string | null, custom5?: string | null, custom6?: string | null, custom7?: string | null, custom8?: string | null, custom9?: string | null, custom10?: string | null, absentee_address?: string | null, absentee_city?: string | null, absentee_province?: string | null, absentee_postal_code?: string | null }[], radius_search?: { preview?: boolean, address?: string, record_count?: number, record_types?: all | likelytomove | apartmentcomplex | likelytodownsize | likelytorefi | absenteeowner | highnetworth | majorityhomeequity | homefreeclear | underwater | kidsinhousehold | newhomeowner | firsttimehomebuyer | renters | retiring | retired | pool | onlybusinesses | newbusiness, include_condos?: boolean, append_data?: boolean, use_property_owner?: boolean, include_search_address?: boolean }, handwriting_style_id?: number, handwriting_color?: string, handwriting_realism?: boolean, sub_account?: number, notification_emails?: string, email_lookup?: boolean, postage_class?: first_class | standard, return_name?: string, return_address?: string, return_address2?: string, return_city?: string, return_state?: string, return_postal_code?: string, metadata?: Record<string, any> | null, creative_id?: number, image_template_id?: number, front_image_url?: string, message?: string, message_template_id?: number, qrcode_url?: string, additional_pages_url?: string, pdf_only_url?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ type?: string, size?: string | null, total_recipients?: number, recipients?: { united_states?: number, international?: number }, pending_email_lookups?: number, costs_in_cents?: { united_states?: number, international?: number, additional_pages?: number, giftcard_face_value?: number, grand_total?: number }, total_cost_in_cents?: number, total_cost?: string, current_balance_in_cents?: number, covered_by_balance?: boolean, test_mode?: boolean, notes?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.giftcardBrands.list",
+      "shortPath": "giftcardBrands.list",
+      "description": "List gift-card brands by group.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "main",
+            "optional": true,
+            "type": "{ title?: string, brands?: { brand_code?: string, title?: string, image?: string, available_amounts?: number[], group?: string }[] }"
+          },
+          {
+            "key": "food",
+            "optional": true,
+            "type": "{ title?: string, brands?: { brand_code?: string, title?: string, image?: string, available_amounts?: number[], group?: string }[] }"
+          },
+          {
+            "key": "entertainment",
+            "optional": true,
+            "type": "{ title?: string, brands?: { brand_code?: string, title?: string, image?: string, available_amounts?: number[], group?: string }[] }"
+          },
+          {
+            "key": "gift",
+            "optional": true,
+            "type": "{ title?: string, brands?: { brand_code?: string, title?: string, image?: string, available_amounts?: number[], group?: string }[] }"
+          },
+          {
+            "key": "gifts",
+            "optional": true,
+            "type": "{ title?: string, brands?: { brand_code?: string, title?: string, image?: string, available_amounts?: number[], group?: string }[] }"
+          },
+          {
+            "key": "travel",
+            "optional": true,
+            "type": "{ title?: string, brands?: { brand_code?: string, title?: string, image?: string, available_amounts?: number[], group?: string }[] }"
+          },
+          {
+            "key": "big_box",
+            "optional": true,
+            "type": "{ title?: string, brands?: { brand_code?: string, title?: string, image?: string, available_amounts?: number[], group?: string }[] }"
+          },
+          {
+            "key": "other",
+            "optional": true,
+            "type": "{ title?: string, brands?: { brand_code?: string, title?: string, image?: string, available_amounts?: number[], group?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.giftcardBrands.listFlat",
+      "shortPath": "giftcardBrands.listFlat",
+      "description": "List gift-card brands with their groups.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ brands?: { brand_code?: string, title?: string, image?: string, available_amounts?: number[], group?: string }[] } | { brands?: { brand_code?: string, title?: string, image?: string, available_amounts?: number[], group?: string }[] }[]"
+      }
+    },
+    {
+      "path": "thanksio.api.handwritingStyles.list",
+      "shortPath": "handwritingStyles.list",
+      "description": "List handwriting styles.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ handwriting_style_id?: number, name?: string, sample?: string, type?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.imageBuilder.create",
+      "shortPath": "imageBuilder.create",
+      "description": "Build and return a PNG image without placing an order.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "background_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "header",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subheader",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "logo_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "overlay_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "4x6 | 6x9"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.imageTemplates.list",
+      "shortPath": "imageTemplates.list",
+      "description": "List image templates.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "items_per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sub_account_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "postcard | postcard6x9 | postcard6x11 | letter | windowlessletter | notecard | giftcard | magnacard"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number, user_id?: number, sub_account_id?: number | null, type?: string, name?: string, image?: string, is_dynamic?: boolean, dynamic_image_url?: string | null, canva_id?: string | null, share_uuid?: string | null, created_at?: string, updated_at?: string }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ current_page?: number, from?: number | null, last_page?: number, path?: string, per_page?: number | string, to?: number | null, total?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.mailingLists.buyRadiusSearch",
+      "shortPath": "mailingLists.buyRadiusSearch",
+      "description": "Purchase radius-search records; charges may apply.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ address: string, postal_code: string, record_count: number, record_types?: all | likelytomove | apartmentcomplex | likelytodownsize | likelytorefi | absenteeowner | highnetworth | majorityhomeequity | homefreeclear | underwater | kidsinhousehold | newhomeowner | firsttimehomebuyer | renters | retiring | retired | pool | onlybusinesses | newbusiness, include_condos?: boolean, mailing_list_id?: number, append_data?: boolean, use_property_owner?: boolean, include_search_address?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mailing_list_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "failure",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.mailingLists.countRadiusSearch",
+      "shortPath": "mailingLists.countRadiusSearch",
+      "description": "Count available radius-search records.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ address: string, postal_code: string, record_count: number, record_types?: all | likelytomove | apartmentcomplex | likelytodownsize | likelytorefi | absenteeowner | highnetworth | majorityhomeequity | homefreeclear | underwater | kidsinhousehold | newhomeowner | firsttimehomebuyer | renters | retiring | retired | pool | onlybusinesses | newbusiness, include_condos?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mailing_list_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "failure",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.mailingLists.create",
+      "shortPath": "mailingLists.create",
+      "description": "Create a mailing list.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ description: string, sub_account_id?: number, qrcode_url?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sub_account_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "qrcode_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "total_recipients",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "processed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_suppression_list",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "total_scans",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "unique_scans",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last_scan",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "total_sends",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last_send",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "api_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_diff",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.mailingLists.delete",
+      "shortPath": "mailingLists.delete",
+      "description": "Delete a mailing list.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "thanksio.api.mailingLists.get",
+      "shortPath": "mailingLists.get",
+      "description": "Get a mailing list.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sub_account_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "qrcode_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "total_recipients",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "processed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_suppression_list",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "total_scans",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "unique_scans",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last_scan",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "total_sends",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last_send",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "api_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_diff",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.mailingLists.list",
+      "shortPath": "mailingLists.list",
+      "description": "List mailing lists.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "items_per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number, user_id?: number, sub_account_id?: number | null, type?: string, description?: string, qrcode_url?: string | null, total_recipients?: number, processed?: boolean, is_suppression_list?: boolean, total_scans?: number, unique_scans?: number, last_scan?: string | null, total_sends?: number, last_send?: string | null, api_key?: string, created_at?: string, created_at_diff?: string, updated_at?: string }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ current_page?: number, from?: number | null, last_page?: number, path?: string, per_page?: number | string, to?: number | null, total?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.mailingLists.listRecipients",
+      "shortPath": "mailingLists.listRecipients",
+      "description": "List recipients in a mailing list.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_since",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "current_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "last_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number, mailing_list_id?: number, name?: string | null, company?: string | null, address?: string | null, address2?: string | null, city?: string | null, province?: string | null, postal_code?: string | null, country?: string | null, dob?: string | null, anniversary?: string | null, email?: string | null, phone?: string | null, custom1?: string | null, custom2?: string | null, custom3?: string | null, custom4?: string | null, custom5?: string | null, custom6?: string | null, custom7?: string | null, custom8?: string | null, custom9?: string | null, custom10?: string | null, absentee_address?: string | null, created_at?: string | null, updated_at?: string | null, error?: string }[]"
+          },
+          {
+            "key": "first_page_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_page_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_page_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "prev_page_url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.messageTemplates.create",
+      "shortPath": "messageTemplates.create",
+      "description": "Create a message template.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ type?: postcard | postcard6x9 | postcard6x11 | letter | windowlessletter | notecard | giftcard | magnacard, name?: string, handwriting_style_id?: number, font_color?: string, handwriting_realism?: boolean, content?: string, sub_account_id?: number | null, additional_pages?: string, pdf_only_url?: string, custom_background_url?: string, qrcode_url?: string, cc_emails?: string[], giftcard_brand_code?: string, giftcard_amount?: number, landing_page_url?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sub_account_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "handwriting_style_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "font_size",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "font_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "handwriting_realism",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "additional_pages",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "skip_creative_generation",
+            "optional": true,
+            "type": "number | boolean"
+          },
+          {
+            "key": "custom_background_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "qrcode_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cc_emails",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "giftcard_brand_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "giftcard_brand_image",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "giftcard_amount",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "landing_page_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "share_uuid",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.messageTemplates.delete",
+      "shortPath": "messageTemplates.delete",
+      "description": "Delete a message template.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messageTemplateId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.messageTemplates.get",
+      "shortPath": "messageTemplates.get",
+      "description": "Get a message template.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messageTemplateId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sub_account_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "handwriting_style_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "font_size",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "font_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "handwriting_realism",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "additional_pages",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "skip_creative_generation",
+            "optional": true,
+            "type": "number | boolean"
+          },
+          {
+            "key": "custom_background_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "qrcode_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cc_emails",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "giftcard_brand_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "giftcard_brand_image",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "giftcard_amount",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "landing_page_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "share_uuid",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.messageTemplates.list",
+      "shortPath": "messageTemplates.list",
+      "description": "List message templates.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "items_per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sub_account_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "postcard | postcard6x9 | postcard6x11 | letter | windowlessletter | notecard | giftcard | magnacard"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number, user_id?: number, sub_account_id?: number | null, handwriting_style_id?: number, font_size?: string | number, font_color?: string, handwriting_realism?: boolean, name?: string, content?: string, additional_pages?: string | null, skip_creative_generation?: number | boolean, custom_background_url?: string | null, qrcode_url?: string | null, cc_emails?: string[], created_at?: string, updated_at?: string, type?: string, giftcard_brand_code?: string | null, giftcard_brand_image?: string | null, giftcard_amount?: string | number | null, landing_page_url?: string | null, share_uuid?: string }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ current_page?: number, from?: number | null, last_page?: number, path?: string, per_page?: number | string, to?: number | null, total?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.messageTemplates.update",
+      "shortPath": "messageTemplates.update",
+      "description": "Update a message template.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messageTemplateId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ type?: postcard | postcard6x9 | postcard6x11 | letter | windowlessletter | notecard | giftcard | magnacard, name?: string, handwriting_style_id?: number, font_color?: string, handwriting_realism?: boolean, content?: string, sub_account_id?: number | null, additional_pages?: string, pdf_only_url?: string, custom_background_url?: string, qrcode_url?: string, cc_emails?: string[], giftcard_brand_code?: string, giftcard_amount?: number, landing_page_url?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sub_account_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "handwriting_style_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "font_size",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "font_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "handwriting_realism",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "additional_pages",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "skip_creative_generation",
+            "optional": true,
+            "type": "number | boolean"
+          },
+          {
+            "key": "custom_background_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "qrcode_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cc_emails",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "giftcard_brand_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "giftcard_brand_image",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "giftcard_amount",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "landing_page_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "share_uuid",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.orderItems.invalidateGiftcard",
+      "shortPath": "orderItems.invalidateGiftcard",
+      "description": "Permanently invalidate an unredeemed gift card.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orderItemId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number, status?: string, delivery_date?: string | null, scans?: number, failure?: string | null, recipient?: { id?: number, mailing_list_id?: number, name?: string | null, company?: string | null, address?: string | null, address2?: string | null, city?: string | null, province?: string | null, postal_code?: string | null, country?: string | null, dob?: string | null, anniversary?: string | null, email?: string | null, phone?: string | null, custom1?: string | null, custom2?: string | null, custom3?: string | null, custom4?: string | null, custom5?: string | null, custom6?: string | null, custom7?: string | null, custom8?: string | null, custom9?: string | null, custom10?: string | null, absentee_address?: string | null, created_at?: string | null, updated_at?: string | null, error?: string }, giftcard?: { brand?: string, amount?: number, redeemed_at?: string | null, invalidated_at?: string | null } | null, preview?: { front?: string | null, back?: string | null, pdf?: string | null }, created_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.orders.cancel",
+      "shortPath": "orders.cancel",
+      "description": "Cancel a reviewing order.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orderId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order",
+            "optional": true,
+            "type": "{ id?: number, user_id?: number, sub_account_id?: number | null, message?: string, size?: string, type?: string, display_type?: string, style?: number, front_image?: string, high_quality_preview?: string, authorization_total?: number, grand_total?: number, order_total?: number, total_estimated_recipients?: number, total_recipients?: number, recipient_count?: number, status?: string, method?: string, cancellable?: boolean, total_scans?: number, metadata?: Record<string, any> | null, created_at?: string, updated_at?: string, replayed_from_order_id?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.orders.list",
+      "shortPath": "orders.list",
+      "description": "List recent orders.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "items_per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sub_account_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "postcard | postcard6x9 | postcard6x11 | letter | windowlessletter | notecard | giftcard | magnacard | 4x6-postcard | 6x9-postcard"
+          },
+          {
+            "key": "creative_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "campaign",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number, user_id?: number, sub_account_id?: number | null, message?: string, size?: string, type?: string, display_type?: string, style?: number, front_image?: string, high_quality_preview?: string, authorization_total?: number, grand_total?: number, order_total?: number, total_estimated_recipients?: number, total_recipients?: number, recipient_count?: number, status?: string, method?: string, cancellable?: boolean, total_scans?: number, metadata?: Record<string, any> | null, created_at?: string, updated_at?: string, replayed_from_order_id?: number }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ current_page?: number, from?: number | null, last_page?: number, path?: string, per_page?: number | string, to?: number | null, total?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.orders.listItems",
+      "shortPath": "orders.listItems",
+      "description": "List individual order items.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orderId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number, status?: string, delivery_date?: string | null, scans?: number, failure?: string | null, recipient?: { id?: number, mailing_list_id?: number, name?: string | null, company?: string | null, address?: string | null, address2?: string | null, city?: string | null, province?: string | null, postal_code?: string | null, country?: string | null, dob?: string | null, anniversary?: string | null, email?: string | null, phone?: string | null, custom1?: string | null, custom2?: string | null, custom3?: string | null, custom4?: string | null, custom5?: string | null, custom6?: string | null, custom7?: string | null, custom8?: string | null, custom9?: string | null, custom10?: string | null, absentee_address?: string | null, created_at?: string | null, updated_at?: string | null, error?: string }, giftcard?: { brand?: string, amount?: number, redeemed_at?: string | null, invalidated_at?: string | null } | null, preview?: { front?: string | null, back?: string | null, pdf?: string | null }, created_at?: string }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ current_page?: number, from?: number | null, last_page?: number, path?: string, per_page?: number | string, to?: number | null, total?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.orders.replay",
+      "shortPath": "orders.replay",
+      "description": "Place a new copy of a settled order; this charges and mails again.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orderId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ recipients?: { name?: string, company?: string, address: string, address2?: string, city?: string, province?: string, postal_code?: string, country?: string }[], schedule_for?: string, metadata?: Record<string, any> | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sub_account_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "display_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "style",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "front_image",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "high_quality_preview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "authorization_total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "grand_total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order_total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_estimated_recipients",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_recipients",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "recipient_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "method",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cancellable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "total_scans",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replayed_from_order_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.orders.track",
+      "shortPath": "orders.track",
+      "description": "Track an order and its delivery statistics.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orderId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number, order?: { id?: number, user_id?: number, sub_account_id?: number | null, message?: string, size?: string, type?: string, display_type?: string, style?: number, front_image?: string, high_quality_preview?: string, authorization_total?: number, grand_total?: number, order_total?: number, total_estimated_recipients?: number, total_recipients?: number, recipient_count?: number, status?: string, method?: string, cancellable?: boolean, total_scans?: number, metadata?: Record<string, any> | null, created_at?: string, updated_at?: string, replayed_from_order_id?: number }, stats?: { delivered?: number, processing?: number, printed?: number, in_transit?: number, in_local_area?: number, processed_for_delivery?: number, re_routed?: number, returned_to_sender?: number, failed?: number, scans?: number, multi_scans?: number }, errors?: { id?: number, mailing_list_id?: number, name?: string | null, company?: string | null, address?: string | null, address2?: string | null, city?: string | null, province?: string | null, postal_code?: string | null, country?: string | null, dob?: string | null, anniversary?: string | null, email?: string | null, phone?: string | null, custom1?: string | null, custom2?: string | null, custom3?: string | null, custom4?: string | null, custom5?: string | null, custom6?: string | null, custom7?: string | null, custom8?: string | null, custom9?: string | null, custom10?: string | null, absentee_address?: string | null, created_at?: string | null, updated_at?: string | null, error?: string, failure?: string }[], returned?: { id?: number, mailing_list_id?: number, name?: string | null, company?: string | null, address?: string | null, address2?: string | null, city?: string | null, province?: string | null, postal_code?: string | null, country?: string | null, dob?: string | null, anniversary?: string | null, email?: string | null, phone?: string | null, custom1?: string | null, custom2?: string | null, custom3?: string | null, custom4?: string | null, custom5?: string | null, custom6?: string | null, custom7?: string | null, custom8?: string | null, custom9?: string | null, custom10?: string | null, absentee_address?: string | null, created_at?: string | null, updated_at?: string | null, error?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.recipients.create",
+      "shortPath": "recipients.create",
+      "description": "Create a recipient; email-only address lookup may incur a fee.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ mailing_list_id: number, name?: string | null, company?: string | null, address?: string | null, address2?: string | null, city?: string | null, province?: string | null, postal_code?: string | null, country?: string | null, dob?: string | null, anniversary?: string | null, email?: string | null, phone?: string | null, custom1?: string | null, custom2?: string | null, custom3?: string | null, custom4?: string | null, custom5?: string | null, custom6?: string | null, custom7?: string | null, custom8?: string | null, custom9?: string | null, custom10?: string | null, absentee_address?: string | null, absentee_city?: string | null, absentee_province?: string | null, absentee_postal_code?: string | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "mailing_list_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "province",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "postal_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dob",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "anniversary",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom1",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom3",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom4",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom5",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom6",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom7",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom8",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom9",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom10",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "absentee_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.recipients.createMultiple",
+      "shortPath": "recipients.createMultiple",
+      "description": "Create recipients; email-only address lookup may incur a fee.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ mailing_list_id?: number, name?: string | null, company?: string | null, address?: string | null, address2?: string | null, city?: string | null, province?: string | null, postal_code?: string | null, country?: string | null, dob?: string | null, anniversary?: string | null, email?: string | null, phone?: string | null, custom1?: string | null, custom2?: string | null, custom3?: string | null, custom4?: string | null, custom5?: string | null, custom6?: string | null, custom7?: string | null, custom8?: string | null, custom9?: string | null, custom10?: string | null, absentee_address?: string | null, absentee_city?: string | null, absentee_province?: string | null, absentee_postal_code?: string | null, mailing_list?: number }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: number, mailing_list_id?: number, name?: string | null, company?: string | null, address?: string | null, address2?: string | null, city?: string | null, province?: string | null, postal_code?: string | null, country?: string | null, dob?: string | null, anniversary?: string | null, email?: string | null, phone?: string | null, custom1?: string | null, custom2?: string | null, custom3?: string | null, custom4?: string | null, custom5?: string | null, custom6?: string | null, custom7?: string | null, custom8?: string | null, custom9?: string | null, custom10?: string | null, absentee_address?: string | null, created_at?: string | null, updated_at?: string | null, error?: string }[]"
+      }
+    },
+    {
+      "path": "thanksio.api.recipients.delete",
+      "shortPath": "recipients.delete",
+      "description": "Delete a recipient by ID.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recipientId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "thanksio.api.recipients.deleteByAddress",
+      "shortPath": "recipients.deleteByAddress",
+      "description": "Delete a recipient by address or email.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ mailing_list_id: number, address?: string, address2?: string, city?: string, province?: string, postal_code?: string, country?: string, email?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "thanksio.api.recipients.get",
+      "shortPath": "recipients.get",
+      "description": "Get a recipient by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recipientId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number, mailing_list_id?: number, name?: string | null, company?: string | null, address?: string | null, address2?: string | null, city?: string | null, province?: string | null, postal_code?: string | null, country?: string | null, dob?: string | null, anniversary?: string | null, email?: string | null, phone?: string | null, custom1?: string | null, custom2?: string | null, custom3?: string | null, custom4?: string | null, custom5?: string | null, custom6?: string | null, custom7?: string | null, custom8?: string | null, custom9?: string | null, custom10?: string | null, absentee_address?: string | null, created_at?: string | null, updated_at?: string | null, error?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.recipients.update",
+      "shortPath": "recipients.update",
+      "description": "Update a recipient by ID.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recipientId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ mailing_list_id?: number, name?: string | null, company?: string | null, address?: string | null, address2?: string | null, city?: string | null, province?: string | null, postal_code?: string | null, country?: string | null, dob?: string | null, anniversary?: string | null, email?: string | null, phone?: string | null, custom1?: string | null, custom2?: string | null, custom3?: string | null, custom4?: string | null, custom5?: string | null, custom6?: string | null, custom7?: string | null, custom8?: string | null, custom9?: string | null, custom10?: string | null, absentee_address?: string | null, absentee_city?: string | null, absentee_province?: string | null, absentee_postal_code?: string | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "mailing_list_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "province",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "postal_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dob",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "anniversary",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom1",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom3",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom4",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom5",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom6",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom7",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom8",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom9",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom10",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "absentee_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.send.giftcard",
+      "shortPath": "send.giftcard",
+      "description": "Send a gift card; charges may apply.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ preview?: boolean, mailing_list_ids?: number[], recipients?: { name?: string | null, company?: string | null, address?: string | null, address2?: string | null, city?: string | null, province?: string | null, postal_code?: string | null, country?: string | null, dob?: string | null, anniversary?: string | null, email?: string | null, phone?: string | null, custom1?: string | null, custom2?: string | null, custom3?: string | null, custom4?: string | null, custom5?: string | null, custom6?: string | null, custom7?: string | null, custom8?: string | null, custom9?: string | null, custom10?: string | null, absentee_address?: string | null, absentee_city?: string | null, absentee_province?: string | null, absentee_postal_code?: string | null }[], radius_search?: { preview?: boolean, address?: string, record_count?: number, record_types?: all | likelytomove | apartmentcomplex | likelytodownsize | likelytorefi | absenteeowner | highnetworth | majorityhomeequity | homefreeclear | underwater | kidsinhousehold | newhomeowner | firsttimehomebuyer | renters | retiring | retired | pool | onlybusinesses | newbusiness, include_condos?: boolean, append_data?: boolean, use_property_owner?: boolean, include_search_address?: boolean }, handwriting_style_id?: number, handwriting_color?: string, handwriting_realism?: boolean, sub_account?: number, notification_emails?: string, email_lookup?: boolean, postage_class?: first_class | standard, return_name?: string, return_address?: string, return_address2?: string, return_city?: string, return_state?: string, return_postal_code?: string, metadata?: Record<string, any> | null, creative_id?: number, image_template_id?: number, front_image_url?: string, message?: string, message_template_id?: number, giftcard_brand?: string, giftcard_amount_in_cents?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ message?: string, data: { previews?: string[] } } | { id?: number, user_id?: number, sub_account_id?: number | null, message?: string, size?: string, type?: string, display_type?: string, style?: number, front_image?: string, high_quality_preview?: string, authorization_total?: number, grand_total?: number, order_total?: number, total_estimated_recipients?: number, total_recipients?: number, recipient_count?: number, status?: string, method?: string, cancellable?: boolean, total_scans?: number, metadata?: Record<string, any> | null, created_at?: string, updated_at?: string, replayed_from_order_id?: number }"
+      }
+    },
+    {
+      "path": "thanksio.api.send.magnacard",
+      "shortPath": "send.magnacard",
+      "description": "Send a magnacard; charges may apply.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ preview?: boolean, mailing_list_ids?: number[], recipients?: { name?: string | null, company?: string | null, address?: string | null, address2?: string | null, city?: string | null, province?: string | null, postal_code?: string | null, country?: string | null, dob?: string | null, anniversary?: string | null, email?: string | null, phone?: string | null, custom1?: string | null, custom2?: string | null, custom3?: string | null, custom4?: string | null, custom5?: string | null, custom6?: string | null, custom7?: string | null, custom8?: string | null, custom9?: string | null, custom10?: string | null, absentee_address?: string | null, absentee_city?: string | null, absentee_province?: string | null, absentee_postal_code?: string | null }[], radius_search?: { preview?: boolean, address?: string, record_count?: number, record_types?: all | likelytomove | apartmentcomplex | likelytodownsize | likelytorefi | absenteeowner | highnetworth | majorityhomeequity | homefreeclear | underwater | kidsinhousehold | newhomeowner | firsttimehomebuyer | renters | retiring | retired | pool | onlybusinesses | newbusiness, include_condos?: boolean, append_data?: boolean, use_property_owner?: boolean, include_search_address?: boolean }, handwriting_style_id?: number, handwriting_color?: string, handwriting_realism?: boolean, sub_account?: number, notification_emails?: string, email_lookup?: boolean, postage_class?: first_class | standard, return_name?: string, return_address?: string, return_address2?: string, return_city?: string, return_state?: string, return_postal_code?: string, metadata?: Record<string, any> | null, creative_id?: number, image_template_id?: number, front_image_url?: string, message?: string, message_template_id?: number, use_custom_background?: boolean, custom_background_image?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ message?: string, data: { previews?: string[] } } | { id?: number, user_id?: number, sub_account_id?: number | null, message?: string, size?: string, type?: string, display_type?: string, style?: number, front_image?: string, high_quality_preview?: string, authorization_total?: number, grand_total?: number, order_total?: number, total_estimated_recipients?: number, total_recipients?: number, recipient_count?: number, status?: string, method?: string, cancellable?: boolean, total_scans?: number, metadata?: Record<string, any> | null, created_at?: string, updated_at?: string, replayed_from_order_id?: number }"
+      }
+    },
+    {
+      "path": "thanksio.api.send.notecard",
+      "shortPath": "send.notecard",
+      "description": "Send a notecard; charges may apply.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ preview?: boolean, mailing_list_ids?: number[], recipients?: { name?: string | null, company?: string | null, address?: string | null, address2?: string | null, city?: string | null, province?: string | null, postal_code?: string | null, country?: string | null, dob?: string | null, anniversary?: string | null, email?: string | null, phone?: string | null, custom1?: string | null, custom2?: string | null, custom3?: string | null, custom4?: string | null, custom5?: string | null, custom6?: string | null, custom7?: string | null, custom8?: string | null, custom9?: string | null, custom10?: string | null, absentee_address?: string | null, absentee_city?: string | null, absentee_province?: string | null, absentee_postal_code?: string | null }[], radius_search?: { preview?: boolean, address?: string, record_count?: number, record_types?: all | likelytomove | apartmentcomplex | likelytodownsize | likelytorefi | absenteeowner | highnetworth | majorityhomeequity | homefreeclear | underwater | kidsinhousehold | newhomeowner | firsttimehomebuyer | renters | retiring | retired | pool | onlybusinesses | newbusiness, include_condos?: boolean, append_data?: boolean, use_property_owner?: boolean, include_search_address?: boolean }, handwriting_style_id?: number, handwriting_color?: string, handwriting_realism?: boolean, sub_account?: number, notification_emails?: string, email_lookup?: boolean, postage_class?: first_class | standard, return_name?: string, return_address?: string, return_address2?: string, return_city?: string, return_state?: string, return_postal_code?: string, metadata?: Record<string, any> | null, creative_id?: number, image_template_id?: number, front_image_url?: string, message?: string, message_template_id?: number, use_custom_background?: boolean, custom_background_image?: string, qrcode_url?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ message?: string, data: { previews?: string[] } } | { id?: number, user_id?: number, sub_account_id?: number | null, message?: string, size?: string, type?: string, display_type?: string, style?: number, front_image?: string, high_quality_preview?: string, authorization_total?: number, grand_total?: number, order_total?: number, total_estimated_recipients?: number, total_recipients?: number, recipient_count?: number, status?: string, method?: string, cancellable?: boolean, total_scans?: number, metadata?: Record<string, any> | null, created_at?: string, updated_at?: string, replayed_from_order_id?: number }"
+      }
+    },
+    {
+      "path": "thanksio.api.send.postcard",
+      "shortPath": "send.postcard",
+      "description": "Send a postcard; charges may apply.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ preview?: boolean, mailing_list_ids?: number[], recipients?: { name?: string | null, company?: string | null, address?: string | null, address2?: string | null, city?: string | null, province?: string | null, postal_code?: string | null, country?: string | null, dob?: string | null, anniversary?: string | null, email?: string | null, phone?: string | null, custom1?: string | null, custom2?: string | null, custom3?: string | null, custom4?: string | null, custom5?: string | null, custom6?: string | null, custom7?: string | null, custom8?: string | null, custom9?: string | null, custom10?: string | null, absentee_address?: string | null, absentee_city?: string | null, absentee_province?: string | null, absentee_postal_code?: string | null }[], radius_search?: { preview?: boolean, address?: string, record_count?: number, record_types?: all | likelytomove | apartmentcomplex | likelytodownsize | likelytorefi | absenteeowner | highnetworth | majorityhomeequity | homefreeclear | underwater | kidsinhousehold | newhomeowner | firsttimehomebuyer | renters | retiring | retired | pool | onlybusinesses | newbusiness, include_condos?: boolean, append_data?: boolean, use_property_owner?: boolean, include_search_address?: boolean }, handwriting_style_id?: number, handwriting_color?: string, handwriting_realism?: boolean, sub_account?: number, notification_emails?: string, email_lookup?: boolean, postage_class?: first_class | standard, return_name?: string, return_address?: string, return_address2?: string, return_city?: string, return_state?: string, return_postal_code?: string, metadata?: Record<string, any> | null, creative_id?: number, image_template_id?: number, front_image_url?: string, message?: string, message_template_id?: number, use_custom_background?: boolean, custom_background_image?: string, qrcode_url?: string, size?: 4x6 | 6x9 | 6x11 }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ message?: string, data: { previews?: string[] } } | { id?: number, user_id?: number, sub_account_id?: number | null, message?: string, size?: string, type?: string, display_type?: string, style?: number, front_image?: string, high_quality_preview?: string, authorization_total?: number, grand_total?: number, order_total?: number, total_estimated_recipients?: number, total_recipients?: number, recipient_count?: number, status?: string, method?: string, cancellable?: boolean, total_scans?: number, metadata?: Record<string, any> | null, created_at?: string, updated_at?: string, replayed_from_order_id?: number }"
+      }
+    },
+    {
+      "path": "thanksio.api.send.windowedLetter",
+      "shortPath": "send.windowedLetter",
+      "description": "Send a windowed letter; charges may apply.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ preview?: boolean, mailing_list_ids?: number[], recipients?: { name?: string | null, company?: string | null, address?: string | null, address2?: string | null, city?: string | null, province?: string | null, postal_code?: string | null, country?: string | null, dob?: string | null, anniversary?: string | null, email?: string | null, phone?: string | null, custom1?: string | null, custom2?: string | null, custom3?: string | null, custom4?: string | null, custom5?: string | null, custom6?: string | null, custom7?: string | null, custom8?: string | null, custom9?: string | null, custom10?: string | null, absentee_address?: string | null, absentee_city?: string | null, absentee_province?: string | null, absentee_postal_code?: string | null }[], radius_search?: { preview?: boolean, address?: string, record_count?: number, record_types?: all | likelytomove | apartmentcomplex | likelytodownsize | likelytorefi | absenteeowner | highnetworth | majorityhomeequity | homefreeclear | underwater | kidsinhousehold | newhomeowner | firsttimehomebuyer | renters | retiring | retired | pool | onlybusinesses | newbusiness, include_condos?: boolean, append_data?: boolean, use_property_owner?: boolean, include_search_address?: boolean }, handwriting_style_id?: number, handwriting_color?: string, handwriting_realism?: boolean, sub_account?: number, notification_emails?: string, email_lookup?: boolean, postage_class?: first_class | standard, return_name?: string, return_address?: string, return_address2?: string, return_city?: string, return_state?: string, return_postal_code?: string, metadata?: Record<string, any> | null, creative_id?: number, image_template_id?: number, front_image_url?: string, message?: string, message_template_id?: number, qrcode_url?: string, additional_pages_url?: string, pdf_only_url?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ message?: string, data: { previews?: string[] } } | { id?: number, user_id?: number, sub_account_id?: number | null, message?: string, size?: string, type?: string, display_type?: string, style?: number, front_image?: string, high_quality_preview?: string, authorization_total?: number, grand_total?: number, order_total?: number, total_estimated_recipients?: number, total_recipients?: number, recipient_count?: number, status?: string, method?: string, cancellable?: boolean, total_scans?: number, metadata?: Record<string, any> | null, created_at?: string, updated_at?: string, replayed_from_order_id?: number }"
+      }
+    },
+    {
+      "path": "thanksio.api.send.windowlessLetter",
+      "shortPath": "send.windowlessLetter",
+      "description": "Send a windowless letter; charges may apply.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ preview?: boolean, mailing_list_ids?: number[], recipients?: { name?: string | null, company?: string | null, address?: string | null, address2?: string | null, city?: string | null, province?: string | null, postal_code?: string | null, country?: string | null, dob?: string | null, anniversary?: string | null, email?: string | null, phone?: string | null, custom1?: string | null, custom2?: string | null, custom3?: string | null, custom4?: string | null, custom5?: string | null, custom6?: string | null, custom7?: string | null, custom8?: string | null, custom9?: string | null, custom10?: string | null, absentee_address?: string | null, absentee_city?: string | null, absentee_province?: string | null, absentee_postal_code?: string | null }[], radius_search?: { preview?: boolean, address?: string, record_count?: number, record_types?: all | likelytomove | apartmentcomplex | likelytodownsize | likelytorefi | absenteeowner | highnetworth | majorityhomeequity | homefreeclear | underwater | kidsinhousehold | newhomeowner | firsttimehomebuyer | renters | retiring | retired | pool | onlybusinesses | newbusiness, include_condos?: boolean, append_data?: boolean, use_property_owner?: boolean, include_search_address?: boolean }, handwriting_style_id?: number, handwriting_color?: string, handwriting_realism?: boolean, sub_account?: number, notification_emails?: string, email_lookup?: boolean, postage_class?: first_class | standard, return_name?: string, return_address?: string, return_address2?: string, return_city?: string, return_state?: string, return_postal_code?: string, metadata?: Record<string, any> | null, creative_id?: number, image_template_id?: number, front_image_url?: string, message?: string, message_template_id?: number, qrcode_url?: string, additional_pages_url?: string, pdf_only_url?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ message?: string, data: { previews?: string[] } } | { id?: number, user_id?: number, sub_account_id?: number | null, message?: string, size?: string, type?: string, display_type?: string, style?: number, front_image?: string, high_quality_preview?: string, authorization_total?: number, grand_total?: number, order_total?: number, total_estimated_recipients?: number, total_recipients?: number, recipient_count?: number, status?: string, method?: string, cancellable?: boolean, total_scans?: number, metadata?: Record<string, any> | null, created_at?: string, updated_at?: string, replayed_from_order_id?: number }"
+      }
+    },
+    {
+      "path": "thanksio.api.subAccounts.create",
+      "shortPath": "subAccounts.create",
+      "description": "Create a sub-account.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ title: string, return_name?: string, return_address?: string, return_address2?: string, return_city?: string, return_state?: string, return_postal_code?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "return_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "return_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "return_address2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "return_city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "return_state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "return_postal_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.subAccounts.delete",
+      "shortPath": "subAccounts.delete",
+      "description": "Delete a sub-account and its image templates, message templates, and campaigns; orders and lists move to the main account.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subAccountId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "thanksio.api.subAccounts.get",
+      "shortPath": "subAccounts.get",
+      "description": "Get a sub-account.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subAccountId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "return_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "return_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "return_address2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "return_city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "return_state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "return_postal_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.subAccounts.list",
+      "shortPath": "subAccounts.list",
+      "description": "List sub-accounts.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ title?: string, return_name?: string | null, return_address?: string | null, return_address2?: string | null, return_city?: string | null, return_state?: string | null, return_postal_code?: string | null, id?: number, user_id?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.subAccounts.update",
+      "shortPath": "subAccounts.update",
+      "description": "Update a sub-account.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subAccountId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ title: string, return_name?: string, return_address?: string, return_address2?: string, return_city?: string, return_state?: string, return_postal_code?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "return_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "return_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "return_address2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "return_city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "return_state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "return_postal_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.webhookDestinations.create",
+      "shortPath": "webhookDestinations.create",
+      "description": "Create an outbound webhook destination.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ url: string, type: order_item.status_update | order.status_update | order_item.delivered | scans.scan_update | scan_board.status_update, verb: string, scan_board_status?: new | contacted | follow_up | done | null, description?: string | null, mailing_list_id?: number | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "order_item.status_update | order.status_update | order_item.delivered | scans.scan_update | scan_board.status_update"
+          },
+          {
+            "key": "verb",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scan_board_status",
+            "optional": true,
+            "type": "new | contacted | follow_up | done | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "mailing_list_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "invoke_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.webhookDestinations.delete",
+      "shortPath": "webhookDestinations.delete",
+      "description": "Delete an outbound webhook destination.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.webhookDestinations.list",
+      "shortPath": "webhookDestinations.list",
+      "description": "List outbound webhook destinations.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "items_per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "order_item.status_update | order.status_update | order_item.delivered | scans.scan_update | scan_board.status_update"
+          },
+          {
+            "key": "scan_board_status",
+            "optional": true,
+            "type": "new | contacted | follow_up | done"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ url?: string, type?: order_item.status_update | order.status_update | order_item.delivered | scans.scan_update | scan_board.status_update, verb?: string, scan_board_status?: new | contacted | follow_up | done | null, description?: string | null, id?: number, user_id?: number, mailing_list_id?: number | null, invoke_count?: number, created_at?: string | null, updated_at?: string, deleted_at?: string | null }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ current_page?: number, from?: number | null, last_page?: number, path?: string, per_page?: number | string, to?: number | null, total?: number }"
+          },
+          {
+            "key": "can_manage_webhooks",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "thanksio.api.webhookDestinations.update",
+      "shortPath": "webhookDestinations.update",
+      "description": "Update an outbound webhook destination.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ url: string, type: order_item.status_update | order.status_update | order_item.delivered | scans.scan_update | scan_board.status_update, verb: string, scan_board_status?: new | contacted | follow_up | done | null, description?: string | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "order_item.status_update | order.status_update | order_item.delivered | scans.scan_update | scan_board.status_update"
+          },
+          {
+            "key": "verb",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scan_board_status",
+            "optional": true,
+            "type": "new | contacted | follow_up | done | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "mailing_list_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "invoke_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

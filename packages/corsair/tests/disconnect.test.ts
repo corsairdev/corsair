@@ -1,5 +1,15 @@
 import type { CorsairInternalConfig } from '../core';
-import { disconnectConnection } from '../core/management/operations';
+import {
+	encryptConfig,
+	encryptDEK,
+	generateDEK,
+} from '../core/auth/encryption';
+import { managementHandler } from '../core/management';
+import {
+	describeTenant,
+	disconnectConnection,
+	listTenants,
+} from '../core/management/operations';
 
 const KEK = 'test-kek-with-at-least-32-characters!!';
 
@@ -248,6 +258,230 @@ describe('manage.disconnect', () => {
 			await expect(
 				disconnectConnection(internalFor(db), badInput),
 			).rejects.toMatchObject({ status: 400, code: 'bad_request' });
+		} finally {
+			await destroy();
+		}
+	});
+});
+
+describe('manage.disconnect — one account', () => {
+	type Db = ReturnType<typeof createTestDatabase>['db'];
+
+	const accountCount = (db: Db, id: string) =>
+		db
+			.selectFrom('corsair_accounts')
+			.select((eb) => eb.fn.countAll<number>().as('n'))
+			.where('id', '=', id)
+			.executeTakeFirstOrThrow()
+			.then((r) => Number(r.n));
+
+	async function seedTwo(db: Db) {
+		await seedConnection(db, 't1', 'acc1');
+		await seedConnection(db, 't1', 'acc2');
+		for (const [id, ref, label] of [
+			['acc1', 'p-1', 'one@x.com'],
+			['acc2', 'p-2', 'two@x.com'],
+		] as const) {
+			const dek = generateDEK();
+			await db
+				.updateTable('corsair_accounts')
+				.set({
+					config: encryptConfig(
+						{ account_ref: ref, account_label: label },
+						dek,
+					),
+					dek: await encryptDEK(dek, KEK),
+				})
+				.where('id', '=', id)
+				.execute();
+		}
+	}
+
+	it("disconnect with account removes that account's row, entities and events and leaves the other's", async () => {
+		const { db, destroy } = createTestDatabase();
+		try {
+			await seedTwo(db);
+			const result = await disconnectConnection(internalFor(db), {
+				plugin: 'slack',
+				tenantId: 't1',
+				account: 'acc1',
+			});
+			expect(result).toEqual({ ok: true, disconnected: true });
+			expect(await accountCount(db, 'acc1')).toBe(0);
+			expect(await countFor(db, 'corsair_entities', 'acc1')).toBe(0);
+			expect(await countFor(db, 'corsair_events', 'acc1')).toBe(0);
+			expect(await countFor(db, 'corsair_entities', 'acc2')).toBe(1);
+			expect(await countFor(db, 'corsair_events', 'acc2')).toBe(1);
+		} finally {
+			await destroy();
+		}
+	});
+
+	it('disconnect with an unknown account returns disconnected:false and deletes nothing', async () => {
+		const { db, destroy } = createTestDatabase();
+		try {
+			await seedTwo(db);
+			const result = await disconnectConnection(internalFor(db), {
+				plugin: 'slack',
+				tenantId: 't1',
+				account: 'nobody',
+			});
+			expect(result).toEqual({ ok: true, disconnected: false });
+			expect(await accountCount(db, 'acc1')).toBe(1);
+			expect(await accountCount(db, 'acc2')).toBe(1);
+		} finally {
+			await destroy();
+		}
+	});
+
+	it('disconnect without account still removes every account of the pair', async () => {
+		const { db, destroy } = createTestDatabase();
+		try {
+			await seedTwo(db);
+			const result = await disconnectConnection(internalFor(db), {
+				plugin: 'slack',
+				tenantId: 't1',
+			});
+			expect(result).toEqual({ ok: true, disconnected: true });
+			expect(await accountCount(db, 'acc1')).toBe(0);
+			expect(await accountCount(db, 'acc2')).toBe(0);
+		} finally {
+			await destroy();
+		}
+	});
+
+	it('disconnect with a label matching two accounts rejects and deletes nothing', async () => {
+		const { db, destroy } = createTestDatabase();
+		try {
+			await seedTwo(db);
+			const dek = generateDEK();
+			await db
+				.updateTable('corsair_accounts')
+				.set({
+					config: encryptConfig(
+						{ account_ref: 'p-2', account_label: 'one@x.com' },
+						dek,
+					),
+					dek: await encryptDEK(dek, KEK),
+				})
+				.where('id', '=', 'acc2')
+				.execute();
+			await expect(
+				disconnectConnection(internalFor(db), {
+					plugin: 'slack',
+					tenantId: 't1',
+					account: 'one@x.com',
+				}),
+			).rejects.toThrow(/matches 2 accounts.*Name one by its id/);
+			expect(await accountCount(db, 'acc1')).toBe(1);
+			expect(await accountCount(db, 'acc2')).toBe(1);
+		} finally {
+			await destroy();
+		}
+	});
+
+	it('lists a plugin once in connectedPlugins when it has two accounts', async () => {
+		const { db, destroy } = createTestDatabase();
+		try {
+			await seedTwo(db);
+			expect(
+				(await describeTenant(internalFor(db), 't1')).connectedPlugins,
+			).toEqual(['slack']);
+			const t1 = (await listTenants(internalFor(db))).find(
+				(t) => t.id === 't1',
+			);
+			expect(t1?.connectedPlugins).toEqual(['slack']);
+		} finally {
+			await destroy();
+		}
+	});
+
+	it('disconnect by email label works', async () => {
+		const { db, destroy } = createTestDatabase();
+		try {
+			await seedTwo(db);
+			const result = await disconnectConnection(internalFor(db), {
+				plugin: 'slack',
+				tenantId: 't1',
+				account: 'TWO@x.com',
+			});
+			expect(result).toEqual({ ok: true, disconnected: true });
+			expect(await accountCount(db, 'acc2')).toBe(0);
+			expect(await accountCount(db, 'acc1')).toBe(1);
+		} finally {
+			await destroy();
+		}
+	});
+
+	it.each([[''], ['   '], [null], [5]])(
+		'rejects account %p with a 400 and deletes nothing',
+		async (account) => {
+			const { db, destroy } = createTestDatabase();
+			try {
+				await seedConnection(db, 't1', 'acc1');
+				await expect(
+					disconnectConnection(internalFor(db), {
+						plugin: 'slack',
+						tenantId: 't1',
+						account: account as unknown as string,
+					}),
+				).rejects.toMatchObject({ status: 400, code: 'bad_request' });
+				expect(await accountCount(db, 'acc1')).toBe(1);
+			} finally {
+				await destroy();
+			}
+		},
+	);
+
+	it('a label that exists only in another tenant disconnects nothing', async () => {
+		const { db, destroy } = createTestDatabase();
+		try {
+			await seedTwo(db);
+			await db
+				.updateTable('corsair_accounts')
+				.set({ tenant_id: 't2' })
+				.where('id', '=', 'acc2')
+				.execute();
+			const result = await disconnectConnection(internalFor(db), {
+				plugin: 'slack',
+				tenantId: 't1',
+				account: 'two@x.com',
+			});
+			expect(result).toEqual({ ok: true, disconnected: false });
+			expect(await accountCount(db, 'acc1')).toBe(1);
+			expect(await accountCount(db, 'acc2')).toBe(1);
+		} finally {
+			await destroy();
+		}
+	});
+
+	it('POST /disconnect passes account through the management handler', async () => {
+		const { db, destroy } = createTestDatabase();
+		try {
+			await seedTwo(db);
+			// createCorsair would treat a bare Kysely as Postgres (forUpdate); the
+			// internal-config instance keeps this sqlite.
+			const corsair = {
+				[Symbol.for('corsair:internal')]: {
+					...internalFor(db),
+					multiTenancy: true,
+				},
+			};
+			const res = await managementHandler(corsair)(
+				new Request('http://x/api/corsair/disconnect', {
+					method: 'POST',
+					headers: { 'content-type': 'application/json' },
+					body: JSON.stringify({
+						plugin: 'slack',
+						tenantId: 't1',
+						account: 'p-1',
+					}),
+				}),
+			);
+			expect(res.status).toBe(200);
+			expect(await res.json()).toEqual({ ok: true, disconnected: true });
+			expect(await accountCount(db, 'acc1')).toBe(0);
+			expect(await accountCount(db, 'acc2')).toBe(1);
 		} finally {
 			await destroy();
 		}

@@ -1,0 +1,144 @@
+---
+title: "Cloudflare Browser Run plugin"
+sidebarTitle: "Overview"
+description: "Render and inspect pages, capture screenshots and PDFs, crawl sites, and manage Browser Rendering sessions and targets through REST."
+---
+
+Use **Cloudflare Browser Run** through Corsair: one client, typed API calls.
+
+This plugin exposes 24 REST operations: `content.fetch`, `markdown.convert`, `snapshot.capture`, `accessibilityTree.capture`, `scrape.extract`, `json.extract`, `links.list`, `screenshot.capture`, `pdf.render`, `crawl.start`, `crawl.get`, `crawl.cancel`, `sessions.list`, `sessions.get`, `browser.create`, `browser.close`, `browser.version`, `browser.protocol`, `browser.liveView.create`, `targets.create`, `targets.list`, `targets.get`, `targets.activate`, and `targets.close`.
+
+Quick Actions use the current `/browser-run` paths; DevTools use the generated API reference's `/browser-rendering/devtools` paths. Screenshot/PDF bytes are returned as base64 JSON. Browser DevTools WebSocket/CDP transport, Workers Bindings, and inbound webhooks are not implemented.
+
+**What you get:**
+
+- 24 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/cloudflarebrowserrendering better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/cloudflarebrowserrendering better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/cloudflarebrowserrendering better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/cloudflarebrowserrendering better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { cloudflarebrowserrendering } from '@corsair-dev/cloudflarebrowserrendering';
+
+export const corsair = createCorsair({
+	plugins: [
+		cloudflarebrowserrendering({
+			authType: 'api_key',
+		}),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Cloudflare Browser Run API key before the first call: `pnpm corsair setup --plugin=cloudflarebrowserrendering --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+cloudflarebrowserrendering({
+	authType: 'api_key',
+})
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'cloudflarebrowserrendering',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Fetch rendered HTML**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.cloudflarebrowserrendering.api.content.fetch({
+	accountId: 'acct-123',
+	body: { url: 'https://example.com' },
+});
+```
+
+
+**Create a browser session**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.cloudflarebrowserrendering.api.browser.create({
+	accountId: 'acct-123',
+	keepAlive: 60000,
+	guardrails: {
+		allowedDomains: ['example.com'],
+	},
+});
+```
+
+
+See the full list on the [API](/plugins/cloudflarebrowserrendering/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/cloudflarebrowserrendering/api">
+    Every `cloudflarebrowserrendering.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

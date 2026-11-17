@@ -1,9 +1,14 @@
 import { createAccountKeyManager } from '../core';
 import {
+	AccountSelectionError,
+	listAccountSummaries,
+	upsertAccount,
+} from '../core/account-lookup';
+import {
 	getCorsairInternal,
 	requireCorsairPlugin,
 } from '../core/utils/corsair-instance';
-import { subscribeAndReport } from '../oauth/subscribe-report';
+import { subscribeAndStoreLink } from '../oauth/subscribe-and-store';
 import { resolveOAuthWebhookTenantLink } from '../webhooks/resolve-oauth-tenant-link';
 import { setWebhookTenantLink } from '../webhooks/tenant-links';
 import { ensureCorsairProvisionedForTenant } from './internal/provision';
@@ -16,7 +21,8 @@ export type ManagedOAuthDeliveryErrorCode =
 	| 'invalid_corsair_instance'
 	| 'no_database'
 	| 'plugin_not_found'
-	| 'no_access_token';
+	| 'no_access_token'
+	| AccountSelectionError['code'];
 
 export class ManagedOAuthDeliveryError extends Error {
 	readonly code: ManagedOAuthDeliveryErrorCode;
@@ -39,6 +45,11 @@ export type ProcessManagedOAuthDeliveryOptions = {
 	// Provider token-body identity (Slack team, Notion workspace_id, …) the Hub
 	// forwards so the tenant-link resolver can read it. Absent = API-call class.
 	providerData?: Record<string, unknown>;
+	// Provider account identity; absent = the tenant's default account.
+	account?: { id: string; label?: string };
+	// Every account the hub holds for this plugin and tenant, oldest first, so
+	// an account from before names can be told apart from the one being delivered.
+	accounts?: { id: string; label?: string }[];
 };
 
 export type ProcessManagedOAuthDeliveryResult = {
@@ -61,6 +72,28 @@ export async function processManagedOAuthDelivery(
 		authType = 'managed',
 		providerData,
 	} = options;
+	// Delivery payloads are untyped at runtime; a blank id means no account.
+	const account =
+		typeof options.account?.id === 'string' && options.account.id.trim()
+			? {
+					id: options.account.id,
+					...(typeof options.account.label === 'string' && {
+						label: options.account.label,
+					}),
+				}
+			: undefined;
+	const hubAccounts = Array.isArray(options.accounts)
+		? options.accounts.flatMap((a) =>
+				typeof a?.id === 'string' && a.id.trim()
+					? [
+							{
+								id: a.id,
+								...(typeof a.label === 'string' && { label: a.label }),
+							},
+						]
+					: [],
+			)
+		: undefined;
 
 	if (!accessToken.trim()) {
 		throw new ManagedOAuthDeliveryError(
@@ -93,7 +126,43 @@ export async function processManagedOAuthDelivery(
 
 	await ensureCorsairProvisionedForTenant(corsair, tenantId);
 
+	let accountId: string | undefined;
+	if (!account && internal.multiAccount) {
+		// Without a name, the delivery would land on the oldest account.
+		const accounts = await listAccountSummaries({
+			db: internal.database.db,
+			kek: internal.kek,
+			integrationName: pluginId,
+			tenantId,
+		});
+		if (accounts.length > 1) {
+			throw new ManagedOAuthDeliveryError(
+				'account_required',
+				`${pluginId} has ${accounts.length} accounts for tenant "${tenantId}": the delivery must name one`,
+			);
+		}
+	}
+	if (account) {
+		try {
+			({ accountId } = await upsertAccount({
+				database: internal.database,
+				kek: internal.kek,
+				integrationName: pluginId,
+				tenantId,
+				identity: account,
+				allowMany: internal.multiAccount,
+				...(hubAccounts && { hubAccounts }),
+			}));
+		} catch (error) {
+			if (error instanceof AccountSelectionError) {
+				throw new ManagedOAuthDeliveryError(error.code, error.message);
+			}
+			throw error;
+		}
+	}
+
 	const accountKm = createAccountKeyManager({
+		account: account ? { ref: account.id } : undefined,
 		authType,
 		integrationName: pluginId,
 		tenantId,
@@ -144,6 +213,8 @@ export async function processManagedOAuthDelivery(
 					link: tenantLink,
 					authType,
 					extraAccountFields,
+					accountId,
+					accountRef: account?.id,
 				});
 			} catch (error) {
 				console.warn(
@@ -170,14 +241,23 @@ export async function processManagedOAuthDelivery(
 		);
 	}
 
-	await subscribeAndReport(corsair, plugin, tenantId, accountKm).catch(
-		(error) => {
-			console.warn(
-				`[corsair:managed-oauth] subscribe failed for '${pluginId}' tenant '${tenantId}':`,
-				error,
-			);
-		},
-	);
+	try {
+		await subscribeAndStoreLink({
+			corsair,
+			internal,
+			plugin,
+			tenantId,
+			keys: accountKm,
+			authType,
+			accountId,
+			accountRef: account?.id,
+		});
+	} catch (error) {
+		console.warn(
+			`[corsair:managed-oauth] subscribe failed for '${pluginId}' tenant '${tenantId}':`,
+			error,
+		);
+	}
 
 	return { plugin: pluginId, tenantId };
 }

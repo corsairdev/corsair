@@ -1,0 +1,5907 @@
+{
+  "id": "deepline",
+  "displayName": "Deepline",
+  "description": "Find GTM tools, run and manage enrichment Plays and their triggers, deploy Monitors, manage provider credentials, secrets, notifications and billing through Deepline.",
+  "npmPackageName": "@corsair-dev/deepline",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 115,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "deepline.api.auth.status",
+      "shortPath": "auth.status",
+      "description": "Show the API key, user, workspace and rate-limit tier this plugin is using",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api_key_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "org_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "org_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "org_slug",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "rate_limit_tier",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "features",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.billing.autoRecharge.get",
+      "shortPath": "billing.autoRecharge.get",
+      "description": "Read the automatic credit recharge settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "available",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "threshold_credits",
+            "optional": true,
+            "type": "number | null | null"
+          },
+          {
+            "key": "refill_to_credits",
+            "optional": true,
+            "type": "number | null | null"
+          },
+          {
+            "key": "rolling_limit_cents",
+            "optional": true,
+            "type": "number | null | null"
+          },
+          {
+            "key": "purchase_limit_cents",
+            "optional": true,
+            "type": "number | null | null"
+          },
+          {
+            "key": "purchase_limit_credits",
+            "optional": true,
+            "type": "number | null | null"
+          },
+          {
+            "key": "rolling_committed_cents",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "rolling_committed_credits",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.billing.autoRecharge.update",
+      "shortPath": "billing.autoRecharge.update",
+      "description": "Turn automatic recharge on or off or change its limits (lets Deepline charge the saved card automatically)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "enabled",
+            "optional": false,
+            "type": "boolean",
+            "description": "true turns automatic recharge on (the saved card is charged whenever the balance drops below threshold_credits); false turns it off."
+          },
+          {
+            "key": "threshold_credits",
+            "optional": true,
+            "type": "number",
+            "description": "Required when enabled is true: recharge when the balance drops below this many credits."
+          },
+          {
+            "key": "refill_to_credits",
+            "optional": true,
+            "type": "number",
+            "description": "Required when enabled is true: buy enough credits to bring the balance back to this amount."
+          },
+          {
+            "key": "purchase_limit_credits",
+            "optional": true,
+            "type": "number | null",
+            "description": "Only with enabled true: maximum credits bought automatically over a rolling 30 days; 0 stops purchases, null removes the cap."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": false,
+            "type": "string",
+            "description": "Required caller-owned key, 1-200 printable ASCII characters with no surrounding whitespace (a UUID works). Persist it before calling. Retrying with the same key and the same input replays the original operation instead of charging again; never generate a fresh key to retry an uncertain call."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "available",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "threshold_credits",
+            "optional": true,
+            "type": "number | null | null"
+          },
+          {
+            "key": "refill_to_credits",
+            "optional": true,
+            "type": "number | null | null"
+          },
+          {
+            "key": "rolling_limit_cents",
+            "optional": true,
+            "type": "number | null | null"
+          },
+          {
+            "key": "purchase_limit_cents",
+            "optional": true,
+            "type": "number | null | null"
+          },
+          {
+            "key": "purchase_limit_credits",
+            "optional": true,
+            "type": "number | null | null"
+          },
+          {
+            "key": "rolling_committed_cents",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "rolling_committed_credits",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.billing.balance",
+      "shortPath": "billing.balance",
+      "description": "Get workspace credit balance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "view",
+            "optional": true,
+            "type": "pill",
+            "description": "Set pill for the compact display response; omit for the full balance and exposure breakdown."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ org_id: string, balance: number, balance_display?: string | null, rough_usd_balance?: number | null, posted_balance_credits?: number | null | null, pending_spend_credits?: number | null | null, spendable_balance_credits: number | null, spendable_balance_status: string, spendable_balance_checked_at?: string | null | null, spendable_balance_message?: string | null, temporary_hold_credits?: number | null | null, temporary_hold_credits_truncated?: boolean | null | null, rough_usd_temporary_holds?: number | null | null, estimated_hold_credits?: number | null | null, incurred_unsettled_credits?: number | null | null, pending_wallet_debit_credits?: number | null | null, pending_wallet_refund_credits?: number | null | null, unpriced_unsettled_reservation_count?: number | null | null, exposure_status: string, exposure_message?: string | null, temporary_hold_message?: string | null, balance_status?: string | null, has_payment_method?: boolean | null, payment_method?: Record<string, any> | null | null, recovery?: Record<string, any> | null, updated_at?: string | null | null } | { org_id: string, view: pill, balance: number, balance_display: string, rough_usd_balance: number, balance_status: string, updated_at: string | null }"
+      }
+    },
+    {
+      "path": "deepline.api.billing.catalog",
+      "shortPath": "billing.catalog",
+      "description": "Read the published plan catalog, meters and the plan the workspace is on",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "catalog_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "catalog_version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "active_plan",
+            "optional": false,
+            "type": "{ plan_family_id: string, plan_version_id: string, public_name: string, display_name?: string | null, rate_card_id?: string | null, assigned_by?: string | null, assigned_at?: string | null | null, has_subscription?: boolean | null }"
+          },
+          {
+            "key": "plans",
+            "optional": false,
+            "type": "{ plan_family_id: string, plan_version_id: string, public_name: string, display_name?: string | null, price_usd?: number | null | null, price_interval?: string | null | null, monthly_grant_credits: number, rollover?: { mode: string, max_credits?: number | null } | null, acquirable: boolean }[]"
+          },
+          {
+            "key": "meters",
+            "optional": true,
+            "type": "{ id: string, name: string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.billing.creditPurchases.create",
+      "shortPath": "billing.creditPurchases.create",
+      "description": "Buy credits through a payment-gated purchase (spends money)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credits",
+            "optional": false,
+            "type": "number",
+            "description": "Deepline credits to buy through the payment-gated commercial purchase flow."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": false,
+            "type": "string",
+            "description": "Required caller-owned key, 1-200 printable ASCII characters with no surrounding whitespace (a UUID works). Persist it before calling. Retrying with the same key and the same input replays the original operation instead of charging again; never generate a fresh key to retry an uncertain call."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "operation",
+            "optional": false,
+            "type": "{ id: string, state: string, version: number, next_action?: string | null | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.billing.creditPurchases.recover",
+      "shortPath": "billing.creditPurchases.recover",
+      "description": "Check or retire an uncertain credit purchase by its original key (never charges)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credits",
+            "optional": false,
+            "type": "number",
+            "description": "The exact credit amount of the original purchase."
+          },
+          {
+            "key": "org_id",
+            "optional": false,
+            "type": "string",
+            "description": "The original workspace org_id; must match the authenticated workspace."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": false,
+            "type": "string",
+            "description": "The ORIGINAL purchase idempotency key. Never generate a new key for recovery."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "operation",
+            "optional": false,
+            "type": "{ id: string, state: string, version: number, next_action?: string | null | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.billing.entitlements",
+      "shortPath": "billing.entitlements",
+      "description": "Read current workspace provider benefits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "as_of",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "plan",
+            "optional": false,
+            "type": "{ sku?: string | null, name?: string | null, catalog_revision?: string | null | null, included_credits?: number | null, interval?: string | null | null } | null"
+          },
+          {
+            "key": "benefits",
+            "optional": false,
+            "type": "{ quickenrichUnlimited?: { status: string, value: { enabled: boolean, requestsPerMinute: number }, expiresAt?: number | null } | null, peopleSearch?: { status: string, value: { enabled: boolean, requestsPerMinute: number, profilesPerMonth: number, overageCreditsPerProfile?: number | null }, expiresAt?: number | null, usage: { month: string, periodStartsAt?: number | null, resetsAt?: number | null, resetsOn?: string | null, limit: number, consumed: number, remaining: number } } | null, includedStorage?: { status: string, usage: { limit: number, consumed: number, remaining: number, measuredDay: string, overageCharged: boolean } } | null }"
+          },
+          {
+            "key": "effective_limits",
+            "optional": false,
+            "type": "{ quickenrichUnlimited?: { baseline: number, effective: number, source: string, override_expires_at?: number | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.billing.includedCompute",
+      "shortPath": "billing.includedCompute",
+      "description": "Read Play compute pricing, included minutes and minutes used this period",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "include_overage",
+            "optional": true,
+            "type": "boolean",
+            "description": "true also returns overage_credits: settled plan-rate sandbox credits paid beyond included compute this period."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_per_minute",
+            "optional": true,
+            "type": "number | null | null"
+          },
+          {
+            "key": "included_minutes",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "plan",
+            "optional": false,
+            "type": "{ included_minutes: number, credits_per_minute: number }"
+          },
+          {
+            "key": "period_start_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "period_end_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resets_on",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "included_minutes_used",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "included_credits_used",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "overage_credits",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "minutes_used",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "days",
+            "optional": false,
+            "type": "{ day: string, minutes: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.billing.invoices",
+      "shortPath": "billing.invoices",
+      "description": "List subscription invoices and credit purchase receipts, newest first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum entries, 1-100; the server default is 24."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ kind: string, id: string, created_at: string, description: string, amount_cents: number, currency: string, status: string, url?: string | null | null, pdf_url?: string | null | null, invoice_url?: string | null | null, receipt_url?: string | null | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.billing.ledger",
+      "shortPath": "billing.ledger",
+      "description": "List or export the credit ledger",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "JSON page size; default 50, clamped to 5000. CSV export ignores the requested page limit."
+          },
+          {
+            "key": "since_at",
+            "optional": true,
+            "type": "number",
+            "description": "Lower creation-time bound as Unix milliseconds."
+          },
+          {
+            "key": "before_at",
+            "optional": true,
+            "type": "number",
+            "description": "Upper creation-time bound as Unix milliseconds."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Opaque next_cursor from the previous JSON page. Preserve all filters. Ignored for CSV."
+          },
+          {
+            "key": "run_id",
+            "optional": true,
+            "type": "string",
+            "description": "Exact public run ID."
+          },
+          {
+            "key": "operation",
+            "optional": true,
+            "type": "string",
+            "description": "Exact billed operation name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "scope",
+            "optional": false,
+            "type": "{ kind: org }"
+          },
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ id: string, delta: number, reason: string, provider: string | null, operation: string | null, request_id: string | null, run_id: string | null, billing_stage: string | null, charge_state: string | null, billing_mode: string | null, pricing_model: string | null, pricing_basis: string | null, charge_credits: number, outcome: string | null, result_count: number | null, deepline_rough_usd: number | null, api_key_id: string | null, metadata: Record<string, any> | null, billing_audit: Record<string, any>, stripe_session_id: string | null, created_at: string }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "next_cursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "next_before_at",
+            "optional": false,
+            "type": "null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.billing.plans",
+      "shortPath": "billing.plans",
+      "description": "List plans that can be started or changed to, and check a promo code without redeeming it",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "promo_code",
+            "optional": true,
+            "type": "string",
+            "description": "Optional plan promo code to evaluate; the response reports its status (applied, unknown, expired, already_redeemed, unavailable). Reading never redeems it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "plans",
+            "optional": false,
+            "type": "{ sku: string, name: string, display_name?: string | null, recurring_price_usd: number, first_month_price_usd?: number | null | null, bonus_credits?: number | null | null, interval: string, included_credits: number, benefits?: Record<string, any> | null, purchased_credit_price_usd: number, acquisition_enabled: boolean }[]"
+          },
+          {
+            "key": "current_plan_sku",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pending_plan_sku",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "pending_plan_display_name",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "acquisition_enabled",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "enabled_offer_keys",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "promo_code",
+            "optional": true,
+            "type": "{ code: string, status: string, plan_skus: string[], expires_at?: string | null | null } | null | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.billing.planTransitions.create",
+      "shortPath": "billing.planTransitions.create",
+      "description": "Start, change, cancel or restore the billing plan (changes what the workspace pays)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "start_or_change | cancel | undo_cancel",
+            "description": "start_or_change starts or changes the plan; cancel ends it at period end; undo_cancel restores a pending cancellation."
+          },
+          {
+            "key": "target_plan_sku",
+            "optional": true,
+            "type": "string",
+            "description": "Required for start_or_change: plan SKU from billing.plans, e.g. payg-v1, builder-v1, growth-v1, team-v2."
+          },
+          {
+            "key": "billing_email",
+            "optional": true,
+            "type": "string",
+            "description": "Only for start_or_change: billing email for plan invoices."
+          },
+          {
+            "key": "promo_code",
+            "optional": true,
+            "type": "string",
+            "description": "Only for start_or_change: plan promo code; an unknown, expired or used code refuses the change."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": false,
+            "type": "string",
+            "description": "Required caller-owned key, 1-200 printable ASCII characters with no surrounding whitespace (a UUID works). Persist it before calling. Retrying with the same key and the same input replays the original operation instead of charging again; never generate a fresh key to retry an uncertain call."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "operation",
+            "optional": false,
+            "type": "{ id: string, state: string, version: number, next_action?: string | null | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.billing.portalSessions.create",
+      "shortPath": "billing.portalSessions.create",
+      "description": "Create a Stripe billing portal link for payment details and invoices (the link grants billing access)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "flow",
+            "optional": true,
+            "type": "customer_update",
+            "description": "customer_update opens the billing address editor directly; omit for the general portal (payment recovery and invoices)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.billing.quote",
+      "shortPath": "billing.quote",
+      "description": "Estimate the maximum credits for Play sandbox sessions (quote only, spends nothing)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "quantity",
+            "optional": false,
+            "type": "number",
+            "description": "Number of Play sandbox sessions to quote."
+          },
+          {
+            "key": "sandbox_runtime",
+            "optional": true,
+            "type": "{ timeout?: string, size?: standard | large | xlarge | 1gb | 4gb | 8gb }",
+            "description": "Runtime declaration for each session; omit for defaults."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scope",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "quantity",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "resources",
+            "optional": false,
+            "type": "{ timeoutSeconds: number, memoryGiB: number, cpu: number, diskGiB: number }"
+          },
+          {
+            "key": "maximum_backend",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "priced_backends",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "maximum_credits",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "maximum_billing_seconds",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_play_credits",
+            "optional": true,
+            "type": "number | null | null"
+          },
+          {
+            "key": "total_budget_supported",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "unbounded_components",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "explanation",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "plan_version_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "rate_card_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.billing.status",
+      "shortPath": "billing.status",
+      "description": "Read plan, payment, recharge and invoice state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "plan",
+            "optional": false,
+            "type": "{ sku: string, name: string, display_name?: string | null, recurring_price_usd?: number | null | null, interval?: string | null | null, included_credits?: number | null | null }"
+          },
+          {
+            "key": "state",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "changes_allowed",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "payment_state",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recharge_state",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "billing_email",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "billing_address",
+            "optional": true,
+            "type": "Record<string, any> | null | null"
+          },
+          {
+            "key": "collection_method",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "payment_access_policy",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "plan_invoice",
+            "optional": true,
+            "type": "Record<string, any> | null | null"
+          },
+          {
+            "key": "outstanding_invoice",
+            "optional": true,
+            "type": "Record<string, any> | null | null"
+          },
+          {
+            "key": "next_action",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "pending_plan_sku",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "pending_plan_starts_at",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "current_period_end",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "as_of",
+            "optional": true,
+            "type": "string | null | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.billing.subscription.cancel",
+      "shortPath": "billing.subscription.cancel",
+      "description": "Cancel the subscription at period end, or undo a pending cancellation (changes the subscription)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "cancel | undo_cancel",
+            "description": "cancel schedules cancellation at the end of the paid period (credits are kept); undo_cancel reverses a pending cancellation before the period ends."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subscription_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cancel_at_period_end",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "current_period_end",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.billing.subscription.status",
+      "shortPath": "billing.subscription.status",
+      "description": "Read subscription state, renewal and cancellation facts, and remaining credit pools",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "plan_version_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "plan_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "plan_display_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "plan_family_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subscribed",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "price_usd",
+            "optional": true,
+            "type": "number | null | null"
+          },
+          {
+            "key": "price_interval",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "monthly_grant_credits",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "assigned_by",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "assigned_at",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "credit_pools",
+            "optional": false,
+            "type": "{ grant_id?: string | null, pool: string, credits_remaining: number, credits_granted: number, source: string, cycle_key?: string | null | null, effective_at: string }[]"
+          },
+          {
+            "key": "pooled_credits_remaining",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "current_period_end",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "cancel_at_period_end",
+            "optional": true,
+            "type": "boolean | null | null"
+          },
+          {
+            "key": "stripe_status",
+            "optional": true,
+            "type": "string | null | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.billing.topUp",
+      "shortPath": "billing.topUp",
+      "description": "Charge the saved payment method and add credits (spends money)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credits",
+            "optional": false,
+            "type": "number",
+            "description": "Deepline credits to buy and charge to the saved payment method."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": false,
+            "type": "string",
+            "description": "Required caller-owned key, 1-200 printable ASCII characters with no surrounding whitespace (a UUID works). Persist it before calling. Retrying with the same key and the same input replays the original operation instead of charging again; never generate a fresh key to retry an uncertain call."
+          },
+          {
+            "key": "receipt",
+            "optional": true,
+            "type": "boolean",
+            "description": "true requests a durable operation receipt (status pending or applied) instead of waiting for the charge result; a pending receipt does not mean payment or credits have landed."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ status: pending, operation_id: string, operation_state: string, requested_credits: number, amount_cents: number, currency: string } | { status: applied, operation_id: string, operation_state: string, applied_credits: number, amount_cents: number, currency: string, balance?: number | null, stripe_payment_intent_id?: string | null } | { ok: true, credits: number, amount_cents: number, currency: string, balance: number, stripe_payment_intent_id: string, payment_method?: Record<string, any> | null | null }"
+      }
+    },
+    {
+      "path": "deepline.api.billing.usage",
+      "shortPath": "billing.usage",
+      "description": "Get usage and recent charges",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_id",
+            "optional": true,
+            "type": "string",
+            "description": "Filter recent charges and include spend for this exact public run ID."
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string",
+            "description": "Exact call lookup, at most 200 characters. Cannot be combined with run_id, recent_cursor, or recent_offset. Returns only org_id and recent."
+          },
+          {
+            "key": "recent_limit",
+            "optional": true,
+            "type": "number",
+            "description": "Recent page size; default 10, clamped to 100. Ignored for request_id."
+          },
+          {
+            "key": "recent_offset",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-based recent activity offset, at most 500. Follow recent.next_offset while recent.has_more is true."
+          },
+          {
+            "key": "recent_cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Legacy cursor input. Prefer recent_offset; cannot be combined with request_id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "balance",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "balance_display",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "rough_usd_balance",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "balance_updated_at",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "{ public_name: string, usd_per_credit: number } | null"
+          },
+          {
+            "key": "managed_usd_per_email",
+            "optional": true,
+            "type": "number | null | null"
+          },
+          {
+            "key": "has_payment_method",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "payment_method",
+            "optional": true,
+            "type": "Record<string, any> | null | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ month_spent_credits: number, rough_usd_spent: number, last_30_days_usage_credits: number, rough_usd_last_30_days_usage: number, temporary_hold_credits: number, temporary_hold_credits_truncated: boolean, rough_usd_temporary_holds: number, period_start_at: string, period_end_at: string } | null"
+          },
+          {
+            "key": "run",
+            "optional": true,
+            "type": "{ run_id?: string | null, spent_credits?: number | null, rough_usd_spent?: number | null, event_count?: number | null } | null | null"
+          },
+          {
+            "key": "quota",
+            "optional": true,
+            "type": "{ enabled: boolean, monthly_credits_limit: number | null, monthly_rough_usd_limit: number | null, remaining_credits: number | null, remaining_rough_usd: number | null, updated_at: string | null } | null"
+          },
+          {
+            "key": "autobill",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "recent",
+            "optional": false,
+            "type": "{ run_id: string | null, request_id?: string | null, total: number, total_is_exact?: boolean | null, total_lower_bound?: number | null, offset: number, limit: number, next_offset: number, next_cursor: string | null, has_more: boolean, incomplete: boolean, entries: { id: string, provider: string, operation: string, status: string, request_id: string, run_id: string | null, play_run_id?: string | null | null, workflow_id?: string | null | null, billing_run_id?: string | null | null, execution_run_id?: string | null | null, included_in_run_id?: string | null | null, billing_scope?: string | null | null, step_block_id?: string | null | null, step_alias?: string | null | null, auth_type?: string | null | null, user_id?: string | null | null, api_key_id?: string | null | null, credits: number, billing_mode?: string | null | null, pricing_model?: string | null | null, pricing_basis?: string | null | null, pricing_unit_amount?: number | null | null, outcome?: string | null | null, policy_id?: string | null | null, provider_units?: number | null | null, batch_count?: number | null | null, total_results?: number | null | null, delta?: number | null | null, reason?: string | null | null, stripe_session_id?: string | null | null, metadata?: Record<string, any> | null | null, billing_note?: string | null | null, charge_state: string, charge_finality?: string | null, rough_usd_cost?: number | null | null, created_at?: string | null }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.billing.usageEvents",
+      "shortPath": "billing.usageEvents",
+      "description": "Page raw per-request usage events, or look up one by request_id (not a final charge)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string",
+            "description": "Exact lookup of one execution by the request_id/job_id from a tool execution, 1-200 characters. Cannot be combined with limit, cursor or run_id. An unknown request_id is a 404 error."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size, 1-500; the server default is 200."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Opaque next_cursor from the preceding page. Follow next_cursor until it is null, even when a page is empty."
+          },
+          {
+            "key": "run_id",
+            "optional": true,
+            "type": "string",
+            "description": "Only events attributed to this exact public run ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "run_id",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ id?: string | null | null, provider: string, operation: string, status: string, request_id: string, billing_outcome_reason?: string | null | null, credits?: number | null | null, billing_mode?: string | null | null, pricing_model?: string | null | null, policy_id?: string | null | null, created_at: string, run_id?: string | null | null, charge_state?: any, charge_finality?: any }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.datasets.history",
+      "shortPath": "datasets.history",
+      "description": "Read immutable run row history with coverage and continuation cursor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "playName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableNamespace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ runId: string, datasetId: string, rowKey: string, phase: string, generation: string, attemptSeq: number | null, rowVersion: number | null, inputIndex: number | null, inputDigest: string, status: string, data: Record<string, any>, source: Record<string, any>, recordedAt: string }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "coverage",
+            "optional": false,
+            "type": "{ complete: boolean, expectedRows: number | null, captureStartedAt: string | null, captureCompletedAt: string | null, reason: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.datasets.rows",
+      "shortPath": "datasets.rows",
+      "description": "Read a page of saved dataset rows, optionally scoped to a run",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "playName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableNamespace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "runId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "rowMode",
+            "optional": true,
+            "type": "output | all | live"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "full | counts"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rows",
+            "optional": false,
+            "type": "{ key?: string, status?: string, runId?: string | null, data?: Record<string, any> }[]"
+          },
+          {
+            "key": "scope",
+            "optional": true,
+            "type": "{ kind: database } | { kind: run, runId: string }"
+          },
+          {
+            "key": "summaryMode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "{ stats?: { total?: number, queued?: number, running?: number, completed?: number, failed?: number }, columns?: Record<string, any> }"
+          },
+          {
+            "key": "customerDbUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deltaCursor",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.db.query",
+      "shortPath": "db.query",
+      "description": "Run SQL on the workspace customer database; writes can change storage tables",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sql",
+            "optional": false,
+            "type": "string",
+            "description": "One SQL statement for the workspace customer database. SELECT, EXPLAIN and read-only WITH read permitted schemas; CREATE TABLE, INSERT, UPDATE, DELETE, ALTER, DROP, TRUNCATE and CREATE INDEX change schema-qualified storage tables such as storage.agent_notes."
+          },
+          {
+            "key": "maxRows",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum rows to return, 1 to 1000. The server also bounds results."
+          },
+          {
+            "key": "operationKey",
+            "optional": true,
+            "type": "string",
+            "description": "Recovery key for a write. Resend the same SQL, options and key to recover an uncertain result; a new key starts a new operation."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "command",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "row_count",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "row_count_returned",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "truncated",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "columns",
+            "optional": false,
+            "type": "{ name: string }[]"
+          },
+          {
+            "key": "rows",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "operation",
+            "optional": true,
+            "type": "{ operation_key: string, completed_at_ms: number, source: string }"
+          },
+          {
+            "key": "scope",
+            "optional": true,
+            "type": "{ kind: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.executions.getByKey",
+      "shortPath": "executions.getByKey",
+      "description": "Recover a tool execution by its idempotency key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string",
+            "description": "The key returned by the related Deepline API call."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "toolId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "executionRecovery",
+            "optional": false,
+            "type": "{ idempotencyKey: string, state: string, replayed: boolean, expiresAt?: string | null }"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "responseStatus",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.health.get",
+      "shortPath": "health.get",
+      "description": "Check Runtime API availability",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "ok"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "v2"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.integrations.balance",
+      "shortPath": "integrations.balance",
+      "description": "Read the live balance of the workspace's own provider credential (LeadMagic)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "provider",
+            "optional": false,
+            "type": "string",
+            "description": "Provider whose own workspace credential to read the balance of. Only leadmagic is supported today."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "provider",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credentialScope",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "observedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "balance",
+            "optional": false,
+            "type": "{ value: number, status: string, source: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.integrations.connectLink",
+      "shortPath": "integrations.connectLink",
+      "description": "Get the dashboard link where a workspace admin connects a provider",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "provider",
+            "optional": false,
+            "type": "string",
+            "description": "Provider id from tools.providers, for example hubspot."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "provider",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connect_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.integrations.setCredentials",
+      "shortPath": "integrations.setCredentials",
+      "description": "Save provider credential fields for the workspace (replaces the stored credential; values never returned)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "provider",
+            "optional": false,
+            "type": "string",
+            "description": "Provider id from tools.providers, for example leadmagic."
+          },
+          {
+            "key": "credentials",
+            "optional": false,
+            "type": "Record<string, string>",
+            "description": "Provider-owned credential fields, for example { \"api_key\": \"...\" }. Values are stored by Deepline and never returned."
+          },
+          {
+            "key": "expectedConnectionId",
+            "optional": true,
+            "type": "string",
+            "description": "Replace only this existing connection; the save is refused if the current connection differs."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "credential_saved",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.integrations.startOAuth",
+      "shortPath": "integrations.startOAuth",
+      "description": "Start provider OAuth and return the URL a person opens to grant access",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "provider",
+            "optional": false,
+            "type": "string",
+            "description": "Provider id from tools.providers that connects through OAuth."
+          },
+          {
+            "key": "preset",
+            "optional": true,
+            "type": "string",
+            "description": "Named scope preset defined by the provider integration."
+          },
+          {
+            "key": "scopes",
+            "optional": true,
+            "type": "string[]",
+            "description": "Explicit OAuth scopes to request. Omit to use the defaults."
+          },
+          {
+            "key": "optionalScopes",
+            "optional": true,
+            "type": "string[]",
+            "description": "Scopes to request when the user is allowed to grant them."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "redirect_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.monitors.access",
+      "shortPath": "monitors.access",
+      "description": "Check whether the workspace can use Deepline Monitors",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "has_access",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.monitors.available",
+      "shortPath": "monitors.available",
+      "description": "List deployable monitor tools, or describe the payload, outputs and pricing of one tool",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tool",
+            "optional": true,
+            "type": "string",
+            "description": "A monitor tool id to describe in full (payload schema, outputs, pricing). Omit to list the catalog."
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string",
+            "description": "Only list monitor tools from this provider."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Literal text to match against monitor tool metadata."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum monitor tools to list."
+          },
+          {
+            "key": "full",
+            "optional": true,
+            "type": "boolean",
+            "description": "In list mode, return payload schemas and streams instead of the compact inventory. Ignored when tool is set."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ tools: { tool: string, display_name?: string | null, description?: string | null, deployed_count?: number | null }[], total?: number, returned?: number, limit?: number, is_truncated?: boolean } | { tool: string, provider?: string | null, display_name?: string | null, payload_schema?: Record<string, any> | null }"
+      }
+    },
+    {
+      "path": "deepline.api.monitors.batch.get",
+      "shortPath": "monitors.batch.get",
+      "description": "Read a monitor batch operation, such as the plan from a dry-run start or stop",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string",
+            "description": "operation.runId returned by a dry-run monitors.start or monitors.stop."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "results.continueCursor from the previous page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "rejoined",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "operation",
+            "optional": false,
+            "type": "{ runId: string, kind: string, state: string, dryRun: boolean, summary?: Record<string, any> | null, lastError?: string | null }"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ page: Record<string, any>[], isDone: boolean, continueCursor: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.monitors.check",
+      "shortPath": "monitors.check",
+      "description": "Validate a monitor definition and show its plan and pricing without deploying or spending credits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string",
+            "description": "Stable public key for this monitor, unique within the workspace."
+          },
+          {
+            "key": "tool",
+            "optional": false,
+            "type": "string",
+            "description": "Monitor tool id from monitors.available, e.g. deepline_native.company_radar."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Optional human-readable name shown in listings."
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "Provider-specific payload matching the payload schema monitors.available returns for this tool."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "valid",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "issues",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "monitor",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.monitors.delete",
+      "shortPath": "monitors.delete",
+      "description": "Delete a deployed monitor and deprovision its upstream resource; dryRun shows the plan",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string",
+            "description": "Public key of a deployed monitor, as monitors.list returns it."
+          },
+          {
+            "key": "dryRun",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the plan and cost without changing anything."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "already_deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "delete_pending",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.monitors.dependents",
+      "shortPath": "monitors.dependents",
+      "description": "List the published Plays that react to one monitor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string",
+            "description": "Public key of a deployed monitor, as monitors.list returns it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "plays",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.monitors.deploy",
+      "shortPath": "monitors.deploy",
+      "description": "Deploy a monitor from a definition; creates an upstream provider resource and may spend credits",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string",
+            "description": "Stable public key for this monitor, unique within the workspace."
+          },
+          {
+            "key": "tool",
+            "optional": false,
+            "type": "string",
+            "description": "Monitor tool id from monitors.available, e.g. deepline_native.company_radar."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Optional human-readable name shown in listings."
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "Provider-specific payload matching the payload schema monitors.available returns for this tool."
+          },
+          {
+            "key": "dryRun",
+            "optional": true,
+            "type": "boolean",
+            "description": "Validate and return the deploy plan (cost, reuse candidates) through the free check endpoint without deploying."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "valid",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "monitor",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.monitors.fleets.list",
+      "shortPath": "monitors.fleets.list",
+      "description": "List Monitor Fleets, or their overview with status counts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "overview",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the Fleets overview (status counts, findings, paused totals) instead of the plain list. Required for q, states, sort and window."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Overview only: search Fleet ids, source tables, tools, signals."
+          },
+          {
+            "key": "states",
+            "optional": true,
+            "type": "(needs_attention | paused_credits | paused_cap | paused_billing | setting_up | running | deactivated)[]",
+            "description": "Overview only: statuses to include. All but deactivated by default."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "attention | findings | newest | name",
+            "description": "Overview only: row order. attention by default."
+          },
+          {
+            "key": "window",
+            "optional": true,
+            "type": "1d | 7d | 30d | 90d | 1y",
+            "description": "Overview only: the span each Fleet's findings count covers."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schemaVersion",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fleets",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.monitors.get",
+      "shortPath": "monitors.get",
+      "description": "Get one deployed monitor by its public key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string",
+            "description": "Public key of a deployed monitor, as monitors.list returns it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "monitor_key",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tool",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "monitor_spec",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.monitors.health",
+      "shortPath": "monitors.health",
+      "description": "Read monitor delivery and convergence health",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fleetId",
+            "optional": true,
+            "type": "string",
+            "description": "Limit the report to one Monitor Fleet."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "scope",
+            "optional": false,
+            "type": "{ org_id: string, fleet_id?: string | null }"
+          },
+          {
+            "key": "scanned",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "truncated",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "converged",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "needs_repair",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.monitors.jobs.cancel",
+      "shortPath": "monitors.jobs.cancel",
+      "description": "Cancel a running Monitor Job",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string",
+            "description": "Monitor Job id returned by monitors.start or monitors.stop (job.id)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "job",
+            "optional": true,
+            "type": "{ id: string, operation_id?: string | null, kind?: string | null, state: string, phase?: string | null, outcome?: string | null, target?: Record<string, any> | null, counts?: Record<string, any> | null, error?: string | null }"
+          },
+          {
+            "key": "operation_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "logs",
+            "optional": true,
+            "type": "{ level: string, phase: string, message: string, monitor_key?: string | null, at: string }[]"
+          },
+          {
+            "key": "replayed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "already_terminal",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.monitors.jobs.get",
+      "shortPath": "monitors.jobs.get",
+      "description": "Get the state, phase and counts of a Monitor Job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string",
+            "description": "Monitor Job id returned by monitors.start or monitors.stop (job.id)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "job",
+            "optional": true,
+            "type": "{ id: string, operation_id?: string | null, kind?: string | null, state: string, phase?: string | null, outcome?: string | null, target?: Record<string, any> | null, counts?: Record<string, any> | null, error?: string | null }"
+          },
+          {
+            "key": "operation_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "logs",
+            "optional": true,
+            "type": "{ level: string, phase: string, message: string, monitor_key?: string | null, at: string }[]"
+          },
+          {
+            "key": "replayed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "already_terminal",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.monitors.jobs.logs",
+      "shortPath": "monitors.jobs.logs",
+      "description": "Read the logs of a Monitor Job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string",
+            "description": "Monitor Job id (job.id)."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum log entries to return."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "job",
+            "optional": true,
+            "type": "{ id: string, operation_id?: string | null, kind?: string | null, state: string, phase?: string | null, outcome?: string | null, target?: Record<string, any> | null, counts?: Record<string, any> | null, error?: string | null }"
+          },
+          {
+            "key": "operation_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "logs",
+            "optional": true,
+            "type": "{ level: string, phase: string, message: string, monitor_key?: string | null, at: string }[]"
+          },
+          {
+            "key": "replayed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "already_terminal",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.monitors.ledger.findings",
+      "shortPath": "monitors.ledger.findings",
+      "description": "List the recent findings of one monitor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string",
+            "description": "Public key of a deployed monitor, as monitors.list returns it."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor from the previous findings page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "deepline.api.monitors.ledger.get",
+      "shortPath": "monitors.ledger.get",
+      "description": "Get the ledger entry of one monitor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string",
+            "description": "Public key of a deployed monitor, as monitors.list returns it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "deepline.api.monitors.ledger.list",
+      "shortPath": "monitors.ledger.list",
+      "description": "List monitors with status, findings counts, signals and the Plays each one triggers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Search name, key, subject, signal and deploy filters."
+          },
+          {
+            "key": "states",
+            "optional": true,
+            "type": "(active | setting_up | paused_credits | paused_cap | paused_billing | errored | stopped)[]",
+            "description": "Statuses to include. Every status except stopped by default."
+          },
+          {
+            "key": "signals",
+            "optional": true,
+            "type": "string[]",
+            "description": "Signal keys, as the response signals[].key lists them."
+          },
+          {
+            "key": "play",
+            "optional": true,
+            "type": "string",
+            "description": "A Play definition id, or none for monitors no Play listens to."
+          },
+          {
+            "key": "fleet",
+            "optional": true,
+            "type": "string",
+            "description": "A Monitor Fleet id: only the monitors that Fleet owns."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "recent | installed | name | findings",
+            "description": "Row order. findings orders by most findings in window."
+          },
+          {
+            "key": "window",
+            "optional": true,
+            "type": "1d | 7d | 30d | 90d | 1y",
+            "description": "The span each row's findings count covers. 30d by default."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum rows."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "next_cursor from the previous page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schemaVersion",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "monitors",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.monitors.list",
+      "shortPath": "monitors.list",
+      "description": "List deployed monitors by lifecycle state, with cursor paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "state",
+            "optional": true,
+            "type": "active | provisioning | billing_suspended | errored | disabled | all",
+            "description": "Lifecycle state to list. The server default is active."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum monitors on this page."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "next_cursor from the previous page."
+          },
+          {
+            "key": "includeConsumers",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include current Play listener delivery health for each monitor. Requires limit of 20 or less."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "monitors",
+            "optional": false,
+            "type": "{ key?: string | null, monitor_key?: string | null, state?: string | null, tool?: string | null, name?: string | null }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "returned",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.monitors.preview",
+      "shortPath": "monitors.preview",
+      "description": "Sample recent matches for a monitor definition before deploying; each returned match costs credits",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string",
+            "description": "Stable public key for this monitor, unique within the workspace."
+          },
+          {
+            "key": "tool",
+            "optional": false,
+            "type": "string",
+            "description": "Monitor tool id from monitors.available, e.g. deepline_native.company_radar."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Optional human-readable name shown in listings."
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "Provider-specific payload matching the payload schema monitors.available returns for this tool."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Matches to sample, 1-3. The server default is 3."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": false,
+            "type": "string",
+            "description": "Required. Persist it before calling; reuse it after an uncertain result to recover the same preview without paying again. A new key runs a new, paid preview."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idempotency_key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.monitors.reactivate",
+      "shortPath": "monitors.reactivate",
+      "description": "Reactivate a disabled monitor, creating a replacement upstream resource; dryRun shows the cost",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string",
+            "description": "Public key of a deployed monitor, as monitors.list returns it."
+          },
+          {
+            "key": "dryRun",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the plan and cost without changing anything."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "deepline.api.monitors.start",
+      "shortPath": "monitors.start",
+      "description": "Apply the retained definition of a stopped monitor upstream; may spend credits",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string",
+            "description": "Public key of a deployed monitor, as monitors.list returns it."
+          },
+          {
+            "key": "dryRun",
+            "optional": true,
+            "type": "boolean",
+            "description": "Submit a dry-run batch operation that plans the change without touching the provider. Read the plan with monitors.batch.get and the returned operation.runId."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Stable retry key. Reusing it joins the original operation instead of starting another. Generated when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ ok?: boolean, rejoined?: boolean, operation: { runId: string, kind: string, state: string, dryRun: boolean, summary?: Record<string, any> | null, lastError?: string | null }, results?: { page: Record<string, any>[], isDone: boolean, continueCursor: string } } | { ok?: boolean, job?: { id: string, operation_id?: string | null, kind?: string | null, state: string, phase?: string | null, outcome?: string | null, target?: Record<string, any> | null, counts?: Record<string, any> | null, error?: string | null }, operation_id?: string | null, logs?: { level: string, phase: string, message: string, monitor_key?: string | null, at: string }[], replayed?: boolean, already_terminal?: boolean, next?: string | null }"
+      }
+    },
+    {
+      "path": "deepline.api.monitors.stop",
+      "shortPath": "monitors.stop",
+      "description": "Stop a monitor upstream while keeping its definition for monitors.start",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string",
+            "description": "Public key of a deployed monitor, as monitors.list returns it."
+          },
+          {
+            "key": "dryRun",
+            "optional": true,
+            "type": "boolean",
+            "description": "Submit a dry-run batch operation that plans the change without touching the provider. Read the plan with monitors.batch.get and the returned operation.runId."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Stable retry key. Reusing it joins the original operation instead of starting another. Generated when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ ok?: boolean, rejoined?: boolean, operation: { runId: string, kind: string, state: string, dryRun: boolean, summary?: Record<string, any> | null, lastError?: string | null }, results?: { page: Record<string, any>[], isDone: boolean, continueCursor: string } } | { ok?: boolean, job?: { id: string, operation_id?: string | null, kind?: string | null, state: string, phase?: string | null, outcome?: string | null, target?: Record<string, any> | null, counts?: Record<string, any> | null, error?: string | null }, operation_id?: string | null, logs?: { level: string, phase: string, message: string, monitor_key?: string | null, at: string }[], replayed?: boolean, already_terminal?: boolean, next?: string | null }"
+      }
+    },
+    {
+      "path": "deepline.api.monitors.test",
+      "shortPath": "monitors.test",
+      "description": "Validate an explicit event payload against the webhook contract of a deployed monitor; writes, charges and dispatches nothing",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string",
+            "description": "Public key of a deployed monitor, as monitors.list returns it."
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "An explicit event payload to validate against the monitor's webhook contract. Nothing is persisted, charged or dispatched."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accepted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "persisted_rows",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "dispatched_bound_plays",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.monitors.update",
+      "shortPath": "monitors.update",
+      "description": "Update the name or payload of a deployed monitor; payload changes can replace the upstream resource and spend credits",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string",
+            "description": "Public key of a deployed monitor, as monitors.list returns it."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "New display name."
+          },
+          {
+            "key": "payload",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Payload fields to change. Top-level fields merge with the stored payload; nested values and arrays replace whole. Changing filters can replace the upstream resource."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "change_summary",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.notifications.channels",
+      "shortPath": "notifications.channels",
+      "description": "List Slack channels visible to the connected Deepline Slack app",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Words to match against channel names."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identity",
+            "optional": false,
+            "type": "{ teamId: string, teamName?: string | null }"
+          },
+          {
+            "key": "channels",
+            "optional": false,
+            "type": "{ id: string, name: string, isPrivate: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.notifications.configuration.change",
+      "shortPath": "notifications.configuration.change",
+      "description": "Save or delete one notification group atomically against the expected workspace version",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "expectedWorkspaceVersion",
+            "optional": false,
+            "type": "number",
+            "description": "configuration.workspaceVersion from notifications.configuration.get. A stale version is refused instead of overwriting newer changes."
+          },
+          {
+            "key": "change",
+            "optional": false,
+            "type": "{ kind: save_group, draft: { group: { groupKey: string, name: string, enabled: boolean, deliveryTiming: { mode: immediate } | { mode: immediate_first | digest_only | rolling_limit, windowMs: number }, version: number }, destinations: { destinationKey: string, groupKey: string, name: string, enabled: boolean, settings: { kind: slack, targetKind: channel | member, targetId: string, targetName: string, oauthConnectionId: string } | { kind: email_addresses, to: string[], cc?: string[], bcc?: string[] } | { kind: email_roles, roles: string[] }, version: number }[], rules: { ruleKey: string, groupKey: string, enabled: boolean, notificationType: string, eventName: string, eventFilter: Record<string, string | number | boolean>, trigger: { kind: string }, version: number }[] } } | { kind: delete_group, groupKey: string }",
+            "description": "save_group sends the complete desired group with all of its destinations and rules (start from the objects configuration.get returns, keeping their version fields); delete_group removes one group."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "configuration",
+            "optional": false,
+            "type": "{ workspaceVersion: number, groups: Record<string, any>[], destinations: Record<string, any>[], rules: Record<string, any>[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.notifications.configuration.get",
+      "shortPath": "notifications.configuration.get",
+      "description": "Read notification groups, destinations, rules and the workspace version",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "configuration",
+            "optional": false,
+            "type": "{ workspaceVersion: number, groups: Record<string, any>[], destinations: Record<string, any>[], rules: Record<string, any>[] }"
+          },
+          {
+            "key": "catalog",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "slackConnection",
+            "optional": false,
+            "type": "{ connected: boolean, status: string, connectionId?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.notifications.create",
+      "shortPath": "notifications.create",
+      "description": "Create a named Slack notification for chosen Play events",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the notification."
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "slack",
+            "description": "Delivery provider. Only slack is supported. Defaults to \"slack\"."
+          },
+          {
+            "key": "eventTypes",
+            "optional": false,
+            "type": "string[]",
+            "description": "Event ids from the catalog notifications.list returns."
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string",
+            "description": "Slack channel id or #name from notifications.channels. Give channel or memberId, not both."
+          },
+          {
+            "key": "memberId",
+            "optional": true,
+            "type": "string",
+            "description": "Slack member id to message directly. Give channel or memberId."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "deepline.api.notifications.delete",
+      "shortPath": "notifications.delete",
+      "description": "Archive a named notification without touching its Slack integration",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "notificationId",
+            "optional": false,
+            "type": "string",
+            "description": "Notification id from notifications.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.notifications.dlq.get",
+      "shortPath": "notifications.dlq.get",
+      "description": "Get one dead-lettered notification delivery",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deliveryId",
+            "optional": false,
+            "type": "string",
+            "description": "Dead-lettered delivery id from notifications.dlq.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "deepline.api.notifications.dlq.list",
+      "shortPath": "notifications.dlq.list",
+      "description": "List notification deliveries that exhausted their retries",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum dead-lettered deliveries to return."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "deliveries",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "hasMore",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.notifications.dlq.update",
+      "shortPath": "notifications.dlq.update",
+      "description": "Retry (send again) or archive one dead-lettered notification delivery",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deliveryId",
+            "optional": false,
+            "type": "string",
+            "description": "Dead-lettered delivery id from notifications.dlq.list."
+          },
+          {
+            "key": "action",
+            "optional": false,
+            "type": "retry | archive",
+            "description": "retry sends the delivery again now; archive drops it from the queue. Dead-lettered deliveries never replay on their own."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "deepline.api.notifications.list",
+      "shortPath": "notifications.list",
+      "description": "List named notifications, the event catalog, destinations and dead-letter count",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contractVersion",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "catalog",
+            "optional": false,
+            "type": "{ id: string, label: string, description?: string | null }[]"
+          },
+          {
+            "key": "notifications",
+            "optional": true,
+            "type": "{ id: string, name: string, provider: string, target: { id: string, name: string, kind?: string | null }, enabled: boolean, status: string, eventTypes: string[] }[]"
+          },
+          {
+            "key": "destinations",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "subscriptions",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "dlq",
+            "optional": false,
+            "type": "{ count: number, capped: boolean }"
+          },
+          {
+            "key": "slackConnection",
+            "optional": true,
+            "type": "{ connected: boolean, status: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.notifications.test",
+      "shortPath": "notifications.test",
+      "description": "Send a test message to the Slack target of a notification",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "notificationId",
+            "optional": false,
+            "type": "string",
+            "description": "Notification id from notifications.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "deliveryId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.notifications.update",
+      "shortPath": "notifications.update",
+      "description": "Pause or resume a notification, or change its name, events and Slack target",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "notificationId",
+            "optional": false,
+            "type": "string",
+            "description": "Notification id from notifications.list."
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean",
+            "description": "Pause (false) or resume (true). Send alone."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "New name. Send with eventTypes and one target."
+          },
+          {
+            "key": "eventTypes",
+            "optional": true,
+            "type": "string[]",
+            "description": "Event ids from the catalog notifications.list returns."
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string",
+            "description": "Slack channel id or #name from notifications.channels. Give channel or memberId, not both."
+          },
+          {
+            "key": "memberId",
+            "optional": true,
+            "type": "string",
+            "description": "Slack member id to message directly. Give channel or memberId."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "deepline.api.plays.activity",
+      "shortPath": "plays.activity",
+      "description": "Count Play runs and delivered Monitor findings by day",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timeZone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "days",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "groupBy",
+            "optional": true,
+            "type": "kind | trigger_source"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timeZone",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "groupBy",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "asOfAt",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "buckets",
+            "optional": false,
+            "type": "{ key: string, label: string, startAt: number, endAt: number, groups: { group: string, count: number }[], failedPlayRuns: number, complete: { playRuns: boolean, monitorDeliveries: boolean } }[]"
+          },
+          {
+            "key": "coverage",
+            "optional": false,
+            "type": "{ playRunsEarliestCompleteAt: number | null, monitorDeliveriesEarliestCompleteAt: number | null, monitorDeliveriesCompleteThroughAt: number | null, projectionPending: boolean, earliestPendingAt: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.plays.clearHistory",
+      "shortPath": "plays.clearHistory",
+      "description": "Permanently delete a Play's run history and saved sheet data, keeping its code and versions",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of a Play owned by this workspace, as returned by plays.list. Prebuilt Plays are read-only."
+          },
+          {
+            "key": "tableNamespaces",
+            "optional": true,
+            "type": "string[]",
+            "description": "Dataset keys (ctx.dataset names) to clear. Omit to clear every sheet found for the Play."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "playName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deletedRuns",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "droppedTables",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.plays.cost",
+      "shortPath": "plays.cost",
+      "description": "Estimate credits per row or run for one saved or prebuilt Play (does not start a run)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Play name, or prebuilt reference such as prebuilt/<name>, as returned by plays.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reference",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "costEstimate",
+            "optional": false,
+            "type": "{ status: available, source: string, unit: string, lowCredits: number, highCredits: number, sampleRunCount: number, basedOnRunId?: string | null, modelVersion: string } | { status: unavailable, reason: string, message: string, modelVersion?: string }"
+          },
+          {
+            "key": "observedCost",
+            "optional": true,
+            "type": "{ status: string } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.plays.delete",
+      "shortPath": "plays.delete",
+      "description": "Move a workspace Play to Trash and disable its cron and webhook triggers (restorable)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of a Play owned by this workspace, as returned by plays.list. Prebuilt Plays are read-only."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "archived",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "alreadyArchived",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "archivedBindingCount",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.plays.get",
+      "shortPath": "plays.get",
+      "description": "Describe one callable Play",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The name returned by the related Deepline API call."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "play",
+            "optional": false,
+            "type": "{ name: string, reference?: string | null, displayName?: string | null, description?: string | null | null, origin?: string | null, ownerType?: string | null, scope?: string | null, inputSchema?: Record<string, any> | null | null, outputSchema?: Record<string, any> | null | null, currentRevision?: Record<string, any> | null | null, liveRevision?: Record<string, any> | null | null, canEdit?: boolean | null, canClone?: boolean | null }"
+          },
+          {
+            "key": "latestRuns",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.plays.list",
+      "shortPath": "plays.list",
+      "description": "List and search callable Plays",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Continue with the previous page cursor and the same filters."
+          },
+          {
+            "key": "origin",
+            "optional": true,
+            "type": "prebuilt | owned"
+          },
+          {
+            "key": "summary_only",
+            "optional": true,
+            "type": "1",
+            "description": "Load compact metadata without source or revisions. Cost and category requests still load the data they require."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Text to match against callable Play metadata and contracts. Returns every match in one response; cursor and inventory paging apply only without search."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum Plays to return."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "plays",
+            "optional": false,
+            "type": "{ name: string, reference?: string | null, displayName?: string | null, description?: string | null | null, origin?: string | null, ownerType?: string | null, scope?: string | null, inputSchema?: Record<string, any> | null | null, outputSchema?: Record<string, any> | null | null, currentRevision?: Record<string, any> | null | null, liveRevision?: Record<string, any> | null | null, canEdit?: boolean | null, canClone?: boolean | null }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ cursor: string | null, hasMore: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.plays.paths",
+      "shortPath": "plays.paths",
+      "description": "List the folder locations of workspace Plays, one page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "root",
+            "optional": true,
+            "type": "person | team",
+            "description": "Only list Plays under this root."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Plays to inspect on this page, 1-100."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "cursor from the previous page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "paths",
+            "optional": false,
+            "type": "{ path: null | { root: person | team, folders?: string[] }, ownerUserId?: string | null, ownerName?: string | null, playName: string }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "hasMore",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "roots",
+            "optional": true,
+            "type": "{ value: string, label: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.plays.pin",
+      "shortPath": "plays.pin",
+      "description": "Pin or unpin a workspace Play so it sorts first",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of a Play owned by this workspace, as returned by plays.list. Prebuilt Plays are read-only."
+          },
+          {
+            "key": "pinned",
+            "optional": false,
+            "type": "boolean",
+            "description": "true sorts the Play before unpinned Plays; false unpins it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pinned",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.plays.restore",
+      "shortPath": "plays.restore",
+      "description": "Restore a workspace Play from Trash",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of a Play this workspace previously moved to Trash."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "restored",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "alreadyActive",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.plays.run",
+      "shortPath": "plays.run",
+      "description": "Start a saved or prebuilt Play run (may spend credits or perform external actions)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Saved or prebuilt Play reference."
+          },
+          {
+            "key": "input",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Input matching the selected Play schema."
+          },
+          {
+            "key": "revisionId",
+            "optional": true,
+            "type": "string",
+            "description": "Run a specific saved revision belonging to the named Play."
+          },
+          {
+            "key": "force",
+            "optional": true,
+            "type": "boolean",
+            "description": "Compatibility flag. Active sibling runs are allowed."
+          },
+          {
+            "key": "forceToolRefresh",
+            "optional": true,
+            "type": "boolean",
+            "description": "Bypass cached dataset and tool-call reuse."
+          },
+          {
+            "key": "maxCredits",
+            "optional": true,
+            "type": "number",
+            "description": "Per-run Deepline-credit cap. Replaces the Play’s declared maxCreditsPerRun for this run."
+          },
+          {
+            "key": "maxConcurrentExternalCalls",
+            "optional": true,
+            "type": "number",
+            "description": "Per-run ceiling on concurrently resident provider-tool executions and direct HTTP calls."
+          },
+          {
+            "key": "maxConcurrentRows",
+            "optional": true,
+            "type": "number",
+            "description": "Run-wide default and ceiling for live dataset-map row resolvers."
+          },
+          {
+            "key": "waitForCompletionMs",
+            "optional": true,
+            "type": "number",
+            "description": "Briefly wait for completion. A timeout returns the existing run, not a new execution."
+          },
+          {
+            "key": "terminalStatus",
+            "optional": true,
+            "type": "full",
+            "description": "With a completion wait, request the full terminal detail wrapper."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ schemaVersion: 1, kind: play_run, run: { id: string, playName: string, status: string, dashboardUrl?: string | null, runUrl?: string | null }, steps: Record<string, any>[], outputs: Record<string, any>, datasets: Record<string, any>[], next: Record<string, any> } | { status: string, result?: any | null, package: { schemaVersion: 1, kind: play_run, run: { id: string, playName: string, status: string, dashboardUrl?: string | null, runUrl?: string | null }, steps: Record<string, any>[], outputs: Record<string, any>, datasets: Record<string, any>[], next: Record<string, any> } } | { runId: string, snapshot: Record<string, any>, terminalStatus?: any | null }"
+      }
+    },
+    {
+      "path": "deepline.api.plays.settings.get",
+      "shortPath": "plays.settings.get",
+      "description": "Read a workspace Play's location and display name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of a Play owned by this workspace, as returned by plays.list. Prebuilt Plays are read-only."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "playDefinitionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ownerUserId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ownerName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "settings",
+            "optional": false,
+            "type": "{ path?: null | { root: person | team, folders?: string[] }, displayName?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.plays.settings.update",
+      "shortPath": "plays.settings.update",
+      "description": "Change a workspace Play's location or display name; omitted fields stay as they are",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of a Play owned by this workspace, as returned by plays.list. Prebuilt Plays are read-only."
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "null | { root: person | team, folders?: string[] }",
+            "description": "New location. null moves it to the creator's personal root. Omit to keep the current location."
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string | null",
+            "description": "Name shown in the UI. null or an empty string uses the name derived from the identifier. Omit to keep the current one."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "playDefinitionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ownerUserId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ownerName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "settings",
+            "optional": false,
+            "type": "{ path?: null | { root: person | team, folders?: string[] }, displayName?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.plays.share.get",
+      "shortPath": "plays.share.get",
+      "description": "Read a Play's public share page status and revision picker",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of a Play owned by this workspace, as returned by plays.list. Prebuilt Plays are read-only."
+          },
+          {
+            "key": "revisionId",
+            "optional": true,
+            "type": "string",
+            "description": "Keep this revision in the returned revision picker even if it is older."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "playName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "share",
+            "optional": false,
+            "type": "{ shareSlug: string, orgSlug: string, publishedRevisionId: string, publishedVersion: number, visibility: string, seoIndexing: string, showAverageDeeplineCost?: boolean, showAverageLatency?: boolean, publicPath: string, canonicalPath?: string } | null"
+          },
+          {
+            "key": "publishedCopy",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "revisions",
+            "optional": false,
+            "type": "{ revisionId: string, version: number, isLive?: boolean, isWorking?: boolean, isPublished?: boolean }[]"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.plays.share.publish",
+      "shortPath": "plays.share.publish",
+      "description": "Publish or repoint a Play's public share page to a revision (publicly viewable)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of a Play owned by this workspace, as returned by plays.list. Prebuilt Plays are read-only."
+          },
+          {
+            "key": "revisionId",
+            "optional": false,
+            "type": "string",
+            "description": "Revision to publish or repoint the public page to (from plays.share.get revisions)."
+          },
+          {
+            "key": "acknowledgedUnlisted",
+            "optional": false,
+            "type": "true",
+            "description": "Must be true: confirms the page will be publicly viewable by anyone with the link."
+          },
+          {
+            "key": "showAverageDeeplineCost",
+            "optional": true,
+            "type": "boolean",
+            "description": "Show the average Deepline credit cost on the page."
+          },
+          {
+            "key": "showAverageLatency",
+            "optional": true,
+            "type": "boolean",
+            "description": "Show the average run latency on the page."
+          },
+          {
+            "key": "seoIndexing",
+            "optional": true,
+            "type": "index | noindex",
+            "description": "Whether search engines may index the public page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "playName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "share",
+            "optional": false,
+            "type": "{ shareSlug: string, orgSlug: string, publishedRevisionId: string, publishedVersion: number, visibility: string, seoIndexing: string, showAverageDeeplineCost?: boolean, showAverageLatency?: boolean, publicPath: string, canonicalPath?: string } | null"
+          },
+          {
+            "key": "publishedCopy",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "revisions",
+            "optional": false,
+            "type": "{ revisionId: string, version: number, isLive?: boolean, isWorking?: boolean, isPublished?: boolean }[]"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.plays.share.regenerate",
+      "shortPath": "plays.share.regenerate",
+      "description": "Regenerate a Play's public share page copy with an LLM (rewrites the public page)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of a Play owned by this workspace, as returned by plays.list. Prebuilt Plays are read-only."
+          },
+          {
+            "key": "revisionId",
+            "optional": true,
+            "type": "string",
+            "description": "Revision whose page copy to regenerate. Omit for the published revision."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "playName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "share",
+            "optional": false,
+            "type": "{ shareSlug: string, orgSlug: string, publishedRevisionId: string, publishedVersion: number, visibility: string, seoIndexing: string, showAverageDeeplineCost?: boolean, showAverageLatency?: boolean, publicPath: string, canonicalPath?: string } | null"
+          },
+          {
+            "key": "publishedCopy",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "revisions",
+            "optional": false,
+            "type": "{ revisionId: string, version: number, isLive?: boolean, isWorking?: boolean, isPublished?: boolean }[]"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.plays.share.unpublish",
+      "shortPath": "plays.share.unpublish",
+      "description": "Delete a Play's public share page and its cards",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of a Play owned by this workspace, as returned by plays.list. Prebuilt Plays are read-only."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "playName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "share",
+            "optional": false,
+            "type": "{ shareSlug: string, orgSlug: string, publishedRevisionId: string, publishedVersion: number, visibility: string, seoIndexing: string, showAverageDeeplineCost?: boolean, showAverageLatency?: boolean, publicPath: string, canonicalPath?: string } | null"
+          },
+          {
+            "key": "publishedCopy",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "revisions",
+            "optional": false,
+            "type": "{ revisionId: string, version: number, isLive?: boolean, isWorking?: boolean, isPublished?: boolean }[]"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.plays.share.update",
+      "shortPath": "plays.share.update",
+      "description": "Change share page settings: search indexing, cost and latency display",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of a Play owned by this workspace, as returned by plays.list. Prebuilt Plays are read-only."
+          },
+          {
+            "key": "showAverageDeeplineCost",
+            "optional": true,
+            "type": "boolean",
+            "description": "Show the average Deepline credit cost on the page."
+          },
+          {
+            "key": "showAverageLatency",
+            "optional": true,
+            "type": "boolean",
+            "description": "Show the average run latency on the page."
+          },
+          {
+            "key": "seoIndexing",
+            "optional": true,
+            "type": "index | noindex",
+            "description": "Whether search engines may index the public page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "playName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "share",
+            "optional": false,
+            "type": "{ shareSlug: string, orgSlug: string, publishedRevisionId: string, publishedVersion: number, visibility: string, seoIndexing: string, showAverageDeeplineCost?: boolean, showAverageLatency?: boolean, publicPath: string, canonicalPath?: string } | null"
+          },
+          {
+            "key": "publishedCopy",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "revisions",
+            "optional": false,
+            "type": "{ revisionId: string, version: number, isLive?: boolean, isWorking?: boolean, isPublished?: boolean }[]"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.plays.triggers.get",
+      "shortPath": "plays.triggers.get",
+      "description": "Read a workspace Play's cron schedule and inbound webhook trigger, with the webhook URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of a Play owned by this workspace, as returned by plays.list. Prebuilt Plays are read-only."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "playDefinitionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "liveRevisionId",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "liveVersion",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "readOnly",
+            "optional": false,
+            "type": "{ reason: string, message: string } | null"
+          },
+          {
+            "key": "cron",
+            "optional": false,
+            "type": "{ bindingId: string | null, schedule: string, timezone?: string | null, input?: Record<string, any> | null, status?: string | null, nextScheduledAt?: number | null, lastScheduledAt?: number | null } | null"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ bindingId: string | null, url: string | null, status?: string | null, auth?: { type: string } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.plays.triggers.history",
+      "shortPath": "plays.triggers.history",
+      "description": "List one trigger's recent runs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bindingId",
+            "optional": false,
+            "type": "string",
+            "description": "Trigger bindingId from plays.triggers.inventory."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Recent runs to return, 1-30."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recentRuns",
+            "optional": false,
+            "type": "{ workflowId: string, runId: string | null, status: string, createdAt: number, startedAt?: number | null, finishedAt?: number | null }[]"
+          },
+          {
+            "key": "truncated",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "cronInput",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.plays.triggers.inventory",
+      "shortPath": "plays.triggers.inventory",
+      "description": "List cron and webhook triggers across the workspace, one page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "continueCursor from the previous page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": false,
+            "type": "{ bindingId: string, name: string, type: string, status: string, cron?: string | null, timezone?: string | null, nextScheduledAt?: number | null }[]"
+          },
+          {
+            "key": "continueCursor",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "isDone",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.plays.triggers.update",
+      "shortPath": "plays.triggers.update",
+      "description": "Set or remove a Play cron schedule or inbound webhook (optional HMAC or Standard Webhooks signing) and publish it live (scheduled runs may spend credits)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of a Play owned by this workspace, as returned by plays.list. Prebuilt Plays are read-only."
+          },
+          {
+            "key": "cron",
+            "optional": true,
+            "type": "{ schedule: string, timezone?: string, input?: Record<string, any> } | null",
+            "description": "Desired cron trigger. null removes it; omit to keep it."
+          },
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "{ auth?: { type: standard-webhooks, headerFamily: standard | svix, signingSecrets: string[], toleranceSeconds?: number } | { type: hmac, secretEnv: string, header?: string, signaturePrefix?: string } | null } | null",
+            "description": "Desired webhook trigger. null removes it; omit to keep it."
+          },
+          {
+            "key": "expectedRevisionId",
+            "optional": true,
+            "type": "string",
+            "description": "liveRevisionId from plays.triggers.get. The update is refused (409) if the live revision changed."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "changed",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "revisionId",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "triggers",
+            "optional": false,
+            "type": "{ name: string, playDefinitionId: string, liveRevisionId: string | null, liveVersion: number | null, readOnly: { reason: string, message: string } | null, cron: { bindingId: string | null, schedule: string, timezone?: string | null, input?: Record<string, any> | null, status?: string | null, nextScheduledAt?: number | null, lastScheduledAt?: number | null } | null, webhook: { bindingId: string | null, url: string | null, status?: string | null, auth?: { type: string } | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.plays.versions.list",
+      "shortPath": "plays.versions.list",
+      "description": "List a Play's saved versions, newest first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Play name, or prebuilt reference such as prebuilt/<name>, as returned by plays.list."
+          },
+          {
+            "key": "full",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include each revision’s source code and pipeline. Large; leave unset for summaries."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "versions",
+            "optional": false,
+            "type": "{ _id?: string, version: number, description?: string | null, createdAt?: number, updatedAt?: number, isLive?: boolean, isWorking?: boolean }[]"
+          },
+          {
+            "key": "playName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "definitionName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "revisionWindow",
+            "optional": true,
+            "type": "{ order: string, complete: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.plays.versions.publish",
+      "shortPath": "plays.versions.publish",
+      "description": "Make a Play version live; its cron and webhook triggers then run that version (may spend credits)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of a Play owned by this workspace, as returned by plays.list. Prebuilt Plays are read-only."
+          },
+          {
+            "key": "revisionId",
+            "optional": true,
+            "type": "string",
+            "description": "Revision _id from plays.versions.list to make live. Omit to make the current working revision live."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "liveVersion",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.runs.billing",
+      "shortPath": "runs.billing",
+      "description": "Read credits billed to up to 100 runs and whether they are settling",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "One to 100 run ids to read billed credits for."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runs",
+            "optional": false,
+            "type": "{ runId: string, credits?: number, settling: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.runs.children",
+      "shortPath": "runs.children",
+      "description": "List one page of async child Runs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string",
+            "description": "The runId returned by the related Deepline API call."
+          },
+          {
+            "key": "launchKey",
+            "optional": false,
+            "type": "string",
+            "description": "Authored ctx.runPlayAsync launch key."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Opaque cursor returned by the previous page."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size from 1 through 50; defaults to 50."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "children",
+            "optional": false,
+            "type": "{ runId: string, playName?: string | null | null, launchKey?: string | null | null, status: string }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "hasMore",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.runs.events",
+      "shortPath": "runs.events",
+      "description": "Search structured run events across the workspace or one run",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string",
+            "description": "Inclusive UTC timestamp. Defaults to one hour before the request. A window spans at most seven days; events are kept seven days."
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "string",
+            "description": "Exclusive UTC timestamp. Defaults to the request time."
+          },
+          {
+            "key": "runId",
+            "optional": true,
+            "type": "string",
+            "description": "Only events for this run. Omit to search the whole workspace."
+          },
+          {
+            "key": "playName",
+            "optional": true,
+            "type": "string",
+            "description": "Exact Play name."
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string",
+            "description": "Exact dotted event kind, such as step.failed."
+          },
+          {
+            "key": "jsonpath",
+            "optional": true,
+            "type": "string",
+            "description": "JSONPath equality predicates joined with &&, at most eight and 512 bytes, e.g. $.level == \"error\"."
+          },
+          {
+            "key": "includePayloads",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include saved event details and receipt results. Limits the page to ten events."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size: default 100, maximum 200; at most 10 with payloads."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "nextCursor from the previous page. Reuse that page’s since, until and filters."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "events",
+            "optional": false,
+            "type": "{ eventId: string, occurredAt: string, ingestedAt?: string, runId: string, playName?: string | null, kind: string, level?: string | null | null, message?: string | null | null, searchDoc?: Record<string, any>, eventPayload?: Record<string, any>, payload?: any }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "since",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "until",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.runs.get",
+      "shortPath": "runs.get",
+      "description": "Get one Play run status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string",
+            "description": "The runId returned by the related Deepline API call."
+          },
+          {
+            "key": "full",
+            "optional": true,
+            "type": "boolean",
+            "description": "true selects the legacy detail wrapper: status and result are top-level, and the compact package is nested under package."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string",
+            "description": "Optional comma-separated expansions: nodeStates, runInsights, configuration."
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "boolean",
+            "description": "false omits billing enrichment from full or runInsights reads."
+          },
+          {
+            "key": "watchSnapshot",
+            "optional": true,
+            "type": "boolean",
+            "description": "true returns the bounded status snapshot used by SDK watch."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ schemaVersion: 1, kind: play_run, run: { id: string, playName: string, status: string, dashboardUrl?: string | null, runUrl?: string | null }, steps: Record<string, any>[], outputs: Record<string, any>, datasets: Record<string, any>[], next: Record<string, any> } | { status: string, result?: any | null, package: { schemaVersion: 1, kind: play_run, run: { id: string, playName: string, status: string, dashboardUrl?: string | null, runUrl?: string | null }, steps: Record<string, any>[], outputs: Record<string, any>, datasets: Record<string, any>[], next: Record<string, any> } } | { runId: string, snapshot: Record<string, any>, terminalStatus?: any | null }"
+      }
+    },
+    {
+      "path": "deepline.api.runs.history",
+      "shortPath": "runs.history",
+      "description": "Search and page workspace run history",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Case-insensitive substring, at most 200 characters."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Opaque continuation bound to the same workspace and search."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "all | plays | monitors",
+            "description": "Search all, Play or Monitor runs by recorded trigger metadata; requires search."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum indexed history entries examined in this page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runs",
+            "optional": false,
+            "type": "{ runId: string, workflowId: string, workflowName: string, playScope?: string | null | null, status: string, createdAt: number, updatedAt: number, callerName?: string | null | null, callerEmail?: string | null | null, authorName?: string | null | null, authorEmail?: string | null | null, callerAgent?: string | null | null, executionMode?: string | null | null, bindingId?: string | null | null, parentWorkflowName?: string | null | null, outputRowCount?: number | null | null, hasOutput?: boolean | null, billingTotalCredits?: number | null, triggerSource?: string | null }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "hasMore",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "avatarsByName",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.runs.input",
+      "shortPath": "runs.input",
+      "description": "Read the exact original input retained for a run",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string",
+            "description": "The run id returned by plays.run, runs.list or runs.history."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "Record<string, any> | any[]"
+          },
+          {
+            "key": "bytes",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "sha256",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "replayedFromRunId",
+            "optional": true,
+            "type": "string | null | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.runs.list",
+      "shortPath": "runs.list",
+      "description": "List Play runs filtered by Play, status or run id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "play",
+            "optional": true,
+            "type": "string",
+            "description": "Saved Play name to list runs for."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string",
+            "description": "Run status to filter by, such as running, queued, waiting, completed, failed or cancelled."
+          },
+          {
+            "key": "runId",
+            "optional": true,
+            "type": "string",
+            "description": "Return only this run id. Unknown ids return HTTP 404."
+          },
+          {
+            "key": "node",
+            "optional": true,
+            "type": "string",
+            "description": "Mermaid node id; adds that node's latest settled input and output to each run. Requires play."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum runs to return in this page."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-based page offset. A non-zero offset requires play; status-only lists are not paginated."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runs",
+            "optional": false,
+            "type": "{ runId: string, workflowId?: string | null, playName?: string | null | null, parentRunId?: string | null | null, rootRunId?: string | null | null, status: string, startedAt?: number | string | null | null, createdAt?: number | string | null | null, finishedAt?: number | string | null | null, billingTotalCredits?: number | null, billingMaxCreditsPerRun?: number | null | null }[]"
+          },
+          {
+            "key": "playName",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.runs.logs",
+      "shortPath": "runs.logs",
+      "description": "Read retained run logs; continue with lastSeq as afterSeq",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "afterSeq",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "view",
+            "optional": true,
+            "type": "failed"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ seq: number, line: string }[]"
+          },
+          {
+            "key": "totalLogCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "firstSeq",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "lastSeq",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "lastStoredSeq",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "logsTruncated",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "view",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "association",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.runs.receipts",
+      "shortPath": "runs.receipts",
+      "description": "Read retained tool results for a run by receipt key, without executing tools",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string",
+            "description": "The run id returned by plays.run, runs.list or runs.history."
+          },
+          {
+            "key": "keys",
+            "optional": false,
+            "type": "string[]",
+            "description": "Receipt keys from exported evidence or execution metadata, at most 2048 characters each. Sent in batches of 100; results keep this order."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "receipts",
+            "optional": false,
+            "type": "{ receiptKey: string, status?: string, result?: { status: string, job_id?: string, toolResponse: Record<string, any> }, error?: { code: string, message: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.runs.rerun",
+      "shortPath": "runs.rerun",
+      "description": "Start a new run from a past run's input and revision (may spend credits)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string",
+            "description": "The run id returned by plays.run, runs.list or runs.history."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": false,
+            "type": "string",
+            "description": "Required, sent as Idempotency-Key. Persist it before calling: the same run and key always resolve to the same rerun, so reusing it after an uncertain result never starts a second paid run."
+          },
+          {
+            "key": "inputOverrides",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | null>",
+            "description": "Scalar edits to fields present in the original input. They apply only to the new run."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "replayedFromRunId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "revisionId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deduplicated",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "rateLimited",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.runs.resume",
+      "shortPath": "runs.resume",
+      "description": "Continue a failed or cancelled run in place (may spend credits)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string",
+            "description": "The run id returned by plays.run, runs.list or runs.history."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resumed",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "epoch",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.runs.status",
+      "shortPath": "runs.status",
+      "description": "Read the lifecycle status and progress counters of one run",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string",
+            "description": "The run id returned by plays.run, runs.list or runs.history."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ available: false, runId: string } | { available: true, runId: string, lifecycle: { status: string, updatedAt: number, startedAt?: number | null | null, finishedAt?: number | null | null }, activity?: Record<string, any> | null, calls?: { logicalCalls: { value: number | null, confirmed: boolean }, providerRequests: { value: number | null, confirmed: boolean }, provider429s: { value: number | null, confirmed: boolean } }, steps?: { observed: number, running: number, completed: number, failed: number, skipped: number, confirmed: boolean }, mapStepWork?: Record<string, any>, datasets?: Record<string, any>, wait?: Record<string, any> }"
+      }
+    },
+    {
+      "path": "deepline.api.runs.stop",
+      "shortPath": "runs.stop",
+      "description": "Stop one running Play run",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string",
+            "description": "The run id returned by plays.run, runs.list or runs.history."
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string",
+            "description": "Reason recorded with the stop request."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stopped",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "cancelling",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hitlCancelledCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hitlCancellationPending",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "staleSchedulerState",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.runs.stopAll",
+      "shortPath": "runs.stopAll",
+      "description": "Stop every active run in the workspace; dryRun only lists them",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dryRun",
+            "optional": true,
+            "type": "boolean",
+            "description": "true lists the active runs a stop-all would target without stopping any."
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string",
+            "description": "Reason recorded with the stop request."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ dryRun: true, scope: string, includesChildren: boolean, candidateCount: number, truncated: boolean, runs: { runId: string, playName?: string | null | null, status?: string | null | null, parentRunId?: string | null | null }[] } | { stopped: number, cancelling?: number, failed: number, skipped: number, partial?: boolean, runs: { runId: string, state?: string, stopped: boolean, cancelling?: boolean, hitlCancelledCount?: number, hitlCancellationPending?: boolean, staleSchedulerState?: boolean, error?: string, status?: string | null | null }[] }"
+      }
+    },
+    {
+      "path": "deepline.api.search.query",
+      "shortPath": "search.query",
+      "description": "Search tools, monitor types, plays, and docs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "The task or capability to search for. Omit when filtering only by categories or search_terms."
+          },
+          {
+            "key": "types",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated kinds to search: tools, monitors, prebuilts, custom, plays (prebuilts and custom), or docs. Omit to search everything."
+          },
+          {
+            "key": "exclude",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated kinds to leave out, using the same names as types. Applied after types."
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated tool categories to filter."
+          },
+          {
+            "key": "search_terms",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated capability terms to rank and filter by, including when q is empty."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum ranked results to return."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-based offset into the ranked result set."
+          },
+          {
+            "key": "task",
+            "optional": true,
+            "type": "string",
+            "description": "Optional. What the caller is trying to accomplish, in one sentence: the input it has and the result it needs, not a restatement of q. Used to rank candidates; up to 300 characters are used."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, kind: string, displayName?: string | null, description?: string | null }[]"
+          },
+          {
+            "key": "kinds",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "search_ref",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "next_offset",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_is_exact",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "may_have_more",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "truncated",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "search_terms",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.secrets.inspect",
+      "shortPath": "secrets.inspect",
+      "description": "Check whether a secret is active for the org or a Play, without its value",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Secret name; normalized to uppercase, for example HUBSPOT_TOKEN."
+          },
+          {
+            "key": "playName",
+            "optional": true,
+            "type": "string",
+            "description": "Bare Play name. An active Play secret takes precedence over the org secret; omit to check the org secret only."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "playName",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "reason",
+            "optional": false,
+            "type": "active | missing | disabled | empty | invalid_version"
+          },
+          {
+            "key": "secret",
+            "optional": false,
+            "type": "{ _id: string, orgId: string, scope: org | play, playName?: string | null, name: string, note?: string | null, status: string, hasValue: boolean, createdAt: number, updatedAt: number, lastUsedAt?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.secrets.list",
+      "shortPath": "secrets.list",
+      "description": "List Play secret metadata (never values)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "secrets",
+            "optional": false,
+            "type": "{ _id: string, orgId: string, scope: org | play, playName?: string | null, name: string, note?: string | null, status: string, hasValue: boolean, createdAt: number, updatedAt: number, lastUsedAt?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.secrets.set",
+      "shortPath": "secrets.set",
+      "description": "Create or rotate a Play or org secret (replaces the stored value; value never returned)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "inline",
+        "type": "{ name: string, value: string, scope?: org | play, playName?: string, note?: string }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "secret",
+            "optional": false,
+            "type": "{ _id: string, orgId: string, scope: org | play, playName?: string | null, name: string, note?: string | null, status: string, hasValue: boolean, createdAt: number, updatedAt: number, lastUsedAt?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.secrets.updateNote",
+      "shortPath": "secrets.updateNote",
+      "description": "Add, replace or clear the non-sensitive note on one secret",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "secretId",
+            "optional": false,
+            "type": "string",
+            "description": "The _id of the secret from secrets.list."
+          },
+          {
+            "key": "note",
+            "optional": false,
+            "type": "string",
+            "description": "Non-sensitive note to store on the secret; an empty string clears it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "secret",
+            "optional": false,
+            "type": "{ _id: string, orgId: string, scope: org | play, playName?: string | null, name: string, note?: string | null, status: string, hasValue: boolean, createdAt: number, updatedAt: number, lastUsedAt?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.tools.describeModel",
+      "shortPath": "tools.describeModel",
+      "description": "Describe an AI Gateway model: metadata, provider options and an example input",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "Exact lowercase AI Gateway model id, for example openai/gpt-4o-mini."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schemaVersion",
+            "optional": false,
+            "type": "1"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "modelMetadata",
+            "optional": false,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "providerOptions",
+            "optional": false,
+            "type": "{ gateway: Record<string, any>, selectedProvider?: Record<string, any> | null }"
+          },
+          {
+            "key": "exampleInput",
+            "optional": false,
+            "type": "{ model: string, providerOptions: Record<string, any> }"
+          },
+          {
+            "key": "caveats",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "sources",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "inferencePricing",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.tools.execute",
+      "shortPath": "tools.execute",
+      "description": "Execute one provider-backed tool (may spend credits or perform external actions)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "toolId",
+            "optional": false,
+            "type": "string",
+            "description": "The toolId returned by the related Deepline API call."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Optional caller-owned execution key. Case-sensitive, 1–200 ASCII letters, digits, period, underscore, colon, or hyphen. Persist before dispatch. Changed input conflicts; expired keys cannot be reused."
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "Input matching the selected tool input schema."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "job_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "toolResponse",
+            "optional": true,
+            "type": "{ rawV2?: any | null, view?: string | null, responseMeta?: Record<string, any> | null } | null"
+          },
+          {
+            "key": "extractedLists",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "extractedValues",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ credits_charged?: number | null, cost_usd?: number | null, pricing_status?: string | null, settlement_status?: string | null, estimated_credits?: number | null, estimated_cost_usd?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.tools.get",
+      "shortPath": "tools.get",
+      "description": "Describe one provider-backed tool",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "toolId",
+            "optional": false,
+            "type": "string",
+            "description": "The toolId returned by the related Deepline API call."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ toolId: string, provider: string, operationId: string, description: string, inputSchema?: Record<string, any> | null, outputSchema?: Record<string, any> | null } | { toolId: string, provider: string, description: string, kind: string, callable: false, payload_schema?: Record<string, any> | null, streams?: Record<string, any>[] | null, variants?: Record<string, any>[] | null }"
+      }
+    },
+    {
+      "path": "deepline.api.tools.list",
+      "shortPath": "tools.list",
+      "description": "List callable provider tools",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated tool categories to include."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated tool tags to include."
+          },
+          {
+            "key": "grep",
+            "optional": true,
+            "type": "string",
+            "description": "Literal terms to match against tool metadata."
+          },
+          {
+            "key": "compact",
+            "optional": true,
+            "type": "boolean",
+            "description": "Set false to include input and output schemas."
+          },
+          {
+            "key": "grep_mode",
+            "optional": true,
+            "type": "all | any | phrase",
+            "description": "How to combine literal grep terms."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tools",
+            "optional": false,
+            "type": "{ toolId: string, provider: string, operationId: string, description: string, inputSchema?: Record<string, any> | null, outputSchema?: Record<string, any> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.tools.providers",
+      "shortPath": "tools.providers",
+      "description": "List discoverable providers with tool counts and categories, or only recent additions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "changed",
+            "optional": true,
+            "type": "boolean",
+            "description": "Set true to list only recently added providers, with their catalog version and release date."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "providers",
+            "optional": false,
+            "type": "{ provider: string, displayName: string, toolCount: number, categories: string[], version?: string | null, releasedAt?: string | null }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.tools.quote",
+      "shortPath": "tools.quote",
+      "description": "Price an ai_inference, deeplineagent or ai_evaluate payload without running it",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "toolId",
+            "optional": false,
+            "type": "ai_inference | deeplineagent | ai_evaluate",
+            "description": "Inference tool to price. Dynamic quotes exist only for ai_inference, deeplineagent and ai_evaluate."
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "The exact tool payload you plan to execute (for example model, prompt or messages, maxOutputTokens). Nothing runs; only the price is computed."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "quality",
+            "optional": false,
+            "type": "bounded_max | estimate_only | unavailable"
+          },
+          {
+            "key": "estimate",
+            "optional": false,
+            "type": "{ quality: bounded_max | estimate_only | unavailable, credits?: number, assumptions: { modelCallCount: number, estimatedInputTokens: number, estimatedOutputTokens: number } }"
+          },
+          {
+            "key": "authorization",
+            "optional": false,
+            "type": "{ quality: bounded_max | estimate_only | unavailable, maximumCredits?: number, assumptions: { modelCallCount: number, estimatedInputTokens: number, estimatedOutputTokens: number } }"
+          },
+          {
+            "key": "settlement",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.tools.search",
+      "shortPath": "tools.search",
+      "description": "Search callable provider tools",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "The task or capability to search for. Omit when filtering only by categories or search_terms."
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated tool categories to filter."
+          },
+          {
+            "key": "search_terms",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated capability terms to rank and filter by, including when q is empty."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum ranked tools to return."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-based offset into the ranked result set."
+          },
+          {
+            "key": "task",
+            "optional": true,
+            "type": "string",
+            "description": "Optional. What the caller is trying to accomplish, in one sentence: the input it has and the result it needs, not a restatement of q. Used to rank candidates; up to 300 characters are used."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tools",
+            "optional": false,
+            "type": "{ toolId: string, provider: string, operation: string, description: string, inputFields?: string[] | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_offset",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "truncated",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "total_is_exact",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "may_have_more",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.workspace.members.list",
+      "shortPath": "workspace.members.list",
+      "description": "List one page of workspace members and their grants",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Continuation cursor from the previous page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "members",
+            "optional": false,
+            "type": "{ id: string, userId: string, role: string, grants: string[] }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": false,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepline.api.workspace.serviceAccounts.list",
+      "shortPath": "workspace.serviceAccounts.list",
+      "description": "List workspace service accounts and key metadata (prefix and last 4 only)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "serviceAccounts",
+            "optional": false,
+            "type": "{ id: string, userId: string, memberId?: string | null, name: string, role?: string | null, createdAt: number, createdByUserId: string, activeKeyCount: number, lastUsedAt?: number | null, keys?: { id: string, keyPrefix: string, keyLast4: string, status: string, createdAt: number, lastUsedAt?: number | null }[] | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
