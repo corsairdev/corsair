@@ -3247,7 +3247,7 @@ export type TeamworkV3Inputs = {
 			projectNumbers?: Array<string>;
 			projectNumberCounters?: Array<number>;
 			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectHealths?: Array<0 | 1 | 2 | 3 | '0' | '1' | '2' | '3'>;
 			projectCompanyIds?: Array<number>;
 			projectCategoryIds?: Array<number>;
 			includeCustomFieldIds?: Array<number>;
@@ -3518,7 +3518,7 @@ export type TeamworkV3Inputs = {
 			projectNumbers?: Array<string>;
 			projectNumberCounters?: Array<number>;
 			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectHealths?: Array<0 | 1 | 2 | 3 | '0' | '1' | '2' | '3'>;
 			projectCompanyIds?: Array<number>;
 			projectCategoryIds?: Array<number>;
 			includeCustomFieldIds?: Array<number>;
@@ -3789,7 +3789,7 @@ export type TeamworkV3Inputs = {
 			projectNumbers?: Array<string>;
 			projectNumberCounters?: Array<number>;
 			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectHealths?: Array<0 | 1 | 2 | 3 | '0' | '1' | '2' | '3'>;
 			projectCompanyIds?: Array<number>;
 			projectCategoryIds?: Array<number>;
 			includeCustomFieldIds?: Array<number>;
@@ -3997,7 +3997,7 @@ export type TeamworkV3Inputs = {
 			>;
 			projectOwnerIds?: Array<number>;
 			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectHealths?: Array<0 | 1 | 2 | 3 | '0' | '1' | '2' | '3'>;
 			projectCompanyIds?: Array<number>;
 			projectCategoryIds?: Array<number>;
 		};
@@ -4015,7 +4015,7 @@ export type TeamworkV3Inputs = {
 			>;
 			projectOwnerIds?: Array<number>;
 			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectHealths?: Array<0 | 1 | 2 | 3 | '0' | '1' | '2' | '3'>;
 			projectCompanyIds?: Array<number>;
 			projectCategoryIds?: Array<number>;
 		};
@@ -4033,7 +4033,7 @@ export type TeamworkV3Inputs = {
 			>;
 			projectOwnerIds?: Array<number>;
 			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectHealths?: Array<0 | 1 | 2 | 3 | '0' | '1' | '2' | '3'>;
 			projectCompanyIds?: Array<number>;
 			projectCategoryIds?: Array<number>;
 		};
@@ -4134,7 +4134,7 @@ export type TeamworkV3Inputs = {
 			projectNumbers?: Array<string>;
 			projectNumberCounters?: Array<number>;
 			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectHealths?: Array<0 | 1 | 2 | 3 | '0' | '1' | '2' | '3'>;
 			projectCompanyIds?: Array<number>;
 			projectCategoryIds?: Array<number>;
 			includeCustomFieldIds?: Array<number>;
@@ -4405,7 +4405,7 @@ export type TeamworkV3Inputs = {
 			projectNumbers?: Array<string>;
 			projectNumberCounters?: Array<number>;
 			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectHealths?: Array<0 | 1 | 2 | 3 | '0' | '1' | '2' | '3'>;
 			projectCompanyIds?: Array<number>;
 			projectCategoryIds?: Array<number>;
 			includeCustomFieldIds?: Array<number>;
@@ -5211,7 +5211,7 @@ export type TeamworkV3Inputs = {
 			>;
 			projectOwnerIds?: Array<number>;
 			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectHealths?: Array<0 | 1 | 2 | 3 | '0' | '1' | '2' | '3'>;
 			projectFeaturesEnabled?: Array<
 				| 'list'
 				| 'board'
@@ -5751,7 +5751,7 @@ export type TeamworkV3Inputs = {
 			>;
 			projectOwnerIds?: Array<number>;
 			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectHealths?: Array<0 | 1 | 2 | 3 | '0' | '1' | '2' | '3'>;
 			projectFeaturesEnabled?: Array<
 				| 'list'
 				| 'board'
@@ -6321,7 +6321,7 @@ export type TeamworkV3Inputs = {
 			>;
 			projectOwnerIds?: Array<number>;
 			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectHealths?: Array<0 | 1 | 2 | 3 | '0' | '1' | '2' | '3'>;
 			projectFeaturesEnabled?: Array<
 				| 'list'
 				| 'board'
@@ -6861,7 +6861,7 @@ export type TeamworkV3Inputs = {
 			>;
 			projectOwnerIds?: Array<number>;
 			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectHealths?: Array<0 | 1 | 2 | 3 | '0' | '1' | '2' | '3'>;
 			projectFeaturesEnabled?: Array<
 				| 'list'
 				| 'board'
@@ -7401,7 +7401,7 @@ export type TeamworkV3Inputs = {
 			>;
 			projectOwnerIds?: Array<number>;
 			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectHealths?: Array<0 | 1 | 2 | 3 | '0' | '1' | '2' | '3'>;
 			projectFeaturesEnabled?: Array<
 				| 'list'
 				| 'board'
@@ -10045,7 +10045,7 @@ export type TeamworkV3Inputs = {
 			projectTagIds?: Array<number>;
 			projectOwnerIds?: Array<number>;
 			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectHealths?: Array<0 | 1 | 2 | 3 | '0' | '1' | '2' | '3'>;
 			projectCompanyIds?: Array<number>;
 			projectCategoryIds?: Array<number>;
 			objectTypes?: Array<
@@ -10307,7 +10307,7 @@ export type TeamworkV3Inputs = {
 			projectTagIds?: Array<number>;
 			projectOwnerIds?: Array<number>;
 			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectHealths?: Array<0 | 1 | 2 | 3 | '0' | '1' | '2' | '3'>;
 			projectCompanyIds?: Array<number>;
 			projectCategoryIds?: Array<number>;
 			objectTypes?: Array<
@@ -10569,7 +10569,7 @@ export type TeamworkV3Inputs = {
 			projectTagIds?: Array<number>;
 			projectOwnerIds?: Array<number>;
 			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectHealths?: Array<0 | 1 | 2 | 3 | '0' | '1' | '2' | '3'>;
 			projectCompanyIds?: Array<number>;
 			projectCategoryIds?: Array<number>;
 			objectTypes?: Array<
@@ -10843,7 +10843,7 @@ export type TeamworkV3Inputs = {
 			projectTagIds?: Array<number>;
 			projectOwnerIds?: Array<number>;
 			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectHealths?: Array<0 | 1 | 2 | 3 | '0' | '1' | '2' | '3'>;
 			projectCompanyIds?: Array<number>;
 			projectCategoryIds?: Array<number>;
 			include?: Array<
@@ -11628,7 +11628,7 @@ export type TeamworkV3Inputs = {
 			>;
 			projectOwnerIds?: Array<number>;
 			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectHealths?: Array<0 | 1 | 2 | 3 | '0' | '1' | '2' | '3'>;
 			projectCompanyIds?: Array<number>;
 			projectCategoryIds?: Array<number>;
 			include?: Array<
@@ -11886,7 +11886,7 @@ export type TeamworkV3Inputs = {
 			>;
 			projectOwnerIds?: Array<number>;
 			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectHealths?: Array<0 | 1 | 2 | 3 | '0' | '1' | '2' | '3'>;
 			projectCompanyIds?: Array<number>;
 			projectCategoryIds?: Array<number>;
 			include?: Array<
@@ -12130,7 +12130,7 @@ export type TeamworkV3Inputs = {
 			>;
 			projectOwnerIds?: Array<number>;
 			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectHealths?: Array<0 | 1 | 2 | 3 | '0' | '1' | '2' | '3'>;
 			projectCompanyIds?: Array<number>;
 			projectCategoryIds?: Array<number>;
 			excludeTaskTagIds?: Array<number>;
@@ -12222,7 +12222,7 @@ export type TeamworkV3Inputs = {
 			>;
 			projectOwnerIds?: Array<number>;
 			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectHealths?: Array<0 | 1 | 2 | 3 | '0' | '1' | '2' | '3'>;
 			projectCompanyIds?: Array<number>;
 			projectCategoryIds?: Array<number>;
 			include?: Array<

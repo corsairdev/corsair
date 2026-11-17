@@ -158,10 +158,21 @@ describe('Teamwork OpenAPI contract schemas', () => {
 		).toBe(true);
 	});
 
-	it('takes integer enums the spec lists as strings as numbers', () => {
+	it('takes integer enums the spec lists as strings as numbers, and the strings still', () => {
 		const list = teamworkInputSchemas['tasks.list'];
+		// The public type takes the same values, so this compiles and passes.
+		const typed: TeamworkEndpointInputs['tasks.list'] = {
+			query: { projectHealths: [1, '3'] },
+		};
+		expect(list?.safeParse(typed).success).toBe(true);
 		expect(list?.safeParse({ query: { projectHealths: [1, 3] } }).success).toBe(
 			true,
+		);
+		expect(
+			list?.safeParse({ query: { projectHealths: ['1', 3] } }).success,
+		).toBe(true);
+		expect(list?.safeParse({ query: { projectHealths: ['4'] } }).success).toBe(
+			false,
 		);
 		expect(list?.safeParse({ query: { projectHealths: [4] } }).success).toBe(
 			false,
