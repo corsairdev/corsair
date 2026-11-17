@@ -160,7 +160,7 @@ Every link has Files, where Corsair keeps files for your apps to use, up to 25 M
 How a file gets in depends on where you're chatting:
 
 - **ChatGPT.** A file you attach goes straight to Files.
-- **Claude.** The agent sends a file you attached from its code sandbox with one command. If the sandbox can't reach Corsair, you pick the file in the upload card instead, and the agent tells you which address to allow in **Settings > Capabilities > Allowed websites** so it can send files itself next time.
+- **Claude.** The agent sends a file you attached from its code sandbox with one command. That needs the sandbox to reach Corsair: in claude.ai, add `auth.corsair.dev` under **Settings > Capabilities > Allowed websites**. Until you do, you pick the file in the upload card instead.
 - **An agent with a shell**, such as Claude Code or Codex, sends a file from your computer with one command. The file goes straight to Corsair without passing through the chat.
 - **Anywhere else**, you pick the file in the upload card, or on the upload page its link opens. The link works for 10 minutes.
 - **A public URL**: Corsair fetches it.
