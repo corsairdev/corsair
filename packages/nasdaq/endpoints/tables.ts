@@ -10,6 +10,8 @@ import {
 /** Row values arrive as strings, numbers, booleans or null, never nested. */
 const VALUE_TYPES = new Set(['string', 'number', 'boolean']);
 
+// unknown: a cell straight out of the unchecked provider response; this guard
+// is what narrows it.
 function isScalar(value: unknown): value is string | number | boolean | null {
 	return value === null || VALUE_TYPES.has(typeof value);
 }
