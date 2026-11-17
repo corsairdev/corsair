@@ -34,6 +34,7 @@ export async function logoDevRequest<T>(
 		method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 		path: string;
 		query?: LogoDevQuery;
+		// `unknown` values: a JSON body built by an endpoint from its parsed zod input.
 		body?: Record<string, unknown>;
 	},
 ): Promise<T> {

@@ -51,6 +51,7 @@ const BrandIdentifierShape = {
 		.describe('Brand name. Logo.dev uses the top search match.'),
 };
 
+// `unknown` values: the refine runs on the parsed object, and only presence matters here.
 function exactlyOneIdentifier(value: Record<string, unknown>): boolean {
 	return IDENTIFIER_KEYS.filter((key) => value[key] !== undefined).length === 1;
 }
@@ -171,7 +172,7 @@ export const BrandSchema = z
 			.optional(),
 		logo: ImageSchema.nullable().optional(),
 		brandmark: ImageSchema.nullable().optional(),
-		// Banner objects are not described field by field in the reference.
+		// `unknown`: banner objects are not described field by field in the reference.
 		social_banners: z.array(z.unknown()).optional(),
 	})
 	.passthrough();
