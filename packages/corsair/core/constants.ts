@@ -403,6 +403,7 @@ export const BaseProviders = [
 	'miro',
 	'missive',
 	'mixmax',
+	'modelry',
 	'monday',
 	'mondaymcp',
 	'moonclerk',
@@ -1036,6 +1037,7 @@ export const ProviderDisplayNames = {
 	miro: 'Miro',
 	missive: 'Missive',
 	mixmax: 'Mixmax',
+	modelry: 'Modelry',
 	monday: 'Monday',
 	mondaymcp: 'Monday MCP',
 	moonclerk: 'MoonClerk',
@@ -1676,6 +1678,7 @@ export type AllProviders =
 	| 'miro'
 	| 'missive'
 	| 'mixmax'
+	| 'modelry'
 	| 'monday'
 	| 'mondaymcp'
 	| 'moonclerk'
