@@ -8009,5 +8009,32 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/globalping",
+    "dir": "packages/globalping",
+    "name": "Globalping",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/screenshotone",
+    "dir": "packages/screenshotone",
+    "name": "ScreenshotOne",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/searchapi",
+    "dir": "packages/searchapi",
+    "name": "SearchAPI",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
