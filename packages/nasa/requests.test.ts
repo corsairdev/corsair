@@ -523,7 +523,8 @@ describe('epic', () => {
 			{ date: '2026-11-12' },
 		]);
 
-		expect(asRecord(result)?.dates).toEqual(['2026-11-13', '2026-11-12']);
+		// Returned oldest first, whatever order the provider used.
+		expect(asRecord(result)?.dates).toEqual(['2026-11-12', '2026-11-13']);
 	});
 });
 
@@ -649,6 +650,40 @@ describe('images', () => {
 				endpoints.images.search,
 				{ q: 'moon' },
 				{ collection: { metadata: { total_hits: 3 }, links: [] } },
+			),
+		).rejects.toThrow();
+	});
+
+	it('rejects a bare string manifest entry, which NASA does not send', async () => {
+		await expect(
+			capture(
+				endpoints.images.asset,
+				{ nasa_id: 'as11-40-5874' },
+				{
+					collection: { items: [{ href: 'http://a/orig.jpg' }, 'http://a/x'] },
+				},
+			),
+		).rejects.toThrow();
+	});
+
+	it('rejects malformed paging fields instead of reading them as a last page', async () => {
+		await expect(
+			capture(
+				endpoints.images.search,
+				{ q: 'moon' },
+				{ collection: { ...imageSearch.collection, links: { rel: 'next' } } },
+			),
+		).rejects.toThrow(/links/);
+		await expect(
+			capture(
+				endpoints.images.search,
+				{ q: 'moon' },
+				{
+					collection: {
+						...imageSearch.collection,
+						metadata: { total_hits: '3' },
+					},
+				},
 			),
 		).rejects.toThrow();
 	});

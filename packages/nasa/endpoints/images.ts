@@ -53,19 +53,23 @@ export const search: NasaEndpoints['imageSearch'] = (ctx, input) =>
 				const items = collection.items;
 				const metadata = asRecord(collection.metadata);
 				const links = collection.links;
-				const nextHref = Array.isArray(links)
-					? links
-							.map((entry) => asRecord(entry))
-							.find((entry) => entry?.rel === 'next')?.href
-					: undefined;
+				// NASA documents `links` as an array (absent on the last page) and
+				// `total_hits` as a number. A present value of another type means the
+				// contract changed, so the call fails instead of reading as a last
+				// page or an unknown total.
+				if (links !== undefined && !Array.isArray(links)) {
+					throw new Error(
+						`Expected NASA collection.links to be an array, got ${typeof links}`,
+					);
+				}
+				const nextHref = links
+					?.map((entry) => asRecord(entry))
+					.find((entry) => entry?.rel === 'next')?.href;
 				return {
 					// Passed through as sent: a missing or malformed list fails the
 					// output schema rather than reading as an empty search.
 					items,
-					total_hits:
-						typeof metadata?.total_hits === 'number'
-							? metadata.total_hits
-							: undefined,
+					total_hits: metadata?.total_hits,
 					next_page: readNextPage(nextHref),
 					href:
 						typeof collection.href === 'string' ? collection.href : undefined,
@@ -105,11 +109,12 @@ export const asset: NasaEndpoints['imageAsset'] = (ctx, input) =>
 						`Expected a NASA asset manifest for ${nasa_id}, got ${typeof raw}`,
 					);
 				}
-				// An entry without a string href is kept as it came, so the output
-				// schema rejects the manifest instead of dropping a file from it.
+				// An entry that is not an object with a string href is wrapped so the
+				// output schema rejects the manifest instead of dropping a file.
+				// NASA sends `{ href }` objects; a bare string is malformed too.
 				const manifest = items.map((entry) => {
 					const href = asRecord(entry)?.href;
-					return typeof href === 'string' ? href : entry;
+					return typeof href === 'string' ? href : { malformed: entry };
 				});
 				return {
 					manifest,
