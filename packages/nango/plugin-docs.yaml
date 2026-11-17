@@ -56,7 +56,7 @@ apiExamples:
   proxy.delete: { connection_id: user-123, provider_config_key: github, path: /user/starred/acme/app }
 apiNotes:
   sessions.create: Either `tags` or `end_user` is required; Nango recommends tags. Give the returned `connect_link` to the end user.
-  connections.get: Credentials are dropped unless `include_credentials` is true. Pass `refresh_token: true` as well to also get the refresh token.
+  connections.get: 'Credentials are dropped unless `include_credentials` is true. Pass `refresh_token: true` as well to also get the refresh token.'
   syncs.trigger: '`syncs` takes names, or `{ name, variant }` objects where `variant` is required (the default variant is `base`).'
   records.list: Page with `next_cursor` until it is null; a page can hold fewer than `limit` records.
   proxy.get: '`path` is relative to the provider''s base URL. Headers in `headers` are sent on as `Nango-Proxy-<name>`.'
