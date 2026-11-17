@@ -279,6 +279,46 @@ describe('ecologi purchases (mocked only; never run live)', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
+	it('strips the name and recipient email from a failed purchase error', async () => {
+		mockRequest.mockRejectedValue(
+			new ApiError(
+				{
+					method: 'POST',
+					url: '/impact/trees',
+					body: {
+						number: 1,
+						name: 'Jane Customer',
+						recipientEmail: 'jane@example.com',
+					},
+				},
+				{
+					url: 'https://public.ecologi.com/impact/trees',
+					ok: false,
+					status: 401,
+					statusText: 'Unauthorized',
+					body: { responseCode: 'Unauthorized' },
+				},
+				'Unauthorized',
+				{ retryAfter: 2 },
+			),
+		);
+		const error = await purchaseTrees(context(), {
+			number: 1,
+			name: 'Jane Customer',
+			recipientEmail: 'jane@example.com',
+		}).catch((e: unknown) => e);
+		expect(error).toBeInstanceOf(ApiError);
+		const apiError = error as ApiError;
+		expect(apiError.status).toBe(401);
+		expect(apiError.retryAfter).toBe(2);
+		expect(apiError.request.body).toEqual({
+			number: 1,
+			name: '[REDACTED]',
+			recipientEmail: '[REDACTED]',
+		});
+		expect(JSON.stringify(apiError)).not.toContain('jane@example.com');
+	});
+
 	it('refuses a purchase without a key before any request', async () => {
 		await expect(
 			purchaseTrees({ key: '' } as unknown as EcologiContext, { number: 1 }),

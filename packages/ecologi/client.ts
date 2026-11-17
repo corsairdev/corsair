@@ -3,7 +3,7 @@ import type {
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export const ECOLOGI_API_BASE = 'https://public.ecologi.com';
 
@@ -60,7 +60,49 @@ export async function ecologiPurchase<T>(
 		body,
 		mediaType: 'application/json',
 	};
-	return await request<T>(config, requestOptions, {
-		rateLimitConfig: NO_TRANSPORT_RETRIES,
-	});
+	try {
+		return await request<T>(config, requestOptions, {
+			rateLimitConfig: NO_TRANSPORT_RETRIES,
+		});
+	} catch (error) {
+		throw withoutPersonalData(error);
+	}
+}
+
+/** Body fields that can hold a person's name or email address. */
+const PERSONAL_FIELDS = ['name', 'recipientEmail'] as const;
+
+/**
+ * Core's ApiError keeps `request.body`, which here can hold the funded-by name
+ * and a recipient's email. Rebuild it with those fields redacted; status, body,
+ * URL and rate-limit fields stay the same, so the error handlers still match it.
+ */
+export function withoutPersonalData(error: unknown): unknown {
+	const sent = error instanceof ApiError ? error.request.body : undefined;
+	if (!(error instanceof ApiError) || !sent || typeof sent !== 'object') {
+		return error;
+	}
+	const body: Record<string, unknown> = { ...sent };
+	for (const field of PERSONAL_FIELDS) {
+		if (body[field] !== undefined) body[field] = '[REDACTED]';
+	}
+	const rebuilt = new ApiError(
+		{ ...error.request, body },
+		{
+			url: error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		error.message,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+	rebuilt.stack = error.stack;
+	return rebuilt;
 }
