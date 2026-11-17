@@ -59,7 +59,9 @@ export const search: NasaEndpoints['imageSearch'] = (ctx, input) =>
 							.find((entry) => entry?.rel === 'next')?.href
 					: undefined;
 				return {
-					items: Array.isArray(items) ? items : [],
+					// Passed through as sent: a missing or malformed list fails the
+					// output schema rather than reading as an empty search.
+					items,
 					total_hits:
 						typeof metadata?.total_hits === 'number'
 							? metadata.total_hits
@@ -103,12 +105,18 @@ export const asset: NasaEndpoints['imageAsset'] = (ctx, input) =>
 						`Expected a NASA asset manifest for ${nasa_id}, got ${typeof raw}`,
 					);
 				}
-				const manifest = items
-					.map((entry) => asRecord(entry)?.href)
-					.filter((href): href is string => typeof href === 'string');
+				// An entry without a string href is kept as it came, so the output
+				// schema rejects the manifest instead of dropping a file from it.
+				const manifest = items.map((entry) => {
+					const href = asRecord(entry)?.href;
+					return typeof href === 'string' ? href : entry;
+				});
 				return {
 					manifest,
-					metadata_url: manifest.find((href) => href.endsWith('metadata.json')),
+					metadata_url: manifest.find(
+						(href): href is string =>
+							typeof href === 'string' && href.endsWith('metadata.json'),
+					),
 				};
 			},
 			log: ({ nasa_id }, result) => ({

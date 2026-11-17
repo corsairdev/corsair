@@ -27,7 +27,9 @@ export const images: NasaEndpoints['epicImages'] = (ctx, input) =>
 				: `/api/${collection ?? 'natural'}`,
 		}),
 		{
-			shape: (raw) => ({ images: raw ?? [] }),
+			// A day without imagery is `[]`; anything else that is not an array is
+			// left for the output schema to reject.
+			shape: (raw) => ({ images: raw }),
 			log: (_, result) => ({ count: result.images.length }),
 		},
 	);
@@ -59,14 +61,16 @@ export const availableDates: NasaEndpoints['epicAvailableDates'] = (
 					throw new Error(`Expected a NASA EPIC date array, got ${typeof raw}`);
 				}
 				// /available answers strings; /all answers objects, so both are read.
+				// An entry of neither form is kept as it came, so the output schema
+				// rejects the response instead of returning a shorter list.
 				const dates = raw.map((entry) => {
 					if (typeof entry === 'string') return entry;
 					// unknown: /all answers objects, but the field has no shared type
 					// with the string form, so it is narrowed here.
 					const date = (entry as { date?: unknown } | null)?.date; // unknown: narrowed
-					return typeof date === 'string' ? date : undefined;
+					return typeof date === 'string' ? date : entry;
 				});
-				return { dates: dates.filter((date) => date !== undefined) };
+				return { dates };
 			},
 			log: (_, result) => ({ count: result.dates.length }),
 		},
