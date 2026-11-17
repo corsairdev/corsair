@@ -8,6 +8,892 @@ description: "API reference for the NiftyImages plugin in Corsair: every `niftyi
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
 
+## Bee Plugin
+
+### suspendUser
+
+`beePlugin.suspendUser`
+
+Suspend or reinstate a Bee Plugin user
+
+**Risk:** `write`
+
+```ts
+await corsair.niftyimages.api.beePlugin.suspendUser({ pluginKey: 'YOUR_PLUGIN_KEY', user: 'Test User', suspend: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pluginKey` | `string` | Yes | The Bee Plugin key from the NiftyImages app. |
+| `user` | `string` | Yes | The Bee Plugin user name. |
+| `suspend` | `boolean` | Yes | true suspends the user, false lifts the suspension. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### userImages
+
+`beePlugin.userImages`
+
+List the images one Bee Plugin user made over a window
+
+**Risk:** `read`
+
+```ts
+await corsair.niftyimages.api.beePlugin.userImages({ pluginKey: 'YOUR_PLUGIN_KEY', user: 'Test User' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pluginKey` | `string` | Yes | The Bee Plugin key from the NiftyImages app. |
+| `user` | `string` | Yes | The Bee Plugin user name. |
+| `startDate` | `string` | No | The first instant to include. |
+| `endDate` | `string` | No | The last instant to include. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `images` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+{
+  ImageID?: number | string | null,
+  ImageType?: string | null,
+  Name?: string | null,
+  UserName?: string | null,
+  Opens?: number | string | null,
+  Uri?: string | null,
+  Status?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### users
+
+`beePlugin.users`
+
+List Bee Plugin users with their image and open counts over a window
+
+**Risk:** `read`
+
+```ts
+await corsair.niftyimages.api.beePlugin.users({ pluginKey: 'YOUR_PLUGIN_KEY' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pluginKey` | `string` | Yes | The Bee Plugin key from the NiftyImages app. |
+| `startDate` | `string` | No | The first instant to include. |
+| `endDate` | `string` | No | The last instant to include. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  UserName?: string | null,
+  Images?: number | null,
+  Opens?: number | string | null,
+  Status?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Images
+
+### delete
+
+`images.delete`
+
+Delete an image or timer by URL; emails that embed it stop showing it
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.niftyimages.api.images.delete({ url: 'https://img1.niftyimages.com/p/lop/m7w' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The image URL from NiftyImages, e.g. https://img1.niftyimages.com/p/lop/m7w. |
+
+Emails that embed the image stop showing it.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`images.get`
+
+Read one image or timer by its URL: type, opens, dates and whether it is active
+
+**Risk:** `read`
+
+```ts
+await corsair.niftyimages.api.images.get({ url: 'https://img1.niftyimages.com/p/lop/m7w' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The image URL from NiftyImages, e.g. https://img1.niftyimages.com/p/lop/m7w. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Name` | `string \| null` | No | — |
+| `Url` | `string \| null` | No | — |
+| `Opens` | `number \| string \| null` | No | — |
+| `Clicks` | `number \| string \| null` | No | — |
+| `ImageType` | `string \| null` | No | — |
+| `CreateDate` | `string \| null` | No | — |
+| `LastUpdated` | `string \| null` | No | — |
+| `Active` | `boolean \| null` | No | — |
+
+
+
+---
+
+### list
+
+`images.list`
+
+Page through every personalized image and countdown timer in the account
+
+**Risk:** `read`
+
+```ts
+await corsair.niftyimages.api.images.list({ pageSize: 10, pageNumber: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | Defaults to 10. |
+| `pageNumber` | `number` | No | Defaults to 1. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `images` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+{
+  Name?: string | null,
+  Url?: string | null,
+  Opens?: number | string | null,
+  Clicks?: number | string | null,
+  ImageType?: string | null,
+  CreateDate?: string | null,
+  LastUpdated?: string | null,
+  Active?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stats
+
+`images.stats`
+
+Opens per image over a date range (the last 30 days by default)
+
+**Risk:** `read`
+
+```ts
+await corsair.niftyimages.api.images.stats({ startDate: '2016-03-01', endDate: '2016-04-01' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startDate` | `string` | No | The first instant to include. |
+| `endDate` | `string` | No | The last instant to include. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `images` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+{
+  Name?: string | null,
+  Url?: string | null,
+  Opens?: number | string | null,
+  Clicks?: number | string | null,
+  ImageType?: string | null,
+  CreateDate?: string | null,
+  LastUpdated?: string | null,
+  Active?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Maps
+
+### addLocation
+
+`maps.addLocation`
+
+Add a location to a map by address or coordinates, with custom properties
+
+**Risk:** `write`
+
+```ts
+await corsair.niftyimages.api.maps.addLocation({ url: 'https://img1.niftyimages.com/p/lop/m7w', Address: '5411 3rd St, San Francisco, CA 94124', LocationID: '22' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The map image URL. |
+| `Address` | `string` | No | — |
+| `Latitude` | `number` | No | — |
+| `Longitude` | `number` | No | — |
+| `LocationID` | `string` | No | — |
+| `Properties` | `object[]` | No | — |
+
+Address maps take Address; latitude/longitude maps take Latitude and Longitude. Geocoding runs in the background.
+
+<AccordionGroup>
+<Accordion title="Properties full type">
+
+```ts
+{
+  Name: string,
+  Value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `msg` | `string \| null` | No | — |
+
+
+
+---
+
+### deleteLocation
+
+`maps.deleteLocation`
+
+Remove a location from a map
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.niftyimages.api.maps.deleteLocation({ url: 'https://img1.niftyimages.com/p/lop/m7w', locationID: '22' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The map image URL. |
+| `locationID` | `string` | No | — |
+| `niftyID` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`maps.get`
+
+Read one map: how many locations are searchable, failed or queued, plus opens and clicks
+
+**Risk:** `read`
+
+```ts
+await corsair.niftyimages.api.maps.get({ url: 'https://img1.niftyimages.com/p/lop/m7w' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The image URL from NiftyImages, e.g. https://img1.niftyimages.com/p/lop/m7w. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Url` | `string \| null` | No | — |
+| `Name` | `string \| null` | No | — |
+| `LocationsGood` | `number \| null` | No | — |
+| `LocationsBad` | `number \| null` | No | — |
+| `LocationsNotProcessed` | `number \| null` | No | — |
+| `Opens` | `number \| string \| null` | No | — |
+| `Clicks` | `number \| string \| null` | No | — |
+| `CreateDate` | `string \| null` | No | — |
+| `LastUpdated` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`maps.list`
+
+List the map images in the account with their opens
+
+**Risk:** `read`
+
+```ts
+await corsair.niftyimages.api.maps.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `images` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+{
+  Name?: string | null,
+  Url?: string | null,
+  Opens?: number | string | null,
+  Clicks?: number | string | null,
+  ImageType?: string | null,
+  CreateDate?: string | null,
+  LastUpdated?: string | null,
+  Active?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchLocations
+
+`maps.searchLocations`
+
+Find locations in a map by address, location id, NiftyID or latitude and longitude
+
+**Risk:** `read`
+
+```ts
+await corsair.niftyimages.api.maps.searchLocations({ url: 'https://img1.niftyimages.com/p/lop/m7w', address: 'San Francisco' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The map image URL to search. |
+| `address` | `string` | No | — |
+| `locationID` | `string` | No | — |
+| `lat` | `number` | No | — |
+| `lng` | `number` | No | — |
+| `niftyID` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `locations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="locations full type">
+
+```ts
+{
+  NiftyID?: string | null,
+  LocationID?: string | number | null,
+  Address?: string | null,
+  Latitude?: number | null,
+  Longitude?: number | null,
+  Properties?: {
+    Name?: string | null,
+    Value?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateLocation
+
+`maps.updateLocation`
+
+Change a map location found by NiftyID or location id
+
+**Risk:** `write`
+
+```ts
+await corsair.niftyimages.api.maps.updateLocation({ url: 'https://img1.niftyimages.com/p/lop/m7w', LocationID: '22', Properties: [{ Name: 'Phone', Value: '(415) 555-0100' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The map image URL. |
+| `NiftyID` | `string` | No | — |
+| `Address` | `string` | No | — |
+| `Latitude` | `number` | No | — |
+| `Longitude` | `number` | No | — |
+| `LocationID` | `string` | No | — |
+| `Properties` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="Properties full type">
+
+```ts
+{
+  Name: string,
+  Value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `msg` | `string \| null` | No | — |
+
+
+
+---
+
+## Psd
+
+### get
+
+`psd.get`
+
+Read a Photoshop image: its text variables and every layer with its type and settings
+
+**Risk:** `read`
+
+```ts
+await corsair.niftyimages.api.psd.get({ url: 'https://img1.niftyimages.com/p/lop/m7w' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The image URL from NiftyImages, e.g. https://img1.niftyimages.com/p/lop/m7w. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Url` | `string \| null` | No | — |
+| `Name` | `string \| null` | No | — |
+| `Variables` | `object[] \| null` | No | — |
+| `Layers` | `object[] \| null` | No | — |
+| `LastUpdated` | `string \| null` | No | — |
+| `Active` | `boolean \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="Variables full type">
+
+```ts
+{
+  Name?: string | null,
+  DefaultValue?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="Layers full type">
+
+```ts
+{
+  LayerName?: string | null,
+  LayerType?: string | null,
+  Hide?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`psd.update`
+
+Change a Photoshop image: rename it, set variable defaults, or edit layers by name (text, colours, images, visibility)
+
+**Risk:** `write`
+
+```ts
+await corsair.niftyimages.api.psd.update({ url: 'https://img1.niftyimages.com/p/lop/m7w', Layers: [{ LayerName: 'StockPrice', TextValue: '25,149.30' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The Photoshop image URL. |
+| `Name` | `string` | No | — |
+| `Variables` | `object[]` | No | — |
+| `Layers` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="Variables full type">
+
+```ts
+{
+  Name: string,
+  DefaultValue: string
+}[]
+```
+</Accordion>
+
+<Accordion title="Layers full type">
+
+```ts
+{
+  LayerName: string,
+  Hide?: boolean,
+  TextValue?: string,
+  TextColor?: string,
+  ShapeColor?: string,
+  ImageUrl?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Url` | `string \| null` | No | — |
+| `Name` | `string \| null` | No | — |
+| `Variables` | `object[] \| null` | No | — |
+| `Layers` | `object[] \| null` | No | — |
+| `LastUpdated` | `string \| null` | No | — |
+| `Active` | `boolean \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="Variables full type">
+
+```ts
+{
+  Name?: string | null,
+  DefaultValue?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="Layers full type">
+
+```ts
+{
+  LayerName?: string | null,
+  LayerType?: string | null,
+  Hide?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Store
+
+### addRecord
+
+`store.addRecord`
+
+Add a Data Store record, or update the one whose unique fields match
+
+**Risk:** `write`
+
+```ts
+await corsair.niftyimages.api.store.addRecord({ record: { EmployeeID: 3, First: 'John', Last: 'Dutton' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `record` | `Record<string, any>` | Yes | The record, keyed by Data Store field name (see store.fields). A record whose unique fields match an existing one updates it. |
+
+Updates the existing record when its unique fields match; keys that are not Data Store fields are ignored.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `record` | `Record<string, any>` | Yes | — |
+
+
+
+---
+
+### deleteById
+
+`store.deleteById`
+
+Delete a Data Store record by its id (the value of its unique field)
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.niftyimages.api.store.deleteById({ id: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | The record id: the value of its unique field. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### deleteRecord
+
+`store.deleteRecord`
+
+Delete the Data Store record whose unique fields match the ones given
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.niftyimages.api.store.deleteRecord({ record: { EmployeeID: 3 } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `record` | `Record<string, any>` | Yes | The record, keyed by Data Store field name (see store.fields). A record whose unique fields match an existing one updates it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### fields
+
+`store.fields`
+
+List the Data Store fields with their types and which ones are unique
+
+**Risk:** `read`
+
+```ts
+await corsair.niftyimages.api.store.fields({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  name?: string | null,
+  type?: string | null,
+  unique?: boolean | null,
+  date_input_format?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Timers
+
+### updateTargetDate
+
+`timers.updateTargetDate`
+
+Move a countdown timer to a new target date, optionally shifted by hours, days or months
+
+**Risk:** `write`
+
+```ts
+await corsair.niftyimages.api.timers.updateTargetDate({ TimerImageUrl: 'https://img1.niftyimages.com/z/qwcd/ywcd', TargetDate: '2026-12-24T00:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `TimerImageUrl` | `string` | Yes | The countdown timer image URL. |
+| `TargetDate` | `string` | Yes | The new date to count down to, ISO 8601 unless Format is set. |
+| `Format` | `string` | No | The date format of TargetDate when it is not ISO 8601. |
+| `IsUtc` | `boolean` | No | True to convert TargetDate into the timer's own time zone. |
+| `AddHours` | `number` | No | — |
+| `AddDays` | `number` | No | — |
+| `AddMonths` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `TimerImageUrl` | `string \| null` | No | — |
+| `TimerTimezone` | `string \| null` | No | — |
+| `UpdatedTargetUtc` | `string \| null` | No | — |
+| `UpdatedTargetTimezone` | `string \| null` | No | — |
+
+
+
+---
+
 ## Widgets
 
 ### images
@@ -43,12 +929,13 @@ await corsair.niftyimages.api.widgets.images({ widgetKey: '153607b3-da74-48ed-a5
 
 ```ts
 {
-  ImageKey?: string | null,
-  ImageUrl?: string | null,
+  ImageID?: number | string | null,
+  ImageType?: string | null,
+  Name?: string | null,
   User?: string | null,
-  CreateDate?: string | null,
-  Views?: number | null,
-  Clicks?: number | null
+  Impressions?: number | null,
+  Suspended?: boolean | null,
+  Uri?: string | null
 }[]
 ```
 </Accordion>
@@ -67,7 +954,7 @@ List the account’s widgets with their names and keys, which every other widget
 **Risk:** `read`
 
 ```ts
-await corsair.niftyimages.api.widgets.list({ startDate: '2016-02-10T08:00Z', endDate: '2016-03-10T08:00Z' });
+await corsair.niftyimages.api.widgets.list({});
 ```
 
 **Input**
@@ -77,7 +964,7 @@ await corsair.niftyimages.api.widgets.list({ startDate: '2016-02-10T08:00Z', end
 | `startDate` | `string` | No | The first instant to include. |
 | `endDate` | `string` | No | The last instant to include. |
 
-Answers a bare array of { Name, WidgetKey }, which the plugin keys as widgets.
+Answers a bare array of widgets with Name and WidgetKey, which the plugin keys as `widgets`.
 
 
 
@@ -107,7 +994,7 @@ Answers a bare array of { Name, WidgetKey }, which the plugin keys as widgets.
 
 `widgets.stats`
 
-Read per-widget view and click counts for a time window, for every widget at once
+Read per-widget user, image and impression counts for a time window, for every widget at once
 
 **Risk:** `read`
 
@@ -122,7 +1009,7 @@ await corsair.niftyimages.api.widgets.stats({ startDate: '2016-02-10T08:00Z', en
 | `startDate` | `string` | No | The first instant to include. |
 | `endDate` | `string` | No | The last instant to include. |
 
-Reads AllStats, so one call covers every widget rather than one.
+Reads AllStats, so one call covers every widget.
 
 
 
@@ -139,15 +1026,46 @@ Reads AllStats, so one call covers every widget rather than one.
 {
   WidgetKey?: string | null,
   Name?: string | null,
-  Views?: number | null,
-  UniqueViews?: number | null,
-  Clicks?: number | null,
-  UniqueClicks?: number | null,
-  CreateDate?: string | null
+  Active?: boolean | null,
+  Users?: number | null,
+  Images?: number | null,
+  Impressions?: number | null
 }[]
 ```
 </Accordion>
 </AccordionGroup>
+
+
+
+---
+
+### suspendUser
+
+`widgets.suspendUser`
+
+Suspend or reinstate a widget user
+
+**Risk:** `write`
+
+```ts
+await corsair.niftyimages.api.widgets.suspendUser({ widgetKey: '153607b3-da74-48ed-a579-d2d2430a7578', user: 'jordan@acme-logistics.com', suspend: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `widgetKey` | `string` | Yes | The widget key, a GUID from widgets.list. |
+| `user` | `string` | Yes | The widget user, from widgets.users. |
+| `suspend` | `boolean` | Yes | true suspends the user, false lifts the suspension. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
 
 
 
@@ -187,12 +1105,13 @@ await corsair.niftyimages.api.widgets.userImages({ widgetKey: '153607b3-da74-48e
 
 ```ts
 {
-  ImageKey?: string | null,
-  ImageUrl?: string | null,
+  ImageID?: number | string | null,
+  ImageType?: string | null,
+  Name?: string | null,
   User?: string | null,
-  CreateDate?: string | null,
-  Views?: number | null,
-  Clicks?: number | null
+  Impressions?: number | null,
+  Suspended?: boolean | null,
+  Uri?: string | null
 }[]
 ```
 </Accordion>
@@ -206,7 +1125,7 @@ await corsair.niftyimages.api.widgets.userImages({ widgetKey: '153607b3-da74-48e
 
 `widgets.users`
 
-List the recipients one widget recorded in a time window, with their view and click counts
+List the users one widget recorded in a time window, with their image and impression counts and whether they are suspended
 
 **Risk:** `read`
 
@@ -236,9 +1155,9 @@ await corsair.niftyimages.api.widgets.users({ widgetKey: '153607b3-da74-48ed-a57
 ```ts
 {
   User?: string | null,
-  Views?: number | null,
-  Clicks?: number | null,
-  LastSeen?: string | null
+  Images?: number | null,
+  Impressions?: number | null,
+  Suspended?: boolean | null
 }[]
 ```
 </Accordion>
@@ -285,10 +1204,9 @@ The user is percent-encoded into the path, because it is usually an email addres
 ```ts
 {
   User?: string | null,
-  Views?: number | null,
-  Clicks?: number | null,
-  FirstSeen?: string | null,
-  LastSeen?: string | null
+  Images?: number | null,
+  Impressions?: number | null,
+  Suspended?: boolean | null
 }
 ```
 </Accordion>
