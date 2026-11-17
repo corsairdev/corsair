@@ -33,6 +33,18 @@ export const CheckProxyInputSchema = z.object({
 export type CheckProxyInput = z.infer<typeof CheckProxyInputSchema>;
 
 /**
+ * The docs show `asn` as a string and `lastSeen` as a number, while IP2Location's
+ * own Go client reads both as strings, so either type is accepted.
+ */
+const NumberOrString = z.union([z.number(), z.string()]);
+
+/**
+ * `isProxy` is `YES` or `NO`, and `DCH` for data-center addresses on PX2 to PX4.
+ * It stays a plain string so a value added later does not fail a paid lookup.
+ */
+const IsProxySchema = z.string();
+
+/**
  * Fields the service returns for a successful lookup. Lower packages omit
  * the later fields, so only `response` is required.
  * https://www.ip2location.com/web-service/ip2proxy
@@ -47,11 +59,11 @@ export const CheckProxyResponseSchema = z
 		isp: z.string().optional(),
 		domain: z.string().optional(),
 		usageType: z.string().optional(),
-		asn: z.string().optional(),
+		asn: NumberOrString.optional(),
 		as: z.string().optional(),
-		lastSeen: z.number().optional(),
+		lastSeen: NumberOrString.optional(),
 		proxyType: z.string().optional(),
-		isProxy: z.enum(['YES', 'NO']).optional(),
+		isProxy: IsProxySchema.optional(),
 		threat: z.string().optional(),
 		provider: z.string().optional(),
 		creditsConsumed: z.number().optional(),

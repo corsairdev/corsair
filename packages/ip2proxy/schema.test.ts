@@ -21,10 +21,11 @@ describe('IP2Proxy schema', () => {
 		);
 		expect(
 			Ip2proxyCheckEntity.safeParse({
-				ip: '8.8.8.8',
+				ip: '3.5.140.1',
 				response: 'OK',
-				isProxy: 'MAYBE',
+				isProxy: 'DCH',
+				lastSeen: '1',
 			}).success,
-		).toBe(false);
+		).toBe(true);
 	});
 });

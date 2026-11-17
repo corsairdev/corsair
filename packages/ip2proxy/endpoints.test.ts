@@ -112,6 +112,39 @@ describe('proxy.checkProxy', () => {
 		);
 	});
 
+	it('accepts the DCH flag that PX2 to PX4 return for data-center addresses', async () => {
+		mockRequest.mockResolvedValue({
+			response: 'OK',
+			countryCode: 'KR',
+			countryName: 'South Korea',
+			proxyType: 'DCH',
+			isProxy: 'DCH',
+		});
+
+		const result = await checkProxy(context('test-key'), {
+			ip: '3.5.140.1',
+			package: 'PX2',
+		});
+
+		expect(result.isProxy).toBe('DCH');
+	});
+
+	it('accepts lastSeen and asn as strings, as the provider Go client reads them', async () => {
+		mockRequest.mockResolvedValue({
+			...PX11_SAMPLE,
+			lastSeen: '1',
+			asn: 16509,
+		});
+
+		const result = await checkProxy(context('test-key'), {
+			ip: '3.5.140.1',
+			package: 'PX11',
+		});
+
+		expect(result.lastSeen).toBe('1');
+		expect(result.asn).toBe(16509);
+	});
+
 	it('refuses a missing key before any request', async () => {
 		await expect(
 			checkProxy(context(''), { ip: '8.8.8.8' }),
