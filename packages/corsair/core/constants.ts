@@ -545,6 +545,7 @@ export const BaseProviders = [
 	'shopify',
 	'shortcut',
 	'shortio',
+	'signpath',
 	'signwell',
 	'similarweb',
 	'simlacom',
@@ -1225,6 +1226,7 @@ export const ProviderDisplayNames = {
 	shopify: 'Shopify',
 	shortcut: 'Shortcut',
 	shortio: 'Short.io',
+	signpath: 'SignPath',
 	signwell: 'SignWell',
 	similarweb: 'Similarweb',
 	simlacom: 'Simla.com',
@@ -1912,6 +1914,7 @@ export type AllProviders =
 	| 'shopify'
 	| 'shortcut'
 	| 'shortio'
+	| 'signpath'
 	| 'signwell'
 	| 'similarweb'
 	| 'simlacom'

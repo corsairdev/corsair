@@ -4517,6 +4517,14 @@
                 ]
               },
               {
+                "group": "SignPath",
+                "pages": [
+                  "plugins/signpath/overview",
+                  "plugins/signpath/api",
+                  "plugins/signpath/database"
+                ]
+              },
+              {
                 "group": "SignWell",
                 "pages": [
                   "plugins/signwell/overview",
