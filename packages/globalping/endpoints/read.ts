@@ -218,7 +218,7 @@ export const getMeasurement: CorsairEndpoint<
 	);
 	const row = asRecord(body);
 	const measurement = GlobalpingMeasurementEntity.safeParse({
-		id: text(row?.id) ?? parsed.id,
+		id: text(row?.id),
 		probesCount: num(row?.probesCount),
 		type: text(row?.type),
 		status: text(row?.status),

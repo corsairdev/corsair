@@ -271,6 +271,13 @@ describe('globalping', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
+	it('rejects a measurement response with no id instead of reusing the requested one', async () => {
+		mockRequest.mockResolvedValue({ status: 'finished', results: [] });
+		await expect(getMeasurement(context(), { id: 'abc' })).rejects.toThrow(
+			'missing an id',
+		);
+	});
+
 	it('lets an HTTP 404 through unchanged', async () => {
 		const error = new ApiError(
 			{ method: 'GET', url: '/v1/measurements/missing' },
