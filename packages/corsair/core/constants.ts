@@ -192,6 +192,7 @@ export const BaseProviders = [
 	'countdownapi',
 	'craftmypdf',
 	'crowterminal',
+	'currencyscoop',
 	'currentsapi',
 	'cursor',
 	'customerio',
@@ -228,6 +229,7 @@ export const BaseProviders = [
 	'doppler',
 	'dopplermarketingautomation',
 	'dovetail',
+	'draftable',
 	'dreamstudio',
 	'dripcel',
 	'dropbox',
@@ -236,6 +238,7 @@ export const BaseProviders = [
 	'dynapictures',
 	'e2b',
 	'echtpost',
+	'ecologi',
 	'elevenlabs',
 	'elorus',
 	'emailoctopus',
@@ -308,6 +311,7 @@ export const BaseProviders = [
 	'givebutter',
 	'gladia',
 	'gleap',
+	'globalping',
 	'gmail',
 	'gmicloud',
 	'godial',
@@ -388,6 +392,7 @@ export const BaseProviders = [
 	'kommo',
 	'kontentai',
 	'krakenio',
+	'labs64netlicensing',
 	'launchdarkly',
 	'leexi',
 	'leiga',
@@ -398,6 +403,7 @@ export const BaseProviders = [
 	'linkedin',
 	'litescrape',
 	'livesession',
+	'logodev',
 	'loyverse',
 	'magichour',
 	'mailboxlayer',
@@ -429,6 +435,7 @@ export const BaseProviders = [
 	'neon',
 	'netsuite',
 	'neverbounce',
+	'newsapi',
 	'nextdns',
 	'northflank',
 	'notion',
@@ -451,9 +458,11 @@ export const BaseProviders = [
 	'pagerduty',
 	'parallel',
 	'parma',
+	'parsehub',
 	'parseur',
 	'pdfapi',
 	'pdfco',
+	'pdfless',
 	'pdfmonkey',
 	'pdl',
 	'perplexityai',
@@ -462,6 +471,7 @@ export const BaseProviders = [
 	'pipedrive',
 	'placid',
 	'plain',
+	'platerecognizer',
 	'ploid',
 	'pointagram',
 	'polygon',
@@ -532,13 +542,17 @@ export const BaseProviders = [
 	'scrapedo',
 	'scrapegraphai',
 	'scrapingant',
+	'screenshotone',
 	'search1api',
+	'searchapi',
 	'securitytrails',
 	'semanticscholar',
 	'sendbird',
 	'sendgrid',
+	'sensibo',
 	'sentry',
 	'serpapi',
+	'serply',
 	'servicem8',
 	'servicenow',
 	'sevdesk',
@@ -586,6 +600,7 @@ export const BaseProviders = [
 	'swaggerhub',
 	'suzanne',
 	'svix',
+	'sympla',
 	'synthflowai',
 	'taggun',
 	'talenthr',
@@ -602,6 +617,7 @@ export const BaseProviders = [
 	'textcortex',
 	'teamcamp',
 	'teams',
+	'teamwork',
 	'telegram',
 	'textit',
 	'textrazor',
@@ -878,6 +894,7 @@ export const ProviderDisplayNames = {
 	countdownapi: 'Countdown API',
 	craftmypdf: 'CraftMyPDF',
 	crowterminal: 'CrowTerminal',
+	currencyscoop: 'CurrencyScoop',
 	currentsapi: 'CurrentsApi',
 	cursor: 'Cursor',
 	customerio: 'Customer.io',
@@ -914,6 +931,7 @@ export const ProviderDisplayNames = {
 	doppler: 'Doppler',
 	dopplermarketingautomation: 'Doppler Marketing Automation',
 	dovetail: 'Dovetail',
+	draftable: 'Draftable',
 	dreamstudio: 'DreamStudio',
 	dripcel: 'Dripcel',
 	dropbox: 'Dropbox',
@@ -922,6 +940,7 @@ export const ProviderDisplayNames = {
 	dynapictures: 'Dynapictures',
 	e2b: 'E2B',
 	echtpost: 'Echtpost',
+	ecologi: 'Ecologi',
 	elevenlabs: 'ElevenLabs',
 	elorus: 'Elorus',
 	emailoctopus: 'EmailOctopus',
@@ -994,6 +1013,7 @@ export const ProviderDisplayNames = {
 	givebutter: 'Givebutter',
 	gladia: 'Gladia',
 	gleap: 'Gleap',
+	globalping: 'Globalping',
 	gmail: 'Gmail',
 	gmicloud: 'GMI Cloud',
 	godial: 'GoDial',
@@ -1074,6 +1094,7 @@ export const ProviderDisplayNames = {
 	kommo: 'Kommo',
 	kontentai: 'Kontent.ai',
 	krakenio: 'Kraken.io',
+	labs64netlicensing: 'Labs64 NetLicensing',
 	launchdarkly: 'LaunchDarkly',
 	leexi: 'Leexi',
 	leiga: 'Leiga',
@@ -1084,6 +1105,7 @@ export const ProviderDisplayNames = {
 	linkedin: 'LinkedIn',
 	litescrape: 'LiteScrape',
 	livesession: 'LiveSession',
+	logodev: 'Logo.dev',
 	loyverse: 'Loyverse',
 	magichour: 'Magic Hour',
 	mailboxlayer: 'MailboxLayer',
@@ -1115,6 +1137,7 @@ export const ProviderDisplayNames = {
 	neon: 'Neon',
 	netsuite: 'NetSuite',
 	neverbounce: 'NeverBounce',
+	newsapi: 'NewsAPI',
 	nextdns: 'NextDNS',
 	northflank: 'Northflank',
 	notion: 'Notion',
@@ -1137,9 +1160,11 @@ export const ProviderDisplayNames = {
 	pagerduty: 'PagerDuty',
 	parallel: 'Parallel',
 	parma: 'Parma',
+	parsehub: 'ParseHub',
 	parseur: 'Parseur',
 	pdfapi: 'PDF-API.io',
 	pdfco: 'PDF.co',
+	pdfless: 'PDFLess',
 	pdfmonkey: 'PDFMonkey',
 	pdl: 'People Data Labs',
 	perplexityai: 'Perplexity AI',
@@ -1148,6 +1173,7 @@ export const ProviderDisplayNames = {
 	pipedrive: 'Pipedrive',
 	placid: 'Placid',
 	plain: 'Plain',
+	platerecognizer: 'Plate Recognizer',
 	ploid: 'Ploid',
 	pointagram: 'Pointagram',
 	polygon: 'Polygon OMS',
@@ -1218,13 +1244,17 @@ export const ProviderDisplayNames = {
 	scrapedo: 'Scrape.do',
 	scrapegraphai: 'ScrapeGraphAI',
 	scrapingant: 'ScrapingAnt',
+	screenshotone: 'ScreenshotOne',
 	search1api: 'Search1API',
+	searchapi: 'SearchAPI',
 	securitytrails: 'SecurityTrails',
 	semanticscholar: 'Semantic Scholar',
 	sendbird: 'Sendbird',
 	sendgrid: 'SendGrid',
+	sensibo: 'Sensibo',
 	sentry: 'Sentry',
 	serpapi: 'Serpapi',
+	serply: 'Serply',
 	servicem8: 'ServiceM8',
 	servicenow: 'ServiceNow',
 	sevdesk: 'Sevdesk',
@@ -1272,6 +1302,7 @@ export const ProviderDisplayNames = {
 	swaggerhub: 'SwaggerHub',
 	suzanne: 'Suzanne',
 	svix: 'Svix',
+	sympla: 'Sympla',
 	synthflowai: 'Synthflow AI',
 	taggun: 'Taggun',
 	talenthr: 'TalentHR',
@@ -1288,6 +1319,7 @@ export const ProviderDisplayNames = {
 	textcortex: 'TextCortex',
 	teamcamp: 'Teamcamp',
 	teams: 'Teams',
+	teamwork: 'Teamwork',
 	telegram: 'Telegram',
 	textit: 'TextIt',
 	textrazor: 'TextRazor',
@@ -1571,6 +1603,7 @@ export type AllProviders =
 	| 'countdownapi'
 	| 'craftmypdf'
 	| 'crowterminal'
+	| 'currencyscoop'
 	| 'currentsapi'
 	| 'cursor'
 	| 'customerio'
@@ -1607,6 +1640,7 @@ export type AllProviders =
 	| 'doppler'
 	| 'dopplermarketingautomation'
 	| 'dovetail'
+	| 'draftable'
 	| 'dreamstudio'
 	| 'dripcel'
 	| 'dropbox'
@@ -1615,6 +1649,7 @@ export type AllProviders =
 	| 'dynapictures'
 	| 'e2b'
 	| 'echtpost'
+	| 'ecologi'
 	| 'elevenlabs'
 	| 'elorus'
 	| 'emailoctopus'
@@ -1687,6 +1722,7 @@ export type AllProviders =
 	| 'givebutter'
 	| 'gladia'
 	| 'gleap'
+	| 'globalping'
 	| 'gmail'
 	| 'gmicloud'
 	| 'godial'
@@ -1767,6 +1803,7 @@ export type AllProviders =
 	| 'kommo'
 	| 'kontentai'
 	| 'krakenio'
+	| 'labs64netlicensing'
 	| 'launchdarkly'
 	| 'leexi'
 	| 'leiga'
@@ -1777,6 +1814,7 @@ export type AllProviders =
 	| 'linkedin'
 	| 'litescrape'
 	| 'livesession'
+	| 'logodev'
 	| 'loyverse'
 	| 'magichour'
 	| 'mailboxlayer'
@@ -1808,6 +1846,7 @@ export type AllProviders =
 	| 'neon'
 	| 'netsuite'
 	| 'neverbounce'
+	| 'newsapi'
 	| 'nextdns'
 	| 'northflank'
 	| 'notion'
@@ -1830,9 +1869,11 @@ export type AllProviders =
 	| 'pagerduty'
 	| 'parallel'
 	| 'parma'
+	| 'parsehub'
 	| 'parseur'
 	| 'pdfapi'
 	| 'pdfco'
+	| 'pdfless'
 	| 'pdfmonkey'
 	| 'pdl'
 	| 'perplexityai'
@@ -1841,6 +1882,7 @@ export type AllProviders =
 	| 'pipedrive'
 	| 'placid'
 	| 'plain'
+	| 'platerecognizer'
 	| 'ploid'
 	| 'pointagram'
 	| 'polygon'
@@ -1911,13 +1953,17 @@ export type AllProviders =
 	| 'scrapedo'
 	| 'scrapegraphai'
 	| 'scrapingant'
+	| 'screenshotone'
 	| 'search1api'
+	| 'searchapi'
 	| 'securitytrails'
 	| 'semanticscholar'
 	| 'sendbird'
 	| 'sendgrid'
+	| 'sensibo'
 	| 'sentry'
 	| 'serpapi'
+	| 'serply'
 	| 'servicem8'
 	| 'servicenow'
 	| 'sevdesk'
@@ -1965,6 +2011,7 @@ export type AllProviders =
 	| 'swaggerhub'
 	| 'suzanne'
 	| 'svix'
+	| 'sympla'
 	| 'synthflowai'
 	| 'taggun'
 	| 'talenthr'
@@ -1981,6 +2028,7 @@ export type AllProviders =
 	| 'textcortex'
 	| 'teamcamp'
 	| 'teams'
+	| 'teamwork'
 	| 'telegram'
 	| 'textit'
 	| 'textrazor'

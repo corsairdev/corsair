@@ -1626,6 +1626,14 @@
                 ]
               },
               {
+                "group": "CurrencyScoop",
+                "pages": [
+                  "plugins/currencyscoop/overview",
+                  "plugins/currencyscoop/api",
+                  "plugins/currencyscoop/database"
+                ]
+              },
+              {
                 "group": "Currents API",
                 "pages": [
                   "plugins/currentsapi/overview",
@@ -1918,6 +1926,14 @@
                 ]
               },
               {
+                "group": "Draftable",
+                "pages": [
+                  "plugins/draftable/overview",
+                  "plugins/draftable/api",
+                  "plugins/draftable/database"
+                ]
+              },
+              {
                 "group": "DreamStudio",
                 "pages": [
                   "plugins/dreamstudio/overview",
@@ -1981,6 +1997,14 @@
                   "plugins/echtpost/overview",
                   "plugins/echtpost/api",
                   "plugins/echtpost/database"
+                ]
+              },
+              {
+                "group": "Ecologi",
+                "pages": [
+                  "plugins/ecologi/overview",
+                  "plugins/ecologi/api",
+                  "plugins/ecologi/database"
                 ]
               },
               {
@@ -2513,6 +2537,14 @@
                   "plugins/gigasheet/overview",
                   "plugins/gigasheet/api",
                   "plugins/gigasheet/database"
+                ]
+              },
+              {
+                "group": "Globalping",
+                "pages": [
+                  "plugins/globalping/overview",
+                  "plugins/globalping/api",
+                  "plugins/globalping/database"
                 ]
               },
               {
@@ -3237,6 +3269,14 @@
                 ]
               },
               {
+                "group": "Labs64 NetLicensing",
+                "pages": [
+                  "plugins/labs64netlicensing/overview",
+                  "plugins/labs64netlicensing/api",
+                  "plugins/labs64netlicensing/database"
+                ]
+              },
+              {
                 "group": "LaunchDarkly",
                 "pages": [
                   "plugins/launchdarkly/overview",
@@ -3316,6 +3356,14 @@
                   "plugins/livesession/overview",
                   "plugins/livesession/api",
                   "plugins/livesession/database"
+                ]
+              },
+              {
+                "group": "Logo.dev",
+                "pages": [
+                  "plugins/logodev/overview",
+                  "plugins/logodev/api",
+                  "plugins/logodev/database"
                 ]
               },
               {
@@ -3571,6 +3619,14 @@
                 ]
               },
               {
+                "group": "NewsAPI",
+                "pages": [
+                  "plugins/newsapi/overview",
+                  "plugins/newsapi/api",
+                  "plugins/newsapi/database"
+                ]
+              },
+              {
                 "group": "NextDNS",
                 "pages": [
                   "plugins/nextdns/overview",
@@ -3750,6 +3806,14 @@
                 ]
               },
               {
+                "group": "ParseHub",
+                "pages": [
+                  "plugins/parsehub/overview",
+                  "plugins/parsehub/api",
+                  "plugins/parsehub/database"
+                ]
+              },
+              {
                 "group": "Parseur",
                 "pages": [
                   "plugins/parseur/overview",
@@ -3771,6 +3835,14 @@
                   "plugins/pdfco/overview",
                   "plugins/pdfco/api",
                   "plugins/pdfco/database"
+                ]
+              },
+              {
+                "group": "PDFLess",
+                "pages": [
+                  "plugins/pdfless/overview",
+                  "plugins/pdfless/api",
+                  "plugins/pdfless/database"
                 ]
               },
               {
@@ -3836,6 +3908,14 @@
                   "plugins/plain/overview",
                   "plugins/plain/api",
                   "plugins/plain/database"
+                ]
+              },
+              {
+                "group": "Plate Recognizer",
+                "pages": [
+                  "plugins/platerecognizer/overview",
+                  "plugins/platerecognizer/api",
+                  "plugins/platerecognizer/database"
                 ]
               },
               {
@@ -4408,11 +4488,27 @@
                 ]
               },
               {
+                "group": "ScreenshotOne",
+                "pages": [
+                  "plugins/screenshotone/overview",
+                  "plugins/screenshotone/api",
+                  "plugins/screenshotone/database"
+                ]
+              },
+              {
                 "group": "Search1API",
                 "pages": [
                   "plugins/search1api/overview",
                   "plugins/search1api/api",
                   "plugins/search1api/database"
+                ]
+              },
+              {
+                "group": "SearchAPI",
+                "pages": [
+                  "plugins/searchapi/overview",
+                  "plugins/searchapi/api",
+                  "plugins/searchapi/database"
                 ]
               },
               {
@@ -4448,6 +4544,14 @@
                 ]
               },
               {
+                "group": "Sensibo",
+                "pages": [
+                  "plugins/sensibo/overview",
+                  "plugins/sensibo/api",
+                  "plugins/sensibo/database"
+                ]
+              },
+              {
                 "group": "Sentry",
                 "pages": [
                   "plugins/sentry/overview",
@@ -4463,6 +4567,14 @@
                   "plugins/serpapi/overview",
                   "plugins/serpapi/api",
                   "plugins/serpapi/database"
+                ]
+              },
+              {
+                "group": "Serply",
+                "pages": [
+                  "plugins/serply/overview",
+                  "plugins/serply/api",
+                  "plugins/serply/database"
                 ]
               },
               {
@@ -4846,6 +4958,14 @@
                 ]
               },
               {
+                "group": "Sympla",
+                "pages": [
+                  "plugins/sympla/overview",
+                  "plugins/sympla/api",
+                  "plugins/sympla/database"
+                ]
+              },
+              {
                 "group": "Synthflow AI",
                 "pages": [
                   "plugins/synthflowai/overview",
@@ -4925,6 +5045,14 @@
                   "plugins/teamcamp/overview",
                   "plugins/teamcamp/api",
                   "plugins/teamcamp/database"
+                ]
+              },
+              {
+                "group": "Teamwork",
+                "pages": [
+                  "plugins/teamwork/overview",
+                  "plugins/teamwork/api",
+                  "plugins/teamwork/database"
                 ]
               },
               {
