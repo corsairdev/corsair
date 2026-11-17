@@ -64,6 +64,8 @@ describe('screenshotone', () => {
 			'X-Access-Key': 'sekrit',
 		});
 		expect(mockRequest.mock.calls[0]?.[0]?.TOKEN).toBeUndefined();
+		// Longer than core's 20 s default: a 30 s animation plus rendering must not abort.
+		expect(mockRequest.mock.calls[0]?.[0]?.TIMEOUT).toBe(100_000);
 	});
 
 	it('stores devices and drops the user agent', async () => {

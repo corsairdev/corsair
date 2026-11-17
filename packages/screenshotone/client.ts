@@ -7,6 +7,9 @@ import { request } from 'corsair/http';
 
 export const SCREENSHOTONE_API_BASE = 'https://api.screenshotone.com';
 
+/** ScreenshotOne's own render timeout goes up to 90 s (animations record up to 30 s), so wait longer than core's 20 s default. */
+export const SCREENSHOTONE_TIMEOUT_MS = 100_000;
+
 const NO_TRANSPORT_RETRIES: RateLimitConfig = {
 	enabled: true,
 	maxRetries: 0,
@@ -27,6 +30,7 @@ export async function screenshotoneRequest<T>(
 		VERSION: '1',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
+		TIMEOUT: SCREENSHOTONE_TIMEOUT_MS,
 		// The key goes in the documented X-Access-Key header, not the access_key query
 		// parameter: core's error redaction doesn't know access_key, so a query key would
 		// end up in ApiError.url and ApiError.request.
