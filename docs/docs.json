@@ -1747,6 +1747,14 @@
                 ]
               },
               {
+                "group": "Deepline",
+                "pages": [
+                  "plugins/deepline/overview",
+                  "plugins/deepline/api",
+                  "plugins/deepline/database"
+                ]
+              },
+              {
                 "group": "DeepSeek",
                 "pages": [
                   "plugins/deepseek/overview",
@@ -1989,6 +1997,22 @@
                   "plugins/e2b/overview",
                   "plugins/e2b/api",
                   "plugins/e2b/database"
+                ]
+              },
+              {
+                "group": "Echtpost",
+                "pages": [
+                  "plugins/echtpost/overview",
+                  "plugins/echtpost/api",
+                  "plugins/echtpost/database"
+                ]
+              },
+              {
+                "group": "Ecologi",
+                "pages": [
+                  "plugins/ecologi/overview",
+                  "plugins/ecologi/api",
+                  "plugins/ecologi/database"
                 ]
               },
               {
@@ -2850,6 +2874,14 @@
                 ]
               },
               {
+                "group": "Help Scout",
+                "pages": [
+                  "plugins/helpscout/overview",
+                  "plugins/helpscout/api",
+                  "plugins/helpscout/database"
+                ]
+              },
+              {
                 "group": "HERE",
                 "pages": [
                   "plugins/here/overview",
@@ -3063,6 +3095,22 @@
                   "plugins/intercom/api",
                   "plugins/intercom/database",
                   "plugins/intercom/webhooks"
+                ]
+              },
+              {
+                "group": "IP2Proxy",
+                "pages": [
+                  "plugins/ip2proxy/overview",
+                  "plugins/ip2proxy/api",
+                  "plugins/ip2proxy/database"
+                ]
+              },
+              {
+                "group": "IP2WHOIS",
+                "pages": [
+                  "plugins/ip2whois/overview",
+                  "plugins/ip2whois/api",
+                  "plugins/ip2whois/database"
                 ]
               },
               {
@@ -3798,6 +3846,14 @@
                 ]
               },
               {
+                "group": "ParseHub",
+                "pages": [
+                  "plugins/parsehub/overview",
+                  "plugins/parsehub/api",
+                  "plugins/parsehub/database"
+                ]
+              },
+              {
                 "group": "Parseur",
                 "pages": [
                   "plugins/parseur/overview",
@@ -4014,6 +4070,14 @@
                   "plugins/proabono/overview",
                   "plugins/proabono/api",
                   "plugins/proabono/database"
+                ]
+              },
+              {
+                "group": "Proofly",
+                "pages": [
+                  "plugins/proofly/overview",
+                  "plugins/proofly/api",
+                  "plugins/proofly/database"
                 ]
               },
               {
@@ -4488,6 +4552,14 @@
                 ]
               },
               {
+                "group": "SearchAPI",
+                "pages": [
+                  "plugins/searchapi/overview",
+                  "plugins/searchapi/api",
+                  "plugins/searchapi/database"
+                ]
+              },
+              {
                 "group": "SecurityTrails",
                 "pages": [
                   "plugins/securitytrails/overview",
@@ -4517,6 +4589,14 @@
                   "plugins/sendgrid/overview",
                   "plugins/sendgrid/api",
                   "plugins/sendgrid/database"
+                ]
+              },
+              {
+                "group": "Sensibo",
+                "pages": [
+                  "plugins/sensibo/overview",
+                  "plugins/sensibo/api",
+                  "plugins/sensibo/database"
                 ]
               },
               {
@@ -4926,6 +5006,14 @@
                 ]
               },
               {
+                "group": "Sympla",
+                "pages": [
+                  "plugins/sympla/overview",
+                  "plugins/sympla/api",
+                  "plugins/sympla/database"
+                ]
+              },
+              {
                 "group": "Synthflow AI",
                 "pages": [
                   "plugins/synthflowai/overview",
@@ -5005,6 +5093,14 @@
                   "plugins/teamcamp/overview",
                   "plugins/teamcamp/api",
                   "plugins/teamcamp/database"
+                ]
+              },
+              {
+                "group": "Teamwork",
+                "pages": [
+                  "plugins/teamwork/overview",
+                  "plugins/teamwork/api",
+                  "plugins/teamwork/database"
                 ]
               },
               {
@@ -5329,6 +5425,14 @@
                   "plugins/twochat/overview",
                   "plugins/twochat/api",
                   "plugins/twochat/database"
+                ]
+              },
+              {
+                "group": "2Captcha",
+                "pages": [
+                  "plugins/twocaptcha/overview",
+                  "plugins/twocaptcha/api",
+                  "plugins/twocaptcha/database"
                 ]
               },
               {

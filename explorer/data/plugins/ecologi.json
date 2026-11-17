@@ -1,0 +1,806 @@
+{
+  "id": "ecologi",
+  "displayName": "Ecologi",
+  "description": "Fund tree planting, carbon avoidance, carbon removal and habitat restoration through Ecologi's Impact API, and read any profile's impact totals.",
+  "npmPackageName": "@corsair-dev/ecologi",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 10,
+    "webhooks": 0,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "ecologi.api.carbonOffsets.get",
+      "shortPath": "carbonOffsets.get",
+      "description": "Read the CO2e avoided by an Ecologi username.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": false,
+            "type": "{ id: string, total: number, pending: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ecologi.api.carbonOffsets.purchase",
+      "shortPath": "carbonOffsets.purchase",
+      "description": "Buy carbon avoidance by the kg or tonne (GBP 9.45 a tonne). Billed monthly; test: true charges nothing.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "number",
+            "optional": false,
+            "type": "number",
+            "description": "Amount to buy, at least 1 kg (0.001 tonnes)."
+          },
+          {
+            "key": "units",
+            "optional": false,
+            "type": "KG | Tonnes"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "\"Funded by\" label on the Ecologi profile. Public if the profile is public; never send a customer name without permission."
+          },
+          {
+            "key": "test",
+            "optional": true,
+            "type": "boolean",
+            "description": "true returns the expected response without charging or adding it to the profile."
+          },
+          {
+            "key": "recipientEmail",
+            "optional": true,
+            "type": "string",
+            "description": "Sends this address a templated email about the purchase (not in test mode)."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Sent as the Idempotency-Key header so a retried request is not bought twice."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "numberInTonnes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "treeUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tileUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recipientEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectDetails",
+            "optional": true,
+            "type": "{ name?: string, projectUrl?: string, splitPercentage?: number, splitAmountTrees?: number, splitAmountTonnes?: number, quantity?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ecologi.api.carbonRemovals.get",
+      "shortPath": "carbonRemovals.get",
+      "description": "Read the CO2e removed by an Ecologi username.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": false,
+            "type": "{ id: string, total: number, pending: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ecologi.api.carbonRemovals.purchase",
+      "shortPath": "carbonRemovals.purchase",
+      "description": "Buy permanent carbon removal by the kg (GBP 150 a tonne). Billed monthly; test: true charges nothing.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "number",
+            "optional": false,
+            "type": "number",
+            "description": "Kilograms of carbon removal, at least 1."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "\"Funded by\" label on the Ecologi profile. Public if the profile is public; never send a customer name without permission."
+          },
+          {
+            "key": "test",
+            "optional": true,
+            "type": "boolean",
+            "description": "true returns the expected response without charging or adding it to the profile."
+          },
+          {
+            "key": "recipientEmail",
+            "optional": true,
+            "type": "string",
+            "description": "Sends this address a templated email about the purchase (not in test mode)."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Sent as the Idempotency-Key header so a retried request is not bought twice."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "numberInTonnes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "treeUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tileUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recipientEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectDetails",
+            "optional": true,
+            "type": "{ name?: string, projectUrl?: string, splitPercentage?: number, splitAmountTrees?: number, splitAmountTonnes?: number, quantity?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ecologi.api.habitats.get",
+      "shortPath": "habitats.get",
+      "description": "Read the habitat restored by an Ecologi username.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": false,
+            "type": "{ id: string, total: number, pending: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ecologi.api.habitats.purchase",
+      "shortPath": "habitats.purchase",
+      "description": "Buy habitat restoration by the square metre (GBP 5.55 each). Billed monthly; test: true charges nothing.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "number",
+            "optional": false,
+            "type": "number",
+            "description": "Square metres to restore, at least 0.1, one decimal place."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "\"Funded by\" label on the Ecologi profile. Public if the profile is public; never send a customer name without permission."
+          },
+          {
+            "key": "test",
+            "optional": true,
+            "type": "boolean",
+            "description": "true returns the expected response without charging or adding it to the profile."
+          },
+          {
+            "key": "recipientEmail",
+            "optional": true,
+            "type": "string",
+            "description": "Sends this address a templated email about the purchase (not in test mode)."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Sent as the Idempotency-Key header so a retried request is not bought twice."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "numberInTonnes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "treeUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tileUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recipientEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectDetails",
+            "optional": true,
+            "type": "{ name?: string, projectUrl?: string, splitPercentage?: number, splitAmountTrees?: number, splitAmountTonnes?: number, quantity?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ecologi.api.impacts.get",
+      "shortPath": "impacts.get",
+      "description": "Read the combined impact for an Ecologi username.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "impact",
+            "optional": false,
+            "type": "{ id: string, trees: number, carbonOffset: number, carbonRemoval: number, habitatRestoration: number, pendingTrees: number, pendingCarbonOffset: number, pendingCarbonRemoval: number, pendingHabitatRestoration: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ecologi.api.trees.get",
+      "shortPath": "trees.get",
+      "description": "Read the trees funded by an Ecologi username.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": false,
+            "type": "{ id: string, total: number, pending: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ecologi.api.trees.purchase",
+      "shortPath": "trees.purchase",
+      "description": "Buy trees (GBP 0.60 each) for the Ecologi forest. Billed monthly; test: true charges nothing.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "number",
+            "optional": false,
+            "type": "number",
+            "description": "Trees to buy, 1 to 250,000."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "\"Funded by\" label on the Ecologi profile. Public if the profile is public; never send a customer name without permission."
+          },
+          {
+            "key": "test",
+            "optional": true,
+            "type": "boolean",
+            "description": "true returns the expected response without charging or adding it to the profile."
+          },
+          {
+            "key": "recipientEmail",
+            "optional": true,
+            "type": "string",
+            "description": "Sends this address a templated email about the purchase (not in test mode)."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Sent as the Idempotency-Key header so a retried request is not bought twice."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "numberInTonnes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "treeUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tileUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recipientEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectDetails",
+            "optional": true,
+            "type": "{ name?: string, projectUrl?: string, splitPercentage?: number, splitAmountTrees?: number, splitAmountTonnes?: number, quantity?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ecologi.api.trees.purchaseLocal",
+      "shortPath": "trees.purchaseLocal",
+      "description": "Buy trees planted in the UK, US, Australia or Brazil. Billed monthly; test: true charges nothing.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "number",
+            "optional": false,
+            "type": "number",
+            "description": "Trees to buy."
+          },
+          {
+            "key": "country",
+            "optional": false,
+            "type": "UK | US | AU | BR",
+            "description": "Where the trees are planted."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "\"Funded by\" label on the Ecologi profile. Public if the profile is public; never send a customer name without permission."
+          },
+          {
+            "key": "test",
+            "optional": true,
+            "type": "boolean",
+            "description": "true returns the expected response without charging or adding it to the profile."
+          },
+          {
+            "key": "recipientEmail",
+            "optional": true,
+            "type": "string",
+            "description": "Sends this address a templated email about the purchase (not in test mode)."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Sent as the Idempotency-Key header so a retried request is not bought twice."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "numberInTonnes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "treeUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tileUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recipientEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectDetails",
+            "optional": true,
+            "type": "{ name?: string, projectUrl?: string, splitPercentage?: number, splitAmountTrees?: number, splitAmountTonnes?: number, quantity?: number }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "ecologi.db.carbonOffsets.search",
+      "entityName": "carbonOffsets",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "total",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "pending",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "ecologi.db.carbonRemovals.search",
+      "entityName": "carbonRemovals",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "total",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "pending",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "ecologi.db.habitats.search",
+      "entityName": "habitats",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "total",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "pending",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "ecologi.db.impacts.search",
+      "entityName": "impacts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "trees",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "carbonOffset",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "carbonRemoval",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "habitatRestoration",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "pendingTrees",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "pendingCarbonOffset",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "pendingCarbonRemoval",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "pendingHabitatRestoration",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "ecologi.db.trees.search",
+      "entityName": "trees",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "total",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "pending",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}
