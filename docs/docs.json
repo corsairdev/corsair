@@ -4578,6 +4578,14 @@
                 ]
               },
               {
+                "group": "Square",
+                "pages": [
+                  "plugins/square/overview",
+                  "plugins/square/api",
+                  "plugins/square/database"
+                ]
+              },
+              {
                 "group": "Stack Exchange",
                 "pages": [
                   "plugins/stackexchange/overview",

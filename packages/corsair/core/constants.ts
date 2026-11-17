@@ -552,6 +552,7 @@ export const BaseProviders = [
 	'spoki',
 	'spotlightr',
 	'spotify',
+	'square',
 	'stackai',
 	'stackexchange',
 	'starton',
@@ -1217,6 +1218,7 @@ export const ProviderDisplayNames = {
 	spoki: 'Spoki',
 	spotlightr: 'Spotlightr',
 	spotify: 'Spotify',
+	square: 'Square',
 	stackai: 'StackAI',
 	stackexchange: 'Stack Exchange',
 	starton: 'Starton',
@@ -1889,6 +1891,7 @@ export type AllProviders =
 	| 'spoki'
 	| 'spotlightr'
 	| 'spotify'
+	| 'square'
 	| 'stackai'
 	| 'stackexchange'
 	| 'starton'
