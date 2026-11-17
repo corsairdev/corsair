@@ -1,28 +1,13 @@
-import type {
-	ApiRequestOptions,
-	OpenAPIConfig,
-	RateLimitConfig,
-} from 'corsair/http';
-import { request } from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export const NETLICENSING_API_BASE = 'https://go.netlicensing.io/core/v2/rest';
 
-const NO_TRANSPORT_RETRIES: RateLimitConfig = {
-	enabled: true,
-	maxRetries: 0,
-	initialRetryDelay: 0,
-	backoffMultiplier: 1,
-	headerNames: {
-		retryAfter: 'retry-after',
-	},
-};
+/** A form or query value; arrays repeat the field (e.g. `discount`). */
+export type FormValue = string | number | boolean | string[] | undefined;
 
-export async function netlicensingGet<T>(
-	apiKey: string,
-	url: string,
-	query?: Record<string, string | undefined>,
-): Promise<T> {
-	const config: OpenAPIConfig = {
+function configFor(apiKey: string): OpenAPIConfig {
+	return {
 		BASE: NETLICENSING_API_BASE,
 		VERSION: '2',
 		WITH_CREDENTIALS: false,
@@ -32,17 +17,79 @@ export async function netlicensingGet<T>(
 			Authorization: `Basic ${Buffer.from(`apiKey:${apiKey}`, 'utf8').toString('base64')}`,
 		},
 	};
-	const requestOptions: ApiRequestOptions = { method: 'GET', url, query };
-	return await request<T>(config, requestOptions, {
-		rateLimitConfig: NO_TRANSPORT_RETRIES,
-	});
 }
 
+export async function netlicensingGet<T>(
+	apiKey: string,
+	url: string,
+	query?: Record<string, string | undefined>,
+): Promise<T> {
+	const requestOptions: ApiRequestOptions = { method: 'GET', url, query };
+	return await request<T>(configFor(apiKey), requestOptions);
+}
+
+// A failed write keeps its form body on core's ApiError; it can hold licensee
+// names and custom properties, so drop it before the error leaves the plugin.
+function stripRequestBody(error: unknown): void {
+	if (error instanceof ApiError && error.request) {
+		(error.request as { body?: unknown }).body = undefined;
+	}
+}
+
+/** Encodes form fields; `undefined` is left out, arrays repeat the name. */
+export function toForm(fields: Record<string, FormValue>): string {
+	const form = new URLSearchParams();
+	for (const [name, value] of Object.entries(fields)) {
+		if (value === undefined) continue;
+		if (Array.isArray(value)) {
+			for (const entry of value) form.append(name, entry);
+		} else {
+			form.append(name, String(value));
+		}
+	}
+	return form.toString();
+}
+
+/**
+ * Writes: NetLicensing takes `application/x-www-form-urlencoded` bodies on
+ * POST, and `forceCascade` as a query value on DELETE. Deletes answer 204
+ * with no body. https://netlicensing.io/wiki/restful-api
+ */
+export async function netlicensingSend<T>(
+	apiKey: string,
+	method: 'POST' | 'DELETE',
+	url: string,
+	options: {
+		form?: Record<string, FormValue>;
+		query?: Record<string, string | undefined>;
+	} = {},
+): Promise<T> {
+	const requestOptions: ApiRequestOptions = {
+		method,
+		url,
+		query: options.query,
+		...(options.form
+			? {
+					body: toForm(options.form),
+					mediaType: 'application/x-www-form-urlencoded',
+				}
+			: {}),
+	};
+	try {
+		return await request<T>(configFor(apiKey), requestOptions);
+	} catch (error) {
+		stripRequestBody(error);
+		throw error;
+	}
+}
+
+// unknown: NetLicensing sends one node or an array of them.
 function asList(value: unknown): unknown[] {
 	if (value == null) return [];
 	return Array.isArray(value) ? value : [value];
 }
 
+// unknown: an `item` node from the response, checked field by field.
 function propertyMap(item: unknown): Record<string, string> {
 	if (!item || typeof item !== 'object') return {};
 	const record = item as Record<string, unknown>;
@@ -68,6 +115,105 @@ function propertyMap(item: unknown): Record<string, string> {
 	return out;
 }
 
+/** A NetLicensing `list` inside an item, such as a product's discounts. */
+export type NetLicensingList = {
+	name?: string;
+	properties: Record<string, string>;
+	lists?: NetLicensingList[];
+};
+
+/**
+ * An entity as NetLicensing returns it: every `property` as a string, with
+ * the common ones (number, active, name) lifted out, and nested `list`s.
+ */
+export type NetLicensingItem = {
+	type?: string;
+	number?: string;
+	active?: boolean;
+	name?: string;
+	properties: Record<string, string>;
+	lists?: NetLicensingList[];
+};
+
+// unknown: a `list` node from the response, checked field by field.
+function toList(node: unknown): NetLicensingList {
+	const record = (node ?? {}) as Record<string, unknown>;
+	const lists = asList(record.list).map(toList);
+	return {
+		...(typeof record.name === 'string' ? { name: record.name } : {}),
+		properties: propertiesOf(node),
+		...(lists.length ? { lists } : {}),
+	};
+}
+
+// unknown: an `item` node from the response, checked field by field.
+function propertiesOf(node: unknown): Record<string, string> {
+	const out: Record<string, string> = {};
+	if (!node || typeof node !== 'object') return out;
+	for (const prop of asList((node as Record<string, unknown>).property)) {
+		if (!prop || typeof prop !== 'object') continue;
+		const name = (prop as { name?: unknown }).name;
+		const value = (prop as { value?: unknown }).value;
+		if (typeof name !== 'string' || value == null) continue;
+		out[name] = String(value);
+	}
+	return out;
+}
+
+// unknown: an `item` node from the response, checked field by field.
+export function toItem(node: unknown): NetLicensingItem {
+	const record = (node ?? {}) as Record<string, unknown>;
+	const properties = propertiesOf(node);
+	const lists = asList(record.list).map(toList);
+	return {
+		...(typeof record.type === 'string' ? { type: record.type } : {}),
+		...(properties.number !== undefined ? { number: properties.number } : {}),
+		...(optionalFlag(properties.active) !== undefined
+			? { active: optionalFlag(properties.active) }
+			: {}),
+		...(properties.name !== undefined ? { name: properties.name } : {}),
+		properties,
+		...(lists.length ? { lists } : {}),
+	};
+}
+
+/** Paging fields NetLicensing sends next to a list (as strings). */
+export type NetLicensingPage = {
+	pageNumber?: number;
+	totalPages?: number;
+	totalItems?: number;
+	hasNext?: boolean;
+};
+
+// unknown: the response body, checked field by field.
+export function itemsOf(body: unknown): {
+	items: NetLicensingItem[];
+	page: NetLicensingPage;
+	ttl?: string;
+} {
+	const record = (body ?? {}) as Record<string, unknown>;
+	const items = (record.items ?? {}) as Record<string, unknown>;
+	const num = (v: unknown) =>
+		v == null || v === '' || Number.isNaN(Number(v)) ? undefined : Number(v);
+	const page: NetLicensingPage = {};
+	if (num(items.pagenumber) !== undefined)
+		page.pageNumber = num(items.pagenumber);
+	if (num(items.totalpages) !== undefined)
+		page.totalPages = num(items.totalpages);
+	if (num(items.totalitems) !== undefined)
+		page.totalItems = num(items.totalitems);
+	const hasNext = optionalFlag(
+		items.hasnext == null ? undefined : String(items.hasnext),
+	);
+	if (hasNext !== undefined) page.hasNext = hasNext;
+	return {
+		items: asList(items.item).map(toItem),
+		page,
+		...(typeof record.ttl === 'string' ? { ttl: record.ttl } : {}),
+	};
+}
+
+// unknown: the response body, checked field by field.
 export function listedItems(body: unknown): Record<string, string>[] {
 	if (!body || typeof body !== 'object') return [];
 	const items = (body as { items?: unknown }).items;
