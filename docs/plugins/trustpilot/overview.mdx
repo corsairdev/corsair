@@ -1,0 +1,142 @@
+---
+title: "Trustpilot plugin"
+sidebarTitle: "Overview"
+description: "Read Trustpilot business, service review, product review, invitation, consumer profile and Data Solutions API data."
+---
+
+Use **Trustpilot** through Corsair: one client, typed API calls.
+
+Public API operations need a Trustpilot API key. Private business and invitation operations need an OAuth 2.0 access token; select oauth_2 for these calls. With oauth_2, public operations send the OAuth app's client id as the API key (Trustpilot's API key is the client id), or apiKey from plugin options when it is set. Trustpilot documents authorization-code and client-credentials grants, but does not publish per-operation scopes in these references.
+
+**What you get:**
+
+- 53 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/trustpilot better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/trustpilot better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/trustpilot better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/trustpilot better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { trustpilot } from '@corsair-dev/trustpilot';
+
+export const corsair = createCorsair({
+	plugins: [
+		trustpilot(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Trustpilot API key before the first call: `pnpm corsair setup --plugin=trustpilot --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+trustpilot()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+<Tab title="OAuth 2.0">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Trustpilot OAuth app.
+
+```ts
+trustpilot({
+	authType: 'oauth_2',
+})
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'trustpilot',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`businessUnits.allReviews`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.trustpilot.api.businessUnits.allReviews({});
+```
+
+
+**`invitations.link`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.trustpilot.api.invitations.link({});
+```
+
+
+See the full list on the [API](/plugins/trustpilot/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/trustpilot/api">
+    Every `trustpilot.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
