@@ -8,7 +8,7 @@ Use **Sympla** through Corsair: one client, typed API calls, local DB sync.
 
 Things to know before you call:
 
-- **The token goes in the `s_token` header.** Create it in Sympla under Minha Conta > Integrações > Chave de acesso da API. With no token stored, Corsair raises `AuthMissingError` before any request; a token Sympla rejects comes back as HTTP 401 ("Invalid Token!").
+- **The token goes in the `s_token` header.** Create it in Sympla under Minha Conta &gt; Integrações &gt; Chave de acesso da API. With no token stored, Corsair raises `AuthMissingError` before any request; a token Sympla rejects comes back as HTTP 401 ("Invalid Token!").
 - **This is Sympla's v1.6.0 Public API.** Lists page with a cursor: pass `pagination.next_cursor` back as `cursor` until it is empty. `page_size` goes up to 200 (500 for participants).
 - **Ids.** `event_id` is the event id hash from `events.list`. Presentations are an event's sessions or dates; orders and participants can be read per event, per presentation or per order.
 - **Dates use a timezone.** `from`, `to` and returned dates are local to `timezone` (Sympla default America/Sao_Paulo). Null fields may be left out of replies.

@@ -259,6 +259,7 @@ export async function handleHubDeliveryGet(
 				scope: payload.scope,
 				authType: payload.authType,
 				providerData: payload.providerData,
+				account: payload.account,
 			});
 		} else {
 			if (

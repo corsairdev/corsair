@@ -376,6 +376,7 @@ export const BaseProviders = [
 	'jira',
 	'jobnimbus',
 	'jotform',
+	'jumpcloud',
 	'junglescout',
 	'kadoa',
 	'kaggle',
@@ -423,6 +424,7 @@ export const BaseProviders = [
 	'memberstack',
 	'memberspot',
 	'merriamwebsterdict',
+	'microsoftclarity',
 	'minerstat',
 	'minimax',
 	'miro',
@@ -436,6 +438,8 @@ export const BaseProviders = [
 	'motion',
 	'mrscraper',
 	'nanonets',
+	'nasa',
+	'nasdaq',
 	'needle',
 	'neon',
 	'netsuite',
@@ -1085,6 +1089,7 @@ export const ProviderDisplayNames = {
 	jira: 'Jira',
 	jobnimbus: 'JobNimbus',
 	jotform: 'Jotform',
+	jumpcloud: 'JumpCloud',
 	junglescout: 'Jungle Scout',
 	kadoa: 'Kadoa',
 	kaggle: 'Kaggle',
@@ -1132,6 +1137,7 @@ export const ProviderDisplayNames = {
 	memberstack: 'Memberstack',
 	memberspot: 'MemberSpot',
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
+	microsoftclarity: 'Microsoft Clarity',
 	minerstat: 'Minerstat',
 	minimax: 'MiniMax',
 	miro: 'Miro',
@@ -1145,6 +1151,8 @@ export const ProviderDisplayNames = {
 	motion: 'Motion',
 	mrscraper: 'MrScraper',
 	nanonets: 'Nanonets',
+	nasa: 'NASA',
+	nasdaq: 'Nasdaq Data Link',
 	needle: 'Needle',
 	neon: 'Neon',
 	netsuite: 'NetSuite',
@@ -1801,6 +1809,7 @@ export type AllProviders =
 	| 'jira'
 	| 'jobnimbus'
 	| 'jotform'
+	| 'jumpcloud'
 	| 'junglescout'
 	| 'kadoa'
 	| 'kaggle'
@@ -1848,6 +1857,7 @@ export type AllProviders =
 	| 'memberstack'
 	| 'memberspot'
 	| 'merriamwebsterdict'
+	| 'microsoftclarity'
 	| 'minerstat'
 	| 'minimax'
 	| 'miro'
@@ -1861,6 +1871,8 @@ export type AllProviders =
 	| 'motion'
 	| 'mrscraper'
 	| 'nanonets'
+	| 'nasa'
+	| 'nasdaq'
 	| 'needle'
 	| 'neon'
 	| 'netsuite'

@@ -6,11 +6,28 @@ import * as crypto from 'node:crypto';
 // without creating circular dependencies.
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type OAuthState = { plugin: string; tenantId: string; iat: number };
+/** Add account, or reconnect one by its id, ref or label. */
+export type OAuthAccountTarget = { add: true } | { reconnect: string };
 
-export function encodeOAuthState(plugin: string, tenantId: string): string {
+export type OAuthState = {
+	plugin: string;
+	tenantId: string;
+	iat: number;
+	account?: OAuthAccountTarget;
+};
+
+export function encodeOAuthState(
+	plugin: string,
+	tenantId: string,
+	account?: OAuthAccountTarget,
+): string {
 	return Buffer.from(
-		JSON.stringify({ plugin, tenantId, iat: Date.now() }),
+		JSON.stringify({
+			plugin,
+			tenantId,
+			iat: Date.now(),
+			...(account && { account }),
+		}),
 	).toString('base64url');
 }
 
