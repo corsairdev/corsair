@@ -71,9 +71,18 @@ export async function makeDropboxRequest<T>(
 		query?: Record<string, string | number | boolean | undefined>;
 		baseUrl?: string;
 		extraHeaders?: Record<string, string>;
+		/** Return the body as bytes (`BinaryResponse`) instead of decoding it as text. */
+		responseType?: 'binary';
 	} = {},
 ): Promise<T> {
-	const { method = 'POST', body, query, baseUrl, extraHeaders } = options;
+	const {
+		method = 'POST',
+		body,
+		query,
+		baseUrl,
+		extraHeaders,
+		responseType,
+	} = options;
 
 	const config: OpenAPIConfig = {
 		BASE: baseUrl ?? DROPBOX_API_BASE,
@@ -99,6 +108,7 @@ export async function makeDropboxRequest<T>(
 				? 'application/octet-stream'
 				: 'application/json; charset=utf-8',
 		query: method === 'GET' ? query : undefined,
+		responseType,
 	};
 
 	try {

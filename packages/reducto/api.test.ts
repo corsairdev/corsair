@@ -1,4 +1,5 @@
 import { makeReductoRequest, ReductoAPIError } from './client';
+import { Files } from './endpoints';
 import {
 	AsyncJobIdResponseSchema,
 	ClassifyResponseSchema,
@@ -23,6 +24,7 @@ const SAMPLE = 'https://cdn.reducto.ai/samples/fidelity-example.pdf';
 
 jest.mock('corsair/core', () => ({
 	AuthMissingError: class AuthMissingError extends Error {},
+	logEventFromContext: jest.fn(),
 }));
 
 describe('Reducto input schemas', () => {
@@ -198,6 +200,33 @@ describeIfApiKey('Reducto live API', () => {
 		);
 		expect(classified.job_id.length).toBeGreaterThan(0);
 	});
+
+	// The endpoint an agent calls, with a link instead of a Blob: it fetches the
+	// file, sends it as multipart, and Reducto's file id then parses.
+	it('files.upload takes a public link, and the file id it returns parses', async () => {
+		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
+		const ctx = {
+			key: TEST_API_KEY,
+			options: {},
+			db: { jobs: { findByEntityId: jest.fn(), upsertByEntityId } },
+		};
+		const uploaded = UploadResponseSchema.parse(
+			await (
+				Files.upload as (ctx: unknown, input: unknown) => Promise<unknown>
+			)(ctx, {
+				file: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+			}),
+		);
+		expect(uploaded.file_id.startsWith('reducto://')).toBe(true);
+
+		const parsed = ParseResponseSchema.parse(
+			await makeReductoRequest('/parse', TEST_API_KEY, {
+				method: 'POST',
+				body: { input: uploaded.file_id },
+			}),
+		);
+		expect(JSON.stringify(parsed)).toContain('Dummy PDF file');
+	}, 120_000);
 
 	it('uploads a file and deletes it', async () => {
 		const file = new Blob(['hello'], { type: 'text/plain' });

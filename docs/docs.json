@@ -1203,6 +1203,14 @@
                 ]
               },
               {
+                "group": "Cert Spotter",
+                "pages": [
+                  "plugins/certspotter/overview",
+                  "plugins/certspotter/api",
+                  "plugins/certspotter/database"
+                ]
+              },
+              {
                 "group": "Chaser",
                 "pages": [
                   "plugins/chaser/overview",
@@ -2049,6 +2057,14 @@
                 ]
               },
               {
+                "group": "eTermin",
+                "pages": [
+                  "plugins/etermin/overview",
+                  "plugins/etermin/api",
+                  "plugins/etermin/database"
+                ]
+              },
+              {
                 "group": "Eventbrite",
                 "pages": [
                   "plugins/eventbrite/overview",
@@ -2292,6 +2308,14 @@
                 ]
               },
               {
+                "group": "Fly.io",
+                "pages": [
+                  "plugins/fly/overview",
+                  "plugins/fly/api",
+                  "plugins/fly/database"
+                ]
+              },
+              {
                 "group": "Folk",
                 "pages": [
                   "plugins/folk/overview",
@@ -2337,6 +2361,14 @@
                   "plugins/foursquare/overview",
                   "plugins/foursquare/api",
                   "plugins/foursquare/database"
+                ]
+              },
+              {
+                "group": "Freshdesk",
+                "pages": [
+                  "plugins/freshdesk/overview",
+                  "plugins/freshdesk/api",
+                  "plugins/freshdesk/database"
                 ]
               },
               {
@@ -2444,6 +2476,14 @@
                 ]
               },
               {
+                "group": "Klipfolio",
+                "pages": [
+                  "plugins/klipfolio/overview",
+                  "plugins/klipfolio/api",
+                  "plugins/klipfolio/database"
+                ]
+              },
+              {
                 "group": "Gift Up!",
                 "pages": [
                   "plugins/giftup/overview",
@@ -2518,6 +2558,14 @@
                   "plugins/gmicloud/overview",
                   "plugins/gmicloud/api",
                   "plugins/gmicloud/database"
+                ]
+              },
+              {
+                "group": "GoDial",
+                "pages": [
+                  "plugins/godial/overview",
+                  "plugins/godial/api",
+                  "plugins/godial/database"
                 ]
               },
               {
@@ -3345,6 +3393,14 @@
                 ]
               },
               {
+                "group": "Modelry",
+                "pages": [
+                  "plugins/modelry/overview",
+                  "plugins/modelry/api",
+                  "plugins/modelry/database"
+                ]
+              },
+              {
                 "group": "Monday.com",
                 "pages": [
                   "plugins/monday/overview",
@@ -3579,6 +3635,14 @@
                   "plugins/parallel/overview",
                   "plugins/parallel/api",
                   "plugins/parallel/database"
+                ]
+              },
+              {
+                "group": "Parma",
+                "pages": [
+                  "plugins/parma/overview",
+                  "plugins/parma/api",
+                  "plugins/parma/database"
                 ]
               },
               {
@@ -4332,6 +4396,23 @@
                 ]
               },
               {
+                "group": "ShipStation API (formerly ShipEngine)",
+                "pages": [
+                  "plugins/shipengine/overview",
+                  "plugins/shipengine/api",
+                  "plugins/shipengine/database"
+                ]
+              },
+              {
+                "group": "Shopify",
+                "pages": [
+                  "plugins/shopify/overview",
+                  "plugins/shopify/api",
+                  "plugins/shopify/database",
+                  "plugins/shopify/webhooks"
+                ]
+              },
+              {
                 "group": "Short.io",
                 "pages": [
                   "plugins/shortio/overview",
@@ -4345,6 +4426,38 @@
                   "plugins/shortcut/overview",
                   "plugins/shortcut/api",
                   "plugins/shortcut/database"
+                ]
+              },
+              {
+                "group": "Simple Analytics",
+                "pages": [
+                  "plugins/simpleanalytics/overview",
+                  "plugins/simpleanalytics/api",
+                  "plugins/simpleanalytics/database"
+                ]
+              },
+              {
+                "group": "SimpleKPI",
+                "pages": [
+                  "plugins/simplekpi/overview",
+                  "plugins/simplekpi/api",
+                  "plugins/simplekpi/database"
+                ]
+              },
+              {
+                "group": "Simplero",
+                "pages": [
+                  "plugins/simplero/overview",
+                  "plugins/simplero/api",
+                  "plugins/simplero/database"
+                ]
+              },
+              {
+                "group": "Simplesat",
+                "pages": [
+                  "plugins/simplesat/overview",
+                  "plugins/simplesat/api",
+                  "plugins/simplesat/database"
                 ]
               },
               {
@@ -4408,6 +4521,14 @@
                 ]
               },
               {
+                "group": "Spotlightr",
+                "pages": [
+                  "plugins/spotlightr/overview",
+                  "plugins/spotlightr/api",
+                  "plugins/spotlightr/database"
+                ]
+              },
+              {
                 "group": "Stack Exchange",
                 "pages": [
                   "plugins/stackexchange/overview",
@@ -4459,6 +4580,14 @@
                 ]
               },
               {
+                "group": "SuiteDash",
+                "pages": [
+                  "plugins/suitedash/overview",
+                  "plugins/suitedash/api",
+                  "plugins/suitedash/database"
+                ]
+              },
+              {
                 "group": "Supabase",
                 "pages": [
                   "plugins/supabase/overview",
@@ -4473,6 +4602,14 @@
                   "plugins/supadata/overview",
                   "plugins/supadata/api",
                   "plugins/supadata/database"
+                ]
+              },
+              {
+                "group": "SuperSaaS",
+                "pages": [
+                  "plugins/supersaas/overview",
+                  "plugins/supersaas/api",
+                  "plugins/supersaas/database"
                 ]
               },
               {
@@ -4568,6 +4705,22 @@
                 ]
               },
               {
+                "group": "Templated",
+                "pages": [
+                  "plugins/templated/overview",
+                  "plugins/templated/api",
+                  "plugins/templated/database"
+                ]
+              },
+              {
+                "group": "TextCortex",
+                "pages": [
+                  "plugins/textcortex/overview",
+                  "plugins/textcortex/api",
+                  "plugins/textcortex/database"
+                ]
+              },
+              {
                 "group": "TextIt",
                 "pages": [
                   "plugins/textit/overview",
@@ -4581,6 +4734,14 @@
                   "plugins/textrazor/overview",
                   "plugins/textrazor/api",
                   "plugins/textrazor/database"
+                ]
+              },
+              {
+                "group": "Thanks.io",
+                "pages": [
+                  "plugins/thanksio/overview",
+                  "plugins/thanksio/api",
+                  "plugins/thanksio/database"
                 ]
               },
               {
@@ -4701,6 +4862,22 @@
                 ]
               },
               {
+                "group": "Tomba",
+                "pages": [
+                  "plugins/tomba/overview",
+                  "plugins/tomba/api",
+                  "plugins/tomba/database"
+                ]
+              },
+              {
+                "group": "TomTom",
+                "pages": [
+                  "plugins/tomtom/overview",
+                  "plugins/tomtom/api",
+                  "plugins/tomtom/database"
+                ]
+              },
+              {
                 "group": "TPSCheck",
                 "pages": [
                   "plugins/tpscheck/overview",
@@ -4716,6 +4893,14 @@
                   "plugins/trello/api",
                   "plugins/trello/database",
                   "plugins/trello/webhooks"
+                ]
+              },
+              {
+                "group": "TRIGGERcmd",
+                "pages": [
+                  "plugins/triggercmd/overview",
+                  "plugins/triggercmd/api",
+                  "plugins/triggercmd/database"
                 ]
               },
               {

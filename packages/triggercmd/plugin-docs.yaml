@@ -1,0 +1,42 @@
+displayName: TRIGGERcmd
+description: 'List registered computers and their commands, run a command remotely, read run history, and press panel buttons.'
+domain: triggercmd.com
+recommendedAuth: api_key
+overviewNote: |
+  Copy the token from the Instructions page at https://www.triggercmd.com/user/computer/create, which is also where a computer is registered. The plugin sends it as a Bearer token.
+
+  Things to know:
+
+  - **Commands live on your computers.** The cloud only stores their names and settings, so `commands.list` reports what each agent synced. Adding or editing a command happens in the agent's `commands.json`, not through this API.
+  - **A trigger is not a completion.** `commands.run` acknowledges that the request was dispatched. Use `commands.history` to see whether it actually ran.
+  - **Parameters need Allow Params.** A command runs without parameters unless the agent's Allow Params flag is on, and an empty `params` string is rejected here because it would pass an empty argument rather than omitting it.
+  - **Panel buttons belong to the dashboard.** Each button is configured with the command it runs. `panels.trigger` needs the panel and button names; `params` is optional and only matters for a button that takes them.
+  - **A 404 means the route is wrong.** A real route with a bad token answers 401 with `Invalid Token!`, so a 404 is a path error rather than an auth one.
+  - **No webhooks.** The provider posts no events for command completion, so poll `commands.history`.
+examples:
+  read:
+    path: computers.list
+    title: List your registered computers
+  write:
+    path: commands.run
+    title: Run notepad on the laptop, with a parameter
+    args:
+      computer: laptop
+      trigger: notepad
+      params: MyNote
+apiExamples:
+  commands.list:
+    call: "{ computer_id: 7 }"
+  commands.run:
+    call: "{ computer: 'laptop', trigger: 'notepad', params: 'MyNote' }"
+  commands.history:
+    call: "{ command_id: 101 }"
+  computers.list: {}
+  panels.list: {}
+  panels.trigger:
+    call: "{ panel: 'Living room', button: 'Lights off' }"
+apiNotes:
+  commands.list: 'This route is a POST. Pass `computer_id` to narrow to one computer.'
+  commands.run: 'The response acknowledges dispatch, not completion. Omit `params` rather than passing an empty string.'
+  commands.history: 'Returns the newest runs first. Take `command_id` from `commands.list`.'
+  panels.trigger: 'Runs the command the button is configured for, with the button parameters.'

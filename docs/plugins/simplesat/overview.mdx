@@ -1,0 +1,147 @@
+---
+title: "Simplesat plugin"
+sidebarTitle: "Overview"
+description: "Customer feedback from Simplesat - manage customers and team members, list surveys and questions, search and read responses and answers, correct an answer, and send a survey by email."
+---
+
+Use **Simplesat** through Corsair: one client, typed API calls.
+
+Create an API key at app.simplesat.io under Settings, then API keys. Give it the scopes the operations you call need, and pass it as the plugin's `key` option or store it on the account; the plugin sends it as the `X-Simplesat-Token` header.
+
+Things to know before you write:
+
+- **A bad key is a 403, not a 401.** Simplesat answers `403 Invalid Token.` for a missing or unrecognised token on every route, and a valid key that lacks the route's scope gets the same 403. Check the key and its scopes. The plugin treats both as auth failures.
+- **Customer writes are upserts.** `customers.create` and `teamMembers.create` match an existing record on `external_id` or `email` rather than always inserting, so send one of them. The schema rejects a customer with neither, because Simplesat then has nothing to match against.
+- **A bulk write is queued.** `customers.bulk` answers a `request_id` and a message, not the stored records, and the work happens afterwards.
+- **Surveys are identified by token.** `surveys.email` takes the `survey_token` from `surveys.list`, not the numeric survey id.
+- **Sending a survey notifies a real person.** `surveys.email` schedules an email, so it is a write.
+- **Search and paging.** `answers.search` and `responses.search` are POSTs because they take a filter list and date range, but their pages come back as `next` links that are followed with a GET. Every list answers `{ next, previous, count, results }`, and `next` is a path you pass back unchanged.
+- **A `next` link is checked before it is used.** Simplesat returns a full URL, and the plugin keeps only same-host paths, so the token never travels to another host.
+- **A response create can update.** `responses.create` creates a response or updates the one that already matches it, and `created` backdates it, which is how a survey answered elsewhere is imported.
+
+**What you get:**
+
+- 17 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/simplesat better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/simplesat better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/simplesat better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/simplesat better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { simplesat } from '@corsair-dev/simplesat';
+
+export const corsair = createCorsair({
+	plugins: [
+		simplesat(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Simplesat API key before the first call: `pnpm corsair setup --plugin=simplesat --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+simplesat()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'simplesat',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Search responses for one customer**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.simplesat.api.responses.search({
+	created_start_date: '2024-01-01T00:00:00Z',
+	filters: [{
+		key: 'customer.email',
+		values: ['tester@simplesat.io'],
+		comparison: 'is',
+	}],
+});
+```
+
+
+**Upsert a customer by external id**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.simplesat.api.customers.create({ external_id: '12345', email: 'tester@simplesat.io', name: 'Tester McTestFace' });
+```
+
+
+See the full list on the [API](/plugins/simplesat/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/simplesat/api">
+    Every `simplesat.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
