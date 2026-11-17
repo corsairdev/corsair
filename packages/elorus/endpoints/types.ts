@@ -11,6 +11,10 @@ const ElorusBinaryResponseSchema = z
 	})
 	.strict();
 
+// Elorus sends organization and user references as strings (19-digit IDs, past what a JS number holds exactly);
+// the OpenAPI document types them as integers, so responses accept both.
+const ElorusIdReferenceSchema = z.union([z.string(), z.number().int()]);
+
 // Elorus documents dynamic tracking filters such as tc_12345, not a literal tc_<trackingcategory_id> key.
 function withTrackingCategoryFilters<S extends z.ZodObject>(schema: S) {
 	const documentedQueryFields = new Set(Object.keys(schema.shape));
@@ -34,31 +38,31 @@ function withTrackingCategoryFilters<S extends z.ZodObject>(schema: S) {
 
 const v11Def_PUV11PurchaseList = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
 		documenttype: z.string().nullable().optional(),
-		self_billed: z.boolean().optional(),
-		sequence: z.string().optional(),
-		reference: z.string().max(150).optional(),
-		date: z.string().optional(),
+		self_billed: z.boolean().nullable().optional(),
+		sequence: z.string().nullable().optional(),
+		reference: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		due_date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		supplier: z.string().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		payable: z.string().optional(),
-		paid: z.string().optional(),
+		supplier: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		payable: z.string().nullable().optional(),
+		paid: z.string().nullable().optional(),
 		permalink: z.string().nullable().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_BillingAddress = z
@@ -70,12 +74,31 @@ const v11Def_BillingAddress = z
 		country: z.string(),
 	})
 	.strict();
+const v11Def_BillingAddressResponse = z
+	.object({
+		address_line: z.string(),
+		city: z.string(),
+		state: z.string().nullable().optional(),
+		zip: z.string(),
+		country: z.string(),
+	})
+	.strict();
 const v11Def_ShippingAddress = z
 	.object({
 		address_line: z.string().max(200),
 		city: z.string().max(100),
 		state: z.string().max(100).optional(),
 		zip: z.string().max(20),
+		country: z.string(),
+		branch_code: z.number().int().max(2147483647).nullable().optional(),
+	})
+	.strict();
+const v11Def_ShippingAddressResponse = z
+	.object({
+		address_line: z.string(),
+		city: z.string(),
+		state: z.string().nullable().optional(),
+		zip: z.string(),
 		country: z.string(),
 		branch_code: z.number().int().max(2147483647).nullable().optional(),
 	})
@@ -90,6 +113,16 @@ const v11Def_LoadingAddress = z
 		branch_code: z.number().int().max(2147483647).nullable().optional(),
 	})
 	.strict();
+const v11Def_LoadingAddressResponse = z
+	.object({
+		address_line: z.string(),
+		city: z.string(),
+		state: z.string().nullable().optional(),
+		zip: z.string(),
+		country: z.string(),
+		branch_code: z.number().int().max(2147483647).nullable().optional(),
+	})
+	.strict();
 const v11Def_PurchaseRelatedEntities = z
 	.object({
 		id: z.string().min(1).optional(),
@@ -100,12 +133,30 @@ const v11Def_PurchaseRelatedEntities = z
 		billing_address: v11Def_BillingAddress.optional(),
 	})
 	.strict();
+const v11Def_PurchaseRelatedEntitiesResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		contact: z.string(),
+		contact_display_name: z.string(),
+		contact_vat_number: z.string().nullable().optional(),
+		type: z.number().int(),
+		billing_address: v11Def_BillingAddressResponse.nullable().optional(),
+	})
+	.strict();
 const v11Def_PurchasePackageNested = z
 	.object({
 		id: z.string().min(1).optional(),
 		packaging_type: z.number().int(),
 		quantity: z.number().int().min(1).max(32767),
 		other_packaging_type_title: z.string().max(150).optional(),
+	})
+	.strict();
+const v11Def_PurchasePackageNestedResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		packaging_type: z.number().int(),
+		quantity: z.number().int().min(1).max(32767),
+		other_packaging_type_title: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11PurchaseItemNestedCreate = z
@@ -132,10 +183,40 @@ const v11Def_V11PurchaseItemNestedCreate = z
 		skip_stock_update: z.boolean().optional(),
 	})
 	.strict();
+const v11Def_V11PurchaseItemNestedCreateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		product: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		unit_measure: z.number().int().nullable().optional(),
+		unit_value: z.string().nullable().optional(),
+		unit_value_gross: z.string().nullable().optional(),
+		unit_discount: z.string().nullable().optional(),
+		unit_discount_gross: z.string().nullable().optional(),
+		unit_discount_percentage: z.string().nullable().optional(),
+		unit_discount_mode: z.string().nullable().optional(),
+		taxes: z.array(z.string()).nullable().optional(),
+		unit_total: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
+		project: z.string().nullable().optional(),
+		billable: z.boolean().nullable().optional(),
+		expense_category: z.string(),
+		taric_code: z.string().nullable().optional(),
+		warehouse: z.string().nullable().optional(),
+		skip_stock_update: z.boolean().nullable().optional(),
+	})
+	.strict();
 const v11Def_RecordTrackingCategoryNested = z
 	.object({
 		trackingcategory: z.string(),
 		option: z.string().min(1).max(225),
+	})
+	.strict();
+const v11Def_RecordTrackingCategoryNestedResponse = z
+	.object({
+		trackingcategory: z.string(),
+		option: z.string(),
 	})
 	.strict();
 const v11Def_V11PurchaseCreate = z
@@ -193,55 +274,64 @@ const v11Def_V11PurchaseCreate = z
 	.strict();
 const v11Def_PUV11PurchaseCreate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
 		documenttype: z.string().nullable().optional(),
-		self_billed: z.boolean().optional(),
+		self_billed: z.boolean().nullable().optional(),
 		sequence: z.string().nullable().optional(),
-		reference: z.string().max(150).optional(),
-		date: z.string().optional(),
+		reference: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		due_days: z.number().int().min(0).max(2147483647).nullable().optional(),
 		branch: z.string().nullable().optional(),
-		supplier: z.string().optional(),
-		supplier_display_name: z.string().max(203).optional(),
-		supplier_profession: z.string().max(100).optional(),
-		supplier_vat_number: z.string().max(20).optional(),
-		billing_address: v11Def_BillingAddress.optional(),
-		shipping_address: v11Def_ShippingAddress.optional(),
-		supplier_contact_person: z.string().max(101).optional(),
-		supplier_phone_number: z.string().max(30).optional(),
-		supplier_email: z.string().max(100).optional(),
-		loading_address: v11Def_LoadingAddress.optional(),
+		supplier: z.string().nullable().optional(),
+		supplier_display_name: z.string().nullable().optional(),
+		supplier_profession: z.string().nullable().optional(),
+		supplier_vat_number: z.string().nullable().optional(),
+		billing_address: v11Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v11Def_ShippingAddressResponse.nullable().optional(),
+		supplier_contact_person: z.string().nullable().optional(),
+		supplier_phone_number: z.string().nullable().optional(),
+		supplier_email: z.string().nullable().optional(),
+		loading_address: v11Def_LoadingAddressResponse.nullable().optional(),
 		dispatch_date: z.string().nullable().optional(),
 		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
+		vehicle_number: z.string().nullable().optional(),
 		move_purpose: z.number().int().nullable().optional(),
 		related_entities: z
-			.array(v11Def_PurchaseRelatedEntities)
+			.array(v11Def_PurchaseRelatedEntitiesResponse)
 			.nullable()
 			.optional(),
-		packages: z.array(v11Def_PurchasePackageNested).nullable().optional(),
-		delivery_notes: z.array(z.string()).optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v11Def_V11PurchaseItemNestedCreate).optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		withholding_taxes: z.array(z.string()).optional(),
-		payable: z.string().optional(),
-		paid: z.string().optional(),
+		packages: z
+			.array(v11Def_PurchasePackageNestedResponse)
+			.nullable()
+			.optional(),
+		delivery_notes: z.array(z.string()).nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v11Def_V11PurchaseItemNestedCreateResponse)
+			.nullable()
+			.optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		withholding_taxes: z.array(z.string()).nullable().optional(),
+		payable: z.string().nullable().optional(),
+		paid: z.string().nullable().optional(),
 		template: z.string().nullable().optional(),
-		public_notes: z.string().optional(),
-		trackingcategories: z.array(v11Def_RecordTrackingCategoryNested).optional(),
+		public_notes: z.string().nullable().optional(),
+		trackingcategories: z
+			.array(v11Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
 		permalink: z.string().nullable().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11PurchaseItemNestedRetrieveUpdate = z
@@ -268,57 +358,90 @@ const v11Def_V11PurchaseItemNestedRetrieveUpdate = z
 		skip_stock_update: z.boolean().optional(),
 	})
 	.strict();
+const v11Def_V11PurchaseItemNestedRetrieveUpdateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		product: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		unit_measure: z.number().int().nullable().optional(),
+		unit_value: z.string().nullable().optional(),
+		unit_value_gross: z.string().nullable().optional(),
+		unit_discount: z.string().nullable().optional(),
+		unit_discount_gross: z.string().nullable().optional(),
+		unit_discount_percentage: z.string().nullable().optional(),
+		unit_discount_mode: z.string().nullable().optional(),
+		taxes: z.array(z.string()).nullable().optional(),
+		unit_total: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
+		project: z.string().nullable().optional(),
+		billable: z.boolean().nullable().optional(),
+		expense_category: z.string(),
+		taric_code: z.string().nullable().optional(),
+		warehouse: z.string().nullable().optional(),
+		skip_stock_update: z.boolean().nullable().optional(),
+	})
+	.strict();
 const v11Def_PUV11PurchaseRetrieveUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
 		documenttype: z.string().nullable().optional(),
-		self_billed: z.boolean().optional(),
+		self_billed: z.boolean().nullable().optional(),
 		sequence: z.string().nullable().optional(),
-		reference: z.string().max(150).optional(),
-		date: z.string().optional(),
+		reference: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		due_days: z.number().int().min(0).max(2147483647).nullable().optional(),
 		branch: z.string().nullable().optional(),
-		supplier: z.string().optional(),
-		supplier_display_name: z.string().max(203).optional(),
-		supplier_profession: z.string().max(100).optional(),
-		supplier_vat_number: z.string().max(20).optional(),
-		billing_address: v11Def_BillingAddress.optional(),
-		shipping_address: v11Def_ShippingAddress.optional(),
-		supplier_contact_person: z.string().max(101).optional(),
-		supplier_phone_number: z.string().max(30).optional(),
-		supplier_email: z.string().max(100).optional(),
-		loading_address: v11Def_LoadingAddress.optional(),
+		supplier: z.string().nullable().optional(),
+		supplier_display_name: z.string().nullable().optional(),
+		supplier_profession: z.string().nullable().optional(),
+		supplier_vat_number: z.string().nullable().optional(),
+		billing_address: v11Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v11Def_ShippingAddressResponse.nullable().optional(),
+		supplier_contact_person: z.string().nullable().optional(),
+		supplier_phone_number: z.string().nullable().optional(),
+		supplier_email: z.string().nullable().optional(),
+		loading_address: v11Def_LoadingAddressResponse.nullable().optional(),
 		dispatch_date: z.string().nullable().optional(),
 		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
+		vehicle_number: z.string().nullable().optional(),
 		move_purpose: z.number().int().nullable().optional(),
 		related_entities: z
-			.array(v11Def_PurchaseRelatedEntities)
+			.array(v11Def_PurchaseRelatedEntitiesResponse)
 			.nullable()
 			.optional(),
-		packages: z.array(v11Def_PurchasePackageNested).nullable().optional(),
-		delivery_notes: z.array(z.string()).optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v11Def_V11PurchaseItemNestedRetrieveUpdate).optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		withholding_taxes: z.array(z.string()).optional(),
-		payable: z.string().optional(),
-		paid: z.string().optional(),
+		packages: z
+			.array(v11Def_PurchasePackageNestedResponse)
+			.nullable()
+			.optional(),
+		delivery_notes: z.array(z.string()).nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v11Def_V11PurchaseItemNestedRetrieveUpdateResponse)
+			.nullable()
+			.optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		withholding_taxes: z.array(z.string()).nullable().optional(),
+		payable: z.string().nullable().optional(),
+		paid: z.string().nullable().optional(),
 		template: z.string().nullable().optional(),
-		public_notes: z.string().optional(),
-		trackingcategories: z.array(v11Def_RecordTrackingCategoryNested).optional(),
+		public_notes: z.string().nullable().optional(),
+		trackingcategories: z
+			.array(v11Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
 		permalink: z.string().nullable().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11PurchaseRetrieveUpdate = z
@@ -388,6 +511,23 @@ const v11Def_PUV11PurchasePartialUpdate = z
 		modified: z.string().optional(),
 	})
 	.strict();
+const v11Def_PUV11PurchasePartialUpdateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		trackingcategories: z
+			.array(v11Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
+	})
+	.strict();
 const v11Def_PrivatePurchaseEmailFromTemplate = z
 	.object({
 		to: z.string().min(1),
@@ -401,19 +541,19 @@ const v11Def_PrivatePurchaseEmailFromTemplate = z
 	.strict();
 const v11Def_TrackedEmailMessage = z
 	.object({
-		id: z.string().min(1).optional(),
-		from_email: z.string().min(1).max(255),
-		to: z.string().min(1).max(255),
-		cc: z.string().optional(),
-		bcc: z.string().optional(),
-		reply_to: z.string().min(1).max(255),
-		subject: z.string().min(1).max(255),
-		message: z.string().optional(),
-		attachments: z.string().optional(),
-		attach_pdf: z.boolean().optional(),
-		status: z.string().optional(),
+		id: z.string().nullable().optional(),
+		from_email: z.string(),
+		to: z.string(),
+		cc: z.string().nullable().optional(),
+		bcc: z.string().nullable().optional(),
+		reply_to: z.string(),
+		subject: z.string(),
+		message: z.string().nullable().optional(),
+		attachments: z.string().nullable().optional(),
+		attach_pdf: z.boolean().nullable().optional(),
+		status: z.string().nullable().optional(),
 		status_updated: z.string().nullable().optional(),
-		sent_via_smtp: z.boolean().optional(),
+		sent_via_smtp: z.boolean().nullable().optional(),
 		smtp_error: z.string(),
 		smtp_error_code: z
 			.number()
@@ -422,20 +562,20 @@ const v11Def_TrackedEmailMessage = z
 			.max(32767)
 			.nullable()
 			.optional(),
-		metadata: z.record(z.string(), z.string()).optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		metadata: z.record(z.string(), z.string()).nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_PUEmailRetrieveSerializer = z
 	.object({
-		to: z.string().min(1).optional(),
-		cc: z.string().optional(),
-		bcc: z.string().optional(),
-		reply_to: z.string().min(1).optional(),
-		subject: z.string().min(1).max(255).optional(),
-		message: z.string().min(1).optional(),
-		sender_name: z.string().min(1).max(70).optional(),
+		to: z.string().nullable().optional(),
+		cc: z.string().nullable().optional(),
+		bcc: z.string().nullable().optional(),
+		reply_to: z.string().nullable().optional(),
+		subject: z.string().nullable().optional(),
+		message: z.string().nullable().optional(),
+		sender_name: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_PrivatePurchaseEmail = z
@@ -459,10 +599,16 @@ const v11Def_VoidDocument = z
 	.strict();
 const v11Def_PUPurchaseMarkVoidResponse = z
 	.object({
-		status: z.string().optional(),
+		status: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_PurchaseCashPaymentNested = z
+	.object({
+		purchase: z.string(),
+		amount: z.string(),
+	})
+	.strict();
+const v11Def_PurchaseCashPaymentNestedResponse = z
 	.object({
 		purchase: z.string(),
 		amount: z.string(),
@@ -474,23 +620,35 @@ const v11Def_CreditNoteCashPaymentNested = z
 		amount: z.string(),
 	})
 	.strict();
+const v11Def_CreditNoteCashPaymentNestedResponse = z
+	.object({
+		creditnote: z.string(),
+		amount: z.string(),
+	})
+	.strict();
 const v11Def_PUV11CashPaymentList = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		transaction_type: z.string().optional(),
-		title: z.string().max(255).optional(),
-		amount: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		currency_code: z.string().optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		transaction_type: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		contact: z.string().optional(),
-		purchase_payments: z.array(v11Def_PurchaseCashPaymentNested).optional(),
-		creditnote_payments: z.array(v11Def_CreditNoteCashPaymentNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		contact: z.string().nullable().optional(),
+		purchase_payments: z
+			.array(v11Def_PurchaseCashPaymentNestedResponse)
+			.nullable()
+			.optional(),
+		creditnote_payments: z
+			.array(v11Def_CreditNoteCashPaymentNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11CashPaymentCreate = z
@@ -515,42 +673,60 @@ const v11Def_V11CashPaymentCreate = z
 	.strict();
 const v11Def_PUV11CashPaymentCreate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		transaction_type: z.string().optional(),
-		title: z.string().max(255).optional(),
-		amount: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		currency_code: z.string().optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		transaction_type: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		contact: z.string().optional(),
-		purchase_payments: z.array(v11Def_PurchaseCashPaymentNested).optional(),
-		creditnote_payments: z.array(v11Def_CreditNoteCashPaymentNested).optional(),
-		trackingcategories: z.array(v11Def_RecordTrackingCategoryNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		contact: z.string().nullable().optional(),
+		purchase_payments: z
+			.array(v11Def_PurchaseCashPaymentNestedResponse)
+			.nullable()
+			.optional(),
+		creditnote_payments: z
+			.array(v11Def_CreditNoteCashPaymentNestedResponse)
+			.nullable()
+			.optional(),
+		trackingcategories: z
+			.array(v11Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_PUV11CashPaymentRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		transaction_type: z.string().optional(),
-		title: z.string().max(255).optional(),
-		amount: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		currency_code: z.string().optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		transaction_type: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		contact: z.string().optional(),
-		purchase_payments: z.array(v11Def_PurchaseCashPaymentNested).optional(),
-		creditnote_payments: z.array(v11Def_CreditNoteCashPaymentNested).optional(),
-		trackingcategories: z.array(v11Def_RecordTrackingCategoryNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		contact: z.string().nullable().optional(),
+		purchase_payments: z
+			.array(v11Def_PurchaseCashPaymentNestedResponse)
+			.nullable()
+			.optional(),
+		creditnote_payments: z
+			.array(v11Def_CreditNoteCashPaymentNestedResponse)
+			.nullable()
+			.optional(),
+		trackingcategories: z
+			.array(v11Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11CashPaymentUpdate = z
@@ -575,25 +751,40 @@ const v11Def_V11CashPaymentUpdate = z
 	.strict();
 const v11Def_PUV11CashPaymentUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		transaction_type: z.string().optional(),
-		title: z.string().max(255).optional(),
-		amount: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		currency_code: z.string().optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		transaction_type: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		contact: z.string().optional(),
-		purchase_payments: z.array(v11Def_PurchaseCashPaymentNested).optional(),
-		creditnote_payments: z.array(v11Def_CreditNoteCashPaymentNested).optional(),
-		trackingcategories: z.array(v11Def_RecordTrackingCategoryNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		contact: z.string().nullable().optional(),
+		purchase_payments: z
+			.array(v11Def_PurchaseCashPaymentNestedResponse)
+			.nullable()
+			.optional(),
+		creditnote_payments: z
+			.array(v11Def_CreditNoteCashPaymentNestedResponse)
+			.nullable()
+			.optional(),
+		trackingcategories: z
+			.array(v11Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_InvoiceCashReceiptNested = z
+	.object({
+		invoice: z.string(),
+		amount: z.string(),
+	})
+	.strict();
+const v11Def_InvoiceCashReceiptNestedResponse = z
 	.object({
 		invoice: z.string(),
 		amount: z.string(),
@@ -605,28 +796,38 @@ const v11Def_PurchaseCreditNoteCashReceiptNested = z
 		amount: z.string(),
 	})
 	.strict();
+const v11Def_PurchaseCreditNoteCashReceiptNestedResponse = z
+	.object({
+		purchasecreditnote: z.string(),
+		amount: z.string(),
+	})
+	.strict();
 const v11Def_PUV11CashReceiptList = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		transaction_type: z.string().optional(),
-		income_type: z.string().optional(),
-		title: z.string().max(255).optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		transaction_type: z.string().nullable().optional(),
+		income_type: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		contact: z.string().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		amount: z.string().optional(),
-		invoice_payments: z.array(v11Def_InvoiceCashReceiptNested).optional(),
-		purchasecreditnote_payments: z
-			.array(v11Def_PurchaseCreditNoteCashReceiptNested)
+		contact: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		invoice_payments: z
+			.array(v11Def_InvoiceCashReceiptNestedResponse)
+			.nullable()
 			.optional(),
-		status: z.string().optional(),
+		purchasecreditnote_payments: z
+			.array(v11Def_PurchaseCreditNoteCashReceiptNestedResponse)
+			.nullable()
+			.optional(),
+		status: z.string().nullable().optional(),
 		payment_gateway: z.string().nullable().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11CashReceiptCreate = z
@@ -658,62 +859,76 @@ const v11Def_V11CashReceiptCreate = z
 	.strict();
 const v11Def_PUV11CashReceiptCreate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		transaction_type: z.string().optional(),
-		income_type: z.string().optional(),
-		title: z.string().max(255).optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		transaction_type: z.string().nullable().optional(),
+		income_type: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		contact: z.string().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		net: z.string().optional(),
-		taxes: z.array(z.string()).optional(),
-		amount: z.string().optional(),
-		status: z.string().optional(),
-		invoice_payments: z.array(v11Def_InvoiceCashReceiptNested).optional(),
-		purchasecreditnote_payments: z
-			.array(v11Def_PurchaseCreditNoteCashReceiptNested)
+		contact: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		taxes: z.array(z.string()).nullable().optional(),
+		amount: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		invoice_payments: z
+			.array(v11Def_InvoiceCashReceiptNestedResponse)
+			.nullable()
 			.optional(),
-		trackingcategories: z.array(v11Def_RecordTrackingCategoryNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		purchasecreditnote_payments: z
+			.array(v11Def_PurchaseCreditNoteCashReceiptNestedResponse)
+			.nullable()
+			.optional(),
+		trackingcategories: z
+			.array(v11Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11CashReceiptCashedTaxNested = z
 	.object({
 		tax: z.string(),
-		amount: z.string().optional(),
+		amount: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_PUV11CashReceiptRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		transaction_type: z.string().optional(),
-		income_type: z.string().optional(),
-		title: z.string().max(255).optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		transaction_type: z.string().nullable().optional(),
+		income_type: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		contact: z.string().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
+		contact: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
 		net: z.string().nullable().optional(),
-		taxes: z.array(v11Def_V11CashReceiptCashedTaxNested).optional(),
-		amount: z.string().optional(),
-		invoice_payments: z.array(v11Def_InvoiceCashReceiptNested).optional(),
-		purchasecreditnote_payments: z
-			.array(v11Def_PurchaseCreditNoteCashReceiptNested)
+		taxes: z.array(v11Def_V11CashReceiptCashedTaxNested).nullable().optional(),
+		amount: z.string().nullable().optional(),
+		invoice_payments: z
+			.array(v11Def_InvoiceCashReceiptNestedResponse)
+			.nullable()
 			.optional(),
-		status: z.string().optional(),
+		purchasecreditnote_payments: z
+			.array(v11Def_PurchaseCreditNoteCashReceiptNestedResponse)
+			.nullable()
+			.optional(),
+		status: z.string().nullable().optional(),
 		payment_gateway: z.string().nullable().optional(),
-		trackingcategories: z.array(v11Def_RecordTrackingCategoryNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		trackingcategories: z
+			.array(v11Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11CashReceiptUpdate = z
@@ -744,28 +959,35 @@ const v11Def_V11CashReceiptUpdate = z
 	.strict();
 const v11Def_PUV11CashReceiptUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		transaction_type: z.string().optional(),
-		income_type: z.string().optional(),
-		title: z.string().max(255).optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		transaction_type: z.string().nullable().optional(),
+		income_type: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		contact: z.string().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		net: z.string().optional(),
-		taxes: z.array(z.string()).optional(),
-		amount: z.string().optional(),
-		invoice_payments: z.array(v11Def_InvoiceCashReceiptNested).optional(),
-		purchasecreditnote_payments: z
-			.array(v11Def_PurchaseCreditNoteCashReceiptNested)
+		contact: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		taxes: z.array(z.string()).nullable().optional(),
+		amount: z.string().nullable().optional(),
+		invoice_payments: z
+			.array(v11Def_InvoiceCashReceiptNestedResponse)
+			.nullable()
 			.optional(),
-		trackingcategories: z.array(v11Def_RecordTrackingCategoryNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		purchasecreditnote_payments: z
+			.array(v11Def_PurchaseCreditNoteCashReceiptNestedResponse)
+			.nullable()
+			.optional(),
+		trackingcategories: z
+			.array(v11Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11AddressNested = z
@@ -786,10 +1008,35 @@ const v11Def_V11AddressNested = z
 			.optional(),
 	})
 	.strict();
+const v11Def_V11AddressNestedResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		address: z.string(),
+		city: z.string(),
+		state: z.string().nullable().optional(),
+		zip: z.string(),
+		country: z.string(),
+		ad_type: z.string().nullable().optional(),
+		branch_code: z
+			.number()
+			.int()
+			.min(-2147483648)
+			.max(2147483647)
+			.nullable()
+			.optional(),
+	})
+	.strict();
 const v11Def_V11EmailNested = z
 	.object({
 		id: z.string().min(1).optional(),
 		email: z.string().min(1).max(100),
+		primary: z.boolean(),
+	})
+	.strict();
+const v11Def_V11EmailNestedResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		email: z.string(),
 		primary: z.boolean(),
 	})
 	.strict();
@@ -800,29 +1047,36 @@ const v11Def_V11PhoneNested = z
 		primary: z.boolean(),
 	})
 	.strict();
+const v11Def_V11PhoneNestedResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		number: z.string(),
+		primary: z.boolean(),
+	})
+	.strict();
 const v11Def_PUV11ContactList = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		active: z.boolean().optional(),
-		first_name: z.string().max(50).optional(),
-		last_name: z.string().max(50).optional(),
-		company: z.string().max(100).optional(),
-		display_name: z.string().min(1).optional(),
-		profession: z.string().max(100).optional(),
-		vat_number: z.string().max(20).optional(),
-		is_client: z.boolean().optional(),
-		is_supplier: z.boolean().optional(),
-		default_language: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		first_name: z.string().nullable().optional(),
+		last_name: z.string().nullable().optional(),
+		company: z.string().nullable().optional(),
+		display_name: z.string().nullable().optional(),
+		profession: z.string().nullable().optional(),
+		vat_number: z.string().nullable().optional(),
+		is_client: z.boolean().nullable().optional(),
+		is_supplier: z.boolean().nullable().optional(),
+		default_language: z.string().nullable().optional(),
 		default_theme: z.string().nullable().optional(),
-		default_taxes: z.array(z.string()).optional(),
-		default_currency_code: z.string().optional(),
-		addresses: z.array(v11Def_V11AddressNested).optional(),
-		email: z.array(v11Def_V11EmailNested).optional(),
-		phones: z.array(v11Def_V11PhoneNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		default_taxes: z.array(z.string()).nullable().optional(),
+		default_currency_code: z.string().nullable().optional(),
+		addresses: z.array(v11Def_V11AddressNestedResponse).nullable().optional(),
+		email: z.array(v11Def_V11EmailNestedResponse).nullable().optional(),
+		phones: z.array(v11Def_V11PhoneNestedResponse).nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11ContactRetrieveCreateUpdate = z
@@ -853,68 +1107,71 @@ const v11Def_V11ContactRetrieveCreateUpdate = z
 	.strict();
 const v11Def_PUV11ContactRetrieveCreateUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		active: z.boolean().optional(),
-		first_name: z.string().max(50).optional(),
-		last_name: z.string().max(50).optional(),
-		company: z.string().max(100).optional(),
-		display_name: z.string().min(1).optional(),
-		profession: z.string().max(100).optional(),
-		vat_number: z.string().max(20).optional(),
-		is_client: z.boolean().optional(),
-		is_supplier: z.boolean().optional(),
-		default_language: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		first_name: z.string().nullable().optional(),
+		last_name: z.string().nullable().optional(),
+		company: z.string().nullable().optional(),
+		display_name: z.string().nullable().optional(),
+		profession: z.string().nullable().optional(),
+		vat_number: z.string().nullable().optional(),
+		is_client: z.boolean().nullable().optional(),
+		is_supplier: z.boolean().nullable().optional(),
+		default_language: z.string().nullable().optional(),
 		default_theme: z.string().nullable().optional(),
-		default_taxes: z.array(z.string()).optional(),
-		default_currency_code: z.string().optional(),
-		addresses: z.array(v11Def_V11AddressNested).optional(),
-		email: z.array(v11Def_V11EmailNested).optional(),
-		phones: z.array(v11Def_V11PhoneNested).optional(),
-		trackingcategories: z.array(v11Def_RecordTrackingCategoryNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		default_taxes: z.array(z.string()).nullable().optional(),
+		default_currency_code: z.string().nullable().optional(),
+		addresses: z.array(v11Def_V11AddressNestedResponse).nullable().optional(),
+		email: z.array(v11Def_V11EmailNestedResponse).nullable().optional(),
+		phones: z.array(v11Def_V11PhoneNestedResponse).nullable().optional(),
+		trackingcategories: z
+			.array(v11Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_PUV11CreditNoteList = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		documenttype: z.string().optional(),
-		sequence: z.string().optional(),
-		number: z.string().max(100).optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
+		sequence: z.string().nullable().optional(),
+		number: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_display_name: z.string().min(1).max(203).optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v11Def_BillingAddress.optional(),
-		shipping_address: v11Def_ShippingAddress.optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		loading_address: v11Def_LoadingAddress.optional(),
+		client: z.string().nullable().optional(),
+		client_display_name: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v11Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v11Def_ShippingAddressResponse.nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		loading_address: v11Def_LoadingAddressResponse.nullable().optional(),
 		dispatch_date: z.string().nullable().optional(),
 		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
+		vehicle_number: z.string().nullable().optional(),
 		move_purpose: z.number().int().nullable().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		payable: z.string().optional(),
-		paid: z.string().optional(),
-		permalink: z.string().min(1).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		payable: z.string().nullable().optional(),
+		paid: z.string().nullable().optional(),
+		permalink: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_CreditNoteRelatedEntities = z
@@ -927,12 +1184,30 @@ const v11Def_CreditNoteRelatedEntities = z
 		billing_address: v11Def_BillingAddress.optional(),
 	})
 	.strict();
+const v11Def_CreditNoteRelatedEntitiesResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		contact: z.string(),
+		contact_display_name: z.string(),
+		contact_vat_number: z.string().nullable().optional(),
+		type: z.number().int(),
+		billing_address: v11Def_BillingAddressResponse.nullable().optional(),
+	})
+	.strict();
 const v11Def_CreditNotePackageNested = z
 	.object({
 		id: z.string().min(1).optional(),
 		packaging_type: z.number().int(),
 		quantity: z.number().int().min(1).max(32767),
 		other_packaging_type_title: z.string().max(150).optional(),
+	})
+	.strict();
+const v11Def_CreditNotePackageNestedResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		packaging_type: z.number().int(),
+		quantity: z.number().int().min(1).max(32767),
+		other_packaging_type_title: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11CreditNoteItemNestedCreate = z
@@ -956,6 +1231,29 @@ const v11Def_V11CreditNoteItemNestedCreate = z
 		taric_code: z.string().min(10).max(10).optional(),
 		warehouse: z.string().nullable().optional(),
 		skip_stock_update: z.boolean().optional(),
+	})
+	.strict();
+const v11Def_V11CreditNoteItemNestedCreateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		product: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		unit_measure: z.number().int().nullable().optional(),
+		unit_value: z.string().nullable().optional(),
+		unit_value_gross: z.string().nullable().optional(),
+		unit_discount: z.string().nullable().optional(),
+		unit_discount_gross: z.string().nullable().optional(),
+		unit_discount_percentage: z.string().nullable().optional(),
+		unit_discount_mode: z.string().nullable().optional(),
+		taxes: z.array(z.string()).nullable().optional(),
+		unit_total: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
+		project: z.string().nullable().optional(),
+		taric_code: z.string().nullable().optional(),
+		warehouse: z.string().nullable().optional(),
+		skip_stock_update: z.boolean().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11CreditNoteCreate = z
@@ -1012,54 +1310,63 @@ const v11Def_V11CreditNoteCreate = z
 	.strict();
 const v11Def_PUV11CreditNoteCreate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		documenttype: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
 		sequence: z.string().nullable().optional(),
-		number: z.string().max(100).optional(),
-		date: z.string().optional(),
+		number: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_display_name: z.string().min(1).max(203).optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v11Def_BillingAddress.optional(),
-		shipping_address: v11Def_ShippingAddress.optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		loading_address: v11Def_LoadingAddress.optional(),
+		client: z.string().nullable().optional(),
+		client_display_name: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v11Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v11Def_ShippingAddressResponse.nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		loading_address: v11Def_LoadingAddressResponse.nullable().optional(),
 		dispatch_date: z.string().nullable().optional(),
 		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
+		vehicle_number: z.string().nullable().optional(),
 		move_purpose: z.number().int().nullable().optional(),
 		related_entities: z
-			.array(v11Def_CreditNoteRelatedEntities)
+			.array(v11Def_CreditNoteRelatedEntitiesResponse)
 			.nullable()
 			.optional(),
-		packages: z.array(v11Def_CreditNotePackageNested).nullable().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v11Def_V11CreditNoteItemNestedCreate).optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		withholding_taxes: z.array(z.string()).optional(),
-		paid: z.string().optional(),
-		payable: z.string().optional(),
-		template: z.string().optional(),
-		terms: z.string().optional(),
-		public_notes: z.string().optional(),
-		related_documents: z.array(z.string()).optional(),
-		trackingcategories: z.array(v11Def_RecordTrackingCategoryNested).optional(),
-		permalink: z.string().min(1).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		packages: z
+			.array(v11Def_CreditNotePackageNestedResponse)
+			.nullable()
+			.optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v11Def_V11CreditNoteItemNestedCreateResponse)
+			.nullable()
+			.optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		withholding_taxes: z.array(z.string()).nullable().optional(),
+		paid: z.string().nullable().optional(),
+		payable: z.string().nullable().optional(),
+		template: z.string().nullable().optional(),
+		terms: z.string().nullable().optional(),
+		public_notes: z.string().nullable().optional(),
+		related_documents: z.array(z.string()).nullable().optional(),
+		trackingcategories: z
+			.array(v11Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		permalink: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11CreditNoteItemNestedRetrieveUpdate = z
@@ -1085,56 +1392,88 @@ const v11Def_V11CreditNoteItemNestedRetrieveUpdate = z
 		skip_stock_update: z.boolean().optional(),
 	})
 	.strict();
+const v11Def_V11CreditNoteItemNestedRetrieveUpdateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		product: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		unit_measure: z.number().int().nullable().optional(),
+		unit_value: z.string().nullable().optional(),
+		unit_value_gross: z.string().nullable().optional(),
+		unit_discount: z.string().nullable().optional(),
+		unit_discount_gross: z.string().nullable().optional(),
+		unit_discount_percentage: z.string().nullable().optional(),
+		unit_discount_mode: z.string().nullable().optional(),
+		taxes: z.array(z.string()).nullable().optional(),
+		unit_total: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
+		project: z.string().nullable().optional(),
+		taric_code: z.string().nullable().optional(),
+		warehouse: z.string().nullable().optional(),
+		skip_stock_update: z.boolean().nullable().optional(),
+	})
+	.strict();
 const v11Def_PUV11CreditNoteRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		documenttype: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
 		sequence: z.string().nullable().optional(),
-		number: z.string().max(100).optional(),
-		date: z.string().optional(),
+		number: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_display_name: z.string().min(1).max(203).optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v11Def_BillingAddress.optional(),
-		shipping_address: v11Def_ShippingAddress.optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		loading_address: v11Def_LoadingAddress.optional(),
+		client: z.string().nullable().optional(),
+		client_display_name: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v11Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v11Def_ShippingAddressResponse.nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		loading_address: v11Def_LoadingAddressResponse.nullable().optional(),
 		dispatch_date: z.string().nullable().optional(),
 		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
+		vehicle_number: z.string().nullable().optional(),
 		move_purpose: z.number().int().nullable().optional(),
 		related_entities: z
-			.array(v11Def_CreditNoteRelatedEntities)
+			.array(v11Def_CreditNoteRelatedEntitiesResponse)
 			.nullable()
 			.optional(),
-		packages: z.array(v11Def_CreditNotePackageNested).nullable().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v11Def_V11CreditNoteItemNestedRetrieveUpdate).optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		withholding_taxes: z.array(z.string()).optional(),
-		payable: z.string().optional(),
-		paid: z.string().optional(),
-		template: z.string().optional(),
-		terms: z.string().optional(),
-		public_notes: z.string().optional(),
-		related_documents: z.array(z.string()).optional(),
-		trackingcategories: z.array(v11Def_RecordTrackingCategoryNested).optional(),
-		permalink: z.string().min(1).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		packages: z
+			.array(v11Def_CreditNotePackageNestedResponse)
+			.nullable()
+			.optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v11Def_V11CreditNoteItemNestedRetrieveUpdateResponse)
+			.nullable()
+			.optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		withholding_taxes: z.array(z.string()).nullable().optional(),
+		payable: z.string().nullable().optional(),
+		paid: z.string().nullable().optional(),
+		template: z.string().nullable().optional(),
+		terms: z.string().nullable().optional(),
+		public_notes: z.string().nullable().optional(),
+		related_documents: z.array(z.string()).nullable().optional(),
+		trackingcategories: z
+			.array(v11Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		permalink: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11CreditNoteUpdate = z
@@ -1191,54 +1530,63 @@ const v11Def_V11CreditNoteUpdate = z
 	.strict();
 const v11Def_PUV11CreditNoteUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		documenttype: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
 		sequence: z.string().nullable().optional(),
-		number: z.string().max(100).optional(),
-		date: z.string().optional(),
+		number: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_display_name: z.string().min(1).max(203).optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v11Def_BillingAddress.optional(),
-		shipping_address: v11Def_ShippingAddress.optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		loading_address: v11Def_LoadingAddress.optional(),
+		client: z.string().nullable().optional(),
+		client_display_name: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v11Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v11Def_ShippingAddressResponse.nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		loading_address: v11Def_LoadingAddressResponse.nullable().optional(),
 		dispatch_date: z.string().nullable().optional(),
 		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
+		vehicle_number: z.string().nullable().optional(),
 		move_purpose: z.number().int().nullable().optional(),
 		related_entities: z
-			.array(v11Def_CreditNoteRelatedEntities)
+			.array(v11Def_CreditNoteRelatedEntitiesResponse)
 			.nullable()
 			.optional(),
-		packages: z.array(v11Def_CreditNotePackageNested).nullable().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v11Def_V11CreditNoteItemNestedRetrieveUpdate).optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		withholding_taxes: z.array(z.string()).optional(),
-		payable: z.string().optional(),
-		paid: z.string().optional(),
-		template: z.string().optional(),
-		terms: z.string().optional(),
-		public_notes: z.string().optional(),
-		related_documents: z.array(z.string()).optional(),
-		trackingcategories: z.array(v11Def_RecordTrackingCategoryNested).optional(),
-		permalink: z.string().min(1).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		packages: z
+			.array(v11Def_CreditNotePackageNestedResponse)
+			.nullable()
+			.optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v11Def_V11CreditNoteItemNestedRetrieveUpdateResponse)
+			.nullable()
+			.optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		withholding_taxes: z.array(z.string()).nullable().optional(),
+		payable: z.string().nullable().optional(),
+		paid: z.string().nullable().optional(),
+		template: z.string().nullable().optional(),
+		terms: z.string().nullable().optional(),
+		public_notes: z.string().nullable().optional(),
+		related_documents: z.array(z.string()).nullable().optional(),
+		trackingcategories: z
+			.array(v11Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		permalink: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_PUV11CreditNotePartialUpdate = z
@@ -1253,6 +1601,23 @@ const v11Def_PUV11CreditNotePartialUpdate = z
 		organization: z.number().int().optional(),
 		created: z.string().optional(),
 		modified: z.string().optional(),
+	})
+	.strict();
+const v11Def_PUV11CreditNotePartialUpdateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		trackingcategories: z
+			.array(v11Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_CreditNoteEmailFromTemplate = z
@@ -1282,20 +1647,20 @@ const v11Def_CreditNoteEmail = z
 	.strict();
 const v11Def_PUCreditNoteMarkVoidResponse = z
 	.object({
-		status: z.string().optional(),
+		status: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_PUInvoiceCreditTransactionCNSerializer = z
 	.object({
-		id: z.string().min(1).optional(),
-		representation: z.string().optional(),
-		invoice: z.string().optional(),
-		amount: z.string().optional(),
-		currency_code: z.string().optional(),
-		date: z.string().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		invoice: z.string().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_InvoiceCreditTransactionCN = z
@@ -1311,62 +1676,76 @@ const v11Def_InvoiceCreditTransactionCN = z
 		modified: z.string().optional(),
 	})
 	.strict();
+const v11Def_InvoiceCreditTransactionCNResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		invoice: z.string(),
+		amount: z.string(),
+		currency_code: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
+	})
+	.strict();
 const v11Def_PUV11DocumentTypeList = z
 	.object({
-		id: z.string().min(1).optional(),
-		title: z.string().min(1).max(60).optional(),
-		active: z.boolean().optional(),
-		application: z.number().int().optional(),
-		default: z.boolean().optional(),
-		always_self_billed: z.boolean().optional(),
-		is_delivery_note: z.boolean().optional(),
-		is_reverse_delivery_note: z.boolean().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		application: z.number().int().nullable().optional(),
+		default: z.boolean().nullable().optional(),
+		always_self_billed: z.boolean().nullable().optional(),
+		is_delivery_note: z.boolean().nullable().optional(),
+		is_reverse_delivery_note: z.boolean().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_PUV11DocumentTypeRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		title: z.string().min(1).max(60).optional(),
+		id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
 		title_translations: z
 			.object({
-				bg: z.string().optional(),
-				de: z.string().optional(),
-				el: z.string().optional(),
-				en: z.string().optional(),
-				'en-gb': z.string().optional(),
-				es: z.string().optional(),
-				fr: z.string().optional(),
-				it: z.string().optional(),
+				bg: z.string().nullable().optional(),
+				de: z.string().nullable().optional(),
+				el: z.string().nullable().optional(),
+				en: z.string().nullable().optional(),
+				'en-gb': z.string().nullable().optional(),
+				es: z.string().nullable().optional(),
+				fr: z.string().nullable().optional(),
+				it: z.string().nullable().optional(),
 			})
 			.strict()
+			.nullable()
 			.optional(),
-		active: z.boolean().optional(),
-		application: z.number().int().optional(),
-		default: z.boolean().optional(),
-		always_self_billed: z.boolean().optional(),
-		is_delivery_note: z.boolean().optional(),
-		is_reverse_delivery_note: z.boolean().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		active: z.boolean().nullable().optional(),
+		application: z.number().int().nullable().optional(),
+		default: z.boolean().nullable().optional(),
+		always_self_billed: z.boolean().nullable().optional(),
+		is_delivery_note: z.boolean().nullable().optional(),
+		is_reverse_delivery_note: z.boolean().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_PUV11EmailTemplate = z
 	.object({
-		id: z.string().min(1).optional(),
-		email_type: z.string().optional(),
-		subject: z.string().optional(),
-		message: z.string().optional(),
-		sender_type: z.string().optional(),
-		sender_name: z.string().max(70).optional(),
-		default: z.boolean().optional(),
-		default_for_language: z.string().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		email_type: z.string().nullable().optional(),
+		subject: z.string().nullable().optional(),
+		message: z.string().nullable().optional(),
+		sender_type: z.string().nullable().optional(),
+		sender_name: z.string().nullable().optional(),
+		default: z.boolean().nullable().optional(),
+		default_for_language: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11EmailTemplate = z
@@ -1401,52 +1780,52 @@ const v11Def_V11EmailTemplateUpdate = z
 	.strict();
 const v11Def_PUV11EmailTemplateUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		email_type: z.string().optional(),
-		subject: z.string().optional(),
-		message: z.string().optional(),
-		sender_type: z.string().optional(),
-		sender_name: z.string().max(70).optional(),
-		default: z.boolean().optional(),
-		default_for_language: z.string().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		email_type: z.string().nullable().optional(),
+		subject: z.string().nullable().optional(),
+		message: z.string().nullable().optional(),
+		sender_type: z.string().nullable().optional(),
+		sender_name: z.string().nullable().optional(),
+		default: z.boolean().nullable().optional(),
+		default_for_language: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_PUV11EstimateList = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		documenttype: z.string().optional(),
-		sequence: z.string().optional(),
-		number: z.string().max(100).optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
+		sequence: z.string().nullable().optional(),
+		number: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_display_name: z.string().min(1).max(203).optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v11Def_BillingAddress.optional(),
-		shipping_address: v11Def_ShippingAddress.optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		permalink: z.string().min(1).optional(),
-		converted_invoice: z.string().optional(),
-		active: z.boolean().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		client: z.string().nullable().optional(),
+		client_display_name: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v11Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v11Def_ShippingAddressResponse.nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		permalink: z.string().nullable().optional(),
+		converted_invoice: z.string().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11EstimateItemNestedCreate = z
@@ -1466,6 +1845,25 @@ const v11Def_V11EstimateItemNestedCreate = z
 		taxes: z.array(z.string()).optional(),
 		unit_total: z.string().optional(),
 		item_net: z.string().optional(),
+	})
+	.strict();
+const v11Def_V11EstimateItemNestedCreateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		product: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		unit_measure: z.number().int().nullable().optional(),
+		unit_value: z.string().nullable().optional(),
+		unit_value_gross: z.string().nullable().optional(),
+		unit_discount: z.string().nullable().optional(),
+		unit_discount_gross: z.string().nullable().optional(),
+		unit_discount_percentage: z.string().nullable().optional(),
+		unit_discount_mode: z.string().nullable().optional(),
+		taxes: z.array(z.string()).nullable().optional(),
+		unit_total: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11EstimateCreate = z
@@ -1508,40 +1906,43 @@ const v11Def_V11EstimateCreate = z
 	.strict();
 const v11Def_PUV11EstimateCreate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		accept_status: z.string().optional(),
-		documenttype: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		accept_status: z.string().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
 		sequence: z.string().nullable().optional(),
-		number: z.string().max(100).optional(),
-		date: z.string().optional(),
+		number: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_display_name: z.string().min(1).max(203).optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v11Def_BillingAddress.optional(),
-		shipping_address: v11Def_ShippingAddress.optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v11Def_V11EstimateItemNestedCreate).optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		template: z.string().optional(),
-		terms: z.string().optional(),
-		public_notes: z.string().optional(),
-		permalink: z.string().min(1).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		client: z.string().nullable().optional(),
+		client_display_name: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v11Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v11Def_ShippingAddressResponse.nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v11Def_V11EstimateItemNestedCreateResponse)
+			.nullable()
+			.optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		template: z.string().nullable().optional(),
+		terms: z.string().nullable().optional(),
+		public_notes: z.string().nullable().optional(),
+		permalink: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11EstimateItemNested = z
@@ -1563,43 +1964,62 @@ const v11Def_V11EstimateItemNested = z
 		item_net: z.string().optional(),
 	})
 	.strict();
+const v11Def_V11EstimateItemNestedResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		product: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		unit_measure: z.number().int().nullable().optional(),
+		unit_value: z.string().nullable().optional(),
+		unit_value_gross: z.string().nullable().optional(),
+		unit_discount: z.string().nullable().optional(),
+		unit_discount_gross: z.string().nullable().optional(),
+		unit_discount_percentage: z.string().nullable().optional(),
+		unit_discount_mode: z.string().nullable().optional(),
+		taxes: z.array(z.string()).nullable().optional(),
+		unit_total: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
+	})
+	.strict();
 const v11Def_PUV11EstimateRetrieveUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		accept_status: z.string().optional(),
-		documenttype: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		accept_status: z.string().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
 		sequence: z.string().nullable().optional(),
-		number: z.string().max(100).optional(),
-		date: z.string().optional(),
+		number: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_display_name: z.string().min(1).max(203).optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v11Def_BillingAddress.optional(),
-		shipping_address: v11Def_ShippingAddress.optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v11Def_V11EstimateItemNested).optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		template: z.string().optional(),
-		public_notes: z.string().optional(),
-		converted_invoice: z.string().optional(),
-		permalink: z.string().min(1).optional(),
-		active: z.boolean().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		client: z.string().nullable().optional(),
+		client_display_name: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v11Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v11Def_ShippingAddressResponse.nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z.array(v11Def_V11EstimateItemNestedResponse).nullable().optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		template: z.string().nullable().optional(),
+		public_notes: z.string().nullable().optional(),
+		converted_invoice: z.string().nullable().optional(),
+		permalink: z.string().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11EstimateRetrieveUpdate = z
@@ -1656,6 +2076,21 @@ const v11Def_PUV11EstimatePartialUpdate = z
 		modified: z.string().optional(),
 	})
 	.strict();
+const v11Def_PUV11EstimatePartialUpdateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		status: z.string().nullable().optional(),
+		template: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		converted_invoice: z.string().nullable().optional(),
+		accept_status: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
+	})
+	.strict();
 const v11Def_EstimateEmailFromTemplate = z
 	.object({
 		to: z.string().min(1),
@@ -1683,38 +2118,37 @@ const v11Def_EstimateEmail = z
 	.strict();
 const v11Def_PUV11ExpenseCategoryListRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		title: z.string().min(1).max(60).optional(),
+		id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
 		color: z
 			.string()
-			.min(1)
-			.max(6)
 			.regex(new RegExp('^[a-fA-F0-9]{6}$'))
+			.nullable()
 			.optional(),
-		protected: z.boolean().optional(),
-		active: z.boolean().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		protected: z.boolean().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_PUV11ExpenseList = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		date: z.string().optional(),
-		reference: z.string().max(150).optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
+		reference: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
 		supplier: z.string().nullable().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11ExpenseItemNestedCreate = z
@@ -1727,6 +2161,18 @@ const v11Def_V11ExpenseItemNestedCreate = z
 		taxes: z.array(z.string()).optional(),
 		project: z.string().nullable().optional(),
 		billable: z.boolean().optional(),
+	})
+	.strict();
+const v11Def_V11ExpenseItemNestedCreateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		expense_category: z.string(),
+		description: z.string().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
+		taxes: z.array(z.string()).nullable().optional(),
+		project: z.string().nullable().optional(),
+		billable: z.boolean().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11ExpenseCreate = z
@@ -1752,23 +2198,29 @@ const v11Def_V11ExpenseCreate = z
 	.strict();
 const v11Def_PUV11ExpenseCreate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		date: z.string().optional(),
-		reference: z.string().max(150).optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
+		reference: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
 		supplier: z.string().nullable().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v11Def_V11ExpenseItemNestedCreate).optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		trackingcategories: z.array(v11Def_RecordTrackingCategoryNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v11Def_V11ExpenseItemNestedCreateResponse)
+			.nullable()
+			.optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		trackingcategories: z
+			.array(v11Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11ExpenseItemNestedRetrieve = z
@@ -1783,25 +2235,43 @@ const v11Def_V11ExpenseItemNestedRetrieve = z
 		billable: z.boolean().optional(),
 	})
 	.strict();
+const v11Def_V11ExpenseItemNestedRetrieveResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		expense_category: z.string(),
+		description: z.string().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
+		taxes: z.array(z.string()).nullable().optional(),
+		project: z.string().nullable().optional(),
+		billable: z.boolean().nullable().optional(),
+	})
+	.strict();
 const v11Def_PUV11ExpenseRetrieveUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		date: z.string().optional(),
-		reference: z.string().max(150).optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
+		reference: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
 		supplier: z.string().nullable().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v11Def_V11ExpenseItemNestedRetrieve).optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		trackingcategories: z.array(v11Def_RecordTrackingCategoryNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v11Def_V11ExpenseItemNestedRetrieveResponse)
+			.nullable()
+			.optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		trackingcategories: z
+			.array(v11Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11ExpenseRetrieveUpdate = z
@@ -1827,43 +2297,43 @@ const v11Def_V11ExpenseRetrieveUpdate = z
 	.strict();
 const v11Def_PUV11InvoiceList = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		documenttype: z.string().optional(),
-		sequence: z.string().optional(),
-		number: z.string().max(100).optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
+		sequence: z.string().nullable().optional(),
+		number: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		due_date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_display_name: z.string().min(1).max(203).optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v11Def_BillingAddress.optional(),
-		shipping_address: v11Def_ShippingAddress.optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		loading_address: v11Def_LoadingAddress.optional(),
+		client: z.string().nullable().optional(),
+		client_display_name: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v11Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v11Def_ShippingAddressResponse.nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		loading_address: v11Def_LoadingAddressResponse.nullable().optional(),
 		dispatch_date: z.string().nullable().optional(),
 		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
+		vehicle_number: z.string().nullable().optional(),
 		move_purpose: z.number().int().nullable().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		payable: z.string().optional(),
-		paid: z.string().optional(),
-		permalink: z.string().min(1).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		payable: z.string().nullable().optional(),
+		paid: z.string().nullable().optional(),
+		permalink: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_InvoiceRelatedEntities = z
@@ -1876,12 +2346,30 @@ const v11Def_InvoiceRelatedEntities = z
 		billing_address: v11Def_BillingAddress.optional(),
 	})
 	.strict();
+const v11Def_InvoiceRelatedEntitiesResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		contact: z.string(),
+		contact_display_name: z.string(),
+		contact_vat_number: z.string().nullable().optional(),
+		type: z.number().int(),
+		billing_address: v11Def_BillingAddressResponse.nullable().optional(),
+	})
+	.strict();
 const v11Def_InvoicePackageNested = z
 	.object({
 		id: z.string().min(1).optional(),
 		packaging_type: z.number().int(),
 		quantity: z.number().int().min(1).max(32767),
 		other_packaging_type_title: z.string().max(150).optional(),
+	})
+	.strict();
+const v11Def_InvoicePackageNestedResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		packaging_type: z.number().int(),
+		quantity: z.number().int().min(1).max(32767),
+		other_packaging_type_title: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11InvoiceItemNestedCreate = z
@@ -1905,6 +2393,29 @@ const v11Def_V11InvoiceItemNestedCreate = z
 		taric_code: z.string().min(10).max(10).optional(),
 		warehouse: z.string().nullable().optional(),
 		skip_stock_update: z.boolean().optional(),
+	})
+	.strict();
+const v11Def_V11InvoiceItemNestedCreateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		product: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		unit_measure: z.number().int().nullable().optional(),
+		unit_value: z.string().nullable().optional(),
+		unit_value_gross: z.string().nullable().optional(),
+		unit_discount: z.string().nullable().optional(),
+		unit_discount_gross: z.string().nullable().optional(),
+		unit_discount_percentage: z.string().nullable().optional(),
+		unit_discount_mode: z.string().nullable().optional(),
+		taxes: z.array(z.string()).nullable().optional(),
+		unit_total: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
+		project: z.string().nullable().optional(),
+		taric_code: z.string().nullable().optional(),
+		warehouse: z.string().nullable().optional(),
+		skip_stock_update: z.boolean().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11InvoiceCreate = z
@@ -1962,55 +2473,64 @@ const v11Def_V11InvoiceCreate = z
 	.strict();
 const v11Def_PUV11InvoiceCreate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		documenttype: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
 		sequence: z.string().nullable().optional(),
-		number: z.string().max(100).optional(),
-		date: z.string().optional(),
+		number: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		due_days: z.number().int().min(0).max(2147483647).nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_display_name: z.string().min(1).max(203).optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v11Def_BillingAddress.optional(),
-		shipping_address: v11Def_ShippingAddress.optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		loading_address: v11Def_LoadingAddress.optional(),
+		client: z.string().nullable().optional(),
+		client_display_name: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v11Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v11Def_ShippingAddressResponse.nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		loading_address: v11Def_LoadingAddressResponse.nullable().optional(),
 		dispatch_date: z.string().nullable().optional(),
 		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
+		vehicle_number: z.string().nullable().optional(),
 		move_purpose: z.number().int().nullable().optional(),
 		related_entities: z
-			.array(v11Def_InvoiceRelatedEntities)
+			.array(v11Def_InvoiceRelatedEntitiesResponse)
 			.nullable()
 			.optional(),
-		packages: z.array(v11Def_InvoicePackageNested).nullable().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v11Def_V11InvoiceItemNestedCreate).optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		withholding_taxes: z.array(z.string()).optional(),
-		payable: z.string().optional(),
-		paid: z.string().optional(),
-		template: z.string().optional(),
-		terms: z.string().optional(),
-		public_notes: z.string().optional(),
-		payment_gateways: z.array(z.string()).optional(),
-		trackingcategories: z.array(v11Def_RecordTrackingCategoryNested).optional(),
-		permalink: z.string().min(1).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		packages: z
+			.array(v11Def_InvoicePackageNestedResponse)
+			.nullable()
+			.optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v11Def_V11InvoiceItemNestedCreateResponse)
+			.nullable()
+			.optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		withholding_taxes: z.array(z.string()).nullable().optional(),
+		payable: z.string().nullable().optional(),
+		paid: z.string().nullable().optional(),
+		template: z.string().nullable().optional(),
+		terms: z.string().nullable().optional(),
+		public_notes: z.string().nullable().optional(),
+		payment_gateways: z.array(z.string()).nullable().optional(),
+		trackingcategories: z
+			.array(v11Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		permalink: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11InvoiceItemNestedRetrieveUpdate = z
@@ -2036,57 +2556,89 @@ const v11Def_V11InvoiceItemNestedRetrieveUpdate = z
 		skip_stock_update: z.boolean().optional(),
 	})
 	.strict();
+const v11Def_V11InvoiceItemNestedRetrieveUpdateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		product: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		unit_measure: z.number().int().nullable().optional(),
+		unit_value: z.string().nullable().optional(),
+		unit_value_gross: z.string().nullable().optional(),
+		unit_discount: z.string().nullable().optional(),
+		unit_discount_gross: z.string().nullable().optional(),
+		unit_discount_percentage: z.string().nullable().optional(),
+		unit_discount_mode: z.string().nullable().optional(),
+		taxes: z.array(z.string()).nullable().optional(),
+		unit_total: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
+		project: z.string().nullable().optional(),
+		taric_code: z.string().nullable().optional(),
+		warehouse: z.string().nullable().optional(),
+		skip_stock_update: z.boolean().nullable().optional(),
+	})
+	.strict();
 const v11Def_PUV11InvoiceRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		documenttype: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
 		sequence: z.string().nullable().optional(),
-		number: z.string().max(100).optional(),
-		date: z.string().optional(),
+		number: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		due_days: z.number().int().min(0).max(2147483647).nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_display_name: z.string().min(1).max(203).optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v11Def_BillingAddress.optional(),
-		shipping_address: v11Def_ShippingAddress.optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		loading_address: v11Def_LoadingAddress.optional(),
+		client: z.string().nullable().optional(),
+		client_display_name: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v11Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v11Def_ShippingAddressResponse.nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		loading_address: v11Def_LoadingAddressResponse.nullable().optional(),
 		dispatch_date: z.string().nullable().optional(),
 		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
+		vehicle_number: z.string().nullable().optional(),
 		move_purpose: z.number().int().nullable().optional(),
 		related_entities: z
-			.array(v11Def_InvoiceRelatedEntities)
+			.array(v11Def_InvoiceRelatedEntitiesResponse)
 			.nullable()
 			.optional(),
-		packages: z.array(v11Def_InvoicePackageNested).nullable().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v11Def_V11InvoiceItemNestedRetrieveUpdate).optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		withholding_taxes: z.array(z.string()).optional(),
-		payable: z.string().optional(),
-		paid: z.string().optional(),
-		template: z.string().optional(),
-		terms: z.string().optional(),
-		public_notes: z.string().optional(),
-		payment_gateways: z.array(z.string()).optional(),
-		trackingcategories: z.array(v11Def_RecordTrackingCategoryNested).optional(),
-		permalink: z.string().min(1).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		packages: z
+			.array(v11Def_InvoicePackageNestedResponse)
+			.nullable()
+			.optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v11Def_V11InvoiceItemNestedRetrieveUpdateResponse)
+			.nullable()
+			.optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		withholding_taxes: z.array(z.string()).nullable().optional(),
+		payable: z.string().nullable().optional(),
+		paid: z.string().nullable().optional(),
+		template: z.string().nullable().optional(),
+		terms: z.string().nullable().optional(),
+		public_notes: z.string().nullable().optional(),
+		payment_gateways: z.array(z.string()).nullable().optional(),
+		trackingcategories: z
+			.array(v11Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		permalink: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11InvoiceUpdate = z
@@ -2144,55 +2696,64 @@ const v11Def_V11InvoiceUpdate = z
 	.strict();
 const v11Def_PUV11InvoiceUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		documenttype: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
 		sequence: z.string().nullable().optional(),
-		number: z.string().max(100).optional(),
-		date: z.string().optional(),
+		number: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		due_days: z.number().int().min(0).max(2147483647).nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_display_name: z.string().min(1).max(203).optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v11Def_BillingAddress.optional(),
-		shipping_address: v11Def_ShippingAddress.optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		loading_address: v11Def_LoadingAddress.optional(),
+		client: z.string().nullable().optional(),
+		client_display_name: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v11Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v11Def_ShippingAddressResponse.nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		loading_address: v11Def_LoadingAddressResponse.nullable().optional(),
 		dispatch_date: z.string().nullable().optional(),
 		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
+		vehicle_number: z.string().nullable().optional(),
 		move_purpose: z.number().int().nullable().optional(),
 		related_entities: z
-			.array(v11Def_InvoiceRelatedEntities)
+			.array(v11Def_InvoiceRelatedEntitiesResponse)
 			.nullable()
 			.optional(),
-		packages: z.array(v11Def_InvoicePackageNested).nullable().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v11Def_V11InvoiceItemNestedRetrieveUpdate).optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		withholding_taxes: z.array(z.string()).optional(),
-		payable: z.string().optional(),
-		paid: z.string().optional(),
-		template: z.string().optional(),
-		terms: z.string().optional(),
-		public_notes: z.string().optional(),
-		payment_gateways: z.array(z.string()).optional(),
-		trackingcategories: z.array(v11Def_RecordTrackingCategoryNested).optional(),
-		permalink: z.string().min(1).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		packages: z
+			.array(v11Def_InvoicePackageNestedResponse)
+			.nullable()
+			.optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v11Def_V11InvoiceItemNestedRetrieveUpdateResponse)
+			.nullable()
+			.optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		withholding_taxes: z.array(z.string()).nullable().optional(),
+		payable: z.string().nullable().optional(),
+		paid: z.string().nullable().optional(),
+		template: z.string().nullable().optional(),
+		terms: z.string().nullable().optional(),
+		public_notes: z.string().nullable().optional(),
+		payment_gateways: z.array(z.string()).nullable().optional(),
+		trackingcategories: z
+			.array(v11Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		permalink: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_PUV11InvoicePartialUpdate = z
@@ -2208,6 +2769,24 @@ const v11Def_PUV11InvoicePartialUpdate = z
 		organization: z.number().int().optional(),
 		created: z.string().optional(),
 		modified: z.string().optional(),
+	})
+	.strict();
+const v11Def_PUV11InvoicePartialUpdateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		payment_gateways: z.array(z.string()).nullable().optional(),
+		trackingcategories: z
+			.array(v11Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_InvoiceEmailFromTemplate = z
@@ -2237,20 +2816,20 @@ const v11Def_InvoiceEmail = z
 	.strict();
 const v11Def_PUInvoiceMarkVoidResponse = z
 	.object({
-		status: z.string().optional(),
+		status: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_PUInvoiceCreditTransactionInvSerializer = z
 	.object({
-		id: z.string().min(1).optional(),
-		representation: z.string().optional(),
-		creditnote: z.string().optional(),
-		amount: z.string().optional(),
-		currency_code: z.string().optional(),
-		date: z.string().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		creditnote: z.string().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_InvoiceCreditTransactionInv = z
@@ -2266,14 +2845,27 @@ const v11Def_InvoiceCreditTransactionInv = z
 		modified: z.string().optional(),
 	})
 	.strict();
+const v11Def_InvoiceCreditTransactionInvResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		creditnote: z.string(),
+		amount: z.string(),
+		currency_code: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
+	})
+	.strict();
 const v11Def_PUV11NumberingSequence = z
 	.object({
-		id: z.string().min(1).optional(),
-		name: z.string().min(1).max(10).optional(),
-		documenttype: z.string().min(1).optional(),
-		organization: z.string().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		name: z.string().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
+		organization: z.string().nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11NumberingSequence = z
@@ -2298,47 +2890,47 @@ const v11Def_V11NumberingSequenceUpdate = z
 	.strict();
 const v11Def_PUV11NumberingSequenceUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		name: z.string().min(1).max(10).optional(),
-		documenttype: z.string().min(1).optional(),
-		organization: z.string().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		name: z.string().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
+		organization: z.string().nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_PUV11PaymentGatewayList = z
 	.object({
-		id: z.string().min(1).optional(),
-		title: z.string().min(1).max(30).optional(),
-		backend: z.string().optional(),
-		active: z.boolean().optional(),
-		default: z.boolean().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		backend: z.string().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		default: z.boolean().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_PUV11ProductOrServiceList = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		title: z.string().min(1).max(150).optional(),
-		code: z.string().max(40).optional(),
-		description: z.string().optional(),
-		sales: z.boolean().optional(),
-		sale_value: z.string().optional(),
-		sale_taxes: z.array(z.string()).optional(),
-		purchases: z.boolean().optional(),
-		purchase_value: z.string().optional(),
-		purchase_taxes: z.array(z.string()).optional(),
-		manage: z.boolean().optional(),
-		stock: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		code: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		sales: z.boolean().nullable().optional(),
+		sale_value: z.string().nullable().optional(),
+		sale_taxes: z.array(z.string()).nullable().optional(),
+		purchases: z.boolean().nullable().optional(),
+		purchase_value: z.string().nullable().optional(),
+		purchase_taxes: z.array(z.string()).nullable().optional(),
+		manage: z.boolean().nullable().optional(),
+		stock: z.string().nullable().optional(),
 		unit_measure: z.number().int().nullable().optional(),
-		active: z.boolean().optional(),
-		taric_code: z.string().min(10).max(10).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		active: z.boolean().nullable().optional(),
+		taric_code: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11ProductOrServiceCreate = z
@@ -2367,50 +2959,56 @@ const v11Def_V11ProductOrServiceCreate = z
 	.strict();
 const v11Def_PUV11ProductOrServiceCreate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		title: z.string().min(1).max(150).optional(),
-		code: z.string().max(40).optional(),
-		description: z.string().optional(),
-		sales: z.boolean().optional(),
-		sale_value: z.string().optional(),
-		sale_taxes: z.array(z.string()).optional(),
-		purchases: z.boolean().optional(),
-		purchase_value: z.string().optional(),
-		purchase_taxes: z.array(z.string()).optional(),
-		manage: z.boolean().optional(),
-		stock: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		code: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		sales: z.boolean().nullable().optional(),
+		sale_value: z.string().nullable().optional(),
+		sale_taxes: z.array(z.string()).nullable().optional(),
+		purchases: z.boolean().nullable().optional(),
+		purchase_value: z.string().nullable().optional(),
+		purchase_taxes: z.array(z.string()).nullable().optional(),
+		manage: z.boolean().nullable().optional(),
+		stock: z.string().nullable().optional(),
 		unit_measure: z.number().int().nullable().optional(),
-		trackingcategories: z.array(v11Def_RecordTrackingCategoryNested).optional(),
-		active: z.boolean().optional(),
-		taric_code: z.string().min(10).max(10).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		trackingcategories: z
+			.array(v11Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		active: z.boolean().nullable().optional(),
+		taric_code: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_PUV11ProductOrServiceRetrieveUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		title: z.string().min(1).max(150).optional(),
-		code: z.string().max(40).optional(),
-		description: z.string().optional(),
-		sales: z.boolean().optional(),
-		sale_value: z.string().optional(),
-		sale_taxes: z.array(z.string()).optional(),
-		purchases: z.boolean().optional(),
-		purchase_value: z.string().optional(),
-		purchase_taxes: z.array(z.string()).optional(),
-		manage: z.boolean().optional(),
-		stock: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		code: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		sales: z.boolean().nullable().optional(),
+		sale_value: z.string().nullable().optional(),
+		sale_taxes: z.array(z.string()).nullable().optional(),
+		purchases: z.boolean().nullable().optional(),
+		purchase_value: z.string().nullable().optional(),
+		purchase_taxes: z.array(z.string()).nullable().optional(),
+		manage: z.boolean().nullable().optional(),
+		stock: z.string().nullable().optional(),
 		unit_measure: z.number().int().nullable().optional(),
-		trackingcategories: z.array(v11Def_RecordTrackingCategoryNested).optional(),
-		active: z.boolean().optional(),
-		taric_code: z.string().min(10).max(10).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		trackingcategories: z
+			.array(v11Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		active: z.boolean().nullable().optional(),
+		taric_code: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11ProductOrServiceRetrieveUpdate = z
@@ -2439,81 +3037,84 @@ const v11Def_V11ProductOrServiceRetrieveUpdate = z
 	.strict();
 const v11Def_PUV11ProjectList = z
 	.object({
-		id: z.string().min(1).optional(),
-		name: z.string().min(1).max(100).optional(),
-		description: z.string().optional(),
-		client: z.string().optional(),
-		billing_method: z.string().optional(),
-		fixed_cost: z.string().optional(),
-		hourly_rate: z.string().optional(),
-		active: z.boolean().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		name: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		client: z.string().nullable().optional(),
+		billing_method: z.string().nullable().optional(),
+		fixed_cost: z.string().nullable().optional(),
+		hourly_rate: z.string().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11ProjectMemberNestedRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		member: z.number().int(),
-		manager: z.string().optional(),
-		hourly_rate: z.string().optional(),
-		cost_per_hour: z.string().optional(),
+		id: z.string().nullable().optional(),
+		member: ElorusIdReferenceSchema,
+		manager: z.boolean().nullable().optional(),
+		hourly_rate: z.string().nullable().optional(),
+		cost_per_hour: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_PUV11ProjectRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		name: z.string().min(1).max(100).optional(),
-		description: z.string().optional(),
-		client: z.string().optional(),
-		billing_method: z.string().optional(),
-		fixed_cost: z.string().optional(),
-		hourly_rate: z.string().optional(),
-		members: z.array(v11Def_V11ProjectMemberNestedRetrieve).optional(),
-		active: z.boolean().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		name: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		client: z.string().nullable().optional(),
+		billing_method: z.string().nullable().optional(),
+		fixed_cost: z.string().nullable().optional(),
+		hourly_rate: z.string().nullable().optional(),
+		members: z
+			.array(v11Def_V11ProjectMemberNestedRetrieve)
+			.nullable()
+			.optional(),
+		active: z.boolean().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_PUV11RecurringInvoiceList = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		start_datetime: z.string().optional(),
-		interval: z.number().int().min(0).max(2147483647).optional(),
-		period: z.string().optional(),
-		end_datetime: z.string().optional(),
-		last_execution: z.string().optional(),
-		next_execution: z.string().optional(),
-		paused: z.boolean().optional(),
-		representation: z.string().min(1).optional(),
-		documenttype: z.string().optional(),
-		sequence: z.string().optional(),
-		draft: z.boolean().optional(),
-		auto_email: z.boolean().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		start_datetime: z.string().nullable().optional(),
+		interval: z.number().int().min(0).max(2147483647).nullable().optional(),
+		period: z.string().nullable().optional(),
+		end_datetime: z.string().nullable().optional(),
+		last_execution: z.string().nullable().optional(),
+		next_execution: z.string().nullable().optional(),
+		paused: z.boolean().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
+		sequence: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		auto_email: z.boolean().nullable().optional(),
 		due_days: z.number().int().min(0).max(2147483647).nullable().optional(),
-		template: z.string().optional(),
+		template: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v11Def_BillingAddress.optional(),
-		shipping_address: v11Def_ShippingAddress.optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		payable: z.string().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		client: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v11Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v11Def_ShippingAddressResponse.nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		payable: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11RecurringInvoiceItemNestedRetrieveCreate = z
@@ -2536,6 +3137,28 @@ const v11Def_V11RecurringInvoiceItemNestedRetrieveCreate = z
 		project: z.string().nullable().optional(),
 		warehouse: z.string().nullable().optional(),
 		skip_stock_update: z.boolean().optional(),
+	})
+	.strict();
+const v11Def_V11RecurringInvoiceItemNestedRetrieveCreateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		product: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		unit_measure: z.number().int().nullable().optional(),
+		unit_value: z.string().nullable().optional(),
+		unit_value_gross: z.string().nullable().optional(),
+		unit_discount: z.string().nullable().optional(),
+		unit_discount_gross: z.string().nullable().optional(),
+		unit_discount_percentage: z.string().nullable().optional(),
+		unit_discount_mode: z.string().nullable().optional(),
+		taxes: z.array(z.string()).nullable().optional(),
+		unit_total: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
+		project: z.string().nullable().optional(),
+		warehouse: z.string().nullable().optional(),
+		skip_stock_update: z.boolean().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11RecurringInvoiceCreate = z
@@ -2583,92 +3206,100 @@ const v11Def_V11RecurringInvoiceCreate = z
 	.strict();
 const v11Def_PUV11RecurringInvoiceCreate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		start_datetime: z.string().optional(),
-		interval: z.number().int().min(0).max(2147483647).optional(),
-		period: z.string().optional(),
-		end_datetime: z.string().optional(),
-		last_execution: z.string().optional(),
-		next_execution: z.string().optional(),
-		paused: z.boolean().optional(),
-		representation: z.string().min(1).optional(),
-		documenttype: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		start_datetime: z.string().nullable().optional(),
+		interval: z.number().int().min(0).max(2147483647).nullable().optional(),
+		period: z.string().nullable().optional(),
+		end_datetime: z.string().nullable().optional(),
+		last_execution: z.string().nullable().optional(),
+		next_execution: z.string().nullable().optional(),
+		paused: z.boolean().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
 		sequence: z.string().nullable().optional(),
-		draft: z.boolean().optional(),
-		auto_email: z.boolean().optional(),
+		draft: z.boolean().nullable().optional(),
+		auto_email: z.boolean().nullable().optional(),
 		due_days: z.number().int().min(0).max(2147483647).nullable().optional(),
-		template: z.string().optional(),
+		template: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_display_name: z.string().min(1).max(203).optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v11Def_BillingAddress.optional(),
-		shipping_address: v11Def_ShippingAddress.optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
+		client: z.string().nullable().optional(),
+		client_display_name: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v11Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v11Def_ShippingAddressResponse.nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
 		items: z
-			.array(v11Def_V11RecurringInvoiceItemNestedRetrieveCreate)
+			.array(v11Def_V11RecurringInvoiceItemNestedRetrieveCreateResponse)
+			.nullable()
 			.optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		withholding_taxes: z.array(z.string()).optional(),
-		payable: z.string().optional(),
-		trackingcategories: z.array(v11Def_RecordTrackingCategoryNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		withholding_taxes: z.array(z.string()).nullable().optional(),
+		payable: z.string().nullable().optional(),
+		trackingcategories: z
+			.array(v11Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_PUV11RecurringInvoiceRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		start_datetime: z.string().optional(),
-		interval: z.number().int().min(0).max(2147483647).optional(),
-		period: z.string().optional(),
-		end_datetime: z.string().optional(),
-		last_execution: z.string().optional(),
-		next_execution: z.string().optional(),
-		paused: z.boolean().optional(),
-		representation: z.string().min(1).optional(),
-		documenttype: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		start_datetime: z.string().nullable().optional(),
+		interval: z.number().int().min(0).max(2147483647).nullable().optional(),
+		period: z.string().nullable().optional(),
+		end_datetime: z.string().nullable().optional(),
+		last_execution: z.string().nullable().optional(),
+		next_execution: z.string().nullable().optional(),
+		paused: z.boolean().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
 		sequence: z.string().nullable().optional(),
-		draft: z.boolean().optional(),
-		auto_email: z.boolean().optional(),
+		draft: z.boolean().nullable().optional(),
+		auto_email: z.boolean().nullable().optional(),
 		due_days: z.number().int().min(0).max(2147483647).nullable().optional(),
-		template: z.string().optional(),
+		template: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_display_name: z.string().min(1).max(203).optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v11Def_BillingAddress.optional(),
-		shipping_address: v11Def_ShippingAddress.optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
+		client: z.string().nullable().optional(),
+		client_display_name: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v11Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v11Def_ShippingAddressResponse.nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
 		items: z
-			.array(v11Def_V11RecurringInvoiceItemNestedRetrieveCreate)
+			.array(v11Def_V11RecurringInvoiceItemNestedRetrieveCreateResponse)
+			.nullable()
 			.optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		withholding_taxes: z.array(z.string()).optional(),
-		payable: z.string().optional(),
-		trackingcategories: z.array(v11Def_RecordTrackingCategoryNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		withholding_taxes: z.array(z.string()).nullable().optional(),
+		payable: z.string().nullable().optional(),
+		trackingcategories: z
+			.array(v11Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11RecurringInvoiceItemNestedUpdate = z
@@ -2691,6 +3322,28 @@ const v11Def_V11RecurringInvoiceItemNestedUpdate = z
 		project: z.string().nullable().optional(),
 		warehouse: z.string().nullable().optional(),
 		skip_stock_update: z.boolean().optional(),
+	})
+	.strict();
+const v11Def_V11RecurringInvoiceItemNestedUpdateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		product: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		unit_measure: z.number().int().nullable().optional(),
+		unit_value: z.string().nullable().optional(),
+		unit_value_gross: z.string().nullable().optional(),
+		unit_discount: z.string().nullable().optional(),
+		unit_discount_gross: z.string().nullable().optional(),
+		unit_discount_percentage: z.string().nullable().optional(),
+		unit_discount_mode: z.string().nullable().optional(),
+		taxes: z.array(z.string()).nullable().optional(),
+		unit_total: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
+		project: z.string().nullable().optional(),
+		warehouse: z.string().nullable().optional(),
+		skip_stock_update: z.boolean().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11RecurringInvoiceUpdate = z
@@ -2738,73 +3391,79 @@ const v11Def_V11RecurringInvoiceUpdate = z
 	.strict();
 const v11Def_PUV11RecurringInvoiceUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		start_datetime: z.string().optional(),
-		interval: z.number().int().min(0).max(2147483647).optional(),
-		period: z.string().optional(),
-		end_datetime: z.string().optional(),
-		last_execution: z.string().optional(),
-		next_execution: z.string().optional(),
-		paused: z.boolean().optional(),
-		representation: z.string().min(1).optional(),
-		documenttype: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		start_datetime: z.string().nullable().optional(),
+		interval: z.number().int().min(0).max(2147483647).nullable().optional(),
+		period: z.string().nullable().optional(),
+		end_datetime: z.string().nullable().optional(),
+		last_execution: z.string().nullable().optional(),
+		next_execution: z.string().nullable().optional(),
+		paused: z.boolean().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
 		sequence: z.string().nullable().optional(),
-		draft: z.boolean().optional(),
-		auto_email: z.boolean().optional(),
+		draft: z.boolean().nullable().optional(),
+		auto_email: z.boolean().nullable().optional(),
 		due_days: z.number().int().min(0).max(2147483647).nullable().optional(),
-		template: z.string().optional(),
+		template: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_display_name: z.string().min(1).max(203).optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v11Def_BillingAddress.optional(),
-		shipping_address: v11Def_ShippingAddress.optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v11Def_V11RecurringInvoiceItemNestedUpdate).optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		withholding_taxes: z.array(z.string()).optional(),
-		payable: z.string().optional(),
-		trackingcategories: z.array(v11Def_RecordTrackingCategoryNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		client: z.string().nullable().optional(),
+		client_display_name: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v11Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v11Def_ShippingAddressResponse.nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v11Def_V11RecurringInvoiceItemNestedUpdateResponse)
+			.nullable()
+			.optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		withholding_taxes: z.array(z.string()).nullable().optional(),
+		payable: z.string().nullable().optional(),
+		trackingcategories: z
+			.array(v11Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_PUV11PurchaseCreditNoteList = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
 		documenttype: z.string().nullable().optional(),
-		self_billed: z.boolean().optional(),
-		sequence: z.string().optional(),
-		reference: z.string().max(150).optional(),
-		date: z.string().optional(),
+		self_billed: z.boolean().nullable().optional(),
+		sequence: z.string().nullable().optional(),
+		reference: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		supplier: z.string().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		payable: z.string().optional(),
-		paid: z.string().optional(),
+		supplier: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		payable: z.string().nullable().optional(),
+		paid: z.string().nullable().optional(),
 		permalink: z.string().nullable().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_PurchaseCreditNoteRelatedEntities = z
@@ -2817,12 +3476,30 @@ const v11Def_PurchaseCreditNoteRelatedEntities = z
 		billing_address: v11Def_BillingAddress.optional(),
 	})
 	.strict();
+const v11Def_PurchaseCreditNoteRelatedEntitiesResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		contact: z.string(),
+		contact_display_name: z.string(),
+		contact_vat_number: z.string().nullable().optional(),
+		type: z.number().int(),
+		billing_address: v11Def_BillingAddressResponse.nullable().optional(),
+	})
+	.strict();
 const v11Def_PurchaseCreditNotePackageNested = z
 	.object({
 		id: z.string().min(1).optional(),
 		packaging_type: z.number().int(),
 		quantity: z.number().int().min(1).max(32767),
 		other_packaging_type_title: z.string().max(150).optional(),
+	})
+	.strict();
+const v11Def_PurchaseCreditNotePackageNestedResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		packaging_type: z.number().int(),
+		quantity: z.number().int().min(1).max(32767),
+		other_packaging_type_title: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11PurchaseCreditNoteItemNestedCreate = z
@@ -2847,6 +3524,30 @@ const v11Def_V11PurchaseCreditNoteItemNestedCreate = z
 		taric_code: z.string().min(10).max(10).optional(),
 		warehouse: z.string().nullable().optional(),
 		skip_stock_update: z.boolean().optional(),
+	})
+	.strict();
+const v11Def_V11PurchaseCreditNoteItemNestedCreateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		product: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		unit_measure: z.number().int().nullable().optional(),
+		unit_value: z.string().nullable().optional(),
+		unit_value_gross: z.string().nullable().optional(),
+		unit_discount: z.string().nullable().optional(),
+		unit_discount_gross: z.string().nullable().optional(),
+		unit_discount_percentage: z.string().nullable().optional(),
+		unit_discount_mode: z.string().nullable().optional(),
+		taxes: z.array(z.string()).nullable().optional(),
+		unit_total: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
+		project: z.string().nullable().optional(),
+		billable: z.boolean().nullable().optional(),
+		expense_category: z.string(),
+		taric_code: z.string().nullable().optional(),
+		warehouse: z.string().nullable().optional(),
+		skip_stock_update: z.boolean().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11PurchaseCreditNoteCreate = z
@@ -2906,57 +3607,63 @@ const v11Def_V11PurchaseCreditNoteCreate = z
 	.strict();
 const v11Def_PUV11PurchaseCreditNoteCreate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
 		documenttype: z.string().nullable().optional(),
-		self_billed: z.boolean().optional(),
+		self_billed: z.boolean().nullable().optional(),
 		sequence: z.string().nullable().optional(),
-		reference: z.string().max(150).optional(),
-		date: z.string().optional(),
+		reference: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		supplier: z.string().optional(),
-		supplier_display_name: z.string().max(203).optional(),
-		supplier_profession: z.string().max(100).optional(),
-		supplier_vat_number: z.string().max(20).optional(),
-		billing_address: v11Def_BillingAddress.optional(),
-		shipping_address: v11Def_ShippingAddress.optional(),
-		supplier_contact_person: z.string().max(101).optional(),
-		supplier_phone_number: z.string().max(30).optional(),
-		supplier_email: z.string().max(100).optional(),
-		loading_address: v11Def_LoadingAddress.optional(),
+		supplier: z.string().nullable().optional(),
+		supplier_display_name: z.string().nullable().optional(),
+		supplier_profession: z.string().nullable().optional(),
+		supplier_vat_number: z.string().nullable().optional(),
+		billing_address: v11Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v11Def_ShippingAddressResponse.nullable().optional(),
+		supplier_contact_person: z.string().nullable().optional(),
+		supplier_phone_number: z.string().nullable().optional(),
+		supplier_email: z.string().nullable().optional(),
+		loading_address: v11Def_LoadingAddressResponse.nullable().optional(),
 		dispatch_date: z.string().nullable().optional(),
 		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
+		vehicle_number: z.string().nullable().optional(),
 		move_purpose: z.number().int().nullable().optional(),
 		related_entities: z
-			.array(v11Def_PurchaseCreditNoteRelatedEntities)
+			.array(v11Def_PurchaseCreditNoteRelatedEntitiesResponse)
 			.nullable()
 			.optional(),
 		packages: z
-			.array(v11Def_PurchaseCreditNotePackageNested)
+			.array(v11Def_PurchaseCreditNotePackageNestedResponse)
 			.nullable()
 			.optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v11Def_V11PurchaseCreditNoteItemNestedCreate).optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		withholding_taxes: z.array(z.string()).optional(),
-		payable: z.string().optional(),
-		paid: z.string().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v11Def_V11PurchaseCreditNoteItemNestedCreateResponse)
+			.nullable()
+			.optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		withholding_taxes: z.array(z.string()).nullable().optional(),
+		payable: z.string().nullable().optional(),
+		paid: z.string().nullable().optional(),
 		template: z.string().nullable().optional(),
-		public_notes: z.string().optional(),
-		trackingcategories: z.array(v11Def_RecordTrackingCategoryNested).optional(),
-		related_documents: z.array(z.string()).optional(),
+		public_notes: z.string().nullable().optional(),
+		trackingcategories: z
+			.array(v11Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		related_documents: z.array(z.string()).nullable().optional(),
 		permalink: z.string().nullable().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11PurchaseCreditNoteItemNestedRetrieveUpdate = z
@@ -2983,61 +3690,89 @@ const v11Def_V11PurchaseCreditNoteItemNestedRetrieveUpdate = z
 		skip_stock_update: z.boolean().optional(),
 	})
 	.strict();
+const v11Def_V11PurchaseCreditNoteItemNestedRetrieveUpdateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		product: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		unit_measure: z.number().int().nullable().optional(),
+		unit_value: z.string().nullable().optional(),
+		unit_value_gross: z.string().nullable().optional(),
+		unit_discount: z.string().nullable().optional(),
+		unit_discount_gross: z.string().nullable().optional(),
+		unit_discount_percentage: z.string().nullable().optional(),
+		unit_discount_mode: z.string().nullable().optional(),
+		taxes: z.array(z.string()).nullable().optional(),
+		unit_total: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
+		project: z.string().nullable().optional(),
+		billable: z.boolean().nullable().optional(),
+		expense_category: z.string(),
+		taric_code: z.string().nullable().optional(),
+		warehouse: z.string().nullable().optional(),
+		skip_stock_update: z.boolean().nullable().optional(),
+	})
+	.strict();
 const v11Def_PUV11PurchaseCreditNoteRetrieveUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
 		documenttype: z.string().nullable().optional(),
-		self_billed: z.boolean().optional(),
+		self_billed: z.boolean().nullable().optional(),
 		sequence: z.string().nullable().optional(),
-		reference: z.string().max(150).optional(),
-		date: z.string().optional(),
+		reference: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		supplier: z.string().optional(),
-		supplier_display_name: z.string().max(203).optional(),
-		supplier_profession: z.string().max(100).optional(),
-		supplier_vat_number: z.string().max(20).optional(),
-		billing_address: v11Def_BillingAddress.optional(),
-		shipping_address: v11Def_ShippingAddress.optional(),
-		supplier_contact_person: z.string().max(101).optional(),
-		supplier_phone_number: z.string().max(30).optional(),
-		supplier_email: z.string().max(100).optional(),
-		loading_address: v11Def_LoadingAddress.optional(),
+		supplier: z.string().nullable().optional(),
+		supplier_display_name: z.string().nullable().optional(),
+		supplier_profession: z.string().nullable().optional(),
+		supplier_vat_number: z.string().nullable().optional(),
+		billing_address: v11Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v11Def_ShippingAddressResponse.nullable().optional(),
+		supplier_contact_person: z.string().nullable().optional(),
+		supplier_phone_number: z.string().nullable().optional(),
+		supplier_email: z.string().nullable().optional(),
+		loading_address: v11Def_LoadingAddressResponse.nullable().optional(),
 		dispatch_date: z.string().nullable().optional(),
 		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
+		vehicle_number: z.string().nullable().optional(),
 		move_purpose: z.number().int().nullable().optional(),
 		related_entities: z
-			.array(v11Def_PurchaseCreditNoteRelatedEntities)
+			.array(v11Def_PurchaseCreditNoteRelatedEntitiesResponse)
 			.nullable()
 			.optional(),
 		packages: z
-			.array(v11Def_PurchaseCreditNotePackageNested)
+			.array(v11Def_PurchaseCreditNotePackageNestedResponse)
 			.nullable()
 			.optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
 		items: z
-			.array(v11Def_V11PurchaseCreditNoteItemNestedRetrieveUpdate)
+			.array(v11Def_V11PurchaseCreditNoteItemNestedRetrieveUpdateResponse)
+			.nullable()
 			.optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		withholding_taxes: z.array(z.string()).optional(),
-		payable: z.string().optional(),
-		paid: z.string().optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		withholding_taxes: z.array(z.string()).nullable().optional(),
+		payable: z.string().nullable().optional(),
+		paid: z.string().nullable().optional(),
 		template: z.string().nullable().optional(),
-		public_notes: z.string().optional(),
-		trackingcategories: z.array(v11Def_RecordTrackingCategoryNested).optional(),
-		related_documents: z.array(z.string()).optional(),
+		public_notes: z.string().nullable().optional(),
+		trackingcategories: z
+			.array(v11Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		related_documents: z.array(z.string()).nullable().optional(),
 		permalink: z.string().nullable().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11PurchaseCreditNoteRetrieveUpdate = z
@@ -3109,6 +3844,23 @@ const v11Def_PUV11PurchaseCreditNotePartialUpdate = z
 		modified: z.string().optional(),
 	})
 	.strict();
+const v11Def_PUV11PurchaseCreditNotePartialUpdateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		trackingcategories: z
+			.array(v11Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
+	})
+	.strict();
 const v11Def_PrivatePurchaseCreditNoteEmailFromTemplate = z
 	.object({
 		to: z.string().min(1),
@@ -3136,20 +3888,20 @@ const v11Def_PrivatePurchaseCreditNoteEmail = z
 	.strict();
 const v11Def_PUPurchaseCreditNoteMarkVoidResponse = z
 	.object({
-		status: z.string().optional(),
+		status: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_PUV11PurchaseCreditTransactionPCNListCreate = z
 	.object({
-		id: z.string().min(1).optional(),
-		representation: z.string().optional(),
-		purchase: z.string().optional(),
-		date: z.string().optional(),
-		currency_code: z.string().optional(),
-		amount: z.string().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		purchase: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11PurchaseCreditTransactionPCNListCreate = z
@@ -3165,94 +3917,108 @@ const v11Def_V11PurchaseCreditTransactionPCNListCreate = z
 		modified: z.string().optional(),
 	})
 	.strict();
+const v11Def_V11PurchaseCreditTransactionPCNListCreateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		purchase: z.string(),
+		date: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		amount: z.string(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
+	})
+	.strict();
 const v11Def_PUV11TaxList = z
 	.object({
-		id: z.string().min(1).optional(),
-		title: z.string().min(1).max(150).optional(),
-		tax_type: z.string().optional(),
-		value_mode: z.string().optional(),
-		operand: z.string().optional(),
-		percentage: z.string().optional(),
-		amount: z.string().optional(),
-		per_unit: z.boolean().optional(),
-		subject_to_vat: z.boolean().optional(),
-		apply_on_document_lines: z.boolean().optional(),
-		for_information_purposes: z.boolean().optional(),
-		active: z.boolean().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		tax_type: z.string().nullable().optional(),
+		value_mode: z.string().nullable().optional(),
+		operand: z.string().nullable().optional(),
+		percentage: z.string().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		per_unit: z.boolean().nullable().optional(),
+		subject_to_vat: z.boolean().nullable().optional(),
+		apply_on_document_lines: z.boolean().nullable().optional(),
+		for_information_purposes: z.boolean().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_PUV11TaxRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		title: z.string().min(1).max(150).optional(),
+		id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
 		title_translations: z
 			.object({
-				bg: z.string().optional(),
-				de: z.string().optional(),
-				el: z.string().optional(),
-				en: z.string().optional(),
-				'en-gb': z.string().optional(),
-				es: z.string().optional(),
-				fr: z.string().optional(),
-				it: z.string().optional(),
+				bg: z.string().nullable().optional(),
+				de: z.string().nullable().optional(),
+				el: z.string().nullable().optional(),
+				en: z.string().nullable().optional(),
+				'en-gb': z.string().nullable().optional(),
+				es: z.string().nullable().optional(),
+				fr: z.string().nullable().optional(),
+				it: z.string().nullable().optional(),
 			})
 			.strict()
+			.nullable()
 			.optional(),
-		tax_type: z.string().optional(),
-		value_mode: z.string().optional(),
-		operand: z.string().optional(),
-		percentage: z.string().optional(),
-		amount: z.string().optional(),
-		per_unit: z.boolean().optional(),
-		subject_to_vat: z.boolean().optional(),
-		apply_on_document_lines: z.boolean().optional(),
-		for_information_purposes: z.boolean().optional(),
-		active: z.boolean().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		tax_type: z.string().nullable().optional(),
+		value_mode: z.string().nullable().optional(),
+		operand: z.string().nullable().optional(),
+		percentage: z.string().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		per_unit: z.boolean().nullable().optional(),
+		subject_to_vat: z.boolean().nullable().optional(),
+		apply_on_document_lines: z.boolean().nullable().optional(),
+		for_information_purposes: z.boolean().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_PUV11ThemeListRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		active: z.boolean().optional(),
-		default: z.boolean().optional(),
-		title: z.string().min(1).max(30).optional(),
-		template: z.string().optional(),
-		language: z.string().optional(),
-		company_name: z.string().max(70).optional(),
-		company_info: z.string().optional(),
-		invoice_terms: z.string().optional(),
-		creditnote_terms: z.string().optional(),
-		estimate_terms: z.string().optional(),
-		invoice_public_notes: z.string().optional(),
-		creditnote_public_notes: z.string().optional(),
-		estimate_public_notes: z.string().optional(),
-		self_billed_public_notes: z.string().optional(),
-		self_billed_supplier_credit_public_notes: z.string().optional(),
-		slogan: z.string().max(200).optional(),
-		invoice_email_message: z.string().optional(),
-		estimate_email_message: z.string().optional(),
-		purchase_email_message: z.string().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		default: z.boolean().nullable().optional(),
+		title: z.string().nullable().optional(),
+		template: z.string().nullable().optional(),
+		language: z.string().nullable().optional(),
+		company_name: z.string().nullable().optional(),
+		company_info: z.string().nullable().optional(),
+		invoice_terms: z.string().nullable().optional(),
+		creditnote_terms: z.string().nullable().optional(),
+		estimate_terms: z.string().nullable().optional(),
+		invoice_public_notes: z.string().nullable().optional(),
+		creditnote_public_notes: z.string().nullable().optional(),
+		estimate_public_notes: z.string().nullable().optional(),
+		self_billed_public_notes: z.string().nullable().optional(),
+		self_billed_supplier_credit_public_notes: z.string().nullable().optional(),
+		slogan: z.string().nullable().optional(),
+		invoice_email_message: z.string().nullable().optional(),
+		estimate_email_message: z.string().nullable().optional(),
+		purchase_email_message: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_PUV11TrackingCategoryListRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		title: z.string().min(1).max(255).optional(),
-		active: z.boolean().optional(),
-		options: z.array(z.string()).optional(),
-		application: z.array(z.string()).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		options: z.array(z.string()).nullable().optional(),
+		application: z.array(z.string()).nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_WarehouseAddress = z
@@ -3261,6 +4027,15 @@ const v11Def_WarehouseAddress = z
 		city: z.string().max(100),
 		state: z.string().max(100).optional(),
 		zip: z.string().max(20),
+		country: z.string(),
+	})
+	.strict();
+const v11Def_WarehouseAddressResponse = z
+	.object({
+		address_line: z.string(),
+		city: z.string(),
+		state: z.string().nullable().optional(),
+		zip: z.string(),
 		country: z.string(),
 	})
 	.strict();
@@ -3274,6 +4049,18 @@ const v11Def_PUV11WarehouseSerializer = z
 		organization: z.number().int().optional(),
 		created: z.string().optional(),
 		modified: z.string().optional(),
+	})
+	.strict();
+const v11Def_PUV11WarehouseSerializerResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		name: z.string().nullable().optional(),
+		warehouse_address: v11Def_WarehouseAddressResponse.nullable().optional(),
+		default: z.boolean().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v11Def_V11Warehouse = z
@@ -3291,31 +4078,31 @@ const v11Def_V11Warehouse = z
 
 const v12Def_PUV12PurchaseList = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
 		documenttype: z.string().nullable().optional(),
-		self_billed: z.boolean().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		reference: z.string().max(150).optional(),
-		date: z.string().optional(),
+		self_billed: z.boolean().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		reference: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		due_date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		supplier: z.string().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		payable: z.string().optional(),
-		paid: z.string().optional(),
+		supplier: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		payable: z.string().nullable().optional(),
+		paid: z.string().nullable().optional(),
 		permalink: z.string().nullable().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_BillingAddress = z
@@ -3327,12 +4114,31 @@ const v12Def_BillingAddress = z
 		country: z.string(),
 	})
 	.strict();
+const v12Def_BillingAddressResponse = z
+	.object({
+		address_line: z.string(),
+		city: z.string(),
+		state: z.string().nullable().optional(),
+		zip: z.string(),
+		country: z.string(),
+	})
+	.strict();
 const v12Def_ShippingAddress = z
 	.object({
 		address_line: z.string().max(200),
 		city: z.string().max(100),
 		state: z.string().max(100).optional(),
 		zip: z.string().max(20),
+		country: z.string(),
+		branch_code: z.number().int().max(2147483647).nullable().optional(),
+	})
+	.strict();
+const v12Def_ShippingAddressResponse = z
+	.object({
+		address_line: z.string(),
+		city: z.string(),
+		state: z.string().nullable().optional(),
+		zip: z.string(),
 		country: z.string(),
 		branch_code: z.number().int().max(2147483647).nullable().optional(),
 	})
@@ -3347,6 +4153,16 @@ const v12Def_LoadingAddress = z
 		branch_code: z.number().int().max(2147483647).nullable().optional(),
 	})
 	.strict();
+const v12Def_LoadingAddressResponse = z
+	.object({
+		address_line: z.string(),
+		city: z.string(),
+		state: z.string().nullable().optional(),
+		zip: z.string(),
+		country: z.string(),
+		branch_code: z.number().int().max(2147483647).nullable().optional(),
+	})
+	.strict();
 const v12Def_PurchaseRelatedEntities = z
 	.object({
 		id: z.string().min(1).optional(),
@@ -3357,12 +4173,30 @@ const v12Def_PurchaseRelatedEntities = z
 		billing_address: v12Def_BillingAddress.optional(),
 	})
 	.strict();
+const v12Def_PurchaseRelatedEntitiesResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		contact: z.string(),
+		contact_display_name: z.string(),
+		contact_vat_number: z.string().nullable().optional(),
+		type: z.number().int(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+	})
+	.strict();
 const v12Def_PurchasePackageNested = z
 	.object({
 		id: z.string().min(1).optional(),
 		packaging_type: z.number().int(),
 		quantity: z.number().int().min(1).max(32767),
 		other_packaging_type_title: z.string().max(150).optional(),
+	})
+	.strict();
+const v12Def_PurchasePackageNestedResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		packaging_type: z.number().int(),
+		quantity: z.number().int().min(1).max(32767),
+		other_packaging_type_title: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PurchaseItemTaxNested = z
@@ -3372,6 +4206,15 @@ const v12Def_PurchaseItemTaxNested = z
 		amount: z.string().optional(),
 		vat_amount: z.string().optional(),
 		auto_calculate_vat: z.boolean().optional(),
+	})
+	.strict();
+const v12Def_PurchaseItemTaxNestedResponse = z
+	.object({
+		tax: z.string(),
+		auto_calculate: z.boolean().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		vat_amount: z.string().nullable().optional(),
+		auto_calculate_vat: z.boolean().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12PurchaseItemNestedCreate = z
@@ -3399,11 +4242,43 @@ const v12Def_V12PurchaseItemNestedCreate = z
 		skip_stock_update: z.boolean().optional(),
 	})
 	.strict();
+const v12Def_V12PurchaseItemNestedCreateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		product: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		unit_measure: z.string().nullable().optional(),
+		unit_value: z.string().nullable().optional(),
+		unit_value_gross: z.string().nullable().optional(),
+		unit_discount: z.string().nullable().optional(),
+		unit_discount_gross: z.string().nullable().optional(),
+		unit_discount_percentage: z.string().nullable().optional(),
+		unit_discount_mode: z.string().nullable().optional(),
+		taxes: z.array(v12Def_PurchaseItemTaxNestedResponse).nullable().optional(),
+		unit_total: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
+		project: z.string().nullable().optional(),
+		billable: z.boolean().nullable().optional(),
+		expense_category: z.string().nullable().optional(),
+		taric_code: z.string().nullable().optional(),
+		warehouse: z.string().nullable().optional(),
+		line_type: z.number().int().nullable().optional(),
+		skip_stock_update: z.boolean().nullable().optional(),
+	})
+	.strict();
 const v12Def_PurchaseStandardTaxNested = z
 	.object({
 		tax: z.string(),
 		auto_calculate: z.boolean().optional(),
 		amount: z.string().optional(),
+	})
+	.strict();
+const v12Def_PurchaseStandardTaxNestedResponse = z
+	.object({
+		tax: z.string(),
+		auto_calculate: z.boolean().nullable().optional(),
+		amount: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PurchaseWithholdingTaxNested = z
@@ -3414,10 +4289,24 @@ const v12Def_PurchaseWithholdingTaxNested = z
 		auto_calculate: z.boolean().optional(),
 	})
 	.strict();
+const v12Def_PurchaseWithholdingTaxNestedResponse = z
+	.object({
+		tax: z.string(),
+		amount: z.string().nullable().optional(),
+		subtotal: z.number().int().nullable().optional(),
+		auto_calculate: z.boolean().nullable().optional(),
+	})
+	.strict();
 const v12Def_RecordTrackingCategoryNested = z
 	.object({
 		trackingcategory: z.string(),
 		option: z.string().min(1).max(225),
+	})
+	.strict();
+const v12Def_RecordTrackingCategoryNestedResponse = z
+	.object({
+		trackingcategory: z.string(),
+		option: z.string(),
 	})
 	.strict();
 const v12Def_V12PurchaseCreate = z
@@ -3477,57 +4366,72 @@ const v12Def_V12PurchaseCreate = z
 	.strict();
 const v12Def_PUV12PurchaseCreate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
 		documenttype: z.string().nullable().optional(),
-		self_billed: z.boolean().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		reference: z.string().max(150).optional(),
-		date: z.string().optional(),
+		self_billed: z.boolean().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		reference: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		due_days: z.number().int().min(0).max(2147483647).nullable().optional(),
 		branch: z.string().nullable().optional(),
-		supplier: z.string().optional(),
-		supplier_display_name: z.string().max(203).optional(),
-		supplier_profession: z.string().max(100).optional(),
-		supplier_vat_number: z.string().max(20).optional(),
-		billing_address: v12Def_BillingAddress.optional(),
-		shipping_address: v12Def_ShippingAddress.optional(),
-		supplier_contact_person: z.string().max(101).optional(),
-		supplier_phone_number: z.string().max(30).optional(),
-		supplier_email: z.string().max(100).optional(),
-		loading_address: v12Def_LoadingAddress.optional(),
+		supplier: z.string().nullable().optional(),
+		supplier_display_name: z.string().nullable().optional(),
+		supplier_profession: z.string().nullable().optional(),
+		supplier_vat_number: z.string().nullable().optional(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v12Def_ShippingAddressResponse.nullable().optional(),
+		supplier_contact_person: z.string().nullable().optional(),
+		supplier_phone_number: z.string().nullable().optional(),
+		supplier_email: z.string().nullable().optional(),
+		loading_address: v12Def_LoadingAddressResponse.nullable().optional(),
 		dispatch_date: z.string().nullable().optional(),
 		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
+		vehicle_number: z.string().nullable().optional(),
 		move_purpose: z.number().int().nullable().optional(),
 		related_entities: z
-			.array(v12Def_PurchaseRelatedEntities)
+			.array(v12Def_PurchaseRelatedEntitiesResponse)
 			.nullable()
 			.optional(),
-		packages: z.array(v12Def_PurchasePackageNested).nullable().optional(),
-		related_documents: z.array(z.string()).optional(),
-		delivery_notes: z.array(z.string()).optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v12Def_V12PurchaseItemNestedCreate).optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		taxes: z.array(v12Def_PurchaseStandardTaxNested).optional(),
-		total: z.string().optional(),
-		withholding_taxes: z.array(v12Def_PurchaseWithholdingTaxNested).optional(),
-		payable: z.string().optional(),
-		paid: z.string().optional(),
+		packages: z
+			.array(v12Def_PurchasePackageNestedResponse)
+			.nullable()
+			.optional(),
+		related_documents: z.array(z.string()).nullable().optional(),
+		delivery_notes: z.array(z.string()).nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v12Def_V12PurchaseItemNestedCreateResponse)
+			.nullable()
+			.optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_PurchaseStandardTaxNestedResponse)
+			.nullable()
+			.optional(),
+		total: z.string().nullable().optional(),
+		withholding_taxes: z
+			.array(v12Def_PurchaseWithholdingTaxNestedResponse)
+			.nullable()
+			.optional(),
+		payable: z.string().nullable().optional(),
+		paid: z.string().nullable().optional(),
 		template: z.string().nullable().optional(),
-		public_notes: z.string().optional(),
-		trackingcategories: z.array(v12Def_RecordTrackingCategoryNested).optional(),
+		public_notes: z.string().nullable().optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
 		permalink: z.string().nullable().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12PurchaseItemNestedRetrieveUpdate = z
@@ -3555,59 +4459,99 @@ const v12Def_V12PurchaseItemNestedRetrieveUpdate = z
 		skip_stock_update: z.boolean().optional(),
 	})
 	.strict();
+const v12Def_V12PurchaseItemNestedRetrieveUpdateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		product: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		unit_measure: z.string().nullable().optional(),
+		unit_value: z.string().nullable().optional(),
+		unit_value_gross: z.string().nullable().optional(),
+		unit_discount: z.string().nullable().optional(),
+		unit_discount_gross: z.string().nullable().optional(),
+		unit_discount_percentage: z.string().nullable().optional(),
+		unit_discount_mode: z.string().nullable().optional(),
+		taxes: z.array(v12Def_PurchaseItemTaxNestedResponse).nullable().optional(),
+		unit_total: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
+		project: z.string().nullable().optional(),
+		billable: z.boolean().nullable().optional(),
+		expense_category: z.string().nullable().optional(),
+		taric_code: z.string().nullable().optional(),
+		warehouse: z.string().nullable().optional(),
+		line_type: z.number().int().nullable().optional(),
+		skip_stock_update: z.boolean().nullable().optional(),
+	})
+	.strict();
 const v12Def_PUV12PurchaseRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
 		documenttype: z.string().nullable().optional(),
-		self_billed: z.boolean().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		reference: z.string().max(150).optional(),
-		date: z.string().optional(),
+		self_billed: z.boolean().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		reference: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		due_days: z.number().int().min(0).max(2147483647).nullable().optional(),
 		branch: z.string().nullable().optional(),
-		supplier: z.string().optional(),
-		supplier_display_name: z.string().max(203).optional(),
-		supplier_profession: z.string().max(100).optional(),
-		supplier_vat_number: z.string().max(20).optional(),
-		billing_address: v12Def_BillingAddress.optional(),
-		shipping_address: v12Def_ShippingAddress.optional(),
-		supplier_contact_person: z.string().max(101).optional(),
-		supplier_phone_number: z.string().max(30).optional(),
-		supplier_email: z.string().max(100).optional(),
-		loading_address: v12Def_LoadingAddress.optional(),
+		supplier: z.string().nullable().optional(),
+		supplier_display_name: z.string().nullable().optional(),
+		supplier_profession: z.string().nullable().optional(),
+		supplier_vat_number: z.string().nullable().optional(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v12Def_ShippingAddressResponse.nullable().optional(),
+		supplier_contact_person: z.string().nullable().optional(),
+		supplier_phone_number: z.string().nullable().optional(),
+		supplier_email: z.string().nullable().optional(),
+		loading_address: v12Def_LoadingAddressResponse.nullable().optional(),
 		dispatch_date: z.string().nullable().optional(),
 		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
+		vehicle_number: z.string().nullable().optional(),
 		move_purpose: z.number().int().nullable().optional(),
 		related_entities: z
-			.array(v12Def_PurchaseRelatedEntities)
+			.array(v12Def_PurchaseRelatedEntitiesResponse)
 			.nullable()
 			.optional(),
-		packages: z.array(v12Def_PurchasePackageNested).nullable().optional(),
-		related_documents: z.array(z.string()).optional(),
-		delivery_notes: z.array(z.string()).optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v12Def_V12PurchaseItemNestedRetrieveUpdate).optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		taxes: z.array(v12Def_PurchaseStandardTaxNested).optional(),
-		total: z.string().optional(),
-		withholding_taxes: z.array(v12Def_PurchaseWithholdingTaxNested).optional(),
-		payable: z.string().optional(),
-		paid: z.string().optional(),
+		packages: z
+			.array(v12Def_PurchasePackageNestedResponse)
+			.nullable()
+			.optional(),
+		related_documents: z.array(z.string()).nullable().optional(),
+		delivery_notes: z.array(z.string()).nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v12Def_V12PurchaseItemNestedRetrieveUpdateResponse)
+			.nullable()
+			.optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_PurchaseStandardTaxNestedResponse)
+			.nullable()
+			.optional(),
+		total: z.string().nullable().optional(),
+		withholding_taxes: z
+			.array(v12Def_PurchaseWithholdingTaxNestedResponse)
+			.nullable()
+			.optional(),
+		payable: z.string().nullable().optional(),
+		paid: z.string().nullable().optional(),
 		template: z.string().nullable().optional(),
-		public_notes: z.string().optional(),
-		trackingcategories: z.array(v12Def_RecordTrackingCategoryNested).optional(),
+		public_notes: z.string().nullable().optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
 		permalink: z.string().nullable().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12PurchaseUpdate = z
@@ -3667,57 +4611,72 @@ const v12Def_V12PurchaseUpdate = z
 	.strict();
 const v12Def_PUV12PurchaseUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
 		documenttype: z.string().nullable().optional(),
-		self_billed: z.boolean().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		reference: z.string().max(150).optional(),
-		date: z.string().optional(),
+		self_billed: z.boolean().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		reference: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		due_days: z.number().int().min(0).max(2147483647).nullable().optional(),
 		branch: z.string().nullable().optional(),
-		supplier: z.string().optional(),
-		supplier_display_name: z.string().max(203).optional(),
-		supplier_profession: z.string().max(100).optional(),
-		supplier_vat_number: z.string().max(20).optional(),
-		billing_address: v12Def_BillingAddress.optional(),
-		shipping_address: v12Def_ShippingAddress.optional(),
-		supplier_contact_person: z.string().max(101).optional(),
-		supplier_phone_number: z.string().max(30).optional(),
-		supplier_email: z.string().max(100).optional(),
-		loading_address: v12Def_LoadingAddress.optional(),
+		supplier: z.string().nullable().optional(),
+		supplier_display_name: z.string().nullable().optional(),
+		supplier_profession: z.string().nullable().optional(),
+		supplier_vat_number: z.string().nullable().optional(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v12Def_ShippingAddressResponse.nullable().optional(),
+		supplier_contact_person: z.string().nullable().optional(),
+		supplier_phone_number: z.string().nullable().optional(),
+		supplier_email: z.string().nullable().optional(),
+		loading_address: v12Def_LoadingAddressResponse.nullable().optional(),
 		dispatch_date: z.string().nullable().optional(),
 		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
+		vehicle_number: z.string().nullable().optional(),
 		move_purpose: z.number().int().nullable().optional(),
 		related_entities: z
-			.array(v12Def_PurchaseRelatedEntities)
+			.array(v12Def_PurchaseRelatedEntitiesResponse)
 			.nullable()
 			.optional(),
-		packages: z.array(v12Def_PurchasePackageNested).nullable().optional(),
-		related_documents: z.array(z.string()).optional(),
-		delivery_notes: z.array(z.string()).optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v12Def_V12PurchaseItemNestedRetrieveUpdate).optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		taxes: z.array(v12Def_PurchaseStandardTaxNested).optional(),
-		total: z.string().optional(),
-		withholding_taxes: z.array(v12Def_PurchaseWithholdingTaxNested).optional(),
-		payable: z.string().optional(),
-		paid: z.string().optional(),
+		packages: z
+			.array(v12Def_PurchasePackageNestedResponse)
+			.nullable()
+			.optional(),
+		related_documents: z.array(z.string()).nullable().optional(),
+		delivery_notes: z.array(z.string()).nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v12Def_V12PurchaseItemNestedRetrieveUpdateResponse)
+			.nullable()
+			.optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_PurchaseStandardTaxNestedResponse)
+			.nullable()
+			.optional(),
+		total: z.string().nullable().optional(),
+		withholding_taxes: z
+			.array(v12Def_PurchaseWithholdingTaxNestedResponse)
+			.nullable()
+			.optional(),
+		payable: z.string().nullable().optional(),
+		paid: z.string().nullable().optional(),
 		template: z.string().nullable().optional(),
-		public_notes: z.string().optional(),
-		trackingcategories: z.array(v12Def_RecordTrackingCategoryNested).optional(),
+		public_notes: z.string().nullable().optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
 		permalink: z.string().nullable().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12PurchasePartialUpdate = z
@@ -3734,6 +4693,23 @@ const v12Def_PUV12PurchasePartialUpdate = z
 		modified: z.string().optional(),
 	})
 	.strict();
+const v12Def_PUV12PurchasePartialUpdateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
+	})
+	.strict();
 const v12Def_PrivatePurchaseEmailFromTemplate = z
 	.object({
 		to: z.string().min(1),
@@ -3747,19 +4723,19 @@ const v12Def_PrivatePurchaseEmailFromTemplate = z
 	.strict();
 const v12Def_TrackedEmailMessage = z
 	.object({
-		id: z.string().min(1).optional(),
-		from_email: z.string().min(1).max(255),
-		to: z.string().min(1).max(255),
-		cc: z.string().optional(),
-		bcc: z.string().optional(),
-		reply_to: z.string().min(1).max(255),
-		subject: z.string().min(1).max(255),
-		message: z.string().optional(),
-		attachments: z.string().optional(),
-		attach_pdf: z.boolean().optional(),
-		status: z.string().optional(),
+		id: z.string().nullable().optional(),
+		from_email: z.string(),
+		to: z.string(),
+		cc: z.string().nullable().optional(),
+		bcc: z.string().nullable().optional(),
+		reply_to: z.string(),
+		subject: z.string(),
+		message: z.string().nullable().optional(),
+		attachments: z.string().nullable().optional(),
+		attach_pdf: z.boolean().nullable().optional(),
+		status: z.string().nullable().optional(),
 		status_updated: z.string().nullable().optional(),
-		sent_via_smtp: z.boolean().optional(),
+		sent_via_smtp: z.boolean().nullable().optional(),
 		smtp_error: z.string(),
 		smtp_error_code: z
 			.number()
@@ -3768,20 +4744,20 @@ const v12Def_TrackedEmailMessage = z
 			.max(32767)
 			.nullable()
 			.optional(),
-		metadata: z.record(z.string(), z.string()).optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		metadata: z.record(z.string(), z.string()).nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUEmailRetrieveSerializer = z
 	.object({
-		to: z.string().min(1).optional(),
-		cc: z.string().optional(),
-		bcc: z.string().optional(),
-		reply_to: z.string().min(1).optional(),
-		subject: z.string().min(1).max(255).optional(),
-		message: z.string().min(1).optional(),
-		sender_name: z.string().min(1).max(70).optional(),
+		to: z.string().nullable().optional(),
+		cc: z.string().nullable().optional(),
+		bcc: z.string().nullable().optional(),
+		reply_to: z.string().nullable().optional(),
+		subject: z.string().nullable().optional(),
+		message: z.string().nullable().optional(),
+		sender_name: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PrivatePurchaseEmail = z
@@ -3805,7 +4781,7 @@ const v12Def_VoidDocument = z
 	.strict();
 const v12Def_PUPurchaseMarkVoidResponse = z
 	.object({
-		status: z.string().optional(),
+		status: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12PurchaseAttachmentListRetrieve = z
@@ -3818,22 +4794,32 @@ const v12Def_PUV12PurchaseAttachmentListRetrieve = z
 		created: z.string().optional(),
 	})
 	.strict();
+const v12Def_PUV12PurchaseAttachmentListRetrieveResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		primary: z.boolean().nullable().optional(),
+		file_url: z.string().nullable().optional(),
+		file_size: z.string().nullable().optional(),
+		created: z.string().nullable().optional(),
+	})
+	.strict();
 const v12Def_ApiDocumentationAttachmentListRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		title: z.string().min(1).max(120),
-		file_url: z.string().optional(),
-		file_size: z.string().optional(),
-		created: z.string().optional(),
+		id: z.string().nullable().optional(),
+		title: z.string(),
+		file_url: z.string().nullable().optional(),
+		file_size: z.string().nullable().optional(),
+		created: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12NoteSerializer = z
 	.object({
-		id: z.string().min(1).optional(),
-		notes: z.string().min(1).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		notes: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12Note = z
@@ -3847,20 +4833,20 @@ const v12Def_V12Note = z
 	.strict();
 const v12Def_PUTrackedEmailMessageSerializer = z
 	.object({
-		id: z.string().min(1).optional(),
-		from_email: z.string().min(1).max(255).optional(),
-		to: z.string().min(1).max(255).optional(),
-		cc: z.string().optional(),
-		bcc: z.string().optional(),
-		reply_to: z.string().min(1).max(255).optional(),
-		subject: z.string().min(1).max(255).optional(),
-		message: z.string().optional(),
-		attachments: z.string().optional(),
-		attach_pdf: z.boolean().optional(),
-		status: z.string().optional(),
+		id: z.string().nullable().optional(),
+		from_email: z.string().nullable().optional(),
+		to: z.string().nullable().optional(),
+		cc: z.string().nullable().optional(),
+		bcc: z.string().nullable().optional(),
+		reply_to: z.string().nullable().optional(),
+		subject: z.string().nullable().optional(),
+		message: z.string().nullable().optional(),
+		attachments: z.string().nullable().optional(),
+		attach_pdf: z.boolean().nullable().optional(),
+		status: z.string().nullable().optional(),
 		status_updated: z.string().nullable().optional(),
-		sent_via_smtp: z.boolean().optional(),
-		smtp_error: z.string().optional(),
+		sent_via_smtp: z.boolean().nullable().optional(),
+		smtp_error: z.string().nullable().optional(),
 		smtp_error_code: z
 			.number()
 			.int()
@@ -3868,12 +4854,18 @@ const v12Def_PUTrackedEmailMessageSerializer = z
 			.max(32767)
 			.nullable()
 			.optional(),
-		metadata: z.record(z.string(), z.string()).optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		metadata: z.record(z.string(), z.string()).nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PurchaseCashPaymentNested = z
+	.object({
+		purchase: z.string(),
+		amount: z.string(),
+	})
+	.strict();
+const v12Def_PurchaseCashPaymentNestedResponse = z
 	.object({
 		purchase: z.string(),
 		amount: z.string(),
@@ -3885,23 +4877,35 @@ const v12Def_CreditNoteCashPaymentNested = z
 		amount: z.string(),
 	})
 	.strict();
+const v12Def_CreditNoteCashPaymentNestedResponse = z
+	.object({
+		creditnote: z.string(),
+		amount: z.string(),
+	})
+	.strict();
 const v12Def_PUV12CashPaymentList = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		transaction_type: z.string().optional(),
-		title: z.string().max(255).optional(),
-		amount: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		currency_code: z.string().optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		transaction_type: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		contact: z.string().optional(),
-		purchase_payments: z.array(v12Def_PurchaseCashPaymentNested).optional(),
-		creditnote_payments: z.array(v12Def_CreditNoteCashPaymentNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		contact: z.string().nullable().optional(),
+		purchase_payments: z
+			.array(v12Def_PurchaseCashPaymentNestedResponse)
+			.nullable()
+			.optional(),
+		creditnote_payments: z
+			.array(v12Def_CreditNoteCashPaymentNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12CashPaymentCreate = z
@@ -3926,42 +4930,60 @@ const v12Def_V12CashPaymentCreate = z
 	.strict();
 const v12Def_PUV12CashPaymentCreate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		transaction_type: z.string().optional(),
-		title: z.string().max(255).optional(),
-		amount: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		currency_code: z.string().optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		transaction_type: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		contact: z.string().optional(),
-		purchase_payments: z.array(v12Def_PurchaseCashPaymentNested).optional(),
-		creditnote_payments: z.array(v12Def_CreditNoteCashPaymentNested).optional(),
-		trackingcategories: z.array(v12Def_RecordTrackingCategoryNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		contact: z.string().nullable().optional(),
+		purchase_payments: z
+			.array(v12Def_PurchaseCashPaymentNestedResponse)
+			.nullable()
+			.optional(),
+		creditnote_payments: z
+			.array(v12Def_CreditNoteCashPaymentNestedResponse)
+			.nullable()
+			.optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12CashPaymentRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		transaction_type: z.string().optional(),
-		title: z.string().max(255).optional(),
-		amount: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		currency_code: z.string().optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		transaction_type: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		contact: z.string().optional(),
-		purchase_payments: z.array(v12Def_PurchaseCashPaymentNested).optional(),
-		creditnote_payments: z.array(v12Def_CreditNoteCashPaymentNested).optional(),
-		trackingcategories: z.array(v12Def_RecordTrackingCategoryNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		contact: z.string().nullable().optional(),
+		purchase_payments: z
+			.array(v12Def_PurchaseCashPaymentNestedResponse)
+			.nullable()
+			.optional(),
+		creditnote_payments: z
+			.array(v12Def_CreditNoteCashPaymentNestedResponse)
+			.nullable()
+			.optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12CashPaymentUpdate = z
@@ -3986,22 +5008,31 @@ const v12Def_V12CashPaymentUpdate = z
 	.strict();
 const v12Def_PUV12CashPaymentUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		transaction_type: z.string().optional(),
-		title: z.string().max(255).optional(),
-		amount: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		currency_code: z.string().optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		transaction_type: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		contact: z.string().optional(),
-		purchase_payments: z.array(v12Def_PurchaseCashPaymentNested).optional(),
-		creditnote_payments: z.array(v12Def_CreditNoteCashPaymentNested).optional(),
-		trackingcategories: z.array(v12Def_RecordTrackingCategoryNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		contact: z.string().nullable().optional(),
+		purchase_payments: z
+			.array(v12Def_PurchaseCashPaymentNestedResponse)
+			.nullable()
+			.optional(),
+		creditnote_payments: z
+			.array(v12Def_CreditNoteCashPaymentNestedResponse)
+			.nullable()
+			.optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12CashPaymentAttachmentListRetrieve = z
@@ -4013,7 +5044,22 @@ const v12Def_PUV12CashPaymentAttachmentListRetrieve = z
 		created: z.string().optional(),
 	})
 	.strict();
+const v12Def_PUV12CashPaymentAttachmentListRetrieveResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		file_url: z.string().nullable().optional(),
+		file_size: z.string().nullable().optional(),
+		created: z.string().nullable().optional(),
+	})
+	.strict();
 const v12Def_InvoiceCashReceiptNested = z
+	.object({
+		invoice: z.string(),
+		amount: z.string(),
+	})
+	.strict();
+const v12Def_InvoiceCashReceiptNestedResponse = z
 	.object({
 		invoice: z.string(),
 		amount: z.string(),
@@ -4025,28 +5071,38 @@ const v12Def_PurchaseCreditNoteCashReceiptNested = z
 		amount: z.string(),
 	})
 	.strict();
+const v12Def_PurchaseCreditNoteCashReceiptNestedResponse = z
+	.object({
+		purchasecreditnote: z.string(),
+		amount: z.string(),
+	})
+	.strict();
 const v12Def_PUV12CashReceiptList = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		transaction_type: z.string().optional(),
-		income_type: z.string().optional(),
-		title: z.string().max(255).optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		transaction_type: z.string().nullable().optional(),
+		income_type: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		contact: z.string().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		amount: z.string().optional(),
-		invoice_payments: z.array(v12Def_InvoiceCashReceiptNested).optional(),
-		purchasecreditnote_payments: z
-			.array(v12Def_PurchaseCreditNoteCashReceiptNested)
+		contact: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		invoice_payments: z
+			.array(v12Def_InvoiceCashReceiptNestedResponse)
+			.nullable()
 			.optional(),
-		status: z.string().optional(),
+		purchasecreditnote_payments: z
+			.array(v12Def_PurchaseCreditNoteCashReceiptNestedResponse)
+			.nullable()
+			.optional(),
+		status: z.string().nullable().optional(),
 		payment_gateway: z.string().nullable().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12CashReceiptCreate = z
@@ -4078,62 +5134,76 @@ const v12Def_V12CashReceiptCreate = z
 	.strict();
 const v12Def_PUV12CashReceiptCreate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		transaction_type: z.string().optional(),
-		income_type: z.string().optional(),
-		title: z.string().max(255).optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		transaction_type: z.string().nullable().optional(),
+		income_type: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		contact: z.string().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		net: z.string().optional(),
-		taxes: z.array(z.string()).optional(),
-		amount: z.string().optional(),
-		status: z.string().optional(),
-		invoice_payments: z.array(v12Def_InvoiceCashReceiptNested).optional(),
-		purchasecreditnote_payments: z
-			.array(v12Def_PurchaseCreditNoteCashReceiptNested)
+		contact: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		taxes: z.array(z.string()).nullable().optional(),
+		amount: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		invoice_payments: z
+			.array(v12Def_InvoiceCashReceiptNestedResponse)
+			.nullable()
 			.optional(),
-		trackingcategories: z.array(v12Def_RecordTrackingCategoryNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		purchasecreditnote_payments: z
+			.array(v12Def_PurchaseCreditNoteCashReceiptNestedResponse)
+			.nullable()
+			.optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12CashReceiptCashedTaxNested = z
 	.object({
 		tax: z.string(),
-		amount: z.string().optional(),
+		amount: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12CashReceiptRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		transaction_type: z.string().optional(),
-		income_type: z.string().optional(),
-		title: z.string().max(255).optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		transaction_type: z.string().nullable().optional(),
+		income_type: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		contact: z.string().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
+		contact: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
 		net: z.string().nullable().optional(),
-		taxes: z.array(v12Def_V12CashReceiptCashedTaxNested).optional(),
-		amount: z.string().optional(),
-		invoice_payments: z.array(v12Def_InvoiceCashReceiptNested).optional(),
-		purchasecreditnote_payments: z
-			.array(v12Def_PurchaseCreditNoteCashReceiptNested)
+		taxes: z.array(v12Def_V12CashReceiptCashedTaxNested).nullable().optional(),
+		amount: z.string().nullable().optional(),
+		invoice_payments: z
+			.array(v12Def_InvoiceCashReceiptNestedResponse)
+			.nullable()
 			.optional(),
-		status: z.string().optional(),
+		purchasecreditnote_payments: z
+			.array(v12Def_PurchaseCreditNoteCashReceiptNestedResponse)
+			.nullable()
+			.optional(),
+		status: z.string().nullable().optional(),
 		payment_gateway: z.string().nullable().optional(),
-		trackingcategories: z.array(v12Def_RecordTrackingCategoryNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12CashReceiptUpdate = z
@@ -4164,28 +5234,35 @@ const v12Def_V12CashReceiptUpdate = z
 	.strict();
 const v12Def_PUV12CashReceiptUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		transaction_type: z.string().optional(),
-		income_type: z.string().optional(),
-		title: z.string().max(255).optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		transaction_type: z.string().nullable().optional(),
+		income_type: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		contact: z.string().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		net: z.string().optional(),
-		taxes: z.array(z.string()).optional(),
-		amount: z.string().optional(),
-		invoice_payments: z.array(v12Def_InvoiceCashReceiptNested).optional(),
-		purchasecreditnote_payments: z
-			.array(v12Def_PurchaseCreditNoteCashReceiptNested)
+		contact: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		taxes: z.array(z.string()).nullable().optional(),
+		amount: z.string().nullable().optional(),
+		invoice_payments: z
+			.array(v12Def_InvoiceCashReceiptNestedResponse)
+			.nullable()
 			.optional(),
-		trackingcategories: z.array(v12Def_RecordTrackingCategoryNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		purchasecreditnote_payments: z
+			.array(v12Def_PurchaseCreditNoteCashReceiptNestedResponse)
+			.nullable()
+			.optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12CashReceiptAttachmentListRetrieve = z
@@ -4195,6 +5272,15 @@ const v12Def_PUV12CashReceiptAttachmentListRetrieve = z
 		file_url: z.string().optional(),
 		file_size: z.string().optional(),
 		created: z.string().optional(),
+	})
+	.strict();
+const v12Def_PUV12CashReceiptAttachmentListRetrieveResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		file_url: z.string().nullable().optional(),
+		file_size: z.string().nullable().optional(),
+		created: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12AddressNested = z
@@ -4215,10 +5301,35 @@ const v12Def_V12AddressNested = z
 			.optional(),
 	})
 	.strict();
+const v12Def_V12AddressNestedResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		address: z.string(),
+		city: z.string(),
+		state: z.string().nullable().optional(),
+		zip: z.string(),
+		country: z.string(),
+		ad_type: z.string().nullable().optional(),
+		branch_code: z
+			.number()
+			.int()
+			.min(-2147483648)
+			.max(2147483647)
+			.nullable()
+			.optional(),
+	})
+	.strict();
 const v12Def_V12EmailNested = z
 	.object({
 		id: z.string().min(1).optional(),
 		email: z.string().min(1).max(100),
+		primary: z.boolean(),
+	})
+	.strict();
+const v12Def_V12EmailNestedResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		email: z.string(),
 		primary: z.boolean(),
 	})
 	.strict();
@@ -4229,29 +5340,36 @@ const v12Def_V12PhoneNested = z
 		primary: z.boolean(),
 	})
 	.strict();
+const v12Def_V12PhoneNestedResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		number: z.string(),
+		primary: z.boolean(),
+	})
+	.strict();
 const v12Def_PUV12ContactList = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		active: z.boolean().optional(),
-		first_name: z.string().max(50).optional(),
-		last_name: z.string().max(50).optional(),
-		company: z.string().max(100).optional(),
-		display_name: z.string().min(1).optional(),
-		profession: z.string().max(100).optional(),
-		vat_number: z.string().max(20).optional(),
-		is_client: z.boolean().optional(),
-		is_supplier: z.boolean().optional(),
-		default_language: z.string().optional(),
-		default_template: z.string().min(1).optional(),
-		default_taxes: z.array(z.string()).optional(),
-		default_currency_code: z.string().optional(),
-		addresses: z.array(v12Def_V12AddressNested).optional(),
-		email: z.array(v12Def_V12EmailNested).optional(),
-		phones: z.array(v12Def_V12PhoneNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		first_name: z.string().nullable().optional(),
+		last_name: z.string().nullable().optional(),
+		company: z.string().nullable().optional(),
+		display_name: z.string().nullable().optional(),
+		profession: z.string().nullable().optional(),
+		vat_number: z.string().nullable().optional(),
+		is_client: z.boolean().nullable().optional(),
+		is_supplier: z.boolean().nullable().optional(),
+		default_language: z.string().nullable().optional(),
+		default_template: z.string().nullable().optional(),
+		default_taxes: z.array(z.string()).nullable().optional(),
+		default_currency_code: z.string().nullable().optional(),
+		addresses: z.array(v12Def_V12AddressNestedResponse).nullable().optional(),
+		email: z.array(v12Def_V12EmailNestedResponse).nullable().optional(),
+		phones: z.array(v12Def_V12PhoneNestedResponse).nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12ContactRetrieveCreateUpdate = z
@@ -4282,28 +5400,31 @@ const v12Def_V12ContactRetrieveCreateUpdate = z
 	.strict();
 const v12Def_PUV12ContactRetrieveCreateUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		active: z.boolean().optional(),
-		first_name: z.string().max(50).optional(),
-		last_name: z.string().max(50).optional(),
-		company: z.string().max(100).optional(),
-		display_name: z.string().min(1).optional(),
-		profession: z.string().max(100).optional(),
-		vat_number: z.string().max(20).optional(),
-		is_client: z.boolean().optional(),
-		is_supplier: z.boolean().optional(),
-		default_language: z.string().optional(),
-		default_template: z.string().min(1).optional(),
-		default_taxes: z.array(z.string()).optional(),
-		default_currency_code: z.string().optional(),
-		addresses: z.array(v12Def_V12AddressNested).optional(),
-		email: z.array(v12Def_V12EmailNested).optional(),
-		phones: z.array(v12Def_V12PhoneNested).optional(),
-		trackingcategories: z.array(v12Def_RecordTrackingCategoryNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		first_name: z.string().nullable().optional(),
+		last_name: z.string().nullable().optional(),
+		company: z.string().nullable().optional(),
+		display_name: z.string().nullable().optional(),
+		profession: z.string().nullable().optional(),
+		vat_number: z.string().nullable().optional(),
+		is_client: z.boolean().nullable().optional(),
+		is_supplier: z.boolean().nullable().optional(),
+		default_language: z.string().nullable().optional(),
+		default_template: z.string().nullable().optional(),
+		default_taxes: z.array(z.string()).nullable().optional(),
+		default_currency_code: z.string().nullable().optional(),
+		addresses: z.array(v12Def_V12AddressNestedResponse).nullable().optional(),
+		email: z.array(v12Def_V12EmailNestedResponse).nullable().optional(),
+		phones: z.array(v12Def_V12PhoneNestedResponse).nullable().optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12ContactAttachmentListRetrieve = z
@@ -4315,44 +5436,53 @@ const v12Def_PUV12ContactAttachmentListRetrieve = z
 		created: z.string().optional(),
 	})
 	.strict();
+const v12Def_PUV12ContactAttachmentListRetrieveResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		file_url: z.string().nullable().optional(),
+		file_size: z.string().nullable().optional(),
+		created: z.string().nullable().optional(),
+	})
+	.strict();
 const v12Def_PUV12CreditNoteList = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		documenttype: z.string().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		number: z.string().max(100).optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		number: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_display_name: z.string().min(1).max(203).optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v12Def_BillingAddress.optional(),
-		shipping_address: v12Def_ShippingAddress.optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		loading_address: v12Def_LoadingAddress.optional(),
+		client: z.string().nullable().optional(),
+		client_display_name: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v12Def_ShippingAddressResponse.nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		loading_address: v12Def_LoadingAddressResponse.nullable().optional(),
 		dispatch_date: z.string().nullable().optional(),
 		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
+		vehicle_number: z.string().nullable().optional(),
 		move_purpose: z.number().int().nullable().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		payable: z.string().optional(),
-		paid: z.string().optional(),
-		permalink: z.string().min(1).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		payable: z.string().nullable().optional(),
+		paid: z.string().nullable().optional(),
+		permalink: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_CreditNoteRelatedEntities = z
@@ -4365,12 +5495,30 @@ const v12Def_CreditNoteRelatedEntities = z
 		billing_address: v12Def_BillingAddress.optional(),
 	})
 	.strict();
+const v12Def_CreditNoteRelatedEntitiesResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		contact: z.string(),
+		contact_display_name: z.string(),
+		contact_vat_number: z.string().nullable().optional(),
+		type: z.number().int(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+	})
+	.strict();
 const v12Def_CreditNotePackageNested = z
 	.object({
 		id: z.string().min(1).optional(),
 		packaging_type: z.number().int(),
 		quantity: z.number().int().min(1).max(32767),
 		other_packaging_type_title: z.string().max(150).optional(),
+	})
+	.strict();
+const v12Def_CreditNotePackageNestedResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		packaging_type: z.number().int(),
+		quantity: z.number().int().min(1).max(32767),
+		other_packaging_type_title: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_CreditNoteItemTaxNested = z
@@ -4380,6 +5528,15 @@ const v12Def_CreditNoteItemTaxNested = z
 		amount: z.string().optional(),
 		vat_amount: z.string().optional(),
 		auto_calculate_vat: z.boolean().optional(),
+	})
+	.strict();
+const v12Def_CreditNoteItemTaxNestedResponse = z
+	.object({
+		tax: z.string(),
+		auto_calculate: z.boolean().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		vat_amount: z.string().nullable().optional(),
+		auto_calculate_vat: z.boolean().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12CreditNoteItemNestedCreate = z
@@ -4406,11 +5563,45 @@ const v12Def_V12CreditNoteItemNestedCreate = z
 		skip_stock_update: z.boolean().optional(),
 	})
 	.strict();
+const v12Def_V12CreditNoteItemNestedCreateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		product: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		unit_measure: z.string().nullable().optional(),
+		unit_value: z.string().nullable().optional(),
+		unit_value_gross: z.string().nullable().optional(),
+		unit_discount: z.string().nullable().optional(),
+		unit_discount_gross: z.string().nullable().optional(),
+		unit_discount_percentage: z.string().nullable().optional(),
+		unit_discount_mode: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_CreditNoteItemTaxNestedResponse)
+			.nullable()
+			.optional(),
+		unit_total: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
+		project: z.string().nullable().optional(),
+		taric_code: z.string().nullable().optional(),
+		warehouse: z.string().nullable().optional(),
+		line_type: z.number().int().nullable().optional(),
+		skip_stock_update: z.boolean().nullable().optional(),
+	})
+	.strict();
 const v12Def_CreditNoteStandardTaxNested = z
 	.object({
 		tax: z.string(),
 		auto_calculate: z.boolean().optional(),
 		amount: z.string().optional(),
+	})
+	.strict();
+const v12Def_CreditNoteStandardTaxNestedResponse = z
+	.object({
+		tax: z.string(),
+		auto_calculate: z.boolean().nullable().optional(),
+		amount: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_CreditNoteWithholdingTaxNested = z
@@ -4419,6 +5610,14 @@ const v12Def_CreditNoteWithholdingTaxNested = z
 		amount: z.string().optional(),
 		subtotal: z.number().int().optional(),
 		auto_calculate: z.boolean().optional(),
+	})
+	.strict();
+const v12Def_CreditNoteWithholdingTaxNestedResponse = z
+	.object({
+		tax: z.string(),
+		amount: z.string().nullable().optional(),
+		subtotal: z.number().int().nullable().optional(),
+		auto_calculate: z.boolean().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12CreditNoteCreate = z
@@ -4478,57 +5677,70 @@ const v12Def_V12CreditNoteCreate = z
 	.strict();
 const v12Def_PUV12CreditNoteCreate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		documenttype: z.string().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		number: z.string().max(100).optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		number: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_display_name: z.string().min(1).max(203).optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v12Def_BillingAddress.optional(),
-		shipping_address: v12Def_ShippingAddress.optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		loading_address: v12Def_LoadingAddress.optional(),
+		client: z.string().nullable().optional(),
+		client_display_name: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v12Def_ShippingAddressResponse.nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		loading_address: v12Def_LoadingAddressResponse.nullable().optional(),
 		dispatch_date: z.string().nullable().optional(),
 		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
+		vehicle_number: z.string().nullable().optional(),
 		move_purpose: z.number().int().nullable().optional(),
 		related_entities: z
-			.array(v12Def_CreditNoteRelatedEntities)
+			.array(v12Def_CreditNoteRelatedEntitiesResponse)
 			.nullable()
 			.optional(),
-		packages: z.array(v12Def_CreditNotePackageNested).nullable().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v12Def_V12CreditNoteItemNestedCreate).optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		taxes: z.array(v12Def_CreditNoteStandardTaxNested).optional(),
-		total: z.string().optional(),
-		withholding_taxes: z
-			.array(v12Def_CreditNoteWithholdingTaxNested)
+		packages: z
+			.array(v12Def_CreditNotePackageNestedResponse)
+			.nullable()
 			.optional(),
-		paid: z.string().optional(),
-		payable: z.string().optional(),
-		template: z.string().optional(),
-		terms: z.string().optional(),
-		public_notes: z.string().optional(),
-		related_documents: z.array(z.string()).optional(),
-		trackingcategories: z.array(v12Def_RecordTrackingCategoryNested).optional(),
-		permalink: z.string().min(1).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v12Def_V12CreditNoteItemNestedCreateResponse)
+			.nullable()
+			.optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_CreditNoteStandardTaxNestedResponse)
+			.nullable()
+			.optional(),
+		total: z.string().nullable().optional(),
+		withholding_taxes: z
+			.array(v12Def_CreditNoteWithholdingTaxNestedResponse)
+			.nullable()
+			.optional(),
+		paid: z.string().nullable().optional(),
+		payable: z.string().nullable().optional(),
+		template: z.string().nullable().optional(),
+		terms: z.string().nullable().optional(),
+		public_notes: z.string().nullable().optional(),
+		related_documents: z.array(z.string()).nullable().optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		permalink: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12CreditNoteItemNestedRetrieveUpdate = z
@@ -4555,59 +5767,99 @@ const v12Def_V12CreditNoteItemNestedRetrieveUpdate = z
 		skip_stock_update: z.boolean().optional(),
 	})
 	.strict();
-const v12Def_PUV12CreditNoteRetrieve = z
+const v12Def_V12CreditNoteItemNestedRetrieveUpdateResponse = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		documenttype: z.string().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		number: z.string().max(100).optional(),
-		date: z.string().optional(),
-		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_display_name: z.string().min(1).max(203).optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v12Def_BillingAddress.optional(),
-		shipping_address: v12Def_ShippingAddress.optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		loading_address: v12Def_LoadingAddress.optional(),
-		dispatch_date: z.string().nullable().optional(),
-		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
-		move_purpose: z.number().int().nullable().optional(),
-		related_entities: z
-			.array(v12Def_CreditNoteRelatedEntities)
+		id: z.string().nullable().optional(),
+		product: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		unit_measure: z.string().nullable().optional(),
+		unit_value: z.string().nullable().optional(),
+		unit_value_gross: z.string().nullable().optional(),
+		unit_discount: z.string().nullable().optional(),
+		unit_discount_gross: z.string().nullable().optional(),
+		unit_discount_percentage: z.string().nullable().optional(),
+		unit_discount_mode: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_CreditNoteItemTaxNestedResponse)
 			.nullable()
 			.optional(),
-		packages: z.array(v12Def_CreditNotePackageNested).nullable().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v12Def_V12CreditNoteItemNestedRetrieveUpdate).optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		taxes: z.array(v12Def_CreditNoteStandardTaxNested).optional(),
-		total: z.string().optional(),
-		withholding_taxes: z
-			.array(v12Def_CreditNoteWithholdingTaxNested)
+		unit_total: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
+		project: z.string().nullable().optional(),
+		taric_code: z.string().nullable().optional(),
+		warehouse: z.string().nullable().optional(),
+		line_type: z.number().int().nullable().optional(),
+		skip_stock_update: z.boolean().nullable().optional(),
+	})
+	.strict();
+const v12Def_PUV12CreditNoteRetrieve = z
+	.object({
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		number: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
+		branch: z.string().nullable().optional(),
+		client: z.string().nullable().optional(),
+		client_display_name: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v12Def_ShippingAddressResponse.nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		loading_address: v12Def_LoadingAddressResponse.nullable().optional(),
+		dispatch_date: z.string().nullable().optional(),
+		dispatch_time: z.string().nullable().optional(),
+		vehicle_number: z.string().nullable().optional(),
+		move_purpose: z.number().int().nullable().optional(),
+		related_entities: z
+			.array(v12Def_CreditNoteRelatedEntitiesResponse)
+			.nullable()
 			.optional(),
-		payable: z.string().optional(),
-		paid: z.string().optional(),
-		template: z.string().optional(),
-		terms: z.string().optional(),
-		public_notes: z.string().optional(),
-		related_documents: z.array(z.string()).optional(),
-		trackingcategories: z.array(v12Def_RecordTrackingCategoryNested).optional(),
-		permalink: z.string().min(1).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		packages: z
+			.array(v12Def_CreditNotePackageNestedResponse)
+			.nullable()
+			.optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v12Def_V12CreditNoteItemNestedRetrieveUpdateResponse)
+			.nullable()
+			.optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_CreditNoteStandardTaxNestedResponse)
+			.nullable()
+			.optional(),
+		total: z.string().nullable().optional(),
+		withholding_taxes: z
+			.array(v12Def_CreditNoteWithholdingTaxNestedResponse)
+			.nullable()
+			.optional(),
+		payable: z.string().nullable().optional(),
+		paid: z.string().nullable().optional(),
+		template: z.string().nullable().optional(),
+		terms: z.string().nullable().optional(),
+		public_notes: z.string().nullable().optional(),
+		related_documents: z.array(z.string()).nullable().optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		permalink: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12CreditNoteUpdate = z
@@ -4667,57 +5919,70 @@ const v12Def_V12CreditNoteUpdate = z
 	.strict();
 const v12Def_PUV12CreditNoteUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		documenttype: z.string().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		number: z.string().max(100).optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		number: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_display_name: z.string().min(1).max(203).optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v12Def_BillingAddress.optional(),
-		shipping_address: v12Def_ShippingAddress.optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		loading_address: v12Def_LoadingAddress.optional(),
+		client: z.string().nullable().optional(),
+		client_display_name: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v12Def_ShippingAddressResponse.nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		loading_address: v12Def_LoadingAddressResponse.nullable().optional(),
 		dispatch_date: z.string().nullable().optional(),
 		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
+		vehicle_number: z.string().nullable().optional(),
 		move_purpose: z.number().int().nullable().optional(),
 		related_entities: z
-			.array(v12Def_CreditNoteRelatedEntities)
+			.array(v12Def_CreditNoteRelatedEntitiesResponse)
 			.nullable()
 			.optional(),
-		packages: z.array(v12Def_CreditNotePackageNested).nullable().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v12Def_V12CreditNoteItemNestedRetrieveUpdate).optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		taxes: z.array(v12Def_CreditNoteStandardTaxNested).optional(),
-		total: z.string().optional(),
-		withholding_taxes: z
-			.array(v12Def_CreditNoteWithholdingTaxNested)
+		packages: z
+			.array(v12Def_CreditNotePackageNestedResponse)
+			.nullable()
 			.optional(),
-		payable: z.string().optional(),
-		paid: z.string().optional(),
-		template: z.string().optional(),
-		terms: z.string().optional(),
-		public_notes: z.string().optional(),
-		related_documents: z.array(z.string()).optional(),
-		trackingcategories: z.array(v12Def_RecordTrackingCategoryNested).optional(),
-		permalink: z.string().min(1).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v12Def_V12CreditNoteItemNestedRetrieveUpdateResponse)
+			.nullable()
+			.optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_CreditNoteStandardTaxNestedResponse)
+			.nullable()
+			.optional(),
+		total: z.string().nullable().optional(),
+		withholding_taxes: z
+			.array(v12Def_CreditNoteWithholdingTaxNestedResponse)
+			.nullable()
+			.optional(),
+		payable: z.string().nullable().optional(),
+		paid: z.string().nullable().optional(),
+		template: z.string().nullable().optional(),
+		terms: z.string().nullable().optional(),
+		public_notes: z.string().nullable().optional(),
+		related_documents: z.array(z.string()).nullable().optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		permalink: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12CreditNotePartialUpdate = z
@@ -4732,6 +5997,23 @@ const v12Def_PUV12CreditNotePartialUpdate = z
 		organization: z.number().int().optional(),
 		created: z.string().optional(),
 		modified: z.string().optional(),
+	})
+	.strict();
+const v12Def_PUV12CreditNotePartialUpdateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_CreditNoteEmailFromTemplate = z
@@ -4761,20 +6043,20 @@ const v12Def_CreditNoteEmail = z
 	.strict();
 const v12Def_PUCreditNoteMarkVoidResponse = z
 	.object({
-		status: z.string().optional(),
+		status: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUInvoiceCreditTransactionCNSerializer = z
 	.object({
-		id: z.string().min(1).optional(),
-		representation: z.string().optional(),
-		invoice: z.string().optional(),
-		amount: z.string().optional(),
-		currency_code: z.string().optional(),
-		date: z.string().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		invoice: z.string().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_InvoiceCreditTransactionCN = z
@@ -4790,6 +6072,19 @@ const v12Def_InvoiceCreditTransactionCN = z
 		modified: z.string().optional(),
 	})
 	.strict();
+const v12Def_InvoiceCreditTransactionCNResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		invoice: z.string(),
+		amount: z.string(),
+		currency_code: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
+	})
+	.strict();
 const v12Def_PUV12CreditNoteAttachmentListRetrieve = z
 	.object({
 		id: z.string().min(1).optional(),
@@ -4799,13 +6094,22 @@ const v12Def_PUV12CreditNoteAttachmentListRetrieve = z
 		created: z.string().optional(),
 	})
 	.strict();
+const v12Def_PUV12CreditNoteAttachmentListRetrieveResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		file_url: z.string().nullable().optional(),
+		file_size: z.string().nullable().optional(),
+		created: z.string().nullable().optional(),
+	})
+	.strict();
 const v12Def_PUV12DiscussionSerializer = z
 	.object({
-		id: z.string().min(1).optional(),
-		message: z.string().min(1).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		message: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12Discussion = z
@@ -4820,45 +6124,45 @@ const v12Def_V12Discussion = z
 	.strict();
 const v12Def_PUV12DeliveryNoteList = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		documenttype: z.string().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		number: z.string().max(100).optional(),
-		date: z.string().optional(),
-		is_reverse_delivery_note: z.boolean().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		number: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
+		is_reverse_delivery_note: z.boolean().nullable().optional(),
 		reverse_delivery_note_purpose: z.number().int().nullable().optional(),
 		branch: z.string().nullable().optional(),
 		contact: z.string().nullable().optional(),
-		contact_display_name: z.string().max(203).optional(),
-		contact_profession: z.string().max(100).optional(),
-		contact_vat_number: z.string().max(20).optional(),
-		billing_address: v12Def_BillingAddress.optional(),
-		shipping_address: v12Def_ShippingAddress.optional(),
-		loading_address: v12Def_LoadingAddress.optional(),
-		contact_person: z.string().max(101).optional(),
-		contact_phone_number: z.string().max(30).optional(),
-		contact_email: z.string().max(100).optional(),
+		contact_display_name: z.string().nullable().optional(),
+		contact_profession: z.string().nullable().optional(),
+		contact_vat_number: z.string().nullable().optional(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v12Def_ShippingAddressResponse.nullable().optional(),
+		loading_address: v12Def_LoadingAddressResponse.nullable().optional(),
+		contact_person: z.string().nullable().optional(),
+		contact_phone_number: z.string().nullable().optional(),
+		contact_email: z.string().nullable().optional(),
 		dispatch_date: z.string().nullable().optional(),
 		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
-		move_purpose: z.number().int().optional(),
-		to_weigh: z.boolean().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		permalink: z.string().min(1).optional(),
-		converted_invoice: z.string().optional(),
-		purchase: z.string().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		vehicle_number: z.string().nullable().optional(),
+		move_purpose: z.number().int().nullable().optional(),
+		to_weigh: z.boolean().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		permalink: z.string().nullable().optional(),
+		converted_invoice: z.string().nullable().optional(),
+		purchase: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_DeliveryNoteItemTaxNested = z
@@ -4868,6 +6172,15 @@ const v12Def_DeliveryNoteItemTaxNested = z
 		amount: z.string().optional(),
 		vat_amount: z.string().optional(),
 		auto_calculate_vat: z.boolean().optional(),
+	})
+	.strict();
+const v12Def_DeliveryNoteItemTaxNestedResponse = z
+	.object({
+		tax: z.string(),
+		auto_calculate: z.boolean().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		vat_amount: z.string().nullable().optional(),
+		auto_calculate_vat: z.boolean().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12DeliveryNoteItemNestedCreate = z
@@ -4895,11 +6208,46 @@ const v12Def_V12DeliveryNoteItemNestedCreate = z
 		other_move_purpose_title: z.string().max(150).optional(),
 	})
 	.strict();
+const v12Def_V12DeliveryNoteItemNestedCreateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		product: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		unit_measure: z.string(),
+		unit_value: z.string().nullable().optional(),
+		unit_value_gross: z.string().nullable().optional(),
+		unit_discount: z.string().nullable().optional(),
+		unit_discount_gross: z.string().nullable().optional(),
+		unit_discount_mode: z.string().nullable().optional(),
+		unit_discount_percentage: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_DeliveryNoteItemTaxNestedResponse)
+			.nullable()
+			.optional(),
+		taric_code: z.string().nullable().optional(),
+		unit_total: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
+		warehouse: z.string().nullable().optional(),
+		skip_stock_update: z.boolean().nullable().optional(),
+		target_warehouse: z.string().nullable().optional(),
+		move_purpose: z.number().int().nullable().optional(),
+		other_move_purpose_title: z.string().nullable().optional(),
+	})
+	.strict();
 const v12Def_DeliveryNoteStandardTaxNested = z
 	.object({
 		tax: z.string(),
 		auto_calculate: z.boolean().optional(),
 		amount: z.string().optional(),
+	})
+	.strict();
+const v12Def_DeliveryNoteStandardTaxNestedResponse = z
+	.object({
+		tax: z.string(),
+		auto_calculate: z.boolean().nullable().optional(),
+		amount: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_DeliveryNoteRelatedEntities = z
@@ -4912,12 +6260,30 @@ const v12Def_DeliveryNoteRelatedEntities = z
 		billing_address: v12Def_BillingAddress.optional(),
 	})
 	.strict();
+const v12Def_DeliveryNoteRelatedEntitiesResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		contact: z.string(),
+		contact_display_name: z.string(),
+		contact_vat_number: z.string().nullable().optional(),
+		type: z.number().int(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+	})
+	.strict();
 const v12Def_DeliveryNotePackageNested = z
 	.object({
 		id: z.string().min(1).optional(),
 		packaging_type: z.number().int(),
 		quantity: z.number().int().min(1).max(32767),
 		other_packaging_type_title: z.string().max(150).optional(),
+	})
+	.strict();
+const v12Def_DeliveryNotePackageNestedResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		packaging_type: z.number().int(),
+		quantity: z.number().int().min(1).max(32767),
+		other_packaging_type_title: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12DeliveryNoteCreate = z
@@ -4974,54 +6340,63 @@ const v12Def_V12DeliveryNoteCreate = z
 	.strict();
 const v12Def_PUV12DeliveryNoteCreate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		documenttype: z.string().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		number: z.string().max(100).optional(),
-		date: z.string().optional(),
-		intra_transfer: z.boolean().optional(),
-		is_reverse_delivery_note: z.boolean().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		number: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
+		intra_transfer: z.boolean().nullable().optional(),
+		is_reverse_delivery_note: z.boolean().nullable().optional(),
 		reverse_delivery_note_purpose: z.number().int().nullable().optional(),
 		branch: z.string().nullable().optional(),
 		contact: z.string().nullable().optional(),
-		contact_display_name: z.string().max(203).optional(),
-		contact_profession: z.string().max(100).optional(),
-		contact_vat_number: z.string().max(20).optional(),
-		billing_address: v12Def_BillingAddress.optional(),
-		shipping_address: v12Def_ShippingAddress.optional(),
-		loading_address: v12Def_LoadingAddress.optional(),
-		contact_person: z.string().max(101).optional(),
-		contact_phone_number: z.string().max(30).optional(),
-		contact_email: z.string().max(100).optional(),
+		contact_display_name: z.string().nullable().optional(),
+		contact_profession: z.string().nullable().optional(),
+		contact_vat_number: z.string().nullable().optional(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v12Def_ShippingAddressResponse.nullable().optional(),
+		loading_address: v12Def_LoadingAddressResponse.nullable().optional(),
+		contact_person: z.string().nullable().optional(),
+		contact_phone_number: z.string().nullable().optional(),
+		contact_email: z.string().nullable().optional(),
 		dispatch_date: z.string().nullable().optional(),
 		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
-		move_purpose: z.number().int().optional(),
-		other_move_purpose_title: z.string().max(150).optional(),
-		to_weigh: z.boolean().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v12Def_V12DeliveryNoteItemNestedCreate).optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		taxes: z.array(v12Def_DeliveryNoteStandardTaxNested).optional(),
-		total: z.string().optional(),
-		template: z.string().nullable().optional(),
-		public_notes: z.string().optional(),
-		related_entities: z
-			.array(v12Def_DeliveryNoteRelatedEntities)
+		vehicle_number: z.string().nullable().optional(),
+		move_purpose: z.number().int().nullable().optional(),
+		other_move_purpose_title: z.string().nullable().optional(),
+		to_weigh: z.boolean().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v12Def_V12DeliveryNoteItemNestedCreateResponse)
 			.nullable()
 			.optional(),
-		packages: z.array(v12Def_DeliveryNotePackageNested).nullable().optional(),
-		permalink: z.string().min(1).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_DeliveryNoteStandardTaxNestedResponse)
+			.nullable()
+			.optional(),
+		total: z.string().nullable().optional(),
+		template: z.string().nullable().optional(),
+		public_notes: z.string().nullable().optional(),
+		related_entities: z
+			.array(v12Def_DeliveryNoteRelatedEntitiesResponse)
+			.nullable()
+			.optional(),
+		packages: z
+			.array(v12Def_DeliveryNotePackageNestedResponse)
+			.nullable()
+			.optional(),
+		permalink: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12DeliveryNoteItemNestedRetrieveUpdate = z
@@ -5049,58 +6424,95 @@ const v12Def_V12DeliveryNoteItemNestedRetrieveUpdate = z
 		other_move_purpose_title: z.string().max(150).optional(),
 	})
 	.strict();
+const v12Def_V12DeliveryNoteItemNestedRetrieveUpdateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		product: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		unit_measure: z.string(),
+		unit_value: z.string().nullable().optional(),
+		unit_value_gross: z.string().nullable().optional(),
+		unit_discount: z.string().nullable().optional(),
+		unit_discount_gross: z.string().nullable().optional(),
+		unit_discount_mode: z.string().nullable().optional(),
+		unit_discount_percentage: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_DeliveryNoteItemTaxNestedResponse)
+			.nullable()
+			.optional(),
+		taric_code: z.string().nullable().optional(),
+		unit_total: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
+		warehouse: z.string().nullable().optional(),
+		skip_stock_update: z.boolean().nullable().optional(),
+		target_warehouse: z.string().nullable().optional(),
+		move_purpose: z.number().int().nullable().optional(),
+		other_move_purpose_title: z.string().nullable().optional(),
+	})
+	.strict();
 const v12Def_PUV12DeliveryNoteRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		documenttype: z.string().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		number: z.string().max(100).optional(),
-		date: z.string().optional(),
-		intra_transfer: z.boolean().optional(),
-		is_reverse_delivery_note: z.boolean().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		number: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
+		intra_transfer: z.boolean().nullable().optional(),
+		is_reverse_delivery_note: z.boolean().nullable().optional(),
 		reverse_delivery_note_purpose: z.number().int().nullable().optional(),
 		branch: z.string().nullable().optional(),
 		contact: z.string().nullable().optional(),
-		contact_display_name: z.string().max(203).optional(),
-		contact_profession: z.string().max(100).optional(),
-		contact_vat_number: z.string().max(20).optional(),
-		billing_address: v12Def_BillingAddress.optional(),
-		shipping_address: v12Def_ShippingAddress.optional(),
-		loading_address: v12Def_LoadingAddress.optional(),
-		contact_person: z.string().max(101).optional(),
-		contact_phone_number: z.string().max(30).optional(),
-		contact_email: z.string().max(100).optional(),
+		contact_display_name: z.string().nullable().optional(),
+		contact_profession: z.string().nullable().optional(),
+		contact_vat_number: z.string().nullable().optional(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v12Def_ShippingAddressResponse.nullable().optional(),
+		loading_address: v12Def_LoadingAddressResponse.nullable().optional(),
+		contact_person: z.string().nullable().optional(),
+		contact_phone_number: z.string().nullable().optional(),
+		contact_email: z.string().nullable().optional(),
 		dispatch_date: z.string().nullable().optional(),
 		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
-		move_purpose: z.number().int().optional(),
-		other_move_purpose_title: z.string().max(150).optional(),
-		to_weigh: z.boolean().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v12Def_V12DeliveryNoteItemNestedRetrieveUpdate).optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		taxes: z.array(v12Def_DeliveryNoteStandardTaxNested).optional(),
-		total: z.string().optional(),
-		template: z.string().nullable().optional(),
-		public_notes: z.string().optional(),
-		related_entities: z
-			.array(v12Def_DeliveryNoteRelatedEntities)
+		vehicle_number: z.string().nullable().optional(),
+		move_purpose: z.number().int().nullable().optional(),
+		other_move_purpose_title: z.string().nullable().optional(),
+		to_weigh: z.boolean().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v12Def_V12DeliveryNoteItemNestedRetrieveUpdateResponse)
 			.nullable()
 			.optional(),
-		packages: z.array(v12Def_DeliveryNotePackageNested).nullable().optional(),
-		converted_invoice: z.string().optional(),
-		purchase: z.string().optional(),
-		permalink: z.string().min(1).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_DeliveryNoteStandardTaxNestedResponse)
+			.nullable()
+			.optional(),
+		total: z.string().nullable().optional(),
+		template: z.string().nullable().optional(),
+		public_notes: z.string().nullable().optional(),
+		related_entities: z
+			.array(v12Def_DeliveryNoteRelatedEntitiesResponse)
+			.nullable()
+			.optional(),
+		packages: z
+			.array(v12Def_DeliveryNotePackageNestedResponse)
+			.nullable()
+			.optional(),
+		converted_invoice: z.string().nullable().optional(),
+		purchase: z.string().nullable().optional(),
+		permalink: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12DeliveryNoteUpdate = z
@@ -5159,56 +6571,65 @@ const v12Def_V12DeliveryNoteUpdate = z
 	.strict();
 const v12Def_PUV12DeliveryNoteUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		documenttype: z.string().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		number: z.string().max(100).optional(),
-		date: z.string().optional(),
-		intra_transfer: z.boolean().optional(),
-		is_reverse_delivery_note: z.boolean().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		number: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
+		intra_transfer: z.boolean().nullable().optional(),
+		is_reverse_delivery_note: z.boolean().nullable().optional(),
 		reverse_delivery_note_purpose: z.number().int().nullable().optional(),
 		branch: z.string().nullable().optional(),
 		contact: z.string().nullable().optional(),
-		contact_display_name: z.string().max(203).optional(),
-		contact_profession: z.string().max(100).optional(),
-		contact_vat_number: z.string().max(20).optional(),
-		billing_address: v12Def_BillingAddress.optional(),
-		shipping_address: v12Def_ShippingAddress.optional(),
-		loading_address: v12Def_LoadingAddress.optional(),
-		contact_person: z.string().max(101).optional(),
-		contact_phone_number: z.string().max(30).optional(),
-		contact_email: z.string().max(100).optional(),
+		contact_display_name: z.string().nullable().optional(),
+		contact_profession: z.string().nullable().optional(),
+		contact_vat_number: z.string().nullable().optional(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v12Def_ShippingAddressResponse.nullable().optional(),
+		loading_address: v12Def_LoadingAddressResponse.nullable().optional(),
+		contact_person: z.string().nullable().optional(),
+		contact_phone_number: z.string().nullable().optional(),
+		contact_email: z.string().nullable().optional(),
 		dispatch_date: z.string().nullable().optional(),
 		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
-		move_purpose: z.number().int().optional(),
-		other_move_purpose_title: z.string().max(150).optional(),
-		to_weigh: z.boolean().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v12Def_V12DeliveryNoteItemNestedRetrieveUpdate).optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		taxes: z.array(v12Def_DeliveryNoteStandardTaxNested).optional(),
-		total: z.string().optional(),
-		template: z.string().nullable().optional(),
-		public_notes: z.string().optional(),
-		related_entities: z
-			.array(v12Def_DeliveryNoteRelatedEntities)
+		vehicle_number: z.string().nullable().optional(),
+		move_purpose: z.number().int().nullable().optional(),
+		other_move_purpose_title: z.string().nullable().optional(),
+		to_weigh: z.boolean().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v12Def_V12DeliveryNoteItemNestedRetrieveUpdateResponse)
 			.nullable()
 			.optional(),
-		packages: z.array(v12Def_DeliveryNotePackageNested).nullable().optional(),
-		converted_invoice: z.string().optional(),
-		purchase: z.string().optional(),
-		permalink: z.string().min(1).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_DeliveryNoteStandardTaxNestedResponse)
+			.nullable()
+			.optional(),
+		total: z.string().nullable().optional(),
+		template: z.string().nullable().optional(),
+		public_notes: z.string().nullable().optional(),
+		related_entities: z
+			.array(v12Def_DeliveryNoteRelatedEntitiesResponse)
+			.nullable()
+			.optional(),
+		packages: z
+			.array(v12Def_DeliveryNotePackageNestedResponse)
+			.nullable()
+			.optional(),
+		converted_invoice: z.string().nullable().optional(),
+		purchase: z.string().nullable().optional(),
+		permalink: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12DeliveryNotePartialUpdate = z
@@ -5223,6 +6644,20 @@ const v12Def_PUV12DeliveryNotePartialUpdate = z
 		organization: z.number().int().optional(),
 		created: z.string().optional(),
 		modified: z.string().optional(),
+	})
+	.strict();
+const v12Def_PUV12DeliveryNotePartialUpdateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		status: z.string().nullable().optional(),
+		template: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		converted_invoice: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_DeliveryNoteEmailFromTemplate = z
@@ -5252,7 +6687,7 @@ const v12Def_DeliveryNoteEmail = z
 	.strict();
 const v12Def_PUDeliveryNoteMarkVoidResponse = z
 	.object({
-		status: z.string().optional(),
+		status: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12DeliveryNoteAttachmentListRetrieve = z
@@ -5264,62 +6699,73 @@ const v12Def_PUV12DeliveryNoteAttachmentListRetrieve = z
 		created: z.string().optional(),
 	})
 	.strict();
+const v12Def_PUV12DeliveryNoteAttachmentListRetrieveResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		file_url: z.string().nullable().optional(),
+		file_size: z.string().nullable().optional(),
+		created: z.string().nullable().optional(),
+	})
+	.strict();
 const v12Def_PUV12DocumentTypeList = z
 	.object({
-		id: z.string().min(1).optional(),
-		title: z.string().min(1).max(60).optional(),
-		active: z.boolean().optional(),
-		application: z.number().int().optional(),
-		default: z.boolean().optional(),
-		default_sequence: z.string().max(10).optional(),
-		always_self_billed: z.boolean().optional(),
-		is_delivery_note: z.boolean().optional(),
-		is_reverse_delivery_note: z.boolean().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		application: z.number().int().nullable().optional(),
+		default: z.boolean().nullable().optional(),
+		default_sequence: z.string().nullable().optional(),
+		always_self_billed: z.boolean().nullable().optional(),
+		is_delivery_note: z.boolean().nullable().optional(),
+		is_reverse_delivery_note: z.boolean().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12DocumentTypeRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		title: z.string().min(1).max(60).optional(),
+		id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
 		title_translations: z
 			.object({
-				bg: z.string().optional(),
-				de: z.string().optional(),
-				el: z.string().optional(),
-				en: z.string().optional(),
-				'en-gb': z.string().optional(),
-				es: z.string().optional(),
-				fr: z.string().optional(),
-				it: z.string().optional(),
+				bg: z.string().nullable().optional(),
+				de: z.string().nullable().optional(),
+				el: z.string().nullable().optional(),
+				en: z.string().nullable().optional(),
+				'en-gb': z.string().nullable().optional(),
+				es: z.string().nullable().optional(),
+				fr: z.string().nullable().optional(),
+				it: z.string().nullable().optional(),
 			})
 			.strict()
+			.nullable()
 			.optional(),
-		active: z.boolean().optional(),
-		application: z.number().int().optional(),
-		default: z.boolean().optional(),
-		default_sequence: z.string().max(10).optional(),
-		always_self_billed: z.boolean().optional(),
-		is_delivery_note: z.boolean().optional(),
-		is_reverse_delivery_note: z.boolean().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		active: z.boolean().nullable().optional(),
+		application: z.number().int().nullable().optional(),
+		default: z.boolean().nullable().optional(),
+		default_sequence: z.string().nullable().optional(),
+		always_self_billed: z.boolean().nullable().optional(),
+		is_delivery_note: z.boolean().nullable().optional(),
+		is_reverse_delivery_note: z.boolean().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_FlatSequenceNested = z
 	.object({
-		name: z.string().optional(),
-		in_use: z.string().optional(),
-		active: z.boolean().optional(),
+		name: z.string().nullable().optional(),
+		// Typed as a string in the OpenAPI document; Elorus returns the count of documents using the sequence.
+		in_use: z.number().nullable().optional(),
+		active: z.boolean().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUFlatSequenceList = z
 	.object({
-		count: z.number().int().optional(),
-		results: z.array(v12Def_FlatSequenceNested).optional(),
+		count: z.number().int().nullable().optional(),
+		results: z.array(v12Def_FlatSequenceNested).nullable().optional(),
 	})
 	.strict();
 const v12Def_FlatSequence = z
@@ -5329,7 +6775,7 @@ const v12Def_FlatSequence = z
 	.strict();
 const v12Def_PUFlatSequenceSerializer = z
 	.object({
-		name: z.string().min(1).max(10).optional(),
+		name: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_FlatSequenceRename = z
@@ -5340,23 +6786,23 @@ const v12Def_FlatSequenceRename = z
 	.strict();
 const v12Def_PUFlatSequenceRename = z
 	.object({
-		old_name: z.string().min(1).max(10).optional(),
-		new_name: z.string().min(1).max(10).optional(),
+		old_name: z.string().nullable().optional(),
+		new_name: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12EmailTemplate = z
 	.object({
-		id: z.string().min(1).optional(),
-		email_type: z.string().optional(),
-		subject: z.string().optional(),
-		message: z.string().optional(),
-		sender_type: z.string().optional(),
-		sender_name: z.string().max(70).optional(),
-		default: z.boolean().optional(),
-		default_for_language: z.string().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		email_type: z.string().nullable().optional(),
+		subject: z.string().nullable().optional(),
+		message: z.string().nullable().optional(),
+		sender_type: z.string().nullable().optional(),
+		sender_name: z.string().nullable().optional(),
+		default: z.boolean().nullable().optional(),
+		default_for_language: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12EmailTemplate = z
@@ -5391,52 +6837,52 @@ const v12Def_V12EmailTemplateUpdate = z
 	.strict();
 const v12Def_PUV12EmailTemplateUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		email_type: z.string().optional(),
-		subject: z.string().optional(),
-		message: z.string().optional(),
-		sender_type: z.string().optional(),
-		sender_name: z.string().max(70).optional(),
-		default: z.boolean().optional(),
-		default_for_language: z.string().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		email_type: z.string().nullable().optional(),
+		subject: z.string().nullable().optional(),
+		message: z.string().nullable().optional(),
+		sender_type: z.string().nullable().optional(),
+		sender_name: z.string().nullable().optional(),
+		default: z.boolean().nullable().optional(),
+		default_for_language: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12EstimateList = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		documenttype: z.string().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		number: z.string().max(100).optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		number: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_display_name: z.string().min(1).max(203).optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v12Def_BillingAddress.optional(),
-		shipping_address: v12Def_ShippingAddress.optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		permalink: z.string().min(1).optional(),
-		converted_invoice: z.string().optional(),
-		active: z.boolean().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		client: z.string().nullable().optional(),
+		client_display_name: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v12Def_ShippingAddressResponse.nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		permalink: z.string().nullable().optional(),
+		converted_invoice: z.string().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_EstimateItemTaxNested = z
@@ -5446,6 +6892,15 @@ const v12Def_EstimateItemTaxNested = z
 		amount: z.string().optional(),
 		vat_amount: z.string().optional(),
 		auto_calculate_vat: z.boolean().optional(),
+	})
+	.strict();
+const v12Def_EstimateItemTaxNestedResponse = z
+	.object({
+		tax: z.string(),
+		auto_calculate: z.boolean().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		vat_amount: z.string().nullable().optional(),
+		auto_calculate_vat: z.boolean().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12EstimateItemNestedCreate = z
@@ -5468,11 +6923,38 @@ const v12Def_V12EstimateItemNestedCreate = z
 		line_type: z.number().int().nullable().optional(),
 	})
 	.strict();
+const v12Def_V12EstimateItemNestedCreateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		product: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		unit_measure: z.string().nullable().optional(),
+		unit_value: z.string().nullable().optional(),
+		unit_value_gross: z.string().nullable().optional(),
+		unit_discount: z.string().nullable().optional(),
+		unit_discount_gross: z.string().nullable().optional(),
+		unit_discount_percentage: z.string().nullable().optional(),
+		unit_discount_mode: z.string().nullable().optional(),
+		taxes: z.array(v12Def_EstimateItemTaxNestedResponse).nullable().optional(),
+		unit_total: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
+		line_type: z.number().int().nullable().optional(),
+	})
+	.strict();
 const v12Def_EstimateStandardTaxNested = z
 	.object({
 		tax: z.string(),
 		auto_calculate: z.boolean().optional(),
 		amount: z.string().optional(),
+	})
+	.strict();
+const v12Def_EstimateStandardTaxNestedResponse = z
+	.object({
+		tax: z.string(),
+		auto_calculate: z.boolean().nullable().optional(),
+		amount: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12EstimateCreate = z
@@ -5516,41 +6998,47 @@ const v12Def_V12EstimateCreate = z
 	.strict();
 const v12Def_PUV12EstimateCreate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		accept_status: z.string().optional(),
-		documenttype: z.string().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		number: z.string().max(100).optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		accept_status: z.string().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		number: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_display_name: z.string().min(1).max(203).optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v12Def_BillingAddress.optional(),
-		shipping_address: v12Def_ShippingAddress.optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v12Def_V12EstimateItemNestedCreate).optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		taxes: z.array(v12Def_EstimateStandardTaxNested).optional(),
-		total: z.string().optional(),
-		template: z.string().optional(),
-		terms: z.string().optional(),
-		public_notes: z.string().optional(),
-		permalink: z.string().min(1).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		client: z.string().nullable().optional(),
+		client_display_name: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v12Def_ShippingAddressResponse.nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v12Def_V12EstimateItemNestedCreateResponse)
+			.nullable()
+			.optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_EstimateStandardTaxNestedResponse)
+			.nullable()
+			.optional(),
+		total: z.string().nullable().optional(),
+		template: z.string().nullable().optional(),
+		terms: z.string().nullable().optional(),
+		public_notes: z.string().nullable().optional(),
+		permalink: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12EstimateItemNestedURetrieveUpdate = z
@@ -5573,44 +7061,70 @@ const v12Def_V12EstimateItemNestedURetrieveUpdate = z
 		line_type: z.number().int().nullable().optional(),
 	})
 	.strict();
+const v12Def_V12EstimateItemNestedURetrieveUpdateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		product: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		unit_measure: z.string().nullable().optional(),
+		unit_value: z.string().nullable().optional(),
+		unit_value_gross: z.string().nullable().optional(),
+		unit_discount: z.string().nullable().optional(),
+		unit_discount_gross: z.string().nullable().optional(),
+		unit_discount_percentage: z.string().nullable().optional(),
+		unit_discount_mode: z.string().nullable().optional(),
+		taxes: z.array(v12Def_EstimateItemTaxNestedResponse).nullable().optional(),
+		unit_total: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
+		line_type: z.number().int().nullable().optional(),
+	})
+	.strict();
 const v12Def_PUV12EstimateRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		accept_status: z.string().optional(),
-		documenttype: z.string().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		number: z.string().max(100).optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		accept_status: z.string().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		number: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_display_name: z.string().min(1).max(203).optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v12Def_BillingAddress.optional(),
-		shipping_address: v12Def_ShippingAddress.optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v12Def_V12EstimateItemNestedURetrieveUpdate).optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		taxes: z.array(v12Def_EstimateStandardTaxNested).optional(),
-		total: z.string().optional(),
-		template: z.string().optional(),
-		public_notes: z.string().optional(),
-		converted_invoice: z.string().optional(),
-		permalink: z.string().min(1).optional(),
-		active: z.boolean().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		client: z.string().nullable().optional(),
+		client_display_name: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v12Def_ShippingAddressResponse.nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v12Def_V12EstimateItemNestedURetrieveUpdateResponse)
+			.nullable()
+			.optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_EstimateStandardTaxNestedResponse)
+			.nullable()
+			.optional(),
+		total: z.string().nullable().optional(),
+		template: z.string().nullable().optional(),
+		public_notes: z.string().nullable().optional(),
+		converted_invoice: z.string().nullable().optional(),
+		permalink: z.string().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12EstimateUpdate = z
@@ -5655,42 +7169,48 @@ const v12Def_V12EstimateUpdate = z
 	.strict();
 const v12Def_PUV12EstimateUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		accept_status: z.string().optional(),
-		documenttype: z.string().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		number: z.string().max(100).optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		accept_status: z.string().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		number: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_display_name: z.string().min(1).max(203).optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v12Def_BillingAddress.optional(),
-		shipping_address: v12Def_ShippingAddress.optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v12Def_V12EstimateItemNestedURetrieveUpdate).optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		taxes: z.array(v12Def_EstimateStandardTaxNested).optional(),
-		total: z.string().optional(),
-		template: z.string().optional(),
-		public_notes: z.string().optional(),
-		converted_invoice: z.string().optional(),
-		permalink: z.string().min(1).optional(),
-		active: z.boolean().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		client: z.string().nullable().optional(),
+		client_display_name: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v12Def_ShippingAddressResponse.nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v12Def_V12EstimateItemNestedURetrieveUpdateResponse)
+			.nullable()
+			.optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_EstimateStandardTaxNestedResponse)
+			.nullable()
+			.optional(),
+		total: z.string().nullable().optional(),
+		template: z.string().nullable().optional(),
+		public_notes: z.string().nullable().optional(),
+		converted_invoice: z.string().nullable().optional(),
+		permalink: z.string().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12EstimatePartialUpdate = z
@@ -5706,6 +7226,21 @@ const v12Def_PUV12EstimatePartialUpdate = z
 		organization: z.number().int().optional(),
 		created: z.string().optional(),
 		modified: z.string().optional(),
+	})
+	.strict();
+const v12Def_PUV12EstimatePartialUpdateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		status: z.string().nullable().optional(),
+		template: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		converted_invoice: z.string().nullable().optional(),
+		accept_status: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_EstimateEmailFromTemplate = z
@@ -5742,40 +7277,48 @@ const v12Def_PUV12EstimateAttachmentListRetrieve = z
 		created: z.string().optional(),
 	})
 	.strict();
+const v12Def_PUV12EstimateAttachmentListRetrieveResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		file_url: z.string().nullable().optional(),
+		file_size: z.string().nullable().optional(),
+		created: z.string().nullable().optional(),
+	})
+	.strict();
 const v12Def_PUV12ExpenseCategoryListRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		title: z.string().min(1).max(60).optional(),
+		id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
 		color: z
 			.string()
-			.min(1)
-			.max(6)
 			.regex(new RegExp('^[a-fA-F0-9]{6}$'))
+			.nullable()
 			.optional(),
-		protected: z.boolean().optional(),
-		active: z.boolean().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		protected: z.boolean().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12ExpenseList = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		date: z.string().optional(),
-		reference: z.string().max(150).optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
+		reference: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
 		supplier: z.string().nullable().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_ExpenseItemTaxNested = z
@@ -5785,6 +7328,15 @@ const v12Def_ExpenseItemTaxNested = z
 		amount: z.string().optional(),
 		vat_amount: z.string().optional(),
 		auto_calculate_vat: z.boolean().optional(),
+	})
+	.strict();
+const v12Def_ExpenseItemTaxNestedResponse = z
+	.object({
+		tax: z.string(),
+		auto_calculate: z.boolean().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		vat_amount: z.string().nullable().optional(),
+		auto_calculate_vat: z.boolean().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12ExpenseItemNestedCreate = z
@@ -5800,11 +7352,31 @@ const v12Def_V12ExpenseItemNestedCreate = z
 		line_type: z.number().int().nullable().optional(),
 	})
 	.strict();
+const v12Def_V12ExpenseItemNestedCreateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		expense_category: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
+		taxes: z.array(v12Def_ExpenseItemTaxNestedResponse).nullable().optional(),
+		project: z.string().nullable().optional(),
+		billable: z.boolean().nullable().optional(),
+		line_type: z.number().int().nullable().optional(),
+	})
+	.strict();
 const v12Def_ExpenseStandardTaxNested = z
 	.object({
 		tax: z.string(),
 		auto_calculate: z.boolean().optional(),
 		amount: z.string().optional(),
+	})
+	.strict();
+const v12Def_ExpenseStandardTaxNestedResponse = z
+	.object({
+		tax: z.string(),
+		auto_calculate: z.boolean().nullable().optional(),
+		amount: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12ExpenseCreate = z
@@ -5831,24 +7403,33 @@ const v12Def_V12ExpenseCreate = z
 	.strict();
 const v12Def_PUV12ExpenseCreate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		date: z.string().optional(),
-		reference: z.string().max(150).optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
+		reference: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
 		supplier: z.string().nullable().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v12Def_V12ExpenseItemNestedCreate).optional(),
-		net: z.string().optional(),
-		taxes: z.array(v12Def_ExpenseStandardTaxNested).optional(),
-		total: z.string().optional(),
-		trackingcategories: z.array(v12Def_RecordTrackingCategoryNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v12Def_V12ExpenseItemNestedCreateResponse)
+			.nullable()
+			.optional(),
+		net: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_ExpenseStandardTaxNestedResponse)
+			.nullable()
+			.optional(),
+		total: z.string().nullable().optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_ExpenseItemNestedRetrieve = z
@@ -5864,26 +7445,48 @@ const v12Def_ExpenseItemNestedRetrieve = z
 		line_type: z.number().int().nullable().optional(),
 	})
 	.strict();
+const v12Def_ExpenseItemNestedRetrieveResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		expense_category: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
+		taxes: z.array(v12Def_ExpenseItemTaxNestedResponse).nullable().optional(),
+		project: z.string().nullable().optional(),
+		billable: z.boolean().nullable().optional(),
+		line_type: z.number().int().nullable().optional(),
+	})
+	.strict();
 const v12Def_PUV12ExpenseRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		date: z.string().optional(),
-		reference: z.string().max(150).optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
+		reference: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
 		supplier: z.string().nullable().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v12Def_ExpenseItemNestedRetrieve).optional(),
-		net: z.string().optional(),
-		taxes: z.array(v12Def_ExpenseStandardTaxNested).optional(),
-		total: z.string().optional(),
-		trackingcategories: z.array(v12Def_RecordTrackingCategoryNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v12Def_ExpenseItemNestedRetrieveResponse)
+			.nullable()
+			.optional(),
+		net: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_ExpenseStandardTaxNestedResponse)
+			.nullable()
+			.optional(),
+		total: z.string().nullable().optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12ExpenseUpdate = z
@@ -5910,24 +7513,33 @@ const v12Def_V12ExpenseUpdate = z
 	.strict();
 const v12Def_PUV12ExpenseUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		date: z.string().optional(),
-		reference: z.string().max(150).optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
+		reference: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
 		supplier: z.string().nullable().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v12Def_ExpenseItemNestedRetrieve).optional(),
-		net: z.string().optional(),
-		taxes: z.array(v12Def_ExpenseStandardTaxNested).optional(),
-		total: z.string().optional(),
-		trackingcategories: z.array(v12Def_RecordTrackingCategoryNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v12Def_ExpenseItemNestedRetrieveResponse)
+			.nullable()
+			.optional(),
+		net: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_ExpenseStandardTaxNestedResponse)
+			.nullable()
+			.optional(),
+		total: z.string().nullable().optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12ExpenseAttachmentListRetrieve = z
@@ -5940,24 +7552,34 @@ const v12Def_PUV12ExpenseAttachmentListRetrieve = z
 		created: z.string().optional(),
 	})
 	.strict();
+const v12Def_PUV12ExpenseAttachmentListRetrieveResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		primary: z.boolean().nullable().optional(),
+		file_url: z.string().nullable().optional(),
+		file_size: z.string().nullable().optional(),
+		created: z.string().nullable().optional(),
+	})
+	.strict();
 const v12Def_PUV12GoodsReceiptList = z
 	.object({
-		id: z.string().min(1).optional(),
-		representation: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		is_void: z.boolean().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		number: z.string().max(100).optional(),
+		id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		is_void: z.boolean().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		number: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		billing_address: z.string().optional(),
-		supplier: z.string().optional(),
-		supplier_display_name: z.string().max(203).optional(),
-		date: z.string().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		billing_address: z.string().nullable().optional(),
+		supplier: z.string().nullable().optional(),
+		supplier_display_name: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12GoodsReceiptItemNestedCreate = z
@@ -5970,6 +7592,18 @@ const v12Def_V12GoodsReceiptItemNestedCreate = z
 		unit_measure: z.string().nullable().optional(),
 		warehouse: z.string().nullable().optional(),
 		skip_stock_update: z.boolean().optional(),
+	})
+	.strict();
+const v12Def_V12GoodsReceiptItemNestedCreateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		product: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		unit_measure: z.string().nullable().optional(),
+		warehouse: z.string().nullable().optional(),
+		skip_stock_update: z.boolean().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12GoodsReceiptCreate = z
@@ -6001,69 +7635,72 @@ const v12Def_V12GoodsReceiptCreate = z
 	.strict();
 const v12Def_PUV12GoodsReceiptCreate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		number: z.string().max(100).optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		number: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		supplier: z.string().optional(),
-		supplier_display_name: z.string().max(203).optional(),
-		supplier_profession: z.string().max(100).optional(),
-		supplier_vat_number: z.string().max(20).optional(),
-		supplier_contact_person: z.string().max(101).optional(),
-		supplier_phone_number: z.string().max(30).optional(),
-		supplier_email: z.string().max(100).optional(),
-		billing_address: v12Def_BillingAddress.optional(),
-		items: z.array(v12Def_V12GoodsReceiptItemNestedCreate).optional(),
+		supplier: z.string().nullable().optional(),
+		supplier_display_name: z.string().nullable().optional(),
+		supplier_profession: z.string().nullable().optional(),
+		supplier_vat_number: z.string().nullable().optional(),
+		supplier_contact_person: z.string().nullable().optional(),
+		supplier_phone_number: z.string().nullable().optional(),
+		supplier_email: z.string().nullable().optional(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+		items: z
+			.array(v12Def_V12GoodsReceiptItemNestedCreateResponse)
+			.nullable()
+			.optional(),
 		template: z.string().nullable().optional(),
-		public_notes: z.string().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		public_notes: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_GoodsReceiptItemNested = z
 	.object({
-		id: z.string().min(1).optional(),
+		id: z.string().nullable().optional(),
 		product: z.string().nullable().optional(),
-		title: z.string().min(1).max(200).optional(),
-		description: z.string().optional(),
-		quantity: z.string().optional(),
+		title: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
 		unit_measure: z.string().nullable().optional(),
 		warehouse: z.string().nullable().optional(),
-		skip_stock_update: z.boolean().optional(),
+		skip_stock_update: z.boolean().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12GoodsReceiptRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		representation: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		is_void: z.boolean().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		number: z.string().max(100).optional(),
+		id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		is_void: z.boolean().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		number: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		billing_address: z.string().optional(),
-		supplier: z.string().optional(),
-		supplier_display_name: z.string().max(203).optional(),
-		supplier_profession: z.string().max(100).optional(),
-		supplier_vat_number: z.string().max(20).optional(),
-		supplier_contact_person: z.string().max(101).optional(),
-		supplier_phone_number: z.string().max(30).optional(),
-		supplier_email: z.string().max(100).optional(),
-		items: z.array(v12Def_GoodsReceiptItemNested).optional(),
+		billing_address: z.string().nullable().optional(),
+		supplier: z.string().nullable().optional(),
+		supplier_display_name: z.string().nullable().optional(),
+		supplier_profession: z.string().nullable().optional(),
+		supplier_vat_number: z.string().nullable().optional(),
+		supplier_contact_person: z.string().nullable().optional(),
+		supplier_phone_number: z.string().nullable().optional(),
+		supplier_email: z.string().nullable().optional(),
+		items: z.array(v12Def_GoodsReceiptItemNested).nullable().optional(),
 		template: z.string().nullable().optional(),
-		public_notes: z.string().optional(),
-		date: z.string().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		public_notes: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12GoodsReceiptItemNestedRetrieveUpdate = z
@@ -6076,6 +7713,18 @@ const v12Def_V12GoodsReceiptItemNestedRetrieveUpdate = z
 		unit_measure: z.string().nullable().optional(),
 		warehouse: z.string().nullable().optional(),
 		skip_stock_update: z.boolean().optional(),
+	})
+	.strict();
+const v12Def_V12GoodsReceiptItemNestedRetrieveUpdateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		product: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		unit_measure: z.string().nullable().optional(),
+		warehouse: z.string().nullable().optional(),
+		skip_stock_update: z.boolean().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12GoodsReceiptUpdate = z
@@ -6107,29 +7756,32 @@ const v12Def_V12GoodsReceiptUpdate = z
 	.strict();
 const v12Def_PUV12GoodsReceiptUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		number: z.string().max(100).optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		number: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		supplier: z.string().optional(),
-		supplier_display_name: z.string().max(203).optional(),
-		supplier_profession: z.string().max(100).optional(),
-		supplier_vat_number: z.string().max(20).optional(),
-		supplier_contact_person: z.string().max(101).optional(),
-		supplier_phone_number: z.string().max(30).optional(),
-		supplier_email: z.string().max(100).optional(),
-		billing_address: v12Def_BillingAddress.optional(),
-		items: z.array(v12Def_V12GoodsReceiptItemNestedRetrieveUpdate).optional(),
+		supplier: z.string().nullable().optional(),
+		supplier_display_name: z.string().nullable().optional(),
+		supplier_profession: z.string().nullable().optional(),
+		supplier_vat_number: z.string().nullable().optional(),
+		supplier_contact_person: z.string().nullable().optional(),
+		supplier_phone_number: z.string().nullable().optional(),
+		supplier_email: z.string().nullable().optional(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+		items: z
+			.array(v12Def_V12GoodsReceiptItemNestedRetrieveUpdateResponse)
+			.nullable()
+			.optional(),
 		template: z.string().nullable().optional(),
-		public_notes: z.string().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		public_notes: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12GoodsReceiptPartialUpdate = z
@@ -6143,6 +7795,19 @@ const v12Def_PUV12GoodsReceiptPartialUpdate = z
 		organization: z.number().int().optional(),
 		created: z.string().optional(),
 		modified: z.string().optional(),
+	})
+	.strict();
+const v12Def_PUV12GoodsReceiptPartialUpdateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		status: z.string().nullable().optional(),
+		template: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_DocumentEmailFromTemplate = z
@@ -6170,48 +7835,48 @@ const v12Def_DocumentEmail = z
 	.strict();
 const v12Def_PUGoodsReceiptMarkVoidResponse = z
 	.object({
-		status: z.string().optional(),
+		status: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12InvoiceList = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		documenttype: z.string().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		number: z.string().max(100).optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		number: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		due_date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_display_name: z.string().min(1).max(203).optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v12Def_BillingAddress.optional(),
-		shipping_address: v12Def_ShippingAddress.optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		loading_address: v12Def_LoadingAddress.optional(),
+		client: z.string().nullable().optional(),
+		client_display_name: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v12Def_ShippingAddressResponse.nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		loading_address: v12Def_LoadingAddressResponse.nullable().optional(),
 		dispatch_date: z.string().nullable().optional(),
 		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
+		vehicle_number: z.string().nullable().optional(),
 		move_purpose: z.number().int().nullable().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		payable: z.string().optional(),
-		paid: z.string().optional(),
-		permalink: z.string().min(1).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		payable: z.string().nullable().optional(),
+		paid: z.string().nullable().optional(),
+		permalink: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_InvoiceRelatedEntities = z
@@ -6224,12 +7889,30 @@ const v12Def_InvoiceRelatedEntities = z
 		billing_address: v12Def_BillingAddress.optional(),
 	})
 	.strict();
+const v12Def_InvoiceRelatedEntitiesResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		contact: z.string(),
+		contact_display_name: z.string(),
+		contact_vat_number: z.string().nullable().optional(),
+		type: z.number().int(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+	})
+	.strict();
 const v12Def_InvoicePackageNested = z
 	.object({
 		id: z.string().min(1).optional(),
 		packaging_type: z.number().int(),
 		quantity: z.number().int().min(1).max(32767),
 		other_packaging_type_title: z.string().max(150).optional(),
+	})
+	.strict();
+const v12Def_InvoicePackageNestedResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		packaging_type: z.number().int(),
+		quantity: z.number().int().min(1).max(32767),
+		other_packaging_type_title: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_InvoiceItemTaxNested = z
@@ -6239,6 +7922,15 @@ const v12Def_InvoiceItemTaxNested = z
 		amount: z.string().optional(),
 		vat_amount: z.string().optional(),
 		auto_calculate_vat: z.boolean().optional(),
+	})
+	.strict();
+const v12Def_InvoiceItemTaxNestedResponse = z
+	.object({
+		tax: z.string(),
+		auto_calculate: z.boolean().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		vat_amount: z.string().nullable().optional(),
+		auto_calculate_vat: z.boolean().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12InvoiceItemNestedCreate = z
@@ -6265,11 +7957,42 @@ const v12Def_V12InvoiceItemNestedCreate = z
 		skip_stock_update: z.boolean().optional(),
 	})
 	.strict();
+const v12Def_V12InvoiceItemNestedCreateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		product: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		unit_measure: z.string().nullable().optional(),
+		unit_value: z.string().nullable().optional(),
+		unit_value_gross: z.string().nullable().optional(),
+		unit_discount: z.string().nullable().optional(),
+		unit_discount_gross: z.string().nullable().optional(),
+		unit_discount_percentage: z.string().nullable().optional(),
+		unit_discount_mode: z.string().nullable().optional(),
+		taxes: z.array(v12Def_InvoiceItemTaxNestedResponse).nullable().optional(),
+		unit_total: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
+		project: z.string().nullable().optional(),
+		taric_code: z.string().nullable().optional(),
+		warehouse: z.string().nullable().optional(),
+		line_type: z.number().int().nullable().optional(),
+		skip_stock_update: z.boolean().nullable().optional(),
+	})
+	.strict();
 const v12Def_InvoiceStandardTaxNested = z
 	.object({
 		tax: z.string(),
 		auto_calculate: z.boolean().optional(),
 		amount: z.string().optional(),
+	})
+	.strict();
+const v12Def_InvoiceStandardTaxNestedResponse = z
+	.object({
+		tax: z.string(),
+		auto_calculate: z.boolean().nullable().optional(),
+		amount: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_InvoiceWithholdingTaxNested = z
@@ -6278,6 +8001,14 @@ const v12Def_InvoiceWithholdingTaxNested = z
 		amount: z.string().optional(),
 		subtotal: z.number().int().optional(),
 		auto_calculate: z.boolean().optional(),
+	})
+	.strict();
+const v12Def_InvoiceWithholdingTaxNestedResponse = z
+	.object({
+		tax: z.string(),
+		amount: z.string().nullable().optional(),
+		subtotal: z.number().int().nullable().optional(),
+		auto_calculate: z.boolean().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12InvoiceCreate = z
@@ -6338,58 +8069,73 @@ const v12Def_V12InvoiceCreate = z
 	.strict();
 const v12Def_PUV12InvoiceCreate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		documenttype: z.string().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		number: z.string().max(100).optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		number: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		due_days: z.number().int().min(0).max(2147483647).nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_display_name: z.string().min(1).max(203).optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v12Def_BillingAddress.optional(),
-		shipping_address: v12Def_ShippingAddress.optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		loading_address: v12Def_LoadingAddress.optional(),
+		client: z.string().nullable().optional(),
+		client_display_name: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v12Def_ShippingAddressResponse.nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		loading_address: v12Def_LoadingAddressResponse.nullable().optional(),
 		dispatch_date: z.string().nullable().optional(),
 		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
+		vehicle_number: z.string().nullable().optional(),
 		move_purpose: z.number().int().nullable().optional(),
 		related_entities: z
-			.array(v12Def_InvoiceRelatedEntities)
+			.array(v12Def_InvoiceRelatedEntitiesResponse)
 			.nullable()
 			.optional(),
-		packages: z.array(v12Def_InvoicePackageNested).nullable().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v12Def_V12InvoiceItemNestedCreate).optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		taxes: z.array(v12Def_InvoiceStandardTaxNested).optional(),
-		total: z.string().optional(),
-		withholding_taxes: z.array(v12Def_InvoiceWithholdingTaxNested).optional(),
-		payable: z.string().optional(),
-		paid: z.string().optional(),
-		template: z.string().optional(),
-		terms: z.string().optional(),
-		public_notes: z.string().optional(),
-		payment_gateways: z.array(z.string()).optional(),
-		related_documents: z.array(z.string()).optional(),
-		delivery_notes: z.array(z.string()).optional(),
-		trackingcategories: z.array(v12Def_RecordTrackingCategoryNested).optional(),
-		permalink: z.string().min(1).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		packages: z
+			.array(v12Def_InvoicePackageNestedResponse)
+			.nullable()
+			.optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v12Def_V12InvoiceItemNestedCreateResponse)
+			.nullable()
+			.optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_InvoiceStandardTaxNestedResponse)
+			.nullable()
+			.optional(),
+		total: z.string().nullable().optional(),
+		withholding_taxes: z
+			.array(v12Def_InvoiceWithholdingTaxNestedResponse)
+			.nullable()
+			.optional(),
+		payable: z.string().nullable().optional(),
+		paid: z.string().nullable().optional(),
+		template: z.string().nullable().optional(),
+		terms: z.string().nullable().optional(),
+		public_notes: z.string().nullable().optional(),
+		payment_gateways: z.array(z.string()).nullable().optional(),
+		related_documents: z.array(z.string()).nullable().optional(),
+		delivery_notes: z.array(z.string()).nullable().optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		permalink: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12InvoiceItemNestedRetrieveUpdate = z
@@ -6416,60 +8162,99 @@ const v12Def_V12InvoiceItemNestedRetrieveUpdate = z
 		skip_stock_update: z.boolean().optional(),
 	})
 	.strict();
+const v12Def_V12InvoiceItemNestedRetrieveUpdateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		product: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		unit_measure: z.string().nullable().optional(),
+		unit_value: z.string().nullable().optional(),
+		unit_value_gross: z.string().nullable().optional(),
+		unit_discount: z.string().nullable().optional(),
+		unit_discount_gross: z.string().nullable().optional(),
+		unit_discount_percentage: z.string().nullable().optional(),
+		unit_discount_mode: z.string().nullable().optional(),
+		taxes: z.array(v12Def_InvoiceItemTaxNestedResponse).nullable().optional(),
+		unit_total: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
+		project: z.string().nullable().optional(),
+		taric_code: z.string().nullable().optional(),
+		warehouse: z.string().nullable().optional(),
+		line_type: z.number().int().nullable().optional(),
+		skip_stock_update: z.boolean().nullable().optional(),
+	})
+	.strict();
 const v12Def_PUV12InvoiceRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		documenttype: z.string().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		number: z.string().max(100).optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		number: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		due_days: z.number().int().min(0).max(2147483647).nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_display_name: z.string().min(1).max(203).optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v12Def_BillingAddress.optional(),
-		shipping_address: v12Def_ShippingAddress.optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		loading_address: v12Def_LoadingAddress.optional(),
+		client: z.string().nullable().optional(),
+		client_display_name: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v12Def_ShippingAddressResponse.nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		loading_address: v12Def_LoadingAddressResponse.nullable().optional(),
 		dispatch_date: z.string().nullable().optional(),
 		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
+		vehicle_number: z.string().nullable().optional(),
 		move_purpose: z.number().int().nullable().optional(),
 		related_entities: z
-			.array(v12Def_InvoiceRelatedEntities)
+			.array(v12Def_InvoiceRelatedEntitiesResponse)
 			.nullable()
 			.optional(),
-		packages: z.array(v12Def_InvoicePackageNested).nullable().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v12Def_V12InvoiceItemNestedRetrieveUpdate).optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		taxes: z.array(v12Def_InvoiceStandardTaxNested).optional(),
-		total: z.string().optional(),
-		withholding_taxes: z.array(v12Def_InvoiceWithholdingTaxNested).optional(),
-		payable: z.string().optional(),
-		paid: z.string().optional(),
-		template: z.string().optional(),
-		terms: z.string().optional(),
-		public_notes: z.string().optional(),
-		payment_gateways: z.array(z.string()).optional(),
-		related_documents: z.array(z.string()).optional(),
-		delivery_notes: z.array(z.string()).optional(),
-		trackingcategories: z.array(v12Def_RecordTrackingCategoryNested).optional(),
-		permalink: z.string().min(1).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		packages: z
+			.array(v12Def_InvoicePackageNestedResponse)
+			.nullable()
+			.optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v12Def_V12InvoiceItemNestedRetrieveUpdateResponse)
+			.nullable()
+			.optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_InvoiceStandardTaxNestedResponse)
+			.nullable()
+			.optional(),
+		total: z.string().nullable().optional(),
+		withholding_taxes: z
+			.array(v12Def_InvoiceWithholdingTaxNestedResponse)
+			.nullable()
+			.optional(),
+		payable: z.string().nullable().optional(),
+		paid: z.string().nullable().optional(),
+		template: z.string().nullable().optional(),
+		terms: z.string().nullable().optional(),
+		public_notes: z.string().nullable().optional(),
+		payment_gateways: z.array(z.string()).nullable().optional(),
+		related_documents: z.array(z.string()).nullable().optional(),
+		delivery_notes: z.array(z.string()).nullable().optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		permalink: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12InvoiceUpdate = z
@@ -6530,58 +8315,73 @@ const v12Def_V12InvoiceUpdate = z
 	.strict();
 const v12Def_PUV12InvoiceUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
-		documenttype: z.string().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		number: z.string().max(100).optional(),
-		date: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		number: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		due_days: z.number().int().min(0).max(2147483647).nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_display_name: z.string().min(1).max(203).optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v12Def_BillingAddress.optional(),
-		shipping_address: v12Def_ShippingAddress.optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		loading_address: v12Def_LoadingAddress.optional(),
+		client: z.string().nullable().optional(),
+		client_display_name: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v12Def_ShippingAddressResponse.nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		loading_address: v12Def_LoadingAddressResponse.nullable().optional(),
 		dispatch_date: z.string().nullable().optional(),
 		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
+		vehicle_number: z.string().nullable().optional(),
 		move_purpose: z.number().int().nullable().optional(),
 		related_entities: z
-			.array(v12Def_InvoiceRelatedEntities)
+			.array(v12Def_InvoiceRelatedEntitiesResponse)
 			.nullable()
 			.optional(),
-		packages: z.array(v12Def_InvoicePackageNested).nullable().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v12Def_V12InvoiceItemNestedRetrieveUpdate).optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		taxes: z.array(v12Def_InvoiceStandardTaxNested).optional(),
-		total: z.string().optional(),
-		withholding_taxes: z.array(v12Def_InvoiceWithholdingTaxNested).optional(),
-		payable: z.string().optional(),
-		paid: z.string().optional(),
-		template: z.string().optional(),
-		terms: z.string().optional(),
-		public_notes: z.string().optional(),
-		payment_gateways: z.array(z.string()).optional(),
-		related_documents: z.array(z.string()).optional(),
-		delivery_notes: z.array(z.string()).optional(),
-		trackingcategories: z.array(v12Def_RecordTrackingCategoryNested).optional(),
-		permalink: z.string().min(1).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		packages: z
+			.array(v12Def_InvoicePackageNestedResponse)
+			.nullable()
+			.optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v12Def_V12InvoiceItemNestedRetrieveUpdateResponse)
+			.nullable()
+			.optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_InvoiceStandardTaxNestedResponse)
+			.nullable()
+			.optional(),
+		total: z.string().nullable().optional(),
+		withholding_taxes: z
+			.array(v12Def_InvoiceWithholdingTaxNestedResponse)
+			.nullable()
+			.optional(),
+		payable: z.string().nullable().optional(),
+		paid: z.string().nullable().optional(),
+		template: z.string().nullable().optional(),
+		terms: z.string().nullable().optional(),
+		public_notes: z.string().nullable().optional(),
+		payment_gateways: z.array(z.string()).nullable().optional(),
+		related_documents: z.array(z.string()).nullable().optional(),
+		delivery_notes: z.array(z.string()).nullable().optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		permalink: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12InvoicePartialUpdate = z
@@ -6597,6 +8397,24 @@ const v12Def_PUV12InvoicePartialUpdate = z
 		organization: z.number().int().optional(),
 		created: z.string().optional(),
 		modified: z.string().optional(),
+	})
+	.strict();
+const v12Def_PUV12InvoicePartialUpdateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		payment_gateways: z.array(z.string()).nullable().optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_InvoiceEmailFromTemplate = z
@@ -6626,20 +8444,20 @@ const v12Def_InvoiceEmail = z
 	.strict();
 const v12Def_PUInvoiceMarkVoidResponse = z
 	.object({
-		status: z.string().optional(),
+		status: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUInvoiceCreditTransactionInvSerializer = z
 	.object({
-		id: z.string().min(1).optional(),
-		representation: z.string().optional(),
-		creditnote: z.string().optional(),
-		amount: z.string().optional(),
-		currency_code: z.string().optional(),
-		date: z.string().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		creditnote: z.string().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_InvoiceCreditTransactionInv = z
@@ -6655,6 +8473,19 @@ const v12Def_InvoiceCreditTransactionInv = z
 		modified: z.string().optional(),
 	})
 	.strict();
+const v12Def_InvoiceCreditTransactionInvResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		creditnote: z.string(),
+		amount: z.string(),
+		currency_code: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
+	})
+	.strict();
 const v12Def_PUV12InvoiceAttachmentListRetrieve = z
 	.object({
 		id: z.string().min(1).optional(),
@@ -6664,12 +8495,30 @@ const v12Def_PUV12InvoiceAttachmentListRetrieve = z
 		created: z.string().optional(),
 	})
 	.strict();
+const v12Def_PUV12InvoiceAttachmentListRetrieveResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		file_url: z.string().nullable().optional(),
+		file_size: z.string().nullable().optional(),
+		created: z.string().nullable().optional(),
+	})
+	.strict();
 const v12Def_BranchAddress = z
 	.object({
 		address_line: z.string().max(200),
 		city: z.string().max(100),
 		state: z.string().max(100).optional(),
 		zip: z.string().max(20),
+		country: z.string(),
+	})
+	.strict();
+const v12Def_BranchAddressResponse = z
+	.object({
+		address_line: z.string(),
+		city: z.string(),
+		state: z.string().nullable().optional(),
+		zip: z.string(),
 		country: z.string(),
 	})
 	.strict();
@@ -6684,6 +8533,25 @@ const v12Def_PUV12OrganizationBranchSerializer = z
 		organization: z.number().int().optional(),
 		created: z.string().optional(),
 		modified: z.string().optional(),
+	})
+	.strict();
+const v12Def_PUV12OrganizationBranchSerializerResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		branch_name: z.string().nullable().optional(),
+		branch_code: z
+			.number()
+			.int()
+			.min(-2147483648)
+			.max(2147483647)
+			.nullable()
+			.optional(),
+		branch_address: v12Def_BranchAddressResponse.nullable().optional(),
+		phone: z.string().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12OrganizationBranch = z
@@ -6701,37 +8569,37 @@ const v12Def_V12OrganizationBranch = z
 	.strict();
 const v12Def_PUV12PaymentGatewayList = z
 	.object({
-		id: z.string().min(1).optional(),
-		title: z.string().min(1).max(30).optional(),
-		backend: z.string().optional(),
-		active: z.boolean().optional(),
-		default: z.boolean().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		backend: z.string().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		default: z.boolean().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12ProductOrServiceList = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		title: z.string().min(1).max(150).optional(),
-		code: z.string().max(40).optional(),
-		description: z.string().optional(),
-		sales: z.boolean().optional(),
-		sale_value: z.string().optional(),
-		sale_taxes: z.array(z.string()).optional(),
-		purchases: z.boolean().optional(),
-		purchase_value: z.string().optional(),
-		purchase_taxes: z.array(z.string()).optional(),
-		manage: z.boolean().optional(),
-		stock: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		code: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		sales: z.boolean().nullable().optional(),
+		sale_value: z.string().nullable().optional(),
+		sale_taxes: z.array(z.string()).nullable().optional(),
+		purchases: z.boolean().nullable().optional(),
+		purchase_value: z.string().nullable().optional(),
+		purchase_taxes: z.array(z.string()).nullable().optional(),
+		manage: z.boolean().nullable().optional(),
+		stock: z.string().nullable().optional(),
 		unit_measure: z.string().nullable().optional(),
-		active: z.boolean().optional(),
-		taric_code: z.string().min(10).max(10).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		active: z.boolean().nullable().optional(),
+		taric_code: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_StockAdjustmentNestedCreate = z
@@ -6743,6 +8611,11 @@ const v12Def_StockAdjustmentNestedCreate = z
 const v12Def_ProductBarcodeNested = z
 	.object({
 		barcode: z.string().min(1).max(128),
+	})
+	.strict();
+const v12Def_ProductBarcodeNestedResponse = z
+	.object({
+		barcode: z.string(),
 	})
 	.strict();
 const v12Def_V12ProductOrServiceCreate = z
@@ -6773,27 +8646,33 @@ const v12Def_V12ProductOrServiceCreate = z
 	.strict();
 const v12Def_PUV12ProductOrServiceCreate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		title: z.string().min(1).max(150).optional(),
-		code: z.string().max(40).optional(),
-		description: z.string().optional(),
-		sales: z.boolean().optional(),
-		sale_value: z.string().optional(),
-		sale_taxes: z.array(z.string()).optional(),
-		purchases: z.boolean().optional(),
-		purchase_value: z.string().optional(),
-		purchase_taxes: z.array(z.string()).optional(),
-		manage: z.boolean().optional(),
-		stock: z.string().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		code: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		sales: z.boolean().nullable().optional(),
+		sale_value: z.string().nullable().optional(),
+		sale_taxes: z.array(z.string()).nullable().optional(),
+		purchases: z.boolean().nullable().optional(),
+		purchase_value: z.string().nullable().optional(),
+		purchase_taxes: z.array(z.string()).nullable().optional(),
+		manage: z.boolean().nullable().optional(),
+		stock: z.string().nullable().optional(),
 		unit_measure: z.string().nullable().optional(),
-		trackingcategories: z.array(v12Def_RecordTrackingCategoryNested).optional(),
-		active: z.boolean().optional(),
-		taric_code: z.string().min(10).max(10).optional(),
-		barcodes: z.array(v12Def_ProductBarcodeNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		active: z.boolean().nullable().optional(),
+		taric_code: z.string().nullable().optional(),
+		barcodes: z
+			.array(v12Def_ProductBarcodeNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_ProductStockNested = z
@@ -6802,30 +8681,45 @@ const v12Def_ProductStockNested = z
 		stock: z.string(),
 	})
 	.strict();
+const v12Def_ProductStockNestedResponse = z
+	.object({
+		warehouse: z.string(),
+		stock: z.string(),
+	})
+	.strict();
 const v12Def_PUV12ProductOrServiceRetrieveUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		title: z.string().min(1).max(150).optional(),
-		code: z.string().max(40).optional(),
-		description: z.string().optional(),
-		sales: z.boolean().optional(),
-		sale_value: z.string().optional(),
-		sale_taxes: z.array(z.string()).optional(),
-		purchases: z.boolean().optional(),
-		purchase_value: z.string().optional(),
-		purchase_taxes: z.array(z.string()).optional(),
-		manage: z.boolean().optional(),
-		stock: z.string().optional(),
-		warehouses_stock: z.array(v12Def_ProductStockNested).optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		code: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		sales: z.boolean().nullable().optional(),
+		sale_value: z.string().nullable().optional(),
+		sale_taxes: z.array(z.string()).nullable().optional(),
+		purchases: z.boolean().nullable().optional(),
+		purchase_value: z.string().nullable().optional(),
+		purchase_taxes: z.array(z.string()).nullable().optional(),
+		manage: z.boolean().nullable().optional(),
+		stock: z.string().nullable().optional(),
+		warehouses_stock: z
+			.array(v12Def_ProductStockNestedResponse)
+			.nullable()
+			.optional(),
 		unit_measure: z.string().nullable().optional(),
-		trackingcategories: z.array(v12Def_RecordTrackingCategoryNested).optional(),
-		active: z.boolean().optional(),
-		taric_code: z.string().min(10).max(10).optional(),
-		barcodes: z.array(v12Def_ProductBarcodeNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		active: z.boolean().nullable().optional(),
+		taric_code: z.string().nullable().optional(),
+		barcodes: z
+			.array(v12Def_ProductBarcodeNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12ProductOrServiceRetrieveUpdate = z
@@ -6856,15 +8750,15 @@ const v12Def_V12ProductOrServiceRetrieveUpdate = z
 	.strict();
 const v12Def_PUStockAdjustmentSerializer = z
 	.object({
-		id: z.string().min(1).optional(),
-		operand: z.string().optional(),
-		quantity: z.string().optional(),
-		date: z.string().optional(),
-		notes: z.string().max(255).optional(),
-		warehouse: z.string().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		operand: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
+		notes: z.string().nullable().optional(),
+		warehouse: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_StockAdjustment = z
@@ -6882,27 +8776,27 @@ const v12Def_StockAdjustment = z
 	.strict();
 const v12Def_V12ProjectMemberNestedList = z
 	.object({
-		member: z.number().int(),
-		member_repr: z.string().optional(),
-		hourly_rate: z.string().optional(),
-		cost_per_hour: z.string().optional(),
+		member: ElorusIdReferenceSchema,
+		member_repr: z.string().nullable().optional(),
+		hourly_rate: z.string().nullable().optional(),
+		cost_per_hour: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12ProjectList = z
 	.object({
-		id: z.string().min(1).optional(),
-		name: z.string().min(1).max(100).optional(),
-		description: z.string().optional(),
-		client: z.string().optional(),
-		billing_method: z.string().optional(),
-		fixed_cost: z.string().optional(),
-		hourly_rate: z.string().optional(),
-		active: z.boolean().optional(),
-		organization: z.number().int().optional(),
-		members: z.array(v12Def_V12ProjectMemberNestedList).optional(),
-		client_portal: z.string().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		name: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		client: z.string().nullable().optional(),
+		billing_method: z.string().nullable().optional(),
+		fixed_cost: z.string().nullable().optional(),
+		hourly_rate: z.string().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		members: z.array(v12Def_V12ProjectMemberNestedList).nullable().optional(),
+		client_portal: z.string().nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_ProjectMemberNestedCreateUpdate = z
@@ -6913,12 +8807,29 @@ const v12Def_ProjectMemberNestedCreateUpdate = z
 		cost_per_hour: z.string().optional(),
 	})
 	.strict();
+const v12Def_ProjectMemberNestedCreateUpdateResponse = z
+	.object({
+		member: ElorusIdReferenceSchema,
+		manager: z.boolean().nullable().optional(),
+		// Null for a member with no rate of their own, as in project reads.
+		hourly_rate: z.string().nullable().optional(),
+		cost_per_hour: z.string().nullable().optional(),
+	})
+	.strict();
 const v12Def_ProjectTaskNestedCreateUpdate = z
 	.object({
 		id: z.string().min(1).optional(),
 		name: z.string().min(1).max(150),
 		description: z.string().optional(),
 		hourly_rate: z.string().optional(),
+	})
+	.strict();
+const v12Def_ProjectTaskNestedCreateUpdateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		name: z.string(),
+		description: z.string().nullable().optional(),
+		hourly_rate: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12ProjectCreateUpdate = z
@@ -6940,54 +8851,63 @@ const v12Def_V12ProjectCreateUpdate = z
 	.strict();
 const v12Def_PUV12ProjectCreateUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		name: z.string().min(1).max(100).optional(),
-		description: z.string().optional(),
-		client: z.string().optional(),
-		billing_method: z.string().optional(),
-		fixed_cost: z.string().optional(),
-		hourly_rate: z.string().optional(),
-		members: z.array(v12Def_ProjectMemberNestedCreateUpdate).optional(),
-		tasks: z.array(v12Def_ProjectTaskNestedCreateUpdate).optional(),
-		client_portal: z.string().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		name: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		client: z.string().nullable().optional(),
+		billing_method: z.string().nullable().optional(),
+		fixed_cost: z.string().nullable().optional(),
+		hourly_rate: z.string().nullable().optional(),
+		members: z
+			.array(v12Def_ProjectMemberNestedCreateUpdateResponse)
+			.nullable()
+			.optional(),
+		tasks: z
+			.array(v12Def_ProjectTaskNestedCreateUpdateResponse)
+			.nullable()
+			.optional(),
+		client_portal: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12ProjectMemberNestedRetrieve = z
 	.object({
-		member: z.number().int(),
-		member_repr: z.string().optional(),
-		manager: z.string().optional(),
-		hourly_rate: z.string().optional(),
-		cost_per_hour: z.string().optional(),
+		member: ElorusIdReferenceSchema,
+		member_repr: z.string().nullable().optional(),
+		manager: z.boolean().nullable().optional(),
+		hourly_rate: z.string().nullable().optional(),
+		cost_per_hour: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12ProjectRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		name: z.string().min(1).max(100).optional(),
-		description: z.string().optional(),
-		client: z.string().optional(),
-		billing_method: z.string().optional(),
-		fixed_cost: z.string().optional(),
-		hourly_rate: z.string().optional(),
-		billed_amount: z.string().optional(),
-		expenses_amount: z.string().optional(),
-		unbilled_expenses_amount: z.string().optional(),
-		unbilled_hours_amount: z.string().optional(),
-		costs: z.string().optional(),
-		billable_hours: z.string().optional(),
-		total_hours: z.string().optional(),
-		unbilled_hours: z.string().optional(),
-		unbilled_extra_fees_amount: z.string().optional(),
-		members: z.array(v12Def_V12ProjectMemberNestedRetrieve).optional(),
-		client_portal: z.string().optional(),
-		active: z.boolean().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		name: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		client: z.string().nullable().optional(),
+		billing_method: z.string().nullable().optional(),
+		fixed_cost: z.string().nullable().optional(),
+		hourly_rate: z.string().nullable().optional(),
+		billed_amount: z.string().nullable().optional(),
+		expenses_amount: z.string().nullable().optional(),
+		unbilled_expenses_amount: z.string().nullable().optional(),
+		unbilled_hours_amount: z.string().nullable().optional(),
+		costs: z.string().nullable().optional(),
+		billable_hours: z.number().nullable().optional(),
+		total_hours: z.number().nullable().optional(),
+		unbilled_hours: z.number().nullable().optional(),
+		unbilled_extra_fees_amount: z.string().nullable().optional(),
+		members: z
+			.array(v12Def_V12ProjectMemberNestedRetrieve)
+			.nullable()
+			.optional(),
+		client_portal: z.string().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12ProjectAttachmentListRetrieve = z
@@ -6998,6 +8918,16 @@ const v12Def_PUV12ProjectAttachmentListRetrieve = z
 		client_portal: z.boolean().optional(),
 		created: z.string().optional(),
 		file_size: z.string().optional(),
+	})
+	.strict();
+const v12Def_PUV12ProjectAttachmentListRetrieveResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		file_url: z.string().nullable().optional(),
+		client_portal: z.boolean().nullable().optional(),
+		created: z.string().nullable().optional(),
+		file_size: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12ProjectExtraFeesSerializer = z
@@ -7011,6 +8941,19 @@ const v12Def_PUV12ProjectExtraFeesSerializer = z
 		unit_measure: z.string().nullable().optional(),
 		product: z.string().nullable().optional(),
 		organization: z.number().int().optional(),
+	})
+	.strict();
+const v12Def_PUV12ProjectExtraFeesSerializerResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		unit_measure: z.string().nullable().optional(),
+		product: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
 	})
 	.strict();
 const v12Def_V12ProjectExtraFees = z
@@ -7028,42 +8971,42 @@ const v12Def_V12ProjectExtraFees = z
 	.strict();
 const v12Def_PUV12RecurringInvoiceList = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		start_datetime: z.string().optional(),
-		interval: z.number().int().min(0).max(2147483647).optional(),
-		period: z.string().optional(),
-		end_datetime: z.string().optional(),
-		last_execution: z.string().optional(),
-		next_execution: z.string().optional(),
-		paused: z.boolean().optional(),
-		representation: z.string().min(1).optional(),
-		documenttype: z.string().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		draft: z.boolean().optional(),
-		auto_email: z.boolean().optional(),
-		auto_email_attach_pdf: z.boolean().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		start_datetime: z.string().nullable().optional(),
+		interval: z.number().int().min(0).max(2147483647).nullable().optional(),
+		period: z.string().nullable().optional(),
+		end_datetime: z.string().nullable().optional(),
+		last_execution: z.string().nullable().optional(),
+		next_execution: z.string().nullable().optional(),
+		paused: z.boolean().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		auto_email: z.boolean().nullable().optional(),
+		auto_email_attach_pdf: z.boolean().nullable().optional(),
 		due_days: z.number().int().min(0).max(2147483647).nullable().optional(),
-		template: z.string().optional(),
+		template: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v12Def_BillingAddress.optional(),
-		shipping_address: v12Def_ShippingAddress.optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		payable: z.string().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		client: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v12Def_ShippingAddressResponse.nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		payable: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_RecurringInvoiceItemTaxNested = z
@@ -7073,6 +9016,15 @@ const v12Def_RecurringInvoiceItemTaxNested = z
 		amount: z.string().optional(),
 		vat_amount: z.string().optional(),
 		auto_calculate_vat: z.boolean().optional(),
+	})
+	.strict();
+const v12Def_RecurringInvoiceItemTaxNestedResponse = z
+	.object({
+		tax: z.string(),
+		auto_calculate: z.boolean().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		vat_amount: z.string().nullable().optional(),
+		auto_calculate_vat: z.boolean().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12RecurringInvoiceItemNestedRetrieveCreate = z
@@ -7098,11 +9050,44 @@ const v12Def_V12RecurringInvoiceItemNestedRetrieveCreate = z
 		skip_stock_update: z.boolean().optional(),
 	})
 	.strict();
+const v12Def_V12RecurringInvoiceItemNestedRetrieveCreateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		product: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		unit_measure: z.string().nullable().optional(),
+		unit_value: z.string().nullable().optional(),
+		unit_value_gross: z.string().nullable().optional(),
+		unit_discount: z.string().nullable().optional(),
+		unit_discount_gross: z.string().nullable().optional(),
+		unit_discount_percentage: z.string().nullable().optional(),
+		unit_discount_mode: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_RecurringInvoiceItemTaxNestedResponse)
+			.nullable()
+			.optional(),
+		unit_total: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
+		project: z.string().nullable().optional(),
+		warehouse: z.string().nullable().optional(),
+		line_type: z.number().int().nullable().optional(),
+		skip_stock_update: z.boolean().nullable().optional(),
+	})
+	.strict();
 const v12Def_RecurringInvoiceStandardTaxNested = z
 	.object({
 		tax: z.string(),
 		auto_calculate: z.boolean().optional(),
 		amount: z.string().optional(),
+	})
+	.strict();
+const v12Def_RecurringInvoiceStandardTaxNestedResponse = z
+	.object({
+		tax: z.string(),
+		auto_calculate: z.boolean().nullable().optional(),
+		amount: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_RecurringInvoiceWithholdingTaxNested = z
@@ -7111,6 +9096,14 @@ const v12Def_RecurringInvoiceWithholdingTaxNested = z
 		amount: z.string().optional(),
 		subtotal: z.number().int().optional(),
 		auto_calculate: z.boolean().optional(),
+	})
+	.strict();
+const v12Def_RecurringInvoiceWithholdingTaxNestedResponse = z
+	.object({
+		tax: z.string(),
+		amount: z.string().nullable().optional(),
+		subtotal: z.number().int().nullable().optional(),
+		auto_calculate: z.boolean().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12RecurringInvoiceCreate = z
@@ -7162,100 +9155,116 @@ const v12Def_V12RecurringInvoiceCreate = z
 	.strict();
 const v12Def_PUV12RecurringInvoiceCreate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		start_datetime: z.string().optional(),
-		interval: z.number().int().min(0).max(2147483647).optional(),
-		period: z.string().optional(),
-		end_datetime: z.string().optional(),
-		last_execution: z.string().optional(),
-		next_execution: z.string().optional(),
-		paused: z.boolean().optional(),
-		representation: z.string().min(1).optional(),
-		documenttype: z.string().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		draft: z.boolean().optional(),
-		auto_email: z.boolean().optional(),
-		auto_email_attach_pdf: z.boolean().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		start_datetime: z.string().nullable().optional(),
+		interval: z.number().int().min(0).max(2147483647).nullable().optional(),
+		period: z.string().nullable().optional(),
+		end_datetime: z.string().nullable().optional(),
+		last_execution: z.string().nullable().optional(),
+		next_execution: z.string().nullable().optional(),
+		paused: z.boolean().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		auto_email: z.boolean().nullable().optional(),
+		auto_email_attach_pdf: z.boolean().nullable().optional(),
 		due_days: z.number().int().min(0).max(2147483647).nullable().optional(),
-		template: z.string().optional(),
+		template: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_display_name: z.string().min(1).max(203).optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v12Def_BillingAddress.optional(),
-		shipping_address: v12Def_ShippingAddress.optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
+		client: z.string().nullable().optional(),
+		client_display_name: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v12Def_ShippingAddressResponse.nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
 		items: z
-			.array(v12Def_V12RecurringInvoiceItemNestedRetrieveCreate)
+			.array(v12Def_V12RecurringInvoiceItemNestedRetrieveCreateResponse)
+			.nullable()
 			.optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		taxes: z.array(v12Def_RecurringInvoiceStandardTaxNested).optional(),
-		total: z.string().optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_RecurringInvoiceStandardTaxNestedResponse)
+			.nullable()
+			.optional(),
+		total: z.string().nullable().optional(),
 		withholding_taxes: z
-			.array(v12Def_RecurringInvoiceWithholdingTaxNested)
+			.array(v12Def_RecurringInvoiceWithholdingTaxNestedResponse)
+			.nullable()
 			.optional(),
-		payable: z.string().optional(),
-		trackingcategories: z.array(v12Def_RecordTrackingCategoryNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		payable: z.string().nullable().optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12RecurringInvoiceRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		start_datetime: z.string().optional(),
-		interval: z.number().int().min(0).max(2147483647).optional(),
-		period: z.string().optional(),
-		end_datetime: z.string().optional(),
-		last_execution: z.string().optional(),
-		next_execution: z.string().optional(),
-		paused: z.boolean().optional(),
-		representation: z.string().min(1).optional(),
-		documenttype: z.string().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		draft: z.boolean().optional(),
-		auto_email: z.boolean().optional(),
-		auto_email_attach_pdf: z.boolean().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		start_datetime: z.string().nullable().optional(),
+		interval: z.number().int().min(0).max(2147483647).nullable().optional(),
+		period: z.string().nullable().optional(),
+		end_datetime: z.string().nullable().optional(),
+		last_execution: z.string().nullable().optional(),
+		next_execution: z.string().nullable().optional(),
+		paused: z.boolean().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		auto_email: z.boolean().nullable().optional(),
+		auto_email_attach_pdf: z.boolean().nullable().optional(),
 		due_days: z.number().int().min(0).max(2147483647).nullable().optional(),
-		template: z.string().optional(),
+		template: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_display_name: z.string().min(1).max(203).optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v12Def_BillingAddress.optional(),
-		shipping_address: v12Def_ShippingAddress.optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
+		client: z.string().nullable().optional(),
+		client_display_name: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v12Def_ShippingAddressResponse.nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
 		items: z
-			.array(v12Def_V12RecurringInvoiceItemNestedRetrieveCreate)
+			.array(v12Def_V12RecurringInvoiceItemNestedRetrieveCreateResponse)
+			.nullable()
 			.optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		taxes: z.array(v12Def_RecurringInvoiceStandardTaxNested).optional(),
-		total: z.string().optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_RecurringInvoiceStandardTaxNestedResponse)
+			.nullable()
+			.optional(),
+		total: z.string().nullable().optional(),
 		withholding_taxes: z
-			.array(v12Def_RecurringInvoiceWithholdingTaxNested)
+			.array(v12Def_RecurringInvoiceWithholdingTaxNestedResponse)
+			.nullable()
 			.optional(),
-		payable: z.string().optional(),
-		trackingcategories: z.array(v12Def_RecordTrackingCategoryNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		payable: z.string().nullable().optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12RecurringInvoiceItemNestedUpdate = z
@@ -7279,6 +9288,32 @@ const v12Def_V12RecurringInvoiceItemNestedUpdate = z
 		warehouse: z.string().nullable().optional(),
 		line_type: z.number().int().nullable().optional(),
 		skip_stock_update: z.boolean().optional(),
+	})
+	.strict();
+const v12Def_V12RecurringInvoiceItemNestedUpdateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		product: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		unit_measure: z.string().nullable().optional(),
+		unit_value: z.string().nullable().optional(),
+		unit_value_gross: z.string().nullable().optional(),
+		unit_discount: z.string().nullable().optional(),
+		unit_discount_gross: z.string().nullable().optional(),
+		unit_discount_percentage: z.string().nullable().optional(),
+		unit_discount_mode: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_RecurringInvoiceItemTaxNestedResponse)
+			.nullable()
+			.optional(),
+		unit_total: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
+		project: z.string().nullable().optional(),
+		warehouse: z.string().nullable().optional(),
+		line_type: z.number().int().nullable().optional(),
+		skip_stock_update: z.boolean().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12RecurringInvoiceUpdate = z
@@ -7330,77 +9365,87 @@ const v12Def_V12RecurringInvoiceUpdate = z
 	.strict();
 const v12Def_PUV12RecurringInvoiceUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		start_datetime: z.string().optional(),
-		interval: z.number().int().min(0).max(2147483647).optional(),
-		period: z.string().optional(),
-		end_datetime: z.string().optional(),
-		last_execution: z.string().optional(),
-		next_execution: z.string().optional(),
-		paused: z.boolean().optional(),
-		representation: z.string().min(1).optional(),
-		documenttype: z.string().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		draft: z.boolean().optional(),
-		auto_email: z.boolean().optional(),
-		auto_email_attach_pdf: z.boolean().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		start_datetime: z.string().nullable().optional(),
+		interval: z.number().int().min(0).max(2147483647).nullable().optional(),
+		period: z.string().nullable().optional(),
+		end_datetime: z.string().nullable().optional(),
+		last_execution: z.string().nullable().optional(),
+		next_execution: z.string().nullable().optional(),
+		paused: z.boolean().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		documenttype: z.string().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		auto_email: z.boolean().nullable().optional(),
+		auto_email_attach_pdf: z.boolean().nullable().optional(),
 		due_days: z.number().int().min(0).max(2147483647).nullable().optional(),
-		template: z.string().optional(),
+		template: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		client: z.string().optional(),
-		client_display_name: z.string().min(1).max(203).optional(),
-		client_profession: z.string().max(100).optional(),
-		client_vat_number: z.string().max(20).optional(),
-		billing_address: v12Def_BillingAddress.optional(),
-		shipping_address: v12Def_ShippingAddress.optional(),
-		client_contact_person: z.string().max(101).optional(),
-		client_phone_number: z.string().max(30).optional(),
-		client_email: z.string().max(100).optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v12Def_V12RecurringInvoiceItemNestedUpdate).optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		taxes: z.array(v12Def_RecurringInvoiceStandardTaxNested).optional(),
-		total: z.string().optional(),
-		withholding_taxes: z
-			.array(v12Def_RecurringInvoiceWithholdingTaxNested)
+		client: z.string().nullable().optional(),
+		client_display_name: z.string().nullable().optional(),
+		client_profession: z.string().nullable().optional(),
+		client_vat_number: z.string().nullable().optional(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v12Def_ShippingAddressResponse.nullable().optional(),
+		client_contact_person: z.string().nullable().optional(),
+		client_phone_number: z.string().nullable().optional(),
+		client_email: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v12Def_V12RecurringInvoiceItemNestedUpdateResponse)
+			.nullable()
 			.optional(),
-		payable: z.string().optional(),
-		trackingcategories: z.array(v12Def_RecordTrackingCategoryNested).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_RecurringInvoiceStandardTaxNestedResponse)
+			.nullable()
+			.optional(),
+		total: z.string().nullable().optional(),
+		withholding_taxes: z
+			.array(v12Def_RecurringInvoiceWithholdingTaxNestedResponse)
+			.nullable()
+			.optional(),
+		payable: z.string().nullable().optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12PurchaseCreditNoteList = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
 		documenttype: z.string().nullable().optional(),
-		self_billed: z.boolean().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		reference: z.string().max(150).optional(),
-		date: z.string().optional(),
+		self_billed: z.boolean().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		reference: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		supplier: z.string().optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		total: z.string().optional(),
-		payable: z.string().optional(),
-		paid: z.string().optional(),
+		supplier: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		total: z.string().nullable().optional(),
+		payable: z.string().nullable().optional(),
+		paid: z.string().nullable().optional(),
 		permalink: z.string().nullable().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PurchaseCreditNoteRelatedEntities = z
@@ -7413,12 +9458,30 @@ const v12Def_PurchaseCreditNoteRelatedEntities = z
 		billing_address: v12Def_BillingAddress.optional(),
 	})
 	.strict();
+const v12Def_PurchaseCreditNoteRelatedEntitiesResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		contact: z.string(),
+		contact_display_name: z.string(),
+		contact_vat_number: z.string().nullable().optional(),
+		type: z.number().int(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+	})
+	.strict();
 const v12Def_PurchaseCreditNotePackageNested = z
 	.object({
 		id: z.string().min(1).optional(),
 		packaging_type: z.number().int(),
 		quantity: z.number().int().min(1).max(32767),
 		other_packaging_type_title: z.string().max(150).optional(),
+	})
+	.strict();
+const v12Def_PurchaseCreditNotePackageNestedResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		packaging_type: z.number().int(),
+		quantity: z.number().int().min(1).max(32767),
+		other_packaging_type_title: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PurchaseCreditNoteItemTaxNested = z
@@ -7428,6 +9491,15 @@ const v12Def_PurchaseCreditNoteItemTaxNested = z
 		amount: z.string().optional(),
 		vat_amount: z.string().optional(),
 		auto_calculate_vat: z.boolean().optional(),
+	})
+	.strict();
+const v12Def_PurchaseCreditNoteItemTaxNestedResponse = z
+	.object({
+		tax: z.string(),
+		auto_calculate: z.boolean().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		vat_amount: z.string().nullable().optional(),
+		auto_calculate_vat: z.boolean().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12PurchaseCreditNoteItemNestedCreate = z
@@ -7455,11 +9527,46 @@ const v12Def_V12PurchaseCreditNoteItemNestedCreate = z
 		skip_stock_update: z.boolean().optional(),
 	})
 	.strict();
+const v12Def_V12PurchaseCreditNoteItemNestedCreateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		product: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		unit_measure: z.string().nullable().optional(),
+		unit_value: z.string().nullable().optional(),
+		unit_value_gross: z.string().nullable().optional(),
+		unit_discount: z.string().nullable().optional(),
+		unit_discount_gross: z.string().nullable().optional(),
+		unit_discount_percentage: z.string().nullable().optional(),
+		unit_discount_mode: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_PurchaseCreditNoteItemTaxNestedResponse)
+			.nullable()
+			.optional(),
+		unit_total: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
+		project: z.string().nullable().optional(),
+		billable: z.boolean().nullable().optional(),
+		expense_category: z.string().nullable().optional(),
+		taric_code: z.string().nullable().optional(),
+		warehouse: z.string().nullable().optional(),
+		line_type: z.number().int().nullable().optional(),
+		skip_stock_update: z.boolean().nullable().optional(),
+	})
+	.strict();
 const v12Def_PurchaseCreditNoteStandardTaxNested = z
 	.object({
 		tax: z.string(),
 		auto_calculate: z.boolean().optional(),
 		amount: z.string().optional(),
+	})
+	.strict();
+const v12Def_PurchaseCreditNoteStandardTaxNestedResponse = z
+	.object({
+		tax: z.string(),
+		auto_calculate: z.boolean().nullable().optional(),
+		amount: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PurchaseCreditNoteWithholdingTaxNested = z
@@ -7468,6 +9575,14 @@ const v12Def_PurchaseCreditNoteWithholdingTaxNested = z
 		amount: z.string().optional(),
 		subtotal: z.number().int().optional(),
 		auto_calculate: z.boolean().optional(),
+	})
+	.strict();
+const v12Def_PurchaseCreditNoteWithholdingTaxNestedResponse = z
+	.object({
+		tax: z.string(),
+		amount: z.string().nullable().optional(),
+		subtotal: z.number().int().nullable().optional(),
+		auto_calculate: z.boolean().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12PurchaseCreditNoteCreate = z
@@ -7530,60 +9645,70 @@ const v12Def_V12PurchaseCreditNoteCreate = z
 	.strict();
 const v12Def_PUV12PurchaseCreditNoteCreate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
 		documenttype: z.string().nullable().optional(),
-		self_billed: z.boolean().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		reference: z.string().max(150).optional(),
-		date: z.string().optional(),
+		self_billed: z.boolean().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		reference: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		supplier: z.string().optional(),
-		supplier_display_name: z.string().max(203).optional(),
-		supplier_profession: z.string().max(100).optional(),
-		supplier_vat_number: z.string().max(20).optional(),
-		billing_address: v12Def_BillingAddress.optional(),
-		shipping_address: v12Def_ShippingAddress.optional(),
-		supplier_contact_person: z.string().max(101).optional(),
-		supplier_phone_number: z.string().max(30).optional(),
-		supplier_email: z.string().max(100).optional(),
-		loading_address: v12Def_LoadingAddress.optional(),
+		supplier: z.string().nullable().optional(),
+		supplier_display_name: z.string().nullable().optional(),
+		supplier_profession: z.string().nullable().optional(),
+		supplier_vat_number: z.string().nullable().optional(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v12Def_ShippingAddressResponse.nullable().optional(),
+		supplier_contact_person: z.string().nullable().optional(),
+		supplier_phone_number: z.string().nullable().optional(),
+		supplier_email: z.string().nullable().optional(),
+		loading_address: v12Def_LoadingAddressResponse.nullable().optional(),
 		dispatch_date: z.string().nullable().optional(),
 		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
+		vehicle_number: z.string().nullable().optional(),
 		move_purpose: z.number().int().nullable().optional(),
 		related_entities: z
-			.array(v12Def_PurchaseCreditNoteRelatedEntities)
+			.array(v12Def_PurchaseCreditNoteRelatedEntitiesResponse)
 			.nullable()
 			.optional(),
 		packages: z
-			.array(v12Def_PurchaseCreditNotePackageNested)
+			.array(v12Def_PurchaseCreditNotePackageNestedResponse)
 			.nullable()
 			.optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
-		items: z.array(v12Def_V12PurchaseCreditNoteItemNestedCreate).optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		taxes: z.array(v12Def_PurchaseCreditNoteStandardTaxNested).optional(),
-		total: z.string().optional(),
-		withholding_taxes: z
-			.array(v12Def_PurchaseCreditNoteWithholdingTaxNested)
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
+		items: z
+			.array(v12Def_V12PurchaseCreditNoteItemNestedCreateResponse)
+			.nullable()
 			.optional(),
-		payable: z.string().optional(),
-		paid: z.string().optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_PurchaseCreditNoteStandardTaxNestedResponse)
+			.nullable()
+			.optional(),
+		total: z.string().nullable().optional(),
+		withholding_taxes: z
+			.array(v12Def_PurchaseCreditNoteWithholdingTaxNestedResponse)
+			.nullable()
+			.optional(),
+		payable: z.string().nullable().optional(),
+		paid: z.string().nullable().optional(),
 		template: z.string().nullable().optional(),
-		public_notes: z.string().optional(),
-		trackingcategories: z.array(v12Def_RecordTrackingCategoryNested).optional(),
-		related_documents: z.array(z.string()).optional(),
+		public_notes: z.string().nullable().optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		related_documents: z.array(z.string()).nullable().optional(),
 		permalink: z.string().nullable().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12PurchaseCreditNoteItemNestedRetrieveUpdate = z
@@ -7611,64 +9736,100 @@ const v12Def_V12PurchaseCreditNoteItemNestedRetrieveUpdate = z
 		skip_stock_update: z.boolean().optional(),
 	})
 	.strict();
+const v12Def_V12PurchaseCreditNoteItemNestedRetrieveUpdateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		product: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		quantity: z.string().nullable().optional(),
+		unit_measure: z.string().nullable().optional(),
+		unit_value: z.string().nullable().optional(),
+		unit_value_gross: z.string().nullable().optional(),
+		unit_discount: z.string().nullable().optional(),
+		unit_discount_gross: z.string().nullable().optional(),
+		unit_discount_percentage: z.string().nullable().optional(),
+		unit_discount_mode: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_PurchaseCreditNoteItemTaxNestedResponse)
+			.nullable()
+			.optional(),
+		unit_total: z.string().nullable().optional(),
+		item_net: z.string().nullable().optional(),
+		project: z.string().nullable().optional(),
+		billable: z.boolean().nullable().optional(),
+		expense_category: z.string().nullable().optional(),
+		taric_code: z.string().nullable().optional(),
+		warehouse: z.string().nullable().optional(),
+		line_type: z.number().int().nullable().optional(),
+		skip_stock_update: z.boolean().nullable().optional(),
+	})
+	.strict();
 const v12Def_PUV12PurchaseCreditNoteRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
 		documenttype: z.string().nullable().optional(),
-		self_billed: z.boolean().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		reference: z.string().max(150).optional(),
-		date: z.string().optional(),
+		self_billed: z.boolean().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		reference: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		supplier: z.string().optional(),
-		supplier_display_name: z.string().max(203).optional(),
-		supplier_profession: z.string().max(100).optional(),
-		supplier_vat_number: z.string().max(20).optional(),
-		billing_address: v12Def_BillingAddress.optional(),
-		shipping_address: v12Def_ShippingAddress.optional(),
-		supplier_contact_person: z.string().max(101).optional(),
-		supplier_phone_number: z.string().max(30).optional(),
-		supplier_email: z.string().max(100).optional(),
-		loading_address: v12Def_LoadingAddress.optional(),
+		supplier: z.string().nullable().optional(),
+		supplier_display_name: z.string().nullable().optional(),
+		supplier_profession: z.string().nullable().optional(),
+		supplier_vat_number: z.string().nullable().optional(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v12Def_ShippingAddressResponse.nullable().optional(),
+		supplier_contact_person: z.string().nullable().optional(),
+		supplier_phone_number: z.string().nullable().optional(),
+		supplier_email: z.string().nullable().optional(),
+		loading_address: v12Def_LoadingAddressResponse.nullable().optional(),
 		dispatch_date: z.string().nullable().optional(),
 		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
+		vehicle_number: z.string().nullable().optional(),
 		move_purpose: z.number().int().nullable().optional(),
 		related_entities: z
-			.array(v12Def_PurchaseCreditNoteRelatedEntities)
+			.array(v12Def_PurchaseCreditNoteRelatedEntitiesResponse)
 			.nullable()
 			.optional(),
 		packages: z
-			.array(v12Def_PurchaseCreditNotePackageNested)
+			.array(v12Def_PurchaseCreditNotePackageNestedResponse)
 			.nullable()
 			.optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
 		items: z
-			.array(v12Def_V12PurchaseCreditNoteItemNestedRetrieveUpdate)
+			.array(v12Def_V12PurchaseCreditNoteItemNestedRetrieveUpdateResponse)
+			.nullable()
 			.optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		taxes: z.array(v12Def_PurchaseCreditNoteStandardTaxNested).optional(),
-		total: z.string().optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_PurchaseCreditNoteStandardTaxNestedResponse)
+			.nullable()
+			.optional(),
+		total: z.string().nullable().optional(),
 		withholding_taxes: z
-			.array(v12Def_PurchaseCreditNoteWithholdingTaxNested)
+			.array(v12Def_PurchaseCreditNoteWithholdingTaxNestedResponse)
+			.nullable()
 			.optional(),
-		payable: z.string().optional(),
-		paid: z.string().optional(),
+		payable: z.string().nullable().optional(),
+		paid: z.string().nullable().optional(),
 		template: z.string().nullable().optional(),
-		public_notes: z.string().optional(),
-		trackingcategories: z.array(v12Def_RecordTrackingCategoryNested).optional(),
-		related_documents: z.array(z.string()).optional(),
+		public_notes: z.string().nullable().optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		related_documents: z.array(z.string()).nullable().optional(),
 		permalink: z.string().nullable().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12PurchaseCreditNoteUpdate = z
@@ -7731,62 +9892,70 @@ const v12Def_V12PurchaseCreditNoteUpdate = z
 	.strict();
 const v12Def_PUV12PurchaseCreditNoteUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		custom_id: z.string().max(256).optional(),
-		representation: z.string().min(1).optional(),
-		status: z.string().optional(),
-		draft: z.boolean().optional(),
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
 		documenttype: z.string().nullable().optional(),
-		self_billed: z.boolean().optional(),
-		sequence_flat: z.string().max(10).optional(),
-		reference: z.string().max(150).optional(),
-		date: z.string().optional(),
+		self_billed: z.boolean().nullable().optional(),
+		sequence_flat: z.string().nullable().optional(),
+		reference: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
 		branch: z.string().nullable().optional(),
-		supplier: z.string().optional(),
-		supplier_display_name: z.string().max(203).optional(),
-		supplier_profession: z.string().max(100).optional(),
-		supplier_vat_number: z.string().max(20).optional(),
-		billing_address: v12Def_BillingAddress.optional(),
-		shipping_address: v12Def_ShippingAddress.optional(),
-		supplier_contact_person: z.string().max(101).optional(),
-		supplier_phone_number: z.string().max(30).optional(),
-		supplier_email: z.string().max(100).optional(),
-		loading_address: v12Def_LoadingAddress.optional(),
+		supplier: z.string().nullable().optional(),
+		supplier_display_name: z.string().nullable().optional(),
+		supplier_profession: z.string().nullable().optional(),
+		supplier_vat_number: z.string().nullable().optional(),
+		billing_address: v12Def_BillingAddressResponse.nullable().optional(),
+		shipping_address: v12Def_ShippingAddressResponse.nullable().optional(),
+		supplier_contact_person: z.string().nullable().optional(),
+		supplier_phone_number: z.string().nullable().optional(),
+		supplier_email: z.string().nullable().optional(),
+		loading_address: v12Def_LoadingAddressResponse.nullable().optional(),
 		dispatch_date: z.string().nullable().optional(),
 		dispatch_time: z.string().nullable().optional(),
-		vehicle_number: z.string().max(150).optional(),
+		vehicle_number: z.string().nullable().optional(),
 		move_purpose: z.number().int().nullable().optional(),
 		related_entities: z
-			.array(v12Def_PurchaseCreditNoteRelatedEntities)
+			.array(v12Def_PurchaseCreditNoteRelatedEntitiesResponse)
 			.nullable()
 			.optional(),
 		packages: z
-			.array(v12Def_PurchaseCreditNotePackageNested)
+			.array(v12Def_PurchaseCreditNotePackageNestedResponse)
 			.nullable()
 			.optional(),
-		currency_code: z.string().optional(),
-		exchange_rate: z.string().optional(),
-		calculator_mode: z.string().optional(),
+		currency_code: z.string().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		calculator_mode: z.string().nullable().optional(),
 		items: z
-			.array(v12Def_V12PurchaseCreditNoteItemNestedRetrieveUpdate)
+			.array(v12Def_V12PurchaseCreditNoteItemNestedRetrieveUpdateResponse)
+			.nullable()
 			.optional(),
-		initial: z.string().optional(),
-		net: z.string().optional(),
-		taxes: z.array(v12Def_PurchaseCreditNoteStandardTaxNested).optional(),
-		total: z.string().optional(),
+		initial: z.string().nullable().optional(),
+		net: z.string().nullable().optional(),
+		taxes: z
+			.array(v12Def_PurchaseCreditNoteStandardTaxNestedResponse)
+			.nullable()
+			.optional(),
+		total: z.string().nullable().optional(),
 		withholding_taxes: z
-			.array(v12Def_PurchaseCreditNoteWithholdingTaxNested)
+			.array(v12Def_PurchaseCreditNoteWithholdingTaxNestedResponse)
+			.nullable()
 			.optional(),
-		payable: z.string().optional(),
-		paid: z.string().optional(),
+		payable: z.string().nullable().optional(),
+		paid: z.string().nullable().optional(),
 		template: z.string().nullable().optional(),
-		public_notes: z.string().optional(),
-		trackingcategories: z.array(v12Def_RecordTrackingCategoryNested).optional(),
-		related_documents: z.array(z.string()).optional(),
+		public_notes: z.string().nullable().optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		related_documents: z.array(z.string()).nullable().optional(),
 		permalink: z.string().nullable().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12PurchaseCreditNotePartialUpdate = z
@@ -7801,6 +9970,23 @@ const v12Def_PUV12PurchaseCreditNotePartialUpdate = z
 		organization: z.number().int().optional(),
 		created: z.string().optional(),
 		modified: z.string().optional(),
+	})
+	.strict();
+const v12Def_PUV12PurchaseCreditNotePartialUpdateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		custom_id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		draft: z.boolean().nullable().optional(),
+		exchange_rate: z.string().nullable().optional(),
+		trackingcategories: z
+			.array(v12Def_RecordTrackingCategoryNestedResponse)
+			.nullable()
+			.optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PrivatePurchaseCreditNoteEmailFromTemplate = z
@@ -7830,20 +10016,20 @@ const v12Def_PrivatePurchaseCreditNoteEmail = z
 	.strict();
 const v12Def_PUPurchaseCreditNoteMarkVoidResponse = z
 	.object({
-		status: z.string().optional(),
+		status: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12PurchaseCreditTransactionPCNListCreate = z
 	.object({
-		id: z.string().min(1).optional(),
-		representation: z.string().optional(),
-		purchase: z.string().optional(),
-		date: z.string().optional(),
-		currency_code: z.string().optional(),
-		amount: z.string().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		purchase: z.string().nullable().optional(),
+		date: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12PurchaseCreditTransactionPCNListCreate = z
@@ -7859,6 +10045,19 @@ const v12Def_V12PurchaseCreditTransactionPCNListCreate = z
 		modified: z.string().optional(),
 	})
 	.strict();
+const v12Def_V12PurchaseCreditTransactionPCNListCreateResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		representation: z.string().nullable().optional(),
+		purchase: z.string(),
+		date: z.string().nullable().optional(),
+		currency_code: z.string().nullable().optional(),
+		amount: z.string(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
+	})
+	.strict();
 const v12Def_PUV12PurchaseCreditNoteAttachmentListRetrieve = z
 	.object({
 		id: z.string().min(1).optional(),
@@ -7869,17 +10068,27 @@ const v12Def_PUV12PurchaseCreditNoteAttachmentListRetrieve = z
 		created: z.string().optional(),
 	})
 	.strict();
+const v12Def_PUV12PurchaseCreditNoteAttachmentListRetrieveResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		primary: z.boolean().nullable().optional(),
+		file_url: z.string().nullable().optional(),
+		file_size: z.string().nullable().optional(),
+		created: z.string().nullable().optional(),
+	})
+	.strict();
 const v12Def_PUV12TaskSerializer = z
 	.object({
-		id: z.string().min(1).optional(),
-		name: z.string().min(1).max(150).optional(),
-		description: z.string().optional(),
-		hourly_rate: z.string().optional(),
+		id: z.string().nullable().optional(),
+		name: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		hourly_rate: z.string().nullable().optional(),
 		project: z.string().nullable().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
-		active: z.boolean().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
+		active: z.boolean().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12Task = z
@@ -7910,116 +10119,117 @@ const v12Def_V12TaskUpdate = z
 	.strict();
 const v12Def_PUV12TaskUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		name: z.string().min(1).max(150).optional(),
-		description: z.string().optional(),
-		hourly_rate: z.string().optional(),
-		project: z.string().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
-		active: z.boolean().optional(),
+		id: z.string().nullable().optional(),
+		name: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		hourly_rate: z.string().nullable().optional(),
+		project: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
+		active: z.boolean().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12TaxList = z
 	.object({
-		id: z.string().min(1).optional(),
-		title: z.string().min(1).max(150).optional(),
-		tax_type: z.string().optional(),
-		value_mode: z.string().optional(),
-		operand: z.string().optional(),
-		percentage: z.string().optional(),
-		amount: z.string().optional(),
-		per_unit: z.boolean().optional(),
-		subject_to_vat: z.boolean().optional(),
-		apply_on_document_lines: z.boolean().optional(),
-		for_information_purposes: z.boolean().optional(),
-		active: z.boolean().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		tax_type: z.string().nullable().optional(),
+		value_mode: z.string().nullable().optional(),
+		operand: z.string().nullable().optional(),
+		percentage: z.string().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		per_unit: z.boolean().nullable().optional(),
+		subject_to_vat: z.boolean().nullable().optional(),
+		apply_on_document_lines: z.boolean().nullable().optional(),
+		for_information_purposes: z.boolean().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12TaxRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		title: z.string().min(1).max(150).optional(),
+		id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
 		title_translations: z
 			.object({
-				bg: z.string().optional(),
-				de: z.string().optional(),
-				el: z.string().optional(),
-				en: z.string().optional(),
-				'en-gb': z.string().optional(),
-				es: z.string().optional(),
-				fr: z.string().optional(),
-				it: z.string().optional(),
+				bg: z.string().nullable().optional(),
+				de: z.string().nullable().optional(),
+				el: z.string().nullable().optional(),
+				en: z.string().nullable().optional(),
+				'en-gb': z.string().nullable().optional(),
+				es: z.string().nullable().optional(),
+				fr: z.string().nullable().optional(),
+				it: z.string().nullable().optional(),
 			})
 			.strict()
+			.nullable()
 			.optional(),
-		tax_type: z.string().optional(),
-		value_mode: z.string().optional(),
-		operand: z.string().optional(),
-		percentage: z.string().optional(),
-		amount: z.string().optional(),
-		per_unit: z.boolean().optional(),
-		subject_to_vat: z.boolean().optional(),
-		apply_on_document_lines: z.boolean().optional(),
-		for_information_purposes: z.boolean().optional(),
-		active: z.boolean().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		tax_type: z.string().nullable().optional(),
+		value_mode: z.string().nullable().optional(),
+		operand: z.string().nullable().optional(),
+		percentage: z.string().nullable().optional(),
+		amount: z.string().nullable().optional(),
+		per_unit: z.boolean().nullable().optional(),
+		subject_to_vat: z.boolean().nullable().optional(),
+		apply_on_document_lines: z.boolean().nullable().optional(),
+		for_information_purposes: z.boolean().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12ThemeListRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		active: z.boolean().optional(),
-		default: z.boolean().optional(),
-		title: z.string().min(1).max(30).optional(),
-		template: z.string().optional(),
-		language: z.string().optional(),
-		company_name: z.string().max(70).optional(),
-		company_info: z.string().optional(),
-		invoice_terms: z.string().optional(),
-		creditnote_terms: z.string().optional(),
-		estimate_terms: z.string().optional(),
-		invoice_public_notes: z.string().optional(),
-		creditnote_public_notes: z.string().optional(),
-		estimate_public_notes: z.string().optional(),
-		self_billed_public_notes: z.string().optional(),
-		self_billed_supplier_credit_public_notes: z.string().optional(),
-		deliverynote_public_notes: z.string().optional(),
-		goodsreceipt_public_notes: z.string().optional(),
-		slogan: z.string().max(200).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		default: z.boolean().nullable().optional(),
+		title: z.string().nullable().optional(),
+		template: z.string().nullable().optional(),
+		language: z.string().nullable().optional(),
+		company_name: z.string().nullable().optional(),
+		company_info: z.string().nullable().optional(),
+		invoice_terms: z.string().nullable().optional(),
+		creditnote_terms: z.string().nullable().optional(),
+		estimate_terms: z.string().nullable().optional(),
+		invoice_public_notes: z.string().nullable().optional(),
+		creditnote_public_notes: z.string().nullable().optional(),
+		estimate_public_notes: z.string().nullable().optional(),
+		self_billed_public_notes: z.string().nullable().optional(),
+		self_billed_supplier_credit_public_notes: z.string().nullable().optional(),
+		deliverynote_public_notes: z.string().nullable().optional(),
+		goodsreceipt_public_notes: z.string().nullable().optional(),
+		slogan: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12TimeEntryListRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		start_datetime: z.string().optional(),
-		end_datetime: z.string().optional(),
-		duration: z.number().int().optional(),
+		id: z.string().nullable().optional(),
+		start_datetime: z.string().nullable().optional(),
+		end_datetime: z.string().nullable().optional(),
+		duration: z.number().int().nullable().optional(),
 		project: z.string().nullable().optional(),
 		task: z.string().nullable().optional(),
-		description: z.string().optional(),
-		assignee: z.number().int().optional(),
+		description: z.string().nullable().optional(),
+		assignee: ElorusIdReferenceSchema.nullable().optional(),
 		user_team: z.string().nullable().optional(),
-		assignee_email: z.string().optional(),
-		billable: z.boolean().optional(),
-		invoiceitem: z.string().optional(),
-		forcibly_billed: z.boolean().optional(),
-		is_billed: z.string().optional(),
-		project_billing_method: z.string().optional(),
-		project_active: z.string().optional(),
-		task_active: z.string().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		assignee_email: z.string().nullable().optional(),
+		billable: z.boolean().nullable().optional(),
+		invoiceitem: z.string().nullable().optional(),
+		forcibly_billed: z.boolean().nullable().optional(),
+		is_billed: z.boolean().nullable().optional(),
+		project_billing_method: z.string().nullable().optional(),
+		project_active: z.boolean().nullable().optional(),
+		task_active: z.boolean().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12TimeEntryCreateUpdate = z
@@ -8043,33 +10253,33 @@ const v12Def_V12TimeEntryCreateUpdate = z
 	.strict();
 const v12Def_PUV12TimeEntryCreateUpdate = z
 	.object({
-		id: z.string().min(1).optional(),
-		start_datetime: z.string().optional(),
-		end_datetime: z.string().optional(),
+		id: z.string().nullable().optional(),
+		start_datetime: z.string().nullable().optional(),
+		end_datetime: z.string().nullable().optional(),
 		project: z.string().nullable().optional(),
 		task: z.string().nullable().optional(),
-		description: z.string().optional(),
-		assignee: z.number().int().optional(),
+		description: z.string().nullable().optional(),
+		assignee: ElorusIdReferenceSchema.nullable().optional(),
 		user_team: z.string().nullable().optional(),
-		billable: z.boolean().optional(),
-		invoiceitem: z.string().optional(),
-		forcibly_billed: z.boolean().optional(),
-		is_billed: z.string().optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		billable: z.boolean().nullable().optional(),
+		invoiceitem: z.string().nullable().optional(),
+		forcibly_billed: z.boolean().nullable().optional(),
+		is_billed: z.boolean().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12TrackingCategoryListRetrieve = z
 	.object({
-		id: z.string().min(1).optional(),
-		title: z.string().min(1).max(255).optional(),
-		active: z.boolean().optional(),
-		options: z.array(z.string()).optional(),
-		application: z.array(z.string()).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		options: z.array(z.string()).nullable().optional(),
+		application: z.array(z.string()).nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12UnitOfMeasurementListSerializer = z
@@ -8096,6 +10306,33 @@ const v12Def_PUV12UnitOfMeasurementListSerializer = z
 		organization: z.number().int().optional(),
 		created: z.string().optional(),
 		modified: z.string().optional(),
+	})
+	.strict();
+const v12Def_PUV12UnitOfMeasurementListSerializerResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		title: z.string().nullable().optional(),
+		symbol: z.string().nullable().optional(),
+		symbol_translations: z
+			.object({
+				bg: z.string().nullable().optional(),
+				de: z.string().nullable().optional(),
+				el: z.string().nullable().optional(),
+				en: z.string().nullable().optional(),
+				'en-gb': z.string().nullable().optional(),
+				es: z.string().nullable().optional(),
+				fr: z.string().nullable().optional(),
+				it: z.string().nullable().optional(),
+			})
+			.strict()
+			.nullable()
+			.optional(),
+		group_id: z.string().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		protected: z.boolean().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12UnitOfMeasurementList = z
@@ -8126,21 +10363,21 @@ const v12Def_V12UnitOfMeasurementList = z
 	.strict();
 const v12Def_PUV12RoleList = z
 	.object({
-		user_id: z.string().optional(),
-		first_name: z.string().optional(),
-		last_name: z.string().optional(),
-		email: z.string().optional(),
-		active: z.boolean().optional(),
-		created: z.string().optional(),
+		user_id: z.string().nullable().optional(),
+		first_name: z.string().nullable().optional(),
+		last_name: z.string().nullable().optional(),
+		email: z.string().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		created: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_PUV12UserTeam = z
 	.object({
-		id: z.string().min(1).optional(),
-		team_name: z.string().min(1).max(255).optional(),
-		organization: z.number().int().optional(),
-		created: z.string().optional(),
-		modified: z.string().optional(),
+		id: z.string().nullable().optional(),
+		team_name: z.string().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_WarehouseAddress = z
@@ -8149,6 +10386,15 @@ const v12Def_WarehouseAddress = z
 		city: z.string().max(100),
 		state: z.string().max(100).optional(),
 		zip: z.string().max(20),
+		country: z.string(),
+	})
+	.strict();
+const v12Def_WarehouseAddressResponse = z
+	.object({
+		address_line: z.string(),
+		city: z.string(),
+		state: z.string().nullable().optional(),
+		zip: z.string(),
 		country: z.string(),
 	})
 	.strict();
@@ -8162,6 +10408,18 @@ const v12Def_PUV12WarehouseSerializer = z
 		organization: z.number().int().optional(),
 		created: z.string().optional(),
 		modified: z.string().optional(),
+	})
+	.strict();
+const v12Def_PUV12WarehouseSerializerResponse = z
+	.object({
+		id: z.string().nullable().optional(),
+		name: z.string().nullable().optional(),
+		warehouse_address: v12Def_WarehouseAddressResponse.nullable().optional(),
+		default: z.boolean().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		organization: ElorusIdReferenceSchema.nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
 	})
 	.strict();
 const v12Def_V12Warehouse = z
@@ -8249,7 +10507,8 @@ const input_v11_bills_partial_update = z
 		demo: z.boolean().optional(),
 	})
 	.strict();
-const output_v11_bills_partial_update = v11Def_PUV11PurchasePartialUpdate;
+const output_v11_bills_partial_update =
+	v11Def_PUV11PurchasePartialUpdateResponse;
 const input_v11_bills_delete = z
 	.object({
 		path: z.object({ id: z.string() }).strict(),
@@ -8578,7 +10837,7 @@ const input_v11_creditnotes_partial_update = z
 	})
 	.strict();
 const output_v11_creditnotes_partial_update =
-	v11Def_PUV11CreditNotePartialUpdate;
+	v11Def_PUV11CreditNotePartialUpdateResponse;
 const input_v11_creditnotes_delete = z
 	.object({
 		path: z.object({ id: z.string() }).strict(),
@@ -8654,7 +10913,7 @@ const input_v11_creditnotes_applied_credit_create = z
 	})
 	.strict();
 const output_v11_creditnotes_applied_credit_create = z.array(
-	v11Def_InvoiceCreditTransactionCN,
+	v11Def_InvoiceCreditTransactionCNResponse,
 );
 const input_v11_creditnotes_applied_credit_delete = z
 	.object({
@@ -8827,7 +11086,8 @@ const input_v11_estimates_partial_update = z
 		demo: z.boolean().optional(),
 	})
 	.strict();
-const output_v11_estimates_partial_update = v11Def_PUV11EstimatePartialUpdate;
+const output_v11_estimates_partial_update =
+	v11Def_PUV11EstimatePartialUpdateResponse;
 const input_v11_estimates_delete = z
 	.object({
 		path: z.object({ id: z.string() }).strict(),
@@ -9033,7 +11293,8 @@ const input_v11_invoices_partial_update = z
 		demo: z.boolean().optional(),
 	})
 	.strict();
-const output_v11_invoices_partial_update = v11Def_PUV11InvoicePartialUpdate;
+const output_v11_invoices_partial_update =
+	v11Def_PUV11InvoicePartialUpdateResponse;
 const input_v11_invoices_delete = z
 	.object({
 		path: z.object({ id: z.string() }).strict(),
@@ -9109,7 +11370,7 @@ const input_v11_invoices_applied_credit_create = z
 	})
 	.strict();
 const output_v11_invoices_applied_credit_create = z.array(
-	v11Def_InvoiceCreditTransactionInv,
+	v11Def_InvoiceCreditTransactionInvResponse,
 );
 const input_v11_invoices_applied_credit_delete = z
 	.object({
@@ -9425,7 +11686,7 @@ const input_v11_suppliercredits_partial_update = z
 	})
 	.strict();
 const output_v11_suppliercredits_partial_update =
-	v11Def_PUV11PurchaseCreditNotePartialUpdate;
+	v11Def_PUV11PurchaseCreditNotePartialUpdateResponse;
 const input_v11_suppliercredits_delete = z
 	.object({
 		path: z.object({ id: z.string() }).strict(),
@@ -9503,7 +11764,7 @@ const input_v11_suppliercredits_applied_credit_create = z
 	})
 	.strict();
 const output_v11_suppliercredits_applied_credit_create = z.array(
-	v11Def_V11PurchaseCreditTransactionPCNListCreate,
+	v11Def_V11PurchaseCreditTransactionPCNListCreateResponse,
 );
 const input_v11_suppliercredits_applied_credit_delete = z
 	.object({
@@ -9644,7 +11905,7 @@ const output_v11_warehouse_list = z
 		count: z.number().int(),
 		next: z.string().nullable().optional(),
 		previous: z.string().nullable().optional(),
-		results: z.array(v11Def_PUV11WarehouseSerializer),
+		results: z.array(v11Def_PUV11WarehouseSerializerResponse),
 	})
 	.strict();
 const input_v11_warehouse_create = z
@@ -9653,14 +11914,14 @@ const input_v11_warehouse_create = z
 		demo: z.boolean().optional(),
 	})
 	.strict();
-const output_v11_warehouse_create = v11Def_PUV11WarehouseSerializer;
+const output_v11_warehouse_create = v11Def_PUV11WarehouseSerializerResponse;
 const input_v11_warehouse_read = z
 	.object({
 		path: z.object({ id: z.string() }).strict(),
 		demo: z.boolean().optional(),
 	})
 	.strict();
-const output_v11_warehouse_read = v11Def_PUV11WarehouseSerializer;
+const output_v11_warehouse_read = v11Def_PUV11WarehouseSerializerResponse;
 const input_v11_warehouse_update = z
 	.object({
 		path: z.object({ id: z.string() }).strict(),
@@ -9668,7 +11929,7 @@ const input_v11_warehouse_update = z
 		demo: z.boolean().optional(),
 	})
 	.strict();
-const output_v11_warehouse_update = v11Def_PUV11WarehouseSerializer;
+const output_v11_warehouse_update = v11Def_PUV11WarehouseSerializerResponse;
 const input_v11_warehouse_partial_update = z
 	.object({
 		path: z.object({ id: z.string() }).strict(),
@@ -9676,7 +11937,8 @@ const input_v11_warehouse_partial_update = z
 		demo: z.boolean().optional(),
 	})
 	.strict();
-const output_v11_warehouse_partial_update = v11Def_PUV11WarehouseSerializer;
+const output_v11_warehouse_partial_update =
+	v11Def_PUV11WarehouseSerializerResponse;
 const input_v11_warehouse_delete = z
 	.object({
 		path: z.object({ id: z.string() }).strict(),
@@ -9755,7 +12017,8 @@ const input_v12_bills_partial_update = z
 		demo: z.boolean().optional(),
 	})
 	.strict();
-const output_v12_bills_partial_update = v12Def_PUV12PurchasePartialUpdate;
+const output_v12_bills_partial_update =
+	v12Def_PUV12PurchasePartialUpdateResponse;
 const input_v12_bills_delete = z
 	.object({
 		path: z.object({ id: z.string() }).strict(),
@@ -9820,7 +12083,7 @@ const output_v12_bills_attachments_list = z
 		count: z.number().int(),
 		next: z.string().nullable().optional(),
 		previous: z.string().nullable().optional(),
-		results: z.array(v12Def_PUV12PurchaseAttachmentListRetrieve),
+		results: z.array(v12Def_PUV12PurchaseAttachmentListRetrieveResponse),
 	})
 	.strict();
 const input_v12_bills_attachments_create = z
@@ -9845,7 +12108,7 @@ const input_v12_bills_attachments_read = z
 	})
 	.strict();
 const output_v12_bills_attachments_read =
-	v12Def_PUV12PurchaseAttachmentListRetrieve;
+	v12Def_PUV12PurchaseAttachmentListRetrieveResponse;
 const input_v12_bills_attachments_partial_update = z
 	.object({
 		path: z.object({ id: z.string(), parent_pk: z.string() }).strict(),
@@ -9854,7 +12117,7 @@ const input_v12_bills_attachments_partial_update = z
 	})
 	.strict();
 const output_v12_bills_attachments_partial_update =
-	v12Def_PUV12PurchaseAttachmentListRetrieve;
+	v12Def_PUV12PurchaseAttachmentListRetrieveResponse;
 const input_v12_bills_attachments_delete = z
 	.object({
 		path: z.object({ id: z.string(), parent_pk: z.string() }).strict(),
@@ -10013,7 +12276,7 @@ const output_v12_cashpayments_attachments_list = z
 		count: z.number().int(),
 		next: z.string().nullable().optional(),
 		previous: z.string().nullable().optional(),
-		results: z.array(v12Def_PUV12CashPaymentAttachmentListRetrieve),
+		results: z.array(v12Def_PUV12CashPaymentAttachmentListRetrieveResponse),
 	})
 	.strict();
 const input_v12_cashpayments_attachments_create = z
@@ -10037,7 +12300,7 @@ const input_v12_cashpayments_attachments_read = z
 	})
 	.strict();
 const output_v12_cashpayments_attachments_read =
-	v12Def_PUV12CashPaymentAttachmentListRetrieve;
+	v12Def_PUV12CashPaymentAttachmentListRetrieveResponse;
 const input_v12_cashpayments_attachments_partial_update = z
 	.object({
 		path: z.object({ id: z.string(), parent_pk: z.string() }).strict(),
@@ -10046,7 +12309,7 @@ const input_v12_cashpayments_attachments_partial_update = z
 	})
 	.strict();
 const output_v12_cashpayments_attachments_partial_update =
-	v12Def_PUV12CashPaymentAttachmentListRetrieve;
+	v12Def_PUV12CashPaymentAttachmentListRetrieveResponse;
 const input_v12_cashpayments_attachments_delete = z
 	.object({
 		path: z.object({ id: z.string(), parent_pk: z.string() }).strict(),
@@ -10184,7 +12447,7 @@ const output_v12_cashreceipts_attachments_list = z
 		count: z.number().int(),
 		next: z.string().nullable().optional(),
 		previous: z.string().nullable().optional(),
-		results: z.array(v12Def_PUV12CashReceiptAttachmentListRetrieve),
+		results: z.array(v12Def_PUV12CashReceiptAttachmentListRetrieveResponse),
 	})
 	.strict();
 const input_v12_cashreceipts_attachments_create = z
@@ -10208,7 +12471,7 @@ const input_v12_cashreceipts_attachments_read = z
 	})
 	.strict();
 const output_v12_cashreceipts_attachments_read =
-	v12Def_PUV12CashReceiptAttachmentListRetrieve;
+	v12Def_PUV12CashReceiptAttachmentListRetrieveResponse;
 const input_v12_cashreceipts_attachments_partial_update = z
 	.object({
 		path: z.object({ id: z.string(), parent_pk: z.string() }).strict(),
@@ -10217,7 +12480,7 @@ const input_v12_cashreceipts_attachments_partial_update = z
 	})
 	.strict();
 const output_v12_cashreceipts_attachments_partial_update =
-	v12Def_PUV12CashReceiptAttachmentListRetrieve;
+	v12Def_PUV12CashReceiptAttachmentListRetrieveResponse;
 const input_v12_cashreceipts_attachments_delete = z
 	.object({
 		path: z.object({ id: z.string(), parent_pk: z.string() }).strict(),
@@ -10343,7 +12606,7 @@ const output_v12_contacts_attachments_list = z
 		count: z.number().int(),
 		next: z.string().nullable().optional(),
 		previous: z.string().nullable().optional(),
-		results: z.array(v12Def_PUV12ContactAttachmentListRetrieve),
+		results: z.array(v12Def_PUV12ContactAttachmentListRetrieveResponse),
 	})
 	.strict();
 const input_v12_contacts_attachments_create = z
@@ -10367,7 +12630,7 @@ const input_v12_contacts_attachments_read = z
 	})
 	.strict();
 const output_v12_contacts_attachments_read =
-	v12Def_PUV12ContactAttachmentListRetrieve;
+	v12Def_PUV12ContactAttachmentListRetrieveResponse;
 const input_v12_contacts_attachments_partial_update = z
 	.object({
 		path: z.object({ id: z.string(), parent_pk: z.string() }).strict(),
@@ -10376,7 +12639,7 @@ const input_v12_contacts_attachments_partial_update = z
 	})
 	.strict();
 const output_v12_contacts_attachments_partial_update =
-	v12Def_PUV12ContactAttachmentListRetrieve;
+	v12Def_PUV12ContactAttachmentListRetrieveResponse;
 const input_v12_contacts_attachments_delete = z
 	.object({
 		path: z.object({ id: z.string(), parent_pk: z.string() }).strict(),
@@ -10492,7 +12755,7 @@ const input_v12_creditnotes_partial_update = z
 	})
 	.strict();
 const output_v12_creditnotes_partial_update =
-	v12Def_PUV12CreditNotePartialUpdate;
+	v12Def_PUV12CreditNotePartialUpdateResponse;
 const input_v12_creditnotes_delete = z
 	.object({
 		path: z.object({ id: z.string() }).strict(),
@@ -10568,7 +12831,7 @@ const input_v12_creditnotes_applied_credit_create = z
 	})
 	.strict();
 const output_v12_creditnotes_applied_credit_create = z.array(
-	v12Def_InvoiceCreditTransactionCN,
+	v12Def_InvoiceCreditTransactionCNResponse,
 );
 const input_v12_creditnotes_applied_credit_delete = z
 	.object({
@@ -10595,7 +12858,7 @@ const output_v12_creditnotes_attachments_list = z
 		count: z.number().int(),
 		next: z.string().nullable().optional(),
 		previous: z.string().nullable().optional(),
-		results: z.array(v12Def_PUV12CreditNoteAttachmentListRetrieve),
+		results: z.array(v12Def_PUV12CreditNoteAttachmentListRetrieveResponse),
 	})
 	.strict();
 const input_v12_creditnotes_attachments_create = z
@@ -10619,7 +12882,7 @@ const input_v12_creditnotes_attachments_read = z
 	})
 	.strict();
 const output_v12_creditnotes_attachments_read =
-	v12Def_PUV12CreditNoteAttachmentListRetrieve;
+	v12Def_PUV12CreditNoteAttachmentListRetrieveResponse;
 const input_v12_creditnotes_attachments_partial_update = z
 	.object({
 		path: z.object({ id: z.string(), parent_pk: z.string() }).strict(),
@@ -10628,7 +12891,7 @@ const input_v12_creditnotes_attachments_partial_update = z
 	})
 	.strict();
 const output_v12_creditnotes_attachments_partial_update =
-	v12Def_PUV12CreditNoteAttachmentListRetrieve;
+	v12Def_PUV12CreditNoteAttachmentListRetrieveResponse;
 const input_v12_creditnotes_attachments_delete = z
 	.object({
 		path: z.object({ id: z.string(), parent_pk: z.string() }).strict(),
@@ -10799,7 +13062,7 @@ const input_v12_deliverynotes_partial_update = z
 	})
 	.strict();
 const output_v12_deliverynotes_partial_update =
-	v12Def_PUV12DeliveryNotePartialUpdate;
+	v12Def_PUV12DeliveryNotePartialUpdateResponse;
 const input_v12_deliverynotes_delete = z
 	.object({
 		path: z.object({ id: z.string() }).strict(),
@@ -10865,7 +13128,7 @@ const output_v12_deliverynotes_attachments_list = z
 		count: z.number().int(),
 		next: z.string().nullable().optional(),
 		previous: z.string().nullable().optional(),
-		results: z.array(v12Def_PUV12DeliveryNoteAttachmentListRetrieve),
+		results: z.array(v12Def_PUV12DeliveryNoteAttachmentListRetrieveResponse),
 	})
 	.strict();
 const input_v12_deliverynotes_attachments_create = z
@@ -10889,7 +13152,7 @@ const input_v12_deliverynotes_attachments_read = z
 	})
 	.strict();
 const output_v12_deliverynotes_attachments_read =
-	v12Def_PUV12DeliveryNoteAttachmentListRetrieve;
+	v12Def_PUV12DeliveryNoteAttachmentListRetrieveResponse;
 const input_v12_deliverynotes_attachments_partial_update = z
 	.object({
 		path: z.object({ id: z.string(), parent_pk: z.string() }).strict(),
@@ -10898,7 +13161,7 @@ const input_v12_deliverynotes_attachments_partial_update = z
 	})
 	.strict();
 const output_v12_deliverynotes_attachments_partial_update =
-	v12Def_PUV12DeliveryNoteAttachmentListRetrieve;
+	v12Def_PUV12DeliveryNoteAttachmentListRetrieveResponse;
 const input_v12_deliverynotes_attachments_delete = z
 	.object({
 		path: z.object({ id: z.string(), parent_pk: z.string() }).strict(),
@@ -11008,9 +13271,8 @@ const input_v12_documenttypes_sequences_list = z
 		demo: z.boolean().optional(),
 	})
 	.strict();
-const output_v12_documenttypes_sequences_list = z.array(
-	v12Def_PUFlatSequenceList,
-);
+// The OpenAPI document wraps this count/results object in an array; Elorus answers with the object itself.
+const output_v12_documenttypes_sequences_list = v12Def_PUFlatSequenceList;
 const input_v12_documenttypes_sequences_create = z
 	.object({
 		path: z.object({ parent_pk: z.string() }).strict(),
@@ -11166,7 +13428,8 @@ const input_v12_estimates_partial_update = z
 		demo: z.boolean().optional(),
 	})
 	.strict();
-const output_v12_estimates_partial_update = v12Def_PUV12EstimatePartialUpdate;
+const output_v12_estimates_partial_update =
+	v12Def_PUV12EstimatePartialUpdateResponse;
 const input_v12_estimates_delete = z
 	.object({
 		path: z.object({ id: z.string() }).strict(),
@@ -11223,7 +13486,7 @@ const output_v12_estimates_attachments_list = z
 		count: z.number().int(),
 		next: z.string().nullable().optional(),
 		previous: z.string().nullable().optional(),
-		results: z.array(v12Def_PUV12EstimateAttachmentListRetrieve),
+		results: z.array(v12Def_PUV12EstimateAttachmentListRetrieveResponse),
 	})
 	.strict();
 const input_v12_estimates_attachments_create = z
@@ -11247,7 +13510,7 @@ const input_v12_estimates_attachments_read = z
 	})
 	.strict();
 const output_v12_estimates_attachments_read =
-	v12Def_PUV12EstimateAttachmentListRetrieve;
+	v12Def_PUV12EstimateAttachmentListRetrieveResponse;
 const input_v12_estimates_attachments_partial_update = z
 	.object({
 		path: z.object({ id: z.string(), parent_pk: z.string() }).strict(),
@@ -11256,7 +13519,7 @@ const input_v12_estimates_attachments_partial_update = z
 	})
 	.strict();
 const output_v12_estimates_attachments_partial_update =
-	v12Def_PUV12EstimateAttachmentListRetrieve;
+	v12Def_PUV12EstimateAttachmentListRetrieveResponse;
 const input_v12_estimates_attachments_delete = z
 	.object({
 		path: z.object({ id: z.string(), parent_pk: z.string() }).strict(),
@@ -11472,7 +13735,7 @@ const output_v12_expenses_attachments_list = z
 		count: z.number().int(),
 		next: z.string().nullable().optional(),
 		previous: z.string().nullable().optional(),
-		results: z.array(v12Def_PUV12ExpenseAttachmentListRetrieve),
+		results: z.array(v12Def_PUV12ExpenseAttachmentListRetrieveResponse),
 	})
 	.strict();
 const input_v12_expenses_attachments_create = z
@@ -11497,7 +13760,7 @@ const input_v12_expenses_attachments_read = z
 	})
 	.strict();
 const output_v12_expenses_attachments_read =
-	v12Def_PUV12ExpenseAttachmentListRetrieve;
+	v12Def_PUV12ExpenseAttachmentListRetrieveResponse;
 const input_v12_expenses_attachments_partial_update = z
 	.object({
 		path: z.object({ id: z.string(), parent_pk: z.string() }).strict(),
@@ -11506,7 +13769,7 @@ const input_v12_expenses_attachments_partial_update = z
 	})
 	.strict();
 const output_v12_expenses_attachments_partial_update =
-	v12Def_PUV12ExpenseAttachmentListRetrieve;
+	v12Def_PUV12ExpenseAttachmentListRetrieveResponse;
 const input_v12_expenses_attachments_delete = z
 	.object({
 		path: z.object({ id: z.string(), parent_pk: z.string() }).strict(),
@@ -11619,7 +13882,7 @@ const input_v12_goodsreceipts_partial_update = z
 	})
 	.strict();
 const output_v12_goodsreceipts_partial_update =
-	v12Def_PUV12GoodsReceiptPartialUpdate;
+	v12Def_PUV12GoodsReceiptPartialUpdateResponse;
 const input_v12_goodsreceipts_delete = z
 	.object({
 		path: z.object({ id: z.string() }).strict(),
@@ -11726,9 +13989,8 @@ const input_v12_goodsreceiptsequences_list = z
 		demo: z.boolean().optional(),
 	})
 	.strict();
-const output_v12_goodsreceiptsequences_list = z.array(
-	v12Def_PUFlatSequenceList,
-);
+// Same count/results object as document type sequences (the OpenAPI document wraps it in an array there too).
+const output_v12_goodsreceiptsequences_list = v12Def_PUFlatSequenceList;
 const input_v12_goodsreceiptsequences_create = z
 	.object({
 		body: v12Def_FlatSequence,
@@ -11822,7 +14084,8 @@ const input_v12_invoices_partial_update = z
 		demo: z.boolean().optional(),
 	})
 	.strict();
-const output_v12_invoices_partial_update = v12Def_PUV12InvoicePartialUpdate;
+const output_v12_invoices_partial_update =
+	v12Def_PUV12InvoicePartialUpdateResponse;
 const input_v12_invoices_delete = z
 	.object({
 		path: z.object({ id: z.string() }).strict(),
@@ -11898,7 +14161,7 @@ const input_v12_invoices_applied_credit_create = z
 	})
 	.strict();
 const output_v12_invoices_applied_credit_create = z.array(
-	v12Def_InvoiceCreditTransactionInv,
+	v12Def_InvoiceCreditTransactionInvResponse,
 );
 const input_v12_invoices_applied_credit_delete = z
 	.object({
@@ -11925,7 +14188,7 @@ const output_v12_invoices_attachments_list = z
 		count: z.number().int(),
 		next: z.string().nullable().optional(),
 		previous: z.string().nullable().optional(),
-		results: z.array(v12Def_PUV12InvoiceAttachmentListRetrieve),
+		results: z.array(v12Def_PUV12InvoiceAttachmentListRetrieveResponse),
 	})
 	.strict();
 const input_v12_invoices_attachments_create = z
@@ -11949,7 +14212,7 @@ const input_v12_invoices_attachments_read = z
 	})
 	.strict();
 const output_v12_invoices_attachments_read =
-	v12Def_PUV12InvoiceAttachmentListRetrieve;
+	v12Def_PUV12InvoiceAttachmentListRetrieveResponse;
 const input_v12_invoices_attachments_partial_update = z
 	.object({
 		path: z.object({ id: z.string(), parent_pk: z.string() }).strict(),
@@ -11958,7 +14221,7 @@ const input_v12_invoices_attachments_partial_update = z
 	})
 	.strict();
 const output_v12_invoices_attachments_partial_update =
-	v12Def_PUV12InvoiceAttachmentListRetrieve;
+	v12Def_PUV12InvoiceAttachmentListRetrieveResponse;
 const input_v12_invoices_attachments_delete = z
 	.object({
 		path: z.object({ id: z.string(), parent_pk: z.string() }).strict(),
@@ -12085,7 +14348,7 @@ const output_v12_organizationbranch_list = z
 		count: z.number().int(),
 		next: z.string().nullable().optional(),
 		previous: z.string().nullable().optional(),
-		results: z.array(v12Def_PUV12OrganizationBranchSerializer),
+		results: z.array(v12Def_PUV12OrganizationBranchSerializerResponse),
 	})
 	.strict();
 const input_v12_organizationbranch_create = z
@@ -12095,7 +14358,7 @@ const input_v12_organizationbranch_create = z
 	})
 	.strict();
 const output_v12_organizationbranch_create =
-	v12Def_PUV12OrganizationBranchSerializer;
+	v12Def_PUV12OrganizationBranchSerializerResponse;
 const input_v12_organizationbranch_read = z
 	.object({
 		path: z.object({ id: z.string() }).strict(),
@@ -12103,7 +14366,7 @@ const input_v12_organizationbranch_read = z
 	})
 	.strict();
 const output_v12_organizationbranch_read =
-	v12Def_PUV12OrganizationBranchSerializer;
+	v12Def_PUV12OrganizationBranchSerializerResponse;
 const input_v12_organizationbranch_update = z
 	.object({
 		path: z.object({ id: z.string() }).strict(),
@@ -12112,7 +14375,7 @@ const input_v12_organizationbranch_update = z
 	})
 	.strict();
 const output_v12_organizationbranch_update =
-	v12Def_PUV12OrganizationBranchSerializer;
+	v12Def_PUV12OrganizationBranchSerializerResponse;
 const input_v12_organizationbranch_partial_update = z
 	.object({
 		path: z.object({ id: z.string() }).strict(),
@@ -12121,7 +14384,7 @@ const input_v12_organizationbranch_partial_update = z
 	})
 	.strict();
 const output_v12_organizationbranch_partial_update =
-	v12Def_PUV12OrganizationBranchSerializer;
+	v12Def_PUV12OrganizationBranchSerializerResponse;
 const input_v12_organizationbranch_delete = z
 	.object({
 		path: z.object({ id: z.string() }).strict(),
@@ -12372,7 +14635,7 @@ const output_v12_projects_attachments_list = z
 		count: z.number().int(),
 		next: z.string().nullable().optional(),
 		previous: z.string().nullable().optional(),
-		results: z.array(v12Def_PUV12ProjectAttachmentListRetrieve),
+		results: z.array(v12Def_PUV12ProjectAttachmentListRetrieveResponse),
 	})
 	.strict();
 const input_v12_projects_attachments_create = z
@@ -12396,7 +14659,7 @@ const input_v12_projects_attachments_read = z
 	})
 	.strict();
 const output_v12_projects_attachments_read =
-	v12Def_PUV12ProjectAttachmentListRetrieve;
+	v12Def_PUV12ProjectAttachmentListRetrieveResponse;
 const input_v12_projects_attachments_partial_update = z
 	.object({
 		path: z.object({ id: z.string(), parent_pk: z.string() }).strict(),
@@ -12405,7 +14668,7 @@ const input_v12_projects_attachments_partial_update = z
 	})
 	.strict();
 const output_v12_projects_attachments_partial_update =
-	v12Def_PUV12ProjectAttachmentListRetrieve;
+	v12Def_PUV12ProjectAttachmentListRetrieveResponse;
 const input_v12_projects_attachments_delete = z
 	.object({
 		path: z.object({ id: z.string(), parent_pk: z.string() }).strict(),
@@ -12513,7 +14776,7 @@ const output_v12_projects_projectextrafees_list = z
 		count: z.number().int(),
 		next: z.string().nullable().optional(),
 		previous: z.string().nullable().optional(),
-		results: z.array(v12Def_PUV12ProjectExtraFeesSerializer),
+		results: z.array(v12Def_PUV12ProjectExtraFeesSerializerResponse),
 	})
 	.strict();
 const input_v12_projects_projectextrafees_create = z
@@ -12524,7 +14787,7 @@ const input_v12_projects_projectextrafees_create = z
 	})
 	.strict();
 const output_v12_projects_projectextrafees_create =
-	v12Def_PUV12ProjectExtraFeesSerializer;
+	v12Def_PUV12ProjectExtraFeesSerializerResponse;
 const input_v12_projects_projectextrafees_read = z
 	.object({
 		path: z.object({ id: z.string(), parent_pk: z.string() }).strict(),
@@ -12532,7 +14795,7 @@ const input_v12_projects_projectextrafees_read = z
 	})
 	.strict();
 const output_v12_projects_projectextrafees_read =
-	v12Def_PUV12ProjectExtraFeesSerializer;
+	v12Def_PUV12ProjectExtraFeesSerializerResponse;
 const input_v12_projects_projectextrafees_update = z
 	.object({
 		path: z.object({ id: z.string(), parent_pk: z.string() }).strict(),
@@ -12541,7 +14804,7 @@ const input_v12_projects_projectextrafees_update = z
 	})
 	.strict();
 const output_v12_projects_projectextrafees_update =
-	v12Def_PUV12ProjectExtraFeesSerializer;
+	v12Def_PUV12ProjectExtraFeesSerializerResponse;
 const input_v12_projects_projectextrafees_partial_update = z
 	.object({
 		path: z.object({ id: z.string(), parent_pk: z.string() }).strict(),
@@ -12550,7 +14813,7 @@ const input_v12_projects_projectextrafees_partial_update = z
 	})
 	.strict();
 const output_v12_projects_projectextrafees_partial_update =
-	v12Def_PUV12ProjectExtraFeesSerializer;
+	v12Def_PUV12ProjectExtraFeesSerializerResponse;
 const input_v12_projects_projectextrafees_delete = z
 	.object({
 		path: z.object({ id: z.string(), parent_pk: z.string() }).strict(),
@@ -12725,7 +14988,7 @@ const input_v12_suppliercredits_partial_update = z
 	})
 	.strict();
 const output_v12_suppliercredits_partial_update =
-	v12Def_PUV12PurchaseCreditNotePartialUpdate;
+	v12Def_PUV12PurchaseCreditNotePartialUpdateResponse;
 const input_v12_suppliercredits_delete = z
 	.object({
 		path: z.object({ id: z.string() }).strict(),
@@ -12803,7 +15066,7 @@ const input_v12_suppliercredits_applied_credit_create = z
 	})
 	.strict();
 const output_v12_suppliercredits_applied_credit_create = z.array(
-	v12Def_V12PurchaseCreditTransactionPCNListCreate,
+	v12Def_V12PurchaseCreditTransactionPCNListCreateResponse,
 );
 const input_v12_suppliercredits_applied_credit_delete = z
 	.object({
@@ -12830,7 +15093,9 @@ const output_v12_suppliercredits_attachments_list = z
 		count: z.number().int(),
 		next: z.string().nullable().optional(),
 		previous: z.string().nullable().optional(),
-		results: z.array(v12Def_PUV12PurchaseCreditNoteAttachmentListRetrieve),
+		results: z.array(
+			v12Def_PUV12PurchaseCreditNoteAttachmentListRetrieveResponse,
+		),
 	})
 	.strict();
 const input_v12_suppliercredits_attachments_create = z
@@ -12855,7 +15120,7 @@ const input_v12_suppliercredits_attachments_read = z
 	})
 	.strict();
 const output_v12_suppliercredits_attachments_read =
-	v12Def_PUV12PurchaseCreditNoteAttachmentListRetrieve;
+	v12Def_PUV12PurchaseCreditNoteAttachmentListRetrieveResponse;
 const input_v12_suppliercredits_attachments_partial_update = z
 	.object({
 		path: z.object({ id: z.string(), parent_pk: z.string() }).strict(),
@@ -12864,7 +15129,7 @@ const input_v12_suppliercredits_attachments_partial_update = z
 	})
 	.strict();
 const output_v12_suppliercredits_attachments_partial_update =
-	v12Def_PUV12PurchaseCreditNoteAttachmentListRetrieve;
+	v12Def_PUV12PurchaseCreditNoteAttachmentListRetrieveResponse;
 const input_v12_suppliercredits_attachments_delete = z
 	.object({
 		path: z.object({ id: z.string(), parent_pk: z.string() }).strict(),
@@ -13196,7 +15461,7 @@ const output_v12_unitofmeasurement_list = z
 		count: z.number().int(),
 		next: z.string().nullable().optional(),
 		previous: z.string().nullable().optional(),
-		results: z.array(v12Def_PUV12UnitOfMeasurementListSerializer),
+		results: z.array(v12Def_PUV12UnitOfMeasurementListSerializerResponse),
 	})
 	.strict();
 const input_v12_unitofmeasurement_create = z
@@ -13206,7 +15471,7 @@ const input_v12_unitofmeasurement_create = z
 	})
 	.strict();
 const output_v12_unitofmeasurement_create =
-	v12Def_PUV12UnitOfMeasurementListSerializer;
+	v12Def_PUV12UnitOfMeasurementListSerializerResponse;
 const input_v12_unitofmeasurement_read = z
 	.object({
 		path: z.object({ id: z.string() }).strict(),
@@ -13214,7 +15479,7 @@ const input_v12_unitofmeasurement_read = z
 	})
 	.strict();
 const output_v12_unitofmeasurement_read =
-	v12Def_PUV12UnitOfMeasurementListSerializer;
+	v12Def_PUV12UnitOfMeasurementListSerializerResponse;
 const input_v12_unitofmeasurement_update = z
 	.object({
 		path: z.object({ id: z.string() }).strict(),
@@ -13223,7 +15488,7 @@ const input_v12_unitofmeasurement_update = z
 	})
 	.strict();
 const output_v12_unitofmeasurement_update =
-	v12Def_PUV12UnitOfMeasurementListSerializer;
+	v12Def_PUV12UnitOfMeasurementListSerializerResponse;
 const input_v12_unitofmeasurement_partial_update = z
 	.object({
 		path: z.object({ id: z.string() }).strict(),
@@ -13232,7 +15497,7 @@ const input_v12_unitofmeasurement_partial_update = z
 	})
 	.strict();
 const output_v12_unitofmeasurement_partial_update =
-	v12Def_PUV12UnitOfMeasurementListSerializer;
+	v12Def_PUV12UnitOfMeasurementListSerializerResponse;
 const input_v12_unitofmeasurement_delete = z
 	.object({
 		path: z.object({ id: z.string() }).strict(),
@@ -13314,7 +15579,7 @@ const output_v12_warehouse_list = z
 		count: z.number().int(),
 		next: z.string().nullable().optional(),
 		previous: z.string().nullable().optional(),
-		results: z.array(v12Def_PUV12WarehouseSerializer),
+		results: z.array(v12Def_PUV12WarehouseSerializerResponse),
 	})
 	.strict();
 const input_v12_warehouse_create = z
@@ -13323,14 +15588,14 @@ const input_v12_warehouse_create = z
 		demo: z.boolean().optional(),
 	})
 	.strict();
-const output_v12_warehouse_create = v12Def_PUV12WarehouseSerializer;
+const output_v12_warehouse_create = v12Def_PUV12WarehouseSerializerResponse;
 const input_v12_warehouse_read = z
 	.object({
 		path: z.object({ id: z.string() }).strict(),
 		demo: z.boolean().optional(),
 	})
 	.strict();
-const output_v12_warehouse_read = v12Def_PUV12WarehouseSerializer;
+const output_v12_warehouse_read = v12Def_PUV12WarehouseSerializerResponse;
 const input_v12_warehouse_update = z
 	.object({
 		path: z.object({ id: z.string() }).strict(),
@@ -13338,7 +15603,7 @@ const input_v12_warehouse_update = z
 		demo: z.boolean().optional(),
 	})
 	.strict();
-const output_v12_warehouse_update = v12Def_PUV12WarehouseSerializer;
+const output_v12_warehouse_update = v12Def_PUV12WarehouseSerializerResponse;
 const input_v12_warehouse_partial_update = z
 	.object({
 		path: z.object({ id: z.string() }).strict(),
@@ -13346,7 +15611,8 @@ const input_v12_warehouse_partial_update = z
 		demo: z.boolean().optional(),
 	})
 	.strict();
-const output_v12_warehouse_partial_update = v12Def_PUV12WarehouseSerializer;
+const output_v12_warehouse_partial_update =
+	v12Def_PUV12WarehouseSerializerResponse;
 const input_v12_warehouse_delete = z
 	.object({
 		path: z.object({ id: z.string() }).strict(),

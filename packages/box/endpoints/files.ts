@@ -1,4 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
+import type { BinaryResponse } from 'corsair/http';
+import { toFileOutput } from 'corsair/http';
 import { makeBoxRequest, makeBoxUploadRequest } from '../client';
 import type { BoxBoundEndpoints, BoxEndpoints } from '../index';
 import type { BoxEndpointOutputs } from './types';
@@ -70,12 +72,14 @@ export const deleteFile: BoxEndpoints['filesDelete'] = async (ctx, input) => {
 
 export const download: BoxEndpoints['filesDownload'] = async (ctx, input) => {
 	const { file_id, ...query } = input;
-	const result = await makeBoxRequest<BoxEndpointOutputs['filesDownload']>(
+	// Read as bytes: decoding a PDF or image as text corrupts it.
+	const { bytes, contentType } = await makeBoxRequest<BinaryResponse>(
 		`files/${file_id}/content`,
 		ctx.key,
 		{
 			method: 'GET',
 			query,
+			responseType: 'binary',
 		},
 	);
 
@@ -85,7 +89,7 @@ export const download: BoxEndpoints['filesDownload'] = async (ctx, input) => {
 		{ ...input },
 		'completed',
 	);
-	return result;
+	return toFileOutput(bytes, contentType);
 };
 
 export const search: BoxEndpoints['filesSearch'] = async (ctx, input) => {

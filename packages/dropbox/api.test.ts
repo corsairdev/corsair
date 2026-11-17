@@ -1,7 +1,9 @@
 import 'dotenv/config';
 import { DROPBOX_CONTENT_BASE, makeDropboxRequest } from './client';
+import { download } from './endpoints/files';
 import type { DropboxEndpointOutputs } from './endpoints/types';
 import { DropboxEndpointOutputSchemas } from './endpoints/types';
+import type { DropboxContext } from './index';
 
 const TEST_TOKEN = process.env.DROPBOX_ACCESS_TOKEN ?? '';
 const TEST_FOLDER_PATH = process.env.TEST_DROPBOX_FOLDER ?? '';
@@ -258,6 +260,71 @@ describe('Dropbox API Type Tests', () => {
 			DropboxEndpointOutputSchemas.filesDelete.parse(result);
 
 			expect(result).toHaveProperty('metadata');
+		});
+	});
+
+	// Through the endpoint an agent calls: a file with bytes that aren't UTF-8
+	// must come back exactly, and a CSV must come back as text.
+	describe('files.download', () => {
+		const uploaded: string[] = [];
+		const upload = async (path: string, body: Uint8Array) => {
+			const response = await fetch(`${DROPBOX_CONTENT_BASE}/files/upload`, {
+				method: 'POST',
+				headers: {
+					Authorization: `Bearer ${TEST_TOKEN}`,
+					'Content-Type': 'application/octet-stream',
+					'Dropbox-API-Arg': JSON.stringify({ path, mode: 'overwrite' }),
+				},
+				body,
+			});
+			expect(response.ok).toBe(true);
+			uploaded.push(path);
+		};
+
+		afterAll(async () => {
+			for (const path of uploaded) {
+				await makeDropboxRequest('files/delete_v2', TEST_TOKEN, {
+					body: { path },
+				}).catch(() => undefined);
+			}
+		});
+
+		it('returns a binary file byte for byte and a CSV as text', async () => {
+			const pdf = new Uint8Array([
+				0x25, 0x50, 0x44, 0x46, 0x2d, 0x31, 0x2e, 0x34, 0x0a, 0xff, 0xfe, 0x00,
+				0x80, 0xc3, 0x28,
+			]);
+			const csv = 'id,name\n1,Zoë\n';
+			const stamp = Date.now();
+			await upload(`/corsair-download-test-${stamp}.pdf`, pdf);
+			await upload(
+				`/corsair-download-test-${stamp}.csv`,
+				new TextEncoder().encode(csv),
+			);
+
+			// unknown: the endpoint reads only ctx.key, not a full plugin context.
+			const ctx = { key: TEST_TOKEN } as unknown as DropboxContext;
+			const gotPdf = await download(ctx, {
+				path: `/corsair-download-test-${stamp}.pdf`,
+			});
+			expect(DropboxEndpointOutputSchemas.filesDownload.parse(gotPdf)).toEqual(
+				gotPdf,
+			);
+			expect(gotPdf.filename).toBe(`corsair-download-test-${stamp}.pdf`);
+			expect(gotPdf.byteLength).toBe(pdf.byteLength);
+			expect(Buffer.from(gotPdf.contentBase64 ?? '', 'base64')).toEqual(
+				Buffer.from(pdf),
+			);
+
+			// Dropbox serves a CSV as application/octet-stream, so it stays base64;
+			// the bytes are still exact.
+			const gotCsv = await download(ctx, {
+				path: `/corsair-download-test-${stamp}.csv`,
+			});
+			const csvBytes =
+				gotCsv.text ??
+				Buffer.from(gotCsv.contentBase64 ?? '', 'base64').toString();
+			expect(csvBytes).toBe(csv);
 		});
 	});
 
