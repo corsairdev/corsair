@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-16T09:44:36.708Z",
-  "corsairVersion": "0.1.200",
+  "generatedAt": "2026-11-17T00:02:03.119Z",
+  "corsairVersion": "0.1.202",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -33198,7 +33198,7 @@
       "pluginId": "box",
       "kind": "api",
       "shortPath": "files.download",
-      "haystack": "files.download box.api.files.download download the content of a box file read"
+      "haystack": "files.download box.api.files.download download a file. a text file comes back as text, any other file as base64, up to about 700 kb; size and type are always returned. read"
     },
     {
       "pluginId": "box",
@@ -66636,7 +66636,7 @@
       "pluginId": "dropbox",
       "kind": "api",
       "shortPath": "files.download",
-      "haystack": "files.download dropbox.api.files.download download a file read"
+      "haystack": "files.download dropbox.api.files.download download a file. a text file comes back as text, any other file as base64, up to about 700 kb; size and type are always returned. read"
     },
     {
       "pluginId": "dropbox",
@@ -88446,7 +88446,7 @@
       "pluginId": "googledrive",
       "kind": "api",
       "shortPath": "files.download",
-      "haystack": "files.download googledrive.api.files.download download the content of a file read"
+      "haystack": "files.download googledrive.api.files.download download a file. a text file comes back as text, any other file as base64, up to about 700 kb; size and type are always returned. google docs, sheets and slides cannot be downloaded this way. read"
     },
     {
       "pluginId": "googledrive",
@@ -113268,25 +113268,25 @@
       "pluginId": "onedrive",
       "kind": "api",
       "shortPath": "items.download",
-      "haystack": "items.download onedrive.api.items.download download a file read"
+      "haystack": "items.download onedrive.api.items.download download a file. a text file comes back as text, any other file as base64, up to about 700 kb; size and type are always returned. read"
     },
     {
       "pluginId": "onedrive",
       "kind": "api",
       "shortPath": "items.downloadAsFormat",
-      "haystack": "items.downloadasformat onedrive.api.items.downloadasformat download a file converted to a different format read"
+      "haystack": "items.downloadasformat onedrive.api.items.downloadasformat download a file converted to a different format. a text file comes back as text, any other file as base64, up to about 700 kb; size and type are always returned. read"
     },
     {
       "pluginId": "onedrive",
       "kind": "api",
       "shortPath": "items.downloadByPath",
-      "haystack": "items.downloadbypath onedrive.api.items.downloadbypath download a file by path read"
+      "haystack": "items.downloadbypath onedrive.api.items.downloadbypath download a file by path. a text file comes back as text, any other file as base64, up to about 700 kb; size and type are always returned. read"
     },
     {
       "pluginId": "onedrive",
       "kind": "api",
       "shortPath": "items.downloadVersion",
-      "haystack": "items.downloadversion onedrive.api.items.downloadversion download a specific version of a file read"
+      "haystack": "items.downloadversion onedrive.api.items.downloadversion download a specific version of a file. a text file comes back as text, any other file as base64, up to about 700 kb; size and type are always returned. read"
     },
     {
       "pluginId": "onedrive",
