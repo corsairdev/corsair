@@ -1,0 +1,68 @@
+displayName: Docparser
+description: Send documents to Docparser parsers and read the data they extract (invoices, orders, bank statements, forms).
+domain: docparser.com
+recommendedAuth: api_key
+overviewNote: |
+  Get the secret API key under Account > API in Docparser. It is sent as HTTP Basic with the key as the username and an empty password.
+  The usual flow: `parsers.list` to find the parser, `documents.fetch` (public URL) or `documents.upload` (base64) to send a document, `documents.status` until `done` is true (parsing takes a minute or more), then `results.get` for the extracted fields. Parsing rules are set up in the Docparser app; the API runs them.
+  Importing a document uses parsing credits, one per 5 pages, charged only the first time it is parsed (the free trial has 50), so `documents.fetch` and `documents.upload` are destructive. `documents.reparse` costs nothing but replaces the parsed data with a run of the current rules, and `documents.reintegrate` sends the parsed data to the parser's integrations and webhooks again; both are destructive too.
+  Results come back whole, with every field the parser extracted. Only parser, layout and result metadata (ids, file name, page count, dates) is stored locally; parsed values, media links and document URLs are not stored and stay out of events.
+references:
+  - title: Docparser API reference
+    url: https://dev.docparser.com/
+examples:
+  read:
+    path: results.list
+    title: Get the newest parsed documents
+    args:
+      parserId: balhnyuzdezt
+      limit: 20
+  write:
+    path: documents.fetch
+    title: Send an invoice PDF to a parser
+    args:
+      parserId: balhnyuzdezt
+      url: https://example.com/invoices/inv-1001.pdf
+      remoteId: inv-1001
+apiNotes:
+  ping: |
+    `GET /v1/ping`.
+  parsers.list: |
+    `GET /v1/parsers`. Stores id and label.
+  models.list: |
+    `GET /v1/parser/models/{parserId}`. The stored id is parser id plus layout id.
+  results.list: |
+    `GET /v1/results/{parserId}`. Stores id, document id, file name, page count, and timestamps.
+  results.get: |
+    `GET /v1/results/{parserId}/{documentId}`. Returns a list with one row (more with includeChildren).
+  documents.fetch: |
+    `POST /v2/document/fetch/{parserId}` as form data.
+  documents.upload: |
+    `POST /v1/document/upload/{parserId}` with file_content (base64) as form data.
+  documents.status: |
+    `GET /v2/document/status/{parserId}/{documentId}`. done is true once import and parsing finished.
+  documents.reparse: |
+    `POST /v1/document/reparse/{parserId}` with document_ids[].
+  documents.reintegrate: |
+    `POST /v1/document/reintegrate/{parserId}` with document_ids[].
+apiExamples:
+  ping:
+    call: "{}"
+  parsers.list:
+    call: "{}"
+  models.list:
+    call: "{ parserId: 'balhnyuzdezt' }"
+  results.list:
+    call: "{ parserId: 'balhnyuzdezt', list: 'processed_after', date: '2026-11-01T00:00:00+00:00' }"
+  results.get:
+    call: "{ parserId: 'balhnyuzdezt', documentId: '8cb0a36831b2140707e11a4beb07cb36' }"
+  documents.fetch:
+    call: "{ parserId: 'balhnyuzdezt', url: 'https://example.com/invoices/inv-1001.pdf', remoteId: 'inv-1001' }"
+  documents.upload:
+    call: "{ parserId: 'balhnyuzdezt', fileContent: 'JVBERi0xLjQK...', fileName: 'inv-1001.pdf' }"
+  documents.status:
+    call: "{ parserId: 'balhnyuzdezt', documentId: '8cb0a36831b2140707e11a4beb07cb36' }"
+  documents.reparse:
+    call: "{ parserId: 'balhnyuzdezt', documentIds: ['8cb0a36831b2140707e11a4beb07cb36'] }"
+  documents.reintegrate:
+    call: "{ parserId: 'balhnyuzdezt', documentIds: ['8cb0a36831b2140707e11a4beb07cb36'] }"
