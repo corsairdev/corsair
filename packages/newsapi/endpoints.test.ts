@@ -83,6 +83,53 @@ describe('newsapi reads', () => {
 		});
 	});
 
+	it('sends the date, searchIn and excludeDomains filters and returns totalResults', async () => {
+		mockRequest.mockResolvedValue({
+			status: 'ok',
+			totalResults: 594,
+			articles: [ARTICLE],
+		});
+		const result = await everything(context('sekrit'), {
+			q: 'bitcoin',
+			searchIn: 'title,description',
+			excludeDomains: 'example.org',
+			from: '2026-11-10',
+			to: '2026-11-16T12:00:00',
+			page: 2,
+			pageSize: 10,
+		});
+		expect(result.totalResults).toBe(594);
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			url: '/v2/everything',
+			query: {
+				q: 'bitcoin',
+				searchIn: 'title,description',
+				excludeDomains: 'example.org',
+				from: '2026-11-10',
+				to: '2026-11-16T12:00:00',
+				page: '2',
+				pageSize: '10',
+			},
+		});
+	});
+
+	it('rejects a searchIn field NewsAPI does not know', async () => {
+		await expect(
+			everything(context('sekrit'), { q: 'x', searchIn: 'body' }),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('returns totalResults for top headlines', async () => {
+		mockRequest.mockResolvedValue({
+			status: 'ok',
+			totalResults: 37,
+			articles: [ARTICLE],
+		});
+		const result = await headlines(context('sekrit'), { country: 'us' });
+		expect(result.totalResults).toBe(37);
+	});
+
 	it('rejects sources mixed with a country before calling the API', async () => {
 		await expect(
 			headlines(context('sekrit'), { country: 'us', sources: 'bbc-news' }),

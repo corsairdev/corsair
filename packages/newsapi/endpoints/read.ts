@@ -22,6 +22,13 @@ function text(value: unknown): string | undefined {
 	return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
 
+function totalOf(body: unknown): number | undefined {
+	const total = asRecord(body)?.totalResults;
+	return typeof total === 'number' && Number.isFinite(total)
+		? total
+		: undefined;
+}
+
 async function keyOf(ctx: NewsApiContext): Promise<string> {
 	if (!ctx.key) throw new AuthMissingError('newsapi', 'api_key');
 	return ctx.key;
@@ -85,6 +92,10 @@ export const everything: CorsairEndpoint<
 		q: parsed.q,
 		sources: parsed.sources,
 		domains: parsed.domains,
+		excludeDomains: parsed.excludeDomains,
+		searchIn: parsed.searchIn,
+		from: parsed.from,
+		to: parsed.to,
 		language: parsed.language,
 		sortBy: parsed.sortBy,
 		page: parsed.page === undefined ? undefined : String(parsed.page),
@@ -93,7 +104,7 @@ export const everything: CorsairEndpoint<
 	});
 	const articles = articlesFrom(body);
 	await saveArticles(ctx, articles, 'newsapi.articles.everything');
-	return { articles };
+	return { articles, totalResults: totalOf(body) };
 };
 
 export const headlines: CorsairEndpoint<
@@ -114,7 +125,7 @@ export const headlines: CorsairEndpoint<
 	});
 	const articles = articlesFrom(body);
 	await saveArticles(ctx, articles, 'newsapi.articles.headlines');
-	return { articles };
+	return { articles, totalResults: totalOf(body) };
 };
 
 export const listSources: CorsairEndpoint<
