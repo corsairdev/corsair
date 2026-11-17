@@ -140,6 +140,7 @@ export const BaseProviders = [
 	'cdrplatform',
 	'celigo',
 	'certifier',
+	'certspotter',
 	'chaser',
 	'chatbotkit',
 	'chatfai',
@@ -777,6 +778,7 @@ export const ProviderDisplayNames = {
 	cdrplatform: 'CDR Platform',
 	celigo: 'Celigo',
 	certifier: 'Certifier',
+	certspotter: 'SSLMate Cert Spotter',
 	chaser: 'Chaser',
 	chatbotkit: 'ChatBotKit',
 	chatfai: 'ChatFAI',
@@ -1421,6 +1423,7 @@ export type AllProviders =
 	| 'cdrplatform'
 	| 'celigo'
 	| 'certifier'
+	| 'certspotter'
 	| 'chaser'
 	| 'chatbotkit'
 	| 'chatfai'
