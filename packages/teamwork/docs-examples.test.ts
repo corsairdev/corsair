@@ -27,6 +27,15 @@ describe('plugin-docs.yaml examples', () => {
 		},
 	);
 
+	it.each(
+		teamworkOperations.filter((operation) => operation.body !== undefined),
+	)(
+		'$id apiExample sends a body, so the example does something',
+		(operation) => {
+			expect(docs.apiExamples?.[operation.id]?.args?.body).toBeDefined();
+		},
+	);
+
 	it.each(Object.entries(docs.examples ?? {}))(
 		'overview %s example passes its input schema',
 		(_, example) => {
