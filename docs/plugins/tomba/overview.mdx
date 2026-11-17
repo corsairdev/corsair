@@ -1,0 +1,139 @@
+---
+title: "Tomba plugin"
+sidebarTitle: "Overview"
+description: "Find, verify and enrich B2B email addresses and phone numbers, and read company and domain data."
+---
+
+Use **Tomba** through Corsair: one client, typed API calls.
+
+Copy the API key and secret from your Tomba dashboard under API keys. Both are required: the plugin sends them as `X-Tomba-Key` and `X-Tomba-Secret`. Set the key as the plugin key and pass the secret as `apiSecret`, or store both on the account.
+
+Things to know:
+
+- **Lookups cost credits.** Each call draws on a plan allowance. `account.get` reports what is left for the current usage window, and `account.rateLimits` reports the per-route limits.
+- **A miss is a success.** When no address is found, the finder answers 200 with `data.email: null` and a score of 0. That is a legitimate answer to check, not an error.
+- **A webmail domain is an error.** A request against `gmail.com` fails with 400 and type `unknown_record`, because Tomba refuses disposable and webmail domains rather than returning nothing.
+- **402 means an empty balance.** Nothing is charged and no retry helps. `finder.phone` costs more than the other lookups.
+- **451 means the person opted out.** Tomba withholds their data permanently at their request, so the call is not retried.
+- **Rate limits name their window.** The 429 message says whether the per-second, per-minute or daily limit was hit, and `Retry-After` says when to retry. A per-second or per-minute 429 is retried up to three times; a used-up daily limit or count/sources balance is not retried. On the Free plan most lookups allow 5 calls a day per route.
+- **Not included.** Bulk jobs, lead management, API key management and scraper campaigns have their own routes and are not part of this plugin.
+
+**What you get:**
+
+- 22 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/tomba better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/tomba better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/tomba better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/tomba better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { tomba } from '@corsair-dev/tomba';
+
+export const corsair = createCorsair({
+	plugins: [
+		tomba(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Tomba API key before the first call: `pnpm corsair setup --plugin=tomba --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+tomba()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'tomba',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Find one person work email**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.tomba.api.finder.email({ domain: 'stripe.com', first_name: 'Jane', last_name: 'Doe' });
+```
+
+
+**Verify an address**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.tomba.api.verifier.email({ email: 'jane.doe@stripe.com' });
+```
+
+
+See the full list on the [API](/plugins/tomba/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/tomba/api">
+    Every `tomba.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

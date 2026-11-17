@@ -1,0 +1,82 @@
+displayName: Tomba
+description: 'Find, verify and enrich B2B email addresses and phone numbers, and read company and domain data.'
+domain: tomba.io
+recommendedAuth: api_key
+overviewNote: |
+  Copy the API key and secret from your Tomba dashboard under API keys. Both are required: the plugin sends them as `X-Tomba-Key` and `X-Tomba-Secret`. Set the key as the plugin key and pass the secret as `apiSecret`, or store both on the account.
+
+  Things to know:
+
+  - **Lookups cost credits.** Each call draws on a plan allowance. `account.get` reports what is left for the current usage window, and `account.rateLimits` reports the per-route limits.
+  - **A miss is a success.** When no address is found, the finder answers 200 with `data.email: null` and a score of 0. That is a legitimate answer to check, not an error.
+  - **A webmail domain is an error.** A request against `gmail.com` fails with 400 and type `unknown_record`, because Tomba refuses disposable and webmail domains rather than returning nothing.
+  - **402 means an empty balance.** Nothing is charged and no retry helps. `finder.phone` costs more than the other lookups.
+  - **451 means the person opted out.** Tomba withholds their data permanently at their request, so the call is not retried.
+  - **Rate limits name their window.** The 429 message says whether the per-second, per-minute or daily limit was hit, and `Retry-After` says when to retry. A per-second or per-minute 429 is retried up to three times; a used-up daily limit or count/sources balance is not retried. On the Free plan most lookups allow 5 calls a day per route.
+  - **Not included.** Bulk jobs, lead management, API key management and scraper campaigns have their own routes and are not part of this plugin.
+examples:
+  read:
+    path: finder.email
+    title: Find one person work email
+    args:
+      domain: stripe.com
+      first_name: Jane
+      last_name: Doe
+  write:
+    path: verifier.email
+    title: Verify an address
+    args:
+      email: jane.doe@stripe.com
+apiExamples:
+  account.get: {}
+  account.rateLimits: {}
+  finder.domainSearch:
+    call: "{ domain: 'stripe.com', limit: 50, department: 'engineering' }"
+  finder.email:
+    call: "{ domain: 'stripe.com', first_name: 'Jane', last_name: 'Doe' }"
+  finder.linkedin:
+    call: "{ url: 'https://www.linkedin.com/in/jane-doe' }"
+  finder.author:
+    call: "{ url: 'https://stripe.com/blog/engineering' }"
+  finder.enrich:
+    call: "{ email: 'jane.doe@stripe.com' }"
+  finder.phone:
+    call: "{ email: 'jane.doe@stripe.com' }"
+  verifier.email:
+    call: "{ email: 'jane.doe@stripe.com' }"
+  verifier.phone:
+    call: "{ phone: '+14155550132' }"
+  company.find:
+    call: "{ domain: 'stripe.com' }"
+  company.search:
+    call: "{ query: 'Fintech companies in France' }"
+  person.find:
+    call: "{ email: 'jane.doe@stripe.com' }"
+  combined.find:
+    call: "{ email: 'jane.doe@stripe.com' }"
+  domain.emailCount:
+    call: "{ domain: 'stripe.com', type: 'personal' }"
+  domain.emailFormat:
+    call: "{ domain: 'stripe.com' }"
+  domain.location:
+    call: "{ domain: 'stripe.com' }"
+  domain.technology:
+    call: "{ domain: 'stripe.com' }"
+  domain.similar:
+    call: "{ domain: 'stripe.com' }"
+  domain.status:
+    call: "{ domain: 'stripe.com' }"
+  domain.suggestions:
+    call: "{ query: 'stripe' }"
+  domain.emailSources:
+    call: "{ email: 'jane.doe@stripe.com' }"
+apiNotes:
+  account.get: 'The /me body also carries the account `secret_token` and an `intercom_user_jwt`; the endpoint drops both before returning.'
+  finder.email: 'Pass a `domain` or a `company`, and either `full_name` or `first_name`. A miss answers 200 with a null email, not an error.'
+  finder.phone: 'Costs more credits than the other lookups. Pass one of `email`, `domain` or `linkedin`.'
+  verifier.email: 'The verdict is in `data.email.status` and `data.email.result`; the other fields report the individual checks.'
+  company.search: 'Sending `query` makes Tomba generate the filters and ignore any `filters` you send. The generated filters come back in `meta.filters` for the next page.'
+  domain.emailCount: 'Costs an email count credit on every call. `type` narrows the count to personal or generic addresses.'
+  domain.technology: 'Not charged, but it needs a positive search balance.'
+  domain.status: 'The only route whose answer is not wrapped in `data`: `{ domain, webmail, disposable }`.'
+  domain.emailSources: 'Takes one email address and lists up to 20 pages it was found on; an empty list arrives with HTTP 201. A 429 here can mean the sources balance is used up.'

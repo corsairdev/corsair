@@ -43,14 +43,14 @@ export const VercelEnvVariableSchema = z
 export const VercelDomainSchema = z
 	.object({
 		id: z.string(),
-		name: z.string().optional(),
-		createdAt: z.number().optional(),
+		name: z.string().nullable().optional(),
+		createdAt: z.number().nullable().optional(),
 		boughtAt: z.number().nullable().optional(),
 		expiresAt: z.number().nullable().optional(),
 		transferredAt: z.number().nullable().optional(),
-		verified: z.boolean().optional(),
-		projectId: z.string().optional(),
-		teamId: z.string().optional(),
+		verified: z.boolean().nullable().optional(),
+		projectId: z.string().nullable().optional(),
+		teamId: z.string().nullable().optional(),
 	})
 	.passthrough();
 
