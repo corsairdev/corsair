@@ -1,14 +1,21 @@
 import { createCorsair } from 'corsair';
 import type { CorsairEndpoint } from 'corsair/core';
 import { asRecord } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import type { NasaPluginOptions } from './index';
-import { nasa, nasaEndpointsNested } from './index';
+import { nasa, nasaEndpointsNested, nasaErrorCode } from './index';
 import {
 	apodList,
 	apodSingle,
 	donkiCme,
+	donkiCmeAnalysis,
+	donkiEnlil,
+	donkiFlare,
 	donkiHighSpeedStream,
+	donkiMpc,
 	donkiNotification,
+	donkiRbe,
+	donkiSep,
 	donkiShock,
 	donkiStorm,
 	eonetEvent,
@@ -88,7 +95,7 @@ describe('apod.list', () => {
 	it('sends page, per_page and the date range to the APOD feed', async () => {
 		const { url } = await capture(
 			endpoints.apod.list,
-			{ page: 2, per_page: 10, date_from: 240115, date_to: 240117 },
+			{ page: 2, per_page: 10, date_from: '240115', date_to: '240117' },
 			apodList,
 		);
 
@@ -111,9 +118,31 @@ describe('apod.list', () => {
 		).rejects.toThrow(/APOD entry array/);
 	});
 
+	it('keeps the leading zero of a 2000-2009 date code', async () => {
+		// The feed answers 400 rest_invalid_param for 50101 (checked live).
+		const { url } = await capture(
+			endpoints.apod.list,
+			{ date_from: '050101', date_to: '050103' },
+			apodList,
+		);
+
+		expect(new URL(url).searchParams.get('date_from')).toBe('050101');
+		expect(new URL(url).searchParams.get('date_to')).toBe('050103');
+	});
+
+	it('rejects a numeric date code, which would lose a leading zero', async () => {
+		await expect(
+			capture(
+				endpoints.apod.list,
+				{ date_from: 50101, date_to: 50103 },
+				apodList,
+			),
+		).rejects.toThrow();
+	});
+
 	it('rejects a one-sided date range before sending it', async () => {
 		await expect(
-			capture(endpoints.apod.list, { date_from: 240115 }, apodList),
+			capture(endpoints.apod.list, { date_from: '240115' }, apodList),
 		).rejects.toThrow(/date_from and date_to/);
 	});
 });
@@ -214,6 +243,79 @@ describe('DONKI routes', () => {
 			'https://api.nasa.gov/DONKI/CME?startDate=2026-11-01&endDate=2026-11-05&api_key=test-key',
 		);
 		expect(asRecord(result)?.events).toHaveLength(1);
+	});
+
+	it('requires both dates for the CME listing, which answers 400 without them', async () => {
+		await expect(capture(endpoints.donki.cme, {}, donkiCme)).rejects.toThrow();
+		await expect(
+			capture(endpoints.donki.cme, { startDate: '2026-11-01' }, donkiCme),
+		).rejects.toThrow();
+	});
+
+	it('leaves the ENLIL and notification windows to the provider when omitted', async () => {
+		const { url } = await capture(endpoints.donki.enlilSimulation, {}, []);
+
+		expect(new URL(url).searchParams.has('startDate')).toBe(false);
+	});
+
+	it('reads a populated CME analysis', async () => {
+		const { result } = await capture(
+			endpoints.donki.cmeAnalysis,
+			{ startDate: '2026-10-20', endDate: '2026-10-31' },
+			donkiCmeAnalysis,
+		);
+
+		const analyses = asRecord(result)?.analyses;
+		const first = asRecord(Array.isArray(analyses) ? analyses[0] : null);
+		expect(first?.associatedCMEID).toBe(donkiCmeAnalysis[0]?.associatedCMEID);
+		expect(typeof first?.speed).toBe('number');
+		expect(first?.isMostAccurate).toBe(true);
+	});
+
+	it('reads populated SEP, MPC, RBE and flare records', async () => {
+		const cases: Array<[Endpoint, string, readonly object[], string]> = [
+			[endpoints.donki.solarEnergeticParticle, 'particles', donkiSep, 'sepID'],
+			[endpoints.donki.magnetopauseCrossing, 'crossings', donkiMpc, 'mpcID'],
+			[endpoints.donki.radiationBelt, 'enhancements', donkiRbe, 'rbeID'],
+			[endpoints.donki.solarFlare, 'flares', donkiFlare, 'flrID'],
+		];
+
+		for (const [endpoint, key, body, idField] of cases) {
+			const { result } = await capture(
+				endpoint,
+				{ startDate: '2024-05-01', endDate: '2024-05-31' },
+				body,
+			);
+			const list = asRecord(result)?.[key];
+			const first = asRecord(Array.isArray(list) ? list[0] : null);
+			expect({ key, id: first?.[idField] }).toEqual({
+				key,
+				id: asRecord(body[0])?.[idField],
+			});
+			expect(Array.isArray(first?.instruments)).toBe(true);
+		}
+	});
+
+	it('reads an ENLIL run with its CME inputs and impact list', async () => {
+		const { result } = await capture(
+			endpoints.donki.enlilSimulation,
+			{ startDate: '2026-10-01', endDate: '2026-10-31' },
+			donkiEnlil,
+		);
+
+		const list = asRecord(result)?.simulations;
+		const run = asRecord(Array.isArray(list) ? list[0] : null);
+		const input = asRecord(
+			Array.isArray(run?.cmeInputs) ? run.cmeInputs[0] : null,
+		);
+		const impact = asRecord(
+			Array.isArray(run?.impactList) ? run.impactList[0] : null,
+		);
+		expect(run?.simulationID).toBe('WSA-ENLIL/48927/1');
+		expect(input?.CMEID).toBe('2026-10-02T00:53:00-CME-001');
+		expect(input?.speed).toBe(255);
+		expect(impact).toMatchObject({ location: 'Mars', isGlancingBlow: true });
+		expect(run?.estimatedShockArrivalTime).toBeNull();
 	});
 
 	it('passes the CME analysis filters the provider documents', async () => {
@@ -379,6 +481,22 @@ describe('epic', () => {
 		expect(first?.date).toBe('2019-05-30 01:09:10');
 	});
 
+	it('rejects a null body instead of reading it as a day without imagery', async () => {
+		await expect(
+			capture(endpoints.epic.images, { date: '2019-05-30' }, null),
+		).rejects.toThrow();
+	});
+
+	it('rejects a date list with a malformed entry instead of dropping it', async () => {
+		await expect(
+			capture(endpoints.epic.availableDates, {}, [
+				'2015-06-13',
+				{ date: 7 },
+				null,
+			]),
+		).rejects.toThrow();
+	});
+
 	it('returns an empty list for a day without imagery', async () => {
 		const { result } = await capture(
 			endpoints.epic.images,
@@ -525,6 +643,26 @@ describe('images', () => {
 		expect(asRecord(result)?.next_page).toBeUndefined();
 	});
 
+	it('rejects a search envelope without an items list', async () => {
+		await expect(
+			capture(
+				endpoints.images.search,
+				{ q: 'moon' },
+				{ collection: { metadata: { total_hits: 3 }, links: [] } },
+			),
+		).rejects.toThrow();
+	});
+
+	it('rejects a manifest entry without an href instead of dropping the file', async () => {
+		await expect(
+			capture(
+				endpoints.images.asset,
+				{ nasa_id: 'as11-40-5874' },
+				{ collection: { items: [{ href: 'http://a/orig.jpg' }, { size: 3 }] } },
+			),
+		).rejects.toThrow();
+	});
+
 	it('lists the manifest and lifts the metadata.json entry out', async () => {
 		const { result, url } = await capture(
 			endpoints.images.asset,
@@ -590,5 +728,76 @@ describe('nasa plugin definition', () => {
 	it('is creatable through createCorsair', () => {
 		const corsair = createCorsair({ plugins: [nasa({ key: 'k' })] });
 		expect(corsair.nasa).toBeDefined();
+	});
+});
+
+describe('errors', () => {
+	it('passes core ApiError through without the bbox coordinates', async () => {
+		const bbox = '-129.02,50.73,-58.71,12.89';
+		const caught = await capture(
+			endpoints.eonet.events,
+			{ bbox },
+			'<html>Internal error</html>',
+			{ status: 500, contentType: 'text/html' },
+		).then(
+			() => undefined,
+			(error: unknown) => error,
+		);
+
+		expect(caught).toBeInstanceOf(ApiError);
+		const error = caught as ApiError;
+		expect(error.status).toBe(500);
+		const echoed = JSON.stringify({
+			message: error.message,
+			url: error.url,
+			request: error.request,
+		});
+		expect(echoed).not.toContain('-129.02');
+		expect(error.request.query?.bbox).toBe('[REDACTED]');
+	});
+
+	it('keeps the api.nasa.gov error code readable on the ApiError body', async () => {
+		const caught = await capture(
+			endpoints.neo.browse,
+			{},
+			{
+				error: {
+					code: 'API_KEY_INVALID',
+					message: 'An invalid api_key was supplied.',
+				},
+			},
+			{ status: 403 },
+		).then(
+			() => undefined,
+			(error: unknown) => error,
+		);
+
+		expect(caught).toBeInstanceOf(ApiError);
+		expect(JSON.stringify((caught as ApiError).url)).not.toContain('test-key');
+		expect(nasaErrorCode(caught)).toBe('API_KEY_INVALID');
+	});
+
+	it('lets core retry a 429 instead of failing on the first one', async () => {
+		const original = globalThis.fetch;
+		let calls = 0;
+		globalThis.fetch = (async () => {
+			calls += 1;
+			return calls === 1
+				? new Response(JSON.stringify({ error: { code: 'OVER_RATE_LIMIT' } }), {
+						status: 429,
+						headers: { 'Content-Type': 'application/json' },
+					})
+				: new Response(JSON.stringify(neoBrowsePage), {
+						status: 200,
+						headers: { 'Content-Type': 'application/json' },
+					});
+		}) as typeof fetch;
+		try {
+			const result = await endpoints.neo.browse(makeContext() as never, {});
+			expect(calls).toBe(2);
+			expect(asRecord(result)?.near_earth_objects).toBeDefined();
+		} finally {
+			globalThis.fetch = original;
+		}
 	});
 });

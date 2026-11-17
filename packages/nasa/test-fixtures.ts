@@ -408,3 +408,195 @@ export const imageNoAsset = {
 
 /** The `{ user, message }` body EONET sends with an HTML error page. */
 export const eonetHtmlError = '<!DOCTYPE html><title>Server Error</title>';
+
+/**
+ * Live DONKI records captured 2026-11-17 with a free key, one per route,
+ * trimmed to the first record and the first nested entry.
+ */
+/** `GET /DONKI/CMEAnalysis` for 2026-10-20 to 2026-10-31. */
+export const donkiCmeAnalysis = [
+	{
+		catalog: 'M2M_CATALOG',
+		isMostAccurate: true,
+		time21_5: '2026-10-20T10:15Z',
+		latitude: 25.0,
+		longitude: 172.0,
+		halfAngle: 28.0,
+		speed: 368.0,
+		type: 'S',
+		associatedCMEID: '2026-10-20T01:26:00-CME-001',
+		associatedCMEstartTime: '2026-10-20T01:26Z',
+		associatedCMELink: 'https://ccmc.gsfc.nasa.gov/DONKI/view/CME/49173/-1',
+		featureCode: 'LE',
+		dataLevel: '0',
+		measurementTechnique: 'SWPC_CAT',
+		imageType: 'running difference',
+		tilt: null,
+		minorHalfWidth: null,
+		speedMeasuredAtHeight: null,
+		note: 'Measurement based on best fit among SOHO LASCO C2/C3, GOES CCOR-1, and STEREO A ',
+		link: 'https://ccmc.gsfc.nasa.gov/DONKI/view/CMEAnalysis/49174/-1',
+		submissionTime: '2026-10-20T12:10Z',
+		versionId: 1,
+	},
+];
+
+/** `GET /DONKI/SEP` for 2024-05-01 to 2024-05-31. */
+export const donkiSep = [
+	{
+		sepID: '2024-05-09T13:59:00-SEP-001',
+		eventTime: '2024-05-09T13:59Z',
+		instruments: [
+			{
+				displayName: 'MODEL: REleASE:ACE/EPAM 15.8-39.8 MeV',
+			},
+		],
+		link: 'https://ccmc.gsfc.nasa.gov/DONKI/view/SEP/30609/-1',
+		linkedEvents: [
+			{
+				activityID: '2024-05-09T08:45:00-FLR-001',
+			},
+		],
+		sentNotifications: [
+			{
+				messageID: '20240509-AL-004',
+				messageIssueTime: '2024-05-09T14:00Z',
+				messageURL: 'https://ccmc.gsfc.nasa.gov/DONKI/view/Alert/30611/1',
+			},
+		],
+		submissionTime: '2024-05-09T13:54Z',
+		versionId: 1,
+	},
+];
+
+/** `GET /DONKI/MPC` for 2024-05-01 to 2024-05-31. */
+export const donkiMpc = [
+	{
+		mpcID: '2024-05-02T15:49:00-MPC-001',
+		eventTime: '2024-05-02T15:49Z',
+		instruments: [
+			{
+				displayName: 'MODEL: SWMF',
+			},
+		],
+		link: 'https://ccmc.gsfc.nasa.gov/DONKI/view/MPC/30388/-1',
+		linkedEvents: [
+			{
+				activityID: '2024-05-02T07:46:00-IPS-001',
+			},
+			{
+				activityID: '2024-05-02T15:00:00-GST-001',
+			},
+		],
+		sentNotifications: [
+			{
+				messageID: '20240502-AL-002',
+				messageIssueTime: '2024-05-02T14:54Z',
+				messageURL: 'https://ccmc.gsfc.nasa.gov/DONKI/view/Alert/30389/1',
+			},
+			{
+				messageID: '20240502-AL-003',
+				messageIssueTime: '2024-05-02T15:01Z',
+				messageURL: 'https://ccmc.gsfc.nasa.gov/DONKI/view/Alert/30390/1',
+			},
+		],
+		submissionTime: '2024-05-02T14:54Z',
+		versionId: 1,
+	},
+];
+
+/** `GET /DONKI/RBE` for 2026-10-01 to 2026-10-31. */
+export const donkiRbe = [
+	{
+		rbeID: '2026-10-05T16:20:00-RBE-001',
+		eventTime: '2026-10-05T16:20Z',
+		instruments: [
+			{
+				displayName: 'GOES-P: SEISS >2MeV',
+			},
+		],
+		link: 'https://ccmc.gsfc.nasa.gov/DONKI/view/RBE/48977/-1',
+		linkedEvents: [
+			{
+				activityID: '2026-10-03T23:40:00-HSS-001',
+			},
+		],
+		sentNotifications: [
+			{
+				messageID: '20261005-AL-002',
+				messageIssueTime: '2026-10-05T16:30Z',
+				messageURL: 'https://ccmc.gsfc.nasa.gov/DONKI/view/Alert/48978/1',
+			},
+			{
+				messageID: '20261005-AL-003',
+				messageIssueTime: '2026-10-05T16:43Z',
+				messageURL: 'https://ccmc.gsfc.nasa.gov/DONKI/view/Alert/48979/1',
+			},
+			{
+				messageID: '20261007-AL-001',
+				messageIssueTime: '2026-10-07T16:48Z',
+				messageURL: 'https://ccmc.gsfc.nasa.gov/DONKI/view/Alert/49009/1',
+			},
+		],
+		submissionTime: '2026-10-05T16:30Z',
+		versionId: 1,
+	},
+];
+
+/** `GET /DONKI/WSAEnlilSimulations` for 2026-10, a run with a Mars impact. */
+export const donkiEnlil = [
+	{
+		simulationID: 'WSA-ENLIL/48927/1',
+		modelCompletionTime: '2026-10-02T15:25Z',
+		au: 2.0,
+		cmeInputs: [
+			{
+				cmeStartTime: '2026-10-02T00:53Z',
+				latitude: 33.0,
+				longitude: 53.0,
+				speed: 255.0,
+				halfAngle: 28.0,
+				time21_5: '2026-10-02T12:52Z',
+				featureCode: 'LE',
+				isMostAccurate: true,
+				levelOfData: 0,
+				ipsList: [],
+				CMEID: '2026-10-02T00:53:00-CME-001',
+			},
+		],
+		estimatedShockArrivalTime: null,
+		isEarthGB: false,
+		isEarthMinorImpact: false,
+		rmin_re: null,
+		kp_18: null,
+		kp_90: null,
+		kp_135: null,
+		kp_180: null,
+		estimatedDuration: null,
+		impactList: [
+			{
+				location: 'Mars',
+				arrivalTime: '2026-10-08T04:00Z',
+				isGlancingBlow: true,
+				isMinorImpact: false,
+			},
+		],
+		link: 'https://ccmc.gsfc.nasa.gov/DONKI/view/WSA-ENLIL/48927/-1',
+	},
+];
+
+/** `GET /DONKI/FLR`, from NASA's documented example (the route 404ed live). */
+export const donkiFlare = [
+	{
+		flrID: '2016-01-01T23:00:00-FLR-001',
+		instruments: [{ displayName: 'GOES15: SEM/XRS 1.0-8.0' }],
+		beginTime: '2016-01-01T23:00Z',
+		peakTime: '2016-01-02T00:10Z',
+		endTime: null,
+		classType: 'M2.3',
+		sourceLocation: 'S21W73',
+		activeRegionNum: 12473,
+		linkedEvents: [{ activityID: '2016-01-01T23:12:00-CME-001' }],
+		link: 'https://kauai.ccmc.gsfc.nasa.gov/DONKI/view/FLR/9999/-1',
+	},
+];
