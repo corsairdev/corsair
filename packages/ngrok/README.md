@@ -20,7 +20,7 @@ pnpm add @corsair-dev/ngrok
 | `domains.get` | `ngrok.api.domains.get` | `read` | Read one reserved domain, including its certificate provisioning status |
 | `domains.list` | `ngrok.api.domains.list` | `read` | List reserved domains with their CNAME target and certificate state |
 | `domains.update` | `ngrok.api.domains.update` | `write` | Change a reserved domain’s description, certificate, management policy or allowed IPs |
-| `endpoints.create` | `ngrok.api.endpoints.create` | `write` | Create a cloud endpoint that forwards to an upstream URL; it starts serving on its public URL immediately |
+| `endpoints.create` | `ngrok.api.endpoints.create` | `write` | Create a cloud endpoint at a URL you own (e.g. your ngrok dev domain); its required Traffic Policy decides what happens to requests, and it serves immediately |
 | `endpoints.delete` | `ngrok.api.endpoints.delete` | `destructive` | Delete a cloud endpoint; its public URL stops resolving and ngrok has no restore call |
 | `endpoints.get` | `ngrok.api.endpoints.get` | `read` | Read one cloud endpoint by id |
 | `endpoints.list` | `ngrok.api.endpoints.list` | `read` | List cloud endpoints with their public URL, upstream and traffic policy, newest first |

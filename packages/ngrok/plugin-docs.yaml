@@ -7,11 +7,13 @@ overviewNote: |
 
   Things worth knowing:
 
-  - **Creating an endpoint makes it live.** `endpoints.create` returns an endpoint that starts forwarding on its public URL immediately, so a traffic policy that restricts access should be attached in the same call rather than after.
-  - **`traffic_policy` is text, not an object.** It is the policy body as YAML or JSON, and ngrok evaluates it in order. An empty policy forwards everything.
+  - **`url` is the endpoint's own address, not an upstream.** Use a domain the account owns, such as the free `*.ngrok-free.dev` dev domain. Where requests go is decided by the Traffic Policy.
+  - **A cloud endpoint needs a Traffic Policy.** ngrok answers 400 `ERR_NGROK_18015` without one, and the policy has to end in a terminal action such as `forward-internal`, `redirect` or `custom-response`. It is text (YAML or JSON), not an object.
+  - **Creating an endpoint makes it live.** It serves on its URL as soon as `endpoints.create` returns.
+  - **Reserving a domain needs a paid plan** (free accounts get `ERR_NGROK_401`; they have one dev domain with `is_dev: true` and a null `cname_target`).
   - **Reserving a domain does not make it serve traffic.** `domains.create` returns a `cname_target`; point DNS at it, and certificate issuance starts once the record resolves. `certificate_management_status.provisioning_job` reports how that went.
   - **An API key's token is returned once.** `apiKeys.create` includes the `token` in its response and never again; a later `apiKeys.list` or read omits it. Store it when it is minted, because there is no way to read it back.
-  - **Paging is by id, not page number.** Take the `next_page_uri` from one response and pass it as `before_id` on the next; it is absent on the last page.
+  - **Paging is by id, not page number.** A list answers `next_page_uri`, the full URL of the next page, or null on the last page. Pass that URL, or the `before_id` value in its query, as `before_id`; the plugin sends only the id. Keep the same `limit` and `filter`.
   - **Event subscriptions need destinations that already exist.** `events.create` takes `destination_ids`, and destinations are created through a separate ngrok API that this plugin does not wrap.
 
   Errors carry a globally unique code, and two of them share a 403: `ERR_NGROK_200` means no Authorization header was sent, while `ERR_NGROK_202` means the credential does not look like a key. The plugin reports both as auth failures, and keeps the `operation_id` that ngrok support asks for. A 5xx on a read is retried; a 5xx on a create, update or delete is not, because it may have gone through.
@@ -33,7 +35,7 @@ apiExamples:
   endpoints.get:
     call: "{ id: 'ep_2f1c8d9e3a5b4c6d8e9f0a1b2c3d4e5f' }"
   endpoints.create:
-    call: "{ url: 'https://internal.example.com', description: 'Acme API' }"
+    call: "{ url: 'https://acme.ngrok-free.dev', type: 'cloud', traffic_policy: '{\"on_http_request\":[{\"actions\":[{\"type\":\"forward-internal\",\"config\":{\"url\":\"https://api.internal\"}}]}]}', description: 'Acme API' }"
   endpoints.update:
     call: "{ id: 'ep_2f1c8d9e3a5b4c6d8e9f0a1b2c3d4e5f', description: 'Renamed' }"
   endpoints.delete:
@@ -45,7 +47,7 @@ apiExamples:
   domains.create:
     call: "{ domain: 'acme.example.com', description: 'Acme production' }"
   domains.update:
-    call: "{ id: 'rd_2f1c8d9e3a5b4c6d', description: 'Renamed' }"
+    call: "{ id: 'rd_2f1c8d9e3a5b4c6d', description: 'Renamed', resolves_to: [{ value: 'eu' }] }"
   domains.delete:
     call: "{ id: 'rd_2f1c8d9e3a5b4c6d' }"
   tunnels.list:

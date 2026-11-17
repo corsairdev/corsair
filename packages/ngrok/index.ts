@@ -189,7 +189,7 @@ const ngrokEndpointMeta = {
 	'endpoints.create': {
 		riskLevel: 'write',
 		description:
-			'Create a cloud endpoint that forwards to an upstream URL; it starts serving on its public URL immediately',
+			'Create a cloud endpoint at a URL you own (e.g. your ngrok dev domain); its required Traffic Policy decides what happens to requests, and it serves immediately',
 	},
 	'endpoints.update': {
 		riskLevel: 'write',
