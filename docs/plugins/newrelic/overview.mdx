@@ -1,7 +1,7 @@
 ---
 title: "New Relic plugin"
 sidebarTitle: "Overview"
-description: "Read New Relic applications with their health and reporting status, pull metric timeslices, manage alert policies and list their conditions, and run NRQL queries through NerdGraph."
+description: "Read New Relic applications and metrics, search entities, list alert issues, manage alert policies and NRQL alert conditions, record deployment markers, and run NRQL queries through NerdGraph."
 ---
 
 Use **New Relic** through Corsair: one client, typed API calls.
@@ -11,17 +11,21 @@ Use a **user key**, not a license key. Create one at https://one.newrelic.com/ap
 The plugin talks to two surfaces, both under the same key:
 
 - **REST v2** for applications, metrics and alerts, at `api.newrelic.com/v2`.
-- **NerdGraph**, the GraphQL API, for NRQL, at `api.newrelic.com/graphql`.
+- **NerdGraph**, the GraphQL API, for NRQL, accounts, entities, issues and deployment markers, at `api.newrelic.com/graphql`.
 
 An EU account uses `api.eu.newrelic.com` for both, and **a key is only valid in its own region**. Pass `region: 'eu'` on any call from an EU account; the default is `us`.
 
 What to know:
 
-- **`health_status` is a colour**, one of `green`, `orange`, `red` or `unknown`. The REST API says `orange` where the UI shows yellow, and `unknown` means the app has no alert policy attached.
+- **`health_status` is a colour**, such as `green`, `orange`, `red`, `gray` or `unknown`. The REST API says `orange` where the UI shows yellow, and `unknown` means the app has no alert policy attached.
 - **`reporting` goes false after ten quiet minutes**, and `last_reported_at` is then an empty string rather than a timestamp, so a missing time is not an error.
 - **A metric window defaults to the last 30 minutes** when `from` is omitted. `summarize: true` collapses the window into one value per metric, which is what most dashboards want.
 - **REST v2 pages through a `Link` header**, which this plugin cannot read, so `page` is an input. A long list needs an explicit page walk.
-- **`alerts.conditions` covers APM, browser and mobile conditions only.** External service, synthetic and NRQL conditions live behind separate endpoints that are not wrapped here.
+- **`alerts.conditions` covers APM, browser and mobile conditions only.** NRQL conditions, which most accounts use, are `alerts.nrqlConditions` and its create, update and delete.
+- **Updates replace the whole object.** `alerts.updatePolicy` needs both `name` and `incident_preference`, and `alerts.updateNrqlCondition` needs the whole condition: New Relic answers 422, 500 or 400 to a partial body. Read the current values first.
+- **Find GUIDs with `entities.search`.** It takes an entity filter such as `type = 'APPLICATION'`, `domain = 'APM'` or `name LIKE 'checkout'`, and pages with `nextCursor`.
+- **`issues.list` is the current incident model** (NerdGraph `aiIssues`). `title`, `description` and a few other fields are lists even when they hold one value.
+- **A deployment marker cannot be deleted.** `changeTracking.createDeployment` writes it on the entity's charts for good.
 - **A NRQL query is a NerdGraph call.** `accountId` is required, and the answer carries the time window New Relic actually ran over, which can differ from the `SINCE` clause.
 - **A bad NRQL query answers 200 with an `errors` array.** The plugin turns that into a thrown error rather than returning rows that are silently empty.
 - **Deleting a policy deletes its conditions**, and New Relic has no restore call.
@@ -29,7 +33,7 @@ What to know:
 
 **What you get:**
 
-- 8 typed API operations
+- 18 typed API operations
 
 ## Setup
 
