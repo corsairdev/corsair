@@ -377,7 +377,7 @@ export function nasa<const T extends NasaPluginOptions>(
 	} satisfies InternalNasaPlugin;
 }
 
-export { NasaAPIError, stripKey } from './client';
+export { nasaErrorCode } from './client';
 
 export type {
 	ApodGetInput,
@@ -386,6 +386,7 @@ export type {
 	ApodListResponse,
 	CmeAnalysisInput,
 	CmeAnalysisListResponse,
+	CmeListInput,
 	CmeListResponse,
 	DateRangeInput,
 	DonkiCme,
@@ -395,6 +396,7 @@ export type {
 	DonkiInterplanetaryShock,
 	DonkiNotification,
 	DonkiSolarFlare,
+	EnlilSimulationInput,
 	EnlilSimulationListResponse,
 	EonetCategoriesResponse,
 	EonetEventInput,

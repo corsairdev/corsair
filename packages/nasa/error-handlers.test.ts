@@ -1,5 +1,5 @@
 import type { ErrorHandlerAndMatchFunction } from 'corsair/core';
-import { NasaAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
 type HandlerName = keyof typeof errorHandlers;
@@ -25,12 +25,23 @@ async function strategy(error: Error) {
 	});
 }
 
+/** Core's ApiError with api.nasa.gov's `{ error: { code } }` body. */
 function apiError(status: number, code?: string) {
-	return new NasaAPIError(`NASA ${status}: failed`, { status, code });
+	return new ApiError(
+		{ method: 'GET', url: '/neo/rest/v1/feed' },
+		{
+			url: 'https://api.nasa.gov/neo/rest/v1/feed',
+			ok: false,
+			status,
+			statusText: '',
+			body: code ? { error: { code, message: 'failed' } } : 'failed',
+		},
+		`NASA ${status}: failed`,
+	);
 }
 
 describe('nasa error handlers', () => {
-	it('does not retry a 429, because the limit is an hourly window', async () => {
+	it('does not replay a 429 core already retried, because the limit is an hourly window', async () => {
 		const error = apiError(429, 'OVER_RATE_LIMIT');
 		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
@@ -60,7 +71,18 @@ describe('nasa error handlers', () => {
 	});
 
 	it('does not retry a 400 from the APOD feed', async () => {
-		const error = apiError(400, 'rest_invalid_param');
+		// WordPress puts its code at the top level, not under `error`.
+		const error = new ApiError(
+			{ method: 'GET', url: '/wp-json/wp/v2/apod-basic' },
+			{
+				url: 'https://science.nasa.gov/wp-json/wp/v2/apod-basic',
+				ok: false,
+				status: 400,
+				statusText: '',
+				body: { code: 'rest_invalid_param', message: 'Invalid parameter(s)' },
+			},
+			'Bad Request',
+		);
 		expect(classify(error)).toBe('VALIDATION_ERROR');
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
@@ -109,12 +131,12 @@ describe('mergeErrorHandlers', () => {
 	it('runs a caller handler for a status no builtin covers', () => {
 		const custom = {
 			match: (error: Error) =>
-				error instanceof NasaAPIError && error.status === 503,
+				error instanceof ApiError && error.status === 503,
 			handler: async () => ({ maxRetries: 9 }),
 		};
 		const merged = mergeErrorHandlers(errorHandlers, { CUSTOM: custom });
 
-		const failure = new NasaAPIError('down', { status: 503 });
+		const failure = apiError(503);
 		const firstMatch = Object.entries(merged).find(([, entry]) =>
 			entry?.match?.(failure, {
 				pluginId: 'nasa',

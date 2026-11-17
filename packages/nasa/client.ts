@@ -24,23 +24,20 @@ export type NasaHost = keyof typeof NASA_HOSTS;
 /** Hosts that read the `api_key` query parameter. */
 const KEYED_HOSTS: ReadonlySet<NasaHost> = new Set<NasaHost>(['api', 'apod']);
 
-// Retries belong to error-handlers.ts so a rate-limited read backs off once,
-// in one place. The header names stay because NASA sends no Retry-After.
+// Core's request() retries a 429 three times with backoff, so the 429 handler
+// in error-handlers.ts does not retry again. NASA sends no Retry-After header;
+// the header name stays in case a gateway in front of it does.
 const NASA_RATE_LIMIT_CONFIG: RateLimitConfig = {
-	maxRetries: 0,
+	maxRetries: 3,
 	enabled: true,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },
 };
 
-/** api.nasa.gov error code, e.g. `OVER_RATE_LIMIT`. */
-const OVER_RATE_LIMIT = 'OVER_RATE_LIMIT';
-
 // unknown: every host answers with its own error shape, so the body is read
 // field by field until one of the known envelopes matches.
 function readString(
-	// unknown: one field of an untyped error body; see the note above.
 	record: Record<string, unknown> | null | undefined, // unknown: open error body
 	key: string,
 ): string | undefined {
@@ -48,112 +45,88 @@ function readString(
 	return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
 
-/** Reads api.nasa.gov's `{ error: { code, message } }` code. */
-// unknown: untyped error payload; absent fields read as undefined.
-function readApiErrorCode(
-	body: unknown /* unknown: untyped error payload */,
-): string | undefined {
-	const record = asRecord(body);
-	return readString(asRecord(record?.error), 'code');
-}
-
-/** Reads the WordPress REST API's `{ code, message }` code. */
-// unknown: same open error payload as readApiErrorCode.
-function readWordPressCode(
-	body: unknown /* unknown: same open payload as readApiErrorCode */,
-): string | undefined {
-	return readString(asRecord(body), 'code');
-}
-
 /**
- * NASA's five error shapes:
+ * The machine-readable code from a failed request, or undefined when the error
+ * is not core's ApiError or the body has none. NASA's hosts answer:
  *
- * - api.nasa.gov: `{ error: { code, message } }`, 403 for a bad key and 429 for
- *   the hourly limit (the code says which, the status alone does not).
+ * - api.nasa.gov: `{ error: { code, message } }`, 403 `API_KEY_INVALID` or
+ *   `API_KEY_MISSING` for a key problem and 429 `OVER_RATE_LIMIT` for the
+ *   hourly (or, for DEMO_KEY, daily) limit.
  * - science.nasa.gov (WordPress): `{ code, message, data: { status } }`.
- * - images-api.nasa.gov: `{ reason }`.
- * - eonet.gsfc.nasa.gov: an HTML 500 page, or an empty body.
- * - epic.gsfc.nasa.gov: an HTML 500 page for a malformed date, `[]` for a date
- *   with no imagery.
+ * - images-api.nasa.gov: `{ reason }`, no code.
+ * - eonet.gsfc.nasa.gov and epic.gsfc.nasa.gov: an HTML 500 page.
  */
-export class NasaAPIError extends Error {
-	readonly status?: number;
-	readonly code?: string;
-	/** The URL that failed, without the API key. */
-	readonly url?: string;
-	readonly method?: string;
-
-	constructor(
-		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			code?: string;
-			url?: string;
-			method?: string;
-		} = {},
-	) {
-		super(message, options.cause ? { cause: options.cause } : undefined);
-		this.name = 'NasaAPIError';
-		this.status = options.status;
-		this.code = options.code;
-		this.url = options.url;
-		this.method = options.method;
-	}
-
-	/** True when NASA answered the hourly limit rather than a bad key. */
-	get isRateLimit(): boolean {
-		return this.status === 429 || this.code === OVER_RATE_LIMIT;
-	}
-
-	/** True when NASA rejected the key, whether by status or by code. */
-	get isAuthError(): boolean {
-		// api.nasa.gov answers 403 for both a missing and an invalid key, with
-		// the reason in `error.code`. A 401 comes from a gateway in front of it.
-		return (
-			this.status === 401 ||
-			this.status === 403 ||
-			this.code === 'API_KEY_MISSING' ||
-			this.code === 'API_KEY_INVALID'
-		);
-	}
-}
-
-// unknown: see NasaAPIError above; every field is read defensively.
-export function describeNasaError(
-	status: number | undefined,
-	body: unknown, // unknown: an error body from any of the five hosts
-	fallback: string,
-	url?: string,
-): string {
-	const record = asRecord(body);
-	const apiError = asRecord(record?.error);
-	const text =
-		readString(apiError, 'message') ??
-		readString(record, 'message') ??
-		readString(record, 'reason') ??
-		fallback;
-	const code = readApiErrorCode(body) ?? readWordPressCode(body);
-	const label = [status, code].filter((part) => part !== undefined).join(' ');
-	const where = url ? ` (${url})` : '';
-	return label ? `NASA ${label}: ${text}${where}` : `${text}${where}`;
+export function nasaErrorCode(
+	error: unknown, // unknown: any thrown value; only core's ApiError has a body
+): string | undefined {
+	if (!(error instanceof ApiError)) return undefined;
+	const record = asRecord(error.body);
+	return (
+		readString(asRecord(record?.error), 'code') ?? readString(record, 'code')
+	);
 }
 
 /**
- * Removes the API key from a URL before it lands in an error message. NASA
- * takes the key as a query parameter, and ApiError only redacts a fixed list of
- * names, so the whole URL is rebuilt here instead.
+ * Query parameters that carry the caller's own data and must not travel with an
+ * error into logs. `bbox` is a set of exact coordinates (plugin rules R8);
+ * core's ApiError already redacts `api_key`.
  */
-export function stripKey(url: string): string {
+const PRIVATE_QUERY_PARAMS = ['bbox'] as const;
+
+function redactQueryParams(url: string): string {
 	try {
 		const parsed = new URL(url);
-		if (parsed.searchParams.has('api_key')) {
-			parsed.searchParams.set('api_key', 'REDACTED');
+		let changed = false;
+		for (const name of PRIVATE_QUERY_PARAMS) {
+			if (parsed.searchParams.has(name)) {
+				parsed.searchParams.set(name, '[REDACTED]');
+				changed = true;
+			}
 		}
-		return parsed.toString();
+		return changed ? parsed.toString() : url;
 	} catch {
 		return url;
 	}
+}
+
+/**
+ * Rebuilds core's ApiError without the private query values it echoes in `url`
+ * and `request`. Status, retryAfter and the provider's body stay as they were,
+ * so the error handlers and core's retry logic see the same error.
+ */
+function withoutPrivateQuery(error: ApiError): ApiError {
+	const query = error.request.query;
+	const hasPrivate =
+		query !== undefined &&
+		PRIVATE_QUERY_PARAMS.some((name) => query[name] !== undefined);
+	if (!hasPrivate) return error;
+	const redactedQuery = { ...query };
+	for (const name of PRIVATE_QUERY_PARAMS) {
+		if (redactedQuery[name] !== undefined) redactedQuery[name] = '[REDACTED]';
+	}
+	const stripped = new ApiError(
+		{
+			...error.request,
+			url: redactQueryParams(error.request.url),
+			query: redactedQuery,
+		},
+		{
+			url: redactQueryParams(error.url),
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		error.message,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+	stripped.stack = error.stack;
+	return stripped;
 }
 
 export type NasaQuery = Record<string, string | number | boolean | undefined>;
@@ -191,25 +164,10 @@ export async function makeNasaRequest(
 			rateLimitConfig: NASA_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) {
-			// ApiError redacts api_key already; stripKey is a second guard for
-			// hosts that echo a differently named key parameter.
-			const url = stripKey(error.url ?? '');
-			throw new NasaAPIError(
-				describeNasaError(error.status, error.body, error.message, url),
-				{
-					status: error.status,
-					code: readApiErrorCode(error.body) ?? readWordPressCode(error.body),
-					url,
-					method,
-				},
-			);
-		}
-		// DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new NasaAPIError(error.message, { cause: error, method });
-		}
-		throw new NasaAPIError('Unknown NASA error', { method });
+		// Core's ApiError goes through as an ApiError (plugin rules R8), only
+		// without the coordinates a bbox search echoes.
+		if (error instanceof ApiError) throw withoutPrivateQuery(error);
+		throw error;
 	}
 }
 
