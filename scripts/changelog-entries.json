@@ -7019,5 +7019,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/simplero",
+    "dir": "packages/simplero",
+    "name": "Simplero",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
