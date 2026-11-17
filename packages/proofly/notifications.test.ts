@@ -137,6 +137,17 @@ describe('campaigns.setEnabled', () => {
 		);
 	});
 
+	it('changes nothing when the campaign state is missing', async () => {
+		mockRequest.mockResolvedValueOnce({
+			...CAMPAIGNS,
+			data: [{ id: 464014, name: 'Example' }],
+		});
+		await expect(
+			setCampaignEnabled(ctx(), { campaign_id: 464014, enabled: false }),
+		).rejects.toThrow('nothing was changed');
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+	});
+
 	it('fails when the PUT reply is not the documented success body', async () => {
 		mockRequest.mockResolvedValueOnce(CAMPAIGNS);
 		mockRequest.mockResolvedValueOnce('<html>oops</html>');

@@ -93,6 +93,12 @@ async function applyEnabled(
 	if (!campaign) {
 		throw new Error(`Proofly campaign ${campaign_id} was not found`);
 	}
+	// The PUT flips, so without a known current state it could do the opposite.
+	if (typeof campaign.enabled !== 'boolean') {
+		throw new Error(
+			`Proofly did not say whether campaign ${campaign_id} is on; nothing was changed`,
+		);
+	}
 	let result: SetCampaignEnabledResponse;
 	if (campaign.enabled === enabled) {
 		result = { campaign_id, enabled, changed: false };
