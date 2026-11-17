@@ -8484,5 +8484,11 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "cloud",
+    "version": "0.2.0",
+    "changes": []
   }
 ]
