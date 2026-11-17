@@ -343,10 +343,17 @@ function createInputSchema(
 		const field = parameterSchema(parameter, definitions);
 		shape[parameter.name] = parameter.required ? field : field.optional();
 	}
+	// A map with a required parameter is itself required, so leaving it out
+	// can't skip the check; a map with none may be left out (sent as {}).
+	const requiredIn = (place: 'path' | 'query') =>
+		operation.parameters.some(
+			(parameter) => parameter.in === place && parameter.required,
+		);
+	const pathSchema = z.object(pathShape).strict();
+	const querySchema = z.object(queryShape).strict();
 	const inputShape: Record<string, z.ZodType> = {
-		// prefault, not default: an omitted map is still checked for required parameters.
-		path: z.object(pathShape).strict().prefault({}),
-		query: z.object(queryShape).strict().prefault({}),
+		path: requiredIn('path') ? pathSchema : pathSchema.optional(),
+		query: requiredIn('query') ? querySchema : querySchema.optional(),
 	};
 	if (operation.body !== undefined) {
 		const bodySchema = schemaFromOpenApi(
