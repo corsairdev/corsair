@@ -4800,6 +4800,14 @@
                 ]
               },
               {
+                "group": "TRIGGERcmd",
+                "pages": [
+                  "plugins/triggercmd/overview",
+                  "plugins/triggercmd/api",
+                  "plugins/triggercmd/database"
+                ]
+              },
+              {
                 "group": "Tripadvisor",
                 "pages": [
                   "plugins/tripadvisor/overview",
