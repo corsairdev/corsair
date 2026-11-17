@@ -8578,5 +8578,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/needle",
+    "dir": "packages/needle",
+    "name": "Needle",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
