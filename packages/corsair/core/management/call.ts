@@ -108,12 +108,11 @@ function normalizeCallError(err: unknown, plugin: string): ManagementApiError {
 	return new ManagementApiError(500, 'internal_error', 'Internal error');
 }
 
-// Per-(corsair instance, tenant) client cache: concurrent same-tenant calls
-// share ONE client → ONE key-manager → ONE refresh single-flight store, so a
-// burst can't double-refresh and stale-write the rotating refresh_token.
+// Per-(corsair instance, tenant) client cache: building a client imports
+// plugins and provisions, so calls reuse one. Token refreshes are single-flighted
+// per account in the key manager, not by this cache.
 const clientCacheByCorsair = new WeakMap<object, Map<string, unknown>>();
-// In-flight op count per tenant — a client with active work is never evicted,
-// so the LRU can't split a tenant's refresh single-flight (see resolveCall).
+// In-flight op count per tenant: a client with active work is never evicted.
 const inFlightByCorsair = new WeakMap<object, Map<string, number>>();
 // LRU cap — the URL tenant is unbounded in cardinality, so evict the
 // least-recently-used IDLE client past this size. Hot/in-flight tenants keep
