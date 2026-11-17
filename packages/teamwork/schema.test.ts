@@ -1,9 +1,17 @@
 import {
+	TeamworkManifestFileSchema,
+	teamworkManifestFiles,
+} from './endpoints/manifest';
+import {
+	getTeamworkInputSchema,
+	getTeamworkOutputSchema,
 	teamworkInputSchemas,
 	teamworkOutputSchemas,
+	teamworkSchemaEntry,
 } from './endpoints/openapi-schema';
 import type { TeamworkEndpointInputs } from './endpoints/operation-types';
 import { TEAMWORK_OPERATION_IDS } from './endpoints/operation-types';
+import { teamworkOperationsNested } from './endpoints/operations';
 import { teamworkDefinitions, teamworkOperations } from './endpoints/types';
 import { TeamworkSchema } from './schema';
 
@@ -78,16 +86,55 @@ describe('Teamwork OpenAPI contract schemas', () => {
 		);
 	});
 
+	it('checks each manifest file against its schema', () => {
+		for (const file of Object.values(teamworkManifestFiles)) {
+			expect(TeamworkManifestFileSchema.safeParse(file).success).toBe(true);
+		}
+	});
+
+	it('names every operation resource.action, once, with a matching endpoint tree', () => {
+		const ids = teamworkOperations.map((operation) => operation.id);
+		expect(new Set(ids).size).toBe(ids.length);
+		for (const id of ids) {
+			expect(id).toMatch(/^[a-z][A-Za-z]+\.[a-z][A-Za-z]+$/);
+			const [group, action] = id.split('.') as [string, string];
+			const tree: Record<
+				string,
+				Record<string, unknown>
+			> = teamworkOperationsNested;
+			expect(typeof tree[group]?.[action]).toBe('function');
+		}
+		// One operation per HTTP route: no V1/V3 or PUT/PATCH pairs left for the same action.
+		const routes = teamworkOperations.map(
+			(operation) => `${operation.method} ${operation.path}`,
+		);
+		expect(new Set(routes).size).toBe(routes.length);
+	});
+
+	it('builds an operation schema on first use and reuses it', () => {
+		expect(getTeamworkInputSchema('tasks.list')).toBe(
+			getTeamworkInputSchema('tasks.list'),
+		);
+		expect(getTeamworkOutputSchema('tasks.list')).toBe(
+			teamworkOutputSchemas['tasks.list'],
+		);
+		const entry = teamworkSchemaEntry('projects.get');
+		expect(entry.input).toBe(getTeamworkInputSchema('projects.get'));
+		expect(() => getTeamworkInputSchema('projects.nope')).toThrow(
+			'Teamwork operation is unavailable',
+		);
+	});
+
 	it('keeps the typed operation ID list in sync with the provider manifest', () => {
-		expect([...TEAMWORK_OPERATION_IDS]).toEqual(
-			teamworkOperations.map((operation) => operation.id),
+		expect([...TEAMWORK_OPERATION_IDS].sort()).toEqual(
+			teamworkOperations.map((operation) => operation.id).sort(),
 		);
 	});
 
 	// Trimmed from the live run on a Teamwork trial site (11-16). Each one failed the spec-built schema.
 	it.each([
 		[
-			'v3_get_projects_api_v3_projects_projectid_json',
+			'projects.get',
 			{
 				project: {
 					id: 1470497,
@@ -109,7 +156,7 @@ describe('Teamwork OpenAPI contract schemas', () => {
 			},
 		],
 		[
-			'v3_get_projects_api_v3_tasks_taskid_json',
+			'tasks.get',
 			{
 				task: {
 					id: 51453032,
@@ -128,40 +175,12 @@ describe('Teamwork OpenAPI contract schemas', () => {
 			},
 		],
 		[
-			'v3_get_projects_api_v3_me_json',
+			'people.me',
 			{ person: { id: 753865, firstName: 'Corsair', createdBy: null } },
-		],
-		[
-			'v2_get_projects_api_v2_tasks_taskid_json',
-			{
-				STATUS: 'OK',
-				task: {
-					id: 51453032,
-					crmDealIds: null,
-					teamsFollowingChanges: null,
-					companiesFollowingComments: null,
-				},
-			},
-		],
-		[
-			'v1_get_projects_id_json',
-			{
-				STATUS: 'OK',
-				project: {
-					id: '1470497',
-					name: 'corsair-plugin-test',
-					'harvest-timers-enabled': false,
-					integrations: { xero: { connected: false } },
-				},
-			},
-		],
-		[
-			'v1_get_tasklists_id_json',
-			{ STATUS: 'OK', 'todo-list': { id: '4073104', tasks: null } },
 		],
 		// Sparse fieldsets leave out every unselected field, on any resource.
 		[
-			'v3_get_projects_api_v3_tasks_json',
+			'tasks.list',
 			{ tasks: [{ id: 51453032 }], meta: { page: { hasMore: false } } },
 		],
 	])('%s parses a real response with nulls and loose V1 types', (id, body) => {
@@ -179,13 +198,13 @@ describe('Teamwork OpenAPI contract schemas', () => {
 	});
 
 	it.each([
-		'v3_get_projects_api_v3_milestones_metrics_deadlines_json',
-		'v3_get_projects_api_v3_people_metrics_performance_json',
-		'v3_get_projects_api_v3_people_utilization_json',
-		'v3_get_projects_api_v3_projects_metrics_billable_json',
-		'v3_get_projects_api_v3_reporting_precanned_usertaskcompletion_json',
-		'v3_get_projects_api_v3_time_report_json',
-		'v3_get_projects_api_v3_time_report_totals_json',
+		'milestones.listByDeadline',
+		'people.performance',
+		'people.utilization',
+		'projectMetrics.billable',
+		'people.taskCompletion',
+		'time.report',
+		'time.reportTotals',
 	])(
 		'%s requires startDate and endDate, which Teamwork rejects a call without',
 		(id) => {
@@ -197,11 +216,11 @@ describe('Teamwork OpenAPI contract schemas', () => {
 			).toBe(false);
 			// The time report also refuses a call without its grouping type.
 			const query =
-				id === 'v3_get_projects_api_v3_time_report_json'
+				id === 'time.report'
 					? { startDate: '2026-11-01', endDate: '2026-11-16', type: 'user' }
 					: { startDate: '2026-11-01', endDate: '2026-11-16' };
 			expect(schema?.safeParse({ query }).success).toBe(true);
-			if (id === 'v3_get_projects_api_v3_time_report_json') {
+			if (id === 'time.report') {
 				const { type: _type, ...withoutType } = query as { type?: string };
 				expect(schema?.safeParse({ query: withoutType }).success).toBe(false);
 			}
@@ -227,45 +246,27 @@ describe('Teamwork OpenAPI contract schemas', () => {
 			meta: { page: { hasMore: false } },
 		};
 		expect(
-			teamworkOutputSchemas[
-				'v3_get_projects_api_v3_people_utilization_json'
-			]?.safeParse(body).success,
+			teamworkOutputSchemas['people.utilization']?.safeParse(body).success,
 		).toBe(true);
 	});
 
 	it('accepts the body a V3 task delete answers although the spec says 204', () => {
-		const schema =
-			teamworkOutputSchemas['v3_delete_projects_api_v3_tasks_taskid_json'];
+		const schema = teamworkOutputSchemas['tasks.delete'];
 		const body = { affected: { taskIds: [] } };
 		expect(schema?.safeParse(body).data).toEqual(body);
 		expect(schema?.safeParse(undefined).success).toBe(true);
 	});
 
-	it('accepts text custom-field values in V2 task lists', () => {
-		const body = {
-			STATUS: 'OK',
-			tasks: [{ id: 1, customFields: [{ customFieldId: 7, value: 'Blue' }] }],
-		};
-		expect(
-			teamworkOutputSchemas['v2_get_projects_api_v2_tasks_json']?.safeParse(
-				body,
-			).success,
-		).toBe(true);
-	});
-
 	it('still rejects a response that is not the documented top-level shape', () => {
-		const schema =
-			teamworkOutputSchemas['v3_get_projects_api_v3_projects_projectid_json'];
+		const schema = teamworkOutputSchemas['projects.get'];
 		expect(schema?.safeParse(null).success).toBe(false);
 		expect(schema?.safeParse('<!DOCTYPE html>').success).toBe(false);
 		expect(schema?.safeParse({ project: 'not an object' }).success).toBe(false);
 	});
 
 	it('lets V1 bodies carry fields the V1 spec leaves out, and still checks the documented ones', () => {
-		const createMilestone =
-			teamworkInputSchemas['v1_post_projects_id_milestones_json'];
-		const createTasklist =
-			teamworkInputSchemas['v1_post_projects_id_tasklists_json'];
+		const createMilestone = teamworkInputSchemas['milestones.create'];
+		const createTasklist = teamworkInputSchemas['tasklists.create'];
 		// Teamwork's reference documents title and name; the V1 OpenAPI file omits them.
 		expect(
 			createMilestone?.safeParse({
@@ -297,10 +298,7 @@ describe('Teamwork OpenAPI contract schemas', () => {
 
 	it('takes V3 bodies the API accepts although the spec marks other fields required or leaves them out', () => {
 		// Sent live on 11-16: Teamwork created this time entry without taskId, tags or timelogOptions.
-		const createTime =
-			teamworkInputSchemas[
-				'v3_post_projects_api_v3_projects_projectid_time_json'
-			];
+		const createTime = teamworkInputSchemas['time.create'];
 		expect(
 			createTime?.safeParse({
 				path: { projectId: 1 },
@@ -323,10 +321,7 @@ describe('Teamwork OpenAPI contract schemas', () => {
 			}).success,
 		).toBe(false);
 		// The spec types remindAt as an empty object; the API wants a date-time string.
-		const createReminder =
-			teamworkInputSchemas[
-				'v3_post_projects_api_v3_tasks_taskid_reminders_json'
-			];
+		const createReminder = teamworkInputSchemas['taskReminders.create'];
 		expect(
 			createReminder?.safeParse({
 				path: { taskId: 1 },
@@ -343,10 +338,7 @@ describe('Teamwork OpenAPI contract schemas', () => {
 	});
 
 	it('validates documented numeric maps', () => {
-		const ratesSchema =
-			teamworkInputSchemas[
-				'v3_patch_projects_api_v3_companies_companyid_rates_json'
-			];
+		const ratesSchema = teamworkInputSchemas['companies.setRates'];
 		expect(
 			ratesSchema?.safeParse({
 				path: { companyId: 123 },
@@ -364,36 +356,32 @@ describe('Teamwork OpenAPI contract schemas', () => {
 	});
 
 	it('accepts the official V3 create-task example with plain array inputs', () => {
-		const createTaskSchema =
-			teamworkInputSchemas[
-				'v3_post_projects_api_v3_tasklists_tasklistid_tasks_json'
-			];
-		const input: TeamworkEndpointInputs['v3_post_projects_api_v3_tasklists_tasklistid_tasks_json'] =
-			{
-				path: { tasklistId: 123 },
-				query: {},
-				body: {
-					task: {
-						tasklistId: 123,
-						name: 'Create a task from the Teamwork API',
-						assignees: { userIds: [234], teamIds: [], companyIds: [] },
-						priority: 'medium',
-						startAt: '2024-04-16',
-						dueAt: '2024-04-24',
-						description: 'V3 create-task request',
-						customFields: [
-							{ customfieldId: 2794, value: 'QR5654' },
-							{
-								customfieldId: 6050,
-								value: 'https://apidocs.teamwork.com/docs/teamwork',
-								urlTextToDisplay: 'Teamwork.com API',
-							},
-						],
-					},
-					taskOptions: { notify: true },
-					card: { columnId: 42 },
+		const createTaskSchema = teamworkInputSchemas['tasks.create'];
+		const input: TeamworkEndpointInputs['tasks.create'] = {
+			path: { tasklistId: 123 },
+			query: {},
+			body: {
+				task: {
+					tasklistId: 123,
+					name: 'Create a task from the Teamwork API',
+					assignees: { userIds: [234], teamIds: [], companyIds: [] },
+					priority: 'medium',
+					startAt: '2024-04-16',
+					dueAt: '2024-04-24',
+					description: 'V3 create-task request',
+					customFields: [
+						{ customfieldId: 2794, value: 'QR5654' },
+						{
+							customfieldId: 6050,
+							value: 'https://apidocs.teamwork.com/docs/teamwork',
+							urlTextToDisplay: 'Teamwork.com API',
+						},
+					],
 				},
-			};
+				taskOptions: { notify: true },
+				card: { columnId: 42 },
+			},
+		};
 		expect(createTaskSchema?.safeParse(input).success).toBe(true);
 		expect(
 			createTaskSchema?.safeParse({

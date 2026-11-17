@@ -1,33 +1,5 @@
 import type { TeamworkJsonValue } from './operation-types';
 
-type TeamworkV3Input_comment_Comment = {
-	body?: string;
-	contentType?: string;
-	createdAt?: string;
-	createdBy?: number;
-	fileIds: TeamworkV3Input_payload_NullableInt64Slice;
-	grantAccessTo?: TeamworkV3Input_payload_UserGroups;
-	private?: boolean;
-};
-type TeamworkV3Input_comment_File = { categoryId?: number; id: number };
-type TeamworkV3Input_comment_PendingFile = {
-	categoryId?: number;
-	reference: string;
-};
-type TeamworkV3Input_comment_Request = {
-	attachments: {
-		files?: Array<TeamworkV3Input_comment_File>;
-		pendingFiles?: Array<TeamworkV3Input_comment_PendingFile>;
-	};
-	comment: TeamworkV3Input_comment_Comment;
-	commentOptions: {
-		fireWebhook?: boolean;
-		markdownToHTML?: boolean;
-		notify?: TeamworkV3Input_payload_Notify;
-		notifyCurrentUser?: boolean;
-		parseMentions?: boolean;
-	};
-};
 type TeamworkV3Input_company_ClientRatesRequest = {
 	clientRateByRoleId: Record<string, number>;
 };
@@ -142,45 +114,6 @@ type TeamworkV3Input_payload_UserGroups = {
 type TeamworkV3Input_people_UsersPayload = {
 	checkTeamIds: Array<number>;
 	userIds: Array<number>;
-};
-type TeamworkV3Input_project_FeatureOrder2 = {
-	billing?: number;
-	board?: number;
-	comments?: number;
-	dashboard?: number;
-	files?: number;
-	finance?: number;
-	forms?: number;
-	gantt?: number;
-	links?: number;
-	list?: number;
-	messages?: number;
-	milestones?: number;
-	notebooks?: number;
-	numVisibleTabs?: number;
-	people?: number;
-	proofs?: number;
-	risks?: number;
-	schedule?: number;
-	settings?: number;
-	table?: number;
-	tickets?: number;
-	time?: number;
-	timeline?: number;
-};
-type TeamworkV3Input_project_FeatureOrderRequest = {
-	featureOrder?: TeamworkV3Input_project_FeatureOrder2;
-	featureOrderOptions: { useNotifyViaTWIM?: boolean };
-};
-type TeamworkV3Input_project_ProjectNumberSettingsPayload = {
-	autoIncrement?: boolean;
-	nextNumber?: number;
-	projectNumberPattern?: string;
-	projectNumberText?: string;
-	startNumber?: string;
-};
-type TeamworkV3Input_project_ProjectNumberSettingsRequest = {
-	projectNumberSettings: TeamworkV3Input_project_ProjectNumberSettingsPayload;
 };
 type TeamworkV3Input_reminder_Reminder = {
 	isRelative: boolean;
@@ -378,13 +311,6 @@ type TeamworkV3Output_access_CompanyAccess = {
 	canViewTickets: boolean;
 	company: TeamworkV3Output_view_Company;
 } & Record<string, TeamworkJsonValue>;
-type TeamworkV3Output_active_ProjectMetricActive = { value: number } & Record<
-	string,
-	TeamworkJsonValue
->;
-type TeamworkV3Output_active_Response = {
-	data: TeamworkV3Output_active_ProjectMetricActive;
-} & Record<string, TeamworkJsonValue>;
 type TeamworkV3Output_billable_ProjectMetricBillable = {
 	name: string;
 	value: number;
@@ -523,22 +449,6 @@ type TeamworkV3Output_complete_TaskMetricComplete = { value: number } & Record<
 	string,
 	TeamworkJsonValue
 >;
-type TeamworkV3Output_container_DashboardDataResponse = {
-	data: Array<Record<string, TeamworkJsonValue>>;
-	included?: {
-		companies?: Record<string, TeamworkV3Output_view_Company>;
-		currencies?: Record<string, TeamworkV3Output_view_Currency>;
-		jobRoles?: Record<string, TeamworkV3Output_view_JobRole>;
-		projectCategories?: Record<string, TeamworkV3Output_view_ProjectCategory>;
-		projects?: Record<string, TeamworkV3Output_view_ProjectV205>;
-		tasklists?: Record<string, TeamworkV3Output_view_Tasklist>;
-		tasks?: Record<string, TeamworkV3Output_view_TaskV205>;
-		teams?: Record<string, TeamworkV3Output_view_Team>;
-		users?: Record<string, TeamworkV3Output_view_User>;
-		workflowStages?: Record<string, TeamworkV3Output_view_Stage>;
-	} & Record<string, TeamworkJsonValue>;
-	meta: TeamworkV3Output_view_Meta;
-} & Record<string, TeamworkJsonValue>;
 type TeamworkV3Output_customfield_CustomFieldsResponse = {
 	customfields: Array<TeamworkV3Output_view_CustomField>;
 	included: {
@@ -595,17 +505,6 @@ type TeamworkV3Output_late_TaskMetricLate = { value: number } & Record<
 >;
 type TeamworkV3Output_me_Response2 = {
 	person: TeamworkV3Output_view_UserMe;
-} & Record<string, TeamworkJsonValue>;
-type TeamworkV3Output_milestone_MilestoneDetailsResponse = {
-	included?: {
-		companies?: Record<string, TeamworkV3Output_view_Company>;
-		projectCategories?: Record<string, TeamworkV3Output_view_ProjectCategory>;
-		projects?: Record<string, TeamworkV3Output_view_ProjectV205>;
-		teams?: Record<string, TeamworkV3Output_view_Team>;
-		users?: Record<string, TeamworkV3Output_view_User>;
-	} & Record<string, TeamworkJsonValue>;
-	meta: TeamworkV3Output_view_Meta;
-	milestones: Array<TeamworkV3Output_view_Milestone>;
 } & Record<string, TeamworkJsonValue>;
 type TeamworkV3Output_milestone_MilestonesResponse = {
 	included: {
@@ -692,14 +591,6 @@ type TeamworkV3Output_notebook_VersionsResponse = {
 		TeamworkJsonValue
 	>;
 	versions: Array<TeamworkV3Output_view_NotebookVersion>;
-} & Record<string, TeamworkJsonValue>;
-type TeamworkV3Output_owner_ProjectMetricOwner = {
-	name: string;
-	value: number;
-} & Record<string, TeamworkJsonValue>;
-type TeamworkV3Output_owner_ProjectMetricOwnersResponse = {
-	data: Array<TeamworkV3Output_owner_ProjectMetricOwner>;
-	meta: TeamworkV3Output_view_Meta;
 } & Record<string, TeamworkJsonValue>;
 type TeamworkV3Output_people_AddPeopleToProjectResponse = {
 	info?: Array<string>;
@@ -793,37 +684,6 @@ type TeamworkV3Output_performance_PeopleMetricPerformance = {
 type TeamworkV3Output_performance_PeopleMetricPerformancesResponse = {
 	data: Array<TeamworkV3Output_performance_PeopleMetricPerformance>;
 } & Record<string, TeamworkJsonValue>;
-type TeamworkV3Output_project_FeatureOrder = {
-	billing: number;
-	board: number;
-	comments: number;
-	dashboard: number;
-	files: number;
-	finance: number;
-	forms: number;
-	gantt: number;
-	id: number;
-	installationId: number;
-	links: number;
-	list: number;
-	messages: number;
-	milestones: number;
-	notebooks: number;
-	numVisibleTabs: number;
-	people: number;
-	projectId: number;
-	proofs: number;
-	risks: number;
-	schedule: number;
-	settings: number;
-	table: number;
-	tickets: number;
-	time: number;
-	timeline: number;
-} & Record<string, TeamworkJsonValue>;
-type TeamworkV3Output_project_FeatureOrderResponse = {
-	featureOrder: TeamworkV3Output_project_FeatureOrder;
-} & Record<string, TeamworkJsonValue>;
 type TeamworkV3Output_project_Included = {
 	activities?: Record<string, TeamworkV3Output_view_ActivityLog>;
 	companies?: Record<string, TeamworkV3Output_view_Company>;
@@ -871,21 +731,6 @@ type TeamworkV3Output_project_Meta = {
 	timeAverageSpend?: number;
 	totalCapacity?: number;
 	user?: TeamworkV3Output_view_ProjectsUserMeta;
-} & Record<string, TeamworkJsonValue>;
-type TeamworkV3Output_project_ProjectNumberSettings = {
-	autoIncrement: boolean;
-	createdAt?: string;
-	createdBy?: number;
-	nextNumber: number;
-	nextProjectNumber: string;
-	projectNumberPattern: string;
-	projectNumberText: string;
-	startNumber: string;
-	updatedAt?: string;
-	updatedBy?: number;
-} & Record<string, TeamworkJsonValue>;
-type TeamworkV3Output_project_ProjectNumberSettingsResponse = {
-	projectNumberSettings: TeamworkV3Output_project_ProjectNumberSettings;
 } & Record<string, TeamworkJsonValue>;
 type TeamworkV3Output_project_SampleProjectsResponse = {
 	included: {
@@ -3303,112 +3148,134 @@ type TeamworkV3Output_view_WorkingHour = {
 } & Record<string, TeamworkJsonValue>;
 
 export type TeamworkV3Inputs = {
-	v3_get_projects_api_v3_allocations_allocationid_time_json: {
-		path: { allocationId: number };
+	'projects.list': {
+		path?: Record<string, never>;
 		query?: {
 			updatedAfter?: string;
-			startDate?: string;
+			timeMode?: 'timelogs' | 'estimated';
 			searchTerm?: string;
-			reportFormat?: string;
-			projectStatus?:
+			reportType?: 'project' | 'health';
+			reportTimezone?: string;
+			reportFormat?: 'csv' | 'html' | 'pdf' | 'xls' | 'xlsx' | 'google-sheets';
+			projectType?:
+				| 'all'
+				| 'normal'
+				| 'tasklists-template'
+				| 'projects-template'
+				| 'personal'
+				| 'tentative';
+			orderMode?: 'asc' | 'desc';
+			orderBy?:
+				| 'creatorname'
+				| 'companyname'
+				| 'datecreated'
+				| 'startdate'
+				| 'duedate'
+				| 'lastactivity'
+				| 'name'
+				| 'namecaseinsensitive'
+				| 'ownercompany'
+				| 'ownername'
+				| 'health'
+				| 'taskcompletion'
+				| 'budgetused'
+				| 'starred'
+				| 'starredcompanyname'
+				| 'starredfirst'
+				| 'mobilespecial'
+				| 'lastworkedon'
+				| 'categoryname'
+				| 'customfield'
+				| 'status'
+				| 'id'
+				| 'projectnumber';
+			notCompletedBefore?: string;
+			minLastActivityDate?: string;
+			maxLastActivityDate?: string;
+			userId?: number;
+			pageSize?: number;
+			page?: number;
+			orderByCustomFieldId?: number;
+			minBudgetCapacityUsedPercent?: number;
+			maxBudgetCapacityUsedPercent?: number;
+			useFormulaFields?: boolean;
+			skipCounts?: boolean;
+			searchCompanies?: boolean;
+			searchByLetter?: boolean;
+			searchBudgets?: boolean;
+			onlyStarredProjects?: boolean;
+			onlyProjectsWithExplicitMembership?: boolean;
+			onlyProjectsWithAdminAccess?: boolean;
+			onlyProjectsThatCanLogTime?: boolean;
+			onlyProjectsThatCanAddTasks?: boolean;
+			onlyArchivedProjects?: boolean;
+			matchAllProjectTags?: boolean;
+			matchAllExcludedTags?: boolean;
+			isReportDownload?: boolean;
+			includeTentativeProjects?: boolean;
+			includeTabSystemStatus?: boolean;
+			includeSubCategories?: boolean;
+			includeStats?: boolean;
+			includeProjectUserInfo?: boolean;
+			includeProjectProfitability?: boolean;
+			includeProjectDates?: boolean;
+			includeCustomFields?: boolean;
+			includeCounts?: boolean;
+			includeCompletedStatus?: boolean;
+			includeArchivedProjects?: boolean;
+			hideObservedProjects?: boolean;
+			alwaysIncludeFiltering?: boolean;
+			usersWithExplicitMembershipIds?: Array<number>;
+			teamIds?: Array<number>;
+			selectedColumns?: Array<string>;
+			projectTagIds?: Array<number>;
+			projectStatuses?: Array<
 				| 'active'
+				| 'inactive'
+				| 'archived'
 				| 'current'
 				| 'late'
 				| 'upcoming'
 				| 'completed'
-				| 'deleted';
-			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'company'
-				| 'date'
-				| 'dateupdated'
-				| 'project'
-				| 'task'
-				| 'tasklist'
-				| 'user'
-				| 'description'
-				| 'billed'
-				| 'billable'
-				| 'timespent'
-				| 'id';
-			invoicedType?: 'all' | 'invoiced' | 'noninvoiced';
-			endDate?: string;
-			deletedAfter?: string;
-			budgetedType?: 'all' | 'budgeted' | 'nonbudgeted';
-			billableType?: 'all' | 'billable' | 'nonbillable';
-			updatedBy?: number;
-			ticketId?: number;
-			tasklistId?: number;
-			taskId?: number;
-			projectId?: number;
-			pageSize?: number;
-			page?: number;
-			invoiceId?: number;
-			budgetId?: number;
-			allocationId?: number;
-			useFallbackMethod?: boolean;
-			unattachedTimelogs?: boolean;
-			skipCounts?: boolean;
-			showDeleted?: boolean;
-			returnSplitInfo?: boolean;
-			returnCostInfo?: boolean;
-			returnBillableInfo?: boolean;
-			onlyStarredProjects?: boolean;
-			matchAllTaskTags?: boolean;
-			matchAllTags?: boolean;
-			matchAllProjectTags?: boolean;
-			matchAllExcludedTaskTags?: boolean;
-			matchAllExcludedProjectTags?: boolean;
-			isReportDownload?: boolean;
-			includeTotals?: boolean;
-			includeTentativeProjects?: boolean;
-			includePermissions?: boolean;
-			includeDescendants?: boolean;
-			includeArchivedProjects?: boolean;
-			deletedOnly?: boolean;
-			checkLocking?: boolean;
-			budgetAllocations?: boolean;
-			ticketIds?: Array<number>;
-			tasklistIds?: Array<number>;
-			taskTagIds?: Array<number>;
-			taskStatuses?: Array<string>;
-			taskIds?: Array<number>;
-			tagIds?: Array<number>;
-			selectedColumns?: Array<string>;
-			projectsFromCompanyId?: Array<number>;
-			projectTagIds?: Array<number>;
-			projectStatuses?: Array<
-				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
+				| 'deleted'
 			>;
 			projectOwnerIds?: Array<number>;
+			projectNumbers?: Array<string>;
+			projectNumberCounters?: Array<number>;
 			projectIds?: Array<number>;
 			projectHealths?: Array<'0' | '1' | '2' | '3'>;
 			projectCompanyIds?: Array<number>;
 			projectCategoryIds?: Array<number>;
+			includeCustomFieldIds?: Array<number>;
 			include?: Array<
-				| 'projects'
-				| 'projects.companies'
-				| 'projects.companies.currencies'
-				| 'projects.categories'
-				| 'projects.permissions'
-				| 'projects.integrations'
+				| 'projectOwners'
+				| 'projectUpdates'
+				| 'companies'
+				| 'companies.countries'
+				| 'companies.industries'
+				| 'companies.currencies'
+				| 'projectCategories'
+				| 'portfolioCards'
+				| 'portfolioBoards'
+				| 'portfolioColumns'
 				| 'tags'
-				| 'tasks'
-				| 'tasks.parentTasks'
-				| 'tasks.tasklists'
-				| 'tasks.users'
-				| 'tasks.tags'
+				| 'customfields'
+				| 'customfieldProjects'
+				| 'projectBudgets'
+				| 'activities.latest'
 				| 'users'
 				| 'createdBy'
 				| 'updatedBy'
+				| 'completedBy'
 				| 'deletedBy'
-				| 'project.billing'
-				| 'project.billing.currencies'
-				| 'projectBudgets'
-				| 'currencies'
-				| 'userRates'
+				| 'archivedBy'
+				| 'projectEmailDropboxes'
+				| 'workflows'
+				| 'workflows.stages'
+				| 'projecttaskstats'
 			>;
-			ids?: Array<number>;
+			filter?: Array<TeamworkJsonValue>;
+			'fields[workflows]'?: Array<'id' | 'name' | 'statusId'>;
 			'fields[users]'?: Array<
 				| 'id'
 				| 'firstName'
@@ -3432,46 +3299,8 @@ export type TeamworkV3Inputs = {
 				| 'updatedAt'
 				| 'teams'
 			>;
-			'fields[timelogs]'?: Array<
-				| 'id'
-				| 'dateCreated'
-				| 'minutes'
-				| 'description'
-				| 'timeLogged'
-				| 'billable'
-				| 'deleted'
-				| 'dateDeleted'
-				| 'hasStartTime'
-				| 'dateEdited'
-				| 'deskTicketId'
-				| 'userId'
-				| 'taskId'
-				| 'projectId'
-				| 'loggedByUserId'
-				| 'deletedByUserId'
-				| 'editedByUserId'
-				| 'taskIdPreMove'
-				| 'projectBillingInvoiceId'
-			>;
-			'fields[tasks]'?: Array<
-				| 'id'
-				| 'name'
-				| 'dateUpdated'
-				| 'parentTaskId'
-				| 'isPrivate'
-				| 'status'
-				| 'tasklistId'
-				| 'startDate'
-				| 'dueDate'
-				| 'estimateMinutes'
-				| 'accumulatedEstimatedMinutes'
-				| 'updatedAt'
-				| 'tasklist'
-			>;
-			'fields[tasklists]'?: Array<
-				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
-			>;
 			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
+			'fields[stages]'?: Array<'id' | 'name' | 'stage'>;
 			'fields[projects]'?: Array<
 				| 'id'
 				| 'name'
@@ -3496,7 +3325,1408 @@ export type TeamworkV3Inputs = {
 			'fields[projectcategories]'?: Array<
 				'id' | 'name' | 'color' | 'count' | 'parent' | 'parentId'
 			>;
-			'fields[projectIntegrations]'?: Array<
+			'fields[projectUpdates]'?: Array<
+				| 'id'
+				| 'projectId'
+				| 'text'
+				| 'isActive'
+				| 'health'
+				| 'color'
+				| 'dateCreated'
+				| 'deleted'
+				| 'deletedDate'
+				| 'numLikes'
+				| 'reactions'
+			>;
+			'fields[projectBudgets]'?: Array<
+				| 'id'
+				| 'projectId'
+				| 'type'
+				| 'status'
+				| 'capacityUsed'
+				| 'capacity'
+				| 'originatorBudgetId'
+				| 'isRepeating'
+				| 'repeatPeriod'
+				| 'repeatUnit'
+				| 'repeatsRemaining'
+				| 'sequenceNumber'
+				| 'startDateTime'
+				| 'endDateTime'
+				| 'currencyCode'
+				| 'timelogType'
+				| 'expenseType'
+				| 'defaultRate'
+				| 'notificationIds'
+				| 'createdByUserId'
+				| 'dateCreated'
+				| 'updatedUserId'
+				| 'dateUpdated'
+				| 'completedByUserId'
+				| 'dateCompleted'
+				| 'deletedByUserId'
+				| 'dateDeleted'
+			>;
+			'fields[portfolioColumns]'?: Array<'id' | 'name' | 'color'>;
+			'fields[portfolioCards]'?: Array<'id' | 'columnId' | 'projectId'>;
+			'fields[portfolioBoards]'?: Array<'id' | 'name' | 'color'>;
+			'fields[industries]'?: Array<string>;
+			'fields[customfields]'?: Array<
+				| 'id'
+				| 'projectId'
+				| 'entity'
+				| 'name'
+				| 'description'
+				| 'type'
+				| 'options'
+				| 'visibilities'
+				| 'isPrivate'
+				| 'required'
+				| 'createdAt'
+				| 'createdByUserId'
+				| 'updatedAt'
+				| 'updatedByUserId'
+				| 'deleted'
+				| 'deletedAt'
+				| 'deletedByUserId'
+			>;
+			'fields[customfieldProjects]'?: Array<
+				'id' | 'customfieldId' | 'value' | 'createdAt' | 'createdBy'
+			>;
+			'fields[countries]'?: Array<string>;
+			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
+			featuresEnabled?: Array<
+				| 'list'
+				| 'board'
+				| 'gantt'
+				| 'table'
+				| 'dashboard'
+				| 'milestones'
+				| 'messages'
+				| 'files'
+				| 'time'
+				| 'notebooks'
+				| 'risks'
+				| 'links'
+				| 'billing'
+				| 'comments'
+				| 'people'
+				| 'settings'
+				| 'tasks'
+			>;
+			excludeTagIds?: Array<number>;
+			excludeProjectIds?: Array<number>;
+		};
+		body?: never;
+	};
+	'projects.listStarred': {
+		path?: Record<string, never>;
+		query?: {
+			updatedAfter?: string;
+			timeMode?: 'timelogs' | 'estimated';
+			searchTerm?: string;
+			reportType?: 'project' | 'health';
+			reportTimezone?: string;
+			reportFormat?: 'csv' | 'html' | 'pdf' | 'xls' | 'xlsx' | 'google-sheets';
+			projectType?:
+				| 'all'
+				| 'normal'
+				| 'tasklists-template'
+				| 'projects-template'
+				| 'personal'
+				| 'tentative';
+			orderMode?: 'asc' | 'desc';
+			orderBy?:
+				| 'creatorname'
+				| 'companyname'
+				| 'datecreated'
+				| 'startdate'
+				| 'duedate'
+				| 'lastactivity'
+				| 'name'
+				| 'namecaseinsensitive'
+				| 'ownercompany'
+				| 'ownername'
+				| 'health'
+				| 'taskcompletion'
+				| 'budgetused'
+				| 'starred'
+				| 'starredcompanyname'
+				| 'starredfirst'
+				| 'mobilespecial'
+				| 'lastworkedon'
+				| 'categoryname'
+				| 'customfield'
+				| 'status'
+				| 'id'
+				| 'projectnumber';
+			notCompletedBefore?: string;
+			minLastActivityDate?: string;
+			maxLastActivityDate?: string;
+			userId?: number;
+			pageSize?: number;
+			page?: number;
+			orderByCustomFieldId?: number;
+			minBudgetCapacityUsedPercent?: number;
+			maxBudgetCapacityUsedPercent?: number;
+			useFormulaFields?: boolean;
+			skipCounts?: boolean;
+			searchCompanies?: boolean;
+			searchByLetter?: boolean;
+			searchBudgets?: boolean;
+			onlyStarredProjects?: boolean;
+			onlyProjectsWithExplicitMembership?: boolean;
+			onlyProjectsWithAdminAccess?: boolean;
+			onlyProjectsThatCanLogTime?: boolean;
+			onlyProjectsThatCanAddTasks?: boolean;
+			onlyArchivedProjects?: boolean;
+			matchAllProjectTags?: boolean;
+			matchAllExcludedTags?: boolean;
+			isReportDownload?: boolean;
+			includeTentativeProjects?: boolean;
+			includeTabSystemStatus?: boolean;
+			includeSubCategories?: boolean;
+			includeStats?: boolean;
+			includeProjectUserInfo?: boolean;
+			includeProjectProfitability?: boolean;
+			includeProjectDates?: boolean;
+			includeCustomFields?: boolean;
+			includeCounts?: boolean;
+			includeCompletedStatus?: boolean;
+			includeArchivedProjects?: boolean;
+			hideObservedProjects?: boolean;
+			alwaysIncludeFiltering?: boolean;
+			usersWithExplicitMembershipIds?: Array<number>;
+			teamIds?: Array<number>;
+			selectedColumns?: Array<string>;
+			projectTagIds?: Array<number>;
+			projectStatuses?: Array<
+				| 'active'
+				| 'inactive'
+				| 'archived'
+				| 'current'
+				| 'late'
+				| 'upcoming'
+				| 'completed'
+				| 'deleted'
+			>;
+			projectOwnerIds?: Array<number>;
+			projectNumbers?: Array<string>;
+			projectNumberCounters?: Array<number>;
+			projectIds?: Array<number>;
+			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectCompanyIds?: Array<number>;
+			projectCategoryIds?: Array<number>;
+			includeCustomFieldIds?: Array<number>;
+			include?: Array<
+				| 'projectOwners'
+				| 'projectUpdates'
+				| 'companies'
+				| 'companies.countries'
+				| 'companies.industries'
+				| 'companies.currencies'
+				| 'projectCategories'
+				| 'portfolioCards'
+				| 'portfolioBoards'
+				| 'portfolioColumns'
+				| 'tags'
+				| 'customfields'
+				| 'customfieldProjects'
+				| 'projectBudgets'
+				| 'activities.latest'
+				| 'users'
+				| 'createdBy'
+				| 'updatedBy'
+				| 'completedBy'
+				| 'deletedBy'
+				| 'archivedBy'
+				| 'projectEmailDropboxes'
+				| 'workflows'
+				| 'workflows.stages'
+				| 'projecttaskstats'
+			>;
+			filter?: Array<TeamworkJsonValue>;
+			'fields[workflows]'?: Array<'id' | 'name' | 'statusId'>;
+			'fields[users]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
+				| 'updatedAt'
+				| 'teams'
+			>;
+			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
+			'fields[stages]'?: Array<'id' | 'name' | 'stage'>;
+			'fields[projects]'?: Array<
+				| 'id'
+				| 'name'
+				| 'type'
+				| 'status'
+				| 'company'
+				| 'companyId'
+				| 'categoryId'
+				| 'startPage'
+				| 'logoIcon'
+				| 'logoColor'
+				| 'updatedAt'
+				| 'isStarred'
+				| 'allowNotifyAnyone'
+				| 'notifyTaskAssignee'
+				| 'isBillable'
+				| 'timelogRequiresTask'
+				| 'activePages'
+				| 'projectNumber'
+				| 'projectNumberCounter'
+			>;
+			'fields[projectcategories]'?: Array<
+				'id' | 'name' | 'color' | 'count' | 'parent' | 'parentId'
+			>;
+			'fields[projectUpdates]'?: Array<
+				| 'id'
+				| 'projectId'
+				| 'text'
+				| 'isActive'
+				| 'health'
+				| 'color'
+				| 'dateCreated'
+				| 'deleted'
+				| 'deletedDate'
+				| 'numLikes'
+				| 'reactions'
+			>;
+			'fields[projectBudgets]'?: Array<
+				| 'id'
+				| 'projectId'
+				| 'type'
+				| 'status'
+				| 'capacityUsed'
+				| 'capacity'
+				| 'originatorBudgetId'
+				| 'isRepeating'
+				| 'repeatPeriod'
+				| 'repeatUnit'
+				| 'repeatsRemaining'
+				| 'sequenceNumber'
+				| 'startDateTime'
+				| 'endDateTime'
+				| 'currencyCode'
+				| 'timelogType'
+				| 'expenseType'
+				| 'defaultRate'
+				| 'notificationIds'
+				| 'createdByUserId'
+				| 'dateCreated'
+				| 'updatedUserId'
+				| 'dateUpdated'
+				| 'completedByUserId'
+				| 'dateCompleted'
+				| 'deletedByUserId'
+				| 'dateDeleted'
+			>;
+			'fields[portfolioColumns]'?: Array<'id' | 'name' | 'color'>;
+			'fields[portfolioCards]'?: Array<'id' | 'columnId' | 'projectId'>;
+			'fields[portfolioBoards]'?: Array<'id' | 'name' | 'color'>;
+			'fields[industries]'?: Array<string>;
+			'fields[customfields]'?: Array<
+				| 'id'
+				| 'projectId'
+				| 'entity'
+				| 'name'
+				| 'description'
+				| 'type'
+				| 'options'
+				| 'visibilities'
+				| 'isPrivate'
+				| 'required'
+				| 'createdAt'
+				| 'createdByUserId'
+				| 'updatedAt'
+				| 'updatedByUserId'
+				| 'deleted'
+				| 'deletedAt'
+				| 'deletedByUserId'
+			>;
+			'fields[customfieldProjects]'?: Array<
+				'id' | 'customfieldId' | 'value' | 'createdAt' | 'createdBy'
+			>;
+			'fields[countries]'?: Array<string>;
+			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
+			featuresEnabled?: Array<
+				| 'list'
+				| 'board'
+				| 'gantt'
+				| 'table'
+				| 'dashboard'
+				| 'milestones'
+				| 'messages'
+				| 'files'
+				| 'time'
+				| 'notebooks'
+				| 'risks'
+				| 'links'
+				| 'billing'
+				| 'comments'
+				| 'people'
+				| 'settings'
+				| 'tasks'
+			>;
+			excludeTagIds?: Array<number>;
+			excludeProjectIds?: Array<number>;
+		};
+		body?: never;
+	};
+	'projects.get': {
+		path: { projectId: number };
+		query?: {
+			updatedAfter?: string;
+			timeMode?: 'timelogs' | 'estimated';
+			searchTerm?: string;
+			reportType?: 'project' | 'health';
+			reportTimezone?: string;
+			reportFormat?: 'csv' | 'html' | 'pdf' | 'xls' | 'xlsx' | 'google-sheets';
+			projectType?:
+				| 'all'
+				| 'normal'
+				| 'tasklists-template'
+				| 'projects-template'
+				| 'personal'
+				| 'tentative';
+			orderMode?: 'asc' | 'desc';
+			orderBy?:
+				| 'creatorname'
+				| 'companyname'
+				| 'datecreated'
+				| 'startdate'
+				| 'duedate'
+				| 'lastactivity'
+				| 'name'
+				| 'namecaseinsensitive'
+				| 'ownercompany'
+				| 'ownername'
+				| 'health'
+				| 'taskcompletion'
+				| 'budgetused'
+				| 'starred'
+				| 'starredcompanyname'
+				| 'starredfirst'
+				| 'mobilespecial'
+				| 'lastworkedon'
+				| 'categoryname'
+				| 'customfield'
+				| 'status'
+				| 'id'
+				| 'projectnumber';
+			notCompletedBefore?: string;
+			minLastActivityDate?: string;
+			maxLastActivityDate?: string;
+			userId?: number;
+			pageSize?: number;
+			page?: number;
+			orderByCustomFieldId?: number;
+			minBudgetCapacityUsedPercent?: number;
+			maxBudgetCapacityUsedPercent?: number;
+			useFormulaFields?: boolean;
+			skipCounts?: boolean;
+			searchCompanies?: boolean;
+			searchByLetter?: boolean;
+			searchBudgets?: boolean;
+			onlyStarredProjects?: boolean;
+			onlyProjectsWithExplicitMembership?: boolean;
+			onlyProjectsWithAdminAccess?: boolean;
+			onlyProjectsThatCanLogTime?: boolean;
+			onlyProjectsThatCanAddTasks?: boolean;
+			onlyArchivedProjects?: boolean;
+			matchAllProjectTags?: boolean;
+			matchAllExcludedTags?: boolean;
+			isReportDownload?: boolean;
+			includeTentativeProjects?: boolean;
+			includeTabSystemStatus?: boolean;
+			includeSubCategories?: boolean;
+			includeStats?: boolean;
+			includeProjectUserInfo?: boolean;
+			includeProjectProfitability?: boolean;
+			includeProjectDates?: boolean;
+			includeCustomFields?: boolean;
+			includeCounts?: boolean;
+			includeCompletedStatus?: boolean;
+			includeArchivedProjects?: boolean;
+			hideObservedProjects?: boolean;
+			alwaysIncludeFiltering?: boolean;
+			usersWithExplicitMembershipIds?: Array<number>;
+			teamIds?: Array<number>;
+			selectedColumns?: Array<string>;
+			projectTagIds?: Array<number>;
+			projectStatuses?: Array<
+				| 'active'
+				| 'inactive'
+				| 'archived'
+				| 'current'
+				| 'late'
+				| 'upcoming'
+				| 'completed'
+				| 'deleted'
+			>;
+			projectOwnerIds?: Array<number>;
+			projectNumbers?: Array<string>;
+			projectNumberCounters?: Array<number>;
+			projectIds?: Array<number>;
+			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectCompanyIds?: Array<number>;
+			projectCategoryIds?: Array<number>;
+			includeCustomFieldIds?: Array<number>;
+			include?: Array<
+				| 'projectOwners'
+				| 'projectUpdates'
+				| 'companies'
+				| 'companies.countries'
+				| 'companies.industries'
+				| 'companies.currencies'
+				| 'projectCategories'
+				| 'portfolioCards'
+				| 'portfolioBoards'
+				| 'portfolioColumns'
+				| 'tags'
+				| 'customfields'
+				| 'customfieldProjects'
+				| 'projectBudgets'
+				| 'activities.latest'
+				| 'users'
+				| 'createdBy'
+				| 'updatedBy'
+				| 'completedBy'
+				| 'deletedBy'
+				| 'archivedBy'
+				| 'projectEmailDropboxes'
+				| 'workflows'
+				| 'workflows.stages'
+				| 'projecttaskstats'
+			>;
+			filter?: Array<TeamworkJsonValue>;
+			'fields[workflows]'?: Array<'id' | 'name' | 'statusId'>;
+			'fields[users]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
+				| 'updatedAt'
+				| 'teams'
+			>;
+			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
+			'fields[stages]'?: Array<'id' | 'name' | 'stage'>;
+			'fields[projects]'?: Array<
+				| 'id'
+				| 'name'
+				| 'type'
+				| 'status'
+				| 'company'
+				| 'companyId'
+				| 'categoryId'
+				| 'startPage'
+				| 'logoIcon'
+				| 'logoColor'
+				| 'updatedAt'
+				| 'isStarred'
+				| 'allowNotifyAnyone'
+				| 'notifyTaskAssignee'
+				| 'isBillable'
+				| 'timelogRequiresTask'
+				| 'activePages'
+				| 'projectNumber'
+				| 'projectNumberCounter'
+			>;
+			'fields[projectcategories]'?: Array<
+				'id' | 'name' | 'color' | 'count' | 'parent' | 'parentId'
+			>;
+			'fields[projectUpdates]'?: Array<
+				| 'id'
+				| 'projectId'
+				| 'text'
+				| 'isActive'
+				| 'health'
+				| 'color'
+				| 'dateCreated'
+				| 'deleted'
+				| 'deletedDate'
+				| 'numLikes'
+				| 'reactions'
+			>;
+			'fields[projectBudgets]'?: Array<
+				| 'id'
+				| 'projectId'
+				| 'type'
+				| 'status'
+				| 'capacityUsed'
+				| 'capacity'
+				| 'originatorBudgetId'
+				| 'isRepeating'
+				| 'repeatPeriod'
+				| 'repeatUnit'
+				| 'repeatsRemaining'
+				| 'sequenceNumber'
+				| 'startDateTime'
+				| 'endDateTime'
+				| 'currencyCode'
+				| 'timelogType'
+				| 'expenseType'
+				| 'defaultRate'
+				| 'notificationIds'
+				| 'createdByUserId'
+				| 'dateCreated'
+				| 'updatedUserId'
+				| 'dateUpdated'
+				| 'completedByUserId'
+				| 'dateCompleted'
+				| 'deletedByUserId'
+				| 'dateDeleted'
+			>;
+			'fields[portfolioColumns]'?: Array<'id' | 'name' | 'color'>;
+			'fields[portfolioCards]'?: Array<'id' | 'columnId' | 'projectId'>;
+			'fields[portfolioBoards]'?: Array<'id' | 'name' | 'color'>;
+			'fields[industries]'?: Array<string>;
+			'fields[customfields]'?: Array<
+				| 'id'
+				| 'projectId'
+				| 'entity'
+				| 'name'
+				| 'description'
+				| 'type'
+				| 'options'
+				| 'visibilities'
+				| 'isPrivate'
+				| 'required'
+				| 'createdAt'
+				| 'createdByUserId'
+				| 'updatedAt'
+				| 'updatedByUserId'
+				| 'deleted'
+				| 'deletedAt'
+				| 'deletedByUserId'
+			>;
+			'fields[customfieldProjects]'?: Array<
+				'id' | 'customfieldId' | 'value' | 'createdAt' | 'createdBy'
+			>;
+			'fields[countries]'?: Array<string>;
+			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
+			featuresEnabled?: Array<
+				| 'list'
+				| 'board'
+				| 'gantt'
+				| 'table'
+				| 'dashboard'
+				| 'milestones'
+				| 'messages'
+				| 'files'
+				| 'time'
+				| 'notebooks'
+				| 'risks'
+				| 'links'
+				| 'billing'
+				| 'comments'
+				| 'people'
+				| 'settings'
+				| 'tasks'
+			>;
+			excludeTagIds?: Array<number>;
+			excludeProjectIds?: Array<number>;
+		};
+		body?: never;
+	};
+	'projects.convertTentative': {
+		path: { projectId: number };
+		query?: Record<string, never>;
+		body?: never;
+	};
+	'projectMetrics.billable': {
+		path?: Record<string, never>;
+		query: {
+			startDate: string;
+			orderMode?: 'asc' | 'desc';
+			endDate: string;
+		};
+		body?: never;
+	};
+	'projectMetrics.health': {
+		path?: Record<string, never>;
+		query?: {
+			projectStatus?:
+				| 'active'
+				| 'current'
+				| 'late'
+				| 'upcoming'
+				| 'completed'
+				| 'deleted';
+			onlyStarredProjects?: boolean;
+			matchAllProjectTags?: boolean;
+			projectTagIds?: Array<number>;
+			projectStatuses?: Array<
+				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
+			>;
+			projectOwnerIds?: Array<number>;
+			projectIds?: Array<number>;
+			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectCompanyIds?: Array<number>;
+			projectCategoryIds?: Array<number>;
+		};
+		body?: never;
+	};
+	'projectMetrics.invoices': {
+		path?: Record<string, never>;
+		query?: {
+			onlyStarredProjects?: boolean;
+			matchAllProjectTags?: boolean;
+			includeArchivedProjects?: boolean;
+			projectTagIds?: Array<number>;
+			projectStatuses?: Array<
+				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
+			>;
+			projectOwnerIds?: Array<number>;
+			projectIds?: Array<number>;
+			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectCompanyIds?: Array<number>;
+			projectCategoryIds?: Array<number>;
+		};
+		body?: never;
+	};
+	'projectMetrics.unbilled': {
+		path?: Record<string, never>;
+		query?: {
+			onlyStarredProjects?: boolean;
+			matchAllProjectTags?: boolean;
+			includeArchivedProjects?: boolean;
+			projectTagIds?: Array<number>;
+			projectStatuses?: Array<
+				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
+			>;
+			projectOwnerIds?: Array<number>;
+			projectIds?: Array<number>;
+			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectCompanyIds?: Array<number>;
+			projectCategoryIds?: Array<number>;
+		};
+		body?: never;
+	};
+	'projectTemplates.list': {
+		path?: Record<string, never>;
+		query?: {
+			updatedAfter?: string;
+			timeMode?: 'timelogs' | 'estimated';
+			searchTerm?: string;
+			reportType?: 'project' | 'health';
+			reportTimezone?: string;
+			reportFormat?: 'csv' | 'html' | 'pdf' | 'xls' | 'xlsx' | 'google-sheets';
+			projectType?:
+				| 'all'
+				| 'normal'
+				| 'tasklists-template'
+				| 'projects-template'
+				| 'personal'
+				| 'tentative';
+			orderMode?: 'asc' | 'desc';
+			orderBy?:
+				| 'creatorname'
+				| 'companyname'
+				| 'datecreated'
+				| 'startdate'
+				| 'duedate'
+				| 'lastactivity'
+				| 'name'
+				| 'namecaseinsensitive'
+				| 'ownercompany'
+				| 'ownername'
+				| 'health'
+				| 'taskcompletion'
+				| 'budgetused'
+				| 'starred'
+				| 'starredcompanyname'
+				| 'starredfirst'
+				| 'mobilespecial'
+				| 'lastworkedon'
+				| 'categoryname'
+				| 'customfield'
+				| 'status'
+				| 'id'
+				| 'projectnumber';
+			notCompletedBefore?: string;
+			minLastActivityDate?: string;
+			maxLastActivityDate?: string;
+			userId?: number;
+			pageSize?: number;
+			page?: number;
+			orderByCustomFieldId?: number;
+			minBudgetCapacityUsedPercent?: number;
+			maxBudgetCapacityUsedPercent?: number;
+			useFormulaFields?: boolean;
+			skipCounts?: boolean;
+			searchCompanies?: boolean;
+			searchByLetter?: boolean;
+			searchBudgets?: boolean;
+			onlyStarredProjects?: boolean;
+			onlyProjectsWithExplicitMembership?: boolean;
+			onlyProjectsWithAdminAccess?: boolean;
+			onlyProjectsThatCanLogTime?: boolean;
+			onlyProjectsThatCanAddTasks?: boolean;
+			onlyArchivedProjects?: boolean;
+			matchAllProjectTags?: boolean;
+			matchAllExcludedTags?: boolean;
+			isReportDownload?: boolean;
+			includeTentativeProjects?: boolean;
+			includeTabSystemStatus?: boolean;
+			includeSubCategories?: boolean;
+			includeStats?: boolean;
+			includeProjectUserInfo?: boolean;
+			includeProjectProfitability?: boolean;
+			includeProjectDates?: boolean;
+			includeCustomFields?: boolean;
+			includeCounts?: boolean;
+			includeCompletedStatus?: boolean;
+			includeArchivedProjects?: boolean;
+			hideObservedProjects?: boolean;
+			alwaysIncludeFiltering?: boolean;
+			usersWithExplicitMembershipIds?: Array<number>;
+			teamIds?: Array<number>;
+			selectedColumns?: Array<string>;
+			projectTagIds?: Array<number>;
+			projectStatuses?: Array<
+				| 'active'
+				| 'inactive'
+				| 'archived'
+				| 'current'
+				| 'late'
+				| 'upcoming'
+				| 'completed'
+				| 'deleted'
+			>;
+			projectOwnerIds?: Array<number>;
+			projectNumbers?: Array<string>;
+			projectNumberCounters?: Array<number>;
+			projectIds?: Array<number>;
+			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectCompanyIds?: Array<number>;
+			projectCategoryIds?: Array<number>;
+			includeCustomFieldIds?: Array<number>;
+			include?: Array<
+				| 'projectOwners'
+				| 'projectUpdates'
+				| 'companies'
+				| 'companies.countries'
+				| 'companies.industries'
+				| 'companies.currencies'
+				| 'projectCategories'
+				| 'portfolioCards'
+				| 'portfolioBoards'
+				| 'portfolioColumns'
+				| 'tags'
+				| 'customfields'
+				| 'customfieldProjects'
+				| 'projectBudgets'
+				| 'activities.latest'
+				| 'users'
+				| 'createdBy'
+				| 'updatedBy'
+				| 'completedBy'
+				| 'deletedBy'
+				| 'archivedBy'
+				| 'projectEmailDropboxes'
+				| 'workflows'
+				| 'workflows.stages'
+				| 'projecttaskstats'
+			>;
+			filter?: Array<TeamworkJsonValue>;
+			'fields[workflows]'?: Array<'id' | 'name' | 'statusId'>;
+			'fields[users]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
+				| 'updatedAt'
+				| 'teams'
+			>;
+			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
+			'fields[stages]'?: Array<'id' | 'name' | 'stage'>;
+			'fields[projects]'?: Array<
+				| 'id'
+				| 'name'
+				| 'type'
+				| 'status'
+				| 'company'
+				| 'companyId'
+				| 'categoryId'
+				| 'startPage'
+				| 'logoIcon'
+				| 'logoColor'
+				| 'updatedAt'
+				| 'isStarred'
+				| 'allowNotifyAnyone'
+				| 'notifyTaskAssignee'
+				| 'isBillable'
+				| 'timelogRequiresTask'
+				| 'activePages'
+				| 'projectNumber'
+				| 'projectNumberCounter'
+			>;
+			'fields[projectcategories]'?: Array<
+				'id' | 'name' | 'color' | 'count' | 'parent' | 'parentId'
+			>;
+			'fields[projectUpdates]'?: Array<
+				| 'id'
+				| 'projectId'
+				| 'text'
+				| 'isActive'
+				| 'health'
+				| 'color'
+				| 'dateCreated'
+				| 'deleted'
+				| 'deletedDate'
+				| 'numLikes'
+				| 'reactions'
+			>;
+			'fields[projectBudgets]'?: Array<
+				| 'id'
+				| 'projectId'
+				| 'type'
+				| 'status'
+				| 'capacityUsed'
+				| 'capacity'
+				| 'originatorBudgetId'
+				| 'isRepeating'
+				| 'repeatPeriod'
+				| 'repeatUnit'
+				| 'repeatsRemaining'
+				| 'sequenceNumber'
+				| 'startDateTime'
+				| 'endDateTime'
+				| 'currencyCode'
+				| 'timelogType'
+				| 'expenseType'
+				| 'defaultRate'
+				| 'notificationIds'
+				| 'createdByUserId'
+				| 'dateCreated'
+				| 'updatedUserId'
+				| 'dateUpdated'
+				| 'completedByUserId'
+				| 'dateCompleted'
+				| 'deletedByUserId'
+				| 'dateDeleted'
+			>;
+			'fields[portfolioColumns]'?: Array<'id' | 'name' | 'color'>;
+			'fields[portfolioCards]'?: Array<'id' | 'columnId' | 'projectId'>;
+			'fields[portfolioBoards]'?: Array<'id' | 'name' | 'color'>;
+			'fields[industries]'?: Array<string>;
+			'fields[customfields]'?: Array<
+				| 'id'
+				| 'projectId'
+				| 'entity'
+				| 'name'
+				| 'description'
+				| 'type'
+				| 'options'
+				| 'visibilities'
+				| 'isPrivate'
+				| 'required'
+				| 'createdAt'
+				| 'createdByUserId'
+				| 'updatedAt'
+				| 'updatedByUserId'
+				| 'deleted'
+				| 'deletedAt'
+				| 'deletedByUserId'
+			>;
+			'fields[customfieldProjects]'?: Array<
+				'id' | 'customfieldId' | 'value' | 'createdAt' | 'createdBy'
+			>;
+			'fields[countries]'?: Array<string>;
+			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
+			featuresEnabled?: Array<
+				| 'list'
+				| 'board'
+				| 'gantt'
+				| 'table'
+				| 'dashboard'
+				| 'milestones'
+				| 'messages'
+				| 'files'
+				| 'time'
+				| 'notebooks'
+				| 'risks'
+				| 'links'
+				| 'billing'
+				| 'comments'
+				| 'people'
+				| 'settings'
+				| 'tasks'
+			>;
+			excludeTagIds?: Array<number>;
+			excludeProjectIds?: Array<number>;
+		};
+		body?: never;
+	};
+	'projectTemplates.get': {
+		path: { id: number };
+		query?: {
+			updatedAfter?: string;
+			timeMode?: 'timelogs' | 'estimated';
+			searchTerm?: string;
+			reportType?: 'project' | 'health';
+			reportTimezone?: string;
+			reportFormat?: 'csv' | 'html' | 'pdf' | 'xls' | 'xlsx' | 'google-sheets';
+			projectType?:
+				| 'all'
+				| 'normal'
+				| 'tasklists-template'
+				| 'projects-template'
+				| 'personal'
+				| 'tentative';
+			orderMode?: 'asc' | 'desc';
+			orderBy?:
+				| 'creatorname'
+				| 'companyname'
+				| 'datecreated'
+				| 'startdate'
+				| 'duedate'
+				| 'lastactivity'
+				| 'name'
+				| 'namecaseinsensitive'
+				| 'ownercompany'
+				| 'ownername'
+				| 'health'
+				| 'taskcompletion'
+				| 'budgetused'
+				| 'starred'
+				| 'starredcompanyname'
+				| 'starredfirst'
+				| 'mobilespecial'
+				| 'lastworkedon'
+				| 'categoryname'
+				| 'customfield'
+				| 'status'
+				| 'id'
+				| 'projectnumber';
+			notCompletedBefore?: string;
+			minLastActivityDate?: string;
+			maxLastActivityDate?: string;
+			userId?: number;
+			pageSize?: number;
+			page?: number;
+			orderByCustomFieldId?: number;
+			minBudgetCapacityUsedPercent?: number;
+			maxBudgetCapacityUsedPercent?: number;
+			useFormulaFields?: boolean;
+			skipCounts?: boolean;
+			searchCompanies?: boolean;
+			searchByLetter?: boolean;
+			searchBudgets?: boolean;
+			onlyStarredProjects?: boolean;
+			onlyProjectsWithExplicitMembership?: boolean;
+			onlyProjectsWithAdminAccess?: boolean;
+			onlyProjectsThatCanLogTime?: boolean;
+			onlyProjectsThatCanAddTasks?: boolean;
+			onlyArchivedProjects?: boolean;
+			matchAllProjectTags?: boolean;
+			matchAllExcludedTags?: boolean;
+			isReportDownload?: boolean;
+			includeTentativeProjects?: boolean;
+			includeTabSystemStatus?: boolean;
+			includeSubCategories?: boolean;
+			includeStats?: boolean;
+			includeProjectUserInfo?: boolean;
+			includeProjectProfitability?: boolean;
+			includeProjectDates?: boolean;
+			includeCustomFields?: boolean;
+			includeCounts?: boolean;
+			includeCompletedStatus?: boolean;
+			includeArchivedProjects?: boolean;
+			hideObservedProjects?: boolean;
+			alwaysIncludeFiltering?: boolean;
+			usersWithExplicitMembershipIds?: Array<number>;
+			teamIds?: Array<number>;
+			selectedColumns?: Array<string>;
+			projectTagIds?: Array<number>;
+			projectStatuses?: Array<
+				| 'active'
+				| 'inactive'
+				| 'archived'
+				| 'current'
+				| 'late'
+				| 'upcoming'
+				| 'completed'
+				| 'deleted'
+			>;
+			projectOwnerIds?: Array<number>;
+			projectNumbers?: Array<string>;
+			projectNumberCounters?: Array<number>;
+			projectIds?: Array<number>;
+			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectCompanyIds?: Array<number>;
+			projectCategoryIds?: Array<number>;
+			includeCustomFieldIds?: Array<number>;
+			include?: Array<
+				| 'projectOwners'
+				| 'projectUpdates'
+				| 'companies'
+				| 'companies.countries'
+				| 'companies.industries'
+				| 'companies.currencies'
+				| 'projectCategories'
+				| 'portfolioCards'
+				| 'portfolioBoards'
+				| 'portfolioColumns'
+				| 'tags'
+				| 'customfields'
+				| 'customfieldProjects'
+				| 'projectBudgets'
+				| 'activities.latest'
+				| 'users'
+				| 'createdBy'
+				| 'updatedBy'
+				| 'completedBy'
+				| 'deletedBy'
+				| 'archivedBy'
+				| 'projectEmailDropboxes'
+				| 'workflows'
+				| 'workflows.stages'
+				| 'projecttaskstats'
+			>;
+			filter?: Array<TeamworkJsonValue>;
+			'fields[workflows]'?: Array<'id' | 'name' | 'statusId'>;
+			'fields[users]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
+				| 'updatedAt'
+				| 'teams'
+			>;
+			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
+			'fields[stages]'?: Array<'id' | 'name' | 'stage'>;
+			'fields[projects]'?: Array<
+				| 'id'
+				| 'name'
+				| 'type'
+				| 'status'
+				| 'company'
+				| 'companyId'
+				| 'categoryId'
+				| 'startPage'
+				| 'logoIcon'
+				| 'logoColor'
+				| 'updatedAt'
+				| 'isStarred'
+				| 'allowNotifyAnyone'
+				| 'notifyTaskAssignee'
+				| 'isBillable'
+				| 'timelogRequiresTask'
+				| 'activePages'
+				| 'projectNumber'
+				| 'projectNumberCounter'
+			>;
+			'fields[projectcategories]'?: Array<
+				'id' | 'name' | 'color' | 'count' | 'parent' | 'parentId'
+			>;
+			'fields[projectUpdates]'?: Array<
+				| 'id'
+				| 'projectId'
+				| 'text'
+				| 'isActive'
+				| 'health'
+				| 'color'
+				| 'dateCreated'
+				| 'deleted'
+				| 'deletedDate'
+				| 'numLikes'
+				| 'reactions'
+			>;
+			'fields[projectBudgets]'?: Array<
+				| 'id'
+				| 'projectId'
+				| 'type'
+				| 'status'
+				| 'capacityUsed'
+				| 'capacity'
+				| 'originatorBudgetId'
+				| 'isRepeating'
+				| 'repeatPeriod'
+				| 'repeatUnit'
+				| 'repeatsRemaining'
+				| 'sequenceNumber'
+				| 'startDateTime'
+				| 'endDateTime'
+				| 'currencyCode'
+				| 'timelogType'
+				| 'expenseType'
+				| 'defaultRate'
+				| 'notificationIds'
+				| 'createdByUserId'
+				| 'dateCreated'
+				| 'updatedUserId'
+				| 'dateUpdated'
+				| 'completedByUserId'
+				| 'dateCompleted'
+				| 'deletedByUserId'
+				| 'dateDeleted'
+			>;
+			'fields[portfolioColumns]'?: Array<'id' | 'name' | 'color'>;
+			'fields[portfolioCards]'?: Array<'id' | 'columnId' | 'projectId'>;
+			'fields[portfolioBoards]'?: Array<'id' | 'name' | 'color'>;
+			'fields[industries]'?: Array<string>;
+			'fields[customfields]'?: Array<
+				| 'id'
+				| 'projectId'
+				| 'entity'
+				| 'name'
+				| 'description'
+				| 'type'
+				| 'options'
+				| 'visibilities'
+				| 'isPrivate'
+				| 'required'
+				| 'createdAt'
+				| 'createdByUserId'
+				| 'updatedAt'
+				| 'updatedByUserId'
+				| 'deleted'
+				| 'deletedAt'
+				| 'deletedByUserId'
+			>;
+			'fields[customfieldProjects]'?: Array<
+				'id' | 'customfieldId' | 'value' | 'createdAt' | 'createdBy'
+			>;
+			'fields[countries]'?: Array<string>;
+			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
+			featuresEnabled?: Array<
+				| 'list'
+				| 'board'
+				| 'gantt'
+				| 'table'
+				| 'dashboard'
+				| 'milestones'
+				| 'messages'
+				| 'files'
+				| 'time'
+				| 'notebooks'
+				| 'risks'
+				| 'links'
+				| 'billing'
+				| 'comments'
+				| 'people'
+				| 'settings'
+				| 'tasks'
+			>;
+			excludeTagIds?: Array<number>;
+			excludeProjectIds?: Array<number>;
+		};
+		body?: never;
+	};
+	'projectTemplates.listRequiredCustomFields': {
+		path: { id: number };
+		query?: Record<string, never>;
+		body?: never;
+	};
+	'projectUpdates.list': {
+		path?: Record<string, never>;
+		query?: {
+			updatedAfter?: string;
+			projectStatus?: string;
+			orderMode?: 'asc' | 'desc';
+			orderBy?: 'date' | 'color' | 'health' | 'project' | 'user' | 'id';
+			createdAfter?: string;
+			projectId?: number;
+			pageSize?: number;
+			page?: number;
+			skipCounts?: boolean;
+			showDeleted?: boolean;
+			reactions?: boolean;
+			onlyStarredProjects?: boolean;
+			matchAllProjectTags?: boolean;
+			includeArchivedProjects?: boolean;
+			emoji?: boolean;
+			activeOnly?: boolean;
+			projectTagIds?: Array<number>;
+			projectStatuses?: Array<string>;
+			projectOwnerIds?: Array<number>;
+			projectIds?: Array<number>;
+			projectHealths?: Array<number>;
+			projectHealth?: Array<number>;
+			projectCompanyIds?: Array<number>;
+			projectCategoryIds?: Array<number>;
+			include?: Array<'projects' | 'createdBy' | 'deletedBy' | 'likes.users'>;
+			'fields[users]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
+				| 'updatedAt'
+				| 'teams'
+			>;
+			'fields[projects]'?: Array<
+				| 'id'
+				| 'name'
+				| 'type'
+				| 'status'
+				| 'company'
+				| 'companyId'
+				| 'categoryId'
+				| 'startPage'
+				| 'logoIcon'
+				| 'logoColor'
+				| 'updatedAt'
+				| 'isStarred'
+				| 'allowNotifyAnyone'
+				| 'notifyTaskAssignee'
+				| 'isBillable'
+				| 'timelogRequiresTask'
+				| 'activePages'
+				| 'projectNumber'
+				| 'projectNumberCounter'
+			>;
+			'fields[projectUpdates]'?: Array<
+				| 'id'
+				| 'projectId'
+				| 'text'
+				| 'isActive'
+				| 'health'
+				| 'color'
+				| 'dateCreated'
+				| 'deleted'
+				| 'deletedDate'
+				| 'numLikes'
+				| 'reactions'
+			>;
+		};
+		body?: never;
+	};
+	'projectPeople.list': {
+		path: { projectId: number };
+		query?: {
+			userType?: 'account' | 'collaborator' | 'contact' | 'client';
+			updatedAfter?: string;
+			searchTerm?: string;
+			orderMode?: 'asc' | 'desc';
+			orderBy?:
+				| 'name'
+				| 'namecaseinsensitive'
+				| 'company'
+				| 'id'
+				| 'providedids'
+				| 'dateupdated';
+			lastLoginAfter?: string;
+			pageSize?: number;
+			page?: number;
+			skipCounts?: boolean;
+			showDeleted?: boolean;
+			searchUserSkill?: boolean;
+			searchUserJobRole?: boolean;
+			orderPrioritiseCurrentUser?: boolean;
+			onlySiteOwner?: boolean;
+			onlyPlaceholders?: boolean;
+			onlyOwnerCompany?: boolean;
+			inclusiveFilter?: boolean;
+			includeStandardUsers?: boolean;
+			includeServiceAccounts?: boolean;
+			includePlaceholders?: boolean;
+			includeObservers?: boolean;
+			includeCollaborators?: boolean;
+			includeClients?: boolean;
+			filterByNoCostRate?: boolean;
+			excludeContacts?: boolean;
+			clientPortalEligible?: boolean;
+			adminsOnly?: boolean;
+			teamIds?: Array<number>;
+			skillIds?: Array<number>;
+			projectIds?: Array<number>;
+			projectCompanyIds?: Array<number>;
+			notLinkedWithClientPortalIds?: Array<number>;
+			jobRoleIds?: Array<number>;
+			include?: Array<
+				| 'companies'
+				| 'workingHours'
+				| 'currencies'
+				| 'teams'
+				| 'jobRoles'
+				| 'skills'
+				| 'linkedClientPortalCompanies'
+				| 'projects.permissions'
+				| 'permissions'
+				| 'users.integrations'
+				| 'skillCounts'
+			>;
+			ids?: Array<number>;
+			'fields[userIntegrations]'?: Array<
 				| 'userId'
 				| 'projectId'
 				| 'canAccessBox'
@@ -3505,6 +4735,51 @@ export type TeamworkV3Inputs = {
 				| 'canAccessOneDrive'
 				| 'canAccessOneDriveBusiness'
 				| 'canAccessSharePoint'
+			>;
+			'fields[teams]'?: Array<
+				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
+			>;
+			'fields[person]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
+			>;
+			'fields[people]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
 			>;
 			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
 			'fields[ProjectPermissions]'?: Array<
@@ -3552,1131 +4827,72 @@ export type TeamworkV3Inputs = {
 				| 'canViewProjectTemplates'
 				| 'canManageProjectTemplates'
 			>;
-			excludeTaskTagIds?: Array<number>;
-			excludeProjectTagIds?: Array<number>;
-			assignedToUserIds?: Array<number>;
-			assignedToTeamIds?: Array<number>;
-			assignedToCompanyIds?: Array<number>;
-			assignedTeamIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_comments_json: {
-		path?: Record<string, never>;
-		query?: {
-			updatedAfterDate?: string;
-			updatedAfter?: string;
-			searchTerm?: string;
-			publishedStartDate?: string;
-			publishedEndDate?: string;
-			projectType?: string;
-			projectStatuses?: string;
-			orderMode?: 'asc' | 'desc';
-			orderBy?: 'all' | 'date' | 'project' | 'user' | 'type' | 'id';
-			cursor?: string;
-			commentStatus?: 'all' | 'read' | 'unread';
-			pageSize?: number;
-			page?: number;
-			limit?: number;
-			strictHTML?: boolean;
-			skipCounts?: boolean;
-			onlyStarredProjects?: boolean;
-			matchAllProjectTags?: boolean;
-			includeTentativeProjects?: boolean;
-			includeArchivedProjects?: boolean;
-			userIds?: Array<number>;
-			projectTagIds?: Array<number>;
-			projectOwnerIds?: Array<number>;
-			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-			objectTypes?: Array<
-				| 'task'
-				| 'file'
-				| 'fileversion'
-				| 'notebook'
-				| 'milestone'
-				| 'link'
-				| 'projectupdate'
-				| 'customitemrecord'
-			>;
-			objectType?: Array<
-				| 'task'
-				| 'file'
-				| 'fileversion'
-				| 'notebook'
-				| 'milestone'
-				| 'link'
-				| 'projectupdate'
-				| 'customitemrecord'
-			>;
-			objectIds?: Array<number>;
-			notifiedUserIds?: Array<number>;
-			include?: Array<
-				| 'reactions'
-				| 'users'
-				| 'projects'
-				| 'projects.companies'
-				| 'files'
-				| 'relatedFiles'
-				| 'tasks'
-				| 'notebooks'
-				| 'milestones'
-				| 'links'
-			>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[tasks]'?: Array<
-				| 'id'
-				| 'name'
-				| 'dateUpdated'
-				| 'parentTaskId'
-				| 'isPrivate'
-				| 'status'
-				| 'tasklistId'
-				| 'startDate'
-				| 'dueDate'
-				| 'estimateMinutes'
-				| 'accumulatedEstimatedMinutes'
-				| 'updatedAt'
-				| 'tasklist'
-			>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-			'fields[notebooks]'?: Array<
-				| 'id'
-				| 'name'
-				| 'description'
-				| 'contents'
-				| 'type'
-				| 'isPrivate'
-				| 'locked'
-				| 'lockdownId'
-				| 'secureContent'
-				| 'projectId'
-				| 'createdByUserID'
-				| 'updatedByUserID'
-				| 'deletedByUserID'
-				| 'dateUpdated'
-				| 'dateCreated'
-				| 'dateDeleted'
-				| 'deleted'
-				| 'categoryId'
-				| 'notebookVersionID'
-				| 'notebookVersionCreatedDateTime'
-				| 'notebookVersionUpdatedDateTime'
-				| 'latestVersionNo'
-				| 'commentsCount'
-				| 'readCommentsCount'
-				| 'contentHTML'
-				| 'privacy'
-				| 'commentFollowers'
-				| 'changeFollowers'
-				| 'tagIds'
-				| 'updatedAt'
-				| 'project'
-			>;
-			'fields[milestones]'?: Array<
-				| 'id'
-				| 'name'
-				| 'description'
-				| 'deadline'
-				| 'completed'
-				| 'projectId'
-				| 'createdOn'
-				| 'lastChangedOn'
-				| 'creatorUserId'
-				| 'reminder'
-				| 'private'
-				| 'lockdownId'
-				| 'status'
-				| 'completedOn'
-				| 'completerId'
-				| 'percentageComplete'
-				| 'project'
-			>;
-			'fields[links]'?: Array<
-				| 'id'
-				| 'title'
-				| 'description'
-				| 'code'
-				| 'width'
-				| 'height'
-				| 'isPrivate'
-				| 'provider'
-				| 'projectId'
-				| 'createdAt'
-				| 'forceNewWindow'
-				| 'deleted'
-				| 'deletedAt'
-				| 'updatedAt'
-				| 'categoryId'
-				| 'createdBy'
-				| 'deletedBy'
-				| 'updatedBy'
-				| 'project'
-			>;
-			'fields[fileversions]'?: Array<
-				| 'fileVersionId'
-				| 'fileId'
-				| 'versionNo'
-				| 'name'
-				| 'originalName'
-				| 'size'
-				| 'uploadedBy'
-				| 'uploadedAt'
-				| 'description'
-				| 'status'
-				| 'projectId'
-				| 'reactions'
-				| 'commentsCount'
-				| 'commentsCountRead'
-				| 'displayName'
-			>;
-			'fields[files]'?: Array<
-				| 'isPrivate'
-				| 'latestFileVersionNo'
-				| 'versionId'
-				| 'status'
-				| 'description'
-				| 'lockdownId'
-				| 'tagIds'
-				| 'changeFollowers'
-				| 'commentFollowers'
-				| 'originalName'
-				| 'displayName'
-				| 'isLocked'
-				| 'lockedByUserId'
-				| 'lockedDate'
-				| 'size'
-				| 'uploadedDate'
-				| 'uploadedByUserID'
-				| 'updatedAt'
-				| 'deletedAt'
-				| 'deletedBy'
-				| 'fileSource'
-				| 'projectId'
-				| 'numLikes'
-				| 'reactions'
-				| 'versions'
-				| 'downloadURL'
-				| 'previewURL'
-				| 'thumbURL'
-				| 'relatedItems'
-				| 'commentsCount'
-				| 'commentsCountRead'
-				| 'categoryId'
-			>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			'fields[comments]'?: Array<
-				| 'id'
-				| 'objectType'
-				| 'objectId'
-				| 'title'
-				| 'postedAt'
-				| 'postedBy'
-				| 'object'
-				| 'project'
-			>;
-			commentIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_post_projects_api_v3_comments_json: {
-		path?: Record<string, never>;
-		query?: { fireWebhook?: boolean };
-		body: TeamworkV3Input_comment_Request;
-	};
-	v3_get_projects_api_v3_comments_id_json: {
-		path: { id: number };
-		query?: {
-			updatedAfterDate?: string;
-			updatedAfter?: string;
-			searchTerm?: string;
-			publishedStartDate?: string;
-			publishedEndDate?: string;
-			projectType?: string;
-			projectStatuses?: string;
-			orderMode?: 'asc' | 'desc';
-			orderBy?: 'all' | 'date' | 'project' | 'user' | 'type' | 'id';
-			cursor?: string;
-			commentStatus?: 'all' | 'read' | 'unread';
-			pageSize?: number;
-			page?: number;
-			limit?: number;
-			strictHTML?: boolean;
-			skipCounts?: boolean;
-			onlyStarredProjects?: boolean;
-			matchAllProjectTags?: boolean;
-			includeTentativeProjects?: boolean;
-			includeArchivedProjects?: boolean;
-			userIds?: Array<number>;
-			projectTagIds?: Array<number>;
-			projectOwnerIds?: Array<number>;
-			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-			objectTypes?: Array<
-				| 'task'
-				| 'file'
-				| 'fileversion'
-				| 'notebook'
-				| 'milestone'
-				| 'link'
-				| 'projectupdate'
-				| 'customitemrecord'
-			>;
-			objectType?: Array<
-				| 'task'
-				| 'file'
-				| 'fileversion'
-				| 'notebook'
-				| 'milestone'
-				| 'link'
-				| 'projectupdate'
-				| 'customitemrecord'
-			>;
-			objectIds?: Array<number>;
-			notifiedUserIds?: Array<number>;
-			include?: Array<
-				| 'reactions'
-				| 'users'
-				| 'projects'
-				| 'projects.companies'
-				| 'files'
-				| 'relatedFiles'
-				| 'tasks'
-				| 'notebooks'
-				| 'milestones'
-				| 'links'
-			>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[tasks]'?: Array<
-				| 'id'
-				| 'name'
-				| 'dateUpdated'
-				| 'parentTaskId'
-				| 'isPrivate'
-				| 'status'
-				| 'tasklistId'
-				| 'startDate'
-				| 'dueDate'
-				| 'estimateMinutes'
-				| 'accumulatedEstimatedMinutes'
-				| 'updatedAt'
-				| 'tasklist'
-			>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-			'fields[notebooks]'?: Array<
-				| 'id'
-				| 'name'
-				| 'description'
-				| 'contents'
-				| 'type'
-				| 'isPrivate'
-				| 'locked'
-				| 'lockdownId'
-				| 'secureContent'
-				| 'projectId'
-				| 'createdByUserID'
-				| 'updatedByUserID'
-				| 'deletedByUserID'
-				| 'dateUpdated'
-				| 'dateCreated'
-				| 'dateDeleted'
-				| 'deleted'
-				| 'categoryId'
-				| 'notebookVersionID'
-				| 'notebookVersionCreatedDateTime'
-				| 'notebookVersionUpdatedDateTime'
-				| 'latestVersionNo'
-				| 'commentsCount'
-				| 'readCommentsCount'
-				| 'contentHTML'
-				| 'privacy'
-				| 'commentFollowers'
-				| 'changeFollowers'
-				| 'tagIds'
-				| 'updatedAt'
-				| 'project'
-			>;
-			'fields[milestones]'?: Array<
-				| 'id'
-				| 'name'
-				| 'description'
-				| 'deadline'
-				| 'completed'
-				| 'projectId'
-				| 'createdOn'
-				| 'lastChangedOn'
-				| 'creatorUserId'
-				| 'reminder'
-				| 'private'
-				| 'lockdownId'
-				| 'status'
-				| 'completedOn'
-				| 'completerId'
-				| 'percentageComplete'
-				| 'project'
-			>;
-			'fields[links]'?: Array<
-				| 'id'
-				| 'title'
-				| 'description'
-				| 'code'
-				| 'width'
-				| 'height'
-				| 'isPrivate'
-				| 'provider'
-				| 'projectId'
-				| 'createdAt'
-				| 'forceNewWindow'
-				| 'deleted'
-				| 'deletedAt'
-				| 'updatedAt'
-				| 'categoryId'
-				| 'createdBy'
-				| 'deletedBy'
-				| 'updatedBy'
-				| 'project'
-			>;
-			'fields[fileversions]'?: Array<
-				| 'fileVersionId'
-				| 'fileId'
-				| 'versionNo'
-				| 'name'
-				| 'originalName'
-				| 'size'
-				| 'uploadedBy'
-				| 'uploadedAt'
-				| 'description'
-				| 'status'
-				| 'projectId'
-				| 'reactions'
-				| 'commentsCount'
-				| 'commentsCountRead'
-				| 'displayName'
-			>;
-			'fields[files]'?: Array<
-				| 'isPrivate'
-				| 'latestFileVersionNo'
-				| 'versionId'
-				| 'status'
-				| 'description'
-				| 'lockdownId'
-				| 'tagIds'
-				| 'changeFollowers'
-				| 'commentFollowers'
-				| 'originalName'
-				| 'displayName'
-				| 'isLocked'
-				| 'lockedByUserId'
-				| 'lockedDate'
-				| 'size'
-				| 'uploadedDate'
-				| 'uploadedByUserID'
-				| 'updatedAt'
-				| 'deletedAt'
-				| 'deletedBy'
-				| 'fileSource'
-				| 'projectId'
-				| 'numLikes'
-				| 'reactions'
-				| 'versions'
-				| 'downloadURL'
-				| 'previewURL'
-				| 'thumbURL'
-				| 'relatedItems'
-				| 'commentsCount'
-				| 'commentsCountRead'
-				| 'categoryId'
-			>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			'fields[comments]'?: Array<
-				| 'id'
-				| 'objectType'
-				| 'objectId'
-				| 'title'
-				| 'postedAt'
-				| 'postedBy'
-				| 'object'
-				| 'project'
-			>;
-			commentIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_comments_id_notified_json: {
-		path: { id: number };
-		query?: {
-			updatedAfterDate?: string;
-			updatedAfter?: string;
-			searchTerm?: string;
-			publishedStartDate?: string;
-			publishedEndDate?: string;
-			projectType?: string;
-			projectStatuses?: string;
-			orderMode?: 'asc' | 'desc';
-			orderBy?: 'all' | 'date' | 'project' | 'user' | 'type' | 'id';
-			cursor?: string;
-			commentStatus?: 'all' | 'read' | 'unread';
-			pageSize?: number;
-			page?: number;
-			limit?: number;
-			strictHTML?: boolean;
-			skipCounts?: boolean;
-			onlyStarredProjects?: boolean;
-			matchAllProjectTags?: boolean;
-			includeTentativeProjects?: boolean;
-			includeArchivedProjects?: boolean;
-			userIds?: Array<number>;
-			projectTagIds?: Array<number>;
-			projectOwnerIds?: Array<number>;
-			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-			objectTypes?: Array<
-				| 'task'
-				| 'file'
-				| 'fileversion'
-				| 'notebook'
-				| 'milestone'
-				| 'link'
-				| 'projectupdate'
-				| 'customitemrecord'
-			>;
-			objectType?: Array<
-				| 'task'
-				| 'file'
-				| 'fileversion'
-				| 'notebook'
-				| 'milestone'
-				| 'link'
-				| 'projectupdate'
-				| 'customitemrecord'
-			>;
-			objectIds?: Array<number>;
-			notifiedUserIds?: Array<number>;
-			include?: Array<
-				| 'reactions'
-				| 'users'
-				| 'projects'
-				| 'projects.companies'
-				| 'files'
-				| 'relatedFiles'
-				| 'tasks'
-				| 'notebooks'
-				| 'milestones'
-				| 'links'
-			>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[tasks]'?: Array<
-				| 'id'
-				| 'name'
-				| 'dateUpdated'
-				| 'parentTaskId'
-				| 'isPrivate'
-				| 'status'
-				| 'tasklistId'
-				| 'startDate'
-				| 'dueDate'
-				| 'estimateMinutes'
-				| 'accumulatedEstimatedMinutes'
-				| 'updatedAt'
-				| 'tasklist'
-			>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-			'fields[notebooks]'?: Array<
-				| 'id'
-				| 'name'
-				| 'description'
-				| 'contents'
-				| 'type'
-				| 'isPrivate'
-				| 'locked'
-				| 'lockdownId'
-				| 'secureContent'
-				| 'projectId'
-				| 'createdByUserID'
-				| 'updatedByUserID'
-				| 'deletedByUserID'
-				| 'dateUpdated'
-				| 'dateCreated'
-				| 'dateDeleted'
-				| 'deleted'
-				| 'categoryId'
-				| 'notebookVersionID'
-				| 'notebookVersionCreatedDateTime'
-				| 'notebookVersionUpdatedDateTime'
-				| 'latestVersionNo'
-				| 'commentsCount'
-				| 'readCommentsCount'
-				| 'contentHTML'
-				| 'privacy'
-				| 'commentFollowers'
-				| 'changeFollowers'
-				| 'tagIds'
-				| 'updatedAt'
-				| 'project'
-			>;
-			'fields[milestones]'?: Array<
-				| 'id'
-				| 'name'
-				| 'description'
-				| 'deadline'
-				| 'completed'
-				| 'projectId'
-				| 'createdOn'
-				| 'lastChangedOn'
-				| 'creatorUserId'
-				| 'reminder'
-				| 'private'
-				| 'lockdownId'
-				| 'status'
-				| 'completedOn'
-				| 'completerId'
-				| 'percentageComplete'
-				| 'project'
-			>;
-			'fields[links]'?: Array<
-				| 'id'
-				| 'title'
-				| 'description'
-				| 'code'
-				| 'width'
-				| 'height'
-				| 'isPrivate'
-				| 'provider'
-				| 'projectId'
-				| 'createdAt'
-				| 'forceNewWindow'
-				| 'deleted'
-				| 'deletedAt'
-				| 'updatedAt'
-				| 'categoryId'
-				| 'createdBy'
-				| 'deletedBy'
-				| 'updatedBy'
-				| 'project'
-			>;
-			'fields[fileversions]'?: Array<
-				| 'fileVersionId'
-				| 'fileId'
-				| 'versionNo'
-				| 'name'
-				| 'originalName'
-				| 'size'
-				| 'uploadedBy'
-				| 'uploadedAt'
-				| 'description'
-				| 'status'
-				| 'projectId'
-				| 'reactions'
-				| 'commentsCount'
-				| 'commentsCountRead'
-				| 'displayName'
-			>;
-			'fields[files]'?: Array<
-				| 'isPrivate'
-				| 'latestFileVersionNo'
-				| 'versionId'
-				| 'status'
-				| 'description'
-				| 'lockdownId'
-				| 'tagIds'
-				| 'changeFollowers'
-				| 'commentFollowers'
-				| 'originalName'
-				| 'displayName'
-				| 'isLocked'
-				| 'lockedByUserId'
-				| 'lockedDate'
-				| 'size'
-				| 'uploadedDate'
-				| 'uploadedByUserID'
-				| 'updatedAt'
-				| 'deletedAt'
-				| 'deletedBy'
-				| 'fileSource'
-				| 'projectId'
-				| 'numLikes'
-				| 'reactions'
-				| 'versions'
-				| 'downloadURL'
-				| 'previewURL'
-				| 'thumbURL'
-				| 'relatedItems'
-				| 'commentsCount'
-				| 'commentsCountRead'
-				| 'categoryId'
-			>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			'fields[comments]'?: Array<
-				| 'id'
-				| 'objectType'
-				| 'objectId'
-				| 'title'
-				| 'postedAt'
-				| 'postedBy'
-				| 'object'
-				| 'project'
-			>;
-			commentIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_companies_json: {
-		path?: Record<string, never>;
-		query?: {
-			updatedAfterDate?: string;
-			updatedAfter?: string;
-			searchTerm?: string;
-			reportType?: 'company' | 'client';
-			reportFormat?: string;
-			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'name'
-				| 'accounts'
-				| 'clients'
-				| 'collaborators'
-				| 'contacts'
-				| 'projects'
-				| 'tasks'
-				| 'country'
-				| 'health'
-				| 'website'
-				| 'email'
-				| 'phone'
-				| 'fax'
-				| 'industry'
-				| 'ownercompany'
-				| 'ownername'
-				| 'taskscompletion'
-				| 'customfield'
-				| 'id'
-				| 'namecaseinsensitive'
-				| 'createdAt'
-				| 'updatedAt';
-			name?: string;
-			minLastActivityDate?: string;
-			maxLastActivityDate?: string;
-			firstLetter?: string;
-			createdAfterDate?: string;
-			createdAfter?: string;
-			budgetRanges?: string;
-			pageSize?: number;
-			page?: number;
-			orderByCustomFieldId?: number;
-			currencyId?: number;
-			useFormulaFields?: boolean;
-			skipCounts?: boolean;
-			searchClientManagers?: boolean;
-			returnLetters?: boolean;
-			onlyUntaggedCompanies?: boolean;
-			matchAllTags?: boolean;
-			matchAllExcludedTags?: boolean;
-			isReportDownload?: boolean;
-			includeUntaggedCompanies?: boolean;
-			includeTentativeProjects?: boolean;
-			includeProfitability?: boolean;
-			includePermissions?: boolean;
-			includeCustomFields?: boolean;
-			includeBudgetSummary?: boolean;
-			includeBudgetDistribution?: boolean;
-			getStats?: boolean;
-			getEmoji?: boolean;
-			fullProfile?: boolean;
-			excludeOwnerCompany?: boolean;
-			tagIds?: Array<number>;
-			selectedColumns?: Array<string>;
-			projectStatuses?: Array<string>;
-			notLinkedWithClientPortalIds?: Array<number>;
-			include?: Array<
-				| 'tags'
-				| 'countries'
-				| 'industries'
-				| 'clientmanagedby'
-				| 'companyupdates'
-				| 'jobRoles'
-				| 'users'
-				| 'companydomains'
-				| 'currencies'
-				| 'customfields'
-				| 'customfieldCompanies'
-				| 'clientPortals'
-			>;
-			ids?: Array<number>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
-			'fields[industries]'?: Array<string>;
-			'fields[countries]'?: Array<string>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			excludeTagIds?: Array<number>;
+			excludeProjectIds?: Array<number>;
 			excludeIds?: Array<number>;
-			companyHealths?: Array<number>;
-			clientManagedByUserIds?: Array<number>;
-			CustomFields?: Array<string>;
+			excludeAllocatedUsersProjectIDs?: Array<number>;
+			emails?: Array<string>;
+			companyIds?: Array<number>;
+			SkillLevels?: Array<string>;
 		};
 		body?: never;
 	};
-	v3_post_projects_api_v3_companies_json: {
-		path?: Record<string, never>;
-		query?: { fireWebhook?: boolean };
-		body: TeamworkV3Input_company_Request;
-	};
-	v3_delete_projects_api_v3_companies_domains_id_json: {
-		path: { id: number };
-		query?: Record<string, never>;
-		body?: never;
-	};
-	v3_patch_projects_api_v3_companies_domains_id_json: {
-		path: { id: number };
-		query?: Record<string, never>;
-		body: TeamworkV3Input_companydomain_Request;
-	};
-	v3_get_projects_api_v3_companies_time_json: {
-		path?: Record<string, never>;
+	'projectPeople.get': {
+		path: { projectId: number; personId: number };
 		query?: {
+			userType?: 'account' | 'collaborator' | 'contact' | 'client';
 			updatedAfter?: string;
-			startDate?: string;
 			searchTerm?: string;
-			reportFormat?: string;
-			projectStatus?:
-				| 'active'
-				| 'current'
-				| 'late'
-				| 'upcoming'
-				| 'completed'
-				| 'deleted';
 			orderMode?: 'asc' | 'desc';
 			orderBy?:
+				| 'name'
+				| 'namecaseinsensitive'
 				| 'company'
-				| 'date'
-				| 'dateupdated'
-				| 'project'
-				| 'task'
-				| 'tasklist'
-				| 'user'
-				| 'description'
-				| 'billed'
-				| 'billable'
-				| 'timespent'
-				| 'id';
-			invoicedType?: 'all' | 'invoiced' | 'noninvoiced';
-			endDate?: string;
-			deletedAfter?: string;
-			budgetedType?: 'all' | 'budgeted' | 'nonbudgeted';
-			billableType?: 'all' | 'billable' | 'nonbillable';
-			updatedBy?: number;
-			ticketId?: number;
-			tasklistId?: number;
-			taskId?: number;
-			projectId?: number;
+				| 'id'
+				| 'providedids'
+				| 'dateupdated';
+			lastLoginAfter?: string;
 			pageSize?: number;
 			page?: number;
-			invoiceId?: number;
-			budgetId?: number;
-			allocationId?: number;
-			useFallbackMethod?: boolean;
-			unattachedTimelogs?: boolean;
 			skipCounts?: boolean;
 			showDeleted?: boolean;
-			returnSplitInfo?: boolean;
-			returnCostInfo?: boolean;
-			returnBillableInfo?: boolean;
-			onlyStarredProjects?: boolean;
-			matchAllTaskTags?: boolean;
-			matchAllTags?: boolean;
-			matchAllProjectTags?: boolean;
-			matchAllExcludedTaskTags?: boolean;
-			matchAllExcludedProjectTags?: boolean;
-			isReportDownload?: boolean;
-			includeTotals?: boolean;
-			includeTentativeProjects?: boolean;
-			includePermissions?: boolean;
-			includeDescendants?: boolean;
-			includeArchivedProjects?: boolean;
-			deletedOnly?: boolean;
-			checkLocking?: boolean;
-			budgetAllocations?: boolean;
-			ticketIds?: Array<number>;
-			tasklistIds?: Array<number>;
-			taskTagIds?: Array<number>;
-			taskStatuses?: Array<string>;
-			taskIds?: Array<number>;
-			tagIds?: Array<number>;
-			selectedColumns?: Array<string>;
-			projectsFromCompanyId?: Array<number>;
-			projectTagIds?: Array<number>;
-			projectStatuses?: Array<
-				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
-			>;
-			projectOwnerIds?: Array<number>;
+			searchUserSkill?: boolean;
+			searchUserJobRole?: boolean;
+			orderPrioritiseCurrentUser?: boolean;
+			onlySiteOwner?: boolean;
+			onlyPlaceholders?: boolean;
+			onlyOwnerCompany?: boolean;
+			inclusiveFilter?: boolean;
+			includeStandardUsers?: boolean;
+			includeServiceAccounts?: boolean;
+			includePlaceholders?: boolean;
+			includeObservers?: boolean;
+			includeCollaborators?: boolean;
+			includeClients?: boolean;
+			filterByNoCostRate?: boolean;
+			excludeContacts?: boolean;
+			clientPortalEligible?: boolean;
+			adminsOnly?: boolean;
+			teamIds?: Array<number>;
+			skillIds?: Array<number>;
 			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
 			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
+			notLinkedWithClientPortalIds?: Array<number>;
+			jobRoleIds?: Array<number>;
 			include?: Array<
-				| 'projects'
-				| 'projects.companies'
-				| 'projects.companies.currencies'
-				| 'projects.categories'
-				| 'projects.permissions'
-				| 'projects.integrations'
-				| 'tags'
-				| 'tasks'
-				| 'tasks.parentTasks'
-				| 'tasks.tasklists'
-				| 'tasks.users'
-				| 'tasks.tags'
-				| 'users'
-				| 'createdBy'
-				| 'updatedBy'
-				| 'deletedBy'
-				| 'project.billing'
-				| 'project.billing.currencies'
-				| 'projectBudgets'
+				| 'companies'
+				| 'workingHours'
 				| 'currencies'
-				| 'userRates'
+				| 'teams'
+				| 'jobRoles'
+				| 'skills'
+				| 'linkedClientPortalCompanies'
+				| 'projects.permissions'
+				| 'permissions'
+				| 'users.integrations'
+				| 'skillCounts'
 			>;
 			ids?: Array<number>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[timelogs]'?: Array<
-				| 'id'
-				| 'dateCreated'
-				| 'minutes'
-				| 'description'
-				| 'timeLogged'
-				| 'billable'
-				| 'deleted'
-				| 'dateDeleted'
-				| 'hasStartTime'
-				| 'dateEdited'
-				| 'deskTicketId'
-				| 'userId'
-				| 'taskId'
-				| 'projectId'
-				| 'loggedByUserId'
-				| 'deletedByUserId'
-				| 'editedByUserId'
-				| 'taskIdPreMove'
-				| 'projectBillingInvoiceId'
-			>;
-			'fields[tasks]'?: Array<
-				| 'id'
-				| 'name'
-				| 'dateUpdated'
-				| 'parentTaskId'
-				| 'isPrivate'
-				| 'status'
-				| 'tasklistId'
-				| 'startDate'
-				| 'dueDate'
-				| 'estimateMinutes'
-				| 'accumulatedEstimatedMinutes'
-				| 'updatedAt'
-				| 'tasklist'
-			>;
-			'fields[tasklists]'?: Array<
-				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
-			>;
-			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-			'fields[projectcategories]'?: Array<
-				'id' | 'name' | 'color' | 'count' | 'parent' | 'parentId'
-			>;
-			'fields[projectIntegrations]'?: Array<
+			'fields[userIntegrations]'?: Array<
 				| 'userId'
 				| 'projectId'
 				| 'canAccessBox'
@@ -4685,6 +4901,51 @@ export type TeamworkV3Inputs = {
 				| 'canAccessOneDrive'
 				| 'canAccessOneDriveBusiness'
 				| 'canAccessSharePoint'
+			>;
+			'fields[teams]'?: Array<
+				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
+			>;
+			'fields[person]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
+			>;
+			'fields[people]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
 			>;
 			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
 			'fields[ProjectPermissions]'?: Array<
@@ -4732,99 +4993,2874 @@ export type TeamworkV3Inputs = {
 				| 'canViewProjectTemplates'
 				| 'canManageProjectTemplates'
 			>;
-			excludeTaskTagIds?: Array<number>;
-			excludeProjectTagIds?: Array<number>;
-			assignedToUserIds?: Array<number>;
-			assignedToTeamIds?: Array<number>;
-			assignedToCompanyIds?: Array<number>;
-			assignedTeamIds?: Array<number>;
+			excludeProjectIds?: Array<number>;
+			excludeIds?: Array<number>;
+			excludeAllocatedUsersProjectIDs?: Array<number>;
+			emails?: Array<string>;
+			companyIds?: Array<number>;
+			SkillLevels?: Array<string>;
 		};
 		body?: never;
 	};
-	v3_delete_projects_api_v3_companies_companyid_json: {
-		path: { companyId: number };
-		query?: { fireWebhook?: boolean };
-		body?: never;
+	'projectPeople.add': {
+		path: { projectId: number };
+		query?: Record<string, never>;
+		body: TeamworkV3Input_people_UsersPayload;
 	};
-	v3_get_projects_api_v3_companies_companyid_json: {
-		path: { companyId: number };
+	'tasks.list': {
+		path?: Record<string, never>;
 		query?: {
-			updatedAfterDate?: string;
+			updatedBefore?: string;
 			updatedAfter?: string;
+			today?: string;
+			taskFilter?:
+				| 'all'
+				| 'anytime'
+				| 'completed'
+				| 'created'
+				| 'overdue'
+				| 'today'
+				| 'yesterday'
+				| 'started'
+				| 'tomorrow'
+				| 'thisweek'
+				| 'within7'
+				| 'within14'
+				| 'within30'
+				| 'within365'
+				| 'nodate'
+				| 'noduedate'
+				| 'nostartdate'
+				| 'newTaskDefaults'
+				| 'hasDate'
+				| 'upcoming'
+				| 'within'
+				| 'withinprev';
+			startDate?: string;
 			searchTerm?: string;
-			reportType?: 'company' | 'client';
-			reportFormat?: string;
+			reportType?: 'plannedvsactual' | 'task' | 'tasktime';
+			reportFormat?: 'html' | 'pdf' | 'csv' | 'xls' | 'xlsx' | 'google-sheets';
+			projectType?:
+				| 'all'
+				| 'normal'
+				| 'tentative'
+				| 'personal'
+				| 'projects-template'
+				| 'tasklists-template';
+			priority?: string;
 			orderMode?: 'asc' | 'desc';
 			orderBy?:
-				| 'name'
-				| 'accounts'
-				| 'clients'
-				| 'collaborators'
-				| 'contacts'
-				| 'projects'
-				| 'tasks'
-				| 'country'
-				| 'health'
-				| 'website'
-				| 'email'
-				| 'phone'
-				| 'fax'
-				| 'industry'
-				| 'ownercompany'
-				| 'ownername'
-				| 'taskscompletion'
-				| 'customfield'
 				| 'id'
-				| 'namecaseinsensitive'
-				| 'createdAt'
-				| 'updatedAt';
-			name?: string;
-			minLastActivityDate?: string;
-			maxLastActivityDate?: string;
-			firstLetter?: string;
-			createdAfterDate?: string;
+				| 'startdate'
+				| 'createdat'
+				| 'priority'
+				| 'project'
+				| 'flattenedtasklist'
+				| 'company'
+				| 'manual'
+				| 'active'
+				| 'completedat'
+				| 'duestartdate'
+				| 'alldates'
+				| 'tasklistname'
+				| 'tasklistdisplayorder'
+				| 'tasklistid'
+				| 'duedate'
+				| 'updatedat'
+				| 'taskname'
+				| 'createdby'
+				| 'completedby'
+				| 'assignedto'
+				| 'taskstatus'
+				| 'taskduedate'
+				| 'customfield'
+				| 'estimatedtime'
+				| 'taskgroupid'
+				| 'taskgroupname'
+				| 'projectmanual'
+				| 'stagedisplayorder'
+				| 'stage'
+				| 'parenttask'
+				| 'dateadded'
+				| 'datecompleted'
+				| 'completedatdesc'
+				| 'completeddatedesc'
+				| 'duestartdatedesc'
+				| 'alldatesdesc'
+				| 'duedatedesc'
+				| 'taskgroupdisplayorder'
+				| 'dateupdated'
+				| 'originalduedate'
+				| 'tags';
+			notCompletedBefore?: string;
+			endDate?: string;
+			dueBefore?: string;
+			dueAfter?: string;
+			deletedAfter?: string;
+			createdFilter?: 'anytime' | 'today' | 'yesterday' | 'custom';
+			createdDateCode?: string;
+			createdBefore?: string;
 			createdAfter?: string;
-			budgetRanges?: string;
+			completedBefore?: string;
+			completedAfter?: string;
+			updatedByUserId?: number;
+			parentTaskId?: number;
 			pageSize?: number;
 			page?: number;
 			orderByCustomFieldId?: number;
-			currencyId?: number;
+			includeTaskId?: number;
+			filterId?: number;
+			completedByUserId?: number;
+			useTaskDateRange?: boolean;
+			useStartDatesForTodaysTasks?: boolean;
 			useFormulaFields?: boolean;
+			useAllProjects?: boolean;
+			sortActiveFirst?: boolean;
 			skipCounts?: boolean;
-			searchClientManagers?: boolean;
-			returnLetters?: boolean;
-			onlyUntaggedCompanies?: boolean;
+			showDeleted?: boolean;
+			showCompletedLists?: boolean;
+			searchJobRoles?: boolean;
+			searchCompaniesTeams?: boolean;
+			searchAssignees?: boolean;
+			onlyUntaggedTasks?: boolean;
+			onlyUnplanned?: boolean;
+			onlyUnassignedTasks?: boolean;
+			onlyTasksWithUnreadComments?: boolean;
+			onlyTasksWithTickets?: boolean;
+			onlyTasksWithEstimatedTime?: boolean;
+			onlyStarredProjects?: boolean;
+			onlyAssignedTasks?: boolean;
+			onlyAssignedRoleTasks?: boolean;
+			onlyAdminProjects?: boolean;
+			nestSubTasks?: boolean;
 			matchAllTags?: boolean;
+			matchAllProjectTags?: boolean;
 			matchAllExcludedTags?: boolean;
 			isReportDownload?: boolean;
-			includeUntaggedCompanies?: boolean;
+			includeUpdate?: boolean;
+			includeUntaggedTasks?: boolean;
+			includeTomorrow?: boolean;
+			includeToday?: boolean;
 			includeTentativeProjects?: boolean;
-			includeProfitability?: boolean;
-			includePermissions?: boolean;
+			includeTeamUserIds?: boolean;
+			includeTasksWithoutDueDates?: boolean;
+			includeTasksFromDeletedLists?: boolean;
+			includeTasksCount?: boolean;
+			includeRelatedTasks?: boolean;
+			includePrivateItems?: boolean;
+			includeOverdueTasks?: boolean;
+			includeOriginalDueDate?: boolean;
+			includeJobRoleUserIds?: boolean;
+			includeEmailCommentStats?: boolean;
 			includeCustomFields?: boolean;
-			includeBudgetSummary?: boolean;
-			includeBudgetDistribution?: boolean;
-			getStats?: boolean;
-			getEmoji?: boolean;
-			fullProfile?: boolean;
-			excludeOwnerCompany?: boolean;
+			includeCompletedTasks?: boolean;
+			includeCompletedPredecessors?: boolean;
+			includeCompanyUserIds?: boolean;
+			includeCommentStats?: boolean;
+			includeBlocked?: boolean;
+			includeAttachmentCommentStats?: boolean;
+			includeAssigneeTeams?: boolean;
+			includeAssigneeJobRoles?: boolean;
+			includeAssigneeCompanies?: boolean;
+			includeArchivedProjects?: boolean;
+			includeAllComments?: boolean;
+			includeAccumulatedTimeTotals?: boolean;
+			hideDeleted?: boolean;
+			groupByTasklist?: boolean;
+			groupByTaskgroup?: boolean;
+			getSubTasks?: boolean;
+			getFiles?: boolean;
+			fallbackToMilestoneDueDate?: boolean;
+			extractTemplateRoleName?: boolean;
+			excludeAssigneeNotOnProjectTeams?: boolean;
+			excludeAssignedToMe?: boolean;
+			deletedOnly?: boolean;
+			completedOnly?: boolean;
+			checkForTimeblocks?: boolean;
+			checkForReminders?: boolean;
+			calculateTasklistDates?: boolean;
+			allowAssigneesOutsideProject?: boolean;
+			workflowIds?: Array<number>;
+			tasksSelectedColumns?: Array<string>;
+			tasklistIds?: Array<number>;
+			taskgroupIds?: Array<number>;
+			taskIncludedSet?: Array<
+				| 'overdue'
+				| 'nodate'
+				| 'nostartdate'
+				| 'noduedate'
+				| 'nostartwithfutureduedate'
+				| 'taskListNames'
+				| 'projectNames'
+			>;
+			tags?: Array<string>;
 			tagIds?: Array<number>;
+			status?: Array<'upcoming' | 'late' | 'all'>;
+			stageIds?: Array<number>;
+			sort?: Array<string>;
+			skipCRMDealIds?: Array<number>;
 			selectedColumns?: Array<string>;
-			projectStatuses?: Array<string>;
-			notLinkedWithClientPortalIds?: Array<number>;
+			responsiblePartyIds?: Array<number>;
+			projectTagIds?: Array<number>;
+			projectStatuses?: Array<
+				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
+			>;
+			projectOwnerIds?: Array<number>;
+			projectIds?: Array<number>;
+			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectFeaturesEnabled?: Array<
+				| 'list'
+				| 'board'
+				| 'gantt'
+				| 'table'
+				| 'dashboard'
+				| 'milestones'
+				| 'messages'
+				| 'files'
+				| 'time'
+				| 'notebooks'
+				| 'risks'
+				| 'links'
+				| 'billing'
+				| 'comments'
+				| 'people'
+				| 'settings'
+			>;
+			projectCompanyIds?: Array<number>;
+			projectCategoryIds?: Array<number>;
+			portfolioBoardIds?: Array<number>;
+			includeCustomFieldIds?: Array<number>;
 			include?: Array<
-				| 'tags'
-				| 'countries'
-				| 'industries'
-				| 'clientmanagedby'
-				| 'companyupdates'
-				| 'jobRoles'
+				| 'projects'
+				| 'projects.companies'
+				| 'projects.categories'
+				| 'projects.permissions'
+				| 'projects.integrations'
+				| 'tasklists'
+				| 'parentTasks'
+				| 'companies'
+				| 'teams'
 				| 'users'
-				| 'companydomains'
-				| 'currencies'
+				| 'milestones'
+				| 'comments'
+				| 'comments.users'
+				| 'tags'
+				| 'timeTotals'
+				| 'accumulatedTimeTotals'
+				| 'taskSequences'
+				| 'commentFollowers'
+				| 'changeFollowers'
+				| 'completeFollowers'
+				| 'lockdowns'
+				| 'lockdowns.users'
+				| 'lockdowns.companies'
+				| 'lockdowns.teams'
+				| 'lockdowns.users.companies'
+				| 'lockdowns.companies.users'
+				| 'lockdowns.teams.users'
+				| 'attachments'
+				| 'attachments.users'
+				| 'subtaskStats'
+				| 'timers'
+				| 'predecessors'
+				| 'permissions'
+				| 'jobRoles'
+				| 'proofs'
+				| 'taskgroups'
+				| 'workflows'
+				| 'workflows.stages'
 				| 'customfields'
-				| 'customfieldCompanies'
-				| 'clientPortals'
+				| 'customfieldTasks'
+				| 'tasks'
+			>;
+			ids?: Array<number>;
+			followedByUserIds?: Array<number>;
+			'fields[workflows]'?: Array<'id' | 'name' | 'statusId'>;
+			'fields[users]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
+				| 'updatedAt'
+				| 'teams'
+			>;
+			'fields[timers]'?: Array<
+				| 'id'
+				| 'userId'
+				| 'taskId'
+				| 'projectId'
+				| 'description'
+				| 'running'
+				| 'billable'
+				| 'deleted'
+				| 'dateCreated'
+				| 'dateDeleted'
+				| 'duration'
+				| 'lastStartedAt'
+				| 'serverTime'
+				| 'intervals'
+			>;
+			'fields[teams]'?: Array<
+				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
+			>;
+			'fields[tasks]'?: Array<
+				| 'id'
+				| 'name'
+				| 'dateUpdated'
+				| 'parentTaskId'
+				| 'isPrivate'
+				| 'status'
+				| 'tasklistId'
+				| 'startDate'
+				| 'dueDate'
+				| 'estimateMinutes'
+				| 'accumulatedEstimatedMinutes'
+				| 'updatedAt'
+				| 'tasklist'
+			>;
+			'fields[tasklists]'?: Array<
+				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
+			>;
+			'fields[taskgroups]'?: Array<
+				'id' | 'name' | 'description' | 'displayOrder' | 'projectId' | 'status'
+			>;
+			'fields[taskSequences]'?: Array<
+				| 'id'
+				| 'installationId'
+				| 'frequency'
+				| 'selectedWeekDays'
+				| 'endDate'
+				| 'monthlyRepeatType'
+				| 'duration'
+				| 'rrule'
+			>;
+			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
+			'fields[stages]'?: Array<'id' | 'name' | 'stage'>;
+			'fields[projects]'?: Array<
+				| 'id'
+				| 'name'
+				| 'type'
+				| 'status'
+				| 'company'
+				| 'companyId'
+				| 'categoryId'
+				| 'startPage'
+				| 'logoIcon'
+				| 'logoColor'
+				| 'updatedAt'
+				| 'isStarred'
+				| 'allowNotifyAnyone'
+				| 'notifyTaskAssignee'
+				| 'isBillable'
+				| 'timelogRequiresTask'
+				| 'activePages'
+				| 'projectNumber'
+				| 'projectNumberCounter'
+			>;
+			'fields[projectIntegrations]'?: Array<
+				| 'userId'
+				| 'projectId'
+				| 'canAccessBox'
+				| 'canAccessDropbox'
+				| 'canAccessGoogleDocs'
+				| 'canAccessOneDrive'
+				| 'canAccessOneDriveBusiness'
+				| 'canAccessSharePoint'
+			>;
+			'fields[milestones]'?: Array<
+				| 'id'
+				| 'name'
+				| 'description'
+				| 'deadline'
+				| 'completed'
+				| 'projectId'
+				| 'createdOn'
+				| 'lastChangedOn'
+				| 'creatorUserId'
+				| 'reminder'
+				| 'private'
+				| 'lockdownId'
+				| 'status'
+				| 'completedOn'
+				| 'completerId'
+				| 'percentageComplete'
+				| 'project'
+			>;
+			'fields[lockdowns]'?: Array<
+				'id' | 'userID' | 'updatedAt' | 'itemType' | 'itemID' | 'grantAccessTo'
+			>;
+			'fields[jobroles]'?: Array<'id' | 'name'>;
+			'fields[groups]'?: Array<
+				| 'late'
+				| 'today'
+				| 'tomorrow'
+				| 'later-this-week'
+				| 'next-week'
+				| 'later'
+				| 'no-due-date'
+			>;
+			'fields[files]'?: Array<
+				| 'isPrivate'
+				| 'latestFileVersionNo'
+				| 'versionId'
+				| 'status'
+				| 'description'
+				| 'lockdownId'
+				| 'tagIds'
+				| 'changeFollowers'
+				| 'commentFollowers'
+				| 'originalName'
+				| 'displayName'
+				| 'isLocked'
+				| 'lockedByUserId'
+				| 'lockedDate'
+				| 'size'
+				| 'uploadedDate'
+				| 'uploadedByUserID'
+				| 'updatedAt'
+				| 'deletedAt'
+				| 'deletedBy'
+				| 'fileSource'
+				| 'projectId'
+				| 'numLikes'
+				| 'reactions'
+				| 'versions'
+				| 'downloadURL'
+				| 'previewURL'
+				| 'thumbURL'
+				| 'relatedItems'
+				| 'commentsCount'
+				| 'commentsCountRead'
+				| 'categoryId'
+			>;
+			'fields[customfields]'?: Array<
+				| 'id'
+				| 'projectId'
+				| 'entity'
+				| 'name'
+				| 'description'
+				| 'type'
+				| 'options'
+				| 'visibilities'
+				| 'isPrivate'
+				| 'required'
+				| 'createdAt'
+				| 'createdByUserId'
+				| 'updatedAt'
+				| 'updatedByUserId'
+				| 'deleted'
+				| 'deletedAt'
+				| 'deletedByUserId'
+			>;
+			'fields[customfieldTasks]'?: Array<
+				'id' | 'customfieldId' | 'value' | 'createdAt' | 'createdBy'
+			>;
+			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
+			'fields[comments]'?: Array<
+				| 'id'
+				| 'objectType'
+				| 'objectId'
+				| 'title'
+				| 'postedAt'
+				| 'postedBy'
+				| 'object'
+				| 'project'
+			>;
+			'fields[ProjectPermissions]'?: Array<
+				| 'viewMessagesAndFiles'
+				| 'viewTasksAndMilestones'
+				| 'viewTime'
+				| 'viewNotebooks'
+				| 'viewRiskRegister'
+				| 'viewEstimatedTime'
+				| 'viewInvoices'
+				| 'addTasks'
+				| 'addRisks'
+				| 'manageCustomFields'
+				| 'addExpenses'
+				| 'editAllTasks'
+				| 'addMilestones'
+				| 'addTaskLists'
+				| 'addMessages'
+				| 'addFiles'
+				| 'addTime'
+				| 'addNotebooks'
+				| 'viewLinks'
+				| 'addLinks'
+				| 'canViewForms'
+				| 'addForms'
+				| 'viewAllTimeLogs'
+				| 'setPrivacy'
+				| 'projectAdministrator'
+				| 'viewProjectUpdate'
+				| 'addProjectUpdate'
+				| 'canViewProjectMembers'
+				| 'canViewProjectBudget'
+				| 'canManageProjectBudget'
+				| 'canViewRates'
+				| 'canManageRates'
+				| 'canViewSchedule'
+				| 'canManageSchedule'
+				| 'receiveEmailNotifications'
+				| 'isObserving'
+				| 'isArchived'
+				| 'active'
+				| 'canAccess'
+				| 'inOwnerCompany'
+				| 'canManagePeople'
+				| 'canViewProjectTemplates'
+				| 'canManageProjectTemplates'
+			>;
+			expandedIds?: Array<number>;
+			excludeTagIds?: Array<number>;
+			excludeResponsiblePartyIds?: Array<number>;
+			crmDealIds?: Array<number>;
+			createdByUserIds?: Array<number>;
+			assigneeTypes?: Array<
+				| 'user'
+				| 'company'
+				| 'team'
+				| 'jobrole'
+				| 'placeholder'
+				| 'assigned'
+				| 'unassigned'
+			>;
+			assigneeTeamIds?: Array<number>;
+			assigneeJobRoleIds?: Array<number>;
+			assigneeCompanyIds?: Array<number>;
+			CustomFields?: Array<string>;
+		};
+		body?: never;
+	};
+	'tasks.get': {
+		path: { taskId: number };
+		query?: {
+			updatedBefore?: string;
+			updatedAfter?: string;
+			today?: string;
+			taskFilter?:
+				| 'all'
+				| 'anytime'
+				| 'completed'
+				| 'created'
+				| 'overdue'
+				| 'today'
+				| 'yesterday'
+				| 'started'
+				| 'tomorrow'
+				| 'thisweek'
+				| 'within7'
+				| 'within14'
+				| 'within30'
+				| 'within365'
+				| 'nodate'
+				| 'noduedate'
+				| 'nostartdate'
+				| 'newTaskDefaults'
+				| 'hasDate'
+				| 'upcoming'
+				| 'within'
+				| 'withinprev';
+			startDate?: string;
+			searchTerm?: string;
+			reportType?: 'plannedvsactual' | 'task' | 'tasktime';
+			reportFormat?: 'html' | 'pdf' | 'csv' | 'xls' | 'xlsx' | 'google-sheets';
+			projectType?:
+				| 'all'
+				| 'normal'
+				| 'tentative'
+				| 'personal'
+				| 'projects-template'
+				| 'tasklists-template';
+			priority?: string;
+			orderMode?: 'asc' | 'desc';
+			orderBy?:
+				| 'id'
+				| 'startdate'
+				| 'createdat'
+				| 'priority'
+				| 'project'
+				| 'flattenedtasklist'
+				| 'company'
+				| 'manual'
+				| 'active'
+				| 'completedat'
+				| 'duestartdate'
+				| 'alldates'
+				| 'tasklistname'
+				| 'tasklistdisplayorder'
+				| 'tasklistid'
+				| 'duedate'
+				| 'updatedat'
+				| 'taskname'
+				| 'createdby'
+				| 'completedby'
+				| 'assignedto'
+				| 'taskstatus'
+				| 'taskduedate'
+				| 'customfield'
+				| 'estimatedtime'
+				| 'taskgroupid'
+				| 'taskgroupname'
+				| 'projectmanual'
+				| 'stagedisplayorder'
+				| 'stage'
+				| 'parenttask'
+				| 'dateadded'
+				| 'datecompleted'
+				| 'completedatdesc'
+				| 'completeddatedesc'
+				| 'duestartdatedesc'
+				| 'alldatesdesc'
+				| 'duedatedesc'
+				| 'taskgroupdisplayorder'
+				| 'dateupdated'
+				| 'originalduedate'
+				| 'tags';
+			notCompletedBefore?: string;
+			endDate?: string;
+			dueBefore?: string;
+			dueAfter?: string;
+			deletedAfter?: string;
+			createdFilter?: 'anytime' | 'today' | 'yesterday' | 'custom';
+			createdDateCode?: string;
+			createdBefore?: string;
+			createdAfter?: string;
+			completedBefore?: string;
+			completedAfter?: string;
+			updatedByUserId?: number;
+			parentTaskId?: number;
+			pageSize?: number;
+			page?: number;
+			orderByCustomFieldId?: number;
+			includeTaskId?: number;
+			filterId?: number;
+			completedByUserId?: number;
+			useTaskDateRange?: boolean;
+			useStartDatesForTodaysTasks?: boolean;
+			useFormulaFields?: boolean;
+			useAllProjects?: boolean;
+			sortActiveFirst?: boolean;
+			skipCounts?: boolean;
+			showDeleted?: boolean;
+			showCompletedLists?: boolean;
+			searchJobRoles?: boolean;
+			searchCompaniesTeams?: boolean;
+			searchAssignees?: boolean;
+			onlyUntaggedTasks?: boolean;
+			onlyUnplanned?: boolean;
+			onlyUnassignedTasks?: boolean;
+			onlyTasksWithUnreadComments?: boolean;
+			onlyTasksWithTickets?: boolean;
+			onlyTasksWithEstimatedTime?: boolean;
+			onlyStarredProjects?: boolean;
+			onlyAssignedTasks?: boolean;
+			onlyAssignedRoleTasks?: boolean;
+			onlyAdminProjects?: boolean;
+			nestSubTasks?: boolean;
+			matchAllTags?: boolean;
+			matchAllProjectTags?: boolean;
+			matchAllExcludedTags?: boolean;
+			isReportDownload?: boolean;
+			includeUpdate?: boolean;
+			includeUntaggedTasks?: boolean;
+			includeTomorrow?: boolean;
+			includeToday?: boolean;
+			includeTentativeProjects?: boolean;
+			includeTeamUserIds?: boolean;
+			includeTasksWithoutDueDates?: boolean;
+			includeTasksFromDeletedLists?: boolean;
+			includeTasksCount?: boolean;
+			includeRelatedTasks?: boolean;
+			includePrivateItems?: boolean;
+			includeOverdueTasks?: boolean;
+			includeOriginalDueDate?: boolean;
+			includeJobRoleUserIds?: boolean;
+			includeEmailCommentStats?: boolean;
+			includeCustomFields?: boolean;
+			includeCompletedTasks?: boolean;
+			includeCompletedPredecessors?: boolean;
+			includeCompanyUserIds?: boolean;
+			includeCommentStats?: boolean;
+			includeBlocked?: boolean;
+			includeAttachmentCommentStats?: boolean;
+			includeAssigneeTeams?: boolean;
+			includeAssigneeJobRoles?: boolean;
+			includeAssigneeCompanies?: boolean;
+			includeArchivedProjects?: boolean;
+			includeAllComments?: boolean;
+			includeAccumulatedTimeTotals?: boolean;
+			hideDeleted?: boolean;
+			groupByTasklist?: boolean;
+			groupByTaskgroup?: boolean;
+			getSubTasks?: boolean;
+			getFiles?: boolean;
+			fallbackToMilestoneDueDate?: boolean;
+			extractTemplateRoleName?: boolean;
+			excludeAssigneeNotOnProjectTeams?: boolean;
+			excludeAssignedToMe?: boolean;
+			deletedOnly?: boolean;
+			completedOnly?: boolean;
+			checkForTimeblocks?: boolean;
+			checkForReminders?: boolean;
+			calculateTasklistDates?: boolean;
+			allowAssigneesOutsideProject?: boolean;
+			workflowIds?: Array<number>;
+			tasksSelectedColumns?: Array<string>;
+			tasklistIds?: Array<number>;
+			taskgroupIds?: Array<number>;
+			taskIncludedSet?: Array<
+				| 'overdue'
+				| 'nodate'
+				| 'nostartdate'
+				| 'noduedate'
+				| 'nostartwithfutureduedate'
+				| 'taskListNames'
+				| 'projectNames'
+			>;
+			tags?: Array<string>;
+			tagIds?: Array<number>;
+			status?: Array<'upcoming' | 'late' | 'all'>;
+			stageIds?: Array<number>;
+			sort?: Array<string>;
+			skipCRMDealIds?: Array<number>;
+			selectedColumns?: Array<string>;
+			responsiblePartyIds?: Array<number>;
+			projectTagIds?: Array<number>;
+			projectStatuses?: Array<
+				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
+			>;
+			projectOwnerIds?: Array<number>;
+			projectIds?: Array<number>;
+			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectFeaturesEnabled?: Array<
+				| 'list'
+				| 'board'
+				| 'gantt'
+				| 'table'
+				| 'dashboard'
+				| 'milestones'
+				| 'messages'
+				| 'files'
+				| 'time'
+				| 'notebooks'
+				| 'risks'
+				| 'links'
+				| 'billing'
+				| 'comments'
+				| 'people'
+				| 'settings'
+			>;
+			projectCompanyIds?: Array<number>;
+			projectCategoryIds?: Array<number>;
+			portfolioBoardIds?: Array<number>;
+			includeCustomFieldIds?: Array<number>;
+			include?: Array<
+				| 'projects'
+				| 'projects.companies'
+				| 'projects.categories'
+				| 'projects.permissions'
+				| 'projects.integrations'
+				| 'tasklists'
+				| 'parentTasks'
+				| 'companies'
+				| 'teams'
+				| 'users'
+				| 'milestones'
+				| 'comments'
+				| 'comments.users'
+				| 'tags'
+				| 'timeTotals'
+				| 'accumulatedTimeTotals'
+				| 'taskSequences'
+				| 'commentFollowers'
+				| 'changeFollowers'
+				| 'completeFollowers'
+				| 'lockdowns'
+				| 'lockdowns.users'
+				| 'lockdowns.companies'
+				| 'lockdowns.teams'
+				| 'lockdowns.users.companies'
+				| 'lockdowns.companies.users'
+				| 'lockdowns.teams.users'
+				| 'attachments'
+				| 'attachments.users'
+				| 'subtaskStats'
+				| 'timers'
+				| 'predecessors'
+				| 'permissions'
+				| 'jobRoles'
+				| 'proofs'
+				| 'taskgroups'
+				| 'workflows'
+				| 'workflows.stages'
+				| 'customfields'
+				| 'customfieldTasks'
+				| 'tasks'
+			>;
+			ids?: Array<number>;
+			followedByUserIds?: Array<number>;
+			'fields[workflows]'?: Array<'id' | 'name' | 'statusId'>;
+			'fields[users]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
+				| 'updatedAt'
+				| 'teams'
+			>;
+			'fields[timers]'?: Array<
+				| 'id'
+				| 'userId'
+				| 'taskId'
+				| 'projectId'
+				| 'description'
+				| 'running'
+				| 'billable'
+				| 'deleted'
+				| 'dateCreated'
+				| 'dateDeleted'
+				| 'duration'
+				| 'lastStartedAt'
+				| 'serverTime'
+				| 'intervals'
+			>;
+			'fields[teams]'?: Array<
+				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
+			>;
+			'fields[tasks]'?: Array<
+				| 'id'
+				| 'name'
+				| 'dateUpdated'
+				| 'parentTaskId'
+				| 'isPrivate'
+				| 'status'
+				| 'tasklistId'
+				| 'startDate'
+				| 'dueDate'
+				| 'estimateMinutes'
+				| 'accumulatedEstimatedMinutes'
+				| 'updatedAt'
+				| 'tasklist'
+			>;
+			'fields[tasklists]'?: Array<
+				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
+			>;
+			'fields[taskgroups]'?: Array<
+				'id' | 'name' | 'description' | 'displayOrder' | 'projectId' | 'status'
+			>;
+			'fields[taskSequences]'?: Array<
+				| 'id'
+				| 'installationId'
+				| 'frequency'
+				| 'selectedWeekDays'
+				| 'endDate'
+				| 'monthlyRepeatType'
+				| 'duration'
+				| 'rrule'
+			>;
+			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
+			'fields[stages]'?: Array<'id' | 'name' | 'stage'>;
+			'fields[projects]'?: Array<
+				| 'id'
+				| 'name'
+				| 'type'
+				| 'status'
+				| 'company'
+				| 'companyId'
+				| 'categoryId'
+				| 'startPage'
+				| 'logoIcon'
+				| 'logoColor'
+				| 'updatedAt'
+				| 'isStarred'
+				| 'allowNotifyAnyone'
+				| 'notifyTaskAssignee'
+				| 'isBillable'
+				| 'timelogRequiresTask'
+				| 'activePages'
+				| 'projectNumber'
+				| 'projectNumberCounter'
+			>;
+			'fields[projectIntegrations]'?: Array<
+				| 'userId'
+				| 'projectId'
+				| 'canAccessBox'
+				| 'canAccessDropbox'
+				| 'canAccessGoogleDocs'
+				| 'canAccessOneDrive'
+				| 'canAccessOneDriveBusiness'
+				| 'canAccessSharePoint'
+			>;
+			'fields[milestones]'?: Array<
+				| 'id'
+				| 'name'
+				| 'description'
+				| 'deadline'
+				| 'completed'
+				| 'projectId'
+				| 'createdOn'
+				| 'lastChangedOn'
+				| 'creatorUserId'
+				| 'reminder'
+				| 'private'
+				| 'lockdownId'
+				| 'status'
+				| 'completedOn'
+				| 'completerId'
+				| 'percentageComplete'
+				| 'project'
+			>;
+			'fields[lockdowns]'?: Array<
+				'id' | 'userID' | 'updatedAt' | 'itemType' | 'itemID' | 'grantAccessTo'
+			>;
+			'fields[jobroles]'?: Array<'id' | 'name'>;
+			'fields[groups]'?: Array<
+				| 'late'
+				| 'today'
+				| 'tomorrow'
+				| 'later-this-week'
+				| 'next-week'
+				| 'later'
+				| 'no-due-date'
+			>;
+			'fields[files]'?: Array<
+				| 'isPrivate'
+				| 'latestFileVersionNo'
+				| 'versionId'
+				| 'status'
+				| 'description'
+				| 'lockdownId'
+				| 'tagIds'
+				| 'changeFollowers'
+				| 'commentFollowers'
+				| 'originalName'
+				| 'displayName'
+				| 'isLocked'
+				| 'lockedByUserId'
+				| 'lockedDate'
+				| 'size'
+				| 'uploadedDate'
+				| 'uploadedByUserID'
+				| 'updatedAt'
+				| 'deletedAt'
+				| 'deletedBy'
+				| 'fileSource'
+				| 'projectId'
+				| 'numLikes'
+				| 'reactions'
+				| 'versions'
+				| 'downloadURL'
+				| 'previewURL'
+				| 'thumbURL'
+				| 'relatedItems'
+				| 'commentsCount'
+				| 'commentsCountRead'
+				| 'categoryId'
+			>;
+			'fields[customfields]'?: Array<
+				| 'id'
+				| 'projectId'
+				| 'entity'
+				| 'name'
+				| 'description'
+				| 'type'
+				| 'options'
+				| 'visibilities'
+				| 'isPrivate'
+				| 'required'
+				| 'createdAt'
+				| 'createdByUserId'
+				| 'updatedAt'
+				| 'updatedByUserId'
+				| 'deleted'
+				| 'deletedAt'
+				| 'deletedByUserId'
+			>;
+			'fields[customfieldTasks]'?: Array<
+				'id' | 'customfieldId' | 'value' | 'createdAt' | 'createdBy'
+			>;
+			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
+			'fields[comments]'?: Array<
+				| 'id'
+				| 'objectType'
+				| 'objectId'
+				| 'title'
+				| 'postedAt'
+				| 'postedBy'
+				| 'object'
+				| 'project'
+			>;
+			'fields[ProjectPermissions]'?: Array<
+				| 'viewMessagesAndFiles'
+				| 'viewTasksAndMilestones'
+				| 'viewTime'
+				| 'viewNotebooks'
+				| 'viewRiskRegister'
+				| 'viewEstimatedTime'
+				| 'viewInvoices'
+				| 'addTasks'
+				| 'addRisks'
+				| 'manageCustomFields'
+				| 'addExpenses'
+				| 'editAllTasks'
+				| 'addMilestones'
+				| 'addTaskLists'
+				| 'addMessages'
+				| 'addFiles'
+				| 'addTime'
+				| 'addNotebooks'
+				| 'viewLinks'
+				| 'addLinks'
+				| 'canViewForms'
+				| 'addForms'
+				| 'viewAllTimeLogs'
+				| 'setPrivacy'
+				| 'projectAdministrator'
+				| 'viewProjectUpdate'
+				| 'addProjectUpdate'
+				| 'canViewProjectMembers'
+				| 'canViewProjectBudget'
+				| 'canManageProjectBudget'
+				| 'canViewRates'
+				| 'canManageRates'
+				| 'canViewSchedule'
+				| 'canManageSchedule'
+				| 'receiveEmailNotifications'
+				| 'isObserving'
+				| 'isArchived'
+				| 'active'
+				| 'canAccess'
+				| 'inOwnerCompany'
+				| 'canManagePeople'
+				| 'canViewProjectTemplates'
+				| 'canManageProjectTemplates'
+			>;
+			expandedIds?: Array<number>;
+			excludeTagIds?: Array<number>;
+			excludeResponsiblePartyIds?: Array<number>;
+			crmDealIds?: Array<number>;
+			createdByUserIds?: Array<number>;
+			assigneeTypes?: Array<
+				| 'user'
+				| 'company'
+				| 'team'
+				| 'jobrole'
+				| 'placeholder'
+				| 'assigned'
+				| 'unassigned'
+			>;
+			assigneeTeamIds?: Array<number>;
+			assigneeJobRoleIds?: Array<number>;
+			assigneeCompanyIds?: Array<number>;
+			CustomFields?: Array<string>;
+		};
+		body?: never;
+	};
+	'tasks.create': {
+		path: { tasklistId: number };
+		query?: { fireWebhook?: boolean };
+		body: TeamworkV3Input_task_CreateRequest;
+	};
+	'tasks.createSubtask': {
+		path: { taskId: number };
+		query?: { fireWebhook?: boolean };
+		body: TeamworkV3Input_task_CreateRequest;
+	};
+	'tasks.update': {
+		path: { taskId: number };
+		query?: { fireWebhook?: boolean };
+		body: TeamworkV3Input_task_Request;
+	};
+	'tasks.delete': {
+		path: { taskId: number };
+		query?: { fireWebhook?: boolean };
+		body?: never;
+	};
+	'tasks.countCompleted': {
+		path?: Record<string, never>;
+		query?: Record<string, never>;
+		body?: never;
+	};
+	'tasks.countLate': {
+		path?: Record<string, never>;
+		query?: Record<string, never>;
+		body?: never;
+	};
+	'tasks.timeReport': {
+		path?: Record<string, never>;
+		query?: {
+			updatedBefore?: string;
+			updatedAfter?: string;
+			today?: string;
+			taskFilter?:
+				| 'all'
+				| 'anytime'
+				| 'completed'
+				| 'created'
+				| 'overdue'
+				| 'today'
+				| 'yesterday'
+				| 'started'
+				| 'tomorrow'
+				| 'thisweek'
+				| 'within7'
+				| 'within14'
+				| 'within30'
+				| 'within365'
+				| 'nodate'
+				| 'noduedate'
+				| 'nostartdate'
+				| 'newTaskDefaults'
+				| 'hasDate'
+				| 'upcoming'
+				| 'within'
+				| 'withinprev';
+			startDate?: string;
+			searchTerm?: string;
+			reportType?: 'plannedvsactual' | 'task' | 'tasktime';
+			reportFormat?: 'html' | 'pdf' | 'csv' | 'xls' | 'xlsx' | 'google-sheets';
+			projectType?:
+				| 'all'
+				| 'normal'
+				| 'tentative'
+				| 'personal'
+				| 'projects-template'
+				| 'tasklists-template';
+			priority?: string;
+			orderMode?: 'asc' | 'desc';
+			orderBy?:
+				| 'id'
+				| 'startdate'
+				| 'createdat'
+				| 'priority'
+				| 'project'
+				| 'flattenedtasklist'
+				| 'company'
+				| 'manual'
+				| 'active'
+				| 'completedat'
+				| 'duestartdate'
+				| 'alldates'
+				| 'tasklistname'
+				| 'tasklistdisplayorder'
+				| 'tasklistid'
+				| 'duedate'
+				| 'updatedat'
+				| 'taskname'
+				| 'createdby'
+				| 'completedby'
+				| 'assignedto'
+				| 'taskstatus'
+				| 'taskduedate'
+				| 'customfield'
+				| 'estimatedtime'
+				| 'taskgroupid'
+				| 'taskgroupname'
+				| 'projectmanual'
+				| 'stagedisplayorder'
+				| 'stage'
+				| 'parenttask'
+				| 'dateadded'
+				| 'datecompleted'
+				| 'completedatdesc'
+				| 'completeddatedesc'
+				| 'duestartdatedesc'
+				| 'alldatesdesc'
+				| 'duedatedesc'
+				| 'taskgroupdisplayorder'
+				| 'dateupdated'
+				| 'originalduedate'
+				| 'tags';
+			notCompletedBefore?: string;
+			endDate?: string;
+			dueBefore?: string;
+			dueAfter?: string;
+			deletedAfter?: string;
+			createdFilter?: 'anytime' | 'today' | 'yesterday' | 'custom';
+			createdDateCode?: string;
+			createdBefore?: string;
+			createdAfter?: string;
+			completedBefore?: string;
+			completedAfter?: string;
+			updatedByUserId?: number;
+			parentTaskId?: number;
+			pageSize?: number;
+			page?: number;
+			orderByCustomFieldId?: number;
+			includeTaskId?: number;
+			filterId?: number;
+			completedByUserId?: number;
+			useTaskDateRange?: boolean;
+			useStartDatesForTodaysTasks?: boolean;
+			useFormulaFields?: boolean;
+			useAllProjects?: boolean;
+			sortActiveFirst?: boolean;
+			skipCounts?: boolean;
+			showDeleted?: boolean;
+			showCompletedLists?: boolean;
+			searchJobRoles?: boolean;
+			searchCompaniesTeams?: boolean;
+			searchAssignees?: boolean;
+			onlyUntaggedTasks?: boolean;
+			onlyUnplanned?: boolean;
+			onlyUnassignedTasks?: boolean;
+			onlyTasksWithUnreadComments?: boolean;
+			onlyTasksWithTickets?: boolean;
+			onlyTasksWithEstimatedTime?: boolean;
+			onlyStarredProjects?: boolean;
+			onlyAssignedTasks?: boolean;
+			onlyAssignedRoleTasks?: boolean;
+			onlyAdminProjects?: boolean;
+			nestSubTasks?: boolean;
+			matchAllTags?: boolean;
+			matchAllProjectTags?: boolean;
+			matchAllExcludedTags?: boolean;
+			isReportDownload?: boolean;
+			includeUpdate?: boolean;
+			includeUntaggedTasks?: boolean;
+			includeTomorrow?: boolean;
+			includeToday?: boolean;
+			includeTentativeProjects?: boolean;
+			includeTeamUserIds?: boolean;
+			includeTasksWithoutDueDates?: boolean;
+			includeTasksFromDeletedLists?: boolean;
+			includeTasksCount?: boolean;
+			includeRelatedTasks?: boolean;
+			includePrivateItems?: boolean;
+			includeOverdueTasks?: boolean;
+			includeOriginalDueDate?: boolean;
+			includeJobRoleUserIds?: boolean;
+			includeEmailCommentStats?: boolean;
+			includeCustomFields?: boolean;
+			includeCompletedTasks?: boolean;
+			includeCompletedPredecessors?: boolean;
+			includeCompanyUserIds?: boolean;
+			includeCommentStats?: boolean;
+			includeBlocked?: boolean;
+			includeAttachmentCommentStats?: boolean;
+			includeAssigneeTeams?: boolean;
+			includeAssigneeJobRoles?: boolean;
+			includeAssigneeCompanies?: boolean;
+			includeArchivedProjects?: boolean;
+			includeAllComments?: boolean;
+			includeAccumulatedTimeTotals?: boolean;
+			hideDeleted?: boolean;
+			groupByTasklist?: boolean;
+			groupByTaskgroup?: boolean;
+			getSubTasks?: boolean;
+			getFiles?: boolean;
+			fallbackToMilestoneDueDate?: boolean;
+			extractTemplateRoleName?: boolean;
+			excludeAssigneeNotOnProjectTeams?: boolean;
+			excludeAssignedToMe?: boolean;
+			deletedOnly?: boolean;
+			completedOnly?: boolean;
+			checkForTimeblocks?: boolean;
+			checkForReminders?: boolean;
+			calculateTasklistDates?: boolean;
+			allowAssigneesOutsideProject?: boolean;
+			workflowIds?: Array<number>;
+			tasksSelectedColumns?: Array<string>;
+			tasklistIds?: Array<number>;
+			taskgroupIds?: Array<number>;
+			taskIncludedSet?: Array<
+				| 'overdue'
+				| 'nodate'
+				| 'nostartdate'
+				| 'noduedate'
+				| 'nostartwithfutureduedate'
+				| 'taskListNames'
+				| 'projectNames'
+			>;
+			tags?: Array<string>;
+			tagIds?: Array<number>;
+			status?: Array<'upcoming' | 'late' | 'all'>;
+			stageIds?: Array<number>;
+			sort?: Array<string>;
+			skipCRMDealIds?: Array<number>;
+			selectedColumns?: Array<string>;
+			responsiblePartyIds?: Array<number>;
+			projectTagIds?: Array<number>;
+			projectStatuses?: Array<
+				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
+			>;
+			projectOwnerIds?: Array<number>;
+			projectIds?: Array<number>;
+			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectFeaturesEnabled?: Array<
+				| 'list'
+				| 'board'
+				| 'gantt'
+				| 'table'
+				| 'dashboard'
+				| 'milestones'
+				| 'messages'
+				| 'files'
+				| 'time'
+				| 'notebooks'
+				| 'risks'
+				| 'links'
+				| 'billing'
+				| 'comments'
+				| 'people'
+				| 'settings'
+			>;
+			projectCompanyIds?: Array<number>;
+			projectCategoryIds?: Array<number>;
+			portfolioBoardIds?: Array<number>;
+			includeCustomFieldIds?: Array<number>;
+			include?: Array<
+				| 'projects'
+				| 'projects.companies'
+				| 'projects.categories'
+				| 'projects.permissions'
+				| 'projects.integrations'
+				| 'tasklists'
+				| 'parentTasks'
+				| 'companies'
+				| 'teams'
+				| 'users'
+				| 'milestones'
+				| 'comments'
+				| 'comments.users'
+				| 'tags'
+				| 'timeTotals'
+				| 'accumulatedTimeTotals'
+				| 'taskSequences'
+				| 'commentFollowers'
+				| 'changeFollowers'
+				| 'completeFollowers'
+				| 'lockdowns'
+				| 'lockdowns.users'
+				| 'lockdowns.companies'
+				| 'lockdowns.teams'
+				| 'lockdowns.users.companies'
+				| 'lockdowns.companies.users'
+				| 'lockdowns.teams.users'
+				| 'attachments'
+				| 'attachments.users'
+				| 'subtaskStats'
+				| 'timers'
+				| 'predecessors'
+				| 'permissions'
+				| 'jobRoles'
+				| 'proofs'
+				| 'taskgroups'
+				| 'workflows'
+				| 'workflows.stages'
+				| 'customfields'
+				| 'customfieldTasks'
+				| 'tasks'
+			>;
+			ids?: Array<number>;
+			followedByUserIds?: Array<number>;
+			'fields[workflows]'?: Array<'id' | 'name' | 'statusId'>;
+			'fields[users]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
+				| 'updatedAt'
+				| 'teams'
+			>;
+			'fields[timers]'?: Array<
+				| 'id'
+				| 'userId'
+				| 'taskId'
+				| 'projectId'
+				| 'description'
+				| 'running'
+				| 'billable'
+				| 'deleted'
+				| 'dateCreated'
+				| 'dateDeleted'
+				| 'duration'
+				| 'lastStartedAt'
+				| 'serverTime'
+				| 'intervals'
+			>;
+			'fields[teams]'?: Array<
+				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
+			>;
+			'fields[tasks]'?: Array<
+				| 'id'
+				| 'name'
+				| 'dateUpdated'
+				| 'parentTaskId'
+				| 'isPrivate'
+				| 'status'
+				| 'tasklistId'
+				| 'startDate'
+				| 'dueDate'
+				| 'estimateMinutes'
+				| 'accumulatedEstimatedMinutes'
+				| 'updatedAt'
+				| 'tasklist'
+			>;
+			'fields[tasklists]'?: Array<
+				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
+			>;
+			'fields[taskgroups]'?: Array<
+				'id' | 'name' | 'description' | 'displayOrder' | 'projectId' | 'status'
+			>;
+			'fields[taskSequences]'?: Array<
+				| 'id'
+				| 'installationId'
+				| 'frequency'
+				| 'selectedWeekDays'
+				| 'endDate'
+				| 'monthlyRepeatType'
+				| 'duration'
+				| 'rrule'
+			>;
+			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
+			'fields[stages]'?: Array<'id' | 'name' | 'stage'>;
+			'fields[projects]'?: Array<
+				| 'id'
+				| 'name'
+				| 'type'
+				| 'status'
+				| 'company'
+				| 'companyId'
+				| 'categoryId'
+				| 'startPage'
+				| 'logoIcon'
+				| 'logoColor'
+				| 'updatedAt'
+				| 'isStarred'
+				| 'allowNotifyAnyone'
+				| 'notifyTaskAssignee'
+				| 'isBillable'
+				| 'timelogRequiresTask'
+				| 'activePages'
+				| 'projectNumber'
+				| 'projectNumberCounter'
+			>;
+			'fields[projectIntegrations]'?: Array<
+				| 'userId'
+				| 'projectId'
+				| 'canAccessBox'
+				| 'canAccessDropbox'
+				| 'canAccessGoogleDocs'
+				| 'canAccessOneDrive'
+				| 'canAccessOneDriveBusiness'
+				| 'canAccessSharePoint'
+			>;
+			'fields[milestones]'?: Array<
+				| 'id'
+				| 'name'
+				| 'description'
+				| 'deadline'
+				| 'completed'
+				| 'projectId'
+				| 'createdOn'
+				| 'lastChangedOn'
+				| 'creatorUserId'
+				| 'reminder'
+				| 'private'
+				| 'lockdownId'
+				| 'status'
+				| 'completedOn'
+				| 'completerId'
+				| 'percentageComplete'
+				| 'project'
+			>;
+			'fields[lockdowns]'?: Array<
+				'id' | 'userID' | 'updatedAt' | 'itemType' | 'itemID' | 'grantAccessTo'
+			>;
+			'fields[jobroles]'?: Array<'id' | 'name'>;
+			'fields[groups]'?: Array<
+				| 'late'
+				| 'today'
+				| 'tomorrow'
+				| 'later-this-week'
+				| 'next-week'
+				| 'later'
+				| 'no-due-date'
+			>;
+			'fields[files]'?: Array<
+				| 'isPrivate'
+				| 'latestFileVersionNo'
+				| 'versionId'
+				| 'status'
+				| 'description'
+				| 'lockdownId'
+				| 'tagIds'
+				| 'changeFollowers'
+				| 'commentFollowers'
+				| 'originalName'
+				| 'displayName'
+				| 'isLocked'
+				| 'lockedByUserId'
+				| 'lockedDate'
+				| 'size'
+				| 'uploadedDate'
+				| 'uploadedByUserID'
+				| 'updatedAt'
+				| 'deletedAt'
+				| 'deletedBy'
+				| 'fileSource'
+				| 'projectId'
+				| 'numLikes'
+				| 'reactions'
+				| 'versions'
+				| 'downloadURL'
+				| 'previewURL'
+				| 'thumbURL'
+				| 'relatedItems'
+				| 'commentsCount'
+				| 'commentsCountRead'
+				| 'categoryId'
+			>;
+			'fields[customfields]'?: Array<
+				| 'id'
+				| 'projectId'
+				| 'entity'
+				| 'name'
+				| 'description'
+				| 'type'
+				| 'options'
+				| 'visibilities'
+				| 'isPrivate'
+				| 'required'
+				| 'createdAt'
+				| 'createdByUserId'
+				| 'updatedAt'
+				| 'updatedByUserId'
+				| 'deleted'
+				| 'deletedAt'
+				| 'deletedByUserId'
+			>;
+			'fields[customfieldTasks]'?: Array<
+				'id' | 'customfieldId' | 'value' | 'createdAt' | 'createdBy'
+			>;
+			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
+			'fields[comments]'?: Array<
+				| 'id'
+				| 'objectType'
+				| 'objectId'
+				| 'title'
+				| 'postedAt'
+				| 'postedBy'
+				| 'object'
+				| 'project'
+			>;
+			'fields[ProjectPermissions]'?: Array<
+				| 'viewMessagesAndFiles'
+				| 'viewTasksAndMilestones'
+				| 'viewTime'
+				| 'viewNotebooks'
+				| 'viewRiskRegister'
+				| 'viewEstimatedTime'
+				| 'viewInvoices'
+				| 'addTasks'
+				| 'addRisks'
+				| 'manageCustomFields'
+				| 'addExpenses'
+				| 'editAllTasks'
+				| 'addMilestones'
+				| 'addTaskLists'
+				| 'addMessages'
+				| 'addFiles'
+				| 'addTime'
+				| 'addNotebooks'
+				| 'viewLinks'
+				| 'addLinks'
+				| 'canViewForms'
+				| 'addForms'
+				| 'viewAllTimeLogs'
+				| 'setPrivacy'
+				| 'projectAdministrator'
+				| 'viewProjectUpdate'
+				| 'addProjectUpdate'
+				| 'canViewProjectMembers'
+				| 'canViewProjectBudget'
+				| 'canManageProjectBudget'
+				| 'canViewRates'
+				| 'canManageRates'
+				| 'canViewSchedule'
+				| 'canManageSchedule'
+				| 'receiveEmailNotifications'
+				| 'isObserving'
+				| 'isArchived'
+				| 'active'
+				| 'canAccess'
+				| 'inOwnerCompany'
+				| 'canManagePeople'
+				| 'canViewProjectTemplates'
+				| 'canManageProjectTemplates'
+			>;
+			expandedIds?: Array<number>;
+			excludeTagIds?: Array<number>;
+			excludeResponsiblePartyIds?: Array<number>;
+			crmDealIds?: Array<number>;
+			createdByUserIds?: Array<number>;
+			assigneeTypes?: Array<
+				| 'user'
+				| 'company'
+				| 'team'
+				| 'jobrole'
+				| 'placeholder'
+				| 'assigned'
+				| 'unassigned'
+			>;
+			assigneeTeamIds?: Array<number>;
+			assigneeJobRoleIds?: Array<number>;
+			assigneeCompanyIds?: Array<number>;
+			CustomFields?: Array<string>;
+		};
+		body?: never;
+	};
+	'personalTasks.list': {
+		path?: Record<string, never>;
+		query?: {
+			updatedBefore?: string;
+			updatedAfter?: string;
+			today?: string;
+			taskFilter?:
+				| 'all'
+				| 'anytime'
+				| 'completed'
+				| 'created'
+				| 'overdue'
+				| 'today'
+				| 'yesterday'
+				| 'started'
+				| 'tomorrow'
+				| 'thisweek'
+				| 'within7'
+				| 'within14'
+				| 'within30'
+				| 'within365'
+				| 'nodate'
+				| 'noduedate'
+				| 'nostartdate'
+				| 'newTaskDefaults'
+				| 'hasDate'
+				| 'upcoming'
+				| 'within'
+				| 'withinprev';
+			startDate?: string;
+			searchTerm?: string;
+			reportType?: 'plannedvsactual' | 'task' | 'tasktime';
+			reportFormat?: 'html' | 'pdf' | 'csv' | 'xls' | 'xlsx' | 'google-sheets';
+			projectType?:
+				| 'all'
+				| 'normal'
+				| 'tentative'
+				| 'personal'
+				| 'projects-template'
+				| 'tasklists-template';
+			priority?: string;
+			orderMode?: 'asc' | 'desc';
+			orderBy?:
+				| 'id'
+				| 'startdate'
+				| 'createdat'
+				| 'priority'
+				| 'project'
+				| 'flattenedtasklist'
+				| 'company'
+				| 'manual'
+				| 'active'
+				| 'completedat'
+				| 'duestartdate'
+				| 'alldates'
+				| 'tasklistname'
+				| 'tasklistdisplayorder'
+				| 'tasklistid'
+				| 'duedate'
+				| 'updatedat'
+				| 'taskname'
+				| 'createdby'
+				| 'completedby'
+				| 'assignedto'
+				| 'taskstatus'
+				| 'taskduedate'
+				| 'customfield'
+				| 'estimatedtime'
+				| 'taskgroupid'
+				| 'taskgroupname'
+				| 'projectmanual'
+				| 'stagedisplayorder'
+				| 'stage'
+				| 'parenttask'
+				| 'dateadded'
+				| 'datecompleted'
+				| 'completedatdesc'
+				| 'completeddatedesc'
+				| 'duestartdatedesc'
+				| 'alldatesdesc'
+				| 'duedatedesc'
+				| 'taskgroupdisplayorder'
+				| 'dateupdated'
+				| 'originalduedate'
+				| 'tags';
+			notCompletedBefore?: string;
+			endDate?: string;
+			dueBefore?: string;
+			dueAfter?: string;
+			deletedAfter?: string;
+			createdFilter?: 'anytime' | 'today' | 'yesterday' | 'custom';
+			createdDateCode?: string;
+			createdBefore?: string;
+			createdAfter?: string;
+			completedBefore?: string;
+			completedAfter?: string;
+			updatedByUserId?: number;
+			parentTaskId?: number;
+			pageSize?: number;
+			page?: number;
+			orderByCustomFieldId?: number;
+			includeTaskId?: number;
+			filterId?: number;
+			completedByUserId?: number;
+			useTaskDateRange?: boolean;
+			useStartDatesForTodaysTasks?: boolean;
+			useFormulaFields?: boolean;
+			useAllProjects?: boolean;
+			sortActiveFirst?: boolean;
+			skipCounts?: boolean;
+			showDeleted?: boolean;
+			showCompletedLists?: boolean;
+			searchJobRoles?: boolean;
+			searchCompaniesTeams?: boolean;
+			searchAssignees?: boolean;
+			onlyUntaggedTasks?: boolean;
+			onlyUnplanned?: boolean;
+			onlyUnassignedTasks?: boolean;
+			onlyTasksWithUnreadComments?: boolean;
+			onlyTasksWithTickets?: boolean;
+			onlyTasksWithEstimatedTime?: boolean;
+			onlyStarredProjects?: boolean;
+			onlyAssignedTasks?: boolean;
+			onlyAssignedRoleTasks?: boolean;
+			onlyAdminProjects?: boolean;
+			nestSubTasks?: boolean;
+			matchAllTags?: boolean;
+			matchAllProjectTags?: boolean;
+			matchAllExcludedTags?: boolean;
+			isReportDownload?: boolean;
+			includeUpdate?: boolean;
+			includeUntaggedTasks?: boolean;
+			includeTomorrow?: boolean;
+			includeToday?: boolean;
+			includeTentativeProjects?: boolean;
+			includeTeamUserIds?: boolean;
+			includeTasksWithoutDueDates?: boolean;
+			includeTasksFromDeletedLists?: boolean;
+			includeTasksCount?: boolean;
+			includeRelatedTasks?: boolean;
+			includePrivateItems?: boolean;
+			includeOverdueTasks?: boolean;
+			includeOriginalDueDate?: boolean;
+			includeJobRoleUserIds?: boolean;
+			includeEmailCommentStats?: boolean;
+			includeCustomFields?: boolean;
+			includeCompletedTasks?: boolean;
+			includeCompletedPredecessors?: boolean;
+			includeCompanyUserIds?: boolean;
+			includeCommentStats?: boolean;
+			includeBlocked?: boolean;
+			includeAttachmentCommentStats?: boolean;
+			includeAssigneeTeams?: boolean;
+			includeAssigneeJobRoles?: boolean;
+			includeAssigneeCompanies?: boolean;
+			includeArchivedProjects?: boolean;
+			includeAllComments?: boolean;
+			includeAccumulatedTimeTotals?: boolean;
+			hideDeleted?: boolean;
+			groupByTasklist?: boolean;
+			groupByTaskgroup?: boolean;
+			getSubTasks?: boolean;
+			getFiles?: boolean;
+			fallbackToMilestoneDueDate?: boolean;
+			extractTemplateRoleName?: boolean;
+			excludeAssigneeNotOnProjectTeams?: boolean;
+			excludeAssignedToMe?: boolean;
+			deletedOnly?: boolean;
+			completedOnly?: boolean;
+			checkForTimeblocks?: boolean;
+			checkForReminders?: boolean;
+			calculateTasklistDates?: boolean;
+			allowAssigneesOutsideProject?: boolean;
+			workflowIds?: Array<number>;
+			tasksSelectedColumns?: Array<string>;
+			tasklistIds?: Array<number>;
+			taskgroupIds?: Array<number>;
+			taskIncludedSet?: Array<
+				| 'overdue'
+				| 'nodate'
+				| 'nostartdate'
+				| 'noduedate'
+				| 'nostartwithfutureduedate'
+				| 'taskListNames'
+				| 'projectNames'
+			>;
+			tags?: Array<string>;
+			tagIds?: Array<number>;
+			status?: Array<'upcoming' | 'late' | 'all'>;
+			stageIds?: Array<number>;
+			sort?: Array<string>;
+			skipCRMDealIds?: Array<number>;
+			selectedColumns?: Array<string>;
+			responsiblePartyIds?: Array<number>;
+			projectTagIds?: Array<number>;
+			projectStatuses?: Array<
+				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
+			>;
+			projectOwnerIds?: Array<number>;
+			projectIds?: Array<number>;
+			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectFeaturesEnabled?: Array<
+				| 'list'
+				| 'board'
+				| 'gantt'
+				| 'table'
+				| 'dashboard'
+				| 'milestones'
+				| 'messages'
+				| 'files'
+				| 'time'
+				| 'notebooks'
+				| 'risks'
+				| 'links'
+				| 'billing'
+				| 'comments'
+				| 'people'
+				| 'settings'
+			>;
+			projectCompanyIds?: Array<number>;
+			projectCategoryIds?: Array<number>;
+			portfolioBoardIds?: Array<number>;
+			includeCustomFieldIds?: Array<number>;
+			include?: Array<
+				| 'projects'
+				| 'projects.companies'
+				| 'projects.categories'
+				| 'projects.permissions'
+				| 'projects.integrations'
+				| 'tasklists'
+				| 'parentTasks'
+				| 'companies'
+				| 'teams'
+				| 'users'
+				| 'milestones'
+				| 'comments'
+				| 'comments.users'
+				| 'tags'
+				| 'timeTotals'
+				| 'accumulatedTimeTotals'
+				| 'taskSequences'
+				| 'commentFollowers'
+				| 'changeFollowers'
+				| 'completeFollowers'
+				| 'lockdowns'
+				| 'lockdowns.users'
+				| 'lockdowns.companies'
+				| 'lockdowns.teams'
+				| 'lockdowns.users.companies'
+				| 'lockdowns.companies.users'
+				| 'lockdowns.teams.users'
+				| 'attachments'
+				| 'attachments.users'
+				| 'subtaskStats'
+				| 'timers'
+				| 'predecessors'
+				| 'permissions'
+				| 'jobRoles'
+				| 'proofs'
+				| 'taskgroups'
+				| 'workflows'
+				| 'workflows.stages'
+				| 'customfields'
+				| 'customfieldTasks'
+				| 'tasks'
+			>;
+			ids?: Array<number>;
+			followedByUserIds?: Array<number>;
+			'fields[workflows]'?: Array<'id' | 'name' | 'statusId'>;
+			'fields[users]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
+				| 'updatedAt'
+				| 'teams'
+			>;
+			'fields[timers]'?: Array<
+				| 'id'
+				| 'userId'
+				| 'taskId'
+				| 'projectId'
+				| 'description'
+				| 'running'
+				| 'billable'
+				| 'deleted'
+				| 'dateCreated'
+				| 'dateDeleted'
+				| 'duration'
+				| 'lastStartedAt'
+				| 'serverTime'
+				| 'intervals'
+			>;
+			'fields[teams]'?: Array<
+				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
+			>;
+			'fields[tasks]'?: Array<
+				| 'id'
+				| 'name'
+				| 'dateUpdated'
+				| 'parentTaskId'
+				| 'isPrivate'
+				| 'status'
+				| 'tasklistId'
+				| 'startDate'
+				| 'dueDate'
+				| 'estimateMinutes'
+				| 'accumulatedEstimatedMinutes'
+				| 'updatedAt'
+				| 'tasklist'
+			>;
+			'fields[tasklists]'?: Array<
+				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
+			>;
+			'fields[taskgroups]'?: Array<
+				'id' | 'name' | 'description' | 'displayOrder' | 'projectId' | 'status'
+			>;
+			'fields[taskSequences]'?: Array<
+				| 'id'
+				| 'installationId'
+				| 'frequency'
+				| 'selectedWeekDays'
+				| 'endDate'
+				| 'monthlyRepeatType'
+				| 'duration'
+				| 'rrule'
+			>;
+			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
+			'fields[stages]'?: Array<'id' | 'name' | 'stage'>;
+			'fields[projects]'?: Array<
+				| 'id'
+				| 'name'
+				| 'type'
+				| 'status'
+				| 'company'
+				| 'companyId'
+				| 'categoryId'
+				| 'startPage'
+				| 'logoIcon'
+				| 'logoColor'
+				| 'updatedAt'
+				| 'isStarred'
+				| 'allowNotifyAnyone'
+				| 'notifyTaskAssignee'
+				| 'isBillable'
+				| 'timelogRequiresTask'
+				| 'activePages'
+				| 'projectNumber'
+				| 'projectNumberCounter'
+			>;
+			'fields[projectIntegrations]'?: Array<
+				| 'userId'
+				| 'projectId'
+				| 'canAccessBox'
+				| 'canAccessDropbox'
+				| 'canAccessGoogleDocs'
+				| 'canAccessOneDrive'
+				| 'canAccessOneDriveBusiness'
+				| 'canAccessSharePoint'
+			>;
+			'fields[milestones]'?: Array<
+				| 'id'
+				| 'name'
+				| 'description'
+				| 'deadline'
+				| 'completed'
+				| 'projectId'
+				| 'createdOn'
+				| 'lastChangedOn'
+				| 'creatorUserId'
+				| 'reminder'
+				| 'private'
+				| 'lockdownId'
+				| 'status'
+				| 'completedOn'
+				| 'completerId'
+				| 'percentageComplete'
+				| 'project'
+			>;
+			'fields[lockdowns]'?: Array<
+				'id' | 'userID' | 'updatedAt' | 'itemType' | 'itemID' | 'grantAccessTo'
+			>;
+			'fields[jobroles]'?: Array<'id' | 'name'>;
+			'fields[groups]'?: Array<
+				| 'late'
+				| 'today'
+				| 'tomorrow'
+				| 'later-this-week'
+				| 'next-week'
+				| 'later'
+				| 'no-due-date'
+			>;
+			'fields[files]'?: Array<
+				| 'isPrivate'
+				| 'latestFileVersionNo'
+				| 'versionId'
+				| 'status'
+				| 'description'
+				| 'lockdownId'
+				| 'tagIds'
+				| 'changeFollowers'
+				| 'commentFollowers'
+				| 'originalName'
+				| 'displayName'
+				| 'isLocked'
+				| 'lockedByUserId'
+				| 'lockedDate'
+				| 'size'
+				| 'uploadedDate'
+				| 'uploadedByUserID'
+				| 'updatedAt'
+				| 'deletedAt'
+				| 'deletedBy'
+				| 'fileSource'
+				| 'projectId'
+				| 'numLikes'
+				| 'reactions'
+				| 'versions'
+				| 'downloadURL'
+				| 'previewURL'
+				| 'thumbURL'
+				| 'relatedItems'
+				| 'commentsCount'
+				| 'commentsCountRead'
+				| 'categoryId'
+			>;
+			'fields[customfields]'?: Array<
+				| 'id'
+				| 'projectId'
+				| 'entity'
+				| 'name'
+				| 'description'
+				| 'type'
+				| 'options'
+				| 'visibilities'
+				| 'isPrivate'
+				| 'required'
+				| 'createdAt'
+				| 'createdByUserId'
+				| 'updatedAt'
+				| 'updatedByUserId'
+				| 'deleted'
+				| 'deletedAt'
+				| 'deletedByUserId'
+			>;
+			'fields[customfieldTasks]'?: Array<
+				'id' | 'customfieldId' | 'value' | 'createdAt' | 'createdBy'
+			>;
+			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
+			'fields[comments]'?: Array<
+				| 'id'
+				| 'objectType'
+				| 'objectId'
+				| 'title'
+				| 'postedAt'
+				| 'postedBy'
+				| 'object'
+				| 'project'
+			>;
+			'fields[ProjectPermissions]'?: Array<
+				| 'viewMessagesAndFiles'
+				| 'viewTasksAndMilestones'
+				| 'viewTime'
+				| 'viewNotebooks'
+				| 'viewRiskRegister'
+				| 'viewEstimatedTime'
+				| 'viewInvoices'
+				| 'addTasks'
+				| 'addRisks'
+				| 'manageCustomFields'
+				| 'addExpenses'
+				| 'editAllTasks'
+				| 'addMilestones'
+				| 'addTaskLists'
+				| 'addMessages'
+				| 'addFiles'
+				| 'addTime'
+				| 'addNotebooks'
+				| 'viewLinks'
+				| 'addLinks'
+				| 'canViewForms'
+				| 'addForms'
+				| 'viewAllTimeLogs'
+				| 'setPrivacy'
+				| 'projectAdministrator'
+				| 'viewProjectUpdate'
+				| 'addProjectUpdate'
+				| 'canViewProjectMembers'
+				| 'canViewProjectBudget'
+				| 'canManageProjectBudget'
+				| 'canViewRates'
+				| 'canManageRates'
+				| 'canViewSchedule'
+				| 'canManageSchedule'
+				| 'receiveEmailNotifications'
+				| 'isObserving'
+				| 'isArchived'
+				| 'active'
+				| 'canAccess'
+				| 'inOwnerCompany'
+				| 'canManagePeople'
+				| 'canViewProjectTemplates'
+				| 'canManageProjectTemplates'
+			>;
+			expandedIds?: Array<number>;
+			excludeTagIds?: Array<number>;
+			excludeResponsiblePartyIds?: Array<number>;
+			crmDealIds?: Array<number>;
+			createdByUserIds?: Array<number>;
+			assigneeTypes?: Array<
+				| 'user'
+				| 'company'
+				| 'team'
+				| 'jobrole'
+				| 'placeholder'
+				| 'assigned'
+				| 'unassigned'
+			>;
+			assigneeTeamIds?: Array<number>;
+			assigneeJobRoleIds?: Array<number>;
+			assigneeCompanyIds?: Array<number>;
+			CustomFields?: Array<string>;
+		};
+		body?: never;
+	};
+	'personalTasks.get': {
+		path: { id: number };
+		query?: {
+			updatedBefore?: string;
+			updatedAfter?: string;
+			today?: string;
+			taskFilter?:
+				| 'all'
+				| 'anytime'
+				| 'completed'
+				| 'created'
+				| 'overdue'
+				| 'today'
+				| 'yesterday'
+				| 'started'
+				| 'tomorrow'
+				| 'thisweek'
+				| 'within7'
+				| 'within14'
+				| 'within30'
+				| 'within365'
+				| 'nodate'
+				| 'noduedate'
+				| 'nostartdate'
+				| 'newTaskDefaults'
+				| 'hasDate'
+				| 'upcoming'
+				| 'within'
+				| 'withinprev';
+			startDate?: string;
+			searchTerm?: string;
+			reportType?: 'plannedvsactual' | 'task' | 'tasktime';
+			reportFormat?: 'html' | 'pdf' | 'csv' | 'xls' | 'xlsx' | 'google-sheets';
+			projectType?:
+				| 'all'
+				| 'normal'
+				| 'tentative'
+				| 'personal'
+				| 'projects-template'
+				| 'tasklists-template';
+			priority?: string;
+			orderMode?: 'asc' | 'desc';
+			orderBy?:
+				| 'id'
+				| 'startdate'
+				| 'createdat'
+				| 'priority'
+				| 'project'
+				| 'flattenedtasklist'
+				| 'company'
+				| 'manual'
+				| 'active'
+				| 'completedat'
+				| 'duestartdate'
+				| 'alldates'
+				| 'tasklistname'
+				| 'tasklistdisplayorder'
+				| 'tasklistid'
+				| 'duedate'
+				| 'updatedat'
+				| 'taskname'
+				| 'createdby'
+				| 'completedby'
+				| 'assignedto'
+				| 'taskstatus'
+				| 'taskduedate'
+				| 'customfield'
+				| 'estimatedtime'
+				| 'taskgroupid'
+				| 'taskgroupname'
+				| 'projectmanual'
+				| 'stagedisplayorder'
+				| 'stage'
+				| 'parenttask'
+				| 'dateadded'
+				| 'datecompleted'
+				| 'completedatdesc'
+				| 'completeddatedesc'
+				| 'duestartdatedesc'
+				| 'alldatesdesc'
+				| 'duedatedesc'
+				| 'taskgroupdisplayorder'
+				| 'dateupdated'
+				| 'originalduedate'
+				| 'tags';
+			notCompletedBefore?: string;
+			endDate?: string;
+			dueBefore?: string;
+			dueAfter?: string;
+			deletedAfter?: string;
+			createdFilter?: 'anytime' | 'today' | 'yesterday' | 'custom';
+			createdDateCode?: string;
+			createdBefore?: string;
+			createdAfter?: string;
+			completedBefore?: string;
+			completedAfter?: string;
+			updatedByUserId?: number;
+			parentTaskId?: number;
+			pageSize?: number;
+			page?: number;
+			orderByCustomFieldId?: number;
+			includeTaskId?: number;
+			filterId?: number;
+			completedByUserId?: number;
+			useTaskDateRange?: boolean;
+			useStartDatesForTodaysTasks?: boolean;
+			useFormulaFields?: boolean;
+			useAllProjects?: boolean;
+			sortActiveFirst?: boolean;
+			skipCounts?: boolean;
+			showDeleted?: boolean;
+			showCompletedLists?: boolean;
+			searchJobRoles?: boolean;
+			searchCompaniesTeams?: boolean;
+			searchAssignees?: boolean;
+			onlyUntaggedTasks?: boolean;
+			onlyUnplanned?: boolean;
+			onlyUnassignedTasks?: boolean;
+			onlyTasksWithUnreadComments?: boolean;
+			onlyTasksWithTickets?: boolean;
+			onlyTasksWithEstimatedTime?: boolean;
+			onlyStarredProjects?: boolean;
+			onlyAssignedTasks?: boolean;
+			onlyAssignedRoleTasks?: boolean;
+			onlyAdminProjects?: boolean;
+			nestSubTasks?: boolean;
+			matchAllTags?: boolean;
+			matchAllProjectTags?: boolean;
+			matchAllExcludedTags?: boolean;
+			isReportDownload?: boolean;
+			includeUpdate?: boolean;
+			includeUntaggedTasks?: boolean;
+			includeTomorrow?: boolean;
+			includeToday?: boolean;
+			includeTentativeProjects?: boolean;
+			includeTeamUserIds?: boolean;
+			includeTasksWithoutDueDates?: boolean;
+			includeTasksFromDeletedLists?: boolean;
+			includeTasksCount?: boolean;
+			includeRelatedTasks?: boolean;
+			includePrivateItems?: boolean;
+			includeOverdueTasks?: boolean;
+			includeOriginalDueDate?: boolean;
+			includeJobRoleUserIds?: boolean;
+			includeEmailCommentStats?: boolean;
+			includeCustomFields?: boolean;
+			includeCompletedTasks?: boolean;
+			includeCompletedPredecessors?: boolean;
+			includeCompanyUserIds?: boolean;
+			includeCommentStats?: boolean;
+			includeBlocked?: boolean;
+			includeAttachmentCommentStats?: boolean;
+			includeAssigneeTeams?: boolean;
+			includeAssigneeJobRoles?: boolean;
+			includeAssigneeCompanies?: boolean;
+			includeArchivedProjects?: boolean;
+			includeAllComments?: boolean;
+			includeAccumulatedTimeTotals?: boolean;
+			hideDeleted?: boolean;
+			groupByTasklist?: boolean;
+			groupByTaskgroup?: boolean;
+			getSubTasks?: boolean;
+			getFiles?: boolean;
+			fallbackToMilestoneDueDate?: boolean;
+			extractTemplateRoleName?: boolean;
+			excludeAssigneeNotOnProjectTeams?: boolean;
+			excludeAssignedToMe?: boolean;
+			deletedOnly?: boolean;
+			completedOnly?: boolean;
+			checkForTimeblocks?: boolean;
+			checkForReminders?: boolean;
+			calculateTasklistDates?: boolean;
+			allowAssigneesOutsideProject?: boolean;
+			workflowIds?: Array<number>;
+			tasksSelectedColumns?: Array<string>;
+			tasklistIds?: Array<number>;
+			taskgroupIds?: Array<number>;
+			taskIncludedSet?: Array<
+				| 'overdue'
+				| 'nodate'
+				| 'nostartdate'
+				| 'noduedate'
+				| 'nostartwithfutureduedate'
+				| 'taskListNames'
+				| 'projectNames'
+			>;
+			tags?: Array<string>;
+			tagIds?: Array<number>;
+			status?: Array<'upcoming' | 'late' | 'all'>;
+			stageIds?: Array<number>;
+			sort?: Array<string>;
+			skipCRMDealIds?: Array<number>;
+			selectedColumns?: Array<string>;
+			responsiblePartyIds?: Array<number>;
+			projectTagIds?: Array<number>;
+			projectStatuses?: Array<
+				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
+			>;
+			projectOwnerIds?: Array<number>;
+			projectIds?: Array<number>;
+			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectFeaturesEnabled?: Array<
+				| 'list'
+				| 'board'
+				| 'gantt'
+				| 'table'
+				| 'dashboard'
+				| 'milestones'
+				| 'messages'
+				| 'files'
+				| 'time'
+				| 'notebooks'
+				| 'risks'
+				| 'links'
+				| 'billing'
+				| 'comments'
+				| 'people'
+				| 'settings'
+			>;
+			projectCompanyIds?: Array<number>;
+			projectCategoryIds?: Array<number>;
+			portfolioBoardIds?: Array<number>;
+			includeCustomFieldIds?: Array<number>;
+			include?: Array<
+				| 'projects'
+				| 'projects.companies'
+				| 'projects.categories'
+				| 'projects.permissions'
+				| 'projects.integrations'
+				| 'tasklists'
+				| 'parentTasks'
+				| 'companies'
+				| 'teams'
+				| 'users'
+				| 'milestones'
+				| 'comments'
+				| 'comments.users'
+				| 'tags'
+				| 'timeTotals'
+				| 'accumulatedTimeTotals'
+				| 'taskSequences'
+				| 'commentFollowers'
+				| 'changeFollowers'
+				| 'completeFollowers'
+				| 'lockdowns'
+				| 'lockdowns.users'
+				| 'lockdowns.companies'
+				| 'lockdowns.teams'
+				| 'lockdowns.users.companies'
+				| 'lockdowns.companies.users'
+				| 'lockdowns.teams.users'
+				| 'attachments'
+				| 'attachments.users'
+				| 'subtaskStats'
+				| 'timers'
+				| 'predecessors'
+				| 'permissions'
+				| 'jobRoles'
+				| 'proofs'
+				| 'taskgroups'
+				| 'workflows'
+				| 'workflows.stages'
+				| 'customfields'
+				| 'customfieldTasks'
+				| 'tasks'
+			>;
+			ids?: Array<number>;
+			followedByUserIds?: Array<number>;
+			'fields[workflows]'?: Array<'id' | 'name' | 'statusId'>;
+			'fields[users]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
+				| 'updatedAt'
+				| 'teams'
+			>;
+			'fields[timers]'?: Array<
+				| 'id'
+				| 'userId'
+				| 'taskId'
+				| 'projectId'
+				| 'description'
+				| 'running'
+				| 'billable'
+				| 'deleted'
+				| 'dateCreated'
+				| 'dateDeleted'
+				| 'duration'
+				| 'lastStartedAt'
+				| 'serverTime'
+				| 'intervals'
+			>;
+			'fields[teams]'?: Array<
+				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
+			>;
+			'fields[tasks]'?: Array<
+				| 'id'
+				| 'name'
+				| 'dateUpdated'
+				| 'parentTaskId'
+				| 'isPrivate'
+				| 'status'
+				| 'tasklistId'
+				| 'startDate'
+				| 'dueDate'
+				| 'estimateMinutes'
+				| 'accumulatedEstimatedMinutes'
+				| 'updatedAt'
+				| 'tasklist'
+			>;
+			'fields[tasklists]'?: Array<
+				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
+			>;
+			'fields[taskgroups]'?: Array<
+				'id' | 'name' | 'description' | 'displayOrder' | 'projectId' | 'status'
+			>;
+			'fields[taskSequences]'?: Array<
+				| 'id'
+				| 'installationId'
+				| 'frequency'
+				| 'selectedWeekDays'
+				| 'endDate'
+				| 'monthlyRepeatType'
+				| 'duration'
+				| 'rrule'
+			>;
+			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
+			'fields[stages]'?: Array<'id' | 'name' | 'stage'>;
+			'fields[projects]'?: Array<
+				| 'id'
+				| 'name'
+				| 'type'
+				| 'status'
+				| 'company'
+				| 'companyId'
+				| 'categoryId'
+				| 'startPage'
+				| 'logoIcon'
+				| 'logoColor'
+				| 'updatedAt'
+				| 'isStarred'
+				| 'allowNotifyAnyone'
+				| 'notifyTaskAssignee'
+				| 'isBillable'
+				| 'timelogRequiresTask'
+				| 'activePages'
+				| 'projectNumber'
+				| 'projectNumberCounter'
+			>;
+			'fields[projectIntegrations]'?: Array<
+				| 'userId'
+				| 'projectId'
+				| 'canAccessBox'
+				| 'canAccessDropbox'
+				| 'canAccessGoogleDocs'
+				| 'canAccessOneDrive'
+				| 'canAccessOneDriveBusiness'
+				| 'canAccessSharePoint'
+			>;
+			'fields[milestones]'?: Array<
+				| 'id'
+				| 'name'
+				| 'description'
+				| 'deadline'
+				| 'completed'
+				| 'projectId'
+				| 'createdOn'
+				| 'lastChangedOn'
+				| 'creatorUserId'
+				| 'reminder'
+				| 'private'
+				| 'lockdownId'
+				| 'status'
+				| 'completedOn'
+				| 'completerId'
+				| 'percentageComplete'
+				| 'project'
+			>;
+			'fields[lockdowns]'?: Array<
+				'id' | 'userID' | 'updatedAt' | 'itemType' | 'itemID' | 'grantAccessTo'
+			>;
+			'fields[jobroles]'?: Array<'id' | 'name'>;
+			'fields[groups]'?: Array<
+				| 'late'
+				| 'today'
+				| 'tomorrow'
+				| 'later-this-week'
+				| 'next-week'
+				| 'later'
+				| 'no-due-date'
+			>;
+			'fields[files]'?: Array<
+				| 'isPrivate'
+				| 'latestFileVersionNo'
+				| 'versionId'
+				| 'status'
+				| 'description'
+				| 'lockdownId'
+				| 'tagIds'
+				| 'changeFollowers'
+				| 'commentFollowers'
+				| 'originalName'
+				| 'displayName'
+				| 'isLocked'
+				| 'lockedByUserId'
+				| 'lockedDate'
+				| 'size'
+				| 'uploadedDate'
+				| 'uploadedByUserID'
+				| 'updatedAt'
+				| 'deletedAt'
+				| 'deletedBy'
+				| 'fileSource'
+				| 'projectId'
+				| 'numLikes'
+				| 'reactions'
+				| 'versions'
+				| 'downloadURL'
+				| 'previewURL'
+				| 'thumbURL'
+				| 'relatedItems'
+				| 'commentsCount'
+				| 'commentsCountRead'
+				| 'categoryId'
+			>;
+			'fields[customfields]'?: Array<
+				| 'id'
+				| 'projectId'
+				| 'entity'
+				| 'name'
+				| 'description'
+				| 'type'
+				| 'options'
+				| 'visibilities'
+				| 'isPrivate'
+				| 'required'
+				| 'createdAt'
+				| 'createdByUserId'
+				| 'updatedAt'
+				| 'updatedByUserId'
+				| 'deleted'
+				| 'deletedAt'
+				| 'deletedByUserId'
+			>;
+			'fields[customfieldTasks]'?: Array<
+				'id' | 'customfieldId' | 'value' | 'createdAt' | 'createdBy'
+			>;
+			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
+			'fields[comments]'?: Array<
+				| 'id'
+				| 'objectType'
+				| 'objectId'
+				| 'title'
+				| 'postedAt'
+				| 'postedBy'
+				| 'object'
+				| 'project'
+			>;
+			'fields[ProjectPermissions]'?: Array<
+				| 'viewMessagesAndFiles'
+				| 'viewTasksAndMilestones'
+				| 'viewTime'
+				| 'viewNotebooks'
+				| 'viewRiskRegister'
+				| 'viewEstimatedTime'
+				| 'viewInvoices'
+				| 'addTasks'
+				| 'addRisks'
+				| 'manageCustomFields'
+				| 'addExpenses'
+				| 'editAllTasks'
+				| 'addMilestones'
+				| 'addTaskLists'
+				| 'addMessages'
+				| 'addFiles'
+				| 'addTime'
+				| 'addNotebooks'
+				| 'viewLinks'
+				| 'addLinks'
+				| 'canViewForms'
+				| 'addForms'
+				| 'viewAllTimeLogs'
+				| 'setPrivacy'
+				| 'projectAdministrator'
+				| 'viewProjectUpdate'
+				| 'addProjectUpdate'
+				| 'canViewProjectMembers'
+				| 'canViewProjectBudget'
+				| 'canManageProjectBudget'
+				| 'canViewRates'
+				| 'canManageRates'
+				| 'canViewSchedule'
+				| 'canManageSchedule'
+				| 'receiveEmailNotifications'
+				| 'isObserving'
+				| 'isArchived'
+				| 'active'
+				| 'canAccess'
+				| 'inOwnerCompany'
+				| 'canManagePeople'
+				| 'canViewProjectTemplates'
+				| 'canManageProjectTemplates'
+			>;
+			expandedIds?: Array<number>;
+			excludeTagIds?: Array<number>;
+			excludeResponsiblePartyIds?: Array<number>;
+			crmDealIds?: Array<number>;
+			createdByUserIds?: Array<number>;
+			assigneeTypes?: Array<
+				| 'user'
+				| 'company'
+				| 'team'
+				| 'jobrole'
+				| 'placeholder'
+				| 'assigned'
+				| 'unassigned'
+			>;
+			assigneeTeamIds?: Array<number>;
+			assigneeJobRoleIds?: Array<number>;
+			assigneeCompanyIds?: Array<number>;
+			CustomFields?: Array<string>;
+		};
+		body?: never;
+	};
+	'personalTasks.create': {
+		path?: Record<string, never>;
+		query?: { fireWebhook?: boolean };
+		body: TeamworkV3Input_task_CreateRequest;
+	};
+	'taskReminders.list': {
+		path: { id: number };
+		query?: {
+			include?: Array<'users' | 'createdBy'>;
+			'fields[users]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
+				| 'updatedAt'
+				| 'teams'
+			>;
+		};
+		body?: never;
+	};
+	'taskReminders.create': {
+		path: { taskId: number };
+		query?: Record<string, never>;
+		body: TeamworkV3Input_reminder_Request;
+	};
+	'taskReminders.update': {
+		path: { taskId: number; reminderId: number };
+		query?: Record<string, never>;
+		body: TeamworkV3Input_reminder_Request;
+	};
+	'taskReminders.delete': {
+		path: { taskId: number; reminderId: number };
+		query?: Record<string, never>;
+		body?: never;
+	};
+	'tasklists.list': {
+		path?: Record<string, never>;
+		query?: {
+			updatedAfter?: string;
+			searchTerm?: string;
+			projectType?: string;
+			orderMode?: 'asc' | 'desc';
+			orderBy?:
+				| 'displayorder'
+				| 'name'
+				| 'status'
+				| 'createdat'
+				| 'updatedat'
+				| 'project'
+				| 'id';
+			projectBudgetId?: number;
+			pageSize?: number;
+			page?: number;
+			useFormulaFields?: boolean;
+			sortDefaultListFirst?: boolean;
+			sortActiveListsFirst?: boolean;
+			skipCounts?: boolean;
+			showPrivate?: boolean;
+			showDeleted?: boolean;
+			showCompleted?: boolean;
+			isReportDownload?: boolean;
+			includeTentativeProjects?: boolean;
+			includeArchivedProjects?: boolean;
+			getEmptyLists?: boolean;
+			completedOnly?: boolean;
+			calculateDates?: boolean;
+			projectIds?: Array<number>;
+			projectCompanyIds?: Array<number>;
+			include?: Array<
+				| 'defaultTasks'
+				| 'defaultTasks.users'
+				| 'defaultTasks.teams'
+				| 'defaultTasks.reminders'
+				| 'defaultTasks.customfields'
+				| 'defaultTasks.companies'
+				| 'defaultTasks.jobRoles'
+				| 'defaultTasks.tags'
+				| 'defaultTasks.changeFollowers'
+				| 'defaultTasks.commentFollowers'
+				| 'defaultTasks.completeFollowers'
+				| 'defaultTasks.lockdowns'
+				| 'defaultTasks.lockdowns.users'
+				| 'defaultTasks.lockdowns.companies'
+				| 'defaultTasks.lockdowns.teams'
+				| 'createdBy'
+				| 'updatedBy'
+				| 'companies'
+				| 'projects'
+				| 'projects.permissions'
+				| 'projects.integrations'
+				| 'milestones'
+				| 'defaultCustomfields'
+				| 'defaultCustomfieldTasks'
+				| 'defaultColumns'
+				| 'defaultWorkflowStages'
+				| 'defaultWorkflows'
+				| 'lockdowns'
+				| 'lockdowns.users'
+				| 'lockdowns.companies'
+				| 'lockdowns.teams'
+				| 'lockdowns.users.companies'
+				| 'lockdowns.companies.users'
+				| 'lockdowns.teams.users'
+				| 'tasklisttaskstats'
+				| 'tasklistBudgets'
+				| 'tasklistBudgets.notifications'
+				| 'tasklistBudgets.notifications.users'
+				| 'tasklistBudgets.notifications.teams'
+				| 'tasklistBudgets.notifications.companies'
 			>;
 			ids?: Array<number>;
 			'fields[users]'?: Array<
@@ -4850,72 +7886,252 @@ export type TeamworkV3Inputs = {
 				| 'updatedAt'
 				| 'teams'
 			>;
+			'fields[teams]'?: Array<
+				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
+			>;
+			'fields[tasks]'?: Array<
+				| 'id'
+				| 'name'
+				| 'dateUpdated'
+				| 'parentTaskId'
+				| 'isPrivate'
+				| 'status'
+				| 'tasklistId'
+				| 'startDate'
+				| 'dueDate'
+				| 'estimateMinutes'
+				| 'accumulatedEstimatedMinutes'
+				| 'updatedAt'
+				| 'tasklist'
+			>;
+			'fields[tasklists]'?: Array<
+				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
+			>;
 			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
-			'fields[industries]'?: Array<string>;
-			'fields[countries]'?: Array<string>;
+			'fields[projects]'?: Array<
+				| 'id'
+				| 'name'
+				| 'type'
+				| 'status'
+				| 'company'
+				| 'companyId'
+				| 'categoryId'
+				| 'startPage'
+				| 'logoIcon'
+				| 'logoColor'
+				| 'updatedAt'
+				| 'isStarred'
+				| 'allowNotifyAnyone'
+				| 'notifyTaskAssignee'
+				| 'isBillable'
+				| 'timelogRequiresTask'
+				| 'activePages'
+				| 'projectNumber'
+				| 'projectNumberCounter'
+			>;
+			'fields[projectIntegrations]'?: Array<
+				| 'userId'
+				| 'projectId'
+				| 'canAccessBox'
+				| 'canAccessDropbox'
+				| 'canAccessGoogleDocs'
+				| 'canAccessOneDrive'
+				| 'canAccessOneDriveBusiness'
+				| 'canAccessSharePoint'
+			>;
+			'fields[milestones]'?: Array<
+				| 'id'
+				| 'name'
+				| 'description'
+				| 'deadline'
+				| 'completed'
+				| 'projectId'
+				| 'createdOn'
+				| 'lastChangedOn'
+				| 'creatorUserId'
+				| 'reminder'
+				| 'private'
+				| 'lockdownId'
+				| 'status'
+				| 'completedOn'
+				| 'completerId'
+				| 'percentageComplete'
+				| 'project'
+			>;
+			'fields[lockdowns]'?: Array<
+				'id' | 'userID' | 'updatedAt' | 'itemType' | 'itemID' | 'grantAccessTo'
+			>;
 			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			excludeTagIds?: Array<number>;
+			'fields[ProjectPermissions]'?: Array<
+				| 'viewMessagesAndFiles'
+				| 'viewTasksAndMilestones'
+				| 'viewTime'
+				| 'viewNotebooks'
+				| 'viewRiskRegister'
+				| 'viewEstimatedTime'
+				| 'viewInvoices'
+				| 'addTasks'
+				| 'addRisks'
+				| 'manageCustomFields'
+				| 'addExpenses'
+				| 'editAllTasks'
+				| 'addMilestones'
+				| 'addTaskLists'
+				| 'addMessages'
+				| 'addFiles'
+				| 'addTime'
+				| 'addNotebooks'
+				| 'viewLinks'
+				| 'addLinks'
+				| 'canViewForms'
+				| 'addForms'
+				| 'viewAllTimeLogs'
+				| 'setPrivacy'
+				| 'projectAdministrator'
+				| 'viewProjectUpdate'
+				| 'addProjectUpdate'
+				| 'canViewProjectMembers'
+				| 'canViewProjectBudget'
+				| 'canManageProjectBudget'
+				| 'canViewRates'
+				| 'canManageRates'
+				| 'canViewSchedule'
+				| 'canManageSchedule'
+				| 'receiveEmailNotifications'
+				| 'isObserving'
+				| 'isArchived'
+				| 'active'
+				| 'canAccess'
+				| 'inOwnerCompany'
+				| 'canManagePeople'
+				| 'canViewProjectTemplates'
+				| 'canManageProjectTemplates'
+			>;
 			excludeIds?: Array<number>;
-			companyHealths?: Array<number>;
-			clientManagedByUserIds?: Array<number>;
-			CustomFields?: Array<string>;
 		};
 		body?: never;
 	};
-	v3_patch_projects_api_v3_companies_companyid_json: {
-		path: { companyId: number };
-		query?: { fireWebhook?: boolean };
-		body: TeamworkV3Input_company_Request;
-	};
-	v3_patch_projects_api_v3_companies_companyid_rates_json: {
-		path: { companyId: number };
-		query?: Record<string, never>;
-		body: TeamworkV3Input_company_ClientRatesRequest;
-	};
-	v3_post_projects_api_v3_companies_id_convert_currency_json: {
-		path: { id: number };
-		query?: Record<string, never>;
-		body?: never;
-	};
-	v3_post_projects_api_v3_companies_id_domains_json: {
-		path: { id: number };
-		query?: Record<string, never>;
-		body: TeamworkV3Input_companydomain_BulkRequest;
-	};
-	v3_get_projects_api_v3_files_fileid_project_json: {
-		path: { fileId: number };
+	'tasklists.get': {
+		path: { tasklistId: number };
 		query?: {
-			includeProjectUserInfo?: boolean;
-			includeProjectDates?: boolean;
-			includeCustomFields?: boolean;
-			includeCustomFieldIds?: Array<number>;
+			updatedAfter?: string;
+			searchTerm?: string;
+			projectType?: string;
+			orderMode?: 'asc' | 'desc';
+			orderBy?:
+				| 'displayorder'
+				| 'name'
+				| 'status'
+				| 'createdat'
+				| 'updatedat'
+				| 'project'
+				| 'id';
+			projectBudgetId?: number;
+			pageSize?: number;
+			page?: number;
+			useFormulaFields?: boolean;
+			sortDefaultListFirst?: boolean;
+			sortActiveListsFirst?: boolean;
+			skipCounts?: boolean;
+			showPrivate?: boolean;
+			showDeleted?: boolean;
+			showCompleted?: boolean;
+			isReportDownload?: boolean;
+			includeTentativeProjects?: boolean;
+			includeArchivedProjects?: boolean;
+			getEmptyLists?: boolean;
+			completedOnly?: boolean;
+			calculateDates?: boolean;
+			projectIds?: Array<number>;
+			projectCompanyIds?: Array<number>;
 			include?: Array<
-				| 'projectOwners'
-				| 'projectUpdates'
-				| 'companies'
-				| 'companies.countries'
-				| 'companies.industries'
-				| 'companies.currencies'
-				| 'projectCategories'
-				| 'portfolioCards'
-				| 'portfolioBoards'
-				| 'portfolioColumns'
-				| 'tags'
-				| 'customfields'
-				| 'customfieldProjects'
-				| 'projectBudgets'
-				| 'activities.latest'
-				| 'users'
+				| 'defaultTasks'
+				| 'defaultTasks.users'
+				| 'defaultTasks.teams'
+				| 'defaultTasks.reminders'
+				| 'defaultTasks.customfields'
+				| 'defaultTasks.companies'
+				| 'defaultTasks.jobRoles'
+				| 'defaultTasks.tags'
+				| 'defaultTasks.changeFollowers'
+				| 'defaultTasks.commentFollowers'
+				| 'defaultTasks.completeFollowers'
+				| 'defaultTasks.lockdowns'
+				| 'defaultTasks.lockdowns.users'
+				| 'defaultTasks.lockdowns.companies'
+				| 'defaultTasks.lockdowns.teams'
 				| 'createdBy'
 				| 'updatedBy'
-				| 'completedBy'
-				| 'deletedBy'
-				| 'archivedBy'
-				| 'projectEmailDropboxes'
-				| 'workflows'
-				| 'workflows.stages'
-				| 'projecttaskstats'
+				| 'companies'
+				| 'projects'
+				| 'projects.permissions'
+				| 'projects.integrations'
+				| 'milestones'
+				| 'defaultCustomfields'
+				| 'defaultCustomfieldTasks'
+				| 'defaultColumns'
+				| 'defaultWorkflowStages'
+				| 'defaultWorkflows'
+				| 'lockdowns'
+				| 'lockdowns.users'
+				| 'lockdowns.companies'
+				| 'lockdowns.teams'
+				| 'lockdowns.users.companies'
+				| 'lockdowns.companies.users'
+				| 'lockdowns.teams.users'
+				| 'tasklisttaskstats'
+				| 'tasklistBudgets'
+				| 'tasklistBudgets.notifications'
+				| 'tasklistBudgets.notifications.users'
+				| 'tasklistBudgets.notifications.teams'
+				| 'tasklistBudgets.notifications.companies'
 			>;
+			ids?: Array<number>;
+			'fields[users]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
+				| 'updatedAt'
+				| 'teams'
+			>;
+			'fields[teams]'?: Array<
+				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
+			>;
+			'fields[tasks]'?: Array<
+				| 'id'
+				| 'name'
+				| 'dateUpdated'
+				| 'parentTaskId'
+				| 'isPrivate'
+				| 'status'
+				| 'tasklistId'
+				| 'startDate'
+				| 'dueDate'
+				| 'estimateMinutes'
+				| 'accumulatedEstimatedMinutes'
+				| 'updatedAt'
+				| 'tasklist'
+			>;
+			'fields[tasklists]'?: Array<
+				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
+			>;
+			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
 			'fields[projects]'?: Array<
 				| 'id'
 				| 'name'
@@ -4937,53 +8153,214 @@ export type TeamworkV3Inputs = {
 				| 'projectNumber'
 				| 'projectNumberCounter'
 			>;
+			'fields[projectIntegrations]'?: Array<
+				| 'userId'
+				| 'projectId'
+				| 'canAccessBox'
+				| 'canAccessDropbox'
+				| 'canAccessGoogleDocs'
+				| 'canAccessOneDrive'
+				| 'canAccessOneDriveBusiness'
+				| 'canAccessSharePoint'
+			>;
+			'fields[milestones]'?: Array<
+				| 'id'
+				| 'name'
+				| 'description'
+				| 'deadline'
+				| 'completed'
+				| 'projectId'
+				| 'createdOn'
+				| 'lastChangedOn'
+				| 'creatorUserId'
+				| 'reminder'
+				| 'private'
+				| 'lockdownId'
+				| 'status'
+				| 'completedOn'
+				| 'completerId'
+				| 'percentageComplete'
+				| 'project'
+			>;
+			'fields[lockdowns]'?: Array<
+				'id' | 'userID' | 'updatedAt' | 'itemType' | 'itemID' | 'grantAccessTo'
+			>;
+			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
+			'fields[ProjectPermissions]'?: Array<
+				| 'viewMessagesAndFiles'
+				| 'viewTasksAndMilestones'
+				| 'viewTime'
+				| 'viewNotebooks'
+				| 'viewRiskRegister'
+				| 'viewEstimatedTime'
+				| 'viewInvoices'
+				| 'addTasks'
+				| 'addRisks'
+				| 'manageCustomFields'
+				| 'addExpenses'
+				| 'editAllTasks'
+				| 'addMilestones'
+				| 'addTaskLists'
+				| 'addMessages'
+				| 'addFiles'
+				| 'addTime'
+				| 'addNotebooks'
+				| 'viewLinks'
+				| 'addLinks'
+				| 'canViewForms'
+				| 'addForms'
+				| 'viewAllTimeLogs'
+				| 'setPrivacy'
+				| 'projectAdministrator'
+				| 'viewProjectUpdate'
+				| 'addProjectUpdate'
+				| 'canViewProjectMembers'
+				| 'canViewProjectBudget'
+				| 'canManageProjectBudget'
+				| 'canViewRates'
+				| 'canManageRates'
+				| 'canViewSchedule'
+				| 'canManageSchedule'
+				| 'receiveEmailNotifications'
+				| 'isObserving'
+				| 'isArchived'
+				| 'active'
+				| 'canAccess'
+				| 'inOwnerCompany'
+				| 'canManagePeople'
+				| 'canViewProjectTemplates'
+				| 'canManageProjectTemplates'
+			>;
+			excludeIds?: Array<number>;
 		};
 		body?: never;
 	};
-	v3_get_projects_api_v3_links_linkid_comments_json: {
-		path: { linkId: number };
+	'tasklists.delete': {
+		path: { tasklistId: number };
 		query?: Record<string, never>;
 		body?: never;
 	};
-	v3_post_projects_api_v3_links_linkid_comments_json: {
-		path: { linkId: number };
-		query?: Record<string, never>;
-		body: TeamworkV3Input_comment_Request;
-	};
-	v3_get_projects_api_v3_links_linkid_project_json: {
-		path: { linkId: number };
+	'tasklists.listTemplates': {
+		path?: Record<string, never>;
 		query?: {
-			includeProjectUserInfo?: boolean;
-			includeProjectDates?: boolean;
-			includeCustomFields?: boolean;
-			includeCustomFieldIds?: Array<number>;
+			updatedAfter?: string;
+			searchTerm?: string;
+			projectType?: string;
+			orderMode?: 'asc' | 'desc';
+			orderBy?:
+				| 'displayorder'
+				| 'name'
+				| 'status'
+				| 'createdat'
+				| 'updatedat'
+				| 'project'
+				| 'id';
+			projectBudgetId?: number;
+			pageSize?: number;
+			page?: number;
+			useFormulaFields?: boolean;
+			sortDefaultListFirst?: boolean;
+			sortActiveListsFirst?: boolean;
+			skipCounts?: boolean;
+			showPrivate?: boolean;
+			showDeleted?: boolean;
+			showCompleted?: boolean;
+			isReportDownload?: boolean;
+			includeTentativeProjects?: boolean;
+			includeArchivedProjects?: boolean;
+			getEmptyLists?: boolean;
+			completedOnly?: boolean;
+			calculateDates?: boolean;
+			projectIds?: Array<number>;
+			projectCompanyIds?: Array<number>;
 			include?: Array<
-				| 'projectOwners'
-				| 'projectUpdates'
-				| 'companies'
-				| 'companies.countries'
-				| 'companies.industries'
-				| 'companies.currencies'
-				| 'projectCategories'
-				| 'portfolioCards'
-				| 'portfolioBoards'
-				| 'portfolioColumns'
-				| 'tags'
-				| 'customfields'
-				| 'customfieldProjects'
-				| 'projectBudgets'
-				| 'activities.latest'
-				| 'users'
+				| 'defaultTasks'
+				| 'defaultTasks.users'
+				| 'defaultTasks.teams'
+				| 'defaultTasks.reminders'
+				| 'defaultTasks.customfields'
+				| 'defaultTasks.companies'
+				| 'defaultTasks.jobRoles'
+				| 'defaultTasks.tags'
+				| 'defaultTasks.changeFollowers'
+				| 'defaultTasks.commentFollowers'
+				| 'defaultTasks.completeFollowers'
+				| 'defaultTasks.lockdowns'
+				| 'defaultTasks.lockdowns.users'
+				| 'defaultTasks.lockdowns.companies'
+				| 'defaultTasks.lockdowns.teams'
 				| 'createdBy'
 				| 'updatedBy'
-				| 'completedBy'
-				| 'deletedBy'
-				| 'archivedBy'
-				| 'projectEmailDropboxes'
-				| 'workflows'
-				| 'workflows.stages'
-				| 'projecttaskstats'
+				| 'companies'
+				| 'projects'
+				| 'projects.permissions'
+				| 'projects.integrations'
+				| 'milestones'
+				| 'defaultCustomfields'
+				| 'defaultCustomfieldTasks'
+				| 'defaultColumns'
+				| 'defaultWorkflowStages'
+				| 'defaultWorkflows'
+				| 'lockdowns'
+				| 'lockdowns.users'
+				| 'lockdowns.companies'
+				| 'lockdowns.teams'
+				| 'lockdowns.users.companies'
+				| 'lockdowns.companies.users'
+				| 'lockdowns.teams.users'
+				| 'tasklisttaskstats'
+				| 'tasklistBudgets'
+				| 'tasklistBudgets.notifications'
+				| 'tasklistBudgets.notifications.users'
+				| 'tasklistBudgets.notifications.teams'
+				| 'tasklistBudgets.notifications.companies'
 			>;
+			ids?: Array<number>;
+			'fields[users]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
+				| 'updatedAt'
+				| 'teams'
+			>;
+			'fields[teams]'?: Array<
+				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
+			>;
+			'fields[tasks]'?: Array<
+				| 'id'
+				| 'name'
+				| 'dateUpdated'
+				| 'parentTaskId'
+				| 'isPrivate'
+				| 'status'
+				| 'tasklistId'
+				| 'startDate'
+				| 'dueDate'
+				| 'estimateMinutes'
+				| 'accumulatedEstimatedMinutes'
+				| 'updatedAt'
+				| 'tasklist'
+			>;
+			'fields[tasklists]'?: Array<
+				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
+			>;
+			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
 			'fields[projects]'?: Array<
 				| 'id'
 				| 'name'
@@ -5005,10 +8382,902 @@ export type TeamworkV3Inputs = {
 				| 'projectNumber'
 				| 'projectNumberCounter'
 			>;
+			'fields[projectIntegrations]'?: Array<
+				| 'userId'
+				| 'projectId'
+				| 'canAccessBox'
+				| 'canAccessDropbox'
+				| 'canAccessGoogleDocs'
+				| 'canAccessOneDrive'
+				| 'canAccessOneDriveBusiness'
+				| 'canAccessSharePoint'
+			>;
+			'fields[milestones]'?: Array<
+				| 'id'
+				| 'name'
+				| 'description'
+				| 'deadline'
+				| 'completed'
+				| 'projectId'
+				| 'createdOn'
+				| 'lastChangedOn'
+				| 'creatorUserId'
+				| 'reminder'
+				| 'private'
+				| 'lockdownId'
+				| 'status'
+				| 'completedOn'
+				| 'completerId'
+				| 'percentageComplete'
+				| 'project'
+			>;
+			'fields[lockdowns]'?: Array<
+				'id' | 'userID' | 'updatedAt' | 'itemType' | 'itemID' | 'grantAccessTo'
+			>;
+			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
+			'fields[ProjectPermissions]'?: Array<
+				| 'viewMessagesAndFiles'
+				| 'viewTasksAndMilestones'
+				| 'viewTime'
+				| 'viewNotebooks'
+				| 'viewRiskRegister'
+				| 'viewEstimatedTime'
+				| 'viewInvoices'
+				| 'addTasks'
+				| 'addRisks'
+				| 'manageCustomFields'
+				| 'addExpenses'
+				| 'editAllTasks'
+				| 'addMilestones'
+				| 'addTaskLists'
+				| 'addMessages'
+				| 'addFiles'
+				| 'addTime'
+				| 'addNotebooks'
+				| 'viewLinks'
+				| 'addLinks'
+				| 'canViewForms'
+				| 'addForms'
+				| 'viewAllTimeLogs'
+				| 'setPrivacy'
+				| 'projectAdministrator'
+				| 'viewProjectUpdate'
+				| 'addProjectUpdate'
+				| 'canViewProjectMembers'
+				| 'canViewProjectBudget'
+				| 'canManageProjectBudget'
+				| 'canViewRates'
+				| 'canManageRates'
+				| 'canViewSchedule'
+				| 'canManageSchedule'
+				| 'receiveEmailNotifications'
+				| 'isObserving'
+				| 'isArchived'
+				| 'active'
+				| 'canAccess'
+				| 'inOwnerCompany'
+				| 'canManagePeople'
+				| 'canViewProjectTemplates'
+				| 'canManageProjectTemplates'
+			>;
+			excludeIds?: Array<number>;
 		};
 		body?: never;
 	};
-	v3_get_projects_api_v3_me_json: {
+	'milestones.list': {
+		path?: Record<string, never>;
+		query?: {
+			updatedAfterDate?: string;
+			updatedAfter?: string;
+			searchTerm?: string;
+			reportType?: 'plannedvsactual' | 'calendar' | 'agenda';
+			reportFormat?: string;
+			projectType?:
+				| ''
+				| 'normal'
+				| 'tasklists-template'
+				| 'projects-template'
+				| 'personal'
+				| 'tentative';
+			projectStatus?: string;
+			orderMode?: 'asc' | 'desc';
+			orderBy?:
+				| 'date'
+				| 'dateonly'
+				| 'name'
+				| 'project'
+				| 'user'
+				| 'dateCreated'
+				| 'dateUpdated'
+				| 'id'
+				| 'completion'
+				| 'originalDueDate'
+				| 'dateCompleted'
+				| 'completedBy'
+				| 'status'
+				| 'variance';
+			dueBeforeDate?: string;
+			dueBefore?: string;
+			dueAfterDate?: string;
+			dueAfter?: string;
+			deletedAfter?: string;
+			pageSize?: number;
+			page?: number;
+			skipCounts?: boolean;
+			showPrivate?: boolean;
+			showDeleted?: boolean;
+			showAttachedTasklists?: boolean;
+			searchCompaniesTeams?: boolean;
+			searchAssignees?: boolean;
+			progress?: boolean;
+			onlyWithoutTasklists?: boolean;
+			onlyStarredProjects?: boolean;
+			onlyMyProjects?: boolean;
+			onlyAdminProjects?: boolean;
+			matchAllTags?: boolean;
+			matchAllProjectTags?: boolean;
+			isReportDownload?: boolean;
+			includeUpdate?: boolean;
+			includeToday?: boolean;
+			includeTentativeProjects?: boolean;
+			includeTeamUserIds?: boolean;
+			includeTags?: boolean;
+			includeProgress?: boolean;
+			includePercentageComplete?: boolean;
+			includeCompleted?: boolean;
+			includeCompanyUserIds?: boolean;
+			includeAssigneeTeams?: boolean;
+			includeAssigneeCompanies?: boolean;
+			includeArchivedProjects?: boolean;
+			emoji?: boolean;
+			countUnreadComments?: boolean;
+			calendar?: boolean;
+			tagIds?: Array<number>;
+			status?: Array<
+				| 'all'
+				| 'new'
+				| 'reopened'
+				| 'completed'
+				| 'deleted'
+				| 'pending'
+				| 'incomplete'
+				| 'late'
+				| 'today'
+				| 'upcoming'
+			>;
+			selectedColumns?: Array<string>;
+			projectTagIds?: Array<number>;
+			projectStatuses?: Array<string>;
+			projectOwnerIds?: Array<number>;
+			projectIds?: Array<number>;
+			projectHealths?: Array<number>;
+			projectHealth?: Array<number>;
+			projectCompanyIds?: Array<number>;
+			projectCategoryIds?: Array<number>;
+			include?: Array<
+				| 'projects'
+				| 'projects.companies'
+				| 'projects.categories'
+				| 'projects.permissions'
+				| 'projects.integrations'
+				| 'users'
+				| 'completedBy'
+				| 'createdBy'
+				| 'deletedBy'
+				| 'updatedBy'
+				| 'commentFollowers'
+				| 'changeFollowers'
+				| 'completeFollowers'
+				| 'tags'
+				| 'tasklists'
+				| 'tasklisttaskstats'
+				| 'teams'
+				| 'companies'
+			>;
+			ids?: Array<number>;
+			followerIds?: Array<number>;
+			'fields[users]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
+				| 'updatedAt'
+				| 'teams'
+			>;
+			'fields[tasklists]'?: Array<
+				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
+			>;
+			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
+			'fields[projects]'?: Array<
+				| 'id'
+				| 'name'
+				| 'type'
+				| 'status'
+				| 'company'
+				| 'companyId'
+				| 'categoryId'
+				| 'startPage'
+				| 'logoIcon'
+				| 'logoColor'
+				| 'updatedAt'
+				| 'isStarred'
+				| 'allowNotifyAnyone'
+				| 'notifyTaskAssignee'
+				| 'isBillable'
+				| 'timelogRequiresTask'
+				| 'activePages'
+				| 'projectNumber'
+				| 'projectNumberCounter'
+			>;
+			'fields[projectIntegrations]'?: Array<
+				| 'userId'
+				| 'projectId'
+				| 'canAccessBox'
+				| 'canAccessDropbox'
+				| 'canAccessGoogleDocs'
+				| 'canAccessOneDrive'
+				| 'canAccessOneDriveBusiness'
+				| 'canAccessSharePoint'
+			>;
+			'fields[milestones]'?: Array<
+				| 'id'
+				| 'name'
+				| 'description'
+				| 'deadline'
+				| 'completed'
+				| 'projectId'
+				| 'createdOn'
+				| 'lastChangedOn'
+				| 'creatorUserId'
+				| 'reminder'
+				| 'private'
+				| 'lockdownId'
+				| 'status'
+				| 'completedOn'
+				| 'completerId'
+				| 'percentageComplete'
+				| 'project'
+			>;
+			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
+			'fields[ProjectPermissions]'?: Array<
+				| 'viewMessagesAndFiles'
+				| 'viewTasksAndMilestones'
+				| 'viewTime'
+				| 'viewNotebooks'
+				| 'viewRiskRegister'
+				| 'viewEstimatedTime'
+				| 'viewInvoices'
+				| 'addTasks'
+				| 'addRisks'
+				| 'manageCustomFields'
+				| 'addExpenses'
+				| 'editAllTasks'
+				| 'addMilestones'
+				| 'addTaskLists'
+				| 'addMessages'
+				| 'addFiles'
+				| 'addTime'
+				| 'addNotebooks'
+				| 'viewLinks'
+				| 'addLinks'
+				| 'canViewForms'
+				| 'addForms'
+				| 'viewAllTimeLogs'
+				| 'setPrivacy'
+				| 'projectAdministrator'
+				| 'viewProjectUpdate'
+				| 'addProjectUpdate'
+				| 'canViewProjectMembers'
+				| 'canViewProjectBudget'
+				| 'canManageProjectBudget'
+				| 'canViewRates'
+				| 'canManageRates'
+				| 'canViewSchedule'
+				| 'canManageSchedule'
+				| 'receiveEmailNotifications'
+				| 'isObserving'
+				| 'isArchived'
+				| 'active'
+				| 'canAccess'
+				| 'inOwnerCompany'
+				| 'canManagePeople'
+				| 'canViewProjectTemplates'
+				| 'canManageProjectTemplates'
+			>;
+			creatorIds?: Array<number>;
+			assignedToUserIds?: Array<number>;
+			assignedToTeamIds?: Array<number>;
+			assignedToCompanyIds?: Array<number>;
+		};
+		body?: never;
+	};
+	'milestones.get': {
+		path: { milestoneId: number };
+		query?: {
+			updatedAfterDate?: string;
+			updatedAfter?: string;
+			searchTerm?: string;
+			reportType?: 'plannedvsactual' | 'calendar' | 'agenda';
+			reportFormat?: string;
+			projectType?:
+				| ''
+				| 'normal'
+				| 'tasklists-template'
+				| 'projects-template'
+				| 'personal'
+				| 'tentative';
+			projectStatus?: string;
+			orderMode?: 'asc' | 'desc';
+			orderBy?:
+				| 'date'
+				| 'dateonly'
+				| 'name'
+				| 'project'
+				| 'user'
+				| 'dateCreated'
+				| 'dateUpdated'
+				| 'id'
+				| 'completion'
+				| 'originalDueDate'
+				| 'dateCompleted'
+				| 'completedBy'
+				| 'status'
+				| 'variance';
+			dueBeforeDate?: string;
+			dueBefore?: string;
+			dueAfterDate?: string;
+			dueAfter?: string;
+			deletedAfter?: string;
+			pageSize?: number;
+			page?: number;
+			skipCounts?: boolean;
+			showPrivate?: boolean;
+			showDeleted?: boolean;
+			showAttachedTasklists?: boolean;
+			searchCompaniesTeams?: boolean;
+			searchAssignees?: boolean;
+			progress?: boolean;
+			onlyWithoutTasklists?: boolean;
+			onlyStarredProjects?: boolean;
+			onlyMyProjects?: boolean;
+			onlyAdminProjects?: boolean;
+			matchAllTags?: boolean;
+			matchAllProjectTags?: boolean;
+			isReportDownload?: boolean;
+			includeUpdate?: boolean;
+			includeToday?: boolean;
+			includeTentativeProjects?: boolean;
+			includeTeamUserIds?: boolean;
+			includeTags?: boolean;
+			includeProgress?: boolean;
+			includePercentageComplete?: boolean;
+			includeCompleted?: boolean;
+			includeCompanyUserIds?: boolean;
+			includeAssigneeTeams?: boolean;
+			includeAssigneeCompanies?: boolean;
+			includeArchivedProjects?: boolean;
+			emoji?: boolean;
+			countUnreadComments?: boolean;
+			calendar?: boolean;
+			tagIds?: Array<number>;
+			status?: Array<
+				| 'all'
+				| 'new'
+				| 'reopened'
+				| 'completed'
+				| 'deleted'
+				| 'pending'
+				| 'incomplete'
+				| 'late'
+				| 'today'
+				| 'upcoming'
+			>;
+			selectedColumns?: Array<string>;
+			projectTagIds?: Array<number>;
+			projectStatuses?: Array<string>;
+			projectOwnerIds?: Array<number>;
+			projectIds?: Array<number>;
+			projectHealths?: Array<number>;
+			projectHealth?: Array<number>;
+			projectCompanyIds?: Array<number>;
+			projectCategoryIds?: Array<number>;
+			include?: Array<
+				| 'projects'
+				| 'projects.companies'
+				| 'projects.categories'
+				| 'projects.permissions'
+				| 'projects.integrations'
+				| 'users'
+				| 'completedBy'
+				| 'createdBy'
+				| 'deletedBy'
+				| 'updatedBy'
+				| 'commentFollowers'
+				| 'changeFollowers'
+				| 'completeFollowers'
+				| 'tags'
+				| 'tasklists'
+				| 'tasklisttaskstats'
+				| 'teams'
+				| 'companies'
+			>;
+			ids?: Array<number>;
+			followerIds?: Array<number>;
+			'fields[users]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
+				| 'updatedAt'
+				| 'teams'
+			>;
+			'fields[tasklists]'?: Array<
+				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
+			>;
+			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
+			'fields[projects]'?: Array<
+				| 'id'
+				| 'name'
+				| 'type'
+				| 'status'
+				| 'company'
+				| 'companyId'
+				| 'categoryId'
+				| 'startPage'
+				| 'logoIcon'
+				| 'logoColor'
+				| 'updatedAt'
+				| 'isStarred'
+				| 'allowNotifyAnyone'
+				| 'notifyTaskAssignee'
+				| 'isBillable'
+				| 'timelogRequiresTask'
+				| 'activePages'
+				| 'projectNumber'
+				| 'projectNumberCounter'
+			>;
+			'fields[projectIntegrations]'?: Array<
+				| 'userId'
+				| 'projectId'
+				| 'canAccessBox'
+				| 'canAccessDropbox'
+				| 'canAccessGoogleDocs'
+				| 'canAccessOneDrive'
+				| 'canAccessOneDriveBusiness'
+				| 'canAccessSharePoint'
+			>;
+			'fields[milestones]'?: Array<
+				| 'id'
+				| 'name'
+				| 'description'
+				| 'deadline'
+				| 'completed'
+				| 'projectId'
+				| 'createdOn'
+				| 'lastChangedOn'
+				| 'creatorUserId'
+				| 'reminder'
+				| 'private'
+				| 'lockdownId'
+				| 'status'
+				| 'completedOn'
+				| 'completerId'
+				| 'percentageComplete'
+				| 'project'
+			>;
+			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
+			'fields[ProjectPermissions]'?: Array<
+				| 'viewMessagesAndFiles'
+				| 'viewTasksAndMilestones'
+				| 'viewTime'
+				| 'viewNotebooks'
+				| 'viewRiskRegister'
+				| 'viewEstimatedTime'
+				| 'viewInvoices'
+				| 'addTasks'
+				| 'addRisks'
+				| 'manageCustomFields'
+				| 'addExpenses'
+				| 'editAllTasks'
+				| 'addMilestones'
+				| 'addTaskLists'
+				| 'addMessages'
+				| 'addFiles'
+				| 'addTime'
+				| 'addNotebooks'
+				| 'viewLinks'
+				| 'addLinks'
+				| 'canViewForms'
+				| 'addForms'
+				| 'viewAllTimeLogs'
+				| 'setPrivacy'
+				| 'projectAdministrator'
+				| 'viewProjectUpdate'
+				| 'addProjectUpdate'
+				| 'canViewProjectMembers'
+				| 'canViewProjectBudget'
+				| 'canManageProjectBudget'
+				| 'canViewRates'
+				| 'canManageRates'
+				| 'canViewSchedule'
+				| 'canManageSchedule'
+				| 'receiveEmailNotifications'
+				| 'isObserving'
+				| 'isArchived'
+				| 'active'
+				| 'canAccess'
+				| 'inOwnerCompany'
+				| 'canManagePeople'
+				| 'canViewProjectTemplates'
+				| 'canManageProjectTemplates'
+			>;
+			creatorIds?: Array<number>;
+			assignedToUserIds?: Array<number>;
+			assignedToTeamIds?: Array<number>;
+			assignedToCompanyIds?: Array<number>;
+		};
+		body?: never;
+	};
+	'milestones.listByDeadline': {
+		path?: Record<string, never>;
+		query: { startDate: string; endDate: string };
+		body?: never;
+	};
+	'people.list': {
+		path?: Record<string, never>;
+		query?: {
+			userType?: 'account' | 'collaborator' | 'contact' | 'client';
+			updatedAfter?: string;
+			searchTerm?: string;
+			orderMode?: 'asc' | 'desc';
+			orderBy?:
+				| 'name'
+				| 'namecaseinsensitive'
+				| 'company'
+				| 'id'
+				| 'providedids'
+				| 'dateupdated';
+			lastLoginAfter?: string;
+			pageSize?: number;
+			page?: number;
+			skipCounts?: boolean;
+			showDeleted?: boolean;
+			searchUserSkill?: boolean;
+			searchUserJobRole?: boolean;
+			orderPrioritiseCurrentUser?: boolean;
+			onlySiteOwner?: boolean;
+			onlyPlaceholders?: boolean;
+			onlyOwnerCompany?: boolean;
+			inclusiveFilter?: boolean;
+			includeStandardUsers?: boolean;
+			includeServiceAccounts?: boolean;
+			includePlaceholders?: boolean;
+			includeCollaborators?: boolean;
+			includeClients?: boolean;
+			filterByNoCostRate?: boolean;
+			excludeContacts?: boolean;
+			clientPortalEligible?: boolean;
+			adminsOnly?: boolean;
+			teamIds?: Array<number>;
+			skillIds?: Array<number>;
+			projectIds?: Array<number>;
+			projectCompanyIds?: Array<number>;
+			notLinkedWithClientPortalIds?: Array<number>;
+			jobRoleIds?: Array<number>;
+			include?: Array<
+				| 'companies'
+				| 'workingHours'
+				| 'currencies'
+				| 'teams'
+				| 'jobRoles'
+				| 'skills'
+				| 'linkedClientPortalCompanies'
+				| 'skillCounts'
+			>;
+			ids?: Array<number>;
+			'fields[userIntegrations]'?: Array<
+				| 'userId'
+				| 'projectId'
+				| 'canAccessBox'
+				| 'canAccessDropbox'
+				| 'canAccessGoogleDocs'
+				| 'canAccessOneDrive'
+				| 'canAccessOneDriveBusiness'
+				| 'canAccessSharePoint'
+			>;
+			'fields[teams]'?: Array<
+				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
+			>;
+			'fields[person]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
+			>;
+			'fields[people]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
+			>;
+			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
+			'fields[ProjectPermissions]'?: Array<
+				| 'viewMessagesAndFiles'
+				| 'viewTasksAndMilestones'
+				| 'viewTime'
+				| 'viewNotebooks'
+				| 'viewRiskRegister'
+				| 'viewEstimatedTime'
+				| 'viewInvoices'
+				| 'addTasks'
+				| 'addRisks'
+				| 'manageCustomFields'
+				| 'addExpenses'
+				| 'editAllTasks'
+				| 'addMilestones'
+				| 'addTaskLists'
+				| 'addMessages'
+				| 'addFiles'
+				| 'addTime'
+				| 'addNotebooks'
+				| 'viewLinks'
+				| 'addLinks'
+				| 'canViewForms'
+				| 'addForms'
+				| 'viewAllTimeLogs'
+				| 'setPrivacy'
+				| 'projectAdministrator'
+				| 'viewProjectUpdate'
+				| 'addProjectUpdate'
+				| 'canViewProjectMembers'
+				| 'canViewProjectBudget'
+				| 'canManageProjectBudget'
+				| 'canViewRates'
+				| 'canManageRates'
+				| 'canViewSchedule'
+				| 'canManageSchedule'
+				| 'receiveEmailNotifications'
+				| 'isObserving'
+				| 'isArchived'
+				| 'active'
+				| 'canAccess'
+				| 'inOwnerCompany'
+				| 'canManagePeople'
+				| 'canViewProjectTemplates'
+				| 'canManageProjectTemplates'
+			>;
+			excludeProjectIds?: Array<number>;
+			excludeIds?: Array<number>;
+			excludeAllocatedUsersProjectIDs?: Array<number>;
+			emails?: Array<string>;
+			companyIds?: Array<number>;
+			SkillLevels?: Array<string>;
+		};
+		body?: never;
+	};
+	'people.get': {
+		path: { personId: number };
+		query?: {
+			userType?: 'account' | 'collaborator' | 'contact' | 'client';
+			updatedAfter?: string;
+			searchTerm?: string;
+			orderMode?: 'asc' | 'desc';
+			orderBy?:
+				| 'name'
+				| 'namecaseinsensitive'
+				| 'company'
+				| 'id'
+				| 'providedids'
+				| 'dateupdated';
+			lastLoginAfter?: string;
+			pageSize?: number;
+			page?: number;
+			skipCounts?: boolean;
+			showDeleted?: boolean;
+			searchUserSkill?: boolean;
+			searchUserJobRole?: boolean;
+			orderPrioritiseCurrentUser?: boolean;
+			onlySiteOwner?: boolean;
+			onlyPlaceholders?: boolean;
+			onlyOwnerCompany?: boolean;
+			inclusiveFilter?: boolean;
+			includeStandardUsers?: boolean;
+			includeServiceAccounts?: boolean;
+			includePlaceholders?: boolean;
+			includeCollaborators?: boolean;
+			includeClients?: boolean;
+			filterByNoCostRate?: boolean;
+			excludeContacts?: boolean;
+			clientPortalEligible?: boolean;
+			adminsOnly?: boolean;
+			teamIds?: Array<number>;
+			skillIds?: Array<number>;
+			projectIds?: Array<number>;
+			projectCompanyIds?: Array<number>;
+			notLinkedWithClientPortalIds?: Array<number>;
+			jobRoleIds?: Array<number>;
+			include?: Array<
+				| 'companies'
+				| 'workingHours'
+				| 'currencies'
+				| 'teams'
+				| 'jobRoles'
+				| 'skills'
+				| 'linkedClientPortalCompanies'
+				| 'skillCounts'
+			>;
+			ids?: Array<number>;
+			'fields[userIntegrations]'?: Array<
+				| 'userId'
+				| 'projectId'
+				| 'canAccessBox'
+				| 'canAccessDropbox'
+				| 'canAccessGoogleDocs'
+				| 'canAccessOneDrive'
+				| 'canAccessOneDriveBusiness'
+				| 'canAccessSharePoint'
+			>;
+			'fields[teams]'?: Array<
+				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
+			>;
+			'fields[person]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
+			>;
+			'fields[people]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
+			>;
+			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
+			'fields[ProjectPermissions]'?: Array<
+				| 'viewMessagesAndFiles'
+				| 'viewTasksAndMilestones'
+				| 'viewTime'
+				| 'viewNotebooks'
+				| 'viewRiskRegister'
+				| 'viewEstimatedTime'
+				| 'viewInvoices'
+				| 'addTasks'
+				| 'addRisks'
+				| 'manageCustomFields'
+				| 'addExpenses'
+				| 'editAllTasks'
+				| 'addMilestones'
+				| 'addTaskLists'
+				| 'addMessages'
+				| 'addFiles'
+				| 'addTime'
+				| 'addNotebooks'
+				| 'viewLinks'
+				| 'addLinks'
+				| 'canViewForms'
+				| 'addForms'
+				| 'viewAllTimeLogs'
+				| 'setPrivacy'
+				| 'projectAdministrator'
+				| 'viewProjectUpdate'
+				| 'addProjectUpdate'
+				| 'canViewProjectMembers'
+				| 'canViewProjectBudget'
+				| 'canManageProjectBudget'
+				| 'canViewRates'
+				| 'canManageRates'
+				| 'canViewSchedule'
+				| 'canManageSchedule'
+				| 'receiveEmailNotifications'
+				| 'isObserving'
+				| 'isArchived'
+				| 'active'
+				| 'canAccess'
+				| 'inOwnerCompany'
+				| 'canManagePeople'
+				| 'canViewProjectTemplates'
+				| 'canManageProjectTemplates'
+			>;
+			excludeProjectIds?: Array<number>;
+			excludeIds?: Array<number>;
+			excludeAllocatedUsersProjectIDs?: Array<number>;
+			emails?: Array<string>;
+			companyIds?: Array<number>;
+			SkillLevels?: Array<string>;
+		};
+		body?: never;
+	};
+	'people.me': {
 		path?: Record<string, never>;
 		query?: {
 			userId?: number;
@@ -5082,275 +9351,115 @@ export type TeamworkV3Inputs = {
 		};
 		body?: never;
 	};
-	v3_get_projects_api_v3_me_personaltasks_json: {
+	'people.delete': {
+		path: { personId: number };
+		query?: { fireWebhook?: boolean };
+		body?: never;
+	};
+	'people.addToProjects': {
+		path: { userId: number };
+		query?: Record<string, never>;
+		body?: never;
+	};
+	'people.performance': {
 		path?: Record<string, never>;
-		query?: {
-			updatedBefore?: string;
-			updatedAfter?: string;
-			today?: string;
-			taskFilter?:
-				| 'all'
-				| 'anytime'
-				| 'completed'
-				| 'created'
-				| 'overdue'
-				| 'today'
-				| 'yesterday'
-				| 'started'
-				| 'tomorrow'
-				| 'thisweek'
-				| 'within7'
-				| 'within14'
-				| 'within30'
-				| 'within365'
-				| 'nodate'
-				| 'noduedate'
-				| 'nostartdate'
-				| 'newTaskDefaults'
-				| 'hasDate'
-				| 'upcoming'
-				| 'within'
-				| 'withinprev';
-			startDate?: string;
+		query: {
+			startDate: string;
+			orderMode?: 'asc' | 'desc';
+			endDate: string;
+		};
+		body?: never;
+	};
+	'people.utilization': {
+		path?: Record<string, never>;
+		query: {
+			zoom?:
+				| 'week'
+				| 'month'
+				| 'last3months'
+				| 'quarterbyweek'
+				| 'quarterbymonth';
+			startDate: string;
+			sortOrder?: 'asc' | 'desc';
+			sort?:
+				| 'name'
+				| 'percentutilization'
+				| 'percentestimatedutilization'
+				| 'availableminutes'
+				| 'unavailableminutes'
+				| 'loggedminutes'
+				| 'billableminutes'
+				| 'unbillableminutes'
+				| 'billableutilization'
+				| 'nonbillableutilization'
+				| 'companycount'
+				| 'utilizationachieved'
+				| 'utilizationtarget'
+				| 'allocatedutilization'
+				| 'totalworkingminutes'
+				| 'availableutilization'
+				| 'unavailableutilization'
+				| 'companyname'
+				| 'allocatedminutes'
+				| 'estimatedbillableminutes'
+				| 'percentestimatedbillableutilization'
+				| 'estimatedminutes';
 			searchTerm?: string;
-			reportType?: 'plannedvsactual' | 'task' | 'tasktime';
-			reportFormat?: 'html' | 'pdf' | 'csv' | 'xls' | 'xlsx' | 'google-sheets';
-			projectType?:
-				| 'all'
-				| 'normal'
-				| 'tentative'
-				| 'personal'
-				| 'projects-template'
-				| 'tasklists-template';
-			priority?: string;
+			reportFormat?: 'pdf' | 'html' | 'csv' | 'xls' | 'xlsx' | 'google-sheets';
 			orderMode?: 'asc' | 'desc';
 			orderBy?:
-				| 'id'
-				| 'startdate'
-				| 'createdat'
-				| 'priority'
-				| 'project'
-				| 'flattenedtasklist'
-				| 'company'
-				| 'manual'
-				| 'active'
-				| 'completedat'
-				| 'duestartdate'
-				| 'alldates'
-				| 'tasklistname'
-				| 'tasklistdisplayorder'
-				| 'tasklistid'
-				| 'duedate'
-				| 'updatedat'
-				| 'taskname'
-				| 'createdby'
-				| 'completedby'
-				| 'assignedto'
-				| 'taskstatus'
-				| 'taskduedate'
-				| 'customfield'
-				| 'estimatedtime'
-				| 'taskgroupid'
-				| 'taskgroupname'
-				| 'projectmanual'
-				| 'stagedisplayorder'
-				| 'stage'
-				| 'parenttask'
-				| 'dateadded'
-				| 'datecompleted'
-				| 'completedatdesc'
-				| 'completeddatedesc'
-				| 'duestartdatedesc'
-				| 'alldatesdesc'
-				| 'duedatedesc'
-				| 'taskgroupdisplayorder'
-				| 'dateupdated'
-				| 'originalduedate'
-				| 'tags';
-			notCompletedBefore?: string;
-			endDate?: string;
-			dueBefore?: string;
-			dueAfter?: string;
-			deletedAfter?: string;
-			createdFilter?: 'anytime' | 'today' | 'yesterday' | 'custom';
-			createdDateCode?: string;
-			createdBefore?: string;
-			createdAfter?: string;
-			completedBefore?: string;
-			completedAfter?: string;
-			updatedByUserId?: number;
-			parentTaskId?: number;
+				| 'name'
+				| 'percentutilization'
+				| 'percentestimatedutilization'
+				| 'availableminutes'
+				| 'unavailableminutes'
+				| 'loggedminutes'
+				| 'billableminutes'
+				| 'unbillableminutes'
+				| 'companycount'
+				| 'utilizationachieved'
+				| 'utilizationTarget'
+				| 'allocatedutilization'
+				| 'totalworkingminutes'
+				| 'availableutilization'
+				| 'unavailableutilization'
+				| 'billableUtilization'
+				| 'nonBillableUtilization'
+				| 'companyname'
+				| 'allocatedMinutes'
+				| 'estimatedbillableminutes'
+				| 'percentEstimatedBillableUtilization'
+				| 'estimatedMinutes';
+			groupBy?: '' | 'day' | 'week' | 'month' | 'quarter';
+			endDate: string;
 			pageSize?: number;
 			page?: number;
-			orderByCustomFieldId?: number;
-			includeTaskId?: number;
-			filterId?: number;
-			completedByUserId?: number;
-			useTaskDateRange?: boolean;
-			useStartDatesForTodaysTasks?: boolean;
-			useFormulaFields?: boolean;
-			useAllProjects?: boolean;
-			sortActiveFirst?: boolean;
 			skipCounts?: boolean;
-			showDeleted?: boolean;
-			showCompletedLists?: boolean;
-			searchJobRoles?: boolean;
-			searchCompaniesTeams?: boolean;
-			searchAssignees?: boolean;
-			onlyUntaggedTasks?: boolean;
-			onlyUnplanned?: boolean;
-			onlyUnassignedTasks?: boolean;
-			onlyTasksWithUnreadComments?: boolean;
-			onlyTasksWithTickets?: boolean;
-			onlyTasksWithEstimatedTime?: boolean;
-			onlyStarredProjects?: boolean;
-			onlyAssignedTasks?: boolean;
-			onlyAssignedRoleTasks?: boolean;
-			onlyAdminProjects?: boolean;
-			nestSubTasks?: boolean;
-			matchAllTags?: boolean;
-			matchAllProjectTags?: boolean;
-			matchAllExcludedTags?: boolean;
+			legacyResponse?: boolean;
 			isReportDownload?: boolean;
-			includeUpdate?: boolean;
-			includeUntaggedTasks?: boolean;
-			includeTomorrow?: boolean;
-			includeToday?: boolean;
-			includeTentativeProjects?: boolean;
-			includeTeamUserIds?: boolean;
-			includeTasksWithoutDueDates?: boolean;
-			includeTasksFromDeletedLists?: boolean;
-			includeTasksCount?: boolean;
-			includeRelatedTasks?: boolean;
-			includePrivateItems?: boolean;
-			includeOverdueTasks?: boolean;
-			includeOriginalDueDate?: boolean;
-			includeJobRoleUserIds?: boolean;
-			includeEmailCommentStats?: boolean;
-			includeCustomFields?: boolean;
-			includeCompletedTasks?: boolean;
-			includeCompletedPredecessors?: boolean;
-			includeCompanyUserIds?: boolean;
-			includeCommentStats?: boolean;
-			includeBlocked?: boolean;
-			includeAttachmentCommentStats?: boolean;
-			includeAssigneeTeams?: boolean;
-			includeAssigneeJobRoles?: boolean;
-			includeAssigneeCompanies?: boolean;
+			isCustomDateRange?: boolean;
+			includeUtilizations?: boolean;
+			includeTotals?: boolean;
+			includeCollaborators?: boolean;
+			includeClients?: boolean;
+			includeCalendarEvents?: boolean;
 			includeArchivedProjects?: boolean;
-			includeAllComments?: boolean;
-			includeAccumulatedTimeTotals?: boolean;
-			hideDeleted?: boolean;
-			groupByTasklist?: boolean;
-			groupByTaskgroup?: boolean;
-			getSubTasks?: boolean;
-			getFiles?: boolean;
-			fallbackToMilestoneDueDate?: boolean;
-			extractTemplateRoleName?: boolean;
-			excludeAssigneeNotOnProjectTeams?: boolean;
-			excludeAssignedToMe?: boolean;
-			deletedOnly?: boolean;
-			completedOnly?: boolean;
-			checkForTimeblocks?: boolean;
-			checkForReminders?: boolean;
-			calculateTasklistDates?: boolean;
-			allowAssigneesOutsideProject?: boolean;
-			workflowIds?: Array<number>;
-			tasksSelectedColumns?: Array<string>;
-			tasklistIds?: Array<number>;
-			taskgroupIds?: Array<number>;
-			taskIncludedSet?: Array<
-				| 'overdue'
-				| 'nodate'
-				| 'nostartdate'
-				| 'noduedate'
-				| 'nostartwithfutureduedate'
-				| 'taskListNames'
-				| 'projectNames'
-			>;
-			tags?: Array<string>;
-			tagIds?: Array<number>;
-			status?: Array<'upcoming' | 'late' | 'all'>;
-			stageIds?: Array<number>;
-			sort?: Array<string>;
-			skipCRMDealIds?: Array<number>;
+			IncludeCompletedTasks?: boolean;
+			userTypes?: Array<'standard' | 'placeholder'>;
+			userIds?: Array<number>;
+			teamIds?: Array<number>;
 			selectedColumns?: Array<string>;
-			responsiblePartyIds?: Array<number>;
-			projectTagIds?: Array<number>;
-			projectStatuses?: Array<
-				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
-			>;
-			projectOwnerIds?: Array<number>;
 			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
-			projectFeaturesEnabled?: Array<
-				| 'list'
-				| 'board'
-				| 'gantt'
-				| 'table'
-				| 'dashboard'
-				| 'milestones'
-				| 'messages'
-				| 'files'
-				| 'time'
-				| 'notebooks'
-				| 'risks'
-				| 'links'
-				| 'billing'
-				| 'comments'
-				| 'people'
-				| 'settings'
+			jobRoleIds?: Array<number>;
+			include?: Array<'users' | 'jobroles' | 'teams'>;
+			'fields[utilizations]'?: Array<
+				| 'userId'
+				| 'unavailableMinutes'
+				| 'availableMinutes'
+				| 'billableMinutes'
+				| 'unbillableMinutes'
+				| 'loggedMinutes'
 			>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-			portfolioBoardIds?: Array<number>;
-			includeCustomFieldIds?: Array<number>;
-			include?: Array<
-				| 'projects'
-				| 'projects.companies'
-				| 'projects.categories'
-				| 'projects.permissions'
-				| 'projects.integrations'
-				| 'tasklists'
-				| 'parentTasks'
-				| 'companies'
-				| 'teams'
-				| 'users'
-				| 'milestones'
-				| 'comments'
-				| 'comments.users'
-				| 'tags'
-				| 'timeTotals'
-				| 'accumulatedTimeTotals'
-				| 'taskSequences'
-				| 'commentFollowers'
-				| 'changeFollowers'
-				| 'completeFollowers'
-				| 'lockdowns'
-				| 'lockdowns.users'
-				| 'lockdowns.companies'
-				| 'lockdowns.teams'
-				| 'lockdowns.users.companies'
-				| 'lockdowns.companies.users'
-				| 'lockdowns.teams.users'
-				| 'attachments'
-				| 'attachments.users'
-				| 'subtaskStats'
-				| 'timers'
-				| 'predecessors'
-				| 'permissions'
-				| 'jobRoles'
-				| 'proofs'
-				| 'taskgroups'
-				| 'workflows'
-				| 'workflows.stages'
-				| 'customfields'
-				| 'customfieldTasks'
-				| 'tasks'
-			>;
-			ids?: Array<number>;
-			followedByUserIds?: Array<number>;
-			'fields[workflows]'?: Array<'id' | 'name' | 'statusId'>;
 			'fields[users]'?: Array<
 				| 'id'
 				| 'firstName'
@@ -5374,80 +9483,68 @@ export type TeamworkV3Inputs = {
 				| 'updatedAt'
 				| 'teams'
 			>;
-			'fields[timers]'?: Array<
-				| 'id'
-				| 'userId'
-				| 'taskId'
-				| 'projectId'
-				| 'description'
-				| 'running'
-				| 'billable'
-				| 'deleted'
-				| 'dateCreated'
-				| 'dateDeleted'
-				| 'duration'
-				| 'lastStartedAt'
-				| 'serverTime'
-				| 'intervals'
-			>;
-			'fields[teams]'?: Array<
-				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
-			>;
-			'fields[tasks]'?: Array<
-				| 'id'
-				| 'name'
-				| 'dateUpdated'
-				| 'parentTaskId'
-				| 'isPrivate'
-				| 'status'
-				| 'tasklistId'
-				| 'startDate'
-				| 'dueDate'
-				| 'estimateMinutes'
-				| 'accumulatedEstimatedMinutes'
-				| 'updatedAt'
-				| 'tasklist'
-			>;
-			'fields[tasklists]'?: Array<
-				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
-			>;
-			'fields[taskgroups]'?: Array<
-				'id' | 'name' | 'description' | 'displayOrder' | 'projectId' | 'status'
-			>;
-			'fields[taskSequences]'?: Array<
-				| 'id'
-				| 'installationId'
-				| 'frequency'
-				| 'selectedWeekDays'
-				| 'endDate'
-				| 'monthlyRepeatType'
-				| 'duration'
-				| 'rrule'
-			>;
-			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
-			'fields[stages]'?: Array<'id' | 'name' | 'stage'>;
-			'fields[projects]'?: Array<
+			companyIds?: Array<number>;
+		};
+		body?: never;
+	};
+	'people.taskCompletion': {
+		path?: Record<string, never>;
+		query: {
+			userType?: 'account' | 'collaborator' | 'contact' | 'client';
+			updatedAfter?: string;
+			startDate: string;
+			searchTerm?: string;
+			reportFormat?: string;
+			projectType?:
+				| ''
+				| 'normal'
+				| 'tasklists-template'
+				| 'projects-template'
+				| 'personal'
+				| 'tentative';
+			orderMode?: 'asc' | 'desc';
+			orderBy?:
 				| 'id'
 				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-			'fields[projectIntegrations]'?: Array<
+				| 'namecaseinsensitive'
+				| 'overduetasks'
+				| 'assignedtasks'
+				| 'completedtasks'
+				| 'projects'
+				| 'activeprojects';
+			lastLoginAfter?: string;
+			endDate: string;
+			pageSize?: number;
+			page?: number;
+			skipCounts?: boolean;
+			showDeleted?: boolean;
+			searchUserSkill?: boolean;
+			searchUserJobRole?: boolean;
+			orderPrioritiseCurrentUser?: boolean;
+			onlySiteOwner?: boolean;
+			onlyPlaceholders?: boolean;
+			onlyOwnerCompany?: boolean;
+			isReportDownload?: boolean;
+			inclusiveFilter?: boolean;
+			includeServiceAccounts?: boolean;
+			includePlaceholders?: boolean;
+			includeCollaborators?: boolean;
+			includeClients?: boolean;
+			includeArchivedProjects?: boolean;
+			filterByNoCostRate?: boolean;
+			excludeContacts?: boolean;
+			clientPortalEligible?: boolean;
+			adminsOnly?: boolean;
+			userProjectIds?: Array<number>;
+			teamIds?: Array<number>;
+			selectedColumns?: Array<string>;
+			projectIds?: Array<number>;
+			projectCompanyIds?: Array<number>;
+			notLinkedWithClientPortalIds?: Array<number>;
+			jobRoleIds?: Array<number>;
+			include?: Array<'users'>;
+			ids?: Array<number>;
+			'fields[userIntegrations]'?: Array<
 				| 'userId'
 				| 'projectId'
 				| 'canAccessBox'
@@ -5457,105 +9554,52 @@ export type TeamworkV3Inputs = {
 				| 'canAccessOneDriveBusiness'
 				| 'canAccessSharePoint'
 			>;
-			'fields[milestones]'?: Array<
+			'fields[teams]'?: Array<
+				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
+			>;
+			'fields[person]'?: Array<
 				| 'id'
-				| 'name'
-				| 'description'
-				| 'deadline'
-				| 'completed'
-				| 'projectId'
-				| 'createdOn'
-				| 'lastChangedOn'
-				| 'creatorUserId'
-				| 'reminder'
-				| 'private'
-				| 'lockdownId'
-				| 'status'
-				| 'completedOn'
-				| 'completerId'
-				| 'percentageComplete'
-				| 'project'
-			>;
-			'fields[lockdowns]'?: Array<
-				'id' | 'userID' | 'updatedAt' | 'itemType' | 'itemID' | 'grantAccessTo'
-			>;
-			'fields[jobroles]'?: Array<'id' | 'name'>;
-			'fields[groups]'?: Array<
-				| 'late'
-				| 'today'
-				| 'tomorrow'
-				| 'later-this-week'
-				| 'next-week'
-				| 'later'
-				| 'no-due-date'
-			>;
-			'fields[files]'?: Array<
-				| 'isPrivate'
-				| 'latestFileVersionNo'
-				| 'versionId'
-				| 'status'
-				| 'description'
-				| 'lockdownId'
-				| 'tagIds'
-				| 'changeFollowers'
-				| 'commentFollowers'
-				| 'originalName'
-				| 'displayName'
-				| 'isLocked'
-				| 'lockedByUserId'
-				| 'lockedDate'
-				| 'size'
-				| 'uploadedDate'
-				| 'uploadedByUserID'
-				| 'updatedAt'
-				| 'deletedAt'
-				| 'deletedBy'
-				| 'fileSource'
-				| 'projectId'
-				| 'numLikes'
-				| 'reactions'
-				| 'versions'
-				| 'downloadURL'
-				| 'previewURL'
-				| 'thumbURL'
-				| 'relatedItems'
-				| 'commentsCount'
-				| 'commentsCountRead'
-				| 'categoryId'
-			>;
-			'fields[customfields]'?: Array<
-				| 'id'
-				| 'projectId'
-				| 'entity'
-				| 'name'
-				| 'description'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
 				| 'type'
-				| 'options'
-				| 'visibilities'
-				| 'isPrivate'
-				| 'required'
-				| 'createdAt'
-				| 'createdByUserId'
-				| 'updatedAt'
-				| 'updatedByUserId'
 				| 'deleted'
-				| 'deletedAt'
-				| 'deletedByUserId'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
 			>;
-			'fields[customfieldTasks]'?: Array<
-				'id' | 'customfieldId' | 'value' | 'createdAt' | 'createdBy'
+			'fields[people]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
 			>;
 			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			'fields[comments]'?: Array<
-				| 'id'
-				| 'objectType'
-				| 'objectId'
-				| 'title'
-				| 'postedAt'
-				| 'postedBy'
-				| 'object'
-				| 'project'
-			>;
 			'fields[ProjectPermissions]'?: Array<
 				| 'viewMessagesAndFiles'
 				| 'viewTasksAndMilestones'
@@ -5601,301 +9645,444 @@ export type TeamworkV3Inputs = {
 				| 'canViewProjectTemplates'
 				| 'canManageProjectTemplates'
 			>;
-			expandedIds?: Array<number>;
-			excludeTagIds?: Array<number>;
-			excludeResponsiblePartyIds?: Array<number>;
-			crmDealIds?: Array<number>;
-			createdByUserIds?: Array<number>;
-			assigneeTypes?: Array<
-				| 'user'
+			excludeProjectIds?: Array<number>;
+			excludeIds?: Array<number>;
+			excludeAllocatedUsersProjectIDs?: Array<number>;
+			emails?: Array<string>;
+			companyIds?: Array<number>;
+		};
+		body?: never;
+	};
+	'statuses.list': {
+		path?: Record<string, never>;
+		query?: {
+			updatedAfter?: string;
+			searchTerm?: string;
+			teamId?: number;
+			pageSize?: number;
+			page?: number;
+			skipCounts?: boolean;
+			showEveryone?: boolean;
+			showDeleted?: boolean;
+			includeSubteams?: boolean;
+			include?: Array<'statuses' | 'users' | 'userevents'>;
+			'fields[users]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
 				| 'company'
-				| 'team'
-				| 'jobrole'
-				| 'placeholder'
-				| 'assigned'
-				| 'unassigned'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
+				| 'updatedAt'
+				| 'teams'
 			>;
-			assigneeTeamIds?: Array<number>;
-			assigneeJobRoleIds?: Array<number>;
-			assigneeCompanyIds?: Array<number>;
+			'fields[statuses]'?: Array<
+				| 'id'
+				| 'userId'
+				| 'emoji'
+				| 'text'
+				| 'dateTime'
+				| 'ipAddress'
+				| 'dateLastUpdated'
+			>;
+		};
+		body?: never;
+	};
+	'statuses.timeline': {
+		path?: Record<string, never>;
+		query?: {
+			searchTerm?: string;
+			teamId?: number;
+			pageSize?: number;
+			page?: number;
+			skipCounts?: boolean;
+			showDeleted?: boolean;
+			includeSubteams?: boolean;
+			include?: Array<'users' | 'userevents'>;
+			'fields[users]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
+				| 'updatedAt'
+				| 'teams'
+			>;
+			'fields[statuses]'?: Array<
+				| 'id'
+				| 'userId'
+				| 'emoji'
+				| 'text'
+				| 'dateTime'
+				| 'ipAddress'
+				| 'dateLastUpdated'
+			>;
+		};
+		body?: never;
+	};
+	'companies.list': {
+		path?: Record<string, never>;
+		query?: {
+			updatedAfterDate?: string;
+			updatedAfter?: string;
+			searchTerm?: string;
+			reportType?: 'company' | 'client';
+			reportFormat?: string;
+			orderMode?: 'asc' | 'desc';
+			orderBy?:
+				| 'name'
+				| 'accounts'
+				| 'clients'
+				| 'collaborators'
+				| 'contacts'
+				| 'projects'
+				| 'tasks'
+				| 'country'
+				| 'health'
+				| 'website'
+				| 'email'
+				| 'phone'
+				| 'fax'
+				| 'industry'
+				| 'ownercompany'
+				| 'ownername'
+				| 'taskscompletion'
+				| 'customfield'
+				| 'id'
+				| 'namecaseinsensitive'
+				| 'createdAt'
+				| 'updatedAt';
+			name?: string;
+			minLastActivityDate?: string;
+			maxLastActivityDate?: string;
+			firstLetter?: string;
+			createdAfterDate?: string;
+			createdAfter?: string;
+			budgetRanges?: string;
+			pageSize?: number;
+			page?: number;
+			orderByCustomFieldId?: number;
+			currencyId?: number;
+			useFormulaFields?: boolean;
+			skipCounts?: boolean;
+			searchClientManagers?: boolean;
+			returnLetters?: boolean;
+			onlyUntaggedCompanies?: boolean;
+			matchAllTags?: boolean;
+			matchAllExcludedTags?: boolean;
+			isReportDownload?: boolean;
+			includeUntaggedCompanies?: boolean;
+			includeTentativeProjects?: boolean;
+			includeProfitability?: boolean;
+			includePermissions?: boolean;
+			includeCustomFields?: boolean;
+			includeBudgetSummary?: boolean;
+			includeBudgetDistribution?: boolean;
+			getStats?: boolean;
+			getEmoji?: boolean;
+			fullProfile?: boolean;
+			excludeOwnerCompany?: boolean;
+			tagIds?: Array<number>;
+			selectedColumns?: Array<string>;
+			projectStatuses?: Array<string>;
+			notLinkedWithClientPortalIds?: Array<number>;
+			include?: Array<
+				| 'tags'
+				| 'countries'
+				| 'industries'
+				| 'clientmanagedby'
+				| 'companyupdates'
+				| 'jobRoles'
+				| 'users'
+				| 'companydomains'
+				| 'currencies'
+				| 'customfields'
+				| 'customfieldCompanies'
+				| 'clientPortals'
+			>;
+			ids?: Array<number>;
+			'fields[users]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
+				| 'updatedAt'
+				| 'teams'
+			>;
+			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
+			'fields[industries]'?: Array<string>;
+			'fields[countries]'?: Array<string>;
+			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
+			excludeTagIds?: Array<number>;
+			excludeIds?: Array<number>;
+			companyHealths?: Array<number>;
+			clientManagedByUserIds?: Array<number>;
 			CustomFields?: Array<string>;
 		};
 		body?: never;
 	};
-	v3_post_projects_api_v3_me_personaltasks_json: {
+	'companies.get': {
+		path: { companyId: number };
+		query?: {
+			updatedAfterDate?: string;
+			updatedAfter?: string;
+			searchTerm?: string;
+			reportType?: 'company' | 'client';
+			reportFormat?: string;
+			orderMode?: 'asc' | 'desc';
+			orderBy?:
+				| 'name'
+				| 'accounts'
+				| 'clients'
+				| 'collaborators'
+				| 'contacts'
+				| 'projects'
+				| 'tasks'
+				| 'country'
+				| 'health'
+				| 'website'
+				| 'email'
+				| 'phone'
+				| 'fax'
+				| 'industry'
+				| 'ownercompany'
+				| 'ownername'
+				| 'taskscompletion'
+				| 'customfield'
+				| 'id'
+				| 'namecaseinsensitive'
+				| 'createdAt'
+				| 'updatedAt';
+			name?: string;
+			minLastActivityDate?: string;
+			maxLastActivityDate?: string;
+			firstLetter?: string;
+			createdAfterDate?: string;
+			createdAfter?: string;
+			budgetRanges?: string;
+			pageSize?: number;
+			page?: number;
+			orderByCustomFieldId?: number;
+			currencyId?: number;
+			useFormulaFields?: boolean;
+			skipCounts?: boolean;
+			searchClientManagers?: boolean;
+			returnLetters?: boolean;
+			onlyUntaggedCompanies?: boolean;
+			matchAllTags?: boolean;
+			matchAllExcludedTags?: boolean;
+			isReportDownload?: boolean;
+			includeUntaggedCompanies?: boolean;
+			includeTentativeProjects?: boolean;
+			includeProfitability?: boolean;
+			includePermissions?: boolean;
+			includeCustomFields?: boolean;
+			includeBudgetSummary?: boolean;
+			includeBudgetDistribution?: boolean;
+			getStats?: boolean;
+			getEmoji?: boolean;
+			fullProfile?: boolean;
+			excludeOwnerCompany?: boolean;
+			tagIds?: Array<number>;
+			selectedColumns?: Array<string>;
+			projectStatuses?: Array<string>;
+			notLinkedWithClientPortalIds?: Array<number>;
+			include?: Array<
+				| 'tags'
+				| 'countries'
+				| 'industries'
+				| 'clientmanagedby'
+				| 'companyupdates'
+				| 'jobRoles'
+				| 'users'
+				| 'companydomains'
+				| 'currencies'
+				| 'customfields'
+				| 'customfieldCompanies'
+				| 'clientPortals'
+			>;
+			ids?: Array<number>;
+			'fields[users]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
+				| 'updatedAt'
+				| 'teams'
+			>;
+			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
+			'fields[industries]'?: Array<string>;
+			'fields[countries]'?: Array<string>;
+			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
+			excludeTagIds?: Array<number>;
+			excludeIds?: Array<number>;
+			companyHealths?: Array<number>;
+			clientManagedByUserIds?: Array<number>;
+			CustomFields?: Array<string>;
+		};
+		body?: never;
+	};
+	'companies.create': {
 		path?: Record<string, never>;
 		query?: { fireWebhook?: boolean };
-		body: TeamworkV3Input_task_CreateRequest;
+		body: TeamworkV3Input_company_Request;
 	};
-	v3_get_projects_api_v3_me_personaltasks_id_json: {
+	'companies.update': {
+		path: { companyId: number };
+		query?: { fireWebhook?: boolean };
+		body: TeamworkV3Input_company_Request;
+	};
+	'companies.delete': {
+		path: { companyId: number };
+		query?: { fireWebhook?: boolean };
+		body?: never;
+	};
+	'companies.setRates': {
+		path: { companyId: number };
+		query?: Record<string, never>;
+		body: TeamworkV3Input_company_ClientRatesRequest;
+	};
+	'companies.convertCurrency': {
 		path: { id: number };
+		query?: Record<string, never>;
+		body?: never;
+	};
+	'companies.addDomains': {
+		path: { id: number };
+		query?: Record<string, never>;
+		body: TeamworkV3Input_companydomain_BulkRequest;
+	};
+	'companies.updateDomain': {
+		path: { id: number };
+		query?: Record<string, never>;
+		body: TeamworkV3Input_companydomain_Request;
+	};
+	'companies.deleteDomain': {
+		path: { id: number };
+		query?: Record<string, never>;
+		body?: never;
+	};
+	'comments.list': {
+		path?: Record<string, never>;
 		query?: {
-			updatedBefore?: string;
+			updatedAfterDate?: string;
 			updatedAfter?: string;
-			today?: string;
-			taskFilter?:
-				| 'all'
-				| 'anytime'
-				| 'completed'
-				| 'created'
-				| 'overdue'
-				| 'today'
-				| 'yesterday'
-				| 'started'
-				| 'tomorrow'
-				| 'thisweek'
-				| 'within7'
-				| 'within14'
-				| 'within30'
-				| 'within365'
-				| 'nodate'
-				| 'noduedate'
-				| 'nostartdate'
-				| 'newTaskDefaults'
-				| 'hasDate'
-				| 'upcoming'
-				| 'within'
-				| 'withinprev';
-			startDate?: string;
 			searchTerm?: string;
-			reportType?: 'plannedvsactual' | 'task' | 'tasktime';
-			reportFormat?: 'html' | 'pdf' | 'csv' | 'xls' | 'xlsx' | 'google-sheets';
-			projectType?:
-				| 'all'
-				| 'normal'
-				| 'tentative'
-				| 'personal'
-				| 'projects-template'
-				| 'tasklists-template';
-			priority?: string;
+			publishedStartDate?: string;
+			publishedEndDate?: string;
+			projectType?: string;
+			projectStatuses?: string;
 			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'id'
-				| 'startdate'
-				| 'createdat'
-				| 'priority'
-				| 'project'
-				| 'flattenedtasklist'
-				| 'company'
-				| 'manual'
-				| 'active'
-				| 'completedat'
-				| 'duestartdate'
-				| 'alldates'
-				| 'tasklistname'
-				| 'tasklistdisplayorder'
-				| 'tasklistid'
-				| 'duedate'
-				| 'updatedat'
-				| 'taskname'
-				| 'createdby'
-				| 'completedby'
-				| 'assignedto'
-				| 'taskstatus'
-				| 'taskduedate'
-				| 'customfield'
-				| 'estimatedtime'
-				| 'taskgroupid'
-				| 'taskgroupname'
-				| 'projectmanual'
-				| 'stagedisplayorder'
-				| 'stage'
-				| 'parenttask'
-				| 'dateadded'
-				| 'datecompleted'
-				| 'completedatdesc'
-				| 'completeddatedesc'
-				| 'duestartdatedesc'
-				| 'alldatesdesc'
-				| 'duedatedesc'
-				| 'taskgroupdisplayorder'
-				| 'dateupdated'
-				| 'originalduedate'
-				| 'tags';
-			notCompletedBefore?: string;
-			endDate?: string;
-			dueBefore?: string;
-			dueAfter?: string;
-			deletedAfter?: string;
-			createdFilter?: 'anytime' | 'today' | 'yesterday' | 'custom';
-			createdDateCode?: string;
-			createdBefore?: string;
-			createdAfter?: string;
-			completedBefore?: string;
-			completedAfter?: string;
-			updatedByUserId?: number;
-			parentTaskId?: number;
+			orderBy?: 'all' | 'date' | 'project' | 'user' | 'type' | 'id';
+			cursor?: string;
+			commentStatus?: 'all' | 'read' | 'unread';
 			pageSize?: number;
 			page?: number;
-			orderByCustomFieldId?: number;
-			includeTaskId?: number;
-			filterId?: number;
-			completedByUserId?: number;
-			useTaskDateRange?: boolean;
-			useStartDatesForTodaysTasks?: boolean;
-			useFormulaFields?: boolean;
-			useAllProjects?: boolean;
-			sortActiveFirst?: boolean;
+			limit?: number;
+			strictHTML?: boolean;
 			skipCounts?: boolean;
-			showDeleted?: boolean;
-			showCompletedLists?: boolean;
-			searchJobRoles?: boolean;
-			searchCompaniesTeams?: boolean;
-			searchAssignees?: boolean;
-			onlyUntaggedTasks?: boolean;
-			onlyUnplanned?: boolean;
-			onlyUnassignedTasks?: boolean;
-			onlyTasksWithUnreadComments?: boolean;
-			onlyTasksWithTickets?: boolean;
-			onlyTasksWithEstimatedTime?: boolean;
 			onlyStarredProjects?: boolean;
-			onlyAssignedTasks?: boolean;
-			onlyAssignedRoleTasks?: boolean;
-			onlyAdminProjects?: boolean;
-			nestSubTasks?: boolean;
-			matchAllTags?: boolean;
 			matchAllProjectTags?: boolean;
-			matchAllExcludedTags?: boolean;
-			isReportDownload?: boolean;
-			includeUpdate?: boolean;
-			includeUntaggedTasks?: boolean;
-			includeTomorrow?: boolean;
-			includeToday?: boolean;
 			includeTentativeProjects?: boolean;
-			includeTeamUserIds?: boolean;
-			includeTasksWithoutDueDates?: boolean;
-			includeTasksFromDeletedLists?: boolean;
-			includeTasksCount?: boolean;
-			includeRelatedTasks?: boolean;
-			includePrivateItems?: boolean;
-			includeOverdueTasks?: boolean;
-			includeOriginalDueDate?: boolean;
-			includeJobRoleUserIds?: boolean;
-			includeEmailCommentStats?: boolean;
-			includeCustomFields?: boolean;
-			includeCompletedTasks?: boolean;
-			includeCompletedPredecessors?: boolean;
-			includeCompanyUserIds?: boolean;
-			includeCommentStats?: boolean;
-			includeBlocked?: boolean;
-			includeAttachmentCommentStats?: boolean;
-			includeAssigneeTeams?: boolean;
-			includeAssigneeJobRoles?: boolean;
-			includeAssigneeCompanies?: boolean;
 			includeArchivedProjects?: boolean;
-			includeAllComments?: boolean;
-			includeAccumulatedTimeTotals?: boolean;
-			hideDeleted?: boolean;
-			groupByTasklist?: boolean;
-			groupByTaskgroup?: boolean;
-			getSubTasks?: boolean;
-			getFiles?: boolean;
-			fallbackToMilestoneDueDate?: boolean;
-			extractTemplateRoleName?: boolean;
-			excludeAssigneeNotOnProjectTeams?: boolean;
-			excludeAssignedToMe?: boolean;
-			deletedOnly?: boolean;
-			completedOnly?: boolean;
-			checkForTimeblocks?: boolean;
-			checkForReminders?: boolean;
-			calculateTasklistDates?: boolean;
-			allowAssigneesOutsideProject?: boolean;
-			workflowIds?: Array<number>;
-			tasksSelectedColumns?: Array<string>;
-			tasklistIds?: Array<number>;
-			taskgroupIds?: Array<number>;
-			taskIncludedSet?: Array<
-				| 'overdue'
-				| 'nodate'
-				| 'nostartdate'
-				| 'noduedate'
-				| 'nostartwithfutureduedate'
-				| 'taskListNames'
-				| 'projectNames'
-			>;
-			tags?: Array<string>;
-			tagIds?: Array<number>;
-			status?: Array<'upcoming' | 'late' | 'all'>;
-			stageIds?: Array<number>;
-			sort?: Array<string>;
-			skipCRMDealIds?: Array<number>;
-			selectedColumns?: Array<string>;
-			responsiblePartyIds?: Array<number>;
+			userIds?: Array<number>;
 			projectTagIds?: Array<number>;
-			projectStatuses?: Array<
-				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
-			>;
 			projectOwnerIds?: Array<number>;
 			projectIds?: Array<number>;
 			projectHealths?: Array<'0' | '1' | '2' | '3'>;
-			projectFeaturesEnabled?: Array<
-				| 'list'
-				| 'board'
-				| 'gantt'
-				| 'table'
-				| 'dashboard'
-				| 'milestones'
-				| 'messages'
-				| 'files'
-				| 'time'
-				| 'notebooks'
-				| 'risks'
-				| 'links'
-				| 'billing'
-				| 'comments'
-				| 'people'
-				| 'settings'
-			>;
 			projectCompanyIds?: Array<number>;
 			projectCategoryIds?: Array<number>;
-			portfolioBoardIds?: Array<number>;
-			includeCustomFieldIds?: Array<number>;
+			objectTypes?: Array<
+				| 'task'
+				| 'file'
+				| 'fileversion'
+				| 'notebook'
+				| 'milestone'
+				| 'link'
+				| 'projectupdate'
+				| 'customitemrecord'
+			>;
+			objectType?: Array<
+				| 'task'
+				| 'file'
+				| 'fileversion'
+				| 'notebook'
+				| 'milestone'
+				| 'link'
+				| 'projectupdate'
+				| 'customitemrecord'
+			>;
+			objectIds?: Array<number>;
+			notifiedUserIds?: Array<number>;
 			include?: Array<
+				| 'reactions'
+				| 'users'
 				| 'projects'
 				| 'projects.companies'
-				| 'projects.categories'
-				| 'projects.permissions'
-				| 'projects.integrations'
-				| 'tasklists'
-				| 'parentTasks'
-				| 'companies'
-				| 'teams'
-				| 'users'
-				| 'milestones'
-				| 'comments'
-				| 'comments.users'
-				| 'tags'
-				| 'timeTotals'
-				| 'accumulatedTimeTotals'
-				| 'taskSequences'
-				| 'commentFollowers'
-				| 'changeFollowers'
-				| 'completeFollowers'
-				| 'lockdowns'
-				| 'lockdowns.users'
-				| 'lockdowns.companies'
-				| 'lockdowns.teams'
-				| 'lockdowns.users.companies'
-				| 'lockdowns.companies.users'
-				| 'lockdowns.teams.users'
-				| 'attachments'
-				| 'attachments.users'
-				| 'subtaskStats'
-				| 'timers'
-				| 'predecessors'
-				| 'permissions'
-				| 'jobRoles'
-				| 'proofs'
-				| 'taskgroups'
-				| 'workflows'
-				| 'workflows.stages'
-				| 'customfields'
-				| 'customfieldTasks'
+				| 'files'
+				| 'relatedFiles'
 				| 'tasks'
+				| 'notebooks'
+				| 'milestones'
+				| 'links'
 			>;
-			ids?: Array<number>;
-			followedByUserIds?: Array<number>;
-			'fields[workflows]'?: Array<'id' | 'name' | 'statusId'>;
 			'fields[users]'?: Array<
 				| 'id'
 				| 'firstName'
@@ -5919,25 +10106,6 @@ export type TeamworkV3Inputs = {
 				| 'updatedAt'
 				| 'teams'
 			>;
-			'fields[timers]'?: Array<
-				| 'id'
-				| 'userId'
-				| 'taskId'
-				| 'projectId'
-				| 'description'
-				| 'running'
-				| 'billable'
-				| 'deleted'
-				| 'dateCreated'
-				| 'dateDeleted'
-				| 'duration'
-				| 'lastStartedAt'
-				| 'serverTime'
-				| 'intervals'
-			>;
-			'fields[teams]'?: Array<
-				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
-			>;
 			'fields[tasks]'?: Array<
 				| 'id'
 				| 'name'
@@ -5953,24 +10121,6 @@ export type TeamworkV3Inputs = {
 				| 'updatedAt'
 				| 'tasklist'
 			>;
-			'fields[tasklists]'?: Array<
-				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
-			>;
-			'fields[taskgroups]'?: Array<
-				'id' | 'name' | 'description' | 'displayOrder' | 'projectId' | 'status'
-			>;
-			'fields[taskSequences]'?: Array<
-				| 'id'
-				| 'installationId'
-				| 'frequency'
-				| 'selectedWeekDays'
-				| 'endDate'
-				| 'monthlyRepeatType'
-				| 'duration'
-				| 'rrule'
-			>;
-			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
-			'fields[stages]'?: Array<'id' | 'name' | 'stage'>;
 			'fields[projects]'?: Array<
 				| 'id'
 				| 'name'
@@ -5992,15 +10142,38 @@ export type TeamworkV3Inputs = {
 				| 'projectNumber'
 				| 'projectNumberCounter'
 			>;
-			'fields[projectIntegrations]'?: Array<
-				| 'userId'
+			'fields[notebooks]'?: Array<
+				| 'id'
+				| 'name'
+				| 'description'
+				| 'contents'
+				| 'type'
+				| 'isPrivate'
+				| 'locked'
+				| 'lockdownId'
+				| 'secureContent'
 				| 'projectId'
-				| 'canAccessBox'
-				| 'canAccessDropbox'
-				| 'canAccessGoogleDocs'
-				| 'canAccessOneDrive'
-				| 'canAccessOneDriveBusiness'
-				| 'canAccessSharePoint'
+				| 'createdByUserID'
+				| 'updatedByUserID'
+				| 'deletedByUserID'
+				| 'dateUpdated'
+				| 'dateCreated'
+				| 'dateDeleted'
+				| 'deleted'
+				| 'categoryId'
+				| 'notebookVersionID'
+				| 'notebookVersionCreatedDateTime'
+				| 'notebookVersionUpdatedDateTime'
+				| 'latestVersionNo'
+				| 'commentsCount'
+				| 'readCommentsCount'
+				| 'contentHTML'
+				| 'privacy'
+				| 'commentFollowers'
+				| 'changeFollowers'
+				| 'tagIds'
+				| 'updatedAt'
+				| 'project'
 			>;
 			'fields[milestones]'?: Array<
 				| 'id'
@@ -6021,18 +10194,43 @@ export type TeamworkV3Inputs = {
 				| 'percentageComplete'
 				| 'project'
 			>;
-			'fields[lockdowns]'?: Array<
-				'id' | 'userID' | 'updatedAt' | 'itemType' | 'itemID' | 'grantAccessTo'
+			'fields[links]'?: Array<
+				| 'id'
+				| 'title'
+				| 'description'
+				| 'code'
+				| 'width'
+				| 'height'
+				| 'isPrivate'
+				| 'provider'
+				| 'projectId'
+				| 'createdAt'
+				| 'forceNewWindow'
+				| 'deleted'
+				| 'deletedAt'
+				| 'updatedAt'
+				| 'categoryId'
+				| 'createdBy'
+				| 'deletedBy'
+				| 'updatedBy'
+				| 'project'
 			>;
-			'fields[jobroles]'?: Array<'id' | 'name'>;
-			'fields[groups]'?: Array<
-				| 'late'
-				| 'today'
-				| 'tomorrow'
-				| 'later-this-week'
-				| 'next-week'
-				| 'later'
-				| 'no-due-date'
+			'fields[fileversions]'?: Array<
+				| 'fileVersionId'
+				| 'fileId'
+				| 'versionNo'
+				| 'name'
+				| 'originalName'
+				| 'size'
+				| 'uploadedBy'
+				| 'uploadedAt'
+				| 'description'
+				| 'status'
+				| 'projectId'
+				| 'reactions'
+				| 'commentsCount'
+				| 'commentsCountRead'
+				| 'displayName'
 			>;
 			'fields[files]'?: Array<
 				| 'isPrivate'
@@ -6068,28 +10266,6 @@ export type TeamworkV3Inputs = {
 				| 'commentsCountRead'
 				| 'categoryId'
 			>;
-			'fields[customfields]'?: Array<
-				| 'id'
-				| 'projectId'
-				| 'entity'
-				| 'name'
-				| 'description'
-				| 'type'
-				| 'options'
-				| 'visibilities'
-				| 'isPrivate'
-				| 'required'
-				| 'createdAt'
-				| 'createdByUserId'
-				| 'updatedAt'
-				| 'updatedByUserId'
-				| 'deleted'
-				| 'deletedAt'
-				| 'deletedByUserId'
-			>;
-			'fields[customfieldTasks]'?: Array<
-				'id' | 'customfieldId' | 'value' | 'createdAt' | 'createdBy'
-			>;
 			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
 			'fields[comments]'?: Array<
 				| 'id'
@@ -6101,92 +10277,73 @@ export type TeamworkV3Inputs = {
 				| 'object'
 				| 'project'
 			>;
-			'fields[ProjectPermissions]'?: Array<
-				| 'viewMessagesAndFiles'
-				| 'viewTasksAndMilestones'
-				| 'viewTime'
-				| 'viewNotebooks'
-				| 'viewRiskRegister'
-				| 'viewEstimatedTime'
-				| 'viewInvoices'
-				| 'addTasks'
-				| 'addRisks'
-				| 'manageCustomFields'
-				| 'addExpenses'
-				| 'editAllTasks'
-				| 'addMilestones'
-				| 'addTaskLists'
-				| 'addMessages'
-				| 'addFiles'
-				| 'addTime'
-				| 'addNotebooks'
-				| 'viewLinks'
-				| 'addLinks'
-				| 'canViewForms'
-				| 'addForms'
-				| 'viewAllTimeLogs'
-				| 'setPrivacy'
-				| 'projectAdministrator'
-				| 'viewProjectUpdate'
-				| 'addProjectUpdate'
-				| 'canViewProjectMembers'
-				| 'canViewProjectBudget'
-				| 'canManageProjectBudget'
-				| 'canViewRates'
-				| 'canManageRates'
-				| 'canViewSchedule'
-				| 'canManageSchedule'
-				| 'receiveEmailNotifications'
-				| 'isObserving'
-				| 'isArchived'
-				| 'active'
-				| 'canAccess'
-				| 'inOwnerCompany'
-				| 'canManagePeople'
-				| 'canViewProjectTemplates'
-				| 'canManageProjectTemplates'
-			>;
-			expandedIds?: Array<number>;
-			excludeTagIds?: Array<number>;
-			excludeResponsiblePartyIds?: Array<number>;
-			crmDealIds?: Array<number>;
-			createdByUserIds?: Array<number>;
-			assigneeTypes?: Array<
-				| 'user'
-				| 'company'
-				| 'team'
-				| 'jobrole'
-				| 'placeholder'
-				| 'assigned'
-				| 'unassigned'
-			>;
-			assigneeTeamIds?: Array<number>;
-			assigneeJobRoleIds?: Array<number>;
-			assigneeCompanyIds?: Array<number>;
-			CustomFields?: Array<string>;
+			commentIds?: Array<number>;
 		};
 		body?: never;
 	};
-	v3_get_projects_api_v3_me_timers_json: {
-		path?: Record<string, never>;
+	'comments.get': {
+		path: { id: number };
 		query?: {
 			updatedAfterDate?: string;
 			updatedAfter?: string;
-			userId?: number;
-			taskId?: number;
-			projectId?: number;
+			searchTerm?: string;
+			publishedStartDate?: string;
+			publishedEndDate?: string;
+			projectType?: string;
+			projectStatuses?: string;
+			orderMode?: 'asc' | 'desc';
+			orderBy?: 'all' | 'date' | 'project' | 'user' | 'type' | 'id';
+			cursor?: string;
+			commentStatus?: 'all' | 'read' | 'unread';
 			pageSize?: number;
 			page?: number;
+			limit?: number;
+			strictHTML?: boolean;
 			skipCounts?: boolean;
-			showDeleted?: boolean;
-			runningTimersOnly?: boolean;
+			onlyStarredProjects?: boolean;
+			matchAllProjectTags?: boolean;
+			includeTentativeProjects?: boolean;
+			includeArchivedProjects?: boolean;
+			userIds?: Array<number>;
+			projectTagIds?: Array<number>;
+			projectOwnerIds?: Array<number>;
+			projectIds?: Array<number>;
+			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectCompanyIds?: Array<number>;
+			projectCategoryIds?: Array<number>;
+			objectTypes?: Array<
+				| 'task'
+				| 'file'
+				| 'fileversion'
+				| 'notebook'
+				| 'milestone'
+				| 'link'
+				| 'projectupdate'
+				| 'customitemrecord'
+			>;
+			objectType?: Array<
+				| 'task'
+				| 'file'
+				| 'fileversion'
+				| 'notebook'
+				| 'milestone'
+				| 'link'
+				| 'projectupdate'
+				| 'customitemrecord'
+			>;
+			objectIds?: Array<number>;
+			notifiedUserIds?: Array<number>;
 			include?: Array<
+				| 'reactions'
+				| 'users'
 				| 'projects'
 				| 'projects.companies'
+				| 'files'
+				| 'relatedFiles'
 				| 'tasks'
-				| 'tasks.parentTasks'
-				| 'tasks.tasklists'
-				| 'users'
+				| 'notebooks'
+				| 'milestones'
+				| 'links'
 			>;
 			'fields[users]'?: Array<
 				| 'id'
@@ -6210,22 +10367,6 @@ export type TeamworkV3Inputs = {
 				| 'canAddProjects'
 				| 'updatedAt'
 				| 'teams'
-			>;
-			'fields[timers]'?: Array<
-				| 'id'
-				| 'userId'
-				| 'taskId'
-				| 'projectId'
-				| 'description'
-				| 'running'
-				| 'billable'
-				| 'deleted'
-				| 'dateCreated'
-				| 'dateDeleted'
-				| 'duration'
-				| 'lastStartedAt'
-				| 'serverTime'
-				| 'intervals'
 			>;
 			'fields[tasks]'?: Array<
 				| 'id'
@@ -6242,9 +10383,6 @@ export type TeamworkV3Inputs = {
 				| 'updatedAt'
 				| 'tasklist'
 			>;
-			'fields[tasklists]'?: Array<
-				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
-			>;
 			'fields[projects]'?: Array<
 				| 'id'
 				| 'name'
@@ -6266,156 +10404,209 @@ export type TeamworkV3Inputs = {
 				| 'projectNumber'
 				| 'projectNumberCounter'
 			>;
+			'fields[notebooks]'?: Array<
+				| 'id'
+				| 'name'
+				| 'description'
+				| 'contents'
+				| 'type'
+				| 'isPrivate'
+				| 'locked'
+				| 'lockdownId'
+				| 'secureContent'
+				| 'projectId'
+				| 'createdByUserID'
+				| 'updatedByUserID'
+				| 'deletedByUserID'
+				| 'dateUpdated'
+				| 'dateCreated'
+				| 'dateDeleted'
+				| 'deleted'
+				| 'categoryId'
+				| 'notebookVersionID'
+				| 'notebookVersionCreatedDateTime'
+				| 'notebookVersionUpdatedDateTime'
+				| 'latestVersionNo'
+				| 'commentsCount'
+				| 'readCommentsCount'
+				| 'contentHTML'
+				| 'privacy'
+				| 'commentFollowers'
+				| 'changeFollowers'
+				| 'tagIds'
+				| 'updatedAt'
+				| 'project'
+			>;
+			'fields[milestones]'?: Array<
+				| 'id'
+				| 'name'
+				| 'description'
+				| 'deadline'
+				| 'completed'
+				| 'projectId'
+				| 'createdOn'
+				| 'lastChangedOn'
+				| 'creatorUserId'
+				| 'reminder'
+				| 'private'
+				| 'lockdownId'
+				| 'status'
+				| 'completedOn'
+				| 'completerId'
+				| 'percentageComplete'
+				| 'project'
+			>;
+			'fields[links]'?: Array<
+				| 'id'
+				| 'title'
+				| 'description'
+				| 'code'
+				| 'width'
+				| 'height'
+				| 'isPrivate'
+				| 'provider'
+				| 'projectId'
+				| 'createdAt'
+				| 'forceNewWindow'
+				| 'deleted'
+				| 'deletedAt'
+				| 'updatedAt'
+				| 'categoryId'
+				| 'createdBy'
+				| 'deletedBy'
+				| 'updatedBy'
+				| 'project'
+			>;
+			'fields[fileversions]'?: Array<
+				| 'fileVersionId'
+				| 'fileId'
+				| 'versionNo'
+				| 'name'
+				| 'originalName'
+				| 'size'
+				| 'uploadedBy'
+				| 'uploadedAt'
+				| 'description'
+				| 'status'
+				| 'projectId'
+				| 'reactions'
+				| 'commentsCount'
+				| 'commentsCountRead'
+				| 'displayName'
+			>;
+			'fields[files]'?: Array<
+				| 'isPrivate'
+				| 'latestFileVersionNo'
+				| 'versionId'
+				| 'status'
+				| 'description'
+				| 'lockdownId'
+				| 'tagIds'
+				| 'changeFollowers'
+				| 'commentFollowers'
+				| 'originalName'
+				| 'displayName'
+				| 'isLocked'
+				| 'lockedByUserId'
+				| 'lockedDate'
+				| 'size'
+				| 'uploadedDate'
+				| 'uploadedByUserID'
+				| 'updatedAt'
+				| 'deletedAt'
+				| 'deletedBy'
+				| 'fileSource'
+				| 'projectId'
+				| 'numLikes'
+				| 'reactions'
+				| 'versions'
+				| 'downloadURL'
+				| 'previewURL'
+				| 'thumbURL'
+				| 'relatedItems'
+				| 'commentsCount'
+				| 'commentsCountRead'
+				| 'categoryId'
+			>;
+			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
+			'fields[comments]'?: Array<
+				| 'id'
+				| 'objectType'
+				| 'objectId'
+				| 'title'
+				| 'postedAt'
+				| 'postedBy'
+				| 'object'
+				| 'project'
+			>;
+			commentIds?: Array<number>;
 		};
 		body?: never;
 	};
-	v3_post_projects_api_v3_me_timers_json: {
-		path?: Record<string, never>;
-		query?: Record<string, never>;
-		body: TeamworkV3Input_timer_Request;
-	};
-	v3_delete_projects_api_v3_me_timers_timerid_json: {
-		path: { timerId: number };
-		query?: Record<string, never>;
-		body: TeamworkV3Input_timer_DeleteRequest;
-	};
-	v3_put_projects_api_v3_me_timers_timerid_json: {
-		path: { timerId: number };
-		query?: Record<string, never>;
-		body: TeamworkV3Input_timer_Request;
-	};
-	v3_put_projects_api_v3_me_timers_timerid_complete_json: {
-		path: { timerId: number };
-		query?: Record<string, never>;
-		body?: never;
-	};
-	v3_put_projects_api_v3_me_timers_timerid_pause_json: {
-		path: { timerId: number };
-		query?: Record<string, never>;
-		body?: never;
-	};
-	v3_put_projects_api_v3_me_timers_timerid_resume_json: {
-		path: { timerId: number };
-		query?: Record<string, never>;
-		body?: never;
-	};
-	v3_put_projects_api_v3_me_timers_timerid_undelete_json: {
-		path: { timerId: number };
-		query?: Record<string, never>;
-		body?: never;
-	};
-	v3_get_projects_api_v3_milestones_json: {
-		path?: Record<string, never>;
+	'comments.listNotified': {
+		path: { id: number };
 		query?: {
 			updatedAfterDate?: string;
 			updatedAfter?: string;
 			searchTerm?: string;
-			reportType?: 'plannedvsactual' | 'calendar' | 'agenda';
-			reportFormat?: string;
-			projectType?:
-				| ''
-				| 'normal'
-				| 'tasklists-template'
-				| 'projects-template'
-				| 'personal'
-				| 'tentative';
-			projectStatus?: string;
+			publishedStartDate?: string;
+			publishedEndDate?: string;
+			projectType?: string;
+			projectStatuses?: string;
 			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'date'
-				| 'dateonly'
-				| 'name'
-				| 'project'
-				| 'user'
-				| 'dateCreated'
-				| 'dateUpdated'
-				| 'id'
-				| 'completion'
-				| 'originalDueDate'
-				| 'dateCompleted'
-				| 'completedBy'
-				| 'status'
-				| 'variance';
-			dueBeforeDate?: string;
-			dueBefore?: string;
-			dueAfterDate?: string;
-			dueAfter?: string;
-			deletedAfter?: string;
+			orderBy?: 'all' | 'date' | 'project' | 'user' | 'type' | 'id';
+			cursor?: string;
+			commentStatus?: 'all' | 'read' | 'unread';
 			pageSize?: number;
 			page?: number;
+			limit?: number;
+			strictHTML?: boolean;
 			skipCounts?: boolean;
-			showPrivate?: boolean;
-			showDeleted?: boolean;
-			showAttachedTasklists?: boolean;
-			searchCompaniesTeams?: boolean;
-			searchAssignees?: boolean;
-			progress?: boolean;
-			onlyWithoutTasklists?: boolean;
 			onlyStarredProjects?: boolean;
-			onlyMyProjects?: boolean;
-			onlyAdminProjects?: boolean;
-			matchAllTags?: boolean;
 			matchAllProjectTags?: boolean;
-			isReportDownload?: boolean;
-			includeUpdate?: boolean;
-			includeToday?: boolean;
 			includeTentativeProjects?: boolean;
-			includeTeamUserIds?: boolean;
-			includeTags?: boolean;
-			includeProgress?: boolean;
-			includePercentageComplete?: boolean;
-			includeCompleted?: boolean;
-			includeCompanyUserIds?: boolean;
-			includeAssigneeTeams?: boolean;
-			includeAssigneeCompanies?: boolean;
 			includeArchivedProjects?: boolean;
-			emoji?: boolean;
-			countUnreadComments?: boolean;
-			calendar?: boolean;
-			tagIds?: Array<number>;
-			status?: Array<
-				| 'all'
-				| 'new'
-				| 'reopened'
-				| 'completed'
-				| 'deleted'
-				| 'pending'
-				| 'incomplete'
-				| 'late'
-				| 'today'
-				| 'upcoming'
-			>;
-			selectedColumns?: Array<string>;
+			userIds?: Array<number>;
 			projectTagIds?: Array<number>;
-			projectStatuses?: Array<string>;
 			projectOwnerIds?: Array<number>;
 			projectIds?: Array<number>;
-			projectHealths?: Array<number>;
-			projectHealth?: Array<number>;
+			projectHealths?: Array<'0' | '1' | '2' | '3'>;
 			projectCompanyIds?: Array<number>;
 			projectCategoryIds?: Array<number>;
+			objectTypes?: Array<
+				| 'task'
+				| 'file'
+				| 'fileversion'
+				| 'notebook'
+				| 'milestone'
+				| 'link'
+				| 'projectupdate'
+				| 'customitemrecord'
+			>;
+			objectType?: Array<
+				| 'task'
+				| 'file'
+				| 'fileversion'
+				| 'notebook'
+				| 'milestone'
+				| 'link'
+				| 'projectupdate'
+				| 'customitemrecord'
+			>;
+			objectIds?: Array<number>;
+			notifiedUserIds?: Array<number>;
 			include?: Array<
+				| 'reactions'
+				| 'users'
 				| 'projects'
 				| 'projects.companies'
-				| 'projects.categories'
-				| 'projects.permissions'
-				| 'projects.integrations'
-				| 'users'
-				| 'completedBy'
-				| 'createdBy'
-				| 'deletedBy'
-				| 'updatedBy'
-				| 'commentFollowers'
-				| 'changeFollowers'
-				| 'completeFollowers'
-				| 'tags'
-				| 'tasklists'
-				| 'tasklisttaskstats'
-				| 'teams'
-				| 'companies'
+				| 'files'
+				| 'relatedFiles'
+				| 'tasks'
+				| 'notebooks'
+				| 'milestones'
+				| 'links'
 			>;
-			ids?: Array<number>;
-			followerIds?: Array<number>;
 			'fields[users]'?: Array<
 				| 'id'
 				| 'firstName'
@@ -6439,10 +10630,21 @@ export type TeamworkV3Inputs = {
 				| 'updatedAt'
 				| 'teams'
 			>;
-			'fields[tasklists]'?: Array<
-				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
+			'fields[tasks]'?: Array<
+				| 'id'
+				| 'name'
+				| 'dateUpdated'
+				| 'parentTaskId'
+				| 'isPrivate'
+				| 'status'
+				| 'tasklistId'
+				| 'startDate'
+				| 'dueDate'
+				| 'estimateMinutes'
+				| 'accumulatedEstimatedMinutes'
+				| 'updatedAt'
+				| 'tasklist'
 			>;
-			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
 			'fields[projects]'?: Array<
 				| 'id'
 				| 'name'
@@ -6464,262 +10666,38 @@ export type TeamworkV3Inputs = {
 				| 'projectNumber'
 				| 'projectNumberCounter'
 			>;
-			'fields[projectIntegrations]'?: Array<
-				| 'userId'
-				| 'projectId'
-				| 'canAccessBox'
-				| 'canAccessDropbox'
-				| 'canAccessGoogleDocs'
-				| 'canAccessOneDrive'
-				| 'canAccessOneDriveBusiness'
-				| 'canAccessSharePoint'
-			>;
-			'fields[milestones]'?: Array<
+			'fields[notebooks]'?: Array<
 				| 'id'
 				| 'name'
 				| 'description'
-				| 'deadline'
-				| 'completed'
-				| 'projectId'
-				| 'createdOn'
-				| 'lastChangedOn'
-				| 'creatorUserId'
-				| 'reminder'
-				| 'private'
+				| 'contents'
+				| 'type'
+				| 'isPrivate'
+				| 'locked'
 				| 'lockdownId'
-				| 'status'
-				| 'completedOn'
-				| 'completerId'
-				| 'percentageComplete'
-				| 'project'
-			>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			'fields[ProjectPermissions]'?: Array<
-				| 'viewMessagesAndFiles'
-				| 'viewTasksAndMilestones'
-				| 'viewTime'
-				| 'viewNotebooks'
-				| 'viewRiskRegister'
-				| 'viewEstimatedTime'
-				| 'viewInvoices'
-				| 'addTasks'
-				| 'addRisks'
-				| 'manageCustomFields'
-				| 'addExpenses'
-				| 'editAllTasks'
-				| 'addMilestones'
-				| 'addTaskLists'
-				| 'addMessages'
-				| 'addFiles'
-				| 'addTime'
-				| 'addNotebooks'
-				| 'viewLinks'
-				| 'addLinks'
-				| 'canViewForms'
-				| 'addForms'
-				| 'viewAllTimeLogs'
-				| 'setPrivacy'
-				| 'projectAdministrator'
-				| 'viewProjectUpdate'
-				| 'addProjectUpdate'
-				| 'canViewProjectMembers'
-				| 'canViewProjectBudget'
-				| 'canManageProjectBudget'
-				| 'canViewRates'
-				| 'canManageRates'
-				| 'canViewSchedule'
-				| 'canManageSchedule'
-				| 'receiveEmailNotifications'
-				| 'isObserving'
-				| 'isArchived'
-				| 'active'
-				| 'canAccess'
-				| 'inOwnerCompany'
-				| 'canManagePeople'
-				| 'canViewProjectTemplates'
-				| 'canManageProjectTemplates'
-			>;
-			creatorIds?: Array<number>;
-			assignedToUserIds?: Array<number>;
-			assignedToTeamIds?: Array<number>;
-			assignedToCompanyIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_milestones_metrics_deadlines_json: {
-		path?: Record<string, never>;
-		query: { startDate: string; endDate: string };
-		body?: never;
-	};
-	v3_get_projects_api_v3_milestones_milestoneid_json: {
-		path: { milestoneId: number };
-		query?: {
-			updatedAfterDate?: string;
-			updatedAfter?: string;
-			searchTerm?: string;
-			reportType?: 'plannedvsactual' | 'calendar' | 'agenda';
-			reportFormat?: string;
-			projectType?:
-				| ''
-				| 'normal'
-				| 'tasklists-template'
-				| 'projects-template'
-				| 'personal'
-				| 'tentative';
-			projectStatus?: string;
-			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'date'
-				| 'dateonly'
-				| 'name'
-				| 'project'
-				| 'user'
-				| 'dateCreated'
+				| 'secureContent'
+				| 'projectId'
+				| 'createdByUserID'
+				| 'updatedByUserID'
+				| 'deletedByUserID'
 				| 'dateUpdated'
-				| 'id'
-				| 'completion'
-				| 'originalDueDate'
-				| 'dateCompleted'
-				| 'completedBy'
-				| 'status'
-				| 'variance';
-			dueBeforeDate?: string;
-			dueBefore?: string;
-			dueAfterDate?: string;
-			dueAfter?: string;
-			deletedAfter?: string;
-			pageSize?: number;
-			page?: number;
-			skipCounts?: boolean;
-			showPrivate?: boolean;
-			showDeleted?: boolean;
-			showAttachedTasklists?: boolean;
-			searchCompaniesTeams?: boolean;
-			searchAssignees?: boolean;
-			progress?: boolean;
-			onlyWithoutTasklists?: boolean;
-			onlyStarredProjects?: boolean;
-			onlyMyProjects?: boolean;
-			onlyAdminProjects?: boolean;
-			matchAllTags?: boolean;
-			matchAllProjectTags?: boolean;
-			isReportDownload?: boolean;
-			includeUpdate?: boolean;
-			includeToday?: boolean;
-			includeTentativeProjects?: boolean;
-			includeTeamUserIds?: boolean;
-			includeTags?: boolean;
-			includeProgress?: boolean;
-			includePercentageComplete?: boolean;
-			includeCompleted?: boolean;
-			includeCompanyUserIds?: boolean;
-			includeAssigneeTeams?: boolean;
-			includeAssigneeCompanies?: boolean;
-			includeArchivedProjects?: boolean;
-			emoji?: boolean;
-			countUnreadComments?: boolean;
-			calendar?: boolean;
-			tagIds?: Array<number>;
-			status?: Array<
-				| 'all'
-				| 'new'
-				| 'reopened'
-				| 'completed'
+				| 'dateCreated'
+				| 'dateDeleted'
 				| 'deleted'
-				| 'pending'
-				| 'incomplete'
-				| 'late'
-				| 'today'
-				| 'upcoming'
-			>;
-			selectedColumns?: Array<string>;
-			projectTagIds?: Array<number>;
-			projectStatuses?: Array<string>;
-			projectOwnerIds?: Array<number>;
-			projectIds?: Array<number>;
-			projectHealths?: Array<number>;
-			projectHealth?: Array<number>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-			include?: Array<
-				| 'projects'
-				| 'projects.companies'
-				| 'projects.categories'
-				| 'projects.permissions'
-				| 'projects.integrations'
-				| 'users'
-				| 'completedBy'
-				| 'createdBy'
-				| 'deletedBy'
-				| 'updatedBy'
+				| 'categoryId'
+				| 'notebookVersionID'
+				| 'notebookVersionCreatedDateTime'
+				| 'notebookVersionUpdatedDateTime'
+				| 'latestVersionNo'
+				| 'commentsCount'
+				| 'readCommentsCount'
+				| 'contentHTML'
+				| 'privacy'
 				| 'commentFollowers'
 				| 'changeFollowers'
-				| 'completeFollowers'
-				| 'tags'
-				| 'tasklists'
-				| 'tasklisttaskstats'
-				| 'teams'
-				| 'companies'
-			>;
-			ids?: Array<number>;
-			followerIds?: Array<number>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
+				| 'tagIds'
 				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[tasklists]'?: Array<
-				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
-			>;
-			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-			'fields[projectIntegrations]'?: Array<
-				| 'userId'
-				| 'projectId'
-				| 'canAccessBox'
-				| 'canAccessDropbox'
-				| 'canAccessGoogleDocs'
-				| 'canAccessOneDrive'
-				| 'canAccessOneDriveBusiness'
-				| 'canAccessSharePoint'
+				| 'project'
 			>;
 			'fields[milestones]'?: Array<
 				| 'id'
@@ -6740,118 +10718,94 @@ export type TeamworkV3Inputs = {
 				| 'percentageComplete'
 				| 'project'
 			>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			'fields[ProjectPermissions]'?: Array<
-				| 'viewMessagesAndFiles'
-				| 'viewTasksAndMilestones'
-				| 'viewTime'
-				| 'viewNotebooks'
-				| 'viewRiskRegister'
-				| 'viewEstimatedTime'
-				| 'viewInvoices'
-				| 'addTasks'
-				| 'addRisks'
-				| 'manageCustomFields'
-				| 'addExpenses'
-				| 'editAllTasks'
-				| 'addMilestones'
-				| 'addTaskLists'
-				| 'addMessages'
-				| 'addFiles'
-				| 'addTime'
-				| 'addNotebooks'
-				| 'viewLinks'
-				| 'addLinks'
-				| 'canViewForms'
-				| 'addForms'
-				| 'viewAllTimeLogs'
-				| 'setPrivacy'
-				| 'projectAdministrator'
-				| 'viewProjectUpdate'
-				| 'addProjectUpdate'
-				| 'canViewProjectMembers'
-				| 'canViewProjectBudget'
-				| 'canManageProjectBudget'
-				| 'canViewRates'
-				| 'canManageRates'
-				| 'canViewSchedule'
-				| 'canManageSchedule'
-				| 'receiveEmailNotifications'
-				| 'isObserving'
-				| 'isArchived'
-				| 'active'
-				| 'canAccess'
-				| 'inOwnerCompany'
-				| 'canManagePeople'
-				| 'canViewProjectTemplates'
-				| 'canManageProjectTemplates'
-			>;
-			creatorIds?: Array<number>;
-			assignedToUserIds?: Array<number>;
-			assignedToTeamIds?: Array<number>;
-			assignedToCompanyIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_milestones_milestoneid_project_json: {
-		path: { milestoneId: number };
-		query?: {
-			includeProjectUserInfo?: boolean;
-			includeProjectDates?: boolean;
-			includeCustomFields?: boolean;
-			includeCustomFieldIds?: Array<number>;
-			include?: Array<
-				| 'projectOwners'
-				| 'projectUpdates'
-				| 'companies'
-				| 'companies.countries'
-				| 'companies.industries'
-				| 'companies.currencies'
-				| 'projectCategories'
-				| 'portfolioCards'
-				| 'portfolioBoards'
-				| 'portfolioColumns'
-				| 'tags'
-				| 'customfields'
-				| 'customfieldProjects'
-				| 'projectBudgets'
-				| 'activities.latest'
-				| 'users'
-				| 'createdBy'
-				| 'updatedBy'
-				| 'completedBy'
-				| 'deletedBy'
-				| 'archivedBy'
-				| 'projectEmailDropboxes'
-				| 'workflows'
-				| 'workflows.stages'
-				| 'projecttaskstats'
-			>;
-			'fields[projects]'?: Array<
+			'fields[links]'?: Array<
 				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
+				| 'title'
+				| 'description'
+				| 'code'
+				| 'width'
+				| 'height'
+				| 'isPrivate'
+				| 'provider'
+				| 'projectId'
+				| 'createdAt'
+				| 'forceNewWindow'
+				| 'deleted'
+				| 'deletedAt'
 				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
+				| 'categoryId'
+				| 'createdBy'
+				| 'deletedBy'
+				| 'updatedBy'
+				| 'project'
 			>;
+			'fields[fileversions]'?: Array<
+				| 'fileVersionId'
+				| 'fileId'
+				| 'versionNo'
+				| 'name'
+				| 'originalName'
+				| 'size'
+				| 'uploadedBy'
+				| 'uploadedAt'
+				| 'description'
+				| 'status'
+				| 'projectId'
+				| 'reactions'
+				| 'commentsCount'
+				| 'commentsCountRead'
+				| 'displayName'
+			>;
+			'fields[files]'?: Array<
+				| 'isPrivate'
+				| 'latestFileVersionNo'
+				| 'versionId'
+				| 'status'
+				| 'description'
+				| 'lockdownId'
+				| 'tagIds'
+				| 'changeFollowers'
+				| 'commentFollowers'
+				| 'originalName'
+				| 'displayName'
+				| 'isLocked'
+				| 'lockedByUserId'
+				| 'lockedDate'
+				| 'size'
+				| 'uploadedDate'
+				| 'uploadedByUserID'
+				| 'updatedAt'
+				| 'deletedAt'
+				| 'deletedBy'
+				| 'fileSource'
+				| 'projectId'
+				| 'numLikes'
+				| 'reactions'
+				| 'versions'
+				| 'downloadURL'
+				| 'previewURL'
+				| 'thumbURL'
+				| 'relatedItems'
+				| 'commentsCount'
+				| 'commentsCountRead'
+				| 'categoryId'
+			>;
+			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
+			'fields[comments]'?: Array<
+				| 'id'
+				| 'objectType'
+				| 'objectId'
+				| 'title'
+				| 'postedAt'
+				| 'postedBy'
+				| 'object'
+				| 'project'
+			>;
+			commentIds?: Array<number>;
 		};
 		body?: never;
 	};
-	v3_get_projects_api_v3_notebooks_json: {
+	'notebooks.list': {
 		path?: Record<string, never>;
 		query?: {
 			updatedAfterDate?: string;
@@ -7048,12 +11002,7 @@ export type TeamworkV3Inputs = {
 		};
 		body?: never;
 	};
-	v3_delete_projects_api_v3_notebooks_notebookid_json: {
-		path: { notebookId: number };
-		query?: Record<string, never>;
-		body?: never;
-	};
-	v3_get_projects_api_v3_notebooks_notebookid_json: {
+	'notebooks.get': {
 		path: { notebookId: number };
 		query?: {
 			updatedAfterDate?: string;
@@ -7219,7 +11168,163 @@ export type TeamworkV3Inputs = {
 		};
 		body?: never;
 	};
-	v3_patch_projects_api_v3_notebooks_notebookid_json: {
+	'notebooks.create': {
+		path: { projectId: number };
+		query?: {
+			getEmoji?: boolean;
+			include?: Array<
+				| 'projects'
+				| 'projects.permissions'
+				| 'projects.integrations'
+				| 'tags'
+				| 'users'
+				| 'users.teams'
+				| 'notebookCategories'
+				| 'companies'
+				| 'teams'
+			>;
+			'fields[users]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
+				| 'updatedAt'
+				| 'teams'
+			>;
+			'fields[teams]'?: Array<
+				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
+			>;
+			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
+			'fields[projects]'?: Array<
+				| 'id'
+				| 'name'
+				| 'type'
+				| 'status'
+				| 'company'
+				| 'companyId'
+				| 'categoryId'
+				| 'startPage'
+				| 'logoIcon'
+				| 'logoColor'
+				| 'updatedAt'
+				| 'isStarred'
+				| 'allowNotifyAnyone'
+				| 'notifyTaskAssignee'
+				| 'isBillable'
+				| 'timelogRequiresTask'
+				| 'activePages'
+				| 'projectNumber'
+				| 'projectNumberCounter'
+			>;
+			'fields[projectIntegrations]'?: Array<
+				| 'userId'
+				| 'projectId'
+				| 'canAccessBox'
+				| 'canAccessDropbox'
+				| 'canAccessGoogleDocs'
+				| 'canAccessOneDrive'
+				| 'canAccessOneDriveBusiness'
+				| 'canAccessSharePoint'
+			>;
+			'fields[notebooks]'?: Array<
+				| 'id'
+				| 'name'
+				| 'description'
+				| 'contents'
+				| 'type'
+				| 'isPrivate'
+				| 'locked'
+				| 'lockdownId'
+				| 'secureContent'
+				| 'projectId'
+				| 'createdByUserID'
+				| 'updatedByUserID'
+				| 'deletedByUserID'
+				| 'dateUpdated'
+				| 'dateCreated'
+				| 'dateDeleted'
+				| 'deleted'
+				| 'categoryId'
+				| 'notebookVersionID'
+				| 'notebookVersionCreatedDateTime'
+				| 'notebookVersionUpdatedDateTime'
+				| 'latestVersionNo'
+				| 'commentsCount'
+				| 'readCommentsCount'
+				| 'contentHTML'
+				| 'privacy'
+				| 'commentFollowers'
+				| 'changeFollowers'
+				| 'tagIds'
+				| 'updatedAt'
+				| 'project'
+			>;
+			'fields[notebookCategories]'?: Array<string>;
+			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
+			'fields[ProjectPermissions]'?: Array<
+				| 'viewMessagesAndFiles'
+				| 'viewTasksAndMilestones'
+				| 'viewTime'
+				| 'viewNotebooks'
+				| 'viewRiskRegister'
+				| 'viewEstimatedTime'
+				| 'viewInvoices'
+				| 'addTasks'
+				| 'addRisks'
+				| 'manageCustomFields'
+				| 'addExpenses'
+				| 'editAllTasks'
+				| 'addMilestones'
+				| 'addTaskLists'
+				| 'addMessages'
+				| 'addFiles'
+				| 'addTime'
+				| 'addNotebooks'
+				| 'viewLinks'
+				| 'addLinks'
+				| 'canViewForms'
+				| 'addForms'
+				| 'viewAllTimeLogs'
+				| 'setPrivacy'
+				| 'projectAdministrator'
+				| 'viewProjectUpdate'
+				| 'addProjectUpdate'
+				| 'canViewProjectMembers'
+				| 'canViewProjectBudget'
+				| 'canManageProjectBudget'
+				| 'canViewRates'
+				| 'canManageRates'
+				| 'canViewSchedule'
+				| 'canManageSchedule'
+				| 'receiveEmailNotifications'
+				| 'isObserving'
+				| 'isArchived'
+				| 'active'
+				| 'canAccess'
+				| 'inOwnerCompany'
+				| 'canManagePeople'
+				| 'canViewProjectTemplates'
+				| 'canManageProjectTemplates'
+			>;
+		};
+		body: TeamworkV3Input_notebook_Request;
+	};
+	'notebooks.update': {
 		path: { notebookId: number };
 		query?: {
 			getEmoji?: boolean;
@@ -7375,7 +11480,12 @@ export type TeamworkV3Inputs = {
 		};
 		body: TeamworkV3Input_notebook_Request;
 	};
-	v3_get_projects_api_v3_notebooks_notebookid_compare_json: {
+	'notebooks.delete': {
+		path: { notebookId: number };
+		query?: Record<string, never>;
+		body?: never;
+	};
+	'notebooks.listVersions': {
 		path: { notebookId: number };
 		query?: {
 			include?: Array<'users'>;
@@ -7405,100 +11515,7 @@ export type TeamworkV3Inputs = {
 		};
 		body?: never;
 	};
-	v3_get_projects_api_v3_notebooks_notebookid_project_json: {
-		path: { notebookId: number };
-		query?: {
-			includeProjectUserInfo?: boolean;
-			includeProjectDates?: boolean;
-			includeCustomFields?: boolean;
-			includeCustomFieldIds?: Array<number>;
-			include?: Array<
-				| 'projectOwners'
-				| 'projectUpdates'
-				| 'companies'
-				| 'companies.countries'
-				| 'companies.industries'
-				| 'companies.currencies'
-				| 'projectCategories'
-				| 'portfolioCards'
-				| 'portfolioBoards'
-				| 'portfolioColumns'
-				| 'tags'
-				| 'customfields'
-				| 'customfieldProjects'
-				| 'projectBudgets'
-				| 'activities.latest'
-				| 'users'
-				| 'createdBy'
-				| 'updatedBy'
-				| 'completedBy'
-				| 'deletedBy'
-				| 'archivedBy'
-				| 'projectEmailDropboxes'
-				| 'workflows'
-				| 'workflows.stages'
-				| 'projecttaskstats'
-			>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-		};
-		body?: never;
-	};
-	v3_delete_projects_api_v3_notebooks_notebookid_versions_json: {
-		path: { notebookId: number };
-		query?: { versionIds?: Array<number> };
-		body?: never;
-	};
-	v3_get_projects_api_v3_notebooks_notebookid_versions_json: {
-		path: { notebookId: number };
-		query?: {
-			include?: Array<'users'>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_notebooks_notebookid_versions_versionid_json: {
+	'notebooks.getVersion': {
 		path: { versionId: number; notebookId: number };
 		query?: {
 			include?: Array<'users'>;
@@ -7528,4872 +11545,11 @@ export type TeamworkV3Inputs = {
 		};
 		body?: never;
 	};
-	v3_get_projects_api_v3_people_json: {
-		path?: Record<string, never>;
+	'notebooks.compareVersions': {
+		path: { notebookId: number };
 		query?: {
-			userType?: 'account' | 'collaborator' | 'contact' | 'client';
-			updatedAfter?: string;
-			searchTerm?: string;
-			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'name'
-				| 'namecaseinsensitive'
-				| 'company'
-				| 'id'
-				| 'providedids'
-				| 'dateupdated';
-			lastLoginAfter?: string;
-			pageSize?: number;
-			page?: number;
-			skipCounts?: boolean;
-			showDeleted?: boolean;
-			searchUserSkill?: boolean;
-			searchUserJobRole?: boolean;
-			orderPrioritiseCurrentUser?: boolean;
-			onlySiteOwner?: boolean;
-			onlyPlaceholders?: boolean;
-			onlyOwnerCompany?: boolean;
-			inclusiveFilter?: boolean;
-			includeStandardUsers?: boolean;
-			includeServiceAccounts?: boolean;
-			includePlaceholders?: boolean;
-			includeCollaborators?: boolean;
-			includeClients?: boolean;
-			filterByNoCostRate?: boolean;
-			excludeContacts?: boolean;
-			clientPortalEligible?: boolean;
-			adminsOnly?: boolean;
-			teamIds?: Array<number>;
-			skillIds?: Array<number>;
-			projectIds?: Array<number>;
-			projectCompanyIds?: Array<number>;
-			notLinkedWithClientPortalIds?: Array<number>;
-			jobRoleIds?: Array<number>;
-			include?: Array<
-				| 'companies'
-				| 'workingHours'
-				| 'currencies'
-				| 'teams'
-				| 'jobRoles'
-				| 'skills'
-				| 'linkedClientPortalCompanies'
-				| 'skillCounts'
-			>;
-			ids?: Array<number>;
-			'fields[userIntegrations]'?: Array<
-				| 'userId'
-				| 'projectId'
-				| 'canAccessBox'
-				| 'canAccessDropbox'
-				| 'canAccessGoogleDocs'
-				| 'canAccessOneDrive'
-				| 'canAccessOneDriveBusiness'
-				| 'canAccessSharePoint'
-			>;
-			'fields[teams]'?: Array<
-				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
-			>;
-			'fields[person]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-			>;
-			'fields[people]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-			>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			'fields[ProjectPermissions]'?: Array<
-				| 'viewMessagesAndFiles'
-				| 'viewTasksAndMilestones'
-				| 'viewTime'
-				| 'viewNotebooks'
-				| 'viewRiskRegister'
-				| 'viewEstimatedTime'
-				| 'viewInvoices'
-				| 'addTasks'
-				| 'addRisks'
-				| 'manageCustomFields'
-				| 'addExpenses'
-				| 'editAllTasks'
-				| 'addMilestones'
-				| 'addTaskLists'
-				| 'addMessages'
-				| 'addFiles'
-				| 'addTime'
-				| 'addNotebooks'
-				| 'viewLinks'
-				| 'addLinks'
-				| 'canViewForms'
-				| 'addForms'
-				| 'viewAllTimeLogs'
-				| 'setPrivacy'
-				| 'projectAdministrator'
-				| 'viewProjectUpdate'
-				| 'addProjectUpdate'
-				| 'canViewProjectMembers'
-				| 'canViewProjectBudget'
-				| 'canManageProjectBudget'
-				| 'canViewRates'
-				| 'canManageRates'
-				| 'canViewSchedule'
-				| 'canManageSchedule'
-				| 'receiveEmailNotifications'
-				| 'isObserving'
-				| 'isArchived'
-				| 'active'
-				| 'canAccess'
-				| 'inOwnerCompany'
-				| 'canManagePeople'
-				| 'canViewProjectTemplates'
-				| 'canManageProjectTemplates'
-			>;
-			excludeProjectIds?: Array<number>;
-			excludeIds?: Array<number>;
-			excludeAllocatedUsersProjectIDs?: Array<number>;
-			emails?: Array<string>;
-			companyIds?: Array<number>;
-			SkillLevels?: Array<string>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_people_metrics_performance_json: {
-		path?: Record<string, never>;
-		query: {
-			startDate: string;
-			orderMode?: 'asc' | 'desc';
-			endDate: string;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_people_utilization_json: {
-		path?: Record<string, never>;
-		query: {
-			zoom?:
-				| 'week'
-				| 'month'
-				| 'last3months'
-				| 'quarterbyweek'
-				| 'quarterbymonth';
-			startDate: string;
-			sortOrder?: 'asc' | 'desc';
-			sort?:
-				| 'name'
-				| 'percentutilization'
-				| 'percentestimatedutilization'
-				| 'availableminutes'
-				| 'unavailableminutes'
-				| 'loggedminutes'
-				| 'billableminutes'
-				| 'unbillableminutes'
-				| 'billableutilization'
-				| 'nonbillableutilization'
-				| 'companycount'
-				| 'utilizationachieved'
-				| 'utilizationtarget'
-				| 'allocatedutilization'
-				| 'totalworkingminutes'
-				| 'availableutilization'
-				| 'unavailableutilization'
-				| 'companyname'
-				| 'allocatedminutes'
-				| 'estimatedbillableminutes'
-				| 'percentestimatedbillableutilization'
-				| 'estimatedminutes';
-			searchTerm?: string;
-			reportFormat?: 'pdf' | 'html' | 'csv' | 'xls' | 'xlsx' | 'google-sheets';
-			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'name'
-				| 'percentutilization'
-				| 'percentestimatedutilization'
-				| 'availableminutes'
-				| 'unavailableminutes'
-				| 'loggedminutes'
-				| 'billableminutes'
-				| 'unbillableminutes'
-				| 'companycount'
-				| 'utilizationachieved'
-				| 'utilizationTarget'
-				| 'allocatedutilization'
-				| 'totalworkingminutes'
-				| 'availableutilization'
-				| 'unavailableutilization'
-				| 'billableUtilization'
-				| 'nonBillableUtilization'
-				| 'companyname'
-				| 'allocatedMinutes'
-				| 'estimatedbillableminutes'
-				| 'percentEstimatedBillableUtilization'
-				| 'estimatedMinutes';
-			groupBy?: '' | 'day' | 'week' | 'month' | 'quarter';
-			endDate: string;
-			pageSize?: number;
-			page?: number;
-			skipCounts?: boolean;
-			legacyResponse?: boolean;
-			isReportDownload?: boolean;
-			isCustomDateRange?: boolean;
-			includeUtilizations?: boolean;
-			includeTotals?: boolean;
-			includeCollaborators?: boolean;
-			includeClients?: boolean;
-			includeCalendarEvents?: boolean;
-			includeArchivedProjects?: boolean;
-			IncludeCompletedTasks?: boolean;
-			userTypes?: Array<'standard' | 'placeholder'>;
-			userIds?: Array<number>;
-			teamIds?: Array<number>;
-			selectedColumns?: Array<string>;
-			projectIds?: Array<number>;
-			jobRoleIds?: Array<number>;
-			include?: Array<'users' | 'jobroles' | 'teams'>;
-			'fields[utilizations]'?: Array<
-				| 'userId'
-				| 'unavailableMinutes'
-				| 'availableMinutes'
-				| 'billableMinutes'
-				| 'unbillableMinutes'
-				| 'loggedMinutes'
-			>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			companyIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_delete_projects_api_v3_people_personid_json: {
-		path: { personId: number };
-		query?: { fireWebhook?: boolean };
-		body?: never;
-	};
-	v3_get_projects_api_v3_people_personid_json: {
-		path: { personId: number };
-		query?: {
-			userType?: 'account' | 'collaborator' | 'contact' | 'client';
-			updatedAfter?: string;
-			searchTerm?: string;
-			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'name'
-				| 'namecaseinsensitive'
-				| 'company'
-				| 'id'
-				| 'providedids'
-				| 'dateupdated';
-			lastLoginAfter?: string;
-			pageSize?: number;
-			page?: number;
-			skipCounts?: boolean;
-			showDeleted?: boolean;
-			searchUserSkill?: boolean;
-			searchUserJobRole?: boolean;
-			orderPrioritiseCurrentUser?: boolean;
-			onlySiteOwner?: boolean;
-			onlyPlaceholders?: boolean;
-			onlyOwnerCompany?: boolean;
-			inclusiveFilter?: boolean;
-			includeStandardUsers?: boolean;
-			includeServiceAccounts?: boolean;
-			includePlaceholders?: boolean;
-			includeCollaborators?: boolean;
-			includeClients?: boolean;
-			filterByNoCostRate?: boolean;
-			excludeContacts?: boolean;
-			clientPortalEligible?: boolean;
-			adminsOnly?: boolean;
-			teamIds?: Array<number>;
-			skillIds?: Array<number>;
-			projectIds?: Array<number>;
-			projectCompanyIds?: Array<number>;
-			notLinkedWithClientPortalIds?: Array<number>;
-			jobRoleIds?: Array<number>;
-			include?: Array<
-				| 'companies'
-				| 'workingHours'
-				| 'currencies'
-				| 'teams'
-				| 'jobRoles'
-				| 'skills'
-				| 'linkedClientPortalCompanies'
-				| 'skillCounts'
-			>;
-			ids?: Array<number>;
-			'fields[userIntegrations]'?: Array<
-				| 'userId'
-				| 'projectId'
-				| 'canAccessBox'
-				| 'canAccessDropbox'
-				| 'canAccessGoogleDocs'
-				| 'canAccessOneDrive'
-				| 'canAccessOneDriveBusiness'
-				| 'canAccessSharePoint'
-			>;
-			'fields[teams]'?: Array<
-				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
-			>;
-			'fields[person]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-			>;
-			'fields[people]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-			>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			'fields[ProjectPermissions]'?: Array<
-				| 'viewMessagesAndFiles'
-				| 'viewTasksAndMilestones'
-				| 'viewTime'
-				| 'viewNotebooks'
-				| 'viewRiskRegister'
-				| 'viewEstimatedTime'
-				| 'viewInvoices'
-				| 'addTasks'
-				| 'addRisks'
-				| 'manageCustomFields'
-				| 'addExpenses'
-				| 'editAllTasks'
-				| 'addMilestones'
-				| 'addTaskLists'
-				| 'addMessages'
-				| 'addFiles'
-				| 'addTime'
-				| 'addNotebooks'
-				| 'viewLinks'
-				| 'addLinks'
-				| 'canViewForms'
-				| 'addForms'
-				| 'viewAllTimeLogs'
-				| 'setPrivacy'
-				| 'projectAdministrator'
-				| 'viewProjectUpdate'
-				| 'addProjectUpdate'
-				| 'canViewProjectMembers'
-				| 'canViewProjectBudget'
-				| 'canManageProjectBudget'
-				| 'canViewRates'
-				| 'canManageRates'
-				| 'canViewSchedule'
-				| 'canManageSchedule'
-				| 'receiveEmailNotifications'
-				| 'isObserving'
-				| 'isArchived'
-				| 'active'
-				| 'canAccess'
-				| 'inOwnerCompany'
-				| 'canManagePeople'
-				| 'canViewProjectTemplates'
-				| 'canManageProjectTemplates'
-			>;
-			excludeProjectIds?: Array<number>;
-			excludeIds?: Array<number>;
-			excludeAllocatedUsersProjectIDs?: Array<number>;
-			emails?: Array<string>;
-			companyIds?: Array<number>;
-			SkillLevels?: Array<string>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_projects_json: {
-		path?: Record<string, never>;
-		query?: {
-			updatedAfter?: string;
-			timeMode?: 'timelogs' | 'estimated';
-			searchTerm?: string;
-			reportType?: 'project' | 'health';
-			reportTimezone?: string;
-			reportFormat?: 'csv' | 'html' | 'pdf' | 'xls' | 'xlsx' | 'google-sheets';
-			projectType?:
-				| 'all'
-				| 'normal'
-				| 'tasklists-template'
-				| 'projects-template'
-				| 'personal'
-				| 'tentative';
-			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'creatorname'
-				| 'companyname'
-				| 'datecreated'
-				| 'startdate'
-				| 'duedate'
-				| 'lastactivity'
-				| 'name'
-				| 'namecaseinsensitive'
-				| 'ownercompany'
-				| 'ownername'
-				| 'health'
-				| 'taskcompletion'
-				| 'budgetused'
-				| 'starred'
-				| 'starredcompanyname'
-				| 'starredfirst'
-				| 'mobilespecial'
-				| 'lastworkedon'
-				| 'categoryname'
-				| 'customfield'
-				| 'status'
-				| 'id'
-				| 'projectnumber';
-			notCompletedBefore?: string;
-			minLastActivityDate?: string;
-			maxLastActivityDate?: string;
-			userId?: number;
-			pageSize?: number;
-			page?: number;
-			orderByCustomFieldId?: number;
-			minBudgetCapacityUsedPercent?: number;
-			maxBudgetCapacityUsedPercent?: number;
-			useFormulaFields?: boolean;
-			skipCounts?: boolean;
-			searchCompanies?: boolean;
-			searchByLetter?: boolean;
-			searchBudgets?: boolean;
-			onlyStarredProjects?: boolean;
-			onlyProjectsWithExplicitMembership?: boolean;
-			onlyProjectsWithAdminAccess?: boolean;
-			onlyProjectsThatCanLogTime?: boolean;
-			onlyProjectsThatCanAddTasks?: boolean;
-			onlyArchivedProjects?: boolean;
-			matchAllProjectTags?: boolean;
-			matchAllExcludedTags?: boolean;
-			isReportDownload?: boolean;
-			includeTentativeProjects?: boolean;
-			includeTabSystemStatus?: boolean;
-			includeSubCategories?: boolean;
-			includeStats?: boolean;
-			includeProjectUserInfo?: boolean;
-			includeProjectProfitability?: boolean;
-			includeProjectDates?: boolean;
-			includeCustomFields?: boolean;
-			includeCounts?: boolean;
-			includeCompletedStatus?: boolean;
-			includeArchivedProjects?: boolean;
-			hideObservedProjects?: boolean;
-			alwaysIncludeFiltering?: boolean;
-			usersWithExplicitMembershipIds?: Array<number>;
-			teamIds?: Array<number>;
-			selectedColumns?: Array<string>;
-			projectTagIds?: Array<number>;
-			projectStatuses?: Array<
-				| 'active'
-				| 'inactive'
-				| 'archived'
-				| 'current'
-				| 'late'
-				| 'upcoming'
-				| 'completed'
-				| 'deleted'
-			>;
-			projectOwnerIds?: Array<number>;
-			projectNumbers?: Array<string>;
-			projectNumberCounters?: Array<number>;
-			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-			includeCustomFieldIds?: Array<number>;
-			include?: Array<
-				| 'projectOwners'
-				| 'projectUpdates'
-				| 'companies'
-				| 'companies.countries'
-				| 'companies.industries'
-				| 'companies.currencies'
-				| 'projectCategories'
-				| 'portfolioCards'
-				| 'portfolioBoards'
-				| 'portfolioColumns'
-				| 'tags'
-				| 'customfields'
-				| 'customfieldProjects'
-				| 'projectBudgets'
-				| 'activities.latest'
-				| 'users'
-				| 'createdBy'
-				| 'updatedBy'
-				| 'completedBy'
-				| 'deletedBy'
-				| 'archivedBy'
-				| 'projectEmailDropboxes'
-				| 'workflows'
-				| 'workflows.stages'
-				| 'projecttaskstats'
-			>;
-			filter?: Array<TeamworkJsonValue>;
-			'fields[workflows]'?: Array<'id' | 'name' | 'statusId'>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
-			'fields[stages]'?: Array<'id' | 'name' | 'stage'>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-			'fields[projectcategories]'?: Array<
-				'id' | 'name' | 'color' | 'count' | 'parent' | 'parentId'
-			>;
-			'fields[projectUpdates]'?: Array<
-				| 'id'
-				| 'projectId'
-				| 'text'
-				| 'isActive'
-				| 'health'
-				| 'color'
-				| 'dateCreated'
-				| 'deleted'
-				| 'deletedDate'
-				| 'numLikes'
-				| 'reactions'
-			>;
-			'fields[projectBudgets]'?: Array<
-				| 'id'
-				| 'projectId'
-				| 'type'
-				| 'status'
-				| 'capacityUsed'
-				| 'capacity'
-				| 'originatorBudgetId'
-				| 'isRepeating'
-				| 'repeatPeriod'
-				| 'repeatUnit'
-				| 'repeatsRemaining'
-				| 'sequenceNumber'
-				| 'startDateTime'
-				| 'endDateTime'
-				| 'currencyCode'
-				| 'timelogType'
-				| 'expenseType'
-				| 'defaultRate'
-				| 'notificationIds'
-				| 'createdByUserId'
-				| 'dateCreated'
-				| 'updatedUserId'
-				| 'dateUpdated'
-				| 'completedByUserId'
-				| 'dateCompleted'
-				| 'deletedByUserId'
-				| 'dateDeleted'
-			>;
-			'fields[portfolioColumns]'?: Array<'id' | 'name' | 'color'>;
-			'fields[portfolioCards]'?: Array<'id' | 'columnId' | 'projectId'>;
-			'fields[portfolioBoards]'?: Array<'id' | 'name' | 'color'>;
-			'fields[industries]'?: Array<string>;
-			'fields[customfields]'?: Array<
-				| 'id'
-				| 'projectId'
-				| 'entity'
-				| 'name'
-				| 'description'
-				| 'type'
-				| 'options'
-				| 'visibilities'
-				| 'isPrivate'
-				| 'required'
-				| 'createdAt'
-				| 'createdByUserId'
-				| 'updatedAt'
-				| 'updatedByUserId'
-				| 'deleted'
-				| 'deletedAt'
-				| 'deletedByUserId'
-			>;
-			'fields[customfieldProjects]'?: Array<
-				'id' | 'customfieldId' | 'value' | 'createdAt' | 'createdBy'
-			>;
-			'fields[countries]'?: Array<string>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			featuresEnabled?: Array<
-				| 'list'
-				| 'board'
-				| 'gantt'
-				| 'table'
-				| 'dashboard'
-				| 'milestones'
-				| 'messages'
-				| 'files'
-				| 'time'
-				| 'notebooks'
-				| 'risks'
-				| 'links'
-				| 'billing'
-				| 'comments'
-				| 'people'
-				| 'settings'
-				| 'tasks'
-			>;
-			excludeTagIds?: Array<number>;
-			excludeProjectIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_projects_metrics_active_json: {
-		path?: Record<string, never>;
-		query?: Record<string, never>;
-		body?: never;
-	};
-	v3_get_projects_api_v3_projects_metrics_billable_json: {
-		path?: Record<string, never>;
-		query: {
-			startDate: string;
-			orderMode?: 'asc' | 'desc';
-			endDate: string;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_projects_metrics_healths_json: {
-		path?: Record<string, never>;
-		query?: {
-			projectStatus?:
-				| 'active'
-				| 'current'
-				| 'late'
-				| 'upcoming'
-				| 'completed'
-				| 'deleted';
-			onlyStarredProjects?: boolean;
-			matchAllProjectTags?: boolean;
-			projectTagIds?: Array<number>;
-			projectStatuses?: Array<
-				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
-			>;
-			projectOwnerIds?: Array<number>;
-			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_projects_metrics_invoices_json: {
-		path?: Record<string, never>;
-		query?: {
-			onlyStarredProjects?: boolean;
-			matchAllProjectTags?: boolean;
-			includeArchivedProjects?: boolean;
-			projectTagIds?: Array<number>;
-			projectStatuses?: Array<
-				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
-			>;
-			projectOwnerIds?: Array<number>;
-			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_projects_metrics_owners_json: {
-		path?: Record<string, never>;
-		query?: {
-			orderMode?: 'asc' | 'desc';
-			pageSize?: number;
-			page?: number;
-			skipCounts?: boolean;
-			onlyStarredProjects?: boolean;
-			matchAllProjectTags?: boolean;
-			projectTagIds?: Array<number>;
-			projectStatuses?: Array<
-				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
-			>;
-			projectOwnerIds?: Array<number>;
-			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_projects_metrics_unbilled_json: {
-		path?: Record<string, never>;
-		query?: {
-			onlyStarredProjects?: boolean;
-			matchAllProjectTags?: boolean;
-			includeArchivedProjects?: boolean;
-			projectTagIds?: Array<number>;
-			projectStatuses?: Array<
-				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
-			>;
-			projectOwnerIds?: Array<number>;
-			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_projects_number_json: {
-		path?: Record<string, never>;
-		query?: Record<string, never>;
-		body?: never;
-	};
-	v3_put_projects_api_v3_projects_number_json: {
-		path?: Record<string, never>;
-		query?: Record<string, never>;
-		body: TeamworkV3Input_project_ProjectNumberSettingsRequest;
-	};
-	v3_put_projects_api_v3_projects_people_userid_enqueue_json: {
-		path: { userId: number };
-		query?: Record<string, never>;
-		body?: never;
-	};
-	v3_get_projects_api_v3_projects_starred_json: {
-		path?: Record<string, never>;
-		query?: {
-			updatedAfter?: string;
-			timeMode?: 'timelogs' | 'estimated';
-			searchTerm?: string;
-			reportType?: 'project' | 'health';
-			reportTimezone?: string;
-			reportFormat?: 'csv' | 'html' | 'pdf' | 'xls' | 'xlsx' | 'google-sheets';
-			projectType?:
-				| 'all'
-				| 'normal'
-				| 'tasklists-template'
-				| 'projects-template'
-				| 'personal'
-				| 'tentative';
-			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'creatorname'
-				| 'companyname'
-				| 'datecreated'
-				| 'startdate'
-				| 'duedate'
-				| 'lastactivity'
-				| 'name'
-				| 'namecaseinsensitive'
-				| 'ownercompany'
-				| 'ownername'
-				| 'health'
-				| 'taskcompletion'
-				| 'budgetused'
-				| 'starred'
-				| 'starredcompanyname'
-				| 'starredfirst'
-				| 'mobilespecial'
-				| 'lastworkedon'
-				| 'categoryname'
-				| 'customfield'
-				| 'status'
-				| 'id'
-				| 'projectnumber';
-			notCompletedBefore?: string;
-			minLastActivityDate?: string;
-			maxLastActivityDate?: string;
-			userId?: number;
-			pageSize?: number;
-			page?: number;
-			orderByCustomFieldId?: number;
-			minBudgetCapacityUsedPercent?: number;
-			maxBudgetCapacityUsedPercent?: number;
-			useFormulaFields?: boolean;
-			skipCounts?: boolean;
-			searchCompanies?: boolean;
-			searchByLetter?: boolean;
-			searchBudgets?: boolean;
-			onlyStarredProjects?: boolean;
-			onlyProjectsWithExplicitMembership?: boolean;
-			onlyProjectsWithAdminAccess?: boolean;
-			onlyProjectsThatCanLogTime?: boolean;
-			onlyProjectsThatCanAddTasks?: boolean;
-			onlyArchivedProjects?: boolean;
-			matchAllProjectTags?: boolean;
-			matchAllExcludedTags?: boolean;
-			isReportDownload?: boolean;
-			includeTentativeProjects?: boolean;
-			includeTabSystemStatus?: boolean;
-			includeSubCategories?: boolean;
-			includeStats?: boolean;
-			includeProjectUserInfo?: boolean;
-			includeProjectProfitability?: boolean;
-			includeProjectDates?: boolean;
-			includeCustomFields?: boolean;
-			includeCounts?: boolean;
-			includeCompletedStatus?: boolean;
-			includeArchivedProjects?: boolean;
-			hideObservedProjects?: boolean;
-			alwaysIncludeFiltering?: boolean;
-			usersWithExplicitMembershipIds?: Array<number>;
-			teamIds?: Array<number>;
-			selectedColumns?: Array<string>;
-			projectTagIds?: Array<number>;
-			projectStatuses?: Array<
-				| 'active'
-				| 'inactive'
-				| 'archived'
-				| 'current'
-				| 'late'
-				| 'upcoming'
-				| 'completed'
-				| 'deleted'
-			>;
-			projectOwnerIds?: Array<number>;
-			projectNumbers?: Array<string>;
-			projectNumberCounters?: Array<number>;
-			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-			includeCustomFieldIds?: Array<number>;
-			include?: Array<
-				| 'projectOwners'
-				| 'projectUpdates'
-				| 'companies'
-				| 'companies.countries'
-				| 'companies.industries'
-				| 'companies.currencies'
-				| 'projectCategories'
-				| 'portfolioCards'
-				| 'portfolioBoards'
-				| 'portfolioColumns'
-				| 'tags'
-				| 'customfields'
-				| 'customfieldProjects'
-				| 'projectBudgets'
-				| 'activities.latest'
-				| 'users'
-				| 'createdBy'
-				| 'updatedBy'
-				| 'completedBy'
-				| 'deletedBy'
-				| 'archivedBy'
-				| 'projectEmailDropboxes'
-				| 'workflows'
-				| 'workflows.stages'
-				| 'projecttaskstats'
-			>;
-			filter?: Array<TeamworkJsonValue>;
-			'fields[workflows]'?: Array<'id' | 'name' | 'statusId'>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
-			'fields[stages]'?: Array<'id' | 'name' | 'stage'>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-			'fields[projectcategories]'?: Array<
-				'id' | 'name' | 'color' | 'count' | 'parent' | 'parentId'
-			>;
-			'fields[projectUpdates]'?: Array<
-				| 'id'
-				| 'projectId'
-				| 'text'
-				| 'isActive'
-				| 'health'
-				| 'color'
-				| 'dateCreated'
-				| 'deleted'
-				| 'deletedDate'
-				| 'numLikes'
-				| 'reactions'
-			>;
-			'fields[projectBudgets]'?: Array<
-				| 'id'
-				| 'projectId'
-				| 'type'
-				| 'status'
-				| 'capacityUsed'
-				| 'capacity'
-				| 'originatorBudgetId'
-				| 'isRepeating'
-				| 'repeatPeriod'
-				| 'repeatUnit'
-				| 'repeatsRemaining'
-				| 'sequenceNumber'
-				| 'startDateTime'
-				| 'endDateTime'
-				| 'currencyCode'
-				| 'timelogType'
-				| 'expenseType'
-				| 'defaultRate'
-				| 'notificationIds'
-				| 'createdByUserId'
-				| 'dateCreated'
-				| 'updatedUserId'
-				| 'dateUpdated'
-				| 'completedByUserId'
-				| 'dateCompleted'
-				| 'deletedByUserId'
-				| 'dateDeleted'
-			>;
-			'fields[portfolioColumns]'?: Array<'id' | 'name' | 'color'>;
-			'fields[portfolioCards]'?: Array<'id' | 'columnId' | 'projectId'>;
-			'fields[portfolioBoards]'?: Array<'id' | 'name' | 'color'>;
-			'fields[industries]'?: Array<string>;
-			'fields[customfields]'?: Array<
-				| 'id'
-				| 'projectId'
-				| 'entity'
-				| 'name'
-				| 'description'
-				| 'type'
-				| 'options'
-				| 'visibilities'
-				| 'isPrivate'
-				| 'required'
-				| 'createdAt'
-				| 'createdByUserId'
-				| 'updatedAt'
-				| 'updatedByUserId'
-				| 'deleted'
-				| 'deletedAt'
-				| 'deletedByUserId'
-			>;
-			'fields[customfieldProjects]'?: Array<
-				'id' | 'customfieldId' | 'value' | 'createdAt' | 'createdBy'
-			>;
-			'fields[countries]'?: Array<string>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			featuresEnabled?: Array<
-				| 'list'
-				| 'board'
-				| 'gantt'
-				| 'table'
-				| 'dashboard'
-				| 'milestones'
-				| 'messages'
-				| 'files'
-				| 'time'
-				| 'notebooks'
-				| 'risks'
-				| 'links'
-				| 'billing'
-				| 'comments'
-				| 'people'
-				| 'settings'
-				| 'tasks'
-			>;
-			excludeTagIds?: Array<number>;
-			excludeProjectIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_projects_teamwork_samples_json: {
-		path?: Record<string, never>;
-		query?: {
-			searchTerm?: string;
-			pageSize?: number;
-			page?: number;
-			skipCounts?: boolean;
-			ids?: Array<number>;
-			'fields[sampleprojects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'code'
-				| 'description'
-				| 'icon'
-				| 'imagePreview'
-				| 'categoryId'
-				| 'category'
-				| 'content'
-			>;
-			categoryIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_projects_templates_json: {
-		path?: Record<string, never>;
-		query?: {
-			updatedAfter?: string;
-			timeMode?: 'timelogs' | 'estimated';
-			searchTerm?: string;
-			reportType?: 'project' | 'health';
-			reportTimezone?: string;
-			reportFormat?: 'csv' | 'html' | 'pdf' | 'xls' | 'xlsx' | 'google-sheets';
-			projectType?:
-				| 'all'
-				| 'normal'
-				| 'tasklists-template'
-				| 'projects-template'
-				| 'personal'
-				| 'tentative';
-			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'creatorname'
-				| 'companyname'
-				| 'datecreated'
-				| 'startdate'
-				| 'duedate'
-				| 'lastactivity'
-				| 'name'
-				| 'namecaseinsensitive'
-				| 'ownercompany'
-				| 'ownername'
-				| 'health'
-				| 'taskcompletion'
-				| 'budgetused'
-				| 'starred'
-				| 'starredcompanyname'
-				| 'starredfirst'
-				| 'mobilespecial'
-				| 'lastworkedon'
-				| 'categoryname'
-				| 'customfield'
-				| 'status'
-				| 'id'
-				| 'projectnumber';
-			notCompletedBefore?: string;
-			minLastActivityDate?: string;
-			maxLastActivityDate?: string;
-			userId?: number;
-			pageSize?: number;
-			page?: number;
-			orderByCustomFieldId?: number;
-			minBudgetCapacityUsedPercent?: number;
-			maxBudgetCapacityUsedPercent?: number;
-			useFormulaFields?: boolean;
-			skipCounts?: boolean;
-			searchCompanies?: boolean;
-			searchByLetter?: boolean;
-			searchBudgets?: boolean;
-			onlyStarredProjects?: boolean;
-			onlyProjectsWithExplicitMembership?: boolean;
-			onlyProjectsWithAdminAccess?: boolean;
-			onlyProjectsThatCanLogTime?: boolean;
-			onlyProjectsThatCanAddTasks?: boolean;
-			onlyArchivedProjects?: boolean;
-			matchAllProjectTags?: boolean;
-			matchAllExcludedTags?: boolean;
-			isReportDownload?: boolean;
-			includeTentativeProjects?: boolean;
-			includeTabSystemStatus?: boolean;
-			includeSubCategories?: boolean;
-			includeStats?: boolean;
-			includeProjectUserInfo?: boolean;
-			includeProjectProfitability?: boolean;
-			includeProjectDates?: boolean;
-			includeCustomFields?: boolean;
-			includeCounts?: boolean;
-			includeCompletedStatus?: boolean;
-			includeArchivedProjects?: boolean;
-			hideObservedProjects?: boolean;
-			alwaysIncludeFiltering?: boolean;
-			usersWithExplicitMembershipIds?: Array<number>;
-			teamIds?: Array<number>;
-			selectedColumns?: Array<string>;
-			projectTagIds?: Array<number>;
-			projectStatuses?: Array<
-				| 'active'
-				| 'inactive'
-				| 'archived'
-				| 'current'
-				| 'late'
-				| 'upcoming'
-				| 'completed'
-				| 'deleted'
-			>;
-			projectOwnerIds?: Array<number>;
-			projectNumbers?: Array<string>;
-			projectNumberCounters?: Array<number>;
-			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-			includeCustomFieldIds?: Array<number>;
-			include?: Array<
-				| 'projectOwners'
-				| 'projectUpdates'
-				| 'companies'
-				| 'companies.countries'
-				| 'companies.industries'
-				| 'companies.currencies'
-				| 'projectCategories'
-				| 'portfolioCards'
-				| 'portfolioBoards'
-				| 'portfolioColumns'
-				| 'tags'
-				| 'customfields'
-				| 'customfieldProjects'
-				| 'projectBudgets'
-				| 'activities.latest'
-				| 'users'
-				| 'createdBy'
-				| 'updatedBy'
-				| 'completedBy'
-				| 'deletedBy'
-				| 'archivedBy'
-				| 'projectEmailDropboxes'
-				| 'workflows'
-				| 'workflows.stages'
-				| 'projecttaskstats'
-			>;
-			filter?: Array<TeamworkJsonValue>;
-			'fields[workflows]'?: Array<'id' | 'name' | 'statusId'>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
-			'fields[stages]'?: Array<'id' | 'name' | 'stage'>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-			'fields[projectcategories]'?: Array<
-				'id' | 'name' | 'color' | 'count' | 'parent' | 'parentId'
-			>;
-			'fields[projectUpdates]'?: Array<
-				| 'id'
-				| 'projectId'
-				| 'text'
-				| 'isActive'
-				| 'health'
-				| 'color'
-				| 'dateCreated'
-				| 'deleted'
-				| 'deletedDate'
-				| 'numLikes'
-				| 'reactions'
-			>;
-			'fields[projectBudgets]'?: Array<
-				| 'id'
-				| 'projectId'
-				| 'type'
-				| 'status'
-				| 'capacityUsed'
-				| 'capacity'
-				| 'originatorBudgetId'
-				| 'isRepeating'
-				| 'repeatPeriod'
-				| 'repeatUnit'
-				| 'repeatsRemaining'
-				| 'sequenceNumber'
-				| 'startDateTime'
-				| 'endDateTime'
-				| 'currencyCode'
-				| 'timelogType'
-				| 'expenseType'
-				| 'defaultRate'
-				| 'notificationIds'
-				| 'createdByUserId'
-				| 'dateCreated'
-				| 'updatedUserId'
-				| 'dateUpdated'
-				| 'completedByUserId'
-				| 'dateCompleted'
-				| 'deletedByUserId'
-				| 'dateDeleted'
-			>;
-			'fields[portfolioColumns]'?: Array<'id' | 'name' | 'color'>;
-			'fields[portfolioCards]'?: Array<'id' | 'columnId' | 'projectId'>;
-			'fields[portfolioBoards]'?: Array<'id' | 'name' | 'color'>;
-			'fields[industries]'?: Array<string>;
-			'fields[customfields]'?: Array<
-				| 'id'
-				| 'projectId'
-				| 'entity'
-				| 'name'
-				| 'description'
-				| 'type'
-				| 'options'
-				| 'visibilities'
-				| 'isPrivate'
-				| 'required'
-				| 'createdAt'
-				| 'createdByUserId'
-				| 'updatedAt'
-				| 'updatedByUserId'
-				| 'deleted'
-				| 'deletedAt'
-				| 'deletedByUserId'
-			>;
-			'fields[customfieldProjects]'?: Array<
-				'id' | 'customfieldId' | 'value' | 'createdAt' | 'createdBy'
-			>;
-			'fields[countries]'?: Array<string>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			featuresEnabled?: Array<
-				| 'list'
-				| 'board'
-				| 'gantt'
-				| 'table'
-				| 'dashboard'
-				| 'milestones'
-				| 'messages'
-				| 'files'
-				| 'time'
-				| 'notebooks'
-				| 'risks'
-				| 'links'
-				| 'billing'
-				| 'comments'
-				| 'people'
-				| 'settings'
-				| 'tasks'
-			>;
-			excludeTagIds?: Array<number>;
-			excludeProjectIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_projects_templates_id_json: {
-		path: { id: number };
-		query?: {
-			updatedAfter?: string;
-			timeMode?: 'timelogs' | 'estimated';
-			searchTerm?: string;
-			reportType?: 'project' | 'health';
-			reportTimezone?: string;
-			reportFormat?: 'csv' | 'html' | 'pdf' | 'xls' | 'xlsx' | 'google-sheets';
-			projectType?:
-				| 'all'
-				| 'normal'
-				| 'tasklists-template'
-				| 'projects-template'
-				| 'personal'
-				| 'tentative';
-			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'creatorname'
-				| 'companyname'
-				| 'datecreated'
-				| 'startdate'
-				| 'duedate'
-				| 'lastactivity'
-				| 'name'
-				| 'namecaseinsensitive'
-				| 'ownercompany'
-				| 'ownername'
-				| 'health'
-				| 'taskcompletion'
-				| 'budgetused'
-				| 'starred'
-				| 'starredcompanyname'
-				| 'starredfirst'
-				| 'mobilespecial'
-				| 'lastworkedon'
-				| 'categoryname'
-				| 'customfield'
-				| 'status'
-				| 'id'
-				| 'projectnumber';
-			notCompletedBefore?: string;
-			minLastActivityDate?: string;
-			maxLastActivityDate?: string;
-			userId?: number;
-			pageSize?: number;
-			page?: number;
-			orderByCustomFieldId?: number;
-			minBudgetCapacityUsedPercent?: number;
-			maxBudgetCapacityUsedPercent?: number;
-			useFormulaFields?: boolean;
-			skipCounts?: boolean;
-			searchCompanies?: boolean;
-			searchByLetter?: boolean;
-			searchBudgets?: boolean;
-			onlyStarredProjects?: boolean;
-			onlyProjectsWithExplicitMembership?: boolean;
-			onlyProjectsWithAdminAccess?: boolean;
-			onlyProjectsThatCanLogTime?: boolean;
-			onlyProjectsThatCanAddTasks?: boolean;
-			onlyArchivedProjects?: boolean;
-			matchAllProjectTags?: boolean;
-			matchAllExcludedTags?: boolean;
-			isReportDownload?: boolean;
-			includeTentativeProjects?: boolean;
-			includeTabSystemStatus?: boolean;
-			includeSubCategories?: boolean;
-			includeStats?: boolean;
-			includeProjectUserInfo?: boolean;
-			includeProjectProfitability?: boolean;
-			includeProjectDates?: boolean;
-			includeCustomFields?: boolean;
-			includeCounts?: boolean;
-			includeCompletedStatus?: boolean;
-			includeArchivedProjects?: boolean;
-			hideObservedProjects?: boolean;
-			alwaysIncludeFiltering?: boolean;
-			usersWithExplicitMembershipIds?: Array<number>;
-			teamIds?: Array<number>;
-			selectedColumns?: Array<string>;
-			projectTagIds?: Array<number>;
-			projectStatuses?: Array<
-				| 'active'
-				| 'inactive'
-				| 'archived'
-				| 'current'
-				| 'late'
-				| 'upcoming'
-				| 'completed'
-				| 'deleted'
-			>;
-			projectOwnerIds?: Array<number>;
-			projectNumbers?: Array<string>;
-			projectNumberCounters?: Array<number>;
-			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-			includeCustomFieldIds?: Array<number>;
-			include?: Array<
-				| 'projectOwners'
-				| 'projectUpdates'
-				| 'companies'
-				| 'companies.countries'
-				| 'companies.industries'
-				| 'companies.currencies'
-				| 'projectCategories'
-				| 'portfolioCards'
-				| 'portfolioBoards'
-				| 'portfolioColumns'
-				| 'tags'
-				| 'customfields'
-				| 'customfieldProjects'
-				| 'projectBudgets'
-				| 'activities.latest'
-				| 'users'
-				| 'createdBy'
-				| 'updatedBy'
-				| 'completedBy'
-				| 'deletedBy'
-				| 'archivedBy'
-				| 'projectEmailDropboxes'
-				| 'workflows'
-				| 'workflows.stages'
-				| 'projecttaskstats'
-			>;
-			filter?: Array<TeamworkJsonValue>;
-			'fields[workflows]'?: Array<'id' | 'name' | 'statusId'>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
-			'fields[stages]'?: Array<'id' | 'name' | 'stage'>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-			'fields[projectcategories]'?: Array<
-				'id' | 'name' | 'color' | 'count' | 'parent' | 'parentId'
-			>;
-			'fields[projectUpdates]'?: Array<
-				| 'id'
-				| 'projectId'
-				| 'text'
-				| 'isActive'
-				| 'health'
-				| 'color'
-				| 'dateCreated'
-				| 'deleted'
-				| 'deletedDate'
-				| 'numLikes'
-				| 'reactions'
-			>;
-			'fields[projectBudgets]'?: Array<
-				| 'id'
-				| 'projectId'
-				| 'type'
-				| 'status'
-				| 'capacityUsed'
-				| 'capacity'
-				| 'originatorBudgetId'
-				| 'isRepeating'
-				| 'repeatPeriod'
-				| 'repeatUnit'
-				| 'repeatsRemaining'
-				| 'sequenceNumber'
-				| 'startDateTime'
-				| 'endDateTime'
-				| 'currencyCode'
-				| 'timelogType'
-				| 'expenseType'
-				| 'defaultRate'
-				| 'notificationIds'
-				| 'createdByUserId'
-				| 'dateCreated'
-				| 'updatedUserId'
-				| 'dateUpdated'
-				| 'completedByUserId'
-				| 'dateCompleted'
-				| 'deletedByUserId'
-				| 'dateDeleted'
-			>;
-			'fields[portfolioColumns]'?: Array<'id' | 'name' | 'color'>;
-			'fields[portfolioCards]'?: Array<'id' | 'columnId' | 'projectId'>;
-			'fields[portfolioBoards]'?: Array<'id' | 'name' | 'color'>;
-			'fields[industries]'?: Array<string>;
-			'fields[customfields]'?: Array<
-				| 'id'
-				| 'projectId'
-				| 'entity'
-				| 'name'
-				| 'description'
-				| 'type'
-				| 'options'
-				| 'visibilities'
-				| 'isPrivate'
-				| 'required'
-				| 'createdAt'
-				| 'createdByUserId'
-				| 'updatedAt'
-				| 'updatedByUserId'
-				| 'deleted'
-				| 'deletedAt'
-				| 'deletedByUserId'
-			>;
-			'fields[customfieldProjects]'?: Array<
-				'id' | 'customfieldId' | 'value' | 'createdAt' | 'createdBy'
-			>;
-			'fields[countries]'?: Array<string>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			featuresEnabled?: Array<
-				| 'list'
-				| 'board'
-				| 'gantt'
-				| 'table'
-				| 'dashboard'
-				| 'milestones'
-				| 'messages'
-				| 'files'
-				| 'time'
-				| 'notebooks'
-				| 'risks'
-				| 'links'
-				| 'billing'
-				| 'comments'
-				| 'people'
-				| 'settings'
-				| 'tasks'
-			>;
-			excludeTagIds?: Array<number>;
-			excludeProjectIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_projects_templates_id_customfields_required_json: {
-		path: { id: number };
-		query?: Record<string, never>;
-		body?: never;
-	};
-	v3_put_projects_api_v3_projects_tentative_projectid_convert_json: {
-		path: { projectId: number };
-		query?: Record<string, never>;
-		body?: never;
-	};
-	v3_get_projects_api_v3_projects_updates_json: {
-		path?: Record<string, never>;
-		query?: {
-			updatedAfter?: string;
-			projectStatus?: string;
-			orderMode?: 'asc' | 'desc';
-			orderBy?: 'date' | 'color' | 'health' | 'project' | 'user' | 'id';
-			createdAfter?: string;
-			projectId?: number;
-			pageSize?: number;
-			page?: number;
-			skipCounts?: boolean;
-			showDeleted?: boolean;
-			reactions?: boolean;
-			onlyStarredProjects?: boolean;
-			matchAllProjectTags?: boolean;
-			includeArchivedProjects?: boolean;
-			emoji?: boolean;
-			activeOnly?: boolean;
-			projectTagIds?: Array<number>;
-			projectStatuses?: Array<string>;
-			projectOwnerIds?: Array<number>;
-			projectIds?: Array<number>;
-			projectHealths?: Array<number>;
-			projectHealth?: Array<number>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-			include?: Array<'projects' | 'createdBy' | 'deletedBy' | 'likes.users'>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-			'fields[projectUpdates]'?: Array<
-				| 'id'
-				| 'projectId'
-				| 'text'
-				| 'isActive'
-				| 'health'
-				| 'color'
-				| 'dateCreated'
-				| 'deleted'
-				| 'deletedDate'
-				| 'numLikes'
-				| 'reactions'
-			>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_projects_projectids_updates_json: {
-		path: { projectIds: number };
-		query?: {
-			updatedAfter?: string;
-			projectStatus?: string;
-			orderMode?: 'asc' | 'desc';
-			orderBy?: 'date' | 'color' | 'health' | 'project' | 'user' | 'id';
-			createdAfter?: string;
-			projectId?: number;
-			pageSize?: number;
-			page?: number;
-			skipCounts?: boolean;
-			showDeleted?: boolean;
-			reactions?: boolean;
-			onlyStarredProjects?: boolean;
-			matchAllProjectTags?: boolean;
-			includeArchivedProjects?: boolean;
-			emoji?: boolean;
-			activeOnly?: boolean;
-			projectTagIds?: Array<number>;
-			projectStatuses?: Array<string>;
-			projectOwnerIds?: Array<number>;
-			projectIds?: Array<number>;
-			projectHealths?: Array<number>;
-			projectHealth?: Array<number>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-			include?: Array<'projects' | 'createdBy' | 'deletedBy' | 'likes.users'>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-			'fields[projectUpdates]'?: Array<
-				| 'id'
-				| 'projectId'
-				| 'text'
-				| 'isActive'
-				| 'health'
-				| 'color'
-				| 'dateCreated'
-				| 'deleted'
-				| 'deletedDate'
-				| 'numLikes'
-				| 'reactions'
-			>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_projects_projectid_json: {
-		path: { projectId: number };
-		query?: {
-			updatedAfter?: string;
-			timeMode?: 'timelogs' | 'estimated';
-			searchTerm?: string;
-			reportType?: 'project' | 'health';
-			reportTimezone?: string;
-			reportFormat?: 'csv' | 'html' | 'pdf' | 'xls' | 'xlsx' | 'google-sheets';
-			projectType?:
-				| 'all'
-				| 'normal'
-				| 'tasklists-template'
-				| 'projects-template'
-				| 'personal'
-				| 'tentative';
-			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'creatorname'
-				| 'companyname'
-				| 'datecreated'
-				| 'startdate'
-				| 'duedate'
-				| 'lastactivity'
-				| 'name'
-				| 'namecaseinsensitive'
-				| 'ownercompany'
-				| 'ownername'
-				| 'health'
-				| 'taskcompletion'
-				| 'budgetused'
-				| 'starred'
-				| 'starredcompanyname'
-				| 'starredfirst'
-				| 'mobilespecial'
-				| 'lastworkedon'
-				| 'categoryname'
-				| 'customfield'
-				| 'status'
-				| 'id'
-				| 'projectnumber';
-			notCompletedBefore?: string;
-			minLastActivityDate?: string;
-			maxLastActivityDate?: string;
-			userId?: number;
-			pageSize?: number;
-			page?: number;
-			orderByCustomFieldId?: number;
-			minBudgetCapacityUsedPercent?: number;
-			maxBudgetCapacityUsedPercent?: number;
-			useFormulaFields?: boolean;
-			skipCounts?: boolean;
-			searchCompanies?: boolean;
-			searchByLetter?: boolean;
-			searchBudgets?: boolean;
-			onlyStarredProjects?: boolean;
-			onlyProjectsWithExplicitMembership?: boolean;
-			onlyProjectsWithAdminAccess?: boolean;
-			onlyProjectsThatCanLogTime?: boolean;
-			onlyProjectsThatCanAddTasks?: boolean;
-			onlyArchivedProjects?: boolean;
-			matchAllProjectTags?: boolean;
-			matchAllExcludedTags?: boolean;
-			isReportDownload?: boolean;
-			includeTentativeProjects?: boolean;
-			includeTabSystemStatus?: boolean;
-			includeSubCategories?: boolean;
-			includeStats?: boolean;
-			includeProjectUserInfo?: boolean;
-			includeProjectProfitability?: boolean;
-			includeProjectDates?: boolean;
-			includeCustomFields?: boolean;
-			includeCounts?: boolean;
-			includeCompletedStatus?: boolean;
-			includeArchivedProjects?: boolean;
-			hideObservedProjects?: boolean;
-			alwaysIncludeFiltering?: boolean;
-			usersWithExplicitMembershipIds?: Array<number>;
-			teamIds?: Array<number>;
-			selectedColumns?: Array<string>;
-			projectTagIds?: Array<number>;
-			projectStatuses?: Array<
-				| 'active'
-				| 'inactive'
-				| 'archived'
-				| 'current'
-				| 'late'
-				| 'upcoming'
-				| 'completed'
-				| 'deleted'
-			>;
-			projectOwnerIds?: Array<number>;
-			projectNumbers?: Array<string>;
-			projectNumberCounters?: Array<number>;
-			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-			includeCustomFieldIds?: Array<number>;
-			include?: Array<
-				| 'projectOwners'
-				| 'projectUpdates'
-				| 'companies'
-				| 'companies.countries'
-				| 'companies.industries'
-				| 'companies.currencies'
-				| 'projectCategories'
-				| 'portfolioCards'
-				| 'portfolioBoards'
-				| 'portfolioColumns'
-				| 'tags'
-				| 'customfields'
-				| 'customfieldProjects'
-				| 'projectBudgets'
-				| 'activities.latest'
-				| 'users'
-				| 'createdBy'
-				| 'updatedBy'
-				| 'completedBy'
-				| 'deletedBy'
-				| 'archivedBy'
-				| 'projectEmailDropboxes'
-				| 'workflows'
-				| 'workflows.stages'
-				| 'projecttaskstats'
-			>;
-			filter?: Array<TeamworkJsonValue>;
-			'fields[workflows]'?: Array<'id' | 'name' | 'statusId'>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
-			'fields[stages]'?: Array<'id' | 'name' | 'stage'>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-			'fields[projectcategories]'?: Array<
-				'id' | 'name' | 'color' | 'count' | 'parent' | 'parentId'
-			>;
-			'fields[projectUpdates]'?: Array<
-				| 'id'
-				| 'projectId'
-				| 'text'
-				| 'isActive'
-				| 'health'
-				| 'color'
-				| 'dateCreated'
-				| 'deleted'
-				| 'deletedDate'
-				| 'numLikes'
-				| 'reactions'
-			>;
-			'fields[projectBudgets]'?: Array<
-				| 'id'
-				| 'projectId'
-				| 'type'
-				| 'status'
-				| 'capacityUsed'
-				| 'capacity'
-				| 'originatorBudgetId'
-				| 'isRepeating'
-				| 'repeatPeriod'
-				| 'repeatUnit'
-				| 'repeatsRemaining'
-				| 'sequenceNumber'
-				| 'startDateTime'
-				| 'endDateTime'
-				| 'currencyCode'
-				| 'timelogType'
-				| 'expenseType'
-				| 'defaultRate'
-				| 'notificationIds'
-				| 'createdByUserId'
-				| 'dateCreated'
-				| 'updatedUserId'
-				| 'dateUpdated'
-				| 'completedByUserId'
-				| 'dateCompleted'
-				| 'deletedByUserId'
-				| 'dateDeleted'
-			>;
-			'fields[portfolioColumns]'?: Array<'id' | 'name' | 'color'>;
-			'fields[portfolioCards]'?: Array<'id' | 'columnId' | 'projectId'>;
-			'fields[portfolioBoards]'?: Array<'id' | 'name' | 'color'>;
-			'fields[industries]'?: Array<string>;
-			'fields[customfields]'?: Array<
-				| 'id'
-				| 'projectId'
-				| 'entity'
-				| 'name'
-				| 'description'
-				| 'type'
-				| 'options'
-				| 'visibilities'
-				| 'isPrivate'
-				| 'required'
-				| 'createdAt'
-				| 'createdByUserId'
-				| 'updatedAt'
-				| 'updatedByUserId'
-				| 'deleted'
-				| 'deletedAt'
-				| 'deletedByUserId'
-			>;
-			'fields[customfieldProjects]'?: Array<
-				'id' | 'customfieldId' | 'value' | 'createdAt' | 'createdBy'
-			>;
-			'fields[countries]'?: Array<string>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			featuresEnabled?: Array<
-				| 'list'
-				| 'board'
-				| 'gantt'
-				| 'table'
-				| 'dashboard'
-				| 'milestones'
-				| 'messages'
-				| 'files'
-				| 'time'
-				| 'notebooks'
-				| 'risks'
-				| 'links'
-				| 'billing'
-				| 'comments'
-				| 'people'
-				| 'settings'
-				| 'tasks'
-			>;
-			excludeTagIds?: Array<number>;
-			excludeProjectIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_projects_projectid_featureorder_json: {
-		path: { projectId: number };
-		query?: Record<string, never>;
-		body?: never;
-	};
-	v3_put_projects_api_v3_projects_projectid_featureorder_json: {
-		path: { projectId: number };
-		query?: Record<string, never>;
-		body: TeamworkV3Input_project_FeatureOrderRequest;
-	};
-	v3_get_projects_api_v3_projects_projectid_milestones_json: {
-		path: { projectId: number };
-		query?: {
-			updatedAfterDate?: string;
-			updatedAfter?: string;
-			searchTerm?: string;
-			reportType?: 'plannedvsactual' | 'calendar' | 'agenda';
-			reportFormat?: string;
-			projectType?:
-				| ''
-				| 'normal'
-				| 'tasklists-template'
-				| 'projects-template'
-				| 'personal'
-				| 'tentative';
-			projectStatus?: string;
-			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'date'
-				| 'dateonly'
-				| 'name'
-				| 'project'
-				| 'user'
-				| 'dateCreated'
-				| 'dateUpdated'
-				| 'id'
-				| 'completion'
-				| 'originalDueDate'
-				| 'dateCompleted'
-				| 'completedBy'
-				| 'status'
-				| 'variance';
-			dueBeforeDate?: string;
-			dueBefore?: string;
-			dueAfterDate?: string;
-			dueAfter?: string;
-			deletedAfter?: string;
-			pageSize?: number;
-			page?: number;
-			skipCounts?: boolean;
-			showPrivate?: boolean;
-			showDeleted?: boolean;
-			showAttachedTasklists?: boolean;
-			searchCompaniesTeams?: boolean;
-			searchAssignees?: boolean;
-			progress?: boolean;
-			onlyWithoutTasklists?: boolean;
-			onlyStarredProjects?: boolean;
-			onlyMyProjects?: boolean;
-			onlyAdminProjects?: boolean;
-			matchAllTags?: boolean;
-			matchAllProjectTags?: boolean;
-			isReportDownload?: boolean;
-			includeUpdate?: boolean;
-			includeToday?: boolean;
-			includeTentativeProjects?: boolean;
-			includeTeamUserIds?: boolean;
-			includeTags?: boolean;
-			includeProgress?: boolean;
-			includePercentageComplete?: boolean;
-			includeCompleted?: boolean;
-			includeCompanyUserIds?: boolean;
-			includeAssigneeTeams?: boolean;
-			includeAssigneeCompanies?: boolean;
-			includeArchivedProjects?: boolean;
-			emoji?: boolean;
-			countUnreadComments?: boolean;
-			calendar?: boolean;
-			tagIds?: Array<number>;
-			status?: Array<
-				| 'all'
-				| 'new'
-				| 'reopened'
-				| 'completed'
-				| 'deleted'
-				| 'pending'
-				| 'incomplete'
-				| 'late'
-				| 'today'
-				| 'upcoming'
-			>;
-			selectedColumns?: Array<string>;
-			projectTagIds?: Array<number>;
-			projectStatuses?: Array<string>;
-			projectOwnerIds?: Array<number>;
-			projectIds?: Array<number>;
-			projectHealths?: Array<number>;
-			projectHealth?: Array<number>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-			include?: Array<
-				| 'projects'
-				| 'projects.companies'
-				| 'projects.categories'
-				| 'projects.permissions'
-				| 'projects.integrations'
-				| 'users'
-				| 'completedBy'
-				| 'createdBy'
-				| 'deletedBy'
-				| 'updatedBy'
-				| 'commentFollowers'
-				| 'changeFollowers'
-				| 'completeFollowers'
-				| 'tags'
-				| 'tasklists'
-				| 'tasklisttaskstats'
-				| 'teams'
-				| 'companies'
-			>;
-			ids?: Array<number>;
-			followerIds?: Array<number>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[tasklists]'?: Array<
-				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
-			>;
-			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-			'fields[projectIntegrations]'?: Array<
-				| 'userId'
-				| 'projectId'
-				| 'canAccessBox'
-				| 'canAccessDropbox'
-				| 'canAccessGoogleDocs'
-				| 'canAccessOneDrive'
-				| 'canAccessOneDriveBusiness'
-				| 'canAccessSharePoint'
-			>;
-			'fields[milestones]'?: Array<
-				| 'id'
-				| 'name'
-				| 'description'
-				| 'deadline'
-				| 'completed'
-				| 'projectId'
-				| 'createdOn'
-				| 'lastChangedOn'
-				| 'creatorUserId'
-				| 'reminder'
-				| 'private'
-				| 'lockdownId'
-				| 'status'
-				| 'completedOn'
-				| 'completerId'
-				| 'percentageComplete'
-				| 'project'
-			>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			'fields[ProjectPermissions]'?: Array<
-				| 'viewMessagesAndFiles'
-				| 'viewTasksAndMilestones'
-				| 'viewTime'
-				| 'viewNotebooks'
-				| 'viewRiskRegister'
-				| 'viewEstimatedTime'
-				| 'viewInvoices'
-				| 'addTasks'
-				| 'addRisks'
-				| 'manageCustomFields'
-				| 'addExpenses'
-				| 'editAllTasks'
-				| 'addMilestones'
-				| 'addTaskLists'
-				| 'addMessages'
-				| 'addFiles'
-				| 'addTime'
-				| 'addNotebooks'
-				| 'viewLinks'
-				| 'addLinks'
-				| 'canViewForms'
-				| 'addForms'
-				| 'viewAllTimeLogs'
-				| 'setPrivacy'
-				| 'projectAdministrator'
-				| 'viewProjectUpdate'
-				| 'addProjectUpdate'
-				| 'canViewProjectMembers'
-				| 'canViewProjectBudget'
-				| 'canManageProjectBudget'
-				| 'canViewRates'
-				| 'canManageRates'
-				| 'canViewSchedule'
-				| 'canManageSchedule'
-				| 'receiveEmailNotifications'
-				| 'isObserving'
-				| 'isArchived'
-				| 'active'
-				| 'canAccess'
-				| 'inOwnerCompany'
-				| 'canManagePeople'
-				| 'canViewProjectTemplates'
-				| 'canManageProjectTemplates'
-			>;
-			creatorIds?: Array<number>;
-			assignedToUserIds?: Array<number>;
-			assignedToTeamIds?: Array<number>;
-			assignedToCompanyIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_post_projects_api_v3_projects_projectid_notebooks_json: {
-		path: { projectId: number };
-		query?: {
-			getEmoji?: boolean;
-			include?: Array<
-				| 'projects'
-				| 'projects.permissions'
-				| 'projects.integrations'
-				| 'tags'
-				| 'users'
-				| 'users.teams'
-				| 'notebookCategories'
-				| 'companies'
-				| 'teams'
-			>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[teams]'?: Array<
-				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
-			>;
-			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-			'fields[projectIntegrations]'?: Array<
-				| 'userId'
-				| 'projectId'
-				| 'canAccessBox'
-				| 'canAccessDropbox'
-				| 'canAccessGoogleDocs'
-				| 'canAccessOneDrive'
-				| 'canAccessOneDriveBusiness'
-				| 'canAccessSharePoint'
-			>;
-			'fields[notebooks]'?: Array<
-				| 'id'
-				| 'name'
-				| 'description'
-				| 'contents'
-				| 'type'
-				| 'isPrivate'
-				| 'locked'
-				| 'lockdownId'
-				| 'secureContent'
-				| 'projectId'
-				| 'createdByUserID'
-				| 'updatedByUserID'
-				| 'deletedByUserID'
-				| 'dateUpdated'
-				| 'dateCreated'
-				| 'dateDeleted'
-				| 'deleted'
-				| 'categoryId'
-				| 'notebookVersionID'
-				| 'notebookVersionCreatedDateTime'
-				| 'notebookVersionUpdatedDateTime'
-				| 'latestVersionNo'
-				| 'commentsCount'
-				| 'readCommentsCount'
-				| 'contentHTML'
-				| 'privacy'
-				| 'commentFollowers'
-				| 'changeFollowers'
-				| 'tagIds'
-				| 'updatedAt'
-				| 'project'
-			>;
-			'fields[notebookCategories]'?: Array<string>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			'fields[ProjectPermissions]'?: Array<
-				| 'viewMessagesAndFiles'
-				| 'viewTasksAndMilestones'
-				| 'viewTime'
-				| 'viewNotebooks'
-				| 'viewRiskRegister'
-				| 'viewEstimatedTime'
-				| 'viewInvoices'
-				| 'addTasks'
-				| 'addRisks'
-				| 'manageCustomFields'
-				| 'addExpenses'
-				| 'editAllTasks'
-				| 'addMilestones'
-				| 'addTaskLists'
-				| 'addMessages'
-				| 'addFiles'
-				| 'addTime'
-				| 'addNotebooks'
-				| 'viewLinks'
-				| 'addLinks'
-				| 'canViewForms'
-				| 'addForms'
-				| 'viewAllTimeLogs'
-				| 'setPrivacy'
-				| 'projectAdministrator'
-				| 'viewProjectUpdate'
-				| 'addProjectUpdate'
-				| 'canViewProjectMembers'
-				| 'canViewProjectBudget'
-				| 'canManageProjectBudget'
-				| 'canViewRates'
-				| 'canManageRates'
-				| 'canViewSchedule'
-				| 'canManageSchedule'
-				| 'receiveEmailNotifications'
-				| 'isObserving'
-				| 'isArchived'
-				| 'active'
-				| 'canAccess'
-				| 'inOwnerCompany'
-				| 'canManagePeople'
-				| 'canViewProjectTemplates'
-				| 'canManageProjectTemplates'
-			>;
-		};
-		body: TeamworkV3Input_notebook_Request;
-	};
-	v3_get_projects_api_v3_projects_projectid_people_json: {
-		path: { projectId: number };
-		query?: {
-			userType?: 'account' | 'collaborator' | 'contact' | 'client';
-			updatedAfter?: string;
-			searchTerm?: string;
-			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'name'
-				| 'namecaseinsensitive'
-				| 'company'
-				| 'id'
-				| 'providedids'
-				| 'dateupdated';
-			lastLoginAfter?: string;
-			pageSize?: number;
-			page?: number;
-			skipCounts?: boolean;
-			showDeleted?: boolean;
-			searchUserSkill?: boolean;
-			searchUserJobRole?: boolean;
-			orderPrioritiseCurrentUser?: boolean;
-			onlySiteOwner?: boolean;
-			onlyPlaceholders?: boolean;
-			onlyOwnerCompany?: boolean;
-			inclusiveFilter?: boolean;
-			includeStandardUsers?: boolean;
-			includeServiceAccounts?: boolean;
-			includePlaceholders?: boolean;
-			includeObservers?: boolean;
-			includeCollaborators?: boolean;
-			includeClients?: boolean;
-			filterByNoCostRate?: boolean;
-			excludeContacts?: boolean;
-			clientPortalEligible?: boolean;
-			adminsOnly?: boolean;
-			teamIds?: Array<number>;
-			skillIds?: Array<number>;
-			projectIds?: Array<number>;
-			projectCompanyIds?: Array<number>;
-			notLinkedWithClientPortalIds?: Array<number>;
-			jobRoleIds?: Array<number>;
-			include?: Array<
-				| 'companies'
-				| 'workingHours'
-				| 'currencies'
-				| 'teams'
-				| 'jobRoles'
-				| 'skills'
-				| 'linkedClientPortalCompanies'
-				| 'projects.permissions'
-				| 'permissions'
-				| 'users.integrations'
-				| 'skillCounts'
-			>;
-			ids?: Array<number>;
-			'fields[userIntegrations]'?: Array<
-				| 'userId'
-				| 'projectId'
-				| 'canAccessBox'
-				| 'canAccessDropbox'
-				| 'canAccessGoogleDocs'
-				| 'canAccessOneDrive'
-				| 'canAccessOneDriveBusiness'
-				| 'canAccessSharePoint'
-			>;
-			'fields[teams]'?: Array<
-				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
-			>;
-			'fields[person]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-			>;
-			'fields[people]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-			>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			'fields[ProjectPermissions]'?: Array<
-				| 'viewMessagesAndFiles'
-				| 'viewTasksAndMilestones'
-				| 'viewTime'
-				| 'viewNotebooks'
-				| 'viewRiskRegister'
-				| 'viewEstimatedTime'
-				| 'viewInvoices'
-				| 'addTasks'
-				| 'addRisks'
-				| 'manageCustomFields'
-				| 'addExpenses'
-				| 'editAllTasks'
-				| 'addMilestones'
-				| 'addTaskLists'
-				| 'addMessages'
-				| 'addFiles'
-				| 'addTime'
-				| 'addNotebooks'
-				| 'viewLinks'
-				| 'addLinks'
-				| 'canViewForms'
-				| 'addForms'
-				| 'viewAllTimeLogs'
-				| 'setPrivacy'
-				| 'projectAdministrator'
-				| 'viewProjectUpdate'
-				| 'addProjectUpdate'
-				| 'canViewProjectMembers'
-				| 'canViewProjectBudget'
-				| 'canManageProjectBudget'
-				| 'canViewRates'
-				| 'canManageRates'
-				| 'canViewSchedule'
-				| 'canManageSchedule'
-				| 'receiveEmailNotifications'
-				| 'isObserving'
-				| 'isArchived'
-				| 'active'
-				| 'canAccess'
-				| 'inOwnerCompany'
-				| 'canManagePeople'
-				| 'canViewProjectTemplates'
-				| 'canManageProjectTemplates'
-			>;
-			excludeProjectIds?: Array<number>;
-			excludeIds?: Array<number>;
-			excludeAllocatedUsersProjectIDs?: Array<number>;
-			emails?: Array<string>;
-			companyIds?: Array<number>;
-			SkillLevels?: Array<string>;
-		};
-		body?: never;
-	};
-	v3_put_projects_api_v3_projects_projectid_people_json: {
-		path: { projectId: number };
-		query?: Record<string, never>;
-		body: TeamworkV3Input_people_UsersPayload;
-	};
-	v3_get_projects_api_v3_projects_projectid_people_personid_json: {
-		path: { projectId: number; personId: number };
-		query?: {
-			userType?: 'account' | 'collaborator' | 'contact' | 'client';
-			updatedAfter?: string;
-			searchTerm?: string;
-			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'name'
-				| 'namecaseinsensitive'
-				| 'company'
-				| 'id'
-				| 'providedids'
-				| 'dateupdated';
-			lastLoginAfter?: string;
-			pageSize?: number;
-			page?: number;
-			skipCounts?: boolean;
-			showDeleted?: boolean;
-			searchUserSkill?: boolean;
-			searchUserJobRole?: boolean;
-			orderPrioritiseCurrentUser?: boolean;
-			onlySiteOwner?: boolean;
-			onlyPlaceholders?: boolean;
-			onlyOwnerCompany?: boolean;
-			inclusiveFilter?: boolean;
-			includeStandardUsers?: boolean;
-			includeServiceAccounts?: boolean;
-			includePlaceholders?: boolean;
-			includeObservers?: boolean;
-			includeCollaborators?: boolean;
-			includeClients?: boolean;
-			filterByNoCostRate?: boolean;
-			excludeContacts?: boolean;
-			clientPortalEligible?: boolean;
-			adminsOnly?: boolean;
-			teamIds?: Array<number>;
-			skillIds?: Array<number>;
-			projectIds?: Array<number>;
-			projectCompanyIds?: Array<number>;
-			notLinkedWithClientPortalIds?: Array<number>;
-			jobRoleIds?: Array<number>;
-			include?: Array<
-				| 'companies'
-				| 'workingHours'
-				| 'currencies'
-				| 'teams'
-				| 'jobRoles'
-				| 'skills'
-				| 'linkedClientPortalCompanies'
-				| 'projects.permissions'
-				| 'permissions'
-				| 'users.integrations'
-				| 'skillCounts'
-			>;
-			ids?: Array<number>;
-			'fields[userIntegrations]'?: Array<
-				| 'userId'
-				| 'projectId'
-				| 'canAccessBox'
-				| 'canAccessDropbox'
-				| 'canAccessGoogleDocs'
-				| 'canAccessOneDrive'
-				| 'canAccessOneDriveBusiness'
-				| 'canAccessSharePoint'
-			>;
-			'fields[teams]'?: Array<
-				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
-			>;
-			'fields[person]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-			>;
-			'fields[people]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-			>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			'fields[ProjectPermissions]'?: Array<
-				| 'viewMessagesAndFiles'
-				| 'viewTasksAndMilestones'
-				| 'viewTime'
-				| 'viewNotebooks'
-				| 'viewRiskRegister'
-				| 'viewEstimatedTime'
-				| 'viewInvoices'
-				| 'addTasks'
-				| 'addRisks'
-				| 'manageCustomFields'
-				| 'addExpenses'
-				| 'editAllTasks'
-				| 'addMilestones'
-				| 'addTaskLists'
-				| 'addMessages'
-				| 'addFiles'
-				| 'addTime'
-				| 'addNotebooks'
-				| 'viewLinks'
-				| 'addLinks'
-				| 'canViewForms'
-				| 'addForms'
-				| 'viewAllTimeLogs'
-				| 'setPrivacy'
-				| 'projectAdministrator'
-				| 'viewProjectUpdate'
-				| 'addProjectUpdate'
-				| 'canViewProjectMembers'
-				| 'canViewProjectBudget'
-				| 'canManageProjectBudget'
-				| 'canViewRates'
-				| 'canManageRates'
-				| 'canViewSchedule'
-				| 'canManageSchedule'
-				| 'receiveEmailNotifications'
-				| 'isObserving'
-				| 'isArchived'
-				| 'active'
-				| 'canAccess'
-				| 'inOwnerCompany'
-				| 'canManagePeople'
-				| 'canViewProjectTemplates'
-				| 'canManageProjectTemplates'
-			>;
-			excludeProjectIds?: Array<number>;
-			excludeIds?: Array<number>;
-			excludeAllocatedUsersProjectIDs?: Array<number>;
-			emails?: Array<string>;
-			companyIds?: Array<number>;
-			SkillLevels?: Array<string>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_projects_projectid_tasklists_json: {
-		path: { projectId: number };
-		query?: {
-			updatedAfter?: string;
-			searchTerm?: string;
-			projectType?: string;
-			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'displayorder'
-				| 'name'
-				| 'status'
-				| 'createdat'
-				| 'updatedat'
-				| 'project'
-				| 'id';
-			projectBudgetId?: number;
-			pageSize?: number;
-			page?: number;
-			useFormulaFields?: boolean;
-			sortDefaultListFirst?: boolean;
-			sortActiveListsFirst?: boolean;
-			skipCounts?: boolean;
-			showPrivate?: boolean;
-			showDeleted?: boolean;
-			showCompleted?: boolean;
-			isReportDownload?: boolean;
-			includeTentativeProjects?: boolean;
-			includeArchivedProjects?: boolean;
-			getEmptyLists?: boolean;
-			completedOnly?: boolean;
-			calculateDates?: boolean;
-			projectIds?: Array<number>;
-			projectCompanyIds?: Array<number>;
-			include?: Array<
-				| 'defaultTasks'
-				| 'defaultTasks.users'
-				| 'defaultTasks.teams'
-				| 'defaultTasks.reminders'
-				| 'defaultTasks.customfields'
-				| 'defaultTasks.companies'
-				| 'defaultTasks.jobRoles'
-				| 'defaultTasks.tags'
-				| 'defaultTasks.changeFollowers'
-				| 'defaultTasks.commentFollowers'
-				| 'defaultTasks.completeFollowers'
-				| 'defaultTasks.lockdowns'
-				| 'defaultTasks.lockdowns.users'
-				| 'defaultTasks.lockdowns.companies'
-				| 'defaultTasks.lockdowns.teams'
-				| 'createdBy'
-				| 'updatedBy'
-				| 'companies'
-				| 'projects'
-				| 'projects.permissions'
-				| 'projects.integrations'
-				| 'milestones'
-				| 'defaultCustomfields'
-				| 'defaultCustomfieldTasks'
-				| 'defaultColumns'
-				| 'defaultWorkflowStages'
-				| 'defaultWorkflows'
-				| 'lockdowns'
-				| 'lockdowns.users'
-				| 'lockdowns.companies'
-				| 'lockdowns.teams'
-				| 'lockdowns.users.companies'
-				| 'lockdowns.companies.users'
-				| 'lockdowns.teams.users'
-				| 'tasklisttaskstats'
-				| 'tasklistBudgets'
-				| 'tasklistBudgets.notifications'
-				| 'tasklistBudgets.notifications.users'
-				| 'tasklistBudgets.notifications.teams'
-				| 'tasklistBudgets.notifications.companies'
-			>;
-			ids?: Array<number>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[teams]'?: Array<
-				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
-			>;
-			'fields[tasks]'?: Array<
-				| 'id'
-				| 'name'
-				| 'dateUpdated'
-				| 'parentTaskId'
-				| 'isPrivate'
-				| 'status'
-				| 'tasklistId'
-				| 'startDate'
-				| 'dueDate'
-				| 'estimateMinutes'
-				| 'accumulatedEstimatedMinutes'
-				| 'updatedAt'
-				| 'tasklist'
-			>;
-			'fields[tasklists]'?: Array<
-				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
-			>;
-			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-			'fields[projectIntegrations]'?: Array<
-				| 'userId'
-				| 'projectId'
-				| 'canAccessBox'
-				| 'canAccessDropbox'
-				| 'canAccessGoogleDocs'
-				| 'canAccessOneDrive'
-				| 'canAccessOneDriveBusiness'
-				| 'canAccessSharePoint'
-			>;
-			'fields[milestones]'?: Array<
-				| 'id'
-				| 'name'
-				| 'description'
-				| 'deadline'
-				| 'completed'
-				| 'projectId'
-				| 'createdOn'
-				| 'lastChangedOn'
-				| 'creatorUserId'
-				| 'reminder'
-				| 'private'
-				| 'lockdownId'
-				| 'status'
-				| 'completedOn'
-				| 'completerId'
-				| 'percentageComplete'
-				| 'project'
-			>;
-			'fields[lockdowns]'?: Array<
-				'id' | 'userID' | 'updatedAt' | 'itemType' | 'itemID' | 'grantAccessTo'
-			>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			'fields[ProjectPermissions]'?: Array<
-				| 'viewMessagesAndFiles'
-				| 'viewTasksAndMilestones'
-				| 'viewTime'
-				| 'viewNotebooks'
-				| 'viewRiskRegister'
-				| 'viewEstimatedTime'
-				| 'viewInvoices'
-				| 'addTasks'
-				| 'addRisks'
-				| 'manageCustomFields'
-				| 'addExpenses'
-				| 'editAllTasks'
-				| 'addMilestones'
-				| 'addTaskLists'
-				| 'addMessages'
-				| 'addFiles'
-				| 'addTime'
-				| 'addNotebooks'
-				| 'viewLinks'
-				| 'addLinks'
-				| 'canViewForms'
-				| 'addForms'
-				| 'viewAllTimeLogs'
-				| 'setPrivacy'
-				| 'projectAdministrator'
-				| 'viewProjectUpdate'
-				| 'addProjectUpdate'
-				| 'canViewProjectMembers'
-				| 'canViewProjectBudget'
-				| 'canManageProjectBudget'
-				| 'canViewRates'
-				| 'canManageRates'
-				| 'canViewSchedule'
-				| 'canManageSchedule'
-				| 'receiveEmailNotifications'
-				| 'isObserving'
-				| 'isArchived'
-				| 'active'
-				| 'canAccess'
-				| 'inOwnerCompany'
-				| 'canManagePeople'
-				| 'canViewProjectTemplates'
-				| 'canManageProjectTemplates'
-			>;
-			excludeIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_projects_projectid_tasks_json: {
-		path: { projectId: number };
-		query?: {
-			updatedBefore?: string;
-			updatedAfter?: string;
-			today?: string;
-			taskFilter?:
-				| 'all'
-				| 'anytime'
-				| 'completed'
-				| 'created'
-				| 'overdue'
-				| 'today'
-				| 'yesterday'
-				| 'started'
-				| 'tomorrow'
-				| 'thisweek'
-				| 'within7'
-				| 'within14'
-				| 'within30'
-				| 'within365'
-				| 'nodate'
-				| 'noduedate'
-				| 'nostartdate'
-				| 'newTaskDefaults'
-				| 'hasDate'
-				| 'upcoming'
-				| 'within'
-				| 'withinprev';
-			startDate?: string;
-			searchTerm?: string;
-			reportType?: 'plannedvsactual' | 'task' | 'tasktime';
-			reportFormat?: 'html' | 'pdf' | 'csv' | 'xls' | 'xlsx' | 'google-sheets';
-			projectType?:
-				| 'all'
-				| 'normal'
-				| 'tentative'
-				| 'personal'
-				| 'projects-template'
-				| 'tasklists-template';
-			priority?: string;
-			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'id'
-				| 'startdate'
-				| 'createdat'
-				| 'priority'
-				| 'project'
-				| 'flattenedtasklist'
-				| 'company'
-				| 'manual'
-				| 'active'
-				| 'completedat'
-				| 'duestartdate'
-				| 'alldates'
-				| 'tasklistname'
-				| 'tasklistdisplayorder'
-				| 'tasklistid'
-				| 'duedate'
-				| 'updatedat'
-				| 'taskname'
-				| 'createdby'
-				| 'completedby'
-				| 'assignedto'
-				| 'taskstatus'
-				| 'taskduedate'
-				| 'customfield'
-				| 'estimatedtime'
-				| 'taskgroupid'
-				| 'taskgroupname'
-				| 'projectmanual'
-				| 'stagedisplayorder'
-				| 'stage'
-				| 'parenttask'
-				| 'dateadded'
-				| 'datecompleted'
-				| 'completedatdesc'
-				| 'completeddatedesc'
-				| 'duestartdatedesc'
-				| 'alldatesdesc'
-				| 'duedatedesc'
-				| 'taskgroupdisplayorder'
-				| 'dateupdated'
-				| 'originalduedate'
-				| 'tags';
-			notCompletedBefore?: string;
-			endDate?: string;
-			dueBefore?: string;
-			dueAfter?: string;
-			deletedAfter?: string;
-			createdFilter?: 'anytime' | 'today' | 'yesterday' | 'custom';
-			createdDateCode?: string;
-			createdBefore?: string;
-			createdAfter?: string;
-			completedBefore?: string;
-			completedAfter?: string;
-			updatedByUserId?: number;
-			parentTaskId?: number;
-			pageSize?: number;
-			page?: number;
-			orderByCustomFieldId?: number;
-			includeTaskId?: number;
-			filterId?: number;
-			completedByUserId?: number;
-			useTaskDateRange?: boolean;
-			useStartDatesForTodaysTasks?: boolean;
-			useFormulaFields?: boolean;
-			useAllProjects?: boolean;
-			sortActiveFirst?: boolean;
-			skipCounts?: boolean;
-			showDeleted?: boolean;
-			showCompletedLists?: boolean;
-			searchJobRoles?: boolean;
-			searchCompaniesTeams?: boolean;
-			searchAssignees?: boolean;
-			onlyUntaggedTasks?: boolean;
-			onlyUnplanned?: boolean;
-			onlyUnassignedTasks?: boolean;
-			onlyTasksWithUnreadComments?: boolean;
-			onlyTasksWithTickets?: boolean;
-			onlyTasksWithEstimatedTime?: boolean;
-			onlyStarredProjects?: boolean;
-			onlyAssignedTasks?: boolean;
-			onlyAssignedRoleTasks?: boolean;
-			onlyAdminProjects?: boolean;
-			nestSubTasks?: boolean;
-			matchAllTags?: boolean;
-			matchAllProjectTags?: boolean;
-			matchAllExcludedTags?: boolean;
-			isReportDownload?: boolean;
-			includeUpdate?: boolean;
-			includeUntaggedTasks?: boolean;
-			includeTomorrow?: boolean;
-			includeToday?: boolean;
-			includeTentativeProjects?: boolean;
-			includeTeamUserIds?: boolean;
-			includeTasksWithoutDueDates?: boolean;
-			includeTasksFromDeletedLists?: boolean;
-			includeTasksCount?: boolean;
-			includeRelatedTasks?: boolean;
-			includePrivateItems?: boolean;
-			includeOverdueTasks?: boolean;
-			includeOriginalDueDate?: boolean;
-			includeJobRoleUserIds?: boolean;
-			includeEmailCommentStats?: boolean;
-			includeCustomFields?: boolean;
-			includeCompletedTasks?: boolean;
-			includeCompletedPredecessors?: boolean;
-			includeCompanyUserIds?: boolean;
-			includeCommentStats?: boolean;
-			includeBlocked?: boolean;
-			includeAttachmentCommentStats?: boolean;
-			includeAssigneeTeams?: boolean;
-			includeAssigneeJobRoles?: boolean;
-			includeAssigneeCompanies?: boolean;
-			includeArchivedProjects?: boolean;
-			includeAllComments?: boolean;
-			includeAccumulatedTimeTotals?: boolean;
-			hideDeleted?: boolean;
-			groupByTasklist?: boolean;
-			groupByTaskgroup?: boolean;
-			getSubTasks?: boolean;
-			getFiles?: boolean;
-			fallbackToMilestoneDueDate?: boolean;
-			extractTemplateRoleName?: boolean;
-			excludeAssigneeNotOnProjectTeams?: boolean;
-			excludeAssignedToMe?: boolean;
-			deletedOnly?: boolean;
-			completedOnly?: boolean;
-			checkForTimeblocks?: boolean;
-			checkForReminders?: boolean;
-			calculateTasklistDates?: boolean;
-			allowAssigneesOutsideProject?: boolean;
-			workflowIds?: Array<number>;
-			tasksSelectedColumns?: Array<string>;
-			tasklistIds?: Array<number>;
-			taskgroupIds?: Array<number>;
-			taskIncludedSet?: Array<
-				| 'overdue'
-				| 'nodate'
-				| 'nostartdate'
-				| 'noduedate'
-				| 'nostartwithfutureduedate'
-				| 'taskListNames'
-				| 'projectNames'
-			>;
-			tags?: Array<string>;
-			tagIds?: Array<number>;
-			status?: Array<'upcoming' | 'late' | 'all'>;
-			stageIds?: Array<number>;
-			sort?: Array<string>;
-			skipCRMDealIds?: Array<number>;
-			selectedColumns?: Array<string>;
-			responsiblePartyIds?: Array<number>;
-			projectTagIds?: Array<number>;
-			projectStatuses?: Array<
-				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
-			>;
-			projectOwnerIds?: Array<number>;
-			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
-			projectFeaturesEnabled?: Array<
-				| 'list'
-				| 'board'
-				| 'gantt'
-				| 'table'
-				| 'dashboard'
-				| 'milestones'
-				| 'messages'
-				| 'files'
-				| 'time'
-				| 'notebooks'
-				| 'risks'
-				| 'links'
-				| 'billing'
-				| 'comments'
-				| 'people'
-				| 'settings'
-			>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-			portfolioBoardIds?: Array<number>;
-			includeCustomFieldIds?: Array<number>;
-			include?: Array<
-				| 'projects'
-				| 'projects.companies'
-				| 'projects.categories'
-				| 'projects.permissions'
-				| 'projects.integrations'
-				| 'tasklists'
-				| 'parentTasks'
-				| 'companies'
-				| 'teams'
-				| 'users'
-				| 'milestones'
-				| 'comments'
-				| 'comments.users'
-				| 'tags'
-				| 'timeTotals'
-				| 'accumulatedTimeTotals'
-				| 'taskSequences'
-				| 'commentFollowers'
-				| 'changeFollowers'
-				| 'completeFollowers'
-				| 'lockdowns'
-				| 'lockdowns.users'
-				| 'lockdowns.companies'
-				| 'lockdowns.teams'
-				| 'lockdowns.users.companies'
-				| 'lockdowns.companies.users'
-				| 'lockdowns.teams.users'
-				| 'attachments'
-				| 'attachments.users'
-				| 'subtaskStats'
-				| 'timers'
-				| 'predecessors'
-				| 'permissions'
-				| 'jobRoles'
-				| 'proofs'
-				| 'taskgroups'
-				| 'workflows'
-				| 'workflows.stages'
-				| 'customfields'
-				| 'customfieldTasks'
-				| 'tasks'
-			>;
-			ids?: Array<number>;
-			followedByUserIds?: Array<number>;
-			'fields[workflows]'?: Array<'id' | 'name' | 'statusId'>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[timers]'?: Array<
-				| 'id'
-				| 'userId'
-				| 'taskId'
-				| 'projectId'
-				| 'description'
-				| 'running'
-				| 'billable'
-				| 'deleted'
-				| 'dateCreated'
-				| 'dateDeleted'
-				| 'duration'
-				| 'lastStartedAt'
-				| 'serverTime'
-				| 'intervals'
-			>;
-			'fields[teams]'?: Array<
-				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
-			>;
-			'fields[tasks]'?: Array<
-				| 'id'
-				| 'name'
-				| 'dateUpdated'
-				| 'parentTaskId'
-				| 'isPrivate'
-				| 'status'
-				| 'tasklistId'
-				| 'startDate'
-				| 'dueDate'
-				| 'estimateMinutes'
-				| 'accumulatedEstimatedMinutes'
-				| 'updatedAt'
-				| 'tasklist'
-			>;
-			'fields[tasklists]'?: Array<
-				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
-			>;
-			'fields[taskgroups]'?: Array<
-				'id' | 'name' | 'description' | 'displayOrder' | 'projectId' | 'status'
-			>;
-			'fields[taskSequences]'?: Array<
-				| 'id'
-				| 'installationId'
-				| 'frequency'
-				| 'selectedWeekDays'
-				| 'endDate'
-				| 'monthlyRepeatType'
-				| 'duration'
-				| 'rrule'
-			>;
-			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
-			'fields[stages]'?: Array<'id' | 'name' | 'stage'>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-			'fields[projectIntegrations]'?: Array<
-				| 'userId'
-				| 'projectId'
-				| 'canAccessBox'
-				| 'canAccessDropbox'
-				| 'canAccessGoogleDocs'
-				| 'canAccessOneDrive'
-				| 'canAccessOneDriveBusiness'
-				| 'canAccessSharePoint'
-			>;
-			'fields[milestones]'?: Array<
-				| 'id'
-				| 'name'
-				| 'description'
-				| 'deadline'
-				| 'completed'
-				| 'projectId'
-				| 'createdOn'
-				| 'lastChangedOn'
-				| 'creatorUserId'
-				| 'reminder'
-				| 'private'
-				| 'lockdownId'
-				| 'status'
-				| 'completedOn'
-				| 'completerId'
-				| 'percentageComplete'
-				| 'project'
-			>;
-			'fields[lockdowns]'?: Array<
-				'id' | 'userID' | 'updatedAt' | 'itemType' | 'itemID' | 'grantAccessTo'
-			>;
-			'fields[jobroles]'?: Array<'id' | 'name'>;
-			'fields[groups]'?: Array<
-				| 'late'
-				| 'today'
-				| 'tomorrow'
-				| 'later-this-week'
-				| 'next-week'
-				| 'later'
-				| 'no-due-date'
-			>;
-			'fields[files]'?: Array<
-				| 'isPrivate'
-				| 'latestFileVersionNo'
-				| 'versionId'
-				| 'status'
-				| 'description'
-				| 'lockdownId'
-				| 'tagIds'
-				| 'changeFollowers'
-				| 'commentFollowers'
-				| 'originalName'
-				| 'displayName'
-				| 'isLocked'
-				| 'lockedByUserId'
-				| 'lockedDate'
-				| 'size'
-				| 'uploadedDate'
-				| 'uploadedByUserID'
-				| 'updatedAt'
-				| 'deletedAt'
-				| 'deletedBy'
-				| 'fileSource'
-				| 'projectId'
-				| 'numLikes'
-				| 'reactions'
-				| 'versions'
-				| 'downloadURL'
-				| 'previewURL'
-				| 'thumbURL'
-				| 'relatedItems'
-				| 'commentsCount'
-				| 'commentsCountRead'
-				| 'categoryId'
-			>;
-			'fields[customfields]'?: Array<
-				| 'id'
-				| 'projectId'
-				| 'entity'
-				| 'name'
-				| 'description'
-				| 'type'
-				| 'options'
-				| 'visibilities'
-				| 'isPrivate'
-				| 'required'
-				| 'createdAt'
-				| 'createdByUserId'
-				| 'updatedAt'
-				| 'updatedByUserId'
-				| 'deleted'
-				| 'deletedAt'
-				| 'deletedByUserId'
-			>;
-			'fields[customfieldTasks]'?: Array<
-				'id' | 'customfieldId' | 'value' | 'createdAt' | 'createdBy'
-			>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			'fields[comments]'?: Array<
-				| 'id'
-				| 'objectType'
-				| 'objectId'
-				| 'title'
-				| 'postedAt'
-				| 'postedBy'
-				| 'object'
-				| 'project'
-			>;
-			'fields[ProjectPermissions]'?: Array<
-				| 'viewMessagesAndFiles'
-				| 'viewTasksAndMilestones'
-				| 'viewTime'
-				| 'viewNotebooks'
-				| 'viewRiskRegister'
-				| 'viewEstimatedTime'
-				| 'viewInvoices'
-				| 'addTasks'
-				| 'addRisks'
-				| 'manageCustomFields'
-				| 'addExpenses'
-				| 'editAllTasks'
-				| 'addMilestones'
-				| 'addTaskLists'
-				| 'addMessages'
-				| 'addFiles'
-				| 'addTime'
-				| 'addNotebooks'
-				| 'viewLinks'
-				| 'addLinks'
-				| 'canViewForms'
-				| 'addForms'
-				| 'viewAllTimeLogs'
-				| 'setPrivacy'
-				| 'projectAdministrator'
-				| 'viewProjectUpdate'
-				| 'addProjectUpdate'
-				| 'canViewProjectMembers'
-				| 'canViewProjectBudget'
-				| 'canManageProjectBudget'
-				| 'canViewRates'
-				| 'canManageRates'
-				| 'canViewSchedule'
-				| 'canManageSchedule'
-				| 'receiveEmailNotifications'
-				| 'isObserving'
-				| 'isArchived'
-				| 'active'
-				| 'canAccess'
-				| 'inOwnerCompany'
-				| 'canManagePeople'
-				| 'canViewProjectTemplates'
-				| 'canManageProjectTemplates'
-			>;
-			expandedIds?: Array<number>;
-			excludeTagIds?: Array<number>;
-			excludeResponsiblePartyIds?: Array<number>;
-			crmDealIds?: Array<number>;
-			createdByUserIds?: Array<number>;
-			assigneeTypes?: Array<
-				| 'user'
-				| 'company'
-				| 'team'
-				| 'jobrole'
-				| 'placeholder'
-				| 'assigned'
-				| 'unassigned'
-			>;
-			assigneeTeamIds?: Array<number>;
-			assigneeJobRoleIds?: Array<number>;
-			assigneeCompanyIds?: Array<number>;
-			CustomFields?: Array<string>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_projects_projectid_time_json: {
-		path: { projectId: number };
-		query?: {
-			updatedAfter?: string;
-			startDate?: string;
-			searchTerm?: string;
-			reportFormat?: string;
-			projectStatus?:
-				| 'active'
-				| 'current'
-				| 'late'
-				| 'upcoming'
-				| 'completed'
-				| 'deleted';
-			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'company'
-				| 'date'
-				| 'dateupdated'
-				| 'project'
-				| 'task'
-				| 'tasklist'
-				| 'user'
-				| 'description'
-				| 'billed'
-				| 'billable'
-				| 'timespent'
-				| 'id';
-			invoicedType?: 'all' | 'invoiced' | 'noninvoiced';
-			endDate?: string;
-			deletedAfter?: string;
-			budgetedType?: 'all' | 'budgeted' | 'nonbudgeted';
-			billableType?: 'all' | 'billable' | 'nonbillable';
-			updatedBy?: number;
-			ticketId?: number;
-			tasklistId?: number;
-			taskId?: number;
-			projectId?: number;
-			pageSize?: number;
-			page?: number;
-			invoiceId?: number;
-			budgetId?: number;
-			allocationId?: number;
-			useFallbackMethod?: boolean;
-			unattachedTimelogs?: boolean;
-			skipCounts?: boolean;
-			showDeleted?: boolean;
-			returnSplitInfo?: boolean;
-			returnCostInfo?: boolean;
-			returnBillableInfo?: boolean;
-			onlyStarredProjects?: boolean;
-			matchAllTaskTags?: boolean;
-			matchAllTags?: boolean;
-			matchAllProjectTags?: boolean;
-			matchAllExcludedTaskTags?: boolean;
-			matchAllExcludedProjectTags?: boolean;
-			isReportDownload?: boolean;
-			includeTotals?: boolean;
-			includeTentativeProjects?: boolean;
-			includePermissions?: boolean;
-			includeDescendants?: boolean;
-			includeArchivedProjects?: boolean;
-			deletedOnly?: boolean;
-			checkLocking?: boolean;
-			budgetAllocations?: boolean;
-			ticketIds?: Array<number>;
-			tasklistIds?: Array<number>;
-			taskTagIds?: Array<number>;
-			taskStatuses?: Array<string>;
-			taskIds?: Array<number>;
-			tagIds?: Array<number>;
-			selectedColumns?: Array<string>;
-			projectsFromCompanyId?: Array<number>;
-			projectTagIds?: Array<number>;
-			projectStatuses?: Array<
-				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
-			>;
-			projectOwnerIds?: Array<number>;
-			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-			include?: Array<
-				| 'projects'
-				| 'projects.companies'
-				| 'projects.companies.currencies'
-				| 'projects.categories'
-				| 'projects.permissions'
-				| 'projects.integrations'
-				| 'tags'
-				| 'tasks'
-				| 'tasks.parentTasks'
-				| 'tasks.tasklists'
-				| 'tasks.users'
-				| 'tasks.tags'
-				| 'users'
-				| 'createdBy'
-				| 'updatedBy'
-				| 'deletedBy'
-				| 'project.billing'
-				| 'project.billing.currencies'
-				| 'projectBudgets'
-				| 'currencies'
-				| 'userRates'
-			>;
-			ids?: Array<number>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[timelogs]'?: Array<
-				| 'id'
-				| 'dateCreated'
-				| 'minutes'
-				| 'description'
-				| 'timeLogged'
-				| 'billable'
-				| 'deleted'
-				| 'dateDeleted'
-				| 'hasStartTime'
-				| 'dateEdited'
-				| 'deskTicketId'
-				| 'userId'
-				| 'taskId'
-				| 'projectId'
-				| 'loggedByUserId'
-				| 'deletedByUserId'
-				| 'editedByUserId'
-				| 'taskIdPreMove'
-				| 'projectBillingInvoiceId'
-			>;
-			'fields[tasks]'?: Array<
-				| 'id'
-				| 'name'
-				| 'dateUpdated'
-				| 'parentTaskId'
-				| 'isPrivate'
-				| 'status'
-				| 'tasklistId'
-				| 'startDate'
-				| 'dueDate'
-				| 'estimateMinutes'
-				| 'accumulatedEstimatedMinutes'
-				| 'updatedAt'
-				| 'tasklist'
-			>;
-			'fields[tasklists]'?: Array<
-				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
-			>;
-			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-			'fields[projectcategories]'?: Array<
-				'id' | 'name' | 'color' | 'count' | 'parent' | 'parentId'
-			>;
-			'fields[projectIntegrations]'?: Array<
-				| 'userId'
-				| 'projectId'
-				| 'canAccessBox'
-				| 'canAccessDropbox'
-				| 'canAccessGoogleDocs'
-				| 'canAccessOneDrive'
-				| 'canAccessOneDriveBusiness'
-				| 'canAccessSharePoint'
-			>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			'fields[ProjectPermissions]'?: Array<
-				| 'viewMessagesAndFiles'
-				| 'viewTasksAndMilestones'
-				| 'viewTime'
-				| 'viewNotebooks'
-				| 'viewRiskRegister'
-				| 'viewEstimatedTime'
-				| 'viewInvoices'
-				| 'addTasks'
-				| 'addRisks'
-				| 'manageCustomFields'
-				| 'addExpenses'
-				| 'editAllTasks'
-				| 'addMilestones'
-				| 'addTaskLists'
-				| 'addMessages'
-				| 'addFiles'
-				| 'addTime'
-				| 'addNotebooks'
-				| 'viewLinks'
-				| 'addLinks'
-				| 'canViewForms'
-				| 'addForms'
-				| 'viewAllTimeLogs'
-				| 'setPrivacy'
-				| 'projectAdministrator'
-				| 'viewProjectUpdate'
-				| 'addProjectUpdate'
-				| 'canViewProjectMembers'
-				| 'canViewProjectBudget'
-				| 'canManageProjectBudget'
-				| 'canViewRates'
-				| 'canManageRates'
-				| 'canViewSchedule'
-				| 'canManageSchedule'
-				| 'receiveEmailNotifications'
-				| 'isObserving'
-				| 'isArchived'
-				| 'active'
-				| 'canAccess'
-				| 'inOwnerCompany'
-				| 'canManagePeople'
-				| 'canViewProjectTemplates'
-				| 'canManageProjectTemplates'
-			>;
-			excludeTaskTagIds?: Array<number>;
-			excludeProjectTagIds?: Array<number>;
-			assignedToUserIds?: Array<number>;
-			assignedToTeamIds?: Array<number>;
-			assignedToCompanyIds?: Array<number>;
-			assignedTeamIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_post_projects_api_v3_projects_projectid_time_json: {
-		path: { projectId: number };
-		query?: { fireWebhook?: boolean };
-		body: TeamworkV3Input_timelog_Request;
-	};
-	v3_get_projects_api_v3_projects_projectid_time_total_json: {
-		path: { projectId: number };
-		query?: {
-			updatedAfter?: string;
-			startDate?: string;
-			searchTerm?: string;
-			projectStatus?:
-				| 'active'
-				| 'current'
-				| 'late'
-				| 'upcoming'
-				| 'completed'
-				| 'deleted';
-			invoicedType?: 'all' | 'invoiced' | 'noninvoiced';
-			endDate?: string;
-			budgetedType?: 'all' | 'budgeted' | 'nonbudgeted';
-			billableType?: 'all' | 'billable' | 'nonbillable';
-			userId?: number;
-			tasklistId?: number;
-			taskId?: number;
-			projectId?: number;
-			deskTicketId?: number;
-			returnCostInfo?: boolean;
-			returnBillableInfo?: boolean;
-			onlyStarredProjects?: boolean;
-			matchAllProjectTags?: boolean;
-			matchAllExcludedTaskTags?: boolean;
-			matchAllExcludedProjectTags?: boolean;
-			includeTentativeProjects?: boolean;
-			includeDescendants?: boolean;
-			includeArchivedProjects?: boolean;
-			userIds?: Array<number>;
-			tasklistIds?: Array<number>;
-			taskStatuses?: Array<string>;
-			taskIds?: Array<number>;
-			tagIds?: Array<number>;
-			subTaskStatuses?: Array<
-				'all' | 'completed' | 'incomplete' | 'new' | 'reopened' | 'deleted'
-			>;
-			projectTagIds?: Array<number>;
-			projectStatuses?: Array<
-				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
-			>;
-			projectOwnerIds?: Array<number>;
-			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-			excludeTaskTagIds?: Array<number>;
-			excludeProjectTagIds?: Array<number>;
-			companyIds?: Array<number>;
-			assignedToUserIds?: Array<number>;
-			assignedToTeamIds?: Array<number>;
-			assignedToCompanyIds?: Array<number>;
-			assignedTeamIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_reporting_dashboards_data_milestones_json: {
-		path?: Record<string, never>;
-		query?: {
-			startDate?: string;
-			splitBy?: string;
-			searchTerm?: string;
-			orderMode?: string;
-			orderBy?: string;
-			metric?: string;
-			groupBy?: string;
-			endDate?: string;
-			pageSize?: number;
-			page?: number;
-			skipCounts?: boolean;
-			projectIds?: Array<number>;
-			include?: Array<string>;
-			filter?: Array<TeamworkJsonValue>;
-			companyIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_reporting_dashboards_details_milestones_json: {
-		path?: Record<string, never>;
-		query?: {
-			startDate?: string;
-			searchTerm?: string;
-			orderMode?: string;
-			orderBy?: string;
-			endDate?: string;
-			pageSize?: number;
-			page?: number;
-			projectIds?: Array<number>;
-			include?: Array<string>;
-			filter?: Array<TeamworkJsonValue>;
-			companyIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_reporting_precanned_companytime_json: {
-		path?: Record<string, never>;
-		query?: {
-			updatedAfter?: string;
-			startDate?: string;
-			searchTerm?: string;
-			reportFormat?: string;
-			projectStatus?:
-				| 'active'
-				| 'current'
-				| 'late'
-				| 'upcoming'
-				| 'completed'
-				| 'deleted';
-			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'company'
-				| 'date'
-				| 'dateupdated'
-				| 'project'
-				| 'task'
-				| 'tasklist'
-				| 'user'
-				| 'description'
-				| 'billed'
-				| 'billable'
-				| 'timespent'
-				| 'id';
-			invoicedType?: 'all' | 'invoiced' | 'noninvoiced';
-			endDate?: string;
-			deletedAfter?: string;
-			budgetedType?: 'all' | 'budgeted' | 'nonbudgeted';
-			billableType?: 'all' | 'billable' | 'nonbillable';
-			updatedBy?: number;
-			ticketId?: number;
-			tasklistId?: number;
-			taskId?: number;
-			projectId?: number;
-			pageSize?: number;
-			page?: number;
-			invoiceId?: number;
-			budgetId?: number;
-			allocationId?: number;
-			useFallbackMethod?: boolean;
-			unattachedTimelogs?: boolean;
-			skipCounts?: boolean;
-			showDeleted?: boolean;
-			returnSplitInfo?: boolean;
-			returnCostInfo?: boolean;
-			returnBillableInfo?: boolean;
-			onlyStarredProjects?: boolean;
-			matchAllTaskTags?: boolean;
-			matchAllTags?: boolean;
-			matchAllProjectTags?: boolean;
-			matchAllExcludedTaskTags?: boolean;
-			matchAllExcludedProjectTags?: boolean;
-			isReportDownload?: boolean;
-			includeTotals?: boolean;
-			includeTentativeProjects?: boolean;
-			includePermissions?: boolean;
-			includeDescendants?: boolean;
-			includeArchivedProjects?: boolean;
-			deletedOnly?: boolean;
-			checkLocking?: boolean;
-			budgetAllocations?: boolean;
-			ticketIds?: Array<number>;
-			tasklistIds?: Array<number>;
-			taskTagIds?: Array<number>;
-			taskStatuses?: Array<string>;
-			taskIds?: Array<number>;
-			tagIds?: Array<number>;
-			selectedColumns?: Array<string>;
-			projectsFromCompanyId?: Array<number>;
-			projectTagIds?: Array<number>;
-			projectStatuses?: Array<
-				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
-			>;
-			projectOwnerIds?: Array<number>;
-			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-			include?: Array<
-				| 'projects'
-				| 'projects.companies'
-				| 'projects.companies.currencies'
-				| 'projects.categories'
-				| 'projects.permissions'
-				| 'projects.integrations'
-				| 'tags'
-				| 'tasks'
-				| 'tasks.parentTasks'
-				| 'tasks.tasklists'
-				| 'tasks.users'
-				| 'tasks.tags'
-				| 'users'
-				| 'createdBy'
-				| 'updatedBy'
-				| 'deletedBy'
-				| 'project.billing'
-				| 'project.billing.currencies'
-				| 'projectBudgets'
-				| 'currencies'
-				| 'userRates'
-			>;
-			ids?: Array<number>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[timelogs]'?: Array<
-				| 'id'
-				| 'dateCreated'
-				| 'minutes'
-				| 'description'
-				| 'timeLogged'
-				| 'billable'
-				| 'deleted'
-				| 'dateDeleted'
-				| 'hasStartTime'
-				| 'dateEdited'
-				| 'deskTicketId'
-				| 'userId'
-				| 'taskId'
-				| 'projectId'
-				| 'loggedByUserId'
-				| 'deletedByUserId'
-				| 'editedByUserId'
-				| 'taskIdPreMove'
-				| 'projectBillingInvoiceId'
-			>;
-			'fields[tasks]'?: Array<
-				| 'id'
-				| 'name'
-				| 'dateUpdated'
-				| 'parentTaskId'
-				| 'isPrivate'
-				| 'status'
-				| 'tasklistId'
-				| 'startDate'
-				| 'dueDate'
-				| 'estimateMinutes'
-				| 'accumulatedEstimatedMinutes'
-				| 'updatedAt'
-				| 'tasklist'
-			>;
-			'fields[tasklists]'?: Array<
-				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
-			>;
-			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-			'fields[projectcategories]'?: Array<
-				'id' | 'name' | 'color' | 'count' | 'parent' | 'parentId'
-			>;
-			'fields[projectIntegrations]'?: Array<
-				| 'userId'
-				| 'projectId'
-				| 'canAccessBox'
-				| 'canAccessDropbox'
-				| 'canAccessGoogleDocs'
-				| 'canAccessOneDrive'
-				| 'canAccessOneDriveBusiness'
-				| 'canAccessSharePoint'
-			>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			'fields[ProjectPermissions]'?: Array<
-				| 'viewMessagesAndFiles'
-				| 'viewTasksAndMilestones'
-				| 'viewTime'
-				| 'viewNotebooks'
-				| 'viewRiskRegister'
-				| 'viewEstimatedTime'
-				| 'viewInvoices'
-				| 'addTasks'
-				| 'addRisks'
-				| 'manageCustomFields'
-				| 'addExpenses'
-				| 'editAllTasks'
-				| 'addMilestones'
-				| 'addTaskLists'
-				| 'addMessages'
-				| 'addFiles'
-				| 'addTime'
-				| 'addNotebooks'
-				| 'viewLinks'
-				| 'addLinks'
-				| 'canViewForms'
-				| 'addForms'
-				| 'viewAllTimeLogs'
-				| 'setPrivacy'
-				| 'projectAdministrator'
-				| 'viewProjectUpdate'
-				| 'addProjectUpdate'
-				| 'canViewProjectMembers'
-				| 'canViewProjectBudget'
-				| 'canManageProjectBudget'
-				| 'canViewRates'
-				| 'canManageRates'
-				| 'canViewSchedule'
-				| 'canManageSchedule'
-				| 'receiveEmailNotifications'
-				| 'isObserving'
-				| 'isArchived'
-				| 'active'
-				| 'canAccess'
-				| 'inOwnerCompany'
-				| 'canManagePeople'
-				| 'canViewProjectTemplates'
-				| 'canManageProjectTemplates'
-			>;
-			excludeTaskTagIds?: Array<number>;
-			excludeProjectTagIds?: Array<number>;
-			assignedToUserIds?: Array<number>;
-			assignedToTeamIds?: Array<number>;
-			assignedToCompanyIds?: Array<number>;
-			assignedTeamIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_reporting_precanned_tasktime_json: {
-		path?: Record<string, never>;
-		query?: {
-			updatedBefore?: string;
-			updatedAfter?: string;
-			today?: string;
-			taskFilter?:
-				| 'all'
-				| 'anytime'
-				| 'completed'
-				| 'created'
-				| 'overdue'
-				| 'today'
-				| 'yesterday'
-				| 'started'
-				| 'tomorrow'
-				| 'thisweek'
-				| 'within7'
-				| 'within14'
-				| 'within30'
-				| 'within365'
-				| 'nodate'
-				| 'noduedate'
-				| 'nostartdate'
-				| 'newTaskDefaults'
-				| 'hasDate'
-				| 'upcoming'
-				| 'within'
-				| 'withinprev';
-			startDate?: string;
-			searchTerm?: string;
-			reportType?: 'plannedvsactual' | 'task' | 'tasktime';
-			reportFormat?: 'html' | 'pdf' | 'csv' | 'xls' | 'xlsx' | 'google-sheets';
-			projectType?:
-				| 'all'
-				| 'normal'
-				| 'tentative'
-				| 'personal'
-				| 'projects-template'
-				| 'tasklists-template';
-			priority?: string;
-			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'id'
-				| 'startdate'
-				| 'createdat'
-				| 'priority'
-				| 'project'
-				| 'flattenedtasklist'
-				| 'company'
-				| 'manual'
-				| 'active'
-				| 'completedat'
-				| 'duestartdate'
-				| 'alldates'
-				| 'tasklistname'
-				| 'tasklistdisplayorder'
-				| 'tasklistid'
-				| 'duedate'
-				| 'updatedat'
-				| 'taskname'
-				| 'createdby'
-				| 'completedby'
-				| 'assignedto'
-				| 'taskstatus'
-				| 'taskduedate'
-				| 'customfield'
-				| 'estimatedtime'
-				| 'taskgroupid'
-				| 'taskgroupname'
-				| 'projectmanual'
-				| 'stagedisplayorder'
-				| 'stage'
-				| 'parenttask'
-				| 'dateadded'
-				| 'datecompleted'
-				| 'completedatdesc'
-				| 'completeddatedesc'
-				| 'duestartdatedesc'
-				| 'alldatesdesc'
-				| 'duedatedesc'
-				| 'taskgroupdisplayorder'
-				| 'dateupdated'
-				| 'originalduedate'
-				| 'tags';
-			notCompletedBefore?: string;
-			endDate?: string;
-			dueBefore?: string;
-			dueAfter?: string;
-			deletedAfter?: string;
-			createdFilter?: 'anytime' | 'today' | 'yesterday' | 'custom';
-			createdDateCode?: string;
-			createdBefore?: string;
-			createdAfter?: string;
-			completedBefore?: string;
-			completedAfter?: string;
-			updatedByUserId?: number;
-			parentTaskId?: number;
-			pageSize?: number;
-			page?: number;
-			orderByCustomFieldId?: number;
-			includeTaskId?: number;
-			filterId?: number;
-			completedByUserId?: number;
-			useTaskDateRange?: boolean;
-			useStartDatesForTodaysTasks?: boolean;
-			useFormulaFields?: boolean;
-			useAllProjects?: boolean;
-			sortActiveFirst?: boolean;
-			skipCounts?: boolean;
-			showDeleted?: boolean;
-			showCompletedLists?: boolean;
-			searchJobRoles?: boolean;
-			searchCompaniesTeams?: boolean;
-			searchAssignees?: boolean;
-			onlyUntaggedTasks?: boolean;
-			onlyUnplanned?: boolean;
-			onlyUnassignedTasks?: boolean;
-			onlyTasksWithUnreadComments?: boolean;
-			onlyTasksWithTickets?: boolean;
-			onlyTasksWithEstimatedTime?: boolean;
-			onlyStarredProjects?: boolean;
-			onlyAssignedTasks?: boolean;
-			onlyAssignedRoleTasks?: boolean;
-			onlyAdminProjects?: boolean;
-			nestSubTasks?: boolean;
-			matchAllTags?: boolean;
-			matchAllProjectTags?: boolean;
-			matchAllExcludedTags?: boolean;
-			isReportDownload?: boolean;
-			includeUpdate?: boolean;
-			includeUntaggedTasks?: boolean;
-			includeTomorrow?: boolean;
-			includeToday?: boolean;
-			includeTentativeProjects?: boolean;
-			includeTeamUserIds?: boolean;
-			includeTasksWithoutDueDates?: boolean;
-			includeTasksFromDeletedLists?: boolean;
-			includeTasksCount?: boolean;
-			includeRelatedTasks?: boolean;
-			includePrivateItems?: boolean;
-			includeOverdueTasks?: boolean;
-			includeOriginalDueDate?: boolean;
-			includeJobRoleUserIds?: boolean;
-			includeEmailCommentStats?: boolean;
-			includeCustomFields?: boolean;
-			includeCompletedTasks?: boolean;
-			includeCompletedPredecessors?: boolean;
-			includeCompanyUserIds?: boolean;
-			includeCommentStats?: boolean;
-			includeBlocked?: boolean;
-			includeAttachmentCommentStats?: boolean;
-			includeAssigneeTeams?: boolean;
-			includeAssigneeJobRoles?: boolean;
-			includeAssigneeCompanies?: boolean;
-			includeArchivedProjects?: boolean;
-			includeAllComments?: boolean;
-			includeAccumulatedTimeTotals?: boolean;
-			hideDeleted?: boolean;
-			groupByTasklist?: boolean;
-			groupByTaskgroup?: boolean;
-			getSubTasks?: boolean;
-			getFiles?: boolean;
-			fallbackToMilestoneDueDate?: boolean;
-			extractTemplateRoleName?: boolean;
-			excludeAssigneeNotOnProjectTeams?: boolean;
-			excludeAssignedToMe?: boolean;
-			deletedOnly?: boolean;
-			completedOnly?: boolean;
-			checkForTimeblocks?: boolean;
-			checkForReminders?: boolean;
-			calculateTasklistDates?: boolean;
-			allowAssigneesOutsideProject?: boolean;
-			workflowIds?: Array<number>;
-			tasksSelectedColumns?: Array<string>;
-			tasklistIds?: Array<number>;
-			taskgroupIds?: Array<number>;
-			taskIncludedSet?: Array<
-				| 'overdue'
-				| 'nodate'
-				| 'nostartdate'
-				| 'noduedate'
-				| 'nostartwithfutureduedate'
-				| 'taskListNames'
-				| 'projectNames'
-			>;
-			tags?: Array<string>;
-			tagIds?: Array<number>;
-			status?: Array<'upcoming' | 'late' | 'all'>;
-			stageIds?: Array<number>;
-			sort?: Array<string>;
-			skipCRMDealIds?: Array<number>;
-			selectedColumns?: Array<string>;
-			responsiblePartyIds?: Array<number>;
-			projectTagIds?: Array<number>;
-			projectStatuses?: Array<
-				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
-			>;
-			projectOwnerIds?: Array<number>;
-			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
-			projectFeaturesEnabled?: Array<
-				| 'list'
-				| 'board'
-				| 'gantt'
-				| 'table'
-				| 'dashboard'
-				| 'milestones'
-				| 'messages'
-				| 'files'
-				| 'time'
-				| 'notebooks'
-				| 'risks'
-				| 'links'
-				| 'billing'
-				| 'comments'
-				| 'people'
-				| 'settings'
-			>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-			portfolioBoardIds?: Array<number>;
-			includeCustomFieldIds?: Array<number>;
-			include?: Array<
-				| 'projects'
-				| 'projects.companies'
-				| 'projects.categories'
-				| 'projects.permissions'
-				| 'projects.integrations'
-				| 'tasklists'
-				| 'parentTasks'
-				| 'companies'
-				| 'teams'
-				| 'users'
-				| 'milestones'
-				| 'comments'
-				| 'comments.users'
-				| 'tags'
-				| 'timeTotals'
-				| 'accumulatedTimeTotals'
-				| 'taskSequences'
-				| 'commentFollowers'
-				| 'changeFollowers'
-				| 'completeFollowers'
-				| 'lockdowns'
-				| 'lockdowns.users'
-				| 'lockdowns.companies'
-				| 'lockdowns.teams'
-				| 'lockdowns.users.companies'
-				| 'lockdowns.companies.users'
-				| 'lockdowns.teams.users'
-				| 'attachments'
-				| 'attachments.users'
-				| 'subtaskStats'
-				| 'timers'
-				| 'predecessors'
-				| 'permissions'
-				| 'jobRoles'
-				| 'proofs'
-				| 'taskgroups'
-				| 'workflows'
-				| 'workflows.stages'
-				| 'customfields'
-				| 'customfieldTasks'
-				| 'tasks'
-			>;
-			ids?: Array<number>;
-			followedByUserIds?: Array<number>;
-			'fields[workflows]'?: Array<'id' | 'name' | 'statusId'>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[timers]'?: Array<
-				| 'id'
-				| 'userId'
-				| 'taskId'
-				| 'projectId'
-				| 'description'
-				| 'running'
-				| 'billable'
-				| 'deleted'
-				| 'dateCreated'
-				| 'dateDeleted'
-				| 'duration'
-				| 'lastStartedAt'
-				| 'serverTime'
-				| 'intervals'
-			>;
-			'fields[teams]'?: Array<
-				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
-			>;
-			'fields[tasks]'?: Array<
-				| 'id'
-				| 'name'
-				| 'dateUpdated'
-				| 'parentTaskId'
-				| 'isPrivate'
-				| 'status'
-				| 'tasklistId'
-				| 'startDate'
-				| 'dueDate'
-				| 'estimateMinutes'
-				| 'accumulatedEstimatedMinutes'
-				| 'updatedAt'
-				| 'tasklist'
-			>;
-			'fields[tasklists]'?: Array<
-				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
-			>;
-			'fields[taskgroups]'?: Array<
-				'id' | 'name' | 'description' | 'displayOrder' | 'projectId' | 'status'
-			>;
-			'fields[taskSequences]'?: Array<
-				| 'id'
-				| 'installationId'
-				| 'frequency'
-				| 'selectedWeekDays'
-				| 'endDate'
-				| 'monthlyRepeatType'
-				| 'duration'
-				| 'rrule'
-			>;
-			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
-			'fields[stages]'?: Array<'id' | 'name' | 'stage'>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-			'fields[projectIntegrations]'?: Array<
-				| 'userId'
-				| 'projectId'
-				| 'canAccessBox'
-				| 'canAccessDropbox'
-				| 'canAccessGoogleDocs'
-				| 'canAccessOneDrive'
-				| 'canAccessOneDriveBusiness'
-				| 'canAccessSharePoint'
-			>;
-			'fields[milestones]'?: Array<
-				| 'id'
-				| 'name'
-				| 'description'
-				| 'deadline'
-				| 'completed'
-				| 'projectId'
-				| 'createdOn'
-				| 'lastChangedOn'
-				| 'creatorUserId'
-				| 'reminder'
-				| 'private'
-				| 'lockdownId'
-				| 'status'
-				| 'completedOn'
-				| 'completerId'
-				| 'percentageComplete'
-				| 'project'
-			>;
-			'fields[lockdowns]'?: Array<
-				'id' | 'userID' | 'updatedAt' | 'itemType' | 'itemID' | 'grantAccessTo'
-			>;
-			'fields[jobroles]'?: Array<'id' | 'name'>;
-			'fields[groups]'?: Array<
-				| 'late'
-				| 'today'
-				| 'tomorrow'
-				| 'later-this-week'
-				| 'next-week'
-				| 'later'
-				| 'no-due-date'
-			>;
-			'fields[files]'?: Array<
-				| 'isPrivate'
-				| 'latestFileVersionNo'
-				| 'versionId'
-				| 'status'
-				| 'description'
-				| 'lockdownId'
-				| 'tagIds'
-				| 'changeFollowers'
-				| 'commentFollowers'
-				| 'originalName'
-				| 'displayName'
-				| 'isLocked'
-				| 'lockedByUserId'
-				| 'lockedDate'
-				| 'size'
-				| 'uploadedDate'
-				| 'uploadedByUserID'
-				| 'updatedAt'
-				| 'deletedAt'
-				| 'deletedBy'
-				| 'fileSource'
-				| 'projectId'
-				| 'numLikes'
-				| 'reactions'
-				| 'versions'
-				| 'downloadURL'
-				| 'previewURL'
-				| 'thumbURL'
-				| 'relatedItems'
-				| 'commentsCount'
-				| 'commentsCountRead'
-				| 'categoryId'
-			>;
-			'fields[customfields]'?: Array<
-				| 'id'
-				| 'projectId'
-				| 'entity'
-				| 'name'
-				| 'description'
-				| 'type'
-				| 'options'
-				| 'visibilities'
-				| 'isPrivate'
-				| 'required'
-				| 'createdAt'
-				| 'createdByUserId'
-				| 'updatedAt'
-				| 'updatedByUserId'
-				| 'deleted'
-				| 'deletedAt'
-				| 'deletedByUserId'
-			>;
-			'fields[customfieldTasks]'?: Array<
-				'id' | 'customfieldId' | 'value' | 'createdAt' | 'createdBy'
-			>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			'fields[comments]'?: Array<
-				| 'id'
-				| 'objectType'
-				| 'objectId'
-				| 'title'
-				| 'postedAt'
-				| 'postedBy'
-				| 'object'
-				| 'project'
-			>;
-			'fields[ProjectPermissions]'?: Array<
-				| 'viewMessagesAndFiles'
-				| 'viewTasksAndMilestones'
-				| 'viewTime'
-				| 'viewNotebooks'
-				| 'viewRiskRegister'
-				| 'viewEstimatedTime'
-				| 'viewInvoices'
-				| 'addTasks'
-				| 'addRisks'
-				| 'manageCustomFields'
-				| 'addExpenses'
-				| 'editAllTasks'
-				| 'addMilestones'
-				| 'addTaskLists'
-				| 'addMessages'
-				| 'addFiles'
-				| 'addTime'
-				| 'addNotebooks'
-				| 'viewLinks'
-				| 'addLinks'
-				| 'canViewForms'
-				| 'addForms'
-				| 'viewAllTimeLogs'
-				| 'setPrivacy'
-				| 'projectAdministrator'
-				| 'viewProjectUpdate'
-				| 'addProjectUpdate'
-				| 'canViewProjectMembers'
-				| 'canViewProjectBudget'
-				| 'canManageProjectBudget'
-				| 'canViewRates'
-				| 'canManageRates'
-				| 'canViewSchedule'
-				| 'canManageSchedule'
-				| 'receiveEmailNotifications'
-				| 'isObserving'
-				| 'isArchived'
-				| 'active'
-				| 'canAccess'
-				| 'inOwnerCompany'
-				| 'canManagePeople'
-				| 'canViewProjectTemplates'
-				| 'canManageProjectTemplates'
-			>;
-			expandedIds?: Array<number>;
-			excludeTagIds?: Array<number>;
-			excludeResponsiblePartyIds?: Array<number>;
-			crmDealIds?: Array<number>;
-			createdByUserIds?: Array<number>;
-			assigneeTypes?: Array<
-				| 'user'
-				| 'company'
-				| 'team'
-				| 'jobrole'
-				| 'placeholder'
-				| 'assigned'
-				| 'unassigned'
-			>;
-			assigneeTeamIds?: Array<number>;
-			assigneeJobRoleIds?: Array<number>;
-			assigneeCompanyIds?: Array<number>;
-			CustomFields?: Array<string>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_reporting_precanned_usertaskcompletion_json: {
-		path?: Record<string, never>;
-		query: {
-			userType?: 'account' | 'collaborator' | 'contact' | 'client';
-			updatedAfter?: string;
-			startDate: string;
-			searchTerm?: string;
-			reportFormat?: string;
-			projectType?:
-				| ''
-				| 'normal'
-				| 'tasklists-template'
-				| 'projects-template'
-				| 'personal'
-				| 'tentative';
-			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'id'
-				| 'name'
-				| 'namecaseinsensitive'
-				| 'overduetasks'
-				| 'assignedtasks'
-				| 'completedtasks'
-				| 'projects'
-				| 'activeprojects';
-			lastLoginAfter?: string;
-			endDate: string;
-			pageSize?: number;
-			page?: number;
-			skipCounts?: boolean;
-			showDeleted?: boolean;
-			searchUserSkill?: boolean;
-			searchUserJobRole?: boolean;
-			orderPrioritiseCurrentUser?: boolean;
-			onlySiteOwner?: boolean;
-			onlyPlaceholders?: boolean;
-			onlyOwnerCompany?: boolean;
-			isReportDownload?: boolean;
-			inclusiveFilter?: boolean;
-			includeServiceAccounts?: boolean;
-			includePlaceholders?: boolean;
-			includeCollaborators?: boolean;
-			includeClients?: boolean;
-			includeArchivedProjects?: boolean;
-			filterByNoCostRate?: boolean;
-			excludeContacts?: boolean;
-			clientPortalEligible?: boolean;
-			adminsOnly?: boolean;
-			userProjectIds?: Array<number>;
-			teamIds?: Array<number>;
-			selectedColumns?: Array<string>;
-			projectIds?: Array<number>;
-			projectCompanyIds?: Array<number>;
-			notLinkedWithClientPortalIds?: Array<number>;
-			jobRoleIds?: Array<number>;
 			include?: Array<'users'>;
-			ids?: Array<number>;
-			'fields[userIntegrations]'?: Array<
-				| 'userId'
-				| 'projectId'
-				| 'canAccessBox'
-				| 'canAccessDropbox'
-				| 'canAccessGoogleDocs'
-				| 'canAccessOneDrive'
-				| 'canAccessOneDriveBusiness'
-				| 'canAccessSharePoint'
-			>;
-			'fields[teams]'?: Array<
-				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
-			>;
-			'fields[person]'?: Array<
+			'fields[users]'?: Array<
 				| 'id'
 				| 'firstName'
 				| 'lastName'
@@ -12413,3814 +11569,19 @@ export type TeamworkV3Inputs = {
 				| 'userRate'
 				| 'userCost'
 				| 'canAddProjects'
+				| 'updatedAt'
+				| 'teams'
 			>;
-			'fields[people]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-			>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			'fields[ProjectPermissions]'?: Array<
-				| 'viewMessagesAndFiles'
-				| 'viewTasksAndMilestones'
-				| 'viewTime'
-				| 'viewNotebooks'
-				| 'viewRiskRegister'
-				| 'viewEstimatedTime'
-				| 'viewInvoices'
-				| 'addTasks'
-				| 'addRisks'
-				| 'manageCustomFields'
-				| 'addExpenses'
-				| 'editAllTasks'
-				| 'addMilestones'
-				| 'addTaskLists'
-				| 'addMessages'
-				| 'addFiles'
-				| 'addTime'
-				| 'addNotebooks'
-				| 'viewLinks'
-				| 'addLinks'
-				| 'canViewForms'
-				| 'addForms'
-				| 'viewAllTimeLogs'
-				| 'setPrivacy'
-				| 'projectAdministrator'
-				| 'viewProjectUpdate'
-				| 'addProjectUpdate'
-				| 'canViewProjectMembers'
-				| 'canViewProjectBudget'
-				| 'canManageProjectBudget'
-				| 'canViewRates'
-				| 'canManageRates'
-				| 'canViewSchedule'
-				| 'canManageSchedule'
-				| 'receiveEmailNotifications'
-				| 'isObserving'
-				| 'isArchived'
-				| 'active'
-				| 'canAccess'
-				| 'inOwnerCompany'
-				| 'canManagePeople'
-				| 'canViewProjectTemplates'
-				| 'canManageProjectTemplates'
-			>;
-			excludeProjectIds?: Array<number>;
-			excludeIds?: Array<number>;
-			excludeAllocatedUsersProjectIDs?: Array<number>;
-			emails?: Array<string>;
-			companyIds?: Array<number>;
 		};
 		body?: never;
 	};
-	v3_get_projects_api_v3_statuses_json: {
+	'notebooks.deleteVersions': {
+		path: { notebookId: number };
+		query?: { versionIds?: Array<number> };
+		body?: never;
+	};
+	'time.list': {
 		path?: Record<string, never>;
-		query?: {
-			updatedAfter?: string;
-			searchTerm?: string;
-			teamId?: number;
-			pageSize?: number;
-			page?: number;
-			skipCounts?: boolean;
-			showEveryone?: boolean;
-			showDeleted?: boolean;
-			includeSubteams?: boolean;
-			include?: Array<'statuses' | 'users' | 'userevents'>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[statuses]'?: Array<
-				| 'id'
-				| 'userId'
-				| 'emoji'
-				| 'text'
-				| 'dateTime'
-				| 'ipAddress'
-				| 'dateLastUpdated'
-			>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_statuses_timeline_json: {
-		path?: Record<string, never>;
-		query?: {
-			searchTerm?: string;
-			teamId?: number;
-			pageSize?: number;
-			page?: number;
-			skipCounts?: boolean;
-			showDeleted?: boolean;
-			includeSubteams?: boolean;
-			include?: Array<'users' | 'userevents'>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[statuses]'?: Array<
-				| 'id'
-				| 'userId'
-				| 'emoji'
-				| 'text'
-				| 'dateTime'
-				| 'ipAddress'
-				| 'dateLastUpdated'
-			>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_taskgroups_taskgroupid_tasks_json: {
-		path: { taskgroupId: number };
-		query?: {
-			updatedBefore?: string;
-			updatedAfter?: string;
-			today?: string;
-			taskFilter?:
-				| 'all'
-				| 'anytime'
-				| 'completed'
-				| 'created'
-				| 'overdue'
-				| 'today'
-				| 'yesterday'
-				| 'started'
-				| 'tomorrow'
-				| 'thisweek'
-				| 'within7'
-				| 'within14'
-				| 'within30'
-				| 'within365'
-				| 'nodate'
-				| 'noduedate'
-				| 'nostartdate'
-				| 'newTaskDefaults'
-				| 'hasDate'
-				| 'upcoming'
-				| 'within'
-				| 'withinprev';
-			startDate?: string;
-			searchTerm?: string;
-			reportType?: 'plannedvsactual' | 'task' | 'tasktime';
-			reportFormat?: 'html' | 'pdf' | 'csv' | 'xls' | 'xlsx' | 'google-sheets';
-			projectType?:
-				| 'all'
-				| 'normal'
-				| 'tentative'
-				| 'personal'
-				| 'projects-template'
-				| 'tasklists-template';
-			priority?: string;
-			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'id'
-				| 'startdate'
-				| 'createdat'
-				| 'priority'
-				| 'project'
-				| 'flattenedtasklist'
-				| 'company'
-				| 'manual'
-				| 'active'
-				| 'completedat'
-				| 'duestartdate'
-				| 'alldates'
-				| 'tasklistname'
-				| 'tasklistdisplayorder'
-				| 'tasklistid'
-				| 'duedate'
-				| 'updatedat'
-				| 'taskname'
-				| 'createdby'
-				| 'completedby'
-				| 'assignedto'
-				| 'taskstatus'
-				| 'taskduedate'
-				| 'customfield'
-				| 'estimatedtime'
-				| 'taskgroupid'
-				| 'taskgroupname'
-				| 'projectmanual'
-				| 'stagedisplayorder'
-				| 'stage'
-				| 'parenttask'
-				| 'dateadded'
-				| 'datecompleted'
-				| 'completedatdesc'
-				| 'completeddatedesc'
-				| 'duestartdatedesc'
-				| 'alldatesdesc'
-				| 'duedatedesc'
-				| 'taskgroupdisplayorder'
-				| 'dateupdated'
-				| 'originalduedate'
-				| 'tags';
-			notCompletedBefore?: string;
-			endDate?: string;
-			dueBefore?: string;
-			dueAfter?: string;
-			deletedAfter?: string;
-			createdFilter?: 'anytime' | 'today' | 'yesterday' | 'custom';
-			createdDateCode?: string;
-			createdBefore?: string;
-			createdAfter?: string;
-			completedBefore?: string;
-			completedAfter?: string;
-			updatedByUserId?: number;
-			parentTaskId?: number;
-			pageSize?: number;
-			page?: number;
-			orderByCustomFieldId?: number;
-			includeTaskId?: number;
-			filterId?: number;
-			completedByUserId?: number;
-			useTaskDateRange?: boolean;
-			useStartDatesForTodaysTasks?: boolean;
-			useFormulaFields?: boolean;
-			useAllProjects?: boolean;
-			sortActiveFirst?: boolean;
-			skipCounts?: boolean;
-			showDeleted?: boolean;
-			showCompletedLists?: boolean;
-			searchJobRoles?: boolean;
-			searchCompaniesTeams?: boolean;
-			searchAssignees?: boolean;
-			onlyUntaggedTasks?: boolean;
-			onlyUnplanned?: boolean;
-			onlyUnassignedTasks?: boolean;
-			onlyTasksWithUnreadComments?: boolean;
-			onlyTasksWithTickets?: boolean;
-			onlyTasksWithEstimatedTime?: boolean;
-			onlyStarredProjects?: boolean;
-			onlyAssignedTasks?: boolean;
-			onlyAssignedRoleTasks?: boolean;
-			onlyAdminProjects?: boolean;
-			nestSubTasks?: boolean;
-			matchAllTags?: boolean;
-			matchAllProjectTags?: boolean;
-			matchAllExcludedTags?: boolean;
-			isReportDownload?: boolean;
-			includeUpdate?: boolean;
-			includeUntaggedTasks?: boolean;
-			includeTomorrow?: boolean;
-			includeToday?: boolean;
-			includeTentativeProjects?: boolean;
-			includeTeamUserIds?: boolean;
-			includeTasksWithoutDueDates?: boolean;
-			includeTasksFromDeletedLists?: boolean;
-			includeTasksCount?: boolean;
-			includeRelatedTasks?: boolean;
-			includePrivateItems?: boolean;
-			includeOverdueTasks?: boolean;
-			includeOriginalDueDate?: boolean;
-			includeJobRoleUserIds?: boolean;
-			includeEmailCommentStats?: boolean;
-			includeCustomFields?: boolean;
-			includeCompletedTasks?: boolean;
-			includeCompletedPredecessors?: boolean;
-			includeCompanyUserIds?: boolean;
-			includeCommentStats?: boolean;
-			includeBlocked?: boolean;
-			includeAttachmentCommentStats?: boolean;
-			includeAssigneeTeams?: boolean;
-			includeAssigneeJobRoles?: boolean;
-			includeAssigneeCompanies?: boolean;
-			includeArchivedProjects?: boolean;
-			includeAllComments?: boolean;
-			includeAccumulatedTimeTotals?: boolean;
-			hideDeleted?: boolean;
-			groupByTasklist?: boolean;
-			groupByTaskgroup?: boolean;
-			getSubTasks?: boolean;
-			getFiles?: boolean;
-			fallbackToMilestoneDueDate?: boolean;
-			extractTemplateRoleName?: boolean;
-			excludeAssigneeNotOnProjectTeams?: boolean;
-			excludeAssignedToMe?: boolean;
-			deletedOnly?: boolean;
-			completedOnly?: boolean;
-			checkForTimeblocks?: boolean;
-			checkForReminders?: boolean;
-			calculateTasklistDates?: boolean;
-			allowAssigneesOutsideProject?: boolean;
-			workflowIds?: Array<number>;
-			tasksSelectedColumns?: Array<string>;
-			tasklistIds?: Array<number>;
-			taskgroupIds?: Array<number>;
-			taskIncludedSet?: Array<
-				| 'overdue'
-				| 'nodate'
-				| 'nostartdate'
-				| 'noduedate'
-				| 'nostartwithfutureduedate'
-				| 'taskListNames'
-				| 'projectNames'
-			>;
-			tags?: Array<string>;
-			tagIds?: Array<number>;
-			status?: Array<'upcoming' | 'late' | 'all'>;
-			stageIds?: Array<number>;
-			sort?: Array<string>;
-			skipCRMDealIds?: Array<number>;
-			selectedColumns?: Array<string>;
-			responsiblePartyIds?: Array<number>;
-			projectTagIds?: Array<number>;
-			projectStatuses?: Array<
-				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
-			>;
-			projectOwnerIds?: Array<number>;
-			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
-			projectFeaturesEnabled?: Array<
-				| 'list'
-				| 'board'
-				| 'gantt'
-				| 'table'
-				| 'dashboard'
-				| 'milestones'
-				| 'messages'
-				| 'files'
-				| 'time'
-				| 'notebooks'
-				| 'risks'
-				| 'links'
-				| 'billing'
-				| 'comments'
-				| 'people'
-				| 'settings'
-			>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-			portfolioBoardIds?: Array<number>;
-			includeCustomFieldIds?: Array<number>;
-			include?: Array<
-				| 'projects'
-				| 'projects.companies'
-				| 'projects.categories'
-				| 'projects.permissions'
-				| 'projects.integrations'
-				| 'tasklists'
-				| 'parentTasks'
-				| 'companies'
-				| 'teams'
-				| 'users'
-				| 'milestones'
-				| 'comments'
-				| 'comments.users'
-				| 'tags'
-				| 'timeTotals'
-				| 'accumulatedTimeTotals'
-				| 'taskSequences'
-				| 'commentFollowers'
-				| 'changeFollowers'
-				| 'completeFollowers'
-				| 'lockdowns'
-				| 'lockdowns.users'
-				| 'lockdowns.companies'
-				| 'lockdowns.teams'
-				| 'lockdowns.users.companies'
-				| 'lockdowns.companies.users'
-				| 'lockdowns.teams.users'
-				| 'attachments'
-				| 'attachments.users'
-				| 'subtaskStats'
-				| 'timers'
-				| 'predecessors'
-				| 'permissions'
-				| 'jobRoles'
-				| 'proofs'
-				| 'taskgroups'
-				| 'workflows'
-				| 'workflows.stages'
-				| 'customfields'
-				| 'customfieldTasks'
-				| 'tasks'
-			>;
-			ids?: Array<number>;
-			followedByUserIds?: Array<number>;
-			'fields[workflows]'?: Array<'id' | 'name' | 'statusId'>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[timers]'?: Array<
-				| 'id'
-				| 'userId'
-				| 'taskId'
-				| 'projectId'
-				| 'description'
-				| 'running'
-				| 'billable'
-				| 'deleted'
-				| 'dateCreated'
-				| 'dateDeleted'
-				| 'duration'
-				| 'lastStartedAt'
-				| 'serverTime'
-				| 'intervals'
-			>;
-			'fields[teams]'?: Array<
-				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
-			>;
-			'fields[tasks]'?: Array<
-				| 'id'
-				| 'name'
-				| 'dateUpdated'
-				| 'parentTaskId'
-				| 'isPrivate'
-				| 'status'
-				| 'tasklistId'
-				| 'startDate'
-				| 'dueDate'
-				| 'estimateMinutes'
-				| 'accumulatedEstimatedMinutes'
-				| 'updatedAt'
-				| 'tasklist'
-			>;
-			'fields[tasklists]'?: Array<
-				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
-			>;
-			'fields[taskgroups]'?: Array<
-				'id' | 'name' | 'description' | 'displayOrder' | 'projectId' | 'status'
-			>;
-			'fields[taskSequences]'?: Array<
-				| 'id'
-				| 'installationId'
-				| 'frequency'
-				| 'selectedWeekDays'
-				| 'endDate'
-				| 'monthlyRepeatType'
-				| 'duration'
-				| 'rrule'
-			>;
-			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
-			'fields[stages]'?: Array<'id' | 'name' | 'stage'>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-			'fields[projectIntegrations]'?: Array<
-				| 'userId'
-				| 'projectId'
-				| 'canAccessBox'
-				| 'canAccessDropbox'
-				| 'canAccessGoogleDocs'
-				| 'canAccessOneDrive'
-				| 'canAccessOneDriveBusiness'
-				| 'canAccessSharePoint'
-			>;
-			'fields[milestones]'?: Array<
-				| 'id'
-				| 'name'
-				| 'description'
-				| 'deadline'
-				| 'completed'
-				| 'projectId'
-				| 'createdOn'
-				| 'lastChangedOn'
-				| 'creatorUserId'
-				| 'reminder'
-				| 'private'
-				| 'lockdownId'
-				| 'status'
-				| 'completedOn'
-				| 'completerId'
-				| 'percentageComplete'
-				| 'project'
-			>;
-			'fields[lockdowns]'?: Array<
-				'id' | 'userID' | 'updatedAt' | 'itemType' | 'itemID' | 'grantAccessTo'
-			>;
-			'fields[jobroles]'?: Array<'id' | 'name'>;
-			'fields[groups]'?: Array<
-				| 'late'
-				| 'today'
-				| 'tomorrow'
-				| 'later-this-week'
-				| 'next-week'
-				| 'later'
-				| 'no-due-date'
-			>;
-			'fields[files]'?: Array<
-				| 'isPrivate'
-				| 'latestFileVersionNo'
-				| 'versionId'
-				| 'status'
-				| 'description'
-				| 'lockdownId'
-				| 'tagIds'
-				| 'changeFollowers'
-				| 'commentFollowers'
-				| 'originalName'
-				| 'displayName'
-				| 'isLocked'
-				| 'lockedByUserId'
-				| 'lockedDate'
-				| 'size'
-				| 'uploadedDate'
-				| 'uploadedByUserID'
-				| 'updatedAt'
-				| 'deletedAt'
-				| 'deletedBy'
-				| 'fileSource'
-				| 'projectId'
-				| 'numLikes'
-				| 'reactions'
-				| 'versions'
-				| 'downloadURL'
-				| 'previewURL'
-				| 'thumbURL'
-				| 'relatedItems'
-				| 'commentsCount'
-				| 'commentsCountRead'
-				| 'categoryId'
-			>;
-			'fields[customfields]'?: Array<
-				| 'id'
-				| 'projectId'
-				| 'entity'
-				| 'name'
-				| 'description'
-				| 'type'
-				| 'options'
-				| 'visibilities'
-				| 'isPrivate'
-				| 'required'
-				| 'createdAt'
-				| 'createdByUserId'
-				| 'updatedAt'
-				| 'updatedByUserId'
-				| 'deleted'
-				| 'deletedAt'
-				| 'deletedByUserId'
-			>;
-			'fields[customfieldTasks]'?: Array<
-				'id' | 'customfieldId' | 'value' | 'createdAt' | 'createdBy'
-			>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			'fields[comments]'?: Array<
-				| 'id'
-				| 'objectType'
-				| 'objectId'
-				| 'title'
-				| 'postedAt'
-				| 'postedBy'
-				| 'object'
-				| 'project'
-			>;
-			'fields[ProjectPermissions]'?: Array<
-				| 'viewMessagesAndFiles'
-				| 'viewTasksAndMilestones'
-				| 'viewTime'
-				| 'viewNotebooks'
-				| 'viewRiskRegister'
-				| 'viewEstimatedTime'
-				| 'viewInvoices'
-				| 'addTasks'
-				| 'addRisks'
-				| 'manageCustomFields'
-				| 'addExpenses'
-				| 'editAllTasks'
-				| 'addMilestones'
-				| 'addTaskLists'
-				| 'addMessages'
-				| 'addFiles'
-				| 'addTime'
-				| 'addNotebooks'
-				| 'viewLinks'
-				| 'addLinks'
-				| 'canViewForms'
-				| 'addForms'
-				| 'viewAllTimeLogs'
-				| 'setPrivacy'
-				| 'projectAdministrator'
-				| 'viewProjectUpdate'
-				| 'addProjectUpdate'
-				| 'canViewProjectMembers'
-				| 'canViewProjectBudget'
-				| 'canManageProjectBudget'
-				| 'canViewRates'
-				| 'canManageRates'
-				| 'canViewSchedule'
-				| 'canManageSchedule'
-				| 'receiveEmailNotifications'
-				| 'isObserving'
-				| 'isArchived'
-				| 'active'
-				| 'canAccess'
-				| 'inOwnerCompany'
-				| 'canManagePeople'
-				| 'canViewProjectTemplates'
-				| 'canManageProjectTemplates'
-			>;
-			expandedIds?: Array<number>;
-			excludeTagIds?: Array<number>;
-			excludeResponsiblePartyIds?: Array<number>;
-			crmDealIds?: Array<number>;
-			createdByUserIds?: Array<number>;
-			assigneeTypes?: Array<
-				| 'user'
-				| 'company'
-				| 'team'
-				| 'jobrole'
-				| 'placeholder'
-				| 'assigned'
-				| 'unassigned'
-			>;
-			assigneeTeamIds?: Array<number>;
-			assigneeJobRoleIds?: Array<number>;
-			assigneeCompanyIds?: Array<number>;
-			CustomFields?: Array<string>;
-		};
-		body?: never;
-	};
-	v3_post_projects_api_v3_taskgroups_taskgroupid_tasks_json: {
-		path: { taskgroupId: number };
-		query?: { fireWebhook?: boolean };
-		body: TeamworkV3Input_task_CreateRequest;
-	};
-	v3_get_projects_api_v3_tasklists_json: {
-		path?: Record<string, never>;
-		query?: {
-			updatedAfter?: string;
-			searchTerm?: string;
-			projectType?: string;
-			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'displayorder'
-				| 'name'
-				| 'status'
-				| 'createdat'
-				| 'updatedat'
-				| 'project'
-				| 'id';
-			projectBudgetId?: number;
-			pageSize?: number;
-			page?: number;
-			useFormulaFields?: boolean;
-			sortDefaultListFirst?: boolean;
-			sortActiveListsFirst?: boolean;
-			skipCounts?: boolean;
-			showPrivate?: boolean;
-			showDeleted?: boolean;
-			showCompleted?: boolean;
-			isReportDownload?: boolean;
-			includeTentativeProjects?: boolean;
-			includeArchivedProjects?: boolean;
-			getEmptyLists?: boolean;
-			completedOnly?: boolean;
-			calculateDates?: boolean;
-			projectIds?: Array<number>;
-			projectCompanyIds?: Array<number>;
-			include?: Array<
-				| 'defaultTasks'
-				| 'defaultTasks.users'
-				| 'defaultTasks.teams'
-				| 'defaultTasks.reminders'
-				| 'defaultTasks.customfields'
-				| 'defaultTasks.companies'
-				| 'defaultTasks.jobRoles'
-				| 'defaultTasks.tags'
-				| 'defaultTasks.changeFollowers'
-				| 'defaultTasks.commentFollowers'
-				| 'defaultTasks.completeFollowers'
-				| 'defaultTasks.lockdowns'
-				| 'defaultTasks.lockdowns.users'
-				| 'defaultTasks.lockdowns.companies'
-				| 'defaultTasks.lockdowns.teams'
-				| 'createdBy'
-				| 'updatedBy'
-				| 'companies'
-				| 'projects'
-				| 'projects.permissions'
-				| 'projects.integrations'
-				| 'milestones'
-				| 'defaultCustomfields'
-				| 'defaultCustomfieldTasks'
-				| 'defaultColumns'
-				| 'defaultWorkflowStages'
-				| 'defaultWorkflows'
-				| 'lockdowns'
-				| 'lockdowns.users'
-				| 'lockdowns.companies'
-				| 'lockdowns.teams'
-				| 'lockdowns.users.companies'
-				| 'lockdowns.companies.users'
-				| 'lockdowns.teams.users'
-				| 'tasklisttaskstats'
-				| 'tasklistBudgets'
-				| 'tasklistBudgets.notifications'
-				| 'tasklistBudgets.notifications.users'
-				| 'tasklistBudgets.notifications.teams'
-				| 'tasklistBudgets.notifications.companies'
-			>;
-			ids?: Array<number>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[teams]'?: Array<
-				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
-			>;
-			'fields[tasks]'?: Array<
-				| 'id'
-				| 'name'
-				| 'dateUpdated'
-				| 'parentTaskId'
-				| 'isPrivate'
-				| 'status'
-				| 'tasklistId'
-				| 'startDate'
-				| 'dueDate'
-				| 'estimateMinutes'
-				| 'accumulatedEstimatedMinutes'
-				| 'updatedAt'
-				| 'tasklist'
-			>;
-			'fields[tasklists]'?: Array<
-				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
-			>;
-			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-			'fields[projectIntegrations]'?: Array<
-				| 'userId'
-				| 'projectId'
-				| 'canAccessBox'
-				| 'canAccessDropbox'
-				| 'canAccessGoogleDocs'
-				| 'canAccessOneDrive'
-				| 'canAccessOneDriveBusiness'
-				| 'canAccessSharePoint'
-			>;
-			'fields[milestones]'?: Array<
-				| 'id'
-				| 'name'
-				| 'description'
-				| 'deadline'
-				| 'completed'
-				| 'projectId'
-				| 'createdOn'
-				| 'lastChangedOn'
-				| 'creatorUserId'
-				| 'reminder'
-				| 'private'
-				| 'lockdownId'
-				| 'status'
-				| 'completedOn'
-				| 'completerId'
-				| 'percentageComplete'
-				| 'project'
-			>;
-			'fields[lockdowns]'?: Array<
-				'id' | 'userID' | 'updatedAt' | 'itemType' | 'itemID' | 'grantAccessTo'
-			>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			'fields[ProjectPermissions]'?: Array<
-				| 'viewMessagesAndFiles'
-				| 'viewTasksAndMilestones'
-				| 'viewTime'
-				| 'viewNotebooks'
-				| 'viewRiskRegister'
-				| 'viewEstimatedTime'
-				| 'viewInvoices'
-				| 'addTasks'
-				| 'addRisks'
-				| 'manageCustomFields'
-				| 'addExpenses'
-				| 'editAllTasks'
-				| 'addMilestones'
-				| 'addTaskLists'
-				| 'addMessages'
-				| 'addFiles'
-				| 'addTime'
-				| 'addNotebooks'
-				| 'viewLinks'
-				| 'addLinks'
-				| 'canViewForms'
-				| 'addForms'
-				| 'viewAllTimeLogs'
-				| 'setPrivacy'
-				| 'projectAdministrator'
-				| 'viewProjectUpdate'
-				| 'addProjectUpdate'
-				| 'canViewProjectMembers'
-				| 'canViewProjectBudget'
-				| 'canManageProjectBudget'
-				| 'canViewRates'
-				| 'canManageRates'
-				| 'canViewSchedule'
-				| 'canManageSchedule'
-				| 'receiveEmailNotifications'
-				| 'isObserving'
-				| 'isArchived'
-				| 'active'
-				| 'canAccess'
-				| 'inOwnerCompany'
-				| 'canManagePeople'
-				| 'canViewProjectTemplates'
-				| 'canManageProjectTemplates'
-			>;
-			excludeIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_tasklists_templates_json: {
-		path?: Record<string, never>;
-		query?: {
-			updatedAfter?: string;
-			searchTerm?: string;
-			projectType?: string;
-			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'displayorder'
-				| 'name'
-				| 'status'
-				| 'createdat'
-				| 'updatedat'
-				| 'project'
-				| 'id';
-			projectBudgetId?: number;
-			pageSize?: number;
-			page?: number;
-			useFormulaFields?: boolean;
-			sortDefaultListFirst?: boolean;
-			sortActiveListsFirst?: boolean;
-			skipCounts?: boolean;
-			showPrivate?: boolean;
-			showDeleted?: boolean;
-			showCompleted?: boolean;
-			isReportDownload?: boolean;
-			includeTentativeProjects?: boolean;
-			includeArchivedProjects?: boolean;
-			getEmptyLists?: boolean;
-			completedOnly?: boolean;
-			calculateDates?: boolean;
-			projectIds?: Array<number>;
-			projectCompanyIds?: Array<number>;
-			include?: Array<
-				| 'defaultTasks'
-				| 'defaultTasks.users'
-				| 'defaultTasks.teams'
-				| 'defaultTasks.reminders'
-				| 'defaultTasks.customfields'
-				| 'defaultTasks.companies'
-				| 'defaultTasks.jobRoles'
-				| 'defaultTasks.tags'
-				| 'defaultTasks.changeFollowers'
-				| 'defaultTasks.commentFollowers'
-				| 'defaultTasks.completeFollowers'
-				| 'defaultTasks.lockdowns'
-				| 'defaultTasks.lockdowns.users'
-				| 'defaultTasks.lockdowns.companies'
-				| 'defaultTasks.lockdowns.teams'
-				| 'createdBy'
-				| 'updatedBy'
-				| 'companies'
-				| 'projects'
-				| 'projects.permissions'
-				| 'projects.integrations'
-				| 'milestones'
-				| 'defaultCustomfields'
-				| 'defaultCustomfieldTasks'
-				| 'defaultColumns'
-				| 'defaultWorkflowStages'
-				| 'defaultWorkflows'
-				| 'lockdowns'
-				| 'lockdowns.users'
-				| 'lockdowns.companies'
-				| 'lockdowns.teams'
-				| 'lockdowns.users.companies'
-				| 'lockdowns.companies.users'
-				| 'lockdowns.teams.users'
-				| 'tasklisttaskstats'
-				| 'tasklistBudgets'
-				| 'tasklistBudgets.notifications'
-				| 'tasklistBudgets.notifications.users'
-				| 'tasklistBudgets.notifications.teams'
-				| 'tasklistBudgets.notifications.companies'
-			>;
-			ids?: Array<number>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[teams]'?: Array<
-				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
-			>;
-			'fields[tasks]'?: Array<
-				| 'id'
-				| 'name'
-				| 'dateUpdated'
-				| 'parentTaskId'
-				| 'isPrivate'
-				| 'status'
-				| 'tasklistId'
-				| 'startDate'
-				| 'dueDate'
-				| 'estimateMinutes'
-				| 'accumulatedEstimatedMinutes'
-				| 'updatedAt'
-				| 'tasklist'
-			>;
-			'fields[tasklists]'?: Array<
-				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
-			>;
-			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-			'fields[projectIntegrations]'?: Array<
-				| 'userId'
-				| 'projectId'
-				| 'canAccessBox'
-				| 'canAccessDropbox'
-				| 'canAccessGoogleDocs'
-				| 'canAccessOneDrive'
-				| 'canAccessOneDriveBusiness'
-				| 'canAccessSharePoint'
-			>;
-			'fields[milestones]'?: Array<
-				| 'id'
-				| 'name'
-				| 'description'
-				| 'deadline'
-				| 'completed'
-				| 'projectId'
-				| 'createdOn'
-				| 'lastChangedOn'
-				| 'creatorUserId'
-				| 'reminder'
-				| 'private'
-				| 'lockdownId'
-				| 'status'
-				| 'completedOn'
-				| 'completerId'
-				| 'percentageComplete'
-				| 'project'
-			>;
-			'fields[lockdowns]'?: Array<
-				'id' | 'userID' | 'updatedAt' | 'itemType' | 'itemID' | 'grantAccessTo'
-			>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			'fields[ProjectPermissions]'?: Array<
-				| 'viewMessagesAndFiles'
-				| 'viewTasksAndMilestones'
-				| 'viewTime'
-				| 'viewNotebooks'
-				| 'viewRiskRegister'
-				| 'viewEstimatedTime'
-				| 'viewInvoices'
-				| 'addTasks'
-				| 'addRisks'
-				| 'manageCustomFields'
-				| 'addExpenses'
-				| 'editAllTasks'
-				| 'addMilestones'
-				| 'addTaskLists'
-				| 'addMessages'
-				| 'addFiles'
-				| 'addTime'
-				| 'addNotebooks'
-				| 'viewLinks'
-				| 'addLinks'
-				| 'canViewForms'
-				| 'addForms'
-				| 'viewAllTimeLogs'
-				| 'setPrivacy'
-				| 'projectAdministrator'
-				| 'viewProjectUpdate'
-				| 'addProjectUpdate'
-				| 'canViewProjectMembers'
-				| 'canViewProjectBudget'
-				| 'canManageProjectBudget'
-				| 'canViewRates'
-				| 'canManageRates'
-				| 'canViewSchedule'
-				| 'canManageSchedule'
-				| 'receiveEmailNotifications'
-				| 'isObserving'
-				| 'isArchived'
-				| 'active'
-				| 'canAccess'
-				| 'inOwnerCompany'
-				| 'canManagePeople'
-				| 'canViewProjectTemplates'
-				| 'canManageProjectTemplates'
-			>;
-			excludeIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_delete_projects_api_v3_tasklists_tasklistid_json: {
-		path: { tasklistId: number };
-		query?: Record<string, never>;
-		body?: never;
-	};
-	v3_get_projects_api_v3_tasklists_tasklistid_json: {
-		path: { tasklistId: number };
-		query?: {
-			updatedAfter?: string;
-			searchTerm?: string;
-			projectType?: string;
-			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'displayorder'
-				| 'name'
-				| 'status'
-				| 'createdat'
-				| 'updatedat'
-				| 'project'
-				| 'id';
-			projectBudgetId?: number;
-			pageSize?: number;
-			page?: number;
-			useFormulaFields?: boolean;
-			sortDefaultListFirst?: boolean;
-			sortActiveListsFirst?: boolean;
-			skipCounts?: boolean;
-			showPrivate?: boolean;
-			showDeleted?: boolean;
-			showCompleted?: boolean;
-			isReportDownload?: boolean;
-			includeTentativeProjects?: boolean;
-			includeArchivedProjects?: boolean;
-			getEmptyLists?: boolean;
-			completedOnly?: boolean;
-			calculateDates?: boolean;
-			projectIds?: Array<number>;
-			projectCompanyIds?: Array<number>;
-			include?: Array<
-				| 'defaultTasks'
-				| 'defaultTasks.users'
-				| 'defaultTasks.teams'
-				| 'defaultTasks.reminders'
-				| 'defaultTasks.customfields'
-				| 'defaultTasks.companies'
-				| 'defaultTasks.jobRoles'
-				| 'defaultTasks.tags'
-				| 'defaultTasks.changeFollowers'
-				| 'defaultTasks.commentFollowers'
-				| 'defaultTasks.completeFollowers'
-				| 'defaultTasks.lockdowns'
-				| 'defaultTasks.lockdowns.users'
-				| 'defaultTasks.lockdowns.companies'
-				| 'defaultTasks.lockdowns.teams'
-				| 'createdBy'
-				| 'updatedBy'
-				| 'companies'
-				| 'projects'
-				| 'projects.permissions'
-				| 'projects.integrations'
-				| 'milestones'
-				| 'defaultCustomfields'
-				| 'defaultCustomfieldTasks'
-				| 'defaultColumns'
-				| 'defaultWorkflowStages'
-				| 'defaultWorkflows'
-				| 'lockdowns'
-				| 'lockdowns.users'
-				| 'lockdowns.companies'
-				| 'lockdowns.teams'
-				| 'lockdowns.users.companies'
-				| 'lockdowns.companies.users'
-				| 'lockdowns.teams.users'
-				| 'tasklisttaskstats'
-				| 'tasklistBudgets'
-				| 'tasklistBudgets.notifications'
-				| 'tasklistBudgets.notifications.users'
-				| 'tasklistBudgets.notifications.teams'
-				| 'tasklistBudgets.notifications.companies'
-			>;
-			ids?: Array<number>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[teams]'?: Array<
-				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
-			>;
-			'fields[tasks]'?: Array<
-				| 'id'
-				| 'name'
-				| 'dateUpdated'
-				| 'parentTaskId'
-				| 'isPrivate'
-				| 'status'
-				| 'tasklistId'
-				| 'startDate'
-				| 'dueDate'
-				| 'estimateMinutes'
-				| 'accumulatedEstimatedMinutes'
-				| 'updatedAt'
-				| 'tasklist'
-			>;
-			'fields[tasklists]'?: Array<
-				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
-			>;
-			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-			'fields[projectIntegrations]'?: Array<
-				| 'userId'
-				| 'projectId'
-				| 'canAccessBox'
-				| 'canAccessDropbox'
-				| 'canAccessGoogleDocs'
-				| 'canAccessOneDrive'
-				| 'canAccessOneDriveBusiness'
-				| 'canAccessSharePoint'
-			>;
-			'fields[milestones]'?: Array<
-				| 'id'
-				| 'name'
-				| 'description'
-				| 'deadline'
-				| 'completed'
-				| 'projectId'
-				| 'createdOn'
-				| 'lastChangedOn'
-				| 'creatorUserId'
-				| 'reminder'
-				| 'private'
-				| 'lockdownId'
-				| 'status'
-				| 'completedOn'
-				| 'completerId'
-				| 'percentageComplete'
-				| 'project'
-			>;
-			'fields[lockdowns]'?: Array<
-				'id' | 'userID' | 'updatedAt' | 'itemType' | 'itemID' | 'grantAccessTo'
-			>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			'fields[ProjectPermissions]'?: Array<
-				| 'viewMessagesAndFiles'
-				| 'viewTasksAndMilestones'
-				| 'viewTime'
-				| 'viewNotebooks'
-				| 'viewRiskRegister'
-				| 'viewEstimatedTime'
-				| 'viewInvoices'
-				| 'addTasks'
-				| 'addRisks'
-				| 'manageCustomFields'
-				| 'addExpenses'
-				| 'editAllTasks'
-				| 'addMilestones'
-				| 'addTaskLists'
-				| 'addMessages'
-				| 'addFiles'
-				| 'addTime'
-				| 'addNotebooks'
-				| 'viewLinks'
-				| 'addLinks'
-				| 'canViewForms'
-				| 'addForms'
-				| 'viewAllTimeLogs'
-				| 'setPrivacy'
-				| 'projectAdministrator'
-				| 'viewProjectUpdate'
-				| 'addProjectUpdate'
-				| 'canViewProjectMembers'
-				| 'canViewProjectBudget'
-				| 'canManageProjectBudget'
-				| 'canViewRates'
-				| 'canManageRates'
-				| 'canViewSchedule'
-				| 'canManageSchedule'
-				| 'receiveEmailNotifications'
-				| 'isObserving'
-				| 'isArchived'
-				| 'active'
-				| 'canAccess'
-				| 'inOwnerCompany'
-				| 'canManagePeople'
-				| 'canViewProjectTemplates'
-				| 'canManageProjectTemplates'
-			>;
-			excludeIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_tasklists_tasklistid_project_json: {
-		path: { tasklistId: number };
-		query?: {
-			includeProjectUserInfo?: boolean;
-			includeProjectDates?: boolean;
-			includeCustomFields?: boolean;
-			includeCustomFieldIds?: Array<number>;
-			include?: Array<
-				| 'projectOwners'
-				| 'projectUpdates'
-				| 'companies'
-				| 'companies.countries'
-				| 'companies.industries'
-				| 'companies.currencies'
-				| 'projectCategories'
-				| 'portfolioCards'
-				| 'portfolioBoards'
-				| 'portfolioColumns'
-				| 'tags'
-				| 'customfields'
-				| 'customfieldProjects'
-				| 'projectBudgets'
-				| 'activities.latest'
-				| 'users'
-				| 'createdBy'
-				| 'updatedBy'
-				| 'completedBy'
-				| 'deletedBy'
-				| 'archivedBy'
-				| 'projectEmailDropboxes'
-				| 'workflows'
-				| 'workflows.stages'
-				| 'projecttaskstats'
-			>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_tasklists_tasklistid_tasks_json: {
-		path: { tasklistId: number };
-		query?: {
-			updatedBefore?: string;
-			updatedAfter?: string;
-			today?: string;
-			taskFilter?:
-				| 'all'
-				| 'anytime'
-				| 'completed'
-				| 'created'
-				| 'overdue'
-				| 'today'
-				| 'yesterday'
-				| 'started'
-				| 'tomorrow'
-				| 'thisweek'
-				| 'within7'
-				| 'within14'
-				| 'within30'
-				| 'within365'
-				| 'nodate'
-				| 'noduedate'
-				| 'nostartdate'
-				| 'newTaskDefaults'
-				| 'hasDate'
-				| 'upcoming'
-				| 'within'
-				| 'withinprev';
-			startDate?: string;
-			searchTerm?: string;
-			reportType?: 'plannedvsactual' | 'task' | 'tasktime';
-			reportFormat?: 'html' | 'pdf' | 'csv' | 'xls' | 'xlsx' | 'google-sheets';
-			projectType?:
-				| 'all'
-				| 'normal'
-				| 'tentative'
-				| 'personal'
-				| 'projects-template'
-				| 'tasklists-template';
-			priority?: string;
-			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'id'
-				| 'startdate'
-				| 'createdat'
-				| 'priority'
-				| 'project'
-				| 'flattenedtasklist'
-				| 'company'
-				| 'manual'
-				| 'active'
-				| 'completedat'
-				| 'duestartdate'
-				| 'alldates'
-				| 'tasklistname'
-				| 'tasklistdisplayorder'
-				| 'tasklistid'
-				| 'duedate'
-				| 'updatedat'
-				| 'taskname'
-				| 'createdby'
-				| 'completedby'
-				| 'assignedto'
-				| 'taskstatus'
-				| 'taskduedate'
-				| 'customfield'
-				| 'estimatedtime'
-				| 'taskgroupid'
-				| 'taskgroupname'
-				| 'projectmanual'
-				| 'stagedisplayorder'
-				| 'stage'
-				| 'parenttask'
-				| 'dateadded'
-				| 'datecompleted'
-				| 'completedatdesc'
-				| 'completeddatedesc'
-				| 'duestartdatedesc'
-				| 'alldatesdesc'
-				| 'duedatedesc'
-				| 'taskgroupdisplayorder'
-				| 'dateupdated'
-				| 'originalduedate'
-				| 'tags';
-			notCompletedBefore?: string;
-			endDate?: string;
-			dueBefore?: string;
-			dueAfter?: string;
-			deletedAfter?: string;
-			createdFilter?: 'anytime' | 'today' | 'yesterday' | 'custom';
-			createdDateCode?: string;
-			createdBefore?: string;
-			createdAfter?: string;
-			completedBefore?: string;
-			completedAfter?: string;
-			updatedByUserId?: number;
-			parentTaskId?: number;
-			pageSize?: number;
-			page?: number;
-			orderByCustomFieldId?: number;
-			includeTaskId?: number;
-			filterId?: number;
-			completedByUserId?: number;
-			useTaskDateRange?: boolean;
-			useStartDatesForTodaysTasks?: boolean;
-			useFormulaFields?: boolean;
-			useAllProjects?: boolean;
-			sortActiveFirst?: boolean;
-			skipCounts?: boolean;
-			showDeleted?: boolean;
-			showCompletedLists?: boolean;
-			searchJobRoles?: boolean;
-			searchCompaniesTeams?: boolean;
-			searchAssignees?: boolean;
-			onlyUntaggedTasks?: boolean;
-			onlyUnplanned?: boolean;
-			onlyUnassignedTasks?: boolean;
-			onlyTasksWithUnreadComments?: boolean;
-			onlyTasksWithTickets?: boolean;
-			onlyTasksWithEstimatedTime?: boolean;
-			onlyStarredProjects?: boolean;
-			onlyAssignedTasks?: boolean;
-			onlyAssignedRoleTasks?: boolean;
-			onlyAdminProjects?: boolean;
-			nestSubTasks?: boolean;
-			matchAllTags?: boolean;
-			matchAllProjectTags?: boolean;
-			matchAllExcludedTags?: boolean;
-			isReportDownload?: boolean;
-			includeUpdate?: boolean;
-			includeUntaggedTasks?: boolean;
-			includeTomorrow?: boolean;
-			includeToday?: boolean;
-			includeTentativeProjects?: boolean;
-			includeTeamUserIds?: boolean;
-			includeTasksWithoutDueDates?: boolean;
-			includeTasksFromDeletedLists?: boolean;
-			includeTasksCount?: boolean;
-			includeRelatedTasks?: boolean;
-			includePrivateItems?: boolean;
-			includeOverdueTasks?: boolean;
-			includeOriginalDueDate?: boolean;
-			includeJobRoleUserIds?: boolean;
-			includeEmailCommentStats?: boolean;
-			includeCustomFields?: boolean;
-			includeCompletedTasks?: boolean;
-			includeCompletedPredecessors?: boolean;
-			includeCompanyUserIds?: boolean;
-			includeCommentStats?: boolean;
-			includeBlocked?: boolean;
-			includeAttachmentCommentStats?: boolean;
-			includeAssigneeTeams?: boolean;
-			includeAssigneeJobRoles?: boolean;
-			includeAssigneeCompanies?: boolean;
-			includeArchivedProjects?: boolean;
-			includeAllComments?: boolean;
-			includeAccumulatedTimeTotals?: boolean;
-			hideDeleted?: boolean;
-			groupByTasklist?: boolean;
-			groupByTaskgroup?: boolean;
-			getSubTasks?: boolean;
-			getFiles?: boolean;
-			fallbackToMilestoneDueDate?: boolean;
-			extractTemplateRoleName?: boolean;
-			excludeAssigneeNotOnProjectTeams?: boolean;
-			excludeAssignedToMe?: boolean;
-			deletedOnly?: boolean;
-			completedOnly?: boolean;
-			checkForTimeblocks?: boolean;
-			checkForReminders?: boolean;
-			calculateTasklistDates?: boolean;
-			allowAssigneesOutsideProject?: boolean;
-			workflowIds?: Array<number>;
-			tasksSelectedColumns?: Array<string>;
-			tasklistIds?: Array<number>;
-			taskgroupIds?: Array<number>;
-			taskIncludedSet?: Array<
-				| 'overdue'
-				| 'nodate'
-				| 'nostartdate'
-				| 'noduedate'
-				| 'nostartwithfutureduedate'
-				| 'taskListNames'
-				| 'projectNames'
-			>;
-			tags?: Array<string>;
-			tagIds?: Array<number>;
-			status?: Array<'upcoming' | 'late' | 'all'>;
-			stageIds?: Array<number>;
-			sort?: Array<string>;
-			skipCRMDealIds?: Array<number>;
-			selectedColumns?: Array<string>;
-			responsiblePartyIds?: Array<number>;
-			projectTagIds?: Array<number>;
-			projectStatuses?: Array<
-				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
-			>;
-			projectOwnerIds?: Array<number>;
-			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
-			projectFeaturesEnabled?: Array<
-				| 'list'
-				| 'board'
-				| 'gantt'
-				| 'table'
-				| 'dashboard'
-				| 'milestones'
-				| 'messages'
-				| 'files'
-				| 'time'
-				| 'notebooks'
-				| 'risks'
-				| 'links'
-				| 'billing'
-				| 'comments'
-				| 'people'
-				| 'settings'
-			>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-			portfolioBoardIds?: Array<number>;
-			includeCustomFieldIds?: Array<number>;
-			include?: Array<
-				| 'projects'
-				| 'projects.companies'
-				| 'projects.categories'
-				| 'projects.permissions'
-				| 'projects.integrations'
-				| 'tasklists'
-				| 'parentTasks'
-				| 'companies'
-				| 'teams'
-				| 'users'
-				| 'milestones'
-				| 'comments'
-				| 'comments.users'
-				| 'tags'
-				| 'timeTotals'
-				| 'accumulatedTimeTotals'
-				| 'taskSequences'
-				| 'commentFollowers'
-				| 'changeFollowers'
-				| 'completeFollowers'
-				| 'lockdowns'
-				| 'lockdowns.users'
-				| 'lockdowns.companies'
-				| 'lockdowns.teams'
-				| 'lockdowns.users.companies'
-				| 'lockdowns.companies.users'
-				| 'lockdowns.teams.users'
-				| 'attachments'
-				| 'attachments.users'
-				| 'subtaskStats'
-				| 'timers'
-				| 'predecessors'
-				| 'permissions'
-				| 'jobRoles'
-				| 'proofs'
-				| 'taskgroups'
-				| 'workflows'
-				| 'workflows.stages'
-				| 'customfields'
-				| 'customfieldTasks'
-				| 'tasks'
-			>;
-			ids?: Array<number>;
-			followedByUserIds?: Array<number>;
-			'fields[workflows]'?: Array<'id' | 'name' | 'statusId'>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[timers]'?: Array<
-				| 'id'
-				| 'userId'
-				| 'taskId'
-				| 'projectId'
-				| 'description'
-				| 'running'
-				| 'billable'
-				| 'deleted'
-				| 'dateCreated'
-				| 'dateDeleted'
-				| 'duration'
-				| 'lastStartedAt'
-				| 'serverTime'
-				| 'intervals'
-			>;
-			'fields[teams]'?: Array<
-				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
-			>;
-			'fields[tasks]'?: Array<
-				| 'id'
-				| 'name'
-				| 'dateUpdated'
-				| 'parentTaskId'
-				| 'isPrivate'
-				| 'status'
-				| 'tasklistId'
-				| 'startDate'
-				| 'dueDate'
-				| 'estimateMinutes'
-				| 'accumulatedEstimatedMinutes'
-				| 'updatedAt'
-				| 'tasklist'
-			>;
-			'fields[tasklists]'?: Array<
-				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
-			>;
-			'fields[taskgroups]'?: Array<
-				'id' | 'name' | 'description' | 'displayOrder' | 'projectId' | 'status'
-			>;
-			'fields[taskSequences]'?: Array<
-				| 'id'
-				| 'installationId'
-				| 'frequency'
-				| 'selectedWeekDays'
-				| 'endDate'
-				| 'monthlyRepeatType'
-				| 'duration'
-				| 'rrule'
-			>;
-			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
-			'fields[stages]'?: Array<'id' | 'name' | 'stage'>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-			'fields[projectIntegrations]'?: Array<
-				| 'userId'
-				| 'projectId'
-				| 'canAccessBox'
-				| 'canAccessDropbox'
-				| 'canAccessGoogleDocs'
-				| 'canAccessOneDrive'
-				| 'canAccessOneDriveBusiness'
-				| 'canAccessSharePoint'
-			>;
-			'fields[milestones]'?: Array<
-				| 'id'
-				| 'name'
-				| 'description'
-				| 'deadline'
-				| 'completed'
-				| 'projectId'
-				| 'createdOn'
-				| 'lastChangedOn'
-				| 'creatorUserId'
-				| 'reminder'
-				| 'private'
-				| 'lockdownId'
-				| 'status'
-				| 'completedOn'
-				| 'completerId'
-				| 'percentageComplete'
-				| 'project'
-			>;
-			'fields[lockdowns]'?: Array<
-				'id' | 'userID' | 'updatedAt' | 'itemType' | 'itemID' | 'grantAccessTo'
-			>;
-			'fields[jobroles]'?: Array<'id' | 'name'>;
-			'fields[groups]'?: Array<
-				| 'late'
-				| 'today'
-				| 'tomorrow'
-				| 'later-this-week'
-				| 'next-week'
-				| 'later'
-				| 'no-due-date'
-			>;
-			'fields[files]'?: Array<
-				| 'isPrivate'
-				| 'latestFileVersionNo'
-				| 'versionId'
-				| 'status'
-				| 'description'
-				| 'lockdownId'
-				| 'tagIds'
-				| 'changeFollowers'
-				| 'commentFollowers'
-				| 'originalName'
-				| 'displayName'
-				| 'isLocked'
-				| 'lockedByUserId'
-				| 'lockedDate'
-				| 'size'
-				| 'uploadedDate'
-				| 'uploadedByUserID'
-				| 'updatedAt'
-				| 'deletedAt'
-				| 'deletedBy'
-				| 'fileSource'
-				| 'projectId'
-				| 'numLikes'
-				| 'reactions'
-				| 'versions'
-				| 'downloadURL'
-				| 'previewURL'
-				| 'thumbURL'
-				| 'relatedItems'
-				| 'commentsCount'
-				| 'commentsCountRead'
-				| 'categoryId'
-			>;
-			'fields[customfields]'?: Array<
-				| 'id'
-				| 'projectId'
-				| 'entity'
-				| 'name'
-				| 'description'
-				| 'type'
-				| 'options'
-				| 'visibilities'
-				| 'isPrivate'
-				| 'required'
-				| 'createdAt'
-				| 'createdByUserId'
-				| 'updatedAt'
-				| 'updatedByUserId'
-				| 'deleted'
-				| 'deletedAt'
-				| 'deletedByUserId'
-			>;
-			'fields[customfieldTasks]'?: Array<
-				'id' | 'customfieldId' | 'value' | 'createdAt' | 'createdBy'
-			>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			'fields[comments]'?: Array<
-				| 'id'
-				| 'objectType'
-				| 'objectId'
-				| 'title'
-				| 'postedAt'
-				| 'postedBy'
-				| 'object'
-				| 'project'
-			>;
-			'fields[ProjectPermissions]'?: Array<
-				| 'viewMessagesAndFiles'
-				| 'viewTasksAndMilestones'
-				| 'viewTime'
-				| 'viewNotebooks'
-				| 'viewRiskRegister'
-				| 'viewEstimatedTime'
-				| 'viewInvoices'
-				| 'addTasks'
-				| 'addRisks'
-				| 'manageCustomFields'
-				| 'addExpenses'
-				| 'editAllTasks'
-				| 'addMilestones'
-				| 'addTaskLists'
-				| 'addMessages'
-				| 'addFiles'
-				| 'addTime'
-				| 'addNotebooks'
-				| 'viewLinks'
-				| 'addLinks'
-				| 'canViewForms'
-				| 'addForms'
-				| 'viewAllTimeLogs'
-				| 'setPrivacy'
-				| 'projectAdministrator'
-				| 'viewProjectUpdate'
-				| 'addProjectUpdate'
-				| 'canViewProjectMembers'
-				| 'canViewProjectBudget'
-				| 'canManageProjectBudget'
-				| 'canViewRates'
-				| 'canManageRates'
-				| 'canViewSchedule'
-				| 'canManageSchedule'
-				| 'receiveEmailNotifications'
-				| 'isObserving'
-				| 'isArchived'
-				| 'active'
-				| 'canAccess'
-				| 'inOwnerCompany'
-				| 'canManagePeople'
-				| 'canViewProjectTemplates'
-				| 'canManageProjectTemplates'
-			>;
-			expandedIds?: Array<number>;
-			excludeTagIds?: Array<number>;
-			excludeResponsiblePartyIds?: Array<number>;
-			crmDealIds?: Array<number>;
-			createdByUserIds?: Array<number>;
-			assigneeTypes?: Array<
-				| 'user'
-				| 'company'
-				| 'team'
-				| 'jobrole'
-				| 'placeholder'
-				| 'assigned'
-				| 'unassigned'
-			>;
-			assigneeTeamIds?: Array<number>;
-			assigneeJobRoleIds?: Array<number>;
-			assigneeCompanyIds?: Array<number>;
-			CustomFields?: Array<string>;
-		};
-		body?: never;
-	};
-	v3_post_projects_api_v3_tasklists_tasklistid_tasks_json: {
-		path: { tasklistId: number };
-		query?: { fireWebhook?: boolean };
-		body: TeamworkV3Input_task_CreateRequest;
-	};
-	v3_get_projects_api_v3_tasklists_tasklistid_time_total_json: {
-		path: { tasklistId: number };
-		query?: {
-			updatedAfter?: string;
-			startDate?: string;
-			searchTerm?: string;
-			projectStatus?:
-				| 'active'
-				| 'current'
-				| 'late'
-				| 'upcoming'
-				| 'completed'
-				| 'deleted';
-			invoicedType?: 'all' | 'invoiced' | 'noninvoiced';
-			endDate?: string;
-			budgetedType?: 'all' | 'budgeted' | 'nonbudgeted';
-			billableType?: 'all' | 'billable' | 'nonbillable';
-			userId?: number;
-			tasklistId?: number;
-			taskId?: number;
-			projectId?: number;
-			deskTicketId?: number;
-			returnCostInfo?: boolean;
-			returnBillableInfo?: boolean;
-			onlyStarredProjects?: boolean;
-			matchAllProjectTags?: boolean;
-			matchAllExcludedTaskTags?: boolean;
-			matchAllExcludedProjectTags?: boolean;
-			includeTentativeProjects?: boolean;
-			includeDescendants?: boolean;
-			includeArchivedProjects?: boolean;
-			userIds?: Array<number>;
-			tasklistIds?: Array<number>;
-			taskStatuses?: Array<string>;
-			taskIds?: Array<number>;
-			tagIds?: Array<number>;
-			subTaskStatuses?: Array<
-				'all' | 'completed' | 'incomplete' | 'new' | 'reopened' | 'deleted'
-			>;
-			projectTagIds?: Array<number>;
-			projectStatuses?: Array<
-				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
-			>;
-			projectOwnerIds?: Array<number>;
-			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-			excludeTaskTagIds?: Array<number>;
-			excludeProjectTagIds?: Array<number>;
-			companyIds?: Array<number>;
-			assignedToUserIds?: Array<number>;
-			assignedToTeamIds?: Array<number>;
-			assignedToCompanyIds?: Array<number>;
-			assignedTeamIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_tasks_json: {
-		path?: Record<string, never>;
-		query?: {
-			updatedBefore?: string;
-			updatedAfter?: string;
-			today?: string;
-			taskFilter?:
-				| 'all'
-				| 'anytime'
-				| 'completed'
-				| 'created'
-				| 'overdue'
-				| 'today'
-				| 'yesterday'
-				| 'started'
-				| 'tomorrow'
-				| 'thisweek'
-				| 'within7'
-				| 'within14'
-				| 'within30'
-				| 'within365'
-				| 'nodate'
-				| 'noduedate'
-				| 'nostartdate'
-				| 'newTaskDefaults'
-				| 'hasDate'
-				| 'upcoming'
-				| 'within'
-				| 'withinprev';
-			startDate?: string;
-			searchTerm?: string;
-			reportType?: 'plannedvsactual' | 'task' | 'tasktime';
-			reportFormat?: 'html' | 'pdf' | 'csv' | 'xls' | 'xlsx' | 'google-sheets';
-			projectType?:
-				| 'all'
-				| 'normal'
-				| 'tentative'
-				| 'personal'
-				| 'projects-template'
-				| 'tasklists-template';
-			priority?: string;
-			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'id'
-				| 'startdate'
-				| 'createdat'
-				| 'priority'
-				| 'project'
-				| 'flattenedtasklist'
-				| 'company'
-				| 'manual'
-				| 'active'
-				| 'completedat'
-				| 'duestartdate'
-				| 'alldates'
-				| 'tasklistname'
-				| 'tasklistdisplayorder'
-				| 'tasklistid'
-				| 'duedate'
-				| 'updatedat'
-				| 'taskname'
-				| 'createdby'
-				| 'completedby'
-				| 'assignedto'
-				| 'taskstatus'
-				| 'taskduedate'
-				| 'customfield'
-				| 'estimatedtime'
-				| 'taskgroupid'
-				| 'taskgroupname'
-				| 'projectmanual'
-				| 'stagedisplayorder'
-				| 'stage'
-				| 'parenttask'
-				| 'dateadded'
-				| 'datecompleted'
-				| 'completedatdesc'
-				| 'completeddatedesc'
-				| 'duestartdatedesc'
-				| 'alldatesdesc'
-				| 'duedatedesc'
-				| 'taskgroupdisplayorder'
-				| 'dateupdated'
-				| 'originalduedate'
-				| 'tags';
-			notCompletedBefore?: string;
-			endDate?: string;
-			dueBefore?: string;
-			dueAfter?: string;
-			deletedAfter?: string;
-			createdFilter?: 'anytime' | 'today' | 'yesterday' | 'custom';
-			createdDateCode?: string;
-			createdBefore?: string;
-			createdAfter?: string;
-			completedBefore?: string;
-			completedAfter?: string;
-			updatedByUserId?: number;
-			parentTaskId?: number;
-			pageSize?: number;
-			page?: number;
-			orderByCustomFieldId?: number;
-			includeTaskId?: number;
-			filterId?: number;
-			completedByUserId?: number;
-			useTaskDateRange?: boolean;
-			useStartDatesForTodaysTasks?: boolean;
-			useFormulaFields?: boolean;
-			useAllProjects?: boolean;
-			sortActiveFirst?: boolean;
-			skipCounts?: boolean;
-			showDeleted?: boolean;
-			showCompletedLists?: boolean;
-			searchJobRoles?: boolean;
-			searchCompaniesTeams?: boolean;
-			searchAssignees?: boolean;
-			onlyUntaggedTasks?: boolean;
-			onlyUnplanned?: boolean;
-			onlyUnassignedTasks?: boolean;
-			onlyTasksWithUnreadComments?: boolean;
-			onlyTasksWithTickets?: boolean;
-			onlyTasksWithEstimatedTime?: boolean;
-			onlyStarredProjects?: boolean;
-			onlyAssignedTasks?: boolean;
-			onlyAssignedRoleTasks?: boolean;
-			onlyAdminProjects?: boolean;
-			nestSubTasks?: boolean;
-			matchAllTags?: boolean;
-			matchAllProjectTags?: boolean;
-			matchAllExcludedTags?: boolean;
-			isReportDownload?: boolean;
-			includeUpdate?: boolean;
-			includeUntaggedTasks?: boolean;
-			includeTomorrow?: boolean;
-			includeToday?: boolean;
-			includeTentativeProjects?: boolean;
-			includeTeamUserIds?: boolean;
-			includeTasksWithoutDueDates?: boolean;
-			includeTasksFromDeletedLists?: boolean;
-			includeTasksCount?: boolean;
-			includeRelatedTasks?: boolean;
-			includePrivateItems?: boolean;
-			includeOverdueTasks?: boolean;
-			includeOriginalDueDate?: boolean;
-			includeJobRoleUserIds?: boolean;
-			includeEmailCommentStats?: boolean;
-			includeCustomFields?: boolean;
-			includeCompletedTasks?: boolean;
-			includeCompletedPredecessors?: boolean;
-			includeCompanyUserIds?: boolean;
-			includeCommentStats?: boolean;
-			includeBlocked?: boolean;
-			includeAttachmentCommentStats?: boolean;
-			includeAssigneeTeams?: boolean;
-			includeAssigneeJobRoles?: boolean;
-			includeAssigneeCompanies?: boolean;
-			includeArchivedProjects?: boolean;
-			includeAllComments?: boolean;
-			includeAccumulatedTimeTotals?: boolean;
-			hideDeleted?: boolean;
-			groupByTasklist?: boolean;
-			groupByTaskgroup?: boolean;
-			getSubTasks?: boolean;
-			getFiles?: boolean;
-			fallbackToMilestoneDueDate?: boolean;
-			extractTemplateRoleName?: boolean;
-			excludeAssigneeNotOnProjectTeams?: boolean;
-			excludeAssignedToMe?: boolean;
-			deletedOnly?: boolean;
-			completedOnly?: boolean;
-			checkForTimeblocks?: boolean;
-			checkForReminders?: boolean;
-			calculateTasklistDates?: boolean;
-			allowAssigneesOutsideProject?: boolean;
-			workflowIds?: Array<number>;
-			tasksSelectedColumns?: Array<string>;
-			tasklistIds?: Array<number>;
-			taskgroupIds?: Array<number>;
-			taskIncludedSet?: Array<
-				| 'overdue'
-				| 'nodate'
-				| 'nostartdate'
-				| 'noduedate'
-				| 'nostartwithfutureduedate'
-				| 'taskListNames'
-				| 'projectNames'
-			>;
-			tags?: Array<string>;
-			tagIds?: Array<number>;
-			status?: Array<'upcoming' | 'late' | 'all'>;
-			stageIds?: Array<number>;
-			sort?: Array<string>;
-			skipCRMDealIds?: Array<number>;
-			selectedColumns?: Array<string>;
-			responsiblePartyIds?: Array<number>;
-			projectTagIds?: Array<number>;
-			projectStatuses?: Array<
-				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
-			>;
-			projectOwnerIds?: Array<number>;
-			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
-			projectFeaturesEnabled?: Array<
-				| 'list'
-				| 'board'
-				| 'gantt'
-				| 'table'
-				| 'dashboard'
-				| 'milestones'
-				| 'messages'
-				| 'files'
-				| 'time'
-				| 'notebooks'
-				| 'risks'
-				| 'links'
-				| 'billing'
-				| 'comments'
-				| 'people'
-				| 'settings'
-			>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-			portfolioBoardIds?: Array<number>;
-			includeCustomFieldIds?: Array<number>;
-			include?: Array<
-				| 'projects'
-				| 'projects.companies'
-				| 'projects.categories'
-				| 'projects.permissions'
-				| 'projects.integrations'
-				| 'tasklists'
-				| 'parentTasks'
-				| 'companies'
-				| 'teams'
-				| 'users'
-				| 'milestones'
-				| 'comments'
-				| 'comments.users'
-				| 'tags'
-				| 'timeTotals'
-				| 'accumulatedTimeTotals'
-				| 'taskSequences'
-				| 'commentFollowers'
-				| 'changeFollowers'
-				| 'completeFollowers'
-				| 'lockdowns'
-				| 'lockdowns.users'
-				| 'lockdowns.companies'
-				| 'lockdowns.teams'
-				| 'lockdowns.users.companies'
-				| 'lockdowns.companies.users'
-				| 'lockdowns.teams.users'
-				| 'attachments'
-				| 'attachments.users'
-				| 'subtaskStats'
-				| 'timers'
-				| 'predecessors'
-				| 'permissions'
-				| 'jobRoles'
-				| 'proofs'
-				| 'taskgroups'
-				| 'workflows'
-				| 'workflows.stages'
-				| 'customfields'
-				| 'customfieldTasks'
-				| 'tasks'
-			>;
-			ids?: Array<number>;
-			followedByUserIds?: Array<number>;
-			'fields[workflows]'?: Array<'id' | 'name' | 'statusId'>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[timers]'?: Array<
-				| 'id'
-				| 'userId'
-				| 'taskId'
-				| 'projectId'
-				| 'description'
-				| 'running'
-				| 'billable'
-				| 'deleted'
-				| 'dateCreated'
-				| 'dateDeleted'
-				| 'duration'
-				| 'lastStartedAt'
-				| 'serverTime'
-				| 'intervals'
-			>;
-			'fields[teams]'?: Array<
-				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
-			>;
-			'fields[tasks]'?: Array<
-				| 'id'
-				| 'name'
-				| 'dateUpdated'
-				| 'parentTaskId'
-				| 'isPrivate'
-				| 'status'
-				| 'tasklistId'
-				| 'startDate'
-				| 'dueDate'
-				| 'estimateMinutes'
-				| 'accumulatedEstimatedMinutes'
-				| 'updatedAt'
-				| 'tasklist'
-			>;
-			'fields[tasklists]'?: Array<
-				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
-			>;
-			'fields[taskgroups]'?: Array<
-				'id' | 'name' | 'description' | 'displayOrder' | 'projectId' | 'status'
-			>;
-			'fields[taskSequences]'?: Array<
-				| 'id'
-				| 'installationId'
-				| 'frequency'
-				| 'selectedWeekDays'
-				| 'endDate'
-				| 'monthlyRepeatType'
-				| 'duration'
-				| 'rrule'
-			>;
-			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
-			'fields[stages]'?: Array<'id' | 'name' | 'stage'>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-			'fields[projectIntegrations]'?: Array<
-				| 'userId'
-				| 'projectId'
-				| 'canAccessBox'
-				| 'canAccessDropbox'
-				| 'canAccessGoogleDocs'
-				| 'canAccessOneDrive'
-				| 'canAccessOneDriveBusiness'
-				| 'canAccessSharePoint'
-			>;
-			'fields[milestones]'?: Array<
-				| 'id'
-				| 'name'
-				| 'description'
-				| 'deadline'
-				| 'completed'
-				| 'projectId'
-				| 'createdOn'
-				| 'lastChangedOn'
-				| 'creatorUserId'
-				| 'reminder'
-				| 'private'
-				| 'lockdownId'
-				| 'status'
-				| 'completedOn'
-				| 'completerId'
-				| 'percentageComplete'
-				| 'project'
-			>;
-			'fields[lockdowns]'?: Array<
-				'id' | 'userID' | 'updatedAt' | 'itemType' | 'itemID' | 'grantAccessTo'
-			>;
-			'fields[jobroles]'?: Array<'id' | 'name'>;
-			'fields[groups]'?: Array<
-				| 'late'
-				| 'today'
-				| 'tomorrow'
-				| 'later-this-week'
-				| 'next-week'
-				| 'later'
-				| 'no-due-date'
-			>;
-			'fields[files]'?: Array<
-				| 'isPrivate'
-				| 'latestFileVersionNo'
-				| 'versionId'
-				| 'status'
-				| 'description'
-				| 'lockdownId'
-				| 'tagIds'
-				| 'changeFollowers'
-				| 'commentFollowers'
-				| 'originalName'
-				| 'displayName'
-				| 'isLocked'
-				| 'lockedByUserId'
-				| 'lockedDate'
-				| 'size'
-				| 'uploadedDate'
-				| 'uploadedByUserID'
-				| 'updatedAt'
-				| 'deletedAt'
-				| 'deletedBy'
-				| 'fileSource'
-				| 'projectId'
-				| 'numLikes'
-				| 'reactions'
-				| 'versions'
-				| 'downloadURL'
-				| 'previewURL'
-				| 'thumbURL'
-				| 'relatedItems'
-				| 'commentsCount'
-				| 'commentsCountRead'
-				| 'categoryId'
-			>;
-			'fields[customfields]'?: Array<
-				| 'id'
-				| 'projectId'
-				| 'entity'
-				| 'name'
-				| 'description'
-				| 'type'
-				| 'options'
-				| 'visibilities'
-				| 'isPrivate'
-				| 'required'
-				| 'createdAt'
-				| 'createdByUserId'
-				| 'updatedAt'
-				| 'updatedByUserId'
-				| 'deleted'
-				| 'deletedAt'
-				| 'deletedByUserId'
-			>;
-			'fields[customfieldTasks]'?: Array<
-				'id' | 'customfieldId' | 'value' | 'createdAt' | 'createdBy'
-			>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			'fields[comments]'?: Array<
-				| 'id'
-				| 'objectType'
-				| 'objectId'
-				| 'title'
-				| 'postedAt'
-				| 'postedBy'
-				| 'object'
-				| 'project'
-			>;
-			'fields[ProjectPermissions]'?: Array<
-				| 'viewMessagesAndFiles'
-				| 'viewTasksAndMilestones'
-				| 'viewTime'
-				| 'viewNotebooks'
-				| 'viewRiskRegister'
-				| 'viewEstimatedTime'
-				| 'viewInvoices'
-				| 'addTasks'
-				| 'addRisks'
-				| 'manageCustomFields'
-				| 'addExpenses'
-				| 'editAllTasks'
-				| 'addMilestones'
-				| 'addTaskLists'
-				| 'addMessages'
-				| 'addFiles'
-				| 'addTime'
-				| 'addNotebooks'
-				| 'viewLinks'
-				| 'addLinks'
-				| 'canViewForms'
-				| 'addForms'
-				| 'viewAllTimeLogs'
-				| 'setPrivacy'
-				| 'projectAdministrator'
-				| 'viewProjectUpdate'
-				| 'addProjectUpdate'
-				| 'canViewProjectMembers'
-				| 'canViewProjectBudget'
-				| 'canManageProjectBudget'
-				| 'canViewRates'
-				| 'canManageRates'
-				| 'canViewSchedule'
-				| 'canManageSchedule'
-				| 'receiveEmailNotifications'
-				| 'isObserving'
-				| 'isArchived'
-				| 'active'
-				| 'canAccess'
-				| 'inOwnerCompany'
-				| 'canManagePeople'
-				| 'canViewProjectTemplates'
-				| 'canManageProjectTemplates'
-			>;
-			expandedIds?: Array<number>;
-			excludeTagIds?: Array<number>;
-			excludeResponsiblePartyIds?: Array<number>;
-			crmDealIds?: Array<number>;
-			createdByUserIds?: Array<number>;
-			assigneeTypes?: Array<
-				| 'user'
-				| 'company'
-				| 'team'
-				| 'jobrole'
-				| 'placeholder'
-				| 'assigned'
-				| 'unassigned'
-			>;
-			assigneeTeamIds?: Array<number>;
-			assigneeJobRoleIds?: Array<number>;
-			assigneeCompanyIds?: Array<number>;
-			CustomFields?: Array<string>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_tasks_metrics_complete_json: {
-		path?: Record<string, never>;
-		query?: Record<string, never>;
-		body?: never;
-	};
-	v3_get_projects_api_v3_tasks_metrics_late_json: {
-		path?: Record<string, never>;
-		query?: Record<string, never>;
-		body?: never;
-	};
-	v3_get_projects_api_v3_tasks_id_reminders_json: {
-		path: { id: number };
-		query?: {
-			include?: Array<'users' | 'createdBy'>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-		};
-		body?: never;
-	};
-	v3_delete_projects_api_v3_tasks_taskid_json: {
-		path: { taskId: number };
-		query?: { fireWebhook?: boolean };
-		body?: never;
-	};
-	v3_get_projects_api_v3_tasks_taskid_json: {
-		path: { taskId: number };
-		query?: {
-			updatedBefore?: string;
-			updatedAfter?: string;
-			today?: string;
-			taskFilter?:
-				| 'all'
-				| 'anytime'
-				| 'completed'
-				| 'created'
-				| 'overdue'
-				| 'today'
-				| 'yesterday'
-				| 'started'
-				| 'tomorrow'
-				| 'thisweek'
-				| 'within7'
-				| 'within14'
-				| 'within30'
-				| 'within365'
-				| 'nodate'
-				| 'noduedate'
-				| 'nostartdate'
-				| 'newTaskDefaults'
-				| 'hasDate'
-				| 'upcoming'
-				| 'within'
-				| 'withinprev';
-			startDate?: string;
-			searchTerm?: string;
-			reportType?: 'plannedvsactual' | 'task' | 'tasktime';
-			reportFormat?: 'html' | 'pdf' | 'csv' | 'xls' | 'xlsx' | 'google-sheets';
-			projectType?:
-				| 'all'
-				| 'normal'
-				| 'tentative'
-				| 'personal'
-				| 'projects-template'
-				| 'tasklists-template';
-			priority?: string;
-			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'id'
-				| 'startdate'
-				| 'createdat'
-				| 'priority'
-				| 'project'
-				| 'flattenedtasklist'
-				| 'company'
-				| 'manual'
-				| 'active'
-				| 'completedat'
-				| 'duestartdate'
-				| 'alldates'
-				| 'tasklistname'
-				| 'tasklistdisplayorder'
-				| 'tasklistid'
-				| 'duedate'
-				| 'updatedat'
-				| 'taskname'
-				| 'createdby'
-				| 'completedby'
-				| 'assignedto'
-				| 'taskstatus'
-				| 'taskduedate'
-				| 'customfield'
-				| 'estimatedtime'
-				| 'taskgroupid'
-				| 'taskgroupname'
-				| 'projectmanual'
-				| 'stagedisplayorder'
-				| 'stage'
-				| 'parenttask'
-				| 'dateadded'
-				| 'datecompleted'
-				| 'completedatdesc'
-				| 'completeddatedesc'
-				| 'duestartdatedesc'
-				| 'alldatesdesc'
-				| 'duedatedesc'
-				| 'taskgroupdisplayorder'
-				| 'dateupdated'
-				| 'originalduedate'
-				| 'tags';
-			notCompletedBefore?: string;
-			endDate?: string;
-			dueBefore?: string;
-			dueAfter?: string;
-			deletedAfter?: string;
-			createdFilter?: 'anytime' | 'today' | 'yesterday' | 'custom';
-			createdDateCode?: string;
-			createdBefore?: string;
-			createdAfter?: string;
-			completedBefore?: string;
-			completedAfter?: string;
-			updatedByUserId?: number;
-			parentTaskId?: number;
-			pageSize?: number;
-			page?: number;
-			orderByCustomFieldId?: number;
-			includeTaskId?: number;
-			filterId?: number;
-			completedByUserId?: number;
-			useTaskDateRange?: boolean;
-			useStartDatesForTodaysTasks?: boolean;
-			useFormulaFields?: boolean;
-			useAllProjects?: boolean;
-			sortActiveFirst?: boolean;
-			skipCounts?: boolean;
-			showDeleted?: boolean;
-			showCompletedLists?: boolean;
-			searchJobRoles?: boolean;
-			searchCompaniesTeams?: boolean;
-			searchAssignees?: boolean;
-			onlyUntaggedTasks?: boolean;
-			onlyUnplanned?: boolean;
-			onlyUnassignedTasks?: boolean;
-			onlyTasksWithUnreadComments?: boolean;
-			onlyTasksWithTickets?: boolean;
-			onlyTasksWithEstimatedTime?: boolean;
-			onlyStarredProjects?: boolean;
-			onlyAssignedTasks?: boolean;
-			onlyAssignedRoleTasks?: boolean;
-			onlyAdminProjects?: boolean;
-			nestSubTasks?: boolean;
-			matchAllTags?: boolean;
-			matchAllProjectTags?: boolean;
-			matchAllExcludedTags?: boolean;
-			isReportDownload?: boolean;
-			includeUpdate?: boolean;
-			includeUntaggedTasks?: boolean;
-			includeTomorrow?: boolean;
-			includeToday?: boolean;
-			includeTentativeProjects?: boolean;
-			includeTeamUserIds?: boolean;
-			includeTasksWithoutDueDates?: boolean;
-			includeTasksFromDeletedLists?: boolean;
-			includeTasksCount?: boolean;
-			includeRelatedTasks?: boolean;
-			includePrivateItems?: boolean;
-			includeOverdueTasks?: boolean;
-			includeOriginalDueDate?: boolean;
-			includeJobRoleUserIds?: boolean;
-			includeEmailCommentStats?: boolean;
-			includeCustomFields?: boolean;
-			includeCompletedTasks?: boolean;
-			includeCompletedPredecessors?: boolean;
-			includeCompanyUserIds?: boolean;
-			includeCommentStats?: boolean;
-			includeBlocked?: boolean;
-			includeAttachmentCommentStats?: boolean;
-			includeAssigneeTeams?: boolean;
-			includeAssigneeJobRoles?: boolean;
-			includeAssigneeCompanies?: boolean;
-			includeArchivedProjects?: boolean;
-			includeAllComments?: boolean;
-			includeAccumulatedTimeTotals?: boolean;
-			hideDeleted?: boolean;
-			groupByTasklist?: boolean;
-			groupByTaskgroup?: boolean;
-			getSubTasks?: boolean;
-			getFiles?: boolean;
-			fallbackToMilestoneDueDate?: boolean;
-			extractTemplateRoleName?: boolean;
-			excludeAssigneeNotOnProjectTeams?: boolean;
-			excludeAssignedToMe?: boolean;
-			deletedOnly?: boolean;
-			completedOnly?: boolean;
-			checkForTimeblocks?: boolean;
-			checkForReminders?: boolean;
-			calculateTasklistDates?: boolean;
-			allowAssigneesOutsideProject?: boolean;
-			workflowIds?: Array<number>;
-			tasksSelectedColumns?: Array<string>;
-			tasklistIds?: Array<number>;
-			taskgroupIds?: Array<number>;
-			taskIncludedSet?: Array<
-				| 'overdue'
-				| 'nodate'
-				| 'nostartdate'
-				| 'noduedate'
-				| 'nostartwithfutureduedate'
-				| 'taskListNames'
-				| 'projectNames'
-			>;
-			tags?: Array<string>;
-			tagIds?: Array<number>;
-			status?: Array<'upcoming' | 'late' | 'all'>;
-			stageIds?: Array<number>;
-			sort?: Array<string>;
-			skipCRMDealIds?: Array<number>;
-			selectedColumns?: Array<string>;
-			responsiblePartyIds?: Array<number>;
-			projectTagIds?: Array<number>;
-			projectStatuses?: Array<
-				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
-			>;
-			projectOwnerIds?: Array<number>;
-			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
-			projectFeaturesEnabled?: Array<
-				| 'list'
-				| 'board'
-				| 'gantt'
-				| 'table'
-				| 'dashboard'
-				| 'milestones'
-				| 'messages'
-				| 'files'
-				| 'time'
-				| 'notebooks'
-				| 'risks'
-				| 'links'
-				| 'billing'
-				| 'comments'
-				| 'people'
-				| 'settings'
-			>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-			portfolioBoardIds?: Array<number>;
-			includeCustomFieldIds?: Array<number>;
-			include?: Array<
-				| 'projects'
-				| 'projects.companies'
-				| 'projects.categories'
-				| 'projects.permissions'
-				| 'projects.integrations'
-				| 'tasklists'
-				| 'parentTasks'
-				| 'companies'
-				| 'teams'
-				| 'users'
-				| 'milestones'
-				| 'comments'
-				| 'comments.users'
-				| 'tags'
-				| 'timeTotals'
-				| 'accumulatedTimeTotals'
-				| 'taskSequences'
-				| 'commentFollowers'
-				| 'changeFollowers'
-				| 'completeFollowers'
-				| 'lockdowns'
-				| 'lockdowns.users'
-				| 'lockdowns.companies'
-				| 'lockdowns.teams'
-				| 'lockdowns.users.companies'
-				| 'lockdowns.companies.users'
-				| 'lockdowns.teams.users'
-				| 'attachments'
-				| 'attachments.users'
-				| 'subtaskStats'
-				| 'timers'
-				| 'predecessors'
-				| 'permissions'
-				| 'jobRoles'
-				| 'proofs'
-				| 'taskgroups'
-				| 'workflows'
-				| 'workflows.stages'
-				| 'customfields'
-				| 'customfieldTasks'
-				| 'tasks'
-			>;
-			ids?: Array<number>;
-			followedByUserIds?: Array<number>;
-			'fields[workflows]'?: Array<'id' | 'name' | 'statusId'>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[timers]'?: Array<
-				| 'id'
-				| 'userId'
-				| 'taskId'
-				| 'projectId'
-				| 'description'
-				| 'running'
-				| 'billable'
-				| 'deleted'
-				| 'dateCreated'
-				| 'dateDeleted'
-				| 'duration'
-				| 'lastStartedAt'
-				| 'serverTime'
-				| 'intervals'
-			>;
-			'fields[teams]'?: Array<
-				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
-			>;
-			'fields[tasks]'?: Array<
-				| 'id'
-				| 'name'
-				| 'dateUpdated'
-				| 'parentTaskId'
-				| 'isPrivate'
-				| 'status'
-				| 'tasklistId'
-				| 'startDate'
-				| 'dueDate'
-				| 'estimateMinutes'
-				| 'accumulatedEstimatedMinutes'
-				| 'updatedAt'
-				| 'tasklist'
-			>;
-			'fields[tasklists]'?: Array<
-				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
-			>;
-			'fields[taskgroups]'?: Array<
-				'id' | 'name' | 'description' | 'displayOrder' | 'projectId' | 'status'
-			>;
-			'fields[taskSequences]'?: Array<
-				| 'id'
-				| 'installationId'
-				| 'frequency'
-				| 'selectedWeekDays'
-				| 'endDate'
-				| 'monthlyRepeatType'
-				| 'duration'
-				| 'rrule'
-			>;
-			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
-			'fields[stages]'?: Array<'id' | 'name' | 'stage'>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-			'fields[projectIntegrations]'?: Array<
-				| 'userId'
-				| 'projectId'
-				| 'canAccessBox'
-				| 'canAccessDropbox'
-				| 'canAccessGoogleDocs'
-				| 'canAccessOneDrive'
-				| 'canAccessOneDriveBusiness'
-				| 'canAccessSharePoint'
-			>;
-			'fields[milestones]'?: Array<
-				| 'id'
-				| 'name'
-				| 'description'
-				| 'deadline'
-				| 'completed'
-				| 'projectId'
-				| 'createdOn'
-				| 'lastChangedOn'
-				| 'creatorUserId'
-				| 'reminder'
-				| 'private'
-				| 'lockdownId'
-				| 'status'
-				| 'completedOn'
-				| 'completerId'
-				| 'percentageComplete'
-				| 'project'
-			>;
-			'fields[lockdowns]'?: Array<
-				'id' | 'userID' | 'updatedAt' | 'itemType' | 'itemID' | 'grantAccessTo'
-			>;
-			'fields[jobroles]'?: Array<'id' | 'name'>;
-			'fields[groups]'?: Array<
-				| 'late'
-				| 'today'
-				| 'tomorrow'
-				| 'later-this-week'
-				| 'next-week'
-				| 'later'
-				| 'no-due-date'
-			>;
-			'fields[files]'?: Array<
-				| 'isPrivate'
-				| 'latestFileVersionNo'
-				| 'versionId'
-				| 'status'
-				| 'description'
-				| 'lockdownId'
-				| 'tagIds'
-				| 'changeFollowers'
-				| 'commentFollowers'
-				| 'originalName'
-				| 'displayName'
-				| 'isLocked'
-				| 'lockedByUserId'
-				| 'lockedDate'
-				| 'size'
-				| 'uploadedDate'
-				| 'uploadedByUserID'
-				| 'updatedAt'
-				| 'deletedAt'
-				| 'deletedBy'
-				| 'fileSource'
-				| 'projectId'
-				| 'numLikes'
-				| 'reactions'
-				| 'versions'
-				| 'downloadURL'
-				| 'previewURL'
-				| 'thumbURL'
-				| 'relatedItems'
-				| 'commentsCount'
-				| 'commentsCountRead'
-				| 'categoryId'
-			>;
-			'fields[customfields]'?: Array<
-				| 'id'
-				| 'projectId'
-				| 'entity'
-				| 'name'
-				| 'description'
-				| 'type'
-				| 'options'
-				| 'visibilities'
-				| 'isPrivate'
-				| 'required'
-				| 'createdAt'
-				| 'createdByUserId'
-				| 'updatedAt'
-				| 'updatedByUserId'
-				| 'deleted'
-				| 'deletedAt'
-				| 'deletedByUserId'
-			>;
-			'fields[customfieldTasks]'?: Array<
-				'id' | 'customfieldId' | 'value' | 'createdAt' | 'createdBy'
-			>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			'fields[comments]'?: Array<
-				| 'id'
-				| 'objectType'
-				| 'objectId'
-				| 'title'
-				| 'postedAt'
-				| 'postedBy'
-				| 'object'
-				| 'project'
-			>;
-			'fields[ProjectPermissions]'?: Array<
-				| 'viewMessagesAndFiles'
-				| 'viewTasksAndMilestones'
-				| 'viewTime'
-				| 'viewNotebooks'
-				| 'viewRiskRegister'
-				| 'viewEstimatedTime'
-				| 'viewInvoices'
-				| 'addTasks'
-				| 'addRisks'
-				| 'manageCustomFields'
-				| 'addExpenses'
-				| 'editAllTasks'
-				| 'addMilestones'
-				| 'addTaskLists'
-				| 'addMessages'
-				| 'addFiles'
-				| 'addTime'
-				| 'addNotebooks'
-				| 'viewLinks'
-				| 'addLinks'
-				| 'canViewForms'
-				| 'addForms'
-				| 'viewAllTimeLogs'
-				| 'setPrivacy'
-				| 'projectAdministrator'
-				| 'viewProjectUpdate'
-				| 'addProjectUpdate'
-				| 'canViewProjectMembers'
-				| 'canViewProjectBudget'
-				| 'canManageProjectBudget'
-				| 'canViewRates'
-				| 'canManageRates'
-				| 'canViewSchedule'
-				| 'canManageSchedule'
-				| 'receiveEmailNotifications'
-				| 'isObserving'
-				| 'isArchived'
-				| 'active'
-				| 'canAccess'
-				| 'inOwnerCompany'
-				| 'canManagePeople'
-				| 'canViewProjectTemplates'
-				| 'canManageProjectTemplates'
-			>;
-			expandedIds?: Array<number>;
-			excludeTagIds?: Array<number>;
-			excludeResponsiblePartyIds?: Array<number>;
-			crmDealIds?: Array<number>;
-			createdByUserIds?: Array<number>;
-			assigneeTypes?: Array<
-				| 'user'
-				| 'company'
-				| 'team'
-				| 'jobrole'
-				| 'placeholder'
-				| 'assigned'
-				| 'unassigned'
-			>;
-			assigneeTeamIds?: Array<number>;
-			assigneeJobRoleIds?: Array<number>;
-			assigneeCompanyIds?: Array<number>;
-			CustomFields?: Array<string>;
-		};
-		body?: never;
-	};
-	v3_patch_projects_api_v3_tasks_taskid_json: {
-		path: { taskId: number };
-		query?: { fireWebhook?: boolean };
-		body: TeamworkV3Input_task_Request;
-	};
-	v3_put_projects_api_v3_tasks_taskid_json: {
-		path: { taskId: number };
-		query?: { fireWebhook?: boolean };
-		body: TeamworkV3Input_task_Request;
-	};
-	v3_get_projects_api_v3_tasks_taskid_project_json: {
-		path: { taskId: number };
-		query?: {
-			includeProjectUserInfo?: boolean;
-			includeProjectDates?: boolean;
-			includeCustomFields?: boolean;
-			includeCustomFieldIds?: Array<number>;
-			include?: Array<
-				| 'projectOwners'
-				| 'projectUpdates'
-				| 'companies'
-				| 'companies.countries'
-				| 'companies.industries'
-				| 'companies.currencies'
-				| 'projectCategories'
-				| 'portfolioCards'
-				| 'portfolioBoards'
-				| 'portfolioColumns'
-				| 'tags'
-				| 'customfields'
-				| 'customfieldProjects'
-				| 'projectBudgets'
-				| 'activities.latest'
-				| 'users'
-				| 'createdBy'
-				| 'updatedBy'
-				| 'completedBy'
-				| 'deletedBy'
-				| 'archivedBy'
-				| 'projectEmailDropboxes'
-				| 'workflows'
-				| 'workflows.stages'
-				| 'projecttaskstats'
-			>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-		};
-		body?: never;
-	};
-	v3_post_projects_api_v3_tasks_taskid_reminders_json: {
-		path: { taskId: number };
-		query?: Record<string, never>;
-		body: TeamworkV3Input_reminder_Request;
-	};
-	v3_delete_projects_api_v3_tasks_taskid_reminders_reminderid_json: {
-		path: { taskId: number; reminderId: number };
-		query?: Record<string, never>;
-		body?: never;
-	};
-	v3_patch_projects_api_v3_tasks_taskid_reminders_reminderid_json: {
-		path: { taskId: number; reminderId: number };
-		query?: Record<string, never>;
-		body: TeamworkV3Input_reminder_Request;
-	};
-	v3_get_projects_api_v3_tasks_taskid_subtasks_json: {
-		path: { taskId: number };
-		query?: {
-			updatedBefore?: string;
-			updatedAfter?: string;
-			today?: string;
-			taskFilter?:
-				| 'all'
-				| 'anytime'
-				| 'completed'
-				| 'created'
-				| 'overdue'
-				| 'today'
-				| 'yesterday'
-				| 'started'
-				| 'tomorrow'
-				| 'thisweek'
-				| 'within7'
-				| 'within14'
-				| 'within30'
-				| 'within365'
-				| 'nodate'
-				| 'noduedate'
-				| 'nostartdate'
-				| 'newTaskDefaults'
-				| 'hasDate'
-				| 'upcoming'
-				| 'within'
-				| 'withinprev';
-			startDate?: string;
-			searchTerm?: string;
-			reportType?: 'plannedvsactual' | 'task' | 'tasktime';
-			reportFormat?: 'html' | 'pdf' | 'csv' | 'xls' | 'xlsx' | 'google-sheets';
-			projectType?:
-				| 'all'
-				| 'normal'
-				| 'tentative'
-				| 'personal'
-				| 'projects-template'
-				| 'tasklists-template';
-			priority?: string;
-			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'id'
-				| 'startdate'
-				| 'createdat'
-				| 'priority'
-				| 'project'
-				| 'flattenedtasklist'
-				| 'company'
-				| 'manual'
-				| 'active'
-				| 'completedat'
-				| 'duestartdate'
-				| 'alldates'
-				| 'tasklistname'
-				| 'tasklistdisplayorder'
-				| 'tasklistid'
-				| 'duedate'
-				| 'updatedat'
-				| 'taskname'
-				| 'createdby'
-				| 'completedby'
-				| 'assignedto'
-				| 'taskstatus'
-				| 'taskduedate'
-				| 'customfield'
-				| 'estimatedtime'
-				| 'taskgroupid'
-				| 'taskgroupname'
-				| 'projectmanual'
-				| 'stagedisplayorder'
-				| 'stage'
-				| 'parenttask'
-				| 'dateadded'
-				| 'datecompleted'
-				| 'completedatdesc'
-				| 'completeddatedesc'
-				| 'duestartdatedesc'
-				| 'alldatesdesc'
-				| 'duedatedesc'
-				| 'taskgroupdisplayorder'
-				| 'dateupdated'
-				| 'originalduedate'
-				| 'tags';
-			notCompletedBefore?: string;
-			endDate?: string;
-			dueBefore?: string;
-			dueAfter?: string;
-			deletedAfter?: string;
-			createdFilter?: 'anytime' | 'today' | 'yesterday' | 'custom';
-			createdDateCode?: string;
-			createdBefore?: string;
-			createdAfter?: string;
-			completedBefore?: string;
-			completedAfter?: string;
-			updatedByUserId?: number;
-			parentTaskId?: number;
-			pageSize?: number;
-			page?: number;
-			orderByCustomFieldId?: number;
-			includeTaskId?: number;
-			filterId?: number;
-			completedByUserId?: number;
-			useTaskDateRange?: boolean;
-			useStartDatesForTodaysTasks?: boolean;
-			useFormulaFields?: boolean;
-			useAllProjects?: boolean;
-			sortActiveFirst?: boolean;
-			skipCounts?: boolean;
-			showDeleted?: boolean;
-			showCompletedLists?: boolean;
-			searchJobRoles?: boolean;
-			searchCompaniesTeams?: boolean;
-			searchAssignees?: boolean;
-			onlyUntaggedTasks?: boolean;
-			onlyUnplanned?: boolean;
-			onlyUnassignedTasks?: boolean;
-			onlyTasksWithUnreadComments?: boolean;
-			onlyTasksWithTickets?: boolean;
-			onlyTasksWithEstimatedTime?: boolean;
-			onlyStarredProjects?: boolean;
-			onlyAssignedTasks?: boolean;
-			onlyAssignedRoleTasks?: boolean;
-			onlyAdminProjects?: boolean;
-			nestSubTasks?: boolean;
-			matchAllTags?: boolean;
-			matchAllProjectTags?: boolean;
-			matchAllExcludedTags?: boolean;
-			isReportDownload?: boolean;
-			includeUpdate?: boolean;
-			includeUntaggedTasks?: boolean;
-			includeTomorrow?: boolean;
-			includeToday?: boolean;
-			includeTentativeProjects?: boolean;
-			includeTeamUserIds?: boolean;
-			includeTasksWithoutDueDates?: boolean;
-			includeTasksFromDeletedLists?: boolean;
-			includeTasksCount?: boolean;
-			includeRelatedTasks?: boolean;
-			includePrivateItems?: boolean;
-			includeOverdueTasks?: boolean;
-			includeOriginalDueDate?: boolean;
-			includeJobRoleUserIds?: boolean;
-			includeEmailCommentStats?: boolean;
-			includeCustomFields?: boolean;
-			includeCompletedTasks?: boolean;
-			includeCompletedPredecessors?: boolean;
-			includeCompanyUserIds?: boolean;
-			includeCommentStats?: boolean;
-			includeBlocked?: boolean;
-			includeAttachmentCommentStats?: boolean;
-			includeAssigneeTeams?: boolean;
-			includeAssigneeJobRoles?: boolean;
-			includeAssigneeCompanies?: boolean;
-			includeArchivedProjects?: boolean;
-			includeAllComments?: boolean;
-			includeAccumulatedTimeTotals?: boolean;
-			hideDeleted?: boolean;
-			groupByTasklist?: boolean;
-			groupByTaskgroup?: boolean;
-			getSubTasks?: boolean;
-			getFiles?: boolean;
-			fallbackToMilestoneDueDate?: boolean;
-			extractTemplateRoleName?: boolean;
-			excludeAssigneeNotOnProjectTeams?: boolean;
-			excludeAssignedToMe?: boolean;
-			deletedOnly?: boolean;
-			completedOnly?: boolean;
-			checkForTimeblocks?: boolean;
-			checkForReminders?: boolean;
-			calculateTasklistDates?: boolean;
-			allowAssigneesOutsideProject?: boolean;
-			workflowIds?: Array<number>;
-			tasksSelectedColumns?: Array<string>;
-			tasklistIds?: Array<number>;
-			taskgroupIds?: Array<number>;
-			taskIncludedSet?: Array<
-				| 'overdue'
-				| 'nodate'
-				| 'nostartdate'
-				| 'noduedate'
-				| 'nostartwithfutureduedate'
-				| 'taskListNames'
-				| 'projectNames'
-			>;
-			tags?: Array<string>;
-			tagIds?: Array<number>;
-			status?: Array<'upcoming' | 'late' | 'all'>;
-			stageIds?: Array<number>;
-			sort?: Array<string>;
-			skipCRMDealIds?: Array<number>;
-			selectedColumns?: Array<string>;
-			responsiblePartyIds?: Array<number>;
-			projectTagIds?: Array<number>;
-			projectStatuses?: Array<
-				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
-			>;
-			projectOwnerIds?: Array<number>;
-			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
-			projectFeaturesEnabled?: Array<
-				| 'list'
-				| 'board'
-				| 'gantt'
-				| 'table'
-				| 'dashboard'
-				| 'milestones'
-				| 'messages'
-				| 'files'
-				| 'time'
-				| 'notebooks'
-				| 'risks'
-				| 'links'
-				| 'billing'
-				| 'comments'
-				| 'people'
-				| 'settings'
-			>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-			portfolioBoardIds?: Array<number>;
-			includeCustomFieldIds?: Array<number>;
-			include?: Array<
-				| 'projects'
-				| 'projects.companies'
-				| 'projects.categories'
-				| 'projects.permissions'
-				| 'projects.integrations'
-				| 'tasklists'
-				| 'parentTasks'
-				| 'companies'
-				| 'teams'
-				| 'users'
-				| 'milestones'
-				| 'comments'
-				| 'comments.users'
-				| 'tags'
-				| 'timeTotals'
-				| 'accumulatedTimeTotals'
-				| 'taskSequences'
-				| 'commentFollowers'
-				| 'changeFollowers'
-				| 'completeFollowers'
-				| 'lockdowns'
-				| 'lockdowns.users'
-				| 'lockdowns.companies'
-				| 'lockdowns.teams'
-				| 'lockdowns.users.companies'
-				| 'lockdowns.companies.users'
-				| 'lockdowns.teams.users'
-				| 'attachments'
-				| 'attachments.users'
-				| 'subtaskStats'
-				| 'timers'
-				| 'predecessors'
-				| 'permissions'
-				| 'jobRoles'
-				| 'proofs'
-				| 'taskgroups'
-				| 'workflows'
-				| 'workflows.stages'
-				| 'customfields'
-				| 'customfieldTasks'
-				| 'tasks'
-			>;
-			ids?: Array<number>;
-			followedByUserIds?: Array<number>;
-			'fields[workflows]'?: Array<'id' | 'name' | 'statusId'>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[timers]'?: Array<
-				| 'id'
-				| 'userId'
-				| 'taskId'
-				| 'projectId'
-				| 'description'
-				| 'running'
-				| 'billable'
-				| 'deleted'
-				| 'dateCreated'
-				| 'dateDeleted'
-				| 'duration'
-				| 'lastStartedAt'
-				| 'serverTime'
-				| 'intervals'
-			>;
-			'fields[teams]'?: Array<
-				'id' | 'name' | 'teamLogo' | 'teamLogoIcon' | 'teamLogoColor'
-			>;
-			'fields[tasks]'?: Array<
-				| 'id'
-				| 'name'
-				| 'dateUpdated'
-				| 'parentTaskId'
-				| 'isPrivate'
-				| 'status'
-				| 'tasklistId'
-				| 'startDate'
-				| 'dueDate'
-				| 'estimateMinutes'
-				| 'accumulatedEstimatedMinutes'
-				| 'updatedAt'
-				| 'tasklist'
-			>;
-			'fields[tasklists]'?: Array<
-				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
-			>;
-			'fields[taskgroups]'?: Array<
-				'id' | 'name' | 'description' | 'displayOrder' | 'projectId' | 'status'
-			>;
-			'fields[taskSequences]'?: Array<
-				| 'id'
-				| 'installationId'
-				| 'frequency'
-				| 'selectedWeekDays'
-				| 'endDate'
-				| 'monthlyRepeatType'
-				| 'duration'
-				| 'rrule'
-			>;
-			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
-			'fields[stages]'?: Array<'id' | 'name' | 'stage'>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-			'fields[projectIntegrations]'?: Array<
-				| 'userId'
-				| 'projectId'
-				| 'canAccessBox'
-				| 'canAccessDropbox'
-				| 'canAccessGoogleDocs'
-				| 'canAccessOneDrive'
-				| 'canAccessOneDriveBusiness'
-				| 'canAccessSharePoint'
-			>;
-			'fields[milestones]'?: Array<
-				| 'id'
-				| 'name'
-				| 'description'
-				| 'deadline'
-				| 'completed'
-				| 'projectId'
-				| 'createdOn'
-				| 'lastChangedOn'
-				| 'creatorUserId'
-				| 'reminder'
-				| 'private'
-				| 'lockdownId'
-				| 'status'
-				| 'completedOn'
-				| 'completerId'
-				| 'percentageComplete'
-				| 'project'
-			>;
-			'fields[lockdowns]'?: Array<
-				'id' | 'userID' | 'updatedAt' | 'itemType' | 'itemID' | 'grantAccessTo'
-			>;
-			'fields[jobroles]'?: Array<'id' | 'name'>;
-			'fields[groups]'?: Array<
-				| 'late'
-				| 'today'
-				| 'tomorrow'
-				| 'later-this-week'
-				| 'next-week'
-				| 'later'
-				| 'no-due-date'
-			>;
-			'fields[files]'?: Array<
-				| 'isPrivate'
-				| 'latestFileVersionNo'
-				| 'versionId'
-				| 'status'
-				| 'description'
-				| 'lockdownId'
-				| 'tagIds'
-				| 'changeFollowers'
-				| 'commentFollowers'
-				| 'originalName'
-				| 'displayName'
-				| 'isLocked'
-				| 'lockedByUserId'
-				| 'lockedDate'
-				| 'size'
-				| 'uploadedDate'
-				| 'uploadedByUserID'
-				| 'updatedAt'
-				| 'deletedAt'
-				| 'deletedBy'
-				| 'fileSource'
-				| 'projectId'
-				| 'numLikes'
-				| 'reactions'
-				| 'versions'
-				| 'downloadURL'
-				| 'previewURL'
-				| 'thumbURL'
-				| 'relatedItems'
-				| 'commentsCount'
-				| 'commentsCountRead'
-				| 'categoryId'
-			>;
-			'fields[customfields]'?: Array<
-				| 'id'
-				| 'projectId'
-				| 'entity'
-				| 'name'
-				| 'description'
-				| 'type'
-				| 'options'
-				| 'visibilities'
-				| 'isPrivate'
-				| 'required'
-				| 'createdAt'
-				| 'createdByUserId'
-				| 'updatedAt'
-				| 'updatedByUserId'
-				| 'deleted'
-				| 'deletedAt'
-				| 'deletedByUserId'
-			>;
-			'fields[customfieldTasks]'?: Array<
-				'id' | 'customfieldId' | 'value' | 'createdAt' | 'createdBy'
-			>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			'fields[comments]'?: Array<
-				| 'id'
-				| 'objectType'
-				| 'objectId'
-				| 'title'
-				| 'postedAt'
-				| 'postedBy'
-				| 'object'
-				| 'project'
-			>;
-			'fields[ProjectPermissions]'?: Array<
-				| 'viewMessagesAndFiles'
-				| 'viewTasksAndMilestones'
-				| 'viewTime'
-				| 'viewNotebooks'
-				| 'viewRiskRegister'
-				| 'viewEstimatedTime'
-				| 'viewInvoices'
-				| 'addTasks'
-				| 'addRisks'
-				| 'manageCustomFields'
-				| 'addExpenses'
-				| 'editAllTasks'
-				| 'addMilestones'
-				| 'addTaskLists'
-				| 'addMessages'
-				| 'addFiles'
-				| 'addTime'
-				| 'addNotebooks'
-				| 'viewLinks'
-				| 'addLinks'
-				| 'canViewForms'
-				| 'addForms'
-				| 'viewAllTimeLogs'
-				| 'setPrivacy'
-				| 'projectAdministrator'
-				| 'viewProjectUpdate'
-				| 'addProjectUpdate'
-				| 'canViewProjectMembers'
-				| 'canViewProjectBudget'
-				| 'canManageProjectBudget'
-				| 'canViewRates'
-				| 'canManageRates'
-				| 'canViewSchedule'
-				| 'canManageSchedule'
-				| 'receiveEmailNotifications'
-				| 'isObserving'
-				| 'isArchived'
-				| 'active'
-				| 'canAccess'
-				| 'inOwnerCompany'
-				| 'canManagePeople'
-				| 'canViewProjectTemplates'
-				| 'canManageProjectTemplates'
-			>;
-			expandedIds?: Array<number>;
-			excludeTagIds?: Array<number>;
-			excludeResponsiblePartyIds?: Array<number>;
-			crmDealIds?: Array<number>;
-			createdByUserIds?: Array<number>;
-			assigneeTypes?: Array<
-				| 'user'
-				| 'company'
-				| 'team'
-				| 'jobrole'
-				| 'placeholder'
-				| 'assigned'
-				| 'unassigned'
-			>;
-			assigneeTeamIds?: Array<number>;
-			assigneeJobRoleIds?: Array<number>;
-			assigneeCompanyIds?: Array<number>;
-			CustomFields?: Array<string>;
-		};
-		body?: never;
-	};
-	v3_post_projects_api_v3_tasks_taskid_subtasks_json: {
-		path: { taskId: number };
-		query?: { fireWebhook?: boolean };
-		body: TeamworkV3Input_task_CreateRequest;
-	};
-	v3_get_projects_api_v3_tasks_taskid_time_json: {
-		path: { taskId: number };
 		query?: {
 			updatedAfter?: string;
 			startDate?: string;
@@ -16477,13 +11838,286 @@ export type TeamworkV3Inputs = {
 		};
 		body?: never;
 	};
-	v3_post_projects_api_v3_tasks_taskid_time_json: {
+	'time.get': {
+		path: { timelogId: number };
+		query?: {
+			updatedAfter?: string;
+			startDate?: string;
+			searchTerm?: string;
+			reportFormat?: string;
+			projectStatus?:
+				| 'active'
+				| 'current'
+				| 'late'
+				| 'upcoming'
+				| 'completed'
+				| 'deleted';
+			orderMode?: 'asc' | 'desc';
+			orderBy?:
+				| 'company'
+				| 'date'
+				| 'dateupdated'
+				| 'project'
+				| 'task'
+				| 'tasklist'
+				| 'user'
+				| 'description'
+				| 'billed'
+				| 'billable'
+				| 'timespent'
+				| 'id';
+			invoicedType?: 'all' | 'invoiced' | 'noninvoiced';
+			endDate?: string;
+			deletedAfter?: string;
+			budgetedType?: 'all' | 'budgeted' | 'nonbudgeted';
+			billableType?: 'all' | 'billable' | 'nonbillable';
+			updatedBy?: number;
+			ticketId?: number;
+			tasklistId?: number;
+			taskId?: number;
+			projectId?: number;
+			pageSize?: number;
+			page?: number;
+			invoiceId?: number;
+			budgetId?: number;
+			allocationId?: number;
+			useFallbackMethod?: boolean;
+			unattachedTimelogs?: boolean;
+			skipCounts?: boolean;
+			showDeleted?: boolean;
+			returnSplitInfo?: boolean;
+			returnCostInfo?: boolean;
+			returnBillableInfo?: boolean;
+			onlyStarredProjects?: boolean;
+			matchAllTaskTags?: boolean;
+			matchAllTags?: boolean;
+			matchAllProjectTags?: boolean;
+			matchAllExcludedTaskTags?: boolean;
+			matchAllExcludedProjectTags?: boolean;
+			isReportDownload?: boolean;
+			includeTotals?: boolean;
+			includeTentativeProjects?: boolean;
+			includePermissions?: boolean;
+			includeDescendants?: boolean;
+			includeArchivedProjects?: boolean;
+			deletedOnly?: boolean;
+			checkLocking?: boolean;
+			budgetAllocations?: boolean;
+			ticketIds?: Array<number>;
+			tasklistIds?: Array<number>;
+			taskTagIds?: Array<number>;
+			taskStatuses?: Array<string>;
+			taskIds?: Array<number>;
+			tagIds?: Array<number>;
+			selectedColumns?: Array<string>;
+			projectsFromCompanyId?: Array<number>;
+			projectTagIds?: Array<number>;
+			projectStatuses?: Array<
+				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
+			>;
+			projectOwnerIds?: Array<number>;
+			projectIds?: Array<number>;
+			projectHealths?: Array<'0' | '1' | '2' | '3'>;
+			projectCompanyIds?: Array<number>;
+			projectCategoryIds?: Array<number>;
+			include?: Array<
+				| 'projects'
+				| 'projects.companies'
+				| 'projects.companies.currencies'
+				| 'projects.categories'
+				| 'projects.permissions'
+				| 'projects.integrations'
+				| 'tags'
+				| 'tasks'
+				| 'tasks.parentTasks'
+				| 'tasks.tasklists'
+				| 'tasks.users'
+				| 'tasks.tags'
+				| 'users'
+				| 'createdBy'
+				| 'updatedBy'
+				| 'deletedBy'
+				| 'project.billing'
+				| 'project.billing.currencies'
+				| 'projectBudgets'
+				| 'currencies'
+				| 'userRates'
+			>;
+			ids?: Array<number>;
+			'fields[users]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
+				| 'updatedAt'
+				| 'teams'
+			>;
+			'fields[timelogs]'?: Array<
+				| 'id'
+				| 'dateCreated'
+				| 'minutes'
+				| 'description'
+				| 'timeLogged'
+				| 'billable'
+				| 'deleted'
+				| 'dateDeleted'
+				| 'hasStartTime'
+				| 'dateEdited'
+				| 'deskTicketId'
+				| 'userId'
+				| 'taskId'
+				| 'projectId'
+				| 'loggedByUserId'
+				| 'deletedByUserId'
+				| 'editedByUserId'
+				| 'taskIdPreMove'
+				| 'projectBillingInvoiceId'
+			>;
+			'fields[tasks]'?: Array<
+				| 'id'
+				| 'name'
+				| 'dateUpdated'
+				| 'parentTaskId'
+				| 'isPrivate'
+				| 'status'
+				| 'tasklistId'
+				| 'startDate'
+				| 'dueDate'
+				| 'estimateMinutes'
+				| 'accumulatedEstimatedMinutes'
+				| 'updatedAt'
+				| 'tasklist'
+			>;
+			'fields[tasklists]'?: Array<
+				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
+			>;
+			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
+			'fields[projects]'?: Array<
+				| 'id'
+				| 'name'
+				| 'type'
+				| 'status'
+				| 'company'
+				| 'companyId'
+				| 'categoryId'
+				| 'startPage'
+				| 'logoIcon'
+				| 'logoColor'
+				| 'updatedAt'
+				| 'isStarred'
+				| 'allowNotifyAnyone'
+				| 'notifyTaskAssignee'
+				| 'isBillable'
+				| 'timelogRequiresTask'
+				| 'activePages'
+				| 'projectNumber'
+				| 'projectNumberCounter'
+			>;
+			'fields[projectcategories]'?: Array<
+				'id' | 'name' | 'color' | 'count' | 'parent' | 'parentId'
+			>;
+			'fields[projectIntegrations]'?: Array<
+				| 'userId'
+				| 'projectId'
+				| 'canAccessBox'
+				| 'canAccessDropbox'
+				| 'canAccessGoogleDocs'
+				| 'canAccessOneDrive'
+				| 'canAccessOneDriveBusiness'
+				| 'canAccessSharePoint'
+			>;
+			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
+			'fields[ProjectPermissions]'?: Array<
+				| 'viewMessagesAndFiles'
+				| 'viewTasksAndMilestones'
+				| 'viewTime'
+				| 'viewNotebooks'
+				| 'viewRiskRegister'
+				| 'viewEstimatedTime'
+				| 'viewInvoices'
+				| 'addTasks'
+				| 'addRisks'
+				| 'manageCustomFields'
+				| 'addExpenses'
+				| 'editAllTasks'
+				| 'addMilestones'
+				| 'addTaskLists'
+				| 'addMessages'
+				| 'addFiles'
+				| 'addTime'
+				| 'addNotebooks'
+				| 'viewLinks'
+				| 'addLinks'
+				| 'canViewForms'
+				| 'addForms'
+				| 'viewAllTimeLogs'
+				| 'setPrivacy'
+				| 'projectAdministrator'
+				| 'viewProjectUpdate'
+				| 'addProjectUpdate'
+				| 'canViewProjectMembers'
+				| 'canViewProjectBudget'
+				| 'canManageProjectBudget'
+				| 'canViewRates'
+				| 'canManageRates'
+				| 'canViewSchedule'
+				| 'canManageSchedule'
+				| 'receiveEmailNotifications'
+				| 'isObserving'
+				| 'isArchived'
+				| 'active'
+				| 'canAccess'
+				| 'inOwnerCompany'
+				| 'canManagePeople'
+				| 'canViewProjectTemplates'
+				| 'canManageProjectTemplates'
+			>;
+			excludeTaskTagIds?: Array<number>;
+			excludeProjectTagIds?: Array<number>;
+			assignedToUserIds?: Array<number>;
+			assignedToTeamIds?: Array<number>;
+			assignedToCompanyIds?: Array<number>;
+			assignedTeamIds?: Array<number>;
+		};
+		body?: never;
+	};
+	'time.create': {
+		path: { projectId: number };
+		query?: { fireWebhook?: boolean };
+		body: TeamworkV3Input_timelog_Request;
+	};
+	'time.createForTask': {
 		path: { taskId: number };
 		query?: { fireWebhook?: boolean };
 		body: TeamworkV3Input_timelog_Request;
 	};
-	v3_get_projects_api_v3_tasks_taskid_time_total_json: {
-		path: { taskId: number };
+	'time.update': {
+		path: { timelogId: number };
+		query?: { fireWebhook?: boolean };
+		body: TeamworkV3Input_timelog_Request;
+	};
+	'time.delete': {
+		path: { timelogId: number };
+		query?: { fireWebhook?: boolean };
+		body?: never;
+	};
+	'time.totals': {
+		path?: Record<string, never>;
 		query?: {
 			updatedAfter?: string;
 			startDate?: string;
@@ -16540,7 +12174,7 @@ export type TeamworkV3Inputs = {
 		};
 		body?: never;
 	};
-	v3_get_projects_api_v3_time_json: {
+	'time.byCompany': {
 		path?: Record<string, never>;
 		query?: {
 			updatedAfter?: string;
@@ -16798,7 +12432,7 @@ export type TeamworkV3Inputs = {
 		};
 		body?: never;
 	};
-	v3_get_projects_api_v3_time_report_json: {
+	'time.report': {
 		path?: Record<string, never>;
 		query: {
 			type: 'company' | 'project' | 'user' | 'tasklist' | 'task' | 'team';
@@ -16883,7 +12517,7 @@ export type TeamworkV3Inputs = {
 		};
 		body?: never;
 	};
-	v3_get_projects_api_v3_time_report_totals_json: {
+	'time.reportTotals': {
 		path?: Record<string, never>;
 		query: {
 			type?: 'company' | 'project' | 'user' | 'tasklist' | 'task' | 'team';
@@ -16968,7 +12602,7 @@ export type TeamworkV3Inputs = {
 		};
 		body?: never;
 	};
-	v3_get_projects_api_v3_time_report_type_json: {
+	'time.reportByType': {
 		path: { type: string };
 		query?: {
 			type?: 'company' | 'project' | 'user' | 'tasklist' | 'task' | 'team';
@@ -17053,343 +12687,12 @@ export type TeamworkV3Inputs = {
 		};
 		body?: never;
 	};
-	v3_get_projects_api_v3_time_total_json: {
-		path?: Record<string, never>;
-		query?: {
-			updatedAfter?: string;
-			startDate?: string;
-			searchTerm?: string;
-			projectStatus?:
-				| 'active'
-				| 'current'
-				| 'late'
-				| 'upcoming'
-				| 'completed'
-				| 'deleted';
-			invoicedType?: 'all' | 'invoiced' | 'noninvoiced';
-			endDate?: string;
-			budgetedType?: 'all' | 'budgeted' | 'nonbudgeted';
-			billableType?: 'all' | 'billable' | 'nonbillable';
-			userId?: number;
-			tasklistId?: number;
-			taskId?: number;
-			projectId?: number;
-			deskTicketId?: number;
-			returnCostInfo?: boolean;
-			returnBillableInfo?: boolean;
-			onlyStarredProjects?: boolean;
-			matchAllProjectTags?: boolean;
-			matchAllExcludedTaskTags?: boolean;
-			matchAllExcludedProjectTags?: boolean;
-			includeTentativeProjects?: boolean;
-			includeDescendants?: boolean;
-			includeArchivedProjects?: boolean;
-			userIds?: Array<number>;
-			tasklistIds?: Array<number>;
-			taskStatuses?: Array<string>;
-			taskIds?: Array<number>;
-			tagIds?: Array<number>;
-			subTaskStatuses?: Array<
-				'all' | 'completed' | 'incomplete' | 'new' | 'reopened' | 'deleted'
-			>;
-			projectTagIds?: Array<number>;
-			projectStatuses?: Array<
-				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
-			>;
-			projectOwnerIds?: Array<number>;
-			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-			excludeTaskTagIds?: Array<number>;
-			excludeProjectTagIds?: Array<number>;
-			companyIds?: Array<number>;
-			assignedToUserIds?: Array<number>;
-			assignedToTeamIds?: Array<number>;
-			assignedToCompanyIds?: Array<number>;
-			assignedTeamIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_get_projects_api_v3_time_validate_json: {
+	'time.validate': {
 		path?: Record<string, never>;
 		query?: { date?: string; userIds?: Array<number> };
 		body?: never;
 	};
-	v3_delete_projects_api_v3_time_timelogid_json: {
-		path: { timelogId: number };
-		query?: { fireWebhook?: boolean };
-		body?: never;
-	};
-	v3_get_projects_api_v3_time_timelogid_json: {
-		path: { timelogId: number };
-		query?: {
-			updatedAfter?: string;
-			startDate?: string;
-			searchTerm?: string;
-			reportFormat?: string;
-			projectStatus?:
-				| 'active'
-				| 'current'
-				| 'late'
-				| 'upcoming'
-				| 'completed'
-				| 'deleted';
-			orderMode?: 'asc' | 'desc';
-			orderBy?:
-				| 'company'
-				| 'date'
-				| 'dateupdated'
-				| 'project'
-				| 'task'
-				| 'tasklist'
-				| 'user'
-				| 'description'
-				| 'billed'
-				| 'billable'
-				| 'timespent'
-				| 'id';
-			invoicedType?: 'all' | 'invoiced' | 'noninvoiced';
-			endDate?: string;
-			deletedAfter?: string;
-			budgetedType?: 'all' | 'budgeted' | 'nonbudgeted';
-			billableType?: 'all' | 'billable' | 'nonbillable';
-			updatedBy?: number;
-			ticketId?: number;
-			tasklistId?: number;
-			taskId?: number;
-			projectId?: number;
-			pageSize?: number;
-			page?: number;
-			invoiceId?: number;
-			budgetId?: number;
-			allocationId?: number;
-			useFallbackMethod?: boolean;
-			unattachedTimelogs?: boolean;
-			skipCounts?: boolean;
-			showDeleted?: boolean;
-			returnSplitInfo?: boolean;
-			returnCostInfo?: boolean;
-			returnBillableInfo?: boolean;
-			onlyStarredProjects?: boolean;
-			matchAllTaskTags?: boolean;
-			matchAllTags?: boolean;
-			matchAllProjectTags?: boolean;
-			matchAllExcludedTaskTags?: boolean;
-			matchAllExcludedProjectTags?: boolean;
-			isReportDownload?: boolean;
-			includeTotals?: boolean;
-			includeTentativeProjects?: boolean;
-			includePermissions?: boolean;
-			includeDescendants?: boolean;
-			includeArchivedProjects?: boolean;
-			deletedOnly?: boolean;
-			checkLocking?: boolean;
-			budgetAllocations?: boolean;
-			ticketIds?: Array<number>;
-			tasklistIds?: Array<number>;
-			taskTagIds?: Array<number>;
-			taskStatuses?: Array<string>;
-			taskIds?: Array<number>;
-			tagIds?: Array<number>;
-			selectedColumns?: Array<string>;
-			projectsFromCompanyId?: Array<number>;
-			projectTagIds?: Array<number>;
-			projectStatuses?: Array<
-				'active' | 'current' | 'late' | 'upcoming' | 'completed' | 'deleted'
-			>;
-			projectOwnerIds?: Array<number>;
-			projectIds?: Array<number>;
-			projectHealths?: Array<'0' | '1' | '2' | '3'>;
-			projectCompanyIds?: Array<number>;
-			projectCategoryIds?: Array<number>;
-			include?: Array<
-				| 'projects'
-				| 'projects.companies'
-				| 'projects.companies.currencies'
-				| 'projects.categories'
-				| 'projects.permissions'
-				| 'projects.integrations'
-				| 'tags'
-				| 'tasks'
-				| 'tasks.parentTasks'
-				| 'tasks.tasklists'
-				| 'tasks.users'
-				| 'tasks.tags'
-				| 'users'
-				| 'createdBy'
-				| 'updatedBy'
-				| 'deletedBy'
-				| 'project.billing'
-				| 'project.billing.currencies'
-				| 'projectBudgets'
-				| 'currencies'
-				| 'userRates'
-			>;
-			ids?: Array<number>;
-			'fields[users]'?: Array<
-				| 'id'
-				| 'firstName'
-				| 'lastName'
-				| 'title'
-				| 'email'
-				| 'companyId'
-				| 'company'
-				| 'isAdmin'
-				| 'isClientUser'
-				| 'isServiceAccount'
-				| 'type'
-				| 'deleted'
-				| 'avatarUrl'
-				| 'lengthOfDay'
-				| 'workingHoursId'
-				| 'workingHour'
-				| 'userRate'
-				| 'userCost'
-				| 'canAddProjects'
-				| 'updatedAt'
-				| 'teams'
-			>;
-			'fields[timelogs]'?: Array<
-				| 'id'
-				| 'dateCreated'
-				| 'minutes'
-				| 'description'
-				| 'timeLogged'
-				| 'billable'
-				| 'deleted'
-				| 'dateDeleted'
-				| 'hasStartTime'
-				| 'dateEdited'
-				| 'deskTicketId'
-				| 'userId'
-				| 'taskId'
-				| 'projectId'
-				| 'loggedByUserId'
-				| 'deletedByUserId'
-				| 'editedByUserId'
-				| 'taskIdPreMove'
-				| 'projectBillingInvoiceId'
-			>;
-			'fields[tasks]'?: Array<
-				| 'id'
-				| 'name'
-				| 'dateUpdated'
-				| 'parentTaskId'
-				| 'isPrivate'
-				| 'status'
-				| 'tasklistId'
-				| 'startDate'
-				| 'dueDate'
-				| 'estimateMinutes'
-				| 'accumulatedEstimatedMinutes'
-				| 'updatedAt'
-				| 'tasklist'
-			>;
-			'fields[tasklists]'?: Array<
-				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
-			>;
-			'fields[tags]'?: Array<'id' | 'name' | 'color' | 'count'>;
-			'fields[projects]'?: Array<
-				| 'id'
-				| 'name'
-				| 'type'
-				| 'status'
-				| 'company'
-				| 'companyId'
-				| 'categoryId'
-				| 'startPage'
-				| 'logoIcon'
-				| 'logoColor'
-				| 'updatedAt'
-				| 'isStarred'
-				| 'allowNotifyAnyone'
-				| 'notifyTaskAssignee'
-				| 'isBillable'
-				| 'timelogRequiresTask'
-				| 'activePages'
-				| 'projectNumber'
-				| 'projectNumberCounter'
-			>;
-			'fields[projectcategories]'?: Array<
-				'id' | 'name' | 'color' | 'count' | 'parent' | 'parentId'
-			>;
-			'fields[projectIntegrations]'?: Array<
-				| 'userId'
-				| 'projectId'
-				| 'canAccessBox'
-				| 'canAccessDropbox'
-				| 'canAccessGoogleDocs'
-				| 'canAccessOneDrive'
-				| 'canAccessOneDriveBusiness'
-				| 'canAccessSharePoint'
-			>;
-			'fields[companies]'?: Array<'id' | 'name' | 'logoUrl'>;
-			'fields[ProjectPermissions]'?: Array<
-				| 'viewMessagesAndFiles'
-				| 'viewTasksAndMilestones'
-				| 'viewTime'
-				| 'viewNotebooks'
-				| 'viewRiskRegister'
-				| 'viewEstimatedTime'
-				| 'viewInvoices'
-				| 'addTasks'
-				| 'addRisks'
-				| 'manageCustomFields'
-				| 'addExpenses'
-				| 'editAllTasks'
-				| 'addMilestones'
-				| 'addTaskLists'
-				| 'addMessages'
-				| 'addFiles'
-				| 'addTime'
-				| 'addNotebooks'
-				| 'viewLinks'
-				| 'addLinks'
-				| 'canViewForms'
-				| 'addForms'
-				| 'viewAllTimeLogs'
-				| 'setPrivacy'
-				| 'projectAdministrator'
-				| 'viewProjectUpdate'
-				| 'addProjectUpdate'
-				| 'canViewProjectMembers'
-				| 'canViewProjectBudget'
-				| 'canManageProjectBudget'
-				| 'canViewRates'
-				| 'canManageRates'
-				| 'canViewSchedule'
-				| 'canManageSchedule'
-				| 'receiveEmailNotifications'
-				| 'isObserving'
-				| 'isArchived'
-				| 'active'
-				| 'canAccess'
-				| 'inOwnerCompany'
-				| 'canManagePeople'
-				| 'canViewProjectTemplates'
-				| 'canManageProjectTemplates'
-			>;
-			excludeTaskTagIds?: Array<number>;
-			excludeProjectTagIds?: Array<number>;
-			assignedToUserIds?: Array<number>;
-			assignedToTeamIds?: Array<number>;
-			assignedToCompanyIds?: Array<number>;
-			assignedTeamIds?: Array<number>;
-		};
-		body?: never;
-	};
-	v3_patch_projects_api_v3_time_timelogid_json: {
-		path: { timelogId: number };
-		query?: { fireWebhook?: boolean };
-		body: TeamworkV3Input_timelog_Request;
-	};
-	v3_put_projects_api_v3_time_timelogid_json: {
-		path: { timelogId: number };
-		query?: { fireWebhook?: boolean };
-		body: TeamworkV3Input_timelog_Request;
-	};
-	v3_get_projects_api_v3_timers_json: {
+	'timers.list': {
 		path?: Record<string, never>;
 		query?: {
 			updatedAfterDate?: string;
@@ -17491,7 +12794,109 @@ export type TeamworkV3Inputs = {
 		};
 		body?: never;
 	};
-	v3_get_projects_api_v3_timers_timerid_json: {
+	'timers.listMine': {
+		path?: Record<string, never>;
+		query?: {
+			updatedAfterDate?: string;
+			updatedAfter?: string;
+			userId?: number;
+			taskId?: number;
+			projectId?: number;
+			pageSize?: number;
+			page?: number;
+			skipCounts?: boolean;
+			showDeleted?: boolean;
+			runningTimersOnly?: boolean;
+			include?: Array<
+				| 'projects'
+				| 'projects.companies'
+				| 'tasks'
+				| 'tasks.parentTasks'
+				| 'tasks.tasklists'
+				| 'users'
+			>;
+			'fields[users]'?: Array<
+				| 'id'
+				| 'firstName'
+				| 'lastName'
+				| 'title'
+				| 'email'
+				| 'companyId'
+				| 'company'
+				| 'isAdmin'
+				| 'isClientUser'
+				| 'isServiceAccount'
+				| 'type'
+				| 'deleted'
+				| 'avatarUrl'
+				| 'lengthOfDay'
+				| 'workingHoursId'
+				| 'workingHour'
+				| 'userRate'
+				| 'userCost'
+				| 'canAddProjects'
+				| 'updatedAt'
+				| 'teams'
+			>;
+			'fields[timers]'?: Array<
+				| 'id'
+				| 'userId'
+				| 'taskId'
+				| 'projectId'
+				| 'description'
+				| 'running'
+				| 'billable'
+				| 'deleted'
+				| 'dateCreated'
+				| 'dateDeleted'
+				| 'duration'
+				| 'lastStartedAt'
+				| 'serverTime'
+				| 'intervals'
+			>;
+			'fields[tasks]'?: Array<
+				| 'id'
+				| 'name'
+				| 'dateUpdated'
+				| 'parentTaskId'
+				| 'isPrivate'
+				| 'status'
+				| 'tasklistId'
+				| 'startDate'
+				| 'dueDate'
+				| 'estimateMinutes'
+				| 'accumulatedEstimatedMinutes'
+				| 'updatedAt'
+				| 'tasklist'
+			>;
+			'fields[tasklists]'?: Array<
+				'id' | 'name' | 'projectId' | 'milestoneId' | 'project' | 'updatedAt'
+			>;
+			'fields[projects]'?: Array<
+				| 'id'
+				| 'name'
+				| 'type'
+				| 'status'
+				| 'company'
+				| 'companyId'
+				| 'categoryId'
+				| 'startPage'
+				| 'logoIcon'
+				| 'logoColor'
+				| 'updatedAt'
+				| 'isStarred'
+				| 'allowNotifyAnyone'
+				| 'notifyTaskAssignee'
+				| 'isBillable'
+				| 'timelogRequiresTask'
+				| 'activePages'
+				| 'projectNumber'
+				| 'projectNumberCounter'
+			>;
+		};
+		body?: never;
+	};
+	'timers.get': {
 		path: { timerId: number };
 		query?: {
 			userId?: number;
@@ -17585,134 +12990,134 @@ export type TeamworkV3Inputs = {
 		};
 		body?: never;
 	};
+	'timers.create': {
+		path?: Record<string, never>;
+		query?: Record<string, never>;
+		body: TeamworkV3Input_timer_Request;
+	};
+	'timers.update': {
+		path: { timerId: number };
+		query?: Record<string, never>;
+		body: TeamworkV3Input_timer_Request;
+	};
+	'timers.pause': {
+		path: { timerId: number };
+		query?: Record<string, never>;
+		body?: never;
+	};
+	'timers.resume': {
+		path: { timerId: number };
+		query?: Record<string, never>;
+		body?: never;
+	};
+	'timers.complete': {
+		path: { timerId: number };
+		query?: Record<string, never>;
+		body?: never;
+	};
+	'timers.delete': {
+		path: { timerId: number };
+		query?: Record<string, never>;
+		body: TeamworkV3Input_timer_DeleteRequest;
+	};
+	'timers.undelete': {
+		path: { timerId: number };
+		query?: Record<string, never>;
+		body?: never;
+	};
 };
 
 export type TeamworkV3Outputs = {
-	v3_get_projects_api_v3_allocations_allocationid_time_json: TeamworkV3Output_timelog_TimelogsResponse;
-	v3_get_projects_api_v3_comments_json: TeamworkV3Output_comment_CommentsResponse;
-	v3_post_projects_api_v3_comments_json: TeamworkV3Output_comment_Response;
-	v3_get_projects_api_v3_comments_id_json: TeamworkV3Output_comment_Response;
-	v3_get_projects_api_v3_comments_id_notified_json: TeamworkV3Output_comment_NotifiedResponse;
-	v3_get_projects_api_v3_companies_json: TeamworkV3Output_company_CompaniesResponse;
-	v3_post_projects_api_v3_companies_json: TeamworkV3Output_company_Response;
-	v3_delete_projects_api_v3_companies_domains_id_json: undefined;
-	v3_patch_projects_api_v3_companies_domains_id_json: TeamworkV3Output_domain_Response;
-	v3_get_projects_api_v3_companies_time_json: TeamworkV3Output_timelog_CompanyTimelogsResponse;
-	v3_delete_projects_api_v3_companies_companyid_json: undefined;
-	v3_get_projects_api_v3_companies_companyid_json: TeamworkV3Output_company_Response;
-	v3_patch_projects_api_v3_companies_companyid_json: TeamworkV3Output_company_Response;
-	v3_patch_projects_api_v3_companies_companyid_rates_json: TeamworkV3Output_company_ClientRatesResponse;
-	v3_post_projects_api_v3_companies_id_convert_currency_json: undefined;
-	v3_post_projects_api_v3_companies_id_domains_json: TeamworkV3Output_domain_BulkResponse;
-	v3_get_projects_api_v3_files_fileid_project_json: TeamworkV3Output_project_responseV205;
-	v3_get_projects_api_v3_links_linkid_comments_json: TeamworkV3Output_comment_CommentsResponse;
-	v3_post_projects_api_v3_links_linkid_comments_json: TeamworkV3Output_comment_Response;
-	v3_get_projects_api_v3_links_linkid_project_json: TeamworkV3Output_project_responseV205;
-	v3_get_projects_api_v3_me_json: TeamworkV3Output_me_Response2;
-	v3_get_projects_api_v3_me_personaltasks_json: TeamworkV3Output_task_tasksResponseV205;
-	v3_post_projects_api_v3_me_personaltasks_json: TeamworkV3Output_task_responseV205;
-	v3_get_projects_api_v3_me_personaltasks_id_json: TeamworkV3Output_task_responseV205;
-	v3_get_projects_api_v3_me_timers_json: TeamworkV3Output_timer_TimersResponse;
-	v3_post_projects_api_v3_me_timers_json: TeamworkV3Output_timer_Response;
-	v3_delete_projects_api_v3_me_timers_timerid_json: undefined;
-	v3_put_projects_api_v3_me_timers_timerid_json: TeamworkV3Output_timer_Response;
-	v3_put_projects_api_v3_me_timers_timerid_complete_json: TeamworkV3Output_timer_Response;
-	v3_put_projects_api_v3_me_timers_timerid_pause_json: TeamworkV3Output_timer_Response;
-	v3_put_projects_api_v3_me_timers_timerid_resume_json: TeamworkV3Output_timer_Response;
-	v3_put_projects_api_v3_me_timers_timerid_undelete_json: undefined;
-	v3_get_projects_api_v3_milestones_json: TeamworkV3Output_milestone_MilestonesResponse;
-	v3_get_projects_api_v3_milestones_metrics_deadlines_json: TeamworkV3Output_deadline_MilestoneMetricDeadlinesResponse;
-	v3_get_projects_api_v3_milestones_milestoneid_json: TeamworkV3Output_milestone_Response;
-	v3_get_projects_api_v3_milestones_milestoneid_project_json: TeamworkV3Output_project_responseV205;
-	v3_get_projects_api_v3_notebooks_json: TeamworkV3Output_notebook_NotebooksResponse;
-	v3_delete_projects_api_v3_notebooks_notebookid_json: undefined;
-	v3_get_projects_api_v3_notebooks_notebookid_json: TeamworkV3Output_notebook_Response;
-	v3_patch_projects_api_v3_notebooks_notebookid_json: TeamworkV3Output_notebook_Response;
-	v3_get_projects_api_v3_notebooks_notebookid_compare_json: TeamworkV3Output_notebook_VersionResponse;
-	v3_get_projects_api_v3_notebooks_notebookid_project_json: TeamworkV3Output_project_responseV205;
-	v3_delete_projects_api_v3_notebooks_notebookid_versions_json: undefined;
-	v3_get_projects_api_v3_notebooks_notebookid_versions_json: TeamworkV3Output_notebook_VersionsResponse;
-	v3_get_projects_api_v3_notebooks_notebookid_versions_versionid_json: TeamworkV3Output_notebook_VersionResponse;
-	v3_get_projects_api_v3_people_json: TeamworkV3Output_people_MultiResponse;
-	v3_get_projects_api_v3_people_metrics_performance_json: TeamworkV3Output_performance_PeopleMetricPerformancesResponse;
-	v3_get_projects_api_v3_people_utilization_json: TeamworkV3Output_utilization_Response;
-	v3_delete_projects_api_v3_people_personid_json: undefined;
-	v3_get_projects_api_v3_people_personid_json: TeamworkV3Output_people_Response;
-	v3_get_projects_api_v3_projects_json: TeamworkV3Output_project_projectsResponseV205;
-	v3_get_projects_api_v3_projects_metrics_active_json: TeamworkV3Output_active_Response;
-	v3_get_projects_api_v3_projects_metrics_billable_json: TeamworkV3Output_billable_ProjectMetricBillablesResponse;
-	v3_get_projects_api_v3_projects_metrics_healths_json: TeamworkV3Output_health_ProjectMetricHealthsResponse;
-	v3_get_projects_api_v3_projects_metrics_invoices_json: TeamworkV3Output_invoice_ProjectMetricInvoicesResponse;
-	v3_get_projects_api_v3_projects_metrics_owners_json: TeamworkV3Output_owner_ProjectMetricOwnersResponse;
-	v3_get_projects_api_v3_projects_metrics_unbilled_json: TeamworkV3Output_unbilled_ProjectMetricUnbilledResponse;
-	v3_get_projects_api_v3_projects_number_json: TeamworkV3Output_project_ProjectNumberSettingsResponse;
-	v3_put_projects_api_v3_projects_number_json: TeamworkV3Output_project_ProjectNumberSettingsResponse;
-	v3_put_projects_api_v3_projects_people_userid_enqueue_json: TeamworkV3Output_people_AddPeopleToProjectResponse;
-	v3_get_projects_api_v3_projects_starred_json: TeamworkV3Output_project_projectsResponseV205;
-	v3_get_projects_api_v3_projects_teamwork_samples_json: TeamworkV3Output_project_SampleProjectsResponse;
-	v3_get_projects_api_v3_projects_templates_json: TeamworkV3Output_project_projectsResponseV205;
-	v3_get_projects_api_v3_projects_templates_id_json: TeamworkV3Output_project_responseV205;
-	v3_get_projects_api_v3_projects_templates_id_customfields_required_json: TeamworkV3Output_customfield_CustomFieldsResponse;
-	v3_put_projects_api_v3_projects_tentative_projectid_convert_json: TeamworkV3Output_project_SampleProjectsResponse;
-	v3_get_projects_api_v3_projects_updates_json: TeamworkV3Output_update_ProjectUpdatesResponse;
-	v3_get_projects_api_v3_projects_projectids_updates_json: TeamworkV3Output_update_ProjectUpdatesResponse;
-	v3_get_projects_api_v3_projects_projectid_json: TeamworkV3Output_project_responseV205;
-	v3_get_projects_api_v3_projects_projectid_featureorder_json: TeamworkV3Output_project_FeatureOrderResponse;
-	v3_put_projects_api_v3_projects_projectid_featureorder_json: TeamworkV3Output_project_FeatureOrderResponse;
-	v3_get_projects_api_v3_projects_projectid_milestones_json: TeamworkV3Output_milestone_MilestonesResponse;
-	v3_post_projects_api_v3_projects_projectid_notebooks_json: TeamworkV3Output_notebook_Response;
-	v3_get_projects_api_v3_projects_projectid_people_json: TeamworkV3Output_people_MultiResponse;
-	v3_put_projects_api_v3_projects_projectid_people_json: TeamworkV3Output_people_AddPeopleToProjectResponse;
-	v3_get_projects_api_v3_projects_projectid_people_personid_json: TeamworkV3Output_people_Response;
-	v3_get_projects_api_v3_projects_projectid_tasklists_json: TeamworkV3Output_tasklist_TasklistsResponse;
-	v3_get_projects_api_v3_projects_projectid_tasks_json: TeamworkV3Output_task_tasksResponseV205;
-	v3_get_projects_api_v3_projects_projectid_time_json: TeamworkV3Output_timelog_TimelogsResponse;
-	v3_post_projects_api_v3_projects_projectid_time_json: TeamworkV3Output_timelog_Response;
-	v3_get_projects_api_v3_projects_projectid_time_total_json: TeamworkV3Output_timelog_TotalsResponse;
-	v3_get_projects_api_v3_reporting_dashboards_data_milestones_json: TeamworkV3Output_container_DashboardDataResponse;
-	v3_get_projects_api_v3_reporting_dashboards_details_milestones_json: TeamworkV3Output_milestone_MilestoneDetailsResponse;
-	v3_get_projects_api_v3_reporting_precanned_companytime_json: TeamworkV3Output_timelog_CompanyTimelogsResponse;
-	v3_get_projects_api_v3_reporting_precanned_tasktime_json: TeamworkV3Output_task_tasksResponseV205;
-	v3_get_projects_api_v3_reporting_precanned_usertaskcompletion_json: TeamworkV3Output_people_TaskCompletionResponse;
-	v3_get_projects_api_v3_statuses_json: TeamworkV3Output_status_StatusesResponse;
-	v3_get_projects_api_v3_statuses_timeline_json: TeamworkV3Output_status_TimelineResponse;
-	v3_get_projects_api_v3_taskgroups_taskgroupid_tasks_json: TeamworkV3Output_task_tasksResponseV205;
-	v3_post_projects_api_v3_taskgroups_taskgroupid_tasks_json: TeamworkV3Output_task_responseV205;
-	v3_get_projects_api_v3_tasklists_json: TeamworkV3Output_tasklist_TasklistsResponse;
-	v3_get_projects_api_v3_tasklists_templates_json: TeamworkV3Output_tasklist_TasklistsResponse;
-	v3_delete_projects_api_v3_tasklists_tasklistid_json: undefined;
-	v3_get_projects_api_v3_tasklists_tasklistid_json: TeamworkV3Output_tasklist_Response;
-	v3_get_projects_api_v3_tasklists_tasklistid_project_json: TeamworkV3Output_project_responseV205;
-	v3_get_projects_api_v3_tasklists_tasklistid_tasks_json: TeamworkV3Output_task_tasksResponseV205;
-	v3_post_projects_api_v3_tasklists_tasklistid_tasks_json: TeamworkV3Output_task_responseV205;
-	v3_get_projects_api_v3_tasklists_tasklistid_time_total_json: TeamworkV3Output_timelog_TotalsResponse;
-	v3_get_projects_api_v3_tasks_json: TeamworkV3Output_task_tasksResponseV205;
-	v3_get_projects_api_v3_tasks_metrics_complete_json: TeamworkV3Output_complete_Response;
-	v3_get_projects_api_v3_tasks_metrics_late_json: TeamworkV3Output_late_Response;
-	v3_get_projects_api_v3_tasks_id_reminders_json: TeamworkV3Output_reminder_TaskRemindersResponse;
-	v3_delete_projects_api_v3_tasks_taskid_json: undefined;
-	v3_get_projects_api_v3_tasks_taskid_json: TeamworkV3Output_task_responseV205;
-	v3_patch_projects_api_v3_tasks_taskid_json: TeamworkV3Output_task_responseV205;
-	v3_put_projects_api_v3_tasks_taskid_json: TeamworkV3Output_task_responseV205;
-	v3_get_projects_api_v3_tasks_taskid_project_json: TeamworkV3Output_project_responseV205;
-	v3_post_projects_api_v3_tasks_taskid_reminders_json: TeamworkV3Output_reminder_TaskRemindersResponse;
-	v3_delete_projects_api_v3_tasks_taskid_reminders_reminderid_json: undefined;
-	v3_patch_projects_api_v3_tasks_taskid_reminders_reminderid_json: TeamworkV3Output_reminder_TaskReminderResponse;
-	v3_get_projects_api_v3_tasks_taskid_subtasks_json: TeamworkV3Output_task_tasksResponseV205;
-	v3_post_projects_api_v3_tasks_taskid_subtasks_json: TeamworkV3Output_task_responseV205;
-	v3_get_projects_api_v3_tasks_taskid_time_json: TeamworkV3Output_timelog_TimelogsResponse;
-	v3_post_projects_api_v3_tasks_taskid_time_json: TeamworkV3Output_timelog_Response;
-	v3_get_projects_api_v3_tasks_taskid_time_total_json: TeamworkV3Output_timelog_TotalsResponse;
-	v3_get_projects_api_v3_time_json: TeamworkV3Output_timelog_TimelogsResponse;
-	v3_get_projects_api_v3_time_report_json: TeamworkV3Output_timelog_TimelogsResponse;
-	v3_get_projects_api_v3_time_report_totals_json: TeamworkV3Output_view_TimeReportTotals;
-	v3_get_projects_api_v3_time_report_type_json: TeamworkV3Output_timelog_ReportResponse;
-	v3_get_projects_api_v3_time_total_json: TeamworkV3Output_timelog_TotalsResponse;
-	v3_get_projects_api_v3_time_validate_json: TeamworkV3Output_timelog_ValidationResponse;
-	v3_delete_projects_api_v3_time_timelogid_json: undefined;
-	v3_get_projects_api_v3_time_timelogid_json: TeamworkV3Output_timelog_Response;
-	v3_patch_projects_api_v3_time_timelogid_json: TeamworkV3Output_timelog_Response;
-	v3_put_projects_api_v3_time_timelogid_json: TeamworkV3Output_timelog_Response;
-	v3_get_projects_api_v3_timers_json: TeamworkV3Output_timer_TimersResponse;
-	v3_get_projects_api_v3_timers_timerid_json: TeamworkV3Output_timer_Response;
+	'projects.list': TeamworkV3Output_project_projectsResponseV205;
+	'projects.listStarred': TeamworkV3Output_project_projectsResponseV205;
+	'projects.get': TeamworkV3Output_project_responseV205;
+	'projects.convertTentative': TeamworkV3Output_project_SampleProjectsResponse;
+	'projectMetrics.billable': TeamworkV3Output_billable_ProjectMetricBillablesResponse;
+	'projectMetrics.health': TeamworkV3Output_health_ProjectMetricHealthsResponse;
+	'projectMetrics.invoices': TeamworkV3Output_invoice_ProjectMetricInvoicesResponse;
+	'projectMetrics.unbilled': TeamworkV3Output_unbilled_ProjectMetricUnbilledResponse;
+	'projectTemplates.list': TeamworkV3Output_project_projectsResponseV205;
+	'projectTemplates.get': TeamworkV3Output_project_responseV205;
+	'projectTemplates.listRequiredCustomFields': TeamworkV3Output_customfield_CustomFieldsResponse;
+	'projectUpdates.list': TeamworkV3Output_update_ProjectUpdatesResponse;
+	'projectPeople.list': TeamworkV3Output_people_MultiResponse;
+	'projectPeople.get': TeamworkV3Output_people_Response;
+	'projectPeople.add': TeamworkV3Output_people_AddPeopleToProjectResponse;
+	'tasks.list': TeamworkV3Output_task_tasksResponseV205;
+	'tasks.get': TeamworkV3Output_task_responseV205;
+	'tasks.create': TeamworkV3Output_task_responseV205;
+	'tasks.createSubtask': TeamworkV3Output_task_responseV205;
+	'tasks.update': TeamworkV3Output_task_responseV205;
+	'tasks.delete': undefined;
+	'tasks.countCompleted': TeamworkV3Output_complete_Response;
+	'tasks.countLate': TeamworkV3Output_late_Response;
+	'tasks.timeReport': TeamworkV3Output_task_tasksResponseV205;
+	'personalTasks.list': TeamworkV3Output_task_tasksResponseV205;
+	'personalTasks.get': TeamworkV3Output_task_responseV205;
+	'personalTasks.create': TeamworkV3Output_task_responseV205;
+	'taskReminders.list': TeamworkV3Output_reminder_TaskRemindersResponse;
+	'taskReminders.create': TeamworkV3Output_reminder_TaskRemindersResponse;
+	'taskReminders.update': TeamworkV3Output_reminder_TaskReminderResponse;
+	'taskReminders.delete': undefined;
+	'tasklists.list': TeamworkV3Output_tasklist_TasklistsResponse;
+	'tasklists.get': TeamworkV3Output_tasklist_Response;
+	'tasklists.delete': undefined;
+	'tasklists.listTemplates': TeamworkV3Output_tasklist_TasklistsResponse;
+	'milestones.list': TeamworkV3Output_milestone_MilestonesResponse;
+	'milestones.get': TeamworkV3Output_milestone_Response;
+	'milestones.listByDeadline': TeamworkV3Output_deadline_MilestoneMetricDeadlinesResponse;
+	'people.list': TeamworkV3Output_people_MultiResponse;
+	'people.get': TeamworkV3Output_people_Response;
+	'people.me': TeamworkV3Output_me_Response2;
+	'people.delete': undefined;
+	'people.addToProjects': TeamworkV3Output_people_AddPeopleToProjectResponse;
+	'people.performance': TeamworkV3Output_performance_PeopleMetricPerformancesResponse;
+	'people.utilization': TeamworkV3Output_utilization_Response;
+	'people.taskCompletion': TeamworkV3Output_people_TaskCompletionResponse;
+	'statuses.list': TeamworkV3Output_status_StatusesResponse;
+	'statuses.timeline': TeamworkV3Output_status_TimelineResponse;
+	'companies.list': TeamworkV3Output_company_CompaniesResponse;
+	'companies.get': TeamworkV3Output_company_Response;
+	'companies.create': TeamworkV3Output_company_Response;
+	'companies.update': TeamworkV3Output_company_Response;
+	'companies.delete': undefined;
+	'companies.setRates': TeamworkV3Output_company_ClientRatesResponse;
+	'companies.convertCurrency': undefined;
+	'companies.addDomains': TeamworkV3Output_domain_BulkResponse;
+	'companies.updateDomain': TeamworkV3Output_domain_Response;
+	'companies.deleteDomain': undefined;
+	'comments.list': TeamworkV3Output_comment_CommentsResponse;
+	'comments.get': TeamworkV3Output_comment_Response;
+	'comments.listNotified': TeamworkV3Output_comment_NotifiedResponse;
+	'notebooks.list': TeamworkV3Output_notebook_NotebooksResponse;
+	'notebooks.get': TeamworkV3Output_notebook_Response;
+	'notebooks.create': TeamworkV3Output_notebook_Response;
+	'notebooks.update': TeamworkV3Output_notebook_Response;
+	'notebooks.delete': undefined;
+	'notebooks.listVersions': TeamworkV3Output_notebook_VersionsResponse;
+	'notebooks.getVersion': TeamworkV3Output_notebook_VersionResponse;
+	'notebooks.compareVersions': TeamworkV3Output_notebook_VersionResponse;
+	'notebooks.deleteVersions': undefined;
+	'time.list': TeamworkV3Output_timelog_TimelogsResponse;
+	'time.get': TeamworkV3Output_timelog_Response;
+	'time.create': TeamworkV3Output_timelog_Response;
+	'time.createForTask': TeamworkV3Output_timelog_Response;
+	'time.update': TeamworkV3Output_timelog_Response;
+	'time.delete': undefined;
+	'time.totals': TeamworkV3Output_timelog_TotalsResponse;
+	'time.byCompany': TeamworkV3Output_timelog_CompanyTimelogsResponse;
+	'time.report': TeamworkV3Output_timelog_TimelogsResponse;
+	'time.reportTotals': TeamworkV3Output_view_TimeReportTotals;
+	'time.reportByType': TeamworkV3Output_timelog_ReportResponse;
+	'time.validate': TeamworkV3Output_timelog_ValidationResponse;
+	'timers.list': TeamworkV3Output_timer_TimersResponse;
+	'timers.listMine': TeamworkV3Output_timer_TimersResponse;
+	'timers.get': TeamworkV3Output_timer_Response;
+	'timers.create': TeamworkV3Output_timer_Response;
+	'timers.update': TeamworkV3Output_timer_Response;
+	'timers.pause': TeamworkV3Output_timer_Response;
+	'timers.resume': TeamworkV3Output_timer_Response;
+	'timers.complete': TeamworkV3Output_timer_Response;
+	'timers.delete': undefined;
+	'timers.undelete': undefined;
 };

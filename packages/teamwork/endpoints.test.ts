@@ -201,7 +201,7 @@ describe('documented operation routes', () => {
 
 	it('uses tenant-scoped site metadata unless the global siteName override is set', async () => {
 		const operation = teamworkOperations.find(
-			(item) => item.id === 'v3_get_projects_api_v3_projects_json',
+			(item) => item.id === 'projects.list',
 		);
 		if (!operation) throw new Error('Projects list operation is missing');
 		const endpoint = teamworkOperationsById[operation.id];
@@ -226,7 +226,7 @@ describe('documented operation routes', () => {
 	});
 
 	it('sends the validated input even if the caller changes its object while the site loads', async () => {
-		const endpoint = teamworkOperationsById['v1_delete_projects_id_json'];
+		const endpoint = teamworkOperationsById['projects.delete'];
 		if (!endpoint) throw new Error('Project delete endpoint is missing');
 		const input = { path: { id: '1' }, query: {} };
 		const ctx = buildContext();
@@ -243,15 +243,15 @@ describe('documented operation routes', () => {
 
 	it('uses documented CSV encoding for array query parameters', async () => {
 		const operation = teamworkOperations.find(
-			(item) => item.id === 'v2_get_projects_api_v2_tasklists_id_taskids_json',
+			(item) => item.id === 'tasks.list',
 		);
-		if (!operation) throw new Error('Task IDs operation is missing');
+		if (!operation) throw new Error('Task list operation is missing');
 		const endpoint = teamworkOperationsById[operation.id];
-		if (!endpoint) throw new Error('Task IDs endpoint is missing');
+		if (!endpoint) throw new Error('Task list endpoint is missing');
 		const input = {
-			path: { id: 123 },
+			path: {},
 			query: {
-				filterText: ['alpha', 'beta'],
+				projectIds: [7, 8],
 				responsiblePartyIds: [2, 3],
 			},
 		};
@@ -266,7 +266,7 @@ describe('documented operation routes', () => {
 		expect(mockedRequest).toHaveBeenLastCalledWith(
 			expect.objectContaining({
 				query: {
-					filterText: 'alpha,beta',
+					projectIds: '7,8',
 					responsiblePartyIds: '2,3',
 				},
 			}),
@@ -297,27 +297,27 @@ describe('documented operation routes', () => {
 			operationIds,
 		);
 		expect(Object.keys(plugin.endpointMeta ?? {}).sort()).toEqual(operationIds);
-		expect(plugin.endpointMeta?.['v1_delete_projects_id_json']?.riskLevel).toBe(
+		expect(plugin.endpointMeta?.['projects.delete']?.riskLevel).toBe(
 			'destructive',
 		);
-		expect(
-			plugin.endpointMeta?.['v1_put_projects_projectid_update_request_json']
-				?.riskLevel,
-		).toBe('destructive');
+		expect(plugin.endpointMeta?.['projectUpdates.request']?.riskLevel).toBe(
+			'destructive',
+		);
 	});
 
 	it('marks operations that email or notify people, or replace a member list, destructive', () => {
 		const plugin = teamwork({ siteName: 'teamwork-test' });
 		for (const id of [
 			// Sends an account invitation unless sendInvite is false.
-			'v1_post_people_json',
+			'people.create',
 			// Notifies the people in notifyIds.
-			'v1_post_projects_projectid_update_json',
+			'projectUpdates.create',
 			// Reminders email, text or notify a person at the set time.
-			'v1_post_tasks_id_reminders_json',
-			'v3_post_projects_api_v3_tasks_taskid_reminders_json',
+			'taskReminders.create',
+			// Asks the project owner for an update by email.
+			'projectUpdates.request',
 			// action defaults to "replace", which drops every other member.
-			'v1_put_teams_id_people_json',
+			'teams.setMembers',
 		] as const) {
 			expect(plugin.endpointMeta?.[id]?.riskLevel).toBe('destructive');
 		}

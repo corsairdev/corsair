@@ -3,7 +3,10 @@ import { logEventFromContext } from 'corsair/core';
 import { z } from 'zod';
 import { makeTeamworkRequest } from '../client';
 import type { TeamworkContext } from '../index';
-import { teamworkInputSchemas, teamworkOutputSchemas } from './openapi-schema';
+import {
+	getTeamworkInputSchema,
+	getTeamworkOutputSchema,
+} from './openapi-schema';
 import type {
 	TeamworkEndpointInputs,
 	TeamworkEndpointOutputs,
@@ -72,12 +75,9 @@ export function createTeamworkOperationEndpoint<Id extends TeamworkOperationId>(
 ): TeamworkOperationEndpoint<Id> {
 	const operation = findOperation(id);
 	return async (ctx, input) => {
-		const inputSchema = teamworkInputSchemas[id];
+		const inputSchema = getTeamworkInputSchema(id);
 		// Every response field is optional, so sparse `fields[...]` selections parse too.
-		const outputSchema = teamworkOutputSchemas[id];
-		if (!inputSchema || !outputSchema) {
-			throw new Error('Teamwork operation schema is unavailable');
-		}
+		const outputSchema = getTeamworkOutputSchema(id);
 		const parsedInput = inputSchema.safeParse(input);
 		if (!parsedInput.success) {
 			throw new Error('Invalid Teamwork endpoint input');
@@ -127,1173 +127,319 @@ export function createTeamworkOperationEndpoint<Id extends TeamworkOperationId>(
 }
 
 export const teamworkOperationsNested = {
-	v1_get_projects_json: createTeamworkOperationEndpoint('v1_get_projects_json'),
-	v1_post_projects_json: createTeamworkOperationEndpoint(
-		'v1_post_projects_json',
-	),
-	v1_get_projects_id_json: createTeamworkOperationEndpoint(
-		'v1_get_projects_id_json',
-	),
-	v1_put_projects_id_json: createTeamworkOperationEndpoint(
-		'v1_put_projects_id_json',
-	),
-	v1_delete_projects_id_json: createTeamworkOperationEndpoint(
-		'v1_delete_projects_id_json',
-	),
-	v1_post_projects_id_clone_json: createTeamworkOperationEndpoint(
-		'v1_post_projects_id_clone_json',
-	),
-	v1_get_companies_id_projects_json: createTeamworkOperationEndpoint(
-		'v1_get_companies_id_projects_json',
-	),
-	v1_get_projects_starred_json: createTeamworkOperationEndpoint(
-		'v1_get_projects_starred_json',
-	),
-	v1_get_projects_id_rates_json: createTeamworkOperationEndpoint(
-		'v1_get_projects_id_rates_json',
-	),
-	v1_post_projects_id_rates_json: createTeamworkOperationEndpoint(
-		'v1_post_projects_id_rates_json',
-	),
-	v1_get_projects_id_stats_json: createTeamworkOperationEndpoint(
-		'v1_get_projects_id_stats_json',
-	),
-	v1_put_projects_id_star_json: createTeamworkOperationEndpoint(
-		'v1_put_projects_id_star_json',
-	),
-	v1_get_projectcategories_json: createTeamworkOperationEndpoint(
-		'v1_get_projectcategories_json',
-	),
-	v1_post_projectcategories_json: createTeamworkOperationEndpoint(
-		'v1_post_projectcategories_json',
-	),
-	v1_get_projectcategories_id_json: createTeamworkOperationEndpoint(
-		'v1_get_projectcategories_id_json',
-	),
-	v1_put_projectcategories_id_json: createTeamworkOperationEndpoint(
-		'v1_put_projectcategories_id_json',
-	),
-	v1_delete_projectcategories_id_json: createTeamworkOperationEndpoint(
-		'v1_delete_projectcategories_id_json',
-	),
-	v1_get_projectcategories_categoryid_tasks_json:
-		createTeamworkOperationEndpoint(
-			'v1_get_projectcategories_categoryid_tasks_json',
-		),
-	v1_put_projects_projectid_json: createTeamworkOperationEndpoint(
-		'v1_put_projects_projectid_json',
-	),
-	v1_get_milestones_json: createTeamworkOperationEndpoint(
-		'v1_get_milestones_json',
-	),
-	v1_get_projects_id_milestones_json: createTeamworkOperationEndpoint(
-		'v1_get_projects_id_milestones_json',
-	),
-	v1_post_projects_id_milestones_json: createTeamworkOperationEndpoint(
-		'v1_post_projects_id_milestones_json',
-	),
-	v1_get_milestones_id_json: createTeamworkOperationEndpoint(
-		'v1_get_milestones_id_json',
-	),
-	v1_put_milestones_id_json: createTeamworkOperationEndpoint(
-		'v1_put_milestones_id_json',
-	),
-	v1_delete_milestones_id_json: createTeamworkOperationEndpoint(
-		'v1_delete_milestones_id_json',
-	),
-	v1_put_milestones_id_complete_json: createTeamworkOperationEndpoint(
-		'v1_put_milestones_id_complete_json',
-	),
-	v1_put_milestones_id_uncomplete_json: createTeamworkOperationEndpoint(
-		'v1_put_milestones_id_uncomplete_json',
-	),
-	v1_get_tasklists_json: createTeamworkOperationEndpoint(
-		'v1_get_tasklists_json',
-	),
-	v1_get_projects_id_tasklists_json: createTeamworkOperationEndpoint(
-		'v1_get_projects_id_tasklists_json',
-	),
-	v1_post_projects_id_tasklists_json: createTeamworkOperationEndpoint(
-		'v1_post_projects_id_tasklists_json',
-	),
-	v1_get_tasklists_id_json: createTeamworkOperationEndpoint(
-		'v1_get_tasklists_id_json',
-	),
-	v1_put_tasklists_id_json: createTeamworkOperationEndpoint(
-		'v1_put_tasklists_id_json',
-	),
-	v1_delete_tasklists_id_json: createTeamworkOperationEndpoint(
-		'v1_delete_tasklists_id_json',
-	),
-	v1_get_tasklists_templates_json: createTeamworkOperationEndpoint(
-		'v1_get_tasklists_templates_json',
-	),
-	v1_put_projects_id_tasklists_reorder_json: createTeamworkOperationEndpoint(
-		'v1_put_projects_id_tasklists_reorder_json',
-	),
-	v1_put_tasklist_id_copy_json: createTeamworkOperationEndpoint(
-		'v1_put_tasklist_id_copy_json',
-	),
-	v1_put_tasklist_id_move_json: createTeamworkOperationEndpoint(
-		'v1_put_tasklist_id_move_json',
-	),
-	v1_get_tasks_json: createTeamworkOperationEndpoint('v1_get_tasks_json'),
-	v1_get_projects_id_tasks_json: createTeamworkOperationEndpoint(
-		'v1_get_projects_id_tasks_json',
-	),
-	v1_post_projects_id_tasks_json: createTeamworkOperationEndpoint(
-		'v1_post_projects_id_tasks_json',
-	),
-	v1_get_tasklists_id_tasks_json: createTeamworkOperationEndpoint(
-		'v1_get_tasklists_id_tasks_json',
-	),
-	v1_post_tasklists_id_tasks_json: createTeamworkOperationEndpoint(
-		'v1_post_tasklists_id_tasks_json',
-	),
-	v1_get_tasks_id_json: createTeamworkOperationEndpoint('v1_get_tasks_id_json'),
-	v1_post_tasks_id_json: createTeamworkOperationEndpoint(
-		'v1_post_tasks_id_json',
-	),
-	v1_get_tasks_id_dependencies_json: createTeamworkOperationEndpoint(
-		'v1_get_tasks_id_dependencies_json',
-	),
-	v1_get_completedtasks_json: createTeamworkOperationEndpoint(
-		'v1_get_completedtasks_json',
-	),
-	v1_get_tasks_id_predecessors_json: createTeamworkOperationEndpoint(
-		'v1_get_tasks_id_predecessors_json',
-	),
-	v1_get_tasks_parenttaskid_subtasks_json: createTeamworkOperationEndpoint(
-		'v1_get_tasks_parenttaskid_subtasks_json',
-	),
-	v1_get_tasks_taskid_recurring_json: createTeamworkOperationEndpoint(
-		'v1_get_tasks_taskid_recurring_json',
-	),
-	v1_post_tasks_id_quickadd_json: createTeamworkOperationEndpoint(
-		'v1_post_tasks_id_quickadd_json',
-	),
-	v1_post_projects_projectid_tasks_quickadd_json:
-		createTeamworkOperationEndpoint(
-			'v1_post_projects_projectid_tasks_quickadd_json',
-		),
-	v1_put_tasks_id_complete_json: createTeamworkOperationEndpoint(
-		'v1_put_tasks_id_complete_json',
-	),
-	v1_put_tasks_id_uncomplete_json: createTeamworkOperationEndpoint(
-		'v1_put_tasks_id_uncomplete_json',
-	),
-	v1_put_tasklists_id_tasks_reorder_json: createTeamworkOperationEndpoint(
-		'v1_put_tasklists_id_tasks_reorder_json',
-	),
-	v1_put_tasks_taskid_move_json: createTeamworkOperationEndpoint(
-		'v1_put_tasks_taskid_move_json',
-	),
-	v1_put_tasks_taskid_copy_json: createTeamworkOperationEndpoint(
-		'v1_put_tasks_taskid_copy_json',
-	),
-	v1_get_tasks_id_reminders_json: createTeamworkOperationEndpoint(
-		'v1_get_tasks_id_reminders_json',
-	),
-	v1_post_tasks_id_reminders_json: createTeamworkOperationEndpoint(
-		'v1_post_tasks_id_reminders_json',
-	),
-	v1_put_taskreminders_id_json: createTeamworkOperationEndpoint(
-		'v1_put_taskreminders_id_json',
-	),
-	v1_delete_taskreminders_id_json: createTeamworkOperationEndpoint(
-		'v1_delete_taskreminders_id_json',
-	),
-	v1_get_companies_json: createTeamworkOperationEndpoint(
-		'v1_get_companies_json',
-	),
-	v1_post_companies_json: createTeamworkOperationEndpoint(
-		'v1_post_companies_json',
-	),
-	v1_get_projects_id_companies_json: createTeamworkOperationEndpoint(
-		'v1_get_projects_id_companies_json',
-	),
-	v1_get_companies_id_json: createTeamworkOperationEndpoint(
-		'v1_get_companies_id_json',
-	),
-	v1_put_companies_id_json: createTeamworkOperationEndpoint(
-		'v1_put_companies_id_json',
-	),
-	v1_delete_companies_id_json: createTeamworkOperationEndpoint(
-		'v1_delete_companies_id_json',
-	),
-	v1_get_people_json: createTeamworkOperationEndpoint('v1_get_people_json'),
-	v1_post_people_json: createTeamworkOperationEndpoint('v1_post_people_json'),
-	v1_get_calendarevents_eventid_availablepeople_json:
-		createTeamworkOperationEndpoint(
-			'v1_get_calendarevents_eventid_availablepeople_json',
-		),
-	v1_get_projects_projectid_messages_availablepeople_json:
-		createTeamworkOperationEndpoint(
-			'v1_get_projects_projectid_messages_availablepeople_json',
-		),
-	v1_get_projects_projectid_milestones_availablepeople_json:
-		createTeamworkOperationEndpoint(
-			'v1_get_projects_projectid_milestones_availablepeople_json',
-		),
-	v1_get_projects_projectid_notebooks_availablepeople_json:
-		createTeamworkOperationEndpoint(
-			'v1_get_projects_projectid_notebooks_availablepeople_json',
-		),
-	v1_get_projects_projectid_tasks_availablepeople_json:
-		createTeamworkOperationEndpoint(
-			'v1_get_projects_projectid_tasks_availablepeople_json',
-		),
-	v1_get_projects_projectid_files_availablepeople_json:
-		createTeamworkOperationEndpoint(
-			'v1_get_projects_projectid_files_availablepeople_json',
-		),
-	v1_get_projects_projectid_links_availablepeople_json:
-		createTeamworkOperationEndpoint(
-			'v1_get_projects_projectid_links_availablepeople_json',
-		),
-	v1_get_projects_projectid_people_json: createTeamworkOperationEndpoint(
-		'v1_get_projects_projectid_people_json',
-	),
-	v1_get_companies_id_people_json: createTeamworkOperationEndpoint(
-		'v1_get_companies_id_people_json',
-	),
-	v1_get_me_json: createTeamworkOperationEndpoint('v1_get_me_json'),
-	v1_get_stats_json: createTeamworkOperationEndpoint('v1_get_stats_json'),
-	v1_get_people_id_json: createTeamworkOperationEndpoint(
-		'v1_get_people_id_json',
-	),
-	v1_put_people_id_json: createTeamworkOperationEndpoint(
-		'v1_put_people_id_json',
-	),
-	v1_delete_people_id_json: createTeamworkOperationEndpoint(
-		'v1_delete_people_id_json',
-	),
-	v1_get_people_apikeys_json: createTeamworkOperationEndpoint(
-		'v1_get_people_apikeys_json',
-	),
-	v1_get_people_deleted_json: createTeamworkOperationEndpoint(
-		'v1_get_people_deleted_json',
-	),
-	v1_get_statuses_json: createTeamworkOperationEndpoint('v1_get_statuses_json'),
-	v1_get_people_id_status_json: createTeamworkOperationEndpoint(
-		'v1_get_people_id_status_json',
-	),
-	v1_post_people_id_status_json: createTeamworkOperationEndpoint(
-		'v1_post_people_id_status_json',
-	),
-	v1_get_me_status_json: createTeamworkOperationEndpoint(
-		'v1_get_me_status_json',
-	),
-	v1_put_me_status_id_json: createTeamworkOperationEndpoint(
-		'v1_put_me_status_id_json',
-	),
-	v1_put_people_personid_status_statusid_json: createTeamworkOperationEndpoint(
-		'v1_put_people_personid_status_statusid_json',
-	),
-	v1_delete_people_personid_status_statusid_json:
-		createTeamworkOperationEndpoint(
-			'v1_delete_people_personid_status_statusid_json',
-		),
-	v1_put_people_status_id_json: createTeamworkOperationEndpoint(
-		'v1_put_people_status_id_json',
-	),
-	v1_delete_people_status_id_json: createTeamworkOperationEndpoint(
-		'v1_delete_people_status_id_json',
-	),
-	v1_delete_me_status_id_json: createTeamworkOperationEndpoint(
-		'v1_delete_me_status_id_json',
-	),
-	v1_get_tasks_id_files_json: createTeamworkOperationEndpoint(
-		'v1_get_tasks_id_files_json',
-	),
-	v1_post_tasks_id_files_json: createTeamworkOperationEndpoint(
-		'v1_post_tasks_id_files_json',
-	),
-	v1_get_projects_id_files_json: createTeamworkOperationEndpoint(
-		'v1_get_projects_id_files_json',
-	),
-	v1_post_projects_id_files_json: createTeamworkOperationEndpoint(
-		'v1_post_projects_id_files_json',
-	),
-	v1_post_files_id_json: createTeamworkOperationEndpoint(
-		'v1_post_files_id_json',
-	),
-	v1_delete_files_id_json: createTeamworkOperationEndpoint(
-		'v1_delete_files_id_json',
-	),
-	v1_get_files_id_sharedlink_json: createTeamworkOperationEndpoint(
-		'v1_get_files_id_sharedlink_json',
-	),
-	v1_put_files_id_copy_json: createTeamworkOperationEndpoint(
-		'v1_put_files_id_copy_json',
-	),
-	v1_get_projects_id_filecategories_json: createTeamworkOperationEndpoint(
-		'v1_get_projects_id_filecategories_json',
-	),
-	v1_post_projects_id_filecategories_json: createTeamworkOperationEndpoint(
-		'v1_post_projects_id_filecategories_json',
-	),
-	v1_get_filecategories_id_json: createTeamworkOperationEndpoint(
-		'v1_get_filecategories_id_json',
-	),
-	v1_put_filecategories_id_json: createTeamworkOperationEndpoint(
-		'v1_put_filecategories_id_json',
-	),
-	v1_delete_filecategories_id_json: createTeamworkOperationEndpoint(
-		'v1_delete_filecategories_id_json',
-	),
-	v1_get_notebooks_json: createTeamworkOperationEndpoint(
-		'v1_get_notebooks_json',
-	),
-	v1_get_projects_id_notebooks_json: createTeamworkOperationEndpoint(
-		'v1_get_projects_id_notebooks_json',
-	),
-	v1_post_projects_id_notebooks_json: createTeamworkOperationEndpoint(
-		'v1_post_projects_id_notebooks_json',
-	),
-	v1_get_notebookcategories_id_notebooks_json: createTeamworkOperationEndpoint(
-		'v1_get_notebookcategories_id_notebooks_json',
-	),
-	v1_get_notebooks_id_json: createTeamworkOperationEndpoint(
-		'v1_get_notebooks_id_json',
-	),
-	v1_put_notebooks_id_json: createTeamworkOperationEndpoint(
-		'v1_put_notebooks_id_json',
-	),
-	v1_delete_notebooks_id_json: createTeamworkOperationEndpoint(
-		'v1_delete_notebooks_id_json',
-	),
-	v1_put_notebooks_id_lock_json: createTeamworkOperationEndpoint(
-		'v1_put_notebooks_id_lock_json',
-	),
-	v1_put_notebooks_id_unlock_json: createTeamworkOperationEndpoint(
-		'v1_put_notebooks_id_unlock_json',
-	),
-	v1_put_notebooks_id_copy_json: createTeamworkOperationEndpoint(
-		'v1_put_notebooks_id_copy_json',
-	),
-	v1_put_notebooks_id_move_json: createTeamworkOperationEndpoint(
-		'v1_put_notebooks_id_move_json',
-	),
-	v1_get_projects_id_notebookcategories_json: createTeamworkOperationEndpoint(
-		'v1_get_projects_id_notebookcategories_json',
-	),
-	v1_post_projects_id_notebookcategories_json: createTeamworkOperationEndpoint(
-		'v1_post_projects_id_notebookcategories_json',
-	),
-	v1_get_notebookcategories_id_json: createTeamworkOperationEndpoint(
-		'v1_get_notebookcategories_id_json',
-	),
-	v1_put_notebookcategories_id_json: createTeamworkOperationEndpoint(
-		'v1_put_notebookcategories_id_json',
-	),
-	v1_delete_notebookcategories_id_json: createTeamworkOperationEndpoint(
-		'v1_delete_notebookcategories_id_json',
-	),
-	v1_get_projects_id_links_json: createTeamworkOperationEndpoint(
-		'v1_get_projects_id_links_json',
-	),
-	v1_post_projects_id_links_json: createTeamworkOperationEndpoint(
-		'v1_post_projects_id_links_json',
-	),
-	v1_get_links_json: createTeamworkOperationEndpoint('v1_get_links_json'),
-	v1_get_links_id_json: createTeamworkOperationEndpoint('v1_get_links_id_json'),
-	v1_put_links_id_json: createTeamworkOperationEndpoint('v1_put_links_id_json'),
-	v1_delete_links_id_json: createTeamworkOperationEndpoint(
-		'v1_delete_links_id_json',
-	),
-	v1_get_projects_id_linkcategories_json: createTeamworkOperationEndpoint(
-		'v1_get_projects_id_linkcategories_json',
-	),
-	v1_post_projects_id_linkcategories_json: createTeamworkOperationEndpoint(
-		'v1_post_projects_id_linkcategories_json',
-	),
-	v1_get_linkcategories_id_json: createTeamworkOperationEndpoint(
-		'v1_get_linkcategories_id_json',
-	),
-	v1_delete_linkcategories_id_json: createTeamworkOperationEndpoint(
-		'v1_delete_linkcategories_id_json',
-	),
-	v1_get_time_entries_json: createTeamworkOperationEndpoint(
-		'v1_get_time_entries_json',
-	),
-	v1_get_projects_id_time_entries_json: createTeamworkOperationEndpoint(
-		'v1_get_projects_id_time_entries_json',
-	),
-	v1_post_projects_id_time_entries_json: createTeamworkOperationEndpoint(
-		'v1_post_projects_id_time_entries_json',
-	),
-	v1_get_tasks_id_time_entries_json: createTeamworkOperationEndpoint(
-		'v1_get_tasks_id_time_entries_json',
-	),
-	v1_post_tasks_id_time_entries_json: createTeamworkOperationEndpoint(
-		'v1_post_tasks_id_time_entries_json',
-	),
-	v1_get_time_entries_id_json: createTeamworkOperationEndpoint(
-		'v1_get_time_entries_id_json',
-	),
-	v1_put_time_entries_id_json: createTeamworkOperationEndpoint(
-		'v1_put_time_entries_id_json',
-	),
-	v1_delete_time_entries_id_json: createTeamworkOperationEndpoint(
-		'v1_delete_time_entries_id_json',
-	),
-	v1_get_projects_id_time_total_json: createTeamworkOperationEndpoint(
-		'v1_get_projects_id_time_total_json',
-	),
-	v1_get_time_total_json: createTeamworkOperationEndpoint(
-		'v1_get_time_total_json',
-	),
-	v1_get_projects_time_total_json: createTeamworkOperationEndpoint(
-		'v1_get_projects_time_total_json',
-	),
-	v1_get_projects_estimatedtime_total_json: createTeamworkOperationEndpoint(
-		'v1_get_projects_estimatedtime_total_json',
-	),
-	v1_get_tasklists_id_time_total_json: createTeamworkOperationEndpoint(
-		'v1_get_tasklists_id_time_total_json',
-	),
-	v1_get_tasks_id_time_total_json: createTeamworkOperationEndpoint(
-		'v1_get_tasks_id_time_total_json',
-	),
-	v1_get_people_id_loggedtime_json: createTeamworkOperationEndpoint(
-		'v1_get_people_id_loggedtime_json',
-	),
-	v1_get_timers_json: createTeamworkOperationEndpoint('v1_get_timers_json'),
-	v1_get_me_timers_json: createTeamworkOperationEndpoint(
-		'v1_get_me_timers_json',
-	),
-	v1_get_people_id_timers_json: createTeamworkOperationEndpoint(
-		'v1_get_people_id_timers_json',
-	),
-	v1_put_tasks_id_estimatedtime_json: createTeamworkOperationEndpoint(
-		'v1_put_tasks_id_estimatedtime_json',
-	),
-	v1_delete_comments_id_json: createTeamworkOperationEndpoint(
-		'v1_delete_comments_id_json',
-	),
-	v1_put_comments_id_json: createTeamworkOperationEndpoint(
-		'v1_put_comments_id_json',
-	),
-	v1_get_resource_resourceid_comments_json: createTeamworkOperationEndpoint(
-		'v1_get_resource_resourceid_comments_json',
-	),
-	v1_post_resource_resourceid_comments_json: createTeamworkOperationEndpoint(
-		'v1_post_resource_resourceid_comments_json',
-	),
-	v1_get_comments_json: createTeamworkOperationEndpoint('v1_get_comments_json'),
-	v1_put_comments_id_markread_json: createTeamworkOperationEndpoint(
-		'v1_put_comments_id_markread_json',
-	),
-	v1_get_projects_id_boards_columns_json: createTeamworkOperationEndpoint(
-		'v1_get_projects_id_boards_columns_json',
-	),
-	v1_post_projects_id_boards_columns_json: createTeamworkOperationEndpoint(
-		'v1_post_projects_id_boards_columns_json',
-	),
-	v1_get_boards_columns_id_cards_json: createTeamworkOperationEndpoint(
-		'v1_get_boards_columns_id_cards_json',
-	),
-	v1_put_boards_columns_cards_id_move_json: createTeamworkOperationEndpoint(
-		'v1_put_boards_columns_cards_id_move_json',
-	),
-	v1_put_boards_columns_cards_id_json: createTeamworkOperationEndpoint(
-		'v1_put_boards_columns_cards_id_json',
-	),
-	v1_delete_boards_columns_cards_id_json: createTeamworkOperationEndpoint(
-		'v1_delete_boards_columns_cards_id_json',
-	),
-	v1_get_boards_columns_cards_id_json: createTeamworkOperationEndpoint(
-		'v1_get_boards_columns_cards_id_json',
-	),
-	v1_delete_boards_columns_id_json: createTeamworkOperationEndpoint(
-		'v1_delete_boards_columns_id_json',
-	),
-	v1_put_boards_columns_id_json: createTeamworkOperationEndpoint(
-		'v1_put_boards_columns_id_json',
-	),
-	v1_get_boards_columns_id_json: createTeamworkOperationEndpoint(
-		'v1_get_boards_columns_id_json',
-	),
-	v1_get_portfolio_boards_json: createTeamworkOperationEndpoint(
-		'v1_get_portfolio_boards_json',
-	),
-	v1_post_portfolio_boards_json: createTeamworkOperationEndpoint(
-		'v1_post_portfolio_boards_json',
-	),
-	v1_put_portfolio_boards_boardid_json: createTeamworkOperationEndpoint(
-		'v1_put_portfolio_boards_boardid_json',
-	),
-	v1_delete_portfolio_boards_boardid_json: createTeamworkOperationEndpoint(
-		'v1_delete_portfolio_boards_boardid_json',
-	),
-	v1_get_portfolio_boards_boardid_columns_json: createTeamworkOperationEndpoint(
-		'v1_get_portfolio_boards_boardid_columns_json',
-	),
-	v1_post_portfolio_boards_boardid_columns_json:
-		createTeamworkOperationEndpoint(
-			'v1_post_portfolio_boards_boardid_columns_json',
-		),
-	v1_get_portfolio_columns_columnid_cards_json: createTeamworkOperationEndpoint(
-		'v1_get_portfolio_columns_columnid_cards_json',
-	),
-	v1_post_portfolio_columns_columnid_cards_json:
-		createTeamworkOperationEndpoint(
-			'v1_post_portfolio_columns_columnid_cards_json',
-		),
-	v1_get_portfolio_cards_cardid_json: createTeamworkOperationEndpoint(
-		'v1_get_portfolio_cards_cardid_json',
-	),
-	v1_delete_portfolio_cards_cardid_json: createTeamworkOperationEndpoint(
-		'v1_delete_portfolio_cards_cardid_json',
-	),
-	v1_put_portfolio_cards_cardid_move_json: createTeamworkOperationEndpoint(
-		'v1_put_portfolio_cards_cardid_move_json',
-	),
-	v1_delete_portfolio_columns_columnid_json: createTeamworkOperationEndpoint(
-		'v1_delete_portfolio_columns_columnid_json',
-	),
-	v1_get_portfolio_columns_columnid_json: createTeamworkOperationEndpoint(
-		'v1_get_portfolio_columns_columnid_json',
-	),
-	v1_get_projects_projectid_updates_json: createTeamworkOperationEndpoint(
-		'v1_get_projects_projectid_updates_json',
-	),
-	v1_get_projects_projectid_update_json: createTeamworkOperationEndpoint(
-		'v1_get_projects_projectid_update_json',
-	),
-	v1_post_projects_projectid_update_json: createTeamworkOperationEndpoint(
-		'v1_post_projects_projectid_update_json',
-	),
-	v1_put_projects_updates_updateid_json: createTeamworkOperationEndpoint(
-		'v1_put_projects_updates_updateid_json',
-	),
-	v1_delete_projects_updates_updateid_json: createTeamworkOperationEndpoint(
-		'v1_delete_projects_updates_updateid_json',
-	),
-	v1_put_projects_projectid_update_request_json:
-		createTeamworkOperationEndpoint(
-			'v1_put_projects_projectid_update_request_json',
-		),
-	v1_post_projects_projectid_people_personid_json:
-		createTeamworkOperationEndpoint(
-			'v1_post_projects_projectid_people_personid_json',
-		),
-	v1_put_projects_projectid_people_personid_json:
-		createTeamworkOperationEndpoint(
-			'v1_put_projects_projectid_people_personid_json',
-		),
-	v1_get_projects_projectid_people_personid_json:
-		createTeamworkOperationEndpoint(
-			'v1_get_projects_projectid_people_personid_json',
-		),
-	v1_get_projects_id_roles_json: createTeamworkOperationEndpoint(
-		'v1_get_projects_id_roles_json',
-	),
-	v1_get_roles_id_json: createTeamworkOperationEndpoint('v1_get_roles_id_json'),
-	v1_put_roles_id_json: createTeamworkOperationEndpoint('v1_put_roles_id_json'),
-	v1_delete_roles_id_json: createTeamworkOperationEndpoint(
-		'v1_delete_roles_id_json',
-	),
-	v1_get_comments_commentid_reactions_json: createTeamworkOperationEndpoint(
-		'v1_get_comments_commentid_reactions_json',
-	),
-	v1_get_projects_updates_updateid_reactions_json:
-		createTeamworkOperationEndpoint(
-			'v1_get_projects_updates_updateid_reactions_json',
-		),
-	v1_put_comments_commentid_react_json: createTeamworkOperationEndpoint(
-		'v1_put_comments_commentid_react_json',
-	),
-	v1_put_projects_updates_updateid_react_json: createTeamworkOperationEndpoint(
-		'v1_put_projects_updates_updateid_react_json',
-	),
-	v1_put_resource_id_unreact_json: createTeamworkOperationEndpoint(
-		'v1_put_resource_id_unreact_json',
-	),
-	v1_post_projects_template_json: createTeamworkOperationEndpoint(
-		'v1_post_projects_template_json',
-	),
-	v1_get_teams_json: createTeamworkOperationEndpoint('v1_get_teams_json'),
-	v1_post_teams_json: createTeamworkOperationEndpoint('v1_post_teams_json'),
-	v1_delete_teams_json: createTeamworkOperationEndpoint('v1_delete_teams_json'),
-	v1_get_teams_id_json: createTeamworkOperationEndpoint('v1_get_teams_id_json'),
-	v1_put_teams_id_json: createTeamworkOperationEndpoint('v1_put_teams_id_json'),
-	v1_delete_teams_id_json: createTeamworkOperationEndpoint(
-		'v1_delete_teams_id_json',
-	),
-	v1_put_teams_id_people_json: createTeamworkOperationEndpoint(
-		'v1_put_teams_id_people_json',
-	),
-	v1_get_projects_id_teams_json: createTeamworkOperationEndpoint(
-		'v1_get_projects_id_teams_json',
-	),
-	v1_post_projects_id_teams_json: createTeamworkOperationEndpoint(
-		'v1_post_projects_id_teams_json',
-	),
-	v1_get_companies_id_teams_json: createTeamworkOperationEndpoint(
-		'v1_get_companies_id_teams_json',
-	),
-	v1_get_milestones_id_teams_json: createTeamworkOperationEndpoint(
-		'v1_get_milestones_id_teams_json',
-	),
-	v1_get_notebooks_id_teams_json: createTeamworkOperationEndpoint(
-		'v1_get_notebooks_id_teams_json',
-	),
-	v1_get_tasks_id_teams_json: createTeamworkOperationEndpoint(
-		'v1_get_tasks_id_teams_json',
-	),
-	v1_get_files_id_teams_json: createTeamworkOperationEndpoint(
-		'v1_get_files_id_teams_json',
-	),
-	v1_get_tasklists_id_teams_json: createTeamworkOperationEndpoint(
-		'v1_get_tasklists_id_teams_json',
-	),
-	v1_get_links_id_teams_json: createTeamworkOperationEndpoint(
-		'v1_get_links_id_teams_json',
-	),
-	v1_get_portfolio_boards_id_teams_json: createTeamworkOperationEndpoint(
-		'v1_get_portfolio_boards_id_teams_json',
-	),
-	v1_get_comments_id_teams_json: createTeamworkOperationEndpoint(
-		'v1_get_comments_id_teams_json',
-	),
-	v1_get_teams_id_subteams_json: createTeamworkOperationEndpoint(
-		'v1_get_teams_id_subteams_json',
-	),
-	v1_get_people_id_teams_json: createTeamworkOperationEndpoint(
-		'v1_get_people_id_teams_json',
-	),
-	v1_get_milestones_id_comments_teams_json: createTeamworkOperationEndpoint(
-		'v1_get_milestones_id_comments_teams_json',
-	),
-	v1_get_notebooks_id_comments_teams_json: createTeamworkOperationEndpoint(
-		'v1_get_notebooks_id_comments_teams_json',
-	),
-	v1_get_tasks_id_comments_teams_json: createTeamworkOperationEndpoint(
-		'v1_get_tasks_id_comments_teams_json',
-	),
-	v1_get_files_id_comments_teams_json: createTeamworkOperationEndpoint(
-		'v1_get_files_id_comments_teams_json',
-	),
-	v1_get_tasklists_id_comments_teams_json: createTeamworkOperationEndpoint(
-		'v1_get_tasklists_id_comments_teams_json',
-	),
-	v1_get_links_id_comments_teams_json: createTeamworkOperationEndpoint(
-		'v1_get_links_id_comments_teams_json',
-	),
-	v1_get_teams_users_json: createTeamworkOperationEndpoint(
-		'v1_get_teams_users_json',
-	),
-	v2_get_projects_api_v2_projects_templates_json:
-		createTeamworkOperationEndpoint(
-			'v2_get_projects_api_v2_projects_templates_json',
-		),
-	v2_get_projects_api_v2_projects_id_predecessors_json:
-		createTeamworkOperationEndpoint(
-			'v2_get_projects_api_v2_projects_id_predecessors_json',
-		),
-	v2_get_projects_api_v2_tasklists_id_taskids_json:
-		createTeamworkOperationEndpoint(
-			'v2_get_projects_api_v2_tasklists_id_taskids_json',
-		),
-	v2_get_projects_api_v2_projects_id_taskids_json:
-		createTeamworkOperationEndpoint(
-			'v2_get_projects_api_v2_projects_id_taskids_json',
-		),
-	v2_get_projects_api_v2_projects_json: createTeamworkOperationEndpoint(
-		'v2_get_projects_api_v2_projects_json',
-	),
-	v2_get_projects_api_v2_tasks_json: createTeamworkOperationEndpoint(
-		'v2_get_projects_api_v2_tasks_json',
-	),
-	v2_get_projects_api_v2_tasks_taskid_json: createTeamworkOperationEndpoint(
-		'v2_get_projects_api_v2_tasks_taskid_json',
-	),
-	v2_get_projects_api_v2_projects_projectid_json:
-		createTeamworkOperationEndpoint(
-			'v2_get_projects_api_v2_projects_projectid_json',
-		),
-	v3_get_projects_api_v3_allocations_allocationid_time_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_allocations_allocationid_time_json',
-		),
-	v3_get_projects_api_v3_comments_json: createTeamworkOperationEndpoint(
-		'v3_get_projects_api_v3_comments_json',
-	),
-	v3_post_projects_api_v3_comments_json: createTeamworkOperationEndpoint(
-		'v3_post_projects_api_v3_comments_json',
-	),
-	v3_get_projects_api_v3_comments_id_json: createTeamworkOperationEndpoint(
-		'v3_get_projects_api_v3_comments_id_json',
-	),
-	v3_get_projects_api_v3_comments_id_notified_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_comments_id_notified_json',
-		),
-	v3_get_projects_api_v3_companies_json: createTeamworkOperationEndpoint(
-		'v3_get_projects_api_v3_companies_json',
-	),
-	v3_post_projects_api_v3_companies_json: createTeamworkOperationEndpoint(
-		'v3_post_projects_api_v3_companies_json',
-	),
-	v3_delete_projects_api_v3_companies_domains_id_json:
-		createTeamworkOperationEndpoint(
-			'v3_delete_projects_api_v3_companies_domains_id_json',
-		),
-	v3_patch_projects_api_v3_companies_domains_id_json:
-		createTeamworkOperationEndpoint(
-			'v3_patch_projects_api_v3_companies_domains_id_json',
-		),
-	v3_get_projects_api_v3_companies_time_json: createTeamworkOperationEndpoint(
-		'v3_get_projects_api_v3_companies_time_json',
-	),
-	v3_delete_projects_api_v3_companies_companyid_json:
-		createTeamworkOperationEndpoint(
-			'v3_delete_projects_api_v3_companies_companyid_json',
-		),
-	v3_get_projects_api_v3_companies_companyid_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_companies_companyid_json',
-		),
-	v3_patch_projects_api_v3_companies_companyid_json:
-		createTeamworkOperationEndpoint(
-			'v3_patch_projects_api_v3_companies_companyid_json',
-		),
-	v3_patch_projects_api_v3_companies_companyid_rates_json:
-		createTeamworkOperationEndpoint(
-			'v3_patch_projects_api_v3_companies_companyid_rates_json',
-		),
-	v3_post_projects_api_v3_companies_id_convert_currency_json:
-		createTeamworkOperationEndpoint(
-			'v3_post_projects_api_v3_companies_id_convert_currency_json',
-		),
-	v3_post_projects_api_v3_companies_id_domains_json:
-		createTeamworkOperationEndpoint(
-			'v3_post_projects_api_v3_companies_id_domains_json',
-		),
-	v3_get_projects_api_v3_files_fileid_project_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_files_fileid_project_json',
-		),
-	v3_get_projects_api_v3_links_linkid_comments_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_links_linkid_comments_json',
-		),
-	v3_post_projects_api_v3_links_linkid_comments_json:
-		createTeamworkOperationEndpoint(
-			'v3_post_projects_api_v3_links_linkid_comments_json',
-		),
-	v3_get_projects_api_v3_links_linkid_project_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_links_linkid_project_json',
-		),
-	v3_get_projects_api_v3_me_json: createTeamworkOperationEndpoint(
-		'v3_get_projects_api_v3_me_json',
-	),
-	v3_get_projects_api_v3_me_personaltasks_json: createTeamworkOperationEndpoint(
-		'v3_get_projects_api_v3_me_personaltasks_json',
-	),
-	v3_post_projects_api_v3_me_personaltasks_json:
-		createTeamworkOperationEndpoint(
-			'v3_post_projects_api_v3_me_personaltasks_json',
-		),
-	v3_get_projects_api_v3_me_personaltasks_id_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_me_personaltasks_id_json',
-		),
-	v3_get_projects_api_v3_me_timers_json: createTeamworkOperationEndpoint(
-		'v3_get_projects_api_v3_me_timers_json',
-	),
-	v3_post_projects_api_v3_me_timers_json: createTeamworkOperationEndpoint(
-		'v3_post_projects_api_v3_me_timers_json',
-	),
-	v3_delete_projects_api_v3_me_timers_timerid_json:
-		createTeamworkOperationEndpoint(
-			'v3_delete_projects_api_v3_me_timers_timerid_json',
-		),
-	v3_put_projects_api_v3_me_timers_timerid_json:
-		createTeamworkOperationEndpoint(
-			'v3_put_projects_api_v3_me_timers_timerid_json',
-		),
-	v3_put_projects_api_v3_me_timers_timerid_complete_json:
-		createTeamworkOperationEndpoint(
-			'v3_put_projects_api_v3_me_timers_timerid_complete_json',
-		),
-	v3_put_projects_api_v3_me_timers_timerid_pause_json:
-		createTeamworkOperationEndpoint(
-			'v3_put_projects_api_v3_me_timers_timerid_pause_json',
-		),
-	v3_put_projects_api_v3_me_timers_timerid_resume_json:
-		createTeamworkOperationEndpoint(
-			'v3_put_projects_api_v3_me_timers_timerid_resume_json',
-		),
-	v3_put_projects_api_v3_me_timers_timerid_undelete_json:
-		createTeamworkOperationEndpoint(
-			'v3_put_projects_api_v3_me_timers_timerid_undelete_json',
-		),
-	v3_get_projects_api_v3_milestones_json: createTeamworkOperationEndpoint(
-		'v3_get_projects_api_v3_milestones_json',
-	),
-	v3_get_projects_api_v3_milestones_metrics_deadlines_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_milestones_metrics_deadlines_json',
-		),
-	v3_get_projects_api_v3_milestones_milestoneid_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_milestones_milestoneid_json',
-		),
-	v3_get_projects_api_v3_milestones_milestoneid_project_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_milestones_milestoneid_project_json',
-		),
-	v3_get_projects_api_v3_notebooks_json: createTeamworkOperationEndpoint(
-		'v3_get_projects_api_v3_notebooks_json',
-	),
-	v3_delete_projects_api_v3_notebooks_notebookid_json:
-		createTeamworkOperationEndpoint(
-			'v3_delete_projects_api_v3_notebooks_notebookid_json',
-		),
-	v3_get_projects_api_v3_notebooks_notebookid_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_notebooks_notebookid_json',
-		),
-	v3_patch_projects_api_v3_notebooks_notebookid_json:
-		createTeamworkOperationEndpoint(
-			'v3_patch_projects_api_v3_notebooks_notebookid_json',
-		),
-	v3_get_projects_api_v3_notebooks_notebookid_compare_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_notebooks_notebookid_compare_json',
-		),
-	v3_get_projects_api_v3_notebooks_notebookid_project_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_notebooks_notebookid_project_json',
-		),
-	v3_delete_projects_api_v3_notebooks_notebookid_versions_json:
-		createTeamworkOperationEndpoint(
-			'v3_delete_projects_api_v3_notebooks_notebookid_versions_json',
-		),
-	v3_get_projects_api_v3_notebooks_notebookid_versions_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_notebooks_notebookid_versions_json',
-		),
-	v3_get_projects_api_v3_notebooks_notebookid_versions_versionid_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_notebooks_notebookid_versions_versionid_json',
-		),
-	v3_get_projects_api_v3_people_json: createTeamworkOperationEndpoint(
-		'v3_get_projects_api_v3_people_json',
-	),
-	v3_get_projects_api_v3_people_metrics_performance_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_people_metrics_performance_json',
-		),
-	v3_get_projects_api_v3_people_utilization_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_people_utilization_json',
-		),
-	v3_delete_projects_api_v3_people_personid_json:
-		createTeamworkOperationEndpoint(
-			'v3_delete_projects_api_v3_people_personid_json',
-		),
-	v3_get_projects_api_v3_people_personid_json: createTeamworkOperationEndpoint(
-		'v3_get_projects_api_v3_people_personid_json',
-	),
-	v3_get_projects_api_v3_projects_json: createTeamworkOperationEndpoint(
-		'v3_get_projects_api_v3_projects_json',
-	),
-	v3_get_projects_api_v3_projects_metrics_active_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_projects_metrics_active_json',
-		),
-	v3_get_projects_api_v3_projects_metrics_billable_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_projects_metrics_billable_json',
-		),
-	v3_get_projects_api_v3_projects_metrics_healths_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_projects_metrics_healths_json',
-		),
-	v3_get_projects_api_v3_projects_metrics_invoices_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_projects_metrics_invoices_json',
-		),
-	v3_get_projects_api_v3_projects_metrics_owners_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_projects_metrics_owners_json',
-		),
-	v3_get_projects_api_v3_projects_metrics_unbilled_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_projects_metrics_unbilled_json',
-		),
-	v3_get_projects_api_v3_projects_number_json: createTeamworkOperationEndpoint(
-		'v3_get_projects_api_v3_projects_number_json',
-	),
-	v3_put_projects_api_v3_projects_number_json: createTeamworkOperationEndpoint(
-		'v3_put_projects_api_v3_projects_number_json',
-	),
-	v3_put_projects_api_v3_projects_people_userid_enqueue_json:
-		createTeamworkOperationEndpoint(
-			'v3_put_projects_api_v3_projects_people_userid_enqueue_json',
-		),
-	v3_get_projects_api_v3_projects_starred_json: createTeamworkOperationEndpoint(
-		'v3_get_projects_api_v3_projects_starred_json',
-	),
-	v3_get_projects_api_v3_projects_teamwork_samples_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_projects_teamwork_samples_json',
-		),
-	v3_get_projects_api_v3_projects_templates_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_projects_templates_json',
-		),
-	v3_get_projects_api_v3_projects_templates_id_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_projects_templates_id_json',
-		),
-	v3_get_projects_api_v3_projects_templates_id_customfields_required_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_projects_templates_id_customfields_required_json',
-		),
-	v3_put_projects_api_v3_projects_tentative_projectid_convert_json:
-		createTeamworkOperationEndpoint(
-			'v3_put_projects_api_v3_projects_tentative_projectid_convert_json',
-		),
-	v3_get_projects_api_v3_projects_updates_json: createTeamworkOperationEndpoint(
-		'v3_get_projects_api_v3_projects_updates_json',
-	),
-	v3_get_projects_api_v3_projects_projectids_updates_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_projects_projectids_updates_json',
-		),
-	v3_get_projects_api_v3_projects_projectid_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_projects_projectid_json',
-		),
-	v3_get_projects_api_v3_projects_projectid_featureorder_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_projects_projectid_featureorder_json',
-		),
-	v3_put_projects_api_v3_projects_projectid_featureorder_json:
-		createTeamworkOperationEndpoint(
-			'v3_put_projects_api_v3_projects_projectid_featureorder_json',
-		),
-	v3_get_projects_api_v3_projects_projectid_milestones_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_projects_projectid_milestones_json',
-		),
-	v3_post_projects_api_v3_projects_projectid_notebooks_json:
-		createTeamworkOperationEndpoint(
-			'v3_post_projects_api_v3_projects_projectid_notebooks_json',
-		),
-	v3_get_projects_api_v3_projects_projectid_people_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_projects_projectid_people_json',
-		),
-	v3_put_projects_api_v3_projects_projectid_people_json:
-		createTeamworkOperationEndpoint(
-			'v3_put_projects_api_v3_projects_projectid_people_json',
-		),
-	v3_get_projects_api_v3_projects_projectid_people_personid_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_projects_projectid_people_personid_json',
-		),
-	v3_get_projects_api_v3_projects_projectid_tasklists_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_projects_projectid_tasklists_json',
-		),
-	v3_get_projects_api_v3_projects_projectid_tasks_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_projects_projectid_tasks_json',
-		),
-	v3_get_projects_api_v3_projects_projectid_time_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_projects_projectid_time_json',
-		),
-	v3_post_projects_api_v3_projects_projectid_time_json:
-		createTeamworkOperationEndpoint(
-			'v3_post_projects_api_v3_projects_projectid_time_json',
-		),
-	v3_get_projects_api_v3_projects_projectid_time_total_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_projects_projectid_time_total_json',
-		),
-	v3_get_projects_api_v3_reporting_dashboards_data_milestones_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_reporting_dashboards_data_milestones_json',
-		),
-	v3_get_projects_api_v3_reporting_dashboards_details_milestones_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_reporting_dashboards_details_milestones_json',
-		),
-	v3_get_projects_api_v3_reporting_precanned_companytime_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_reporting_precanned_companytime_json',
-		),
-	v3_get_projects_api_v3_reporting_precanned_tasktime_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_reporting_precanned_tasktime_json',
-		),
-	v3_get_projects_api_v3_reporting_precanned_usertaskcompletion_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_reporting_precanned_usertaskcompletion_json',
-		),
-	v3_get_projects_api_v3_statuses_json: createTeamworkOperationEndpoint(
-		'v3_get_projects_api_v3_statuses_json',
-	),
-	v3_get_projects_api_v3_statuses_timeline_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_statuses_timeline_json',
-		),
-	v3_get_projects_api_v3_taskgroups_taskgroupid_tasks_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_taskgroups_taskgroupid_tasks_json',
-		),
-	v3_post_projects_api_v3_taskgroups_taskgroupid_tasks_json:
-		createTeamworkOperationEndpoint(
-			'v3_post_projects_api_v3_taskgroups_taskgroupid_tasks_json',
-		),
-	v3_get_projects_api_v3_tasklists_json: createTeamworkOperationEndpoint(
-		'v3_get_projects_api_v3_tasklists_json',
-	),
-	v3_get_projects_api_v3_tasklists_templates_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_tasklists_templates_json',
-		),
-	v3_delete_projects_api_v3_tasklists_tasklistid_json:
-		createTeamworkOperationEndpoint(
-			'v3_delete_projects_api_v3_tasklists_tasklistid_json',
-		),
-	v3_get_projects_api_v3_tasklists_tasklistid_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_tasklists_tasklistid_json',
-		),
-	v3_get_projects_api_v3_tasklists_tasklistid_project_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_tasklists_tasklistid_project_json',
-		),
-	v3_get_projects_api_v3_tasklists_tasklistid_tasks_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_tasklists_tasklistid_tasks_json',
-		),
-	v3_post_projects_api_v3_tasklists_tasklistid_tasks_json:
-		createTeamworkOperationEndpoint(
-			'v3_post_projects_api_v3_tasklists_tasklistid_tasks_json',
-		),
-	v3_get_projects_api_v3_tasklists_tasklistid_time_total_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_tasklists_tasklistid_time_total_json',
-		),
-	v3_get_projects_api_v3_tasks_json: createTeamworkOperationEndpoint(
-		'v3_get_projects_api_v3_tasks_json',
-	),
-	v3_get_projects_api_v3_tasks_metrics_complete_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_tasks_metrics_complete_json',
-		),
-	v3_get_projects_api_v3_tasks_metrics_late_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_tasks_metrics_late_json',
-		),
-	v3_get_projects_api_v3_tasks_id_reminders_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_tasks_id_reminders_json',
-		),
-	v3_delete_projects_api_v3_tasks_taskid_json: createTeamworkOperationEndpoint(
-		'v3_delete_projects_api_v3_tasks_taskid_json',
-	),
-	v3_get_projects_api_v3_tasks_taskid_json: createTeamworkOperationEndpoint(
-		'v3_get_projects_api_v3_tasks_taskid_json',
-	),
-	v3_patch_projects_api_v3_tasks_taskid_json: createTeamworkOperationEndpoint(
-		'v3_patch_projects_api_v3_tasks_taskid_json',
-	),
-	v3_put_projects_api_v3_tasks_taskid_json: createTeamworkOperationEndpoint(
-		'v3_put_projects_api_v3_tasks_taskid_json',
-	),
-	v3_get_projects_api_v3_tasks_taskid_project_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_tasks_taskid_project_json',
-		),
-	v3_post_projects_api_v3_tasks_taskid_reminders_json:
-		createTeamworkOperationEndpoint(
-			'v3_post_projects_api_v3_tasks_taskid_reminders_json',
-		),
-	v3_delete_projects_api_v3_tasks_taskid_reminders_reminderid_json:
-		createTeamworkOperationEndpoint(
-			'v3_delete_projects_api_v3_tasks_taskid_reminders_reminderid_json',
-		),
-	v3_patch_projects_api_v3_tasks_taskid_reminders_reminderid_json:
-		createTeamworkOperationEndpoint(
-			'v3_patch_projects_api_v3_tasks_taskid_reminders_reminderid_json',
-		),
-	v3_get_projects_api_v3_tasks_taskid_subtasks_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_tasks_taskid_subtasks_json',
-		),
-	v3_post_projects_api_v3_tasks_taskid_subtasks_json:
-		createTeamworkOperationEndpoint(
-			'v3_post_projects_api_v3_tasks_taskid_subtasks_json',
-		),
-	v3_get_projects_api_v3_tasks_taskid_time_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_tasks_taskid_time_json',
-		),
-	v3_post_projects_api_v3_tasks_taskid_time_json:
-		createTeamworkOperationEndpoint(
-			'v3_post_projects_api_v3_tasks_taskid_time_json',
-		),
-	v3_get_projects_api_v3_tasks_taskid_time_total_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_tasks_taskid_time_total_json',
-		),
-	v3_get_projects_api_v3_time_json: createTeamworkOperationEndpoint(
-		'v3_get_projects_api_v3_time_json',
-	),
-	v3_get_projects_api_v3_time_report_json: createTeamworkOperationEndpoint(
-		'v3_get_projects_api_v3_time_report_json',
-	),
-	v3_get_projects_api_v3_time_report_totals_json:
-		createTeamworkOperationEndpoint(
-			'v3_get_projects_api_v3_time_report_totals_json',
-		),
-	v3_get_projects_api_v3_time_report_type_json: createTeamworkOperationEndpoint(
-		'v3_get_projects_api_v3_time_report_type_json',
-	),
-	v3_get_projects_api_v3_time_total_json: createTeamworkOperationEndpoint(
-		'v3_get_projects_api_v3_time_total_json',
-	),
-	v3_get_projects_api_v3_time_validate_json: createTeamworkOperationEndpoint(
-		'v3_get_projects_api_v3_time_validate_json',
-	),
-	v3_delete_projects_api_v3_time_timelogid_json:
-		createTeamworkOperationEndpoint(
-			'v3_delete_projects_api_v3_time_timelogid_json',
-		),
-	v3_get_projects_api_v3_time_timelogid_json: createTeamworkOperationEndpoint(
-		'v3_get_projects_api_v3_time_timelogid_json',
-	),
-	v3_patch_projects_api_v3_time_timelogid_json: createTeamworkOperationEndpoint(
-		'v3_patch_projects_api_v3_time_timelogid_json',
-	),
-	v3_put_projects_api_v3_time_timelogid_json: createTeamworkOperationEndpoint(
-		'v3_put_projects_api_v3_time_timelogid_json',
-	),
-	v3_get_projects_api_v3_timers_json: createTeamworkOperationEndpoint(
-		'v3_get_projects_api_v3_timers_json',
-	),
-	v3_get_projects_api_v3_timers_timerid_json: createTeamworkOperationEndpoint(
-		'v3_get_projects_api_v3_timers_timerid_json',
-	),
-} satisfies {
-	[Id in TeamworkOperationId]: TeamworkOperationEndpoint<Id>;
-};
+	projects: {
+		list: createTeamworkOperationEndpoint('projects.list'),
+		listStarred: createTeamworkOperationEndpoint('projects.listStarred'),
+		get: createTeamworkOperationEndpoint('projects.get'),
+		create: createTeamworkOperationEndpoint('projects.create'),
+		update: createTeamworkOperationEndpoint('projects.update'),
+		delete: createTeamworkOperationEndpoint('projects.delete'),
+		clone: createTeamworkOperationEndpoint('projects.clone'),
+		star: createTeamworkOperationEndpoint('projects.star'),
+		getStats: createTeamworkOperationEndpoint('projects.getStats'),
+		getRates: createTeamworkOperationEndpoint('projects.getRates'),
+		setRates: createTeamworkOperationEndpoint('projects.setRates'),
+		convertTentative: createTeamworkOperationEndpoint(
+			'projects.convertTentative',
+		),
+		listTaskPredecessors: createTeamworkOperationEndpoint(
+			'projects.listTaskPredecessors',
+		),
+	},
+	projectMetrics: {
+		billable: createTeamworkOperationEndpoint('projectMetrics.billable'),
+		health: createTeamworkOperationEndpoint('projectMetrics.health'),
+		invoices: createTeamworkOperationEndpoint('projectMetrics.invoices'),
+		unbilled: createTeamworkOperationEndpoint('projectMetrics.unbilled'),
+	},
+	projectTemplates: {
+		list: createTeamworkOperationEndpoint('projectTemplates.list'),
+		get: createTeamworkOperationEndpoint('projectTemplates.get'),
+		listRequiredCustomFields: createTeamworkOperationEndpoint(
+			'projectTemplates.listRequiredCustomFields',
+		),
+		create: createTeamworkOperationEndpoint('projectTemplates.create'),
+	},
+	projectCategories: {
+		list: createTeamworkOperationEndpoint('projectCategories.list'),
+		get: createTeamworkOperationEndpoint('projectCategories.get'),
+		create: createTeamworkOperationEndpoint('projectCategories.create'),
+		update: createTeamworkOperationEndpoint('projectCategories.update'),
+		delete: createTeamworkOperationEndpoint('projectCategories.delete'),
+	},
+	projectUpdates: {
+		list: createTeamworkOperationEndpoint('projectUpdates.list'),
+		create: createTeamworkOperationEndpoint('projectUpdates.create'),
+		update: createTeamworkOperationEndpoint('projectUpdates.update'),
+		delete: createTeamworkOperationEndpoint('projectUpdates.delete'),
+		request: createTeamworkOperationEndpoint('projectUpdates.request'),
+	},
+	projectPeople: {
+		list: createTeamworkOperationEndpoint('projectPeople.list'),
+		get: createTeamworkOperationEndpoint('projectPeople.get'),
+		getPermissions: createTeamworkOperationEndpoint(
+			'projectPeople.getPermissions',
+		),
+		add: createTeamworkOperationEndpoint('projectPeople.add'),
+		remove: createTeamworkOperationEndpoint('projectPeople.remove'),
+	},
+	projectRoles: {
+		list: createTeamworkOperationEndpoint('projectRoles.list'),
+		get: createTeamworkOperationEndpoint('projectRoles.get'),
+		update: createTeamworkOperationEndpoint('projectRoles.update'),
+		delete: createTeamworkOperationEndpoint('projectRoles.delete'),
+	},
+	tasks: {
+		list: createTeamworkOperationEndpoint('tasks.list'),
+		get: createTeamworkOperationEndpoint('tasks.get'),
+		create: createTeamworkOperationEndpoint('tasks.create'),
+		createSubtask: createTeamworkOperationEndpoint('tasks.createSubtask'),
+		update: createTeamworkOperationEndpoint('tasks.update'),
+		delete: createTeamworkOperationEndpoint('tasks.delete'),
+		complete: createTeamworkOperationEndpoint('tasks.complete'),
+		uncomplete: createTeamworkOperationEndpoint('tasks.uncomplete'),
+		quickAdd: createTeamworkOperationEndpoint('tasks.quickAdd'),
+		quickAddSubtasks: createTeamworkOperationEndpoint('tasks.quickAddSubtasks'),
+		reorder: createTeamworkOperationEndpoint('tasks.reorder'),
+		move: createTeamworkOperationEndpoint('tasks.move'),
+		copy: createTeamworkOperationEndpoint('tasks.copy'),
+		setEstimate: createTeamworkOperationEndpoint('tasks.setEstimate'),
+		listDependencies: createTeamworkOperationEndpoint('tasks.listDependencies'),
+		listPredecessors: createTeamworkOperationEndpoint('tasks.listPredecessors'),
+		listRecurring: createTeamworkOperationEndpoint('tasks.listRecurring'),
+		countCompleted: createTeamworkOperationEndpoint('tasks.countCompleted'),
+		countLate: createTeamworkOperationEndpoint('tasks.countLate'),
+		timeReport: createTeamworkOperationEndpoint('tasks.timeReport'),
+	},
+	personalTasks: {
+		list: createTeamworkOperationEndpoint('personalTasks.list'),
+		get: createTeamworkOperationEndpoint('personalTasks.get'),
+		create: createTeamworkOperationEndpoint('personalTasks.create'),
+	},
+	taskReminders: {
+		list: createTeamworkOperationEndpoint('taskReminders.list'),
+		create: createTeamworkOperationEndpoint('taskReminders.create'),
+		update: createTeamworkOperationEndpoint('taskReminders.update'),
+		delete: createTeamworkOperationEndpoint('taskReminders.delete'),
+	},
+	tasklists: {
+		list: createTeamworkOperationEndpoint('tasklists.list'),
+		get: createTeamworkOperationEndpoint('tasklists.get'),
+		create: createTeamworkOperationEndpoint('tasklists.create'),
+		update: createTeamworkOperationEndpoint('tasklists.update'),
+		delete: createTeamworkOperationEndpoint('tasklists.delete'),
+		listTemplates: createTeamworkOperationEndpoint('tasklists.listTemplates'),
+		reorder: createTeamworkOperationEndpoint('tasklists.reorder'),
+		copy: createTeamworkOperationEndpoint('tasklists.copy'),
+		move: createTeamworkOperationEndpoint('tasklists.move'),
+	},
+	milestones: {
+		list: createTeamworkOperationEndpoint('milestones.list'),
+		get: createTeamworkOperationEndpoint('milestones.get'),
+		create: createTeamworkOperationEndpoint('milestones.create'),
+		update: createTeamworkOperationEndpoint('milestones.update'),
+		delete: createTeamworkOperationEndpoint('milestones.delete'),
+		complete: createTeamworkOperationEndpoint('milestones.complete'),
+		uncomplete: createTeamworkOperationEndpoint('milestones.uncomplete'),
+		listByDeadline: createTeamworkOperationEndpoint(
+			'milestones.listByDeadline',
+		),
+	},
+	people: {
+		list: createTeamworkOperationEndpoint('people.list'),
+		get: createTeamworkOperationEndpoint('people.get'),
+		me: createTeamworkOperationEndpoint('people.me'),
+		create: createTeamworkOperationEndpoint('people.create'),
+		update: createTeamworkOperationEndpoint('people.update'),
+		delete: createTeamworkOperationEndpoint('people.delete'),
+		listDeleted: createTeamworkOperationEndpoint('people.listDeleted'),
+		myStats: createTeamworkOperationEndpoint('people.myStats'),
+		addToProjects: createTeamworkOperationEndpoint('people.addToProjects'),
+		performance: createTeamworkOperationEndpoint('people.performance'),
+		utilization: createTeamworkOperationEndpoint('people.utilization'),
+		taskCompletion: createTeamworkOperationEndpoint('people.taskCompletion'),
+	},
+	statuses: {
+		list: createTeamworkOperationEndpoint('statuses.list'),
+		timeline: createTeamworkOperationEndpoint('statuses.timeline'),
+		getMine: createTeamworkOperationEndpoint('statuses.getMine'),
+		getForPerson: createTeamworkOperationEndpoint('statuses.getForPerson'),
+		create: createTeamworkOperationEndpoint('statuses.create'),
+		update: createTeamworkOperationEndpoint('statuses.update'),
+		delete: createTeamworkOperationEndpoint('statuses.delete'),
+	},
+	companies: {
+		list: createTeamworkOperationEndpoint('companies.list'),
+		listForProject: createTeamworkOperationEndpoint('companies.listForProject'),
+		get: createTeamworkOperationEndpoint('companies.get'),
+		create: createTeamworkOperationEndpoint('companies.create'),
+		update: createTeamworkOperationEndpoint('companies.update'),
+		delete: createTeamworkOperationEndpoint('companies.delete'),
+		setRates: createTeamworkOperationEndpoint('companies.setRates'),
+		convertCurrency: createTeamworkOperationEndpoint(
+			'companies.convertCurrency',
+		),
+		addDomains: createTeamworkOperationEndpoint('companies.addDomains'),
+		updateDomain: createTeamworkOperationEndpoint('companies.updateDomain'),
+		deleteDomain: createTeamworkOperationEndpoint('companies.deleteDomain'),
+	},
+	comments: {
+		list: createTeamworkOperationEndpoint('comments.list'),
+		get: createTeamworkOperationEndpoint('comments.get'),
+		listNotified: createTeamworkOperationEndpoint('comments.listNotified'),
+		create: createTeamworkOperationEndpoint('comments.create'),
+		update: createTeamworkOperationEndpoint('comments.update'),
+		delete: createTeamworkOperationEndpoint('comments.delete'),
+		markRead: createTeamworkOperationEndpoint('comments.markRead'),
+	},
+	files: {
+		listForProject: createTeamworkOperationEndpoint('files.listForProject'),
+		listForTask: createTeamworkOperationEndpoint('files.listForTask'),
+		addToProject: createTeamworkOperationEndpoint('files.addToProject'),
+		addToTask: createTeamworkOperationEndpoint('files.addToTask'),
+		addVersion: createTeamworkOperationEndpoint('files.addVersion'),
+		delete: createTeamworkOperationEndpoint('files.delete'),
+		getShareLink: createTeamworkOperationEndpoint('files.getShareLink'),
+		copy: createTeamworkOperationEndpoint('files.copy'),
+	},
+	fileCategories: {
+		list: createTeamworkOperationEndpoint('fileCategories.list'),
+		get: createTeamworkOperationEndpoint('fileCategories.get'),
+		create: createTeamworkOperationEndpoint('fileCategories.create'),
+		update: createTeamworkOperationEndpoint('fileCategories.update'),
+		delete: createTeamworkOperationEndpoint('fileCategories.delete'),
+	},
+	links: {
+		list: createTeamworkOperationEndpoint('links.list'),
+		listForProject: createTeamworkOperationEndpoint('links.listForProject'),
+		get: createTeamworkOperationEndpoint('links.get'),
+		create: createTeamworkOperationEndpoint('links.create'),
+		update: createTeamworkOperationEndpoint('links.update'),
+		delete: createTeamworkOperationEndpoint('links.delete'),
+	},
+	linkCategories: {
+		list: createTeamworkOperationEndpoint('linkCategories.list'),
+		get: createTeamworkOperationEndpoint('linkCategories.get'),
+		create: createTeamworkOperationEndpoint('linkCategories.create'),
+		delete: createTeamworkOperationEndpoint('linkCategories.delete'),
+	},
+	notebooks: {
+		list: createTeamworkOperationEndpoint('notebooks.list'),
+		get: createTeamworkOperationEndpoint('notebooks.get'),
+		create: createTeamworkOperationEndpoint('notebooks.create'),
+		update: createTeamworkOperationEndpoint('notebooks.update'),
+		delete: createTeamworkOperationEndpoint('notebooks.delete'),
+		lock: createTeamworkOperationEndpoint('notebooks.lock'),
+		unlock: createTeamworkOperationEndpoint('notebooks.unlock'),
+		copy: createTeamworkOperationEndpoint('notebooks.copy'),
+		move: createTeamworkOperationEndpoint('notebooks.move'),
+		listVersions: createTeamworkOperationEndpoint('notebooks.listVersions'),
+		getVersion: createTeamworkOperationEndpoint('notebooks.getVersion'),
+		compareVersions: createTeamworkOperationEndpoint(
+			'notebooks.compareVersions',
+		),
+		deleteVersions: createTeamworkOperationEndpoint('notebooks.deleteVersions'),
+	},
+	notebookCategories: {
+		list: createTeamworkOperationEndpoint('notebookCategories.list'),
+		get: createTeamworkOperationEndpoint('notebookCategories.get'),
+		create: createTeamworkOperationEndpoint('notebookCategories.create'),
+		update: createTeamworkOperationEndpoint('notebookCategories.update'),
+		delete: createTeamworkOperationEndpoint('notebookCategories.delete'),
+	},
+	boardColumns: {
+		list: createTeamworkOperationEndpoint('boardColumns.list'),
+		get: createTeamworkOperationEndpoint('boardColumns.get'),
+		create: createTeamworkOperationEndpoint('boardColumns.create'),
+		update: createTeamworkOperationEndpoint('boardColumns.update'),
+		delete: createTeamworkOperationEndpoint('boardColumns.delete'),
+	},
+	boardCards: {
+		list: createTeamworkOperationEndpoint('boardCards.list'),
+		get: createTeamworkOperationEndpoint('boardCards.get'),
+		update: createTeamworkOperationEndpoint('boardCards.update'),
+		move: createTeamworkOperationEndpoint('boardCards.move'),
+		delete: createTeamworkOperationEndpoint('boardCards.delete'),
+	},
+	portfolioBoards: {
+		list: createTeamworkOperationEndpoint('portfolioBoards.list'),
+		create: createTeamworkOperationEndpoint('portfolioBoards.create'),
+		update: createTeamworkOperationEndpoint('portfolioBoards.update'),
+		delete: createTeamworkOperationEndpoint('portfolioBoards.delete'),
+	},
+	portfolioColumns: {
+		list: createTeamworkOperationEndpoint('portfolioColumns.list'),
+		get: createTeamworkOperationEndpoint('portfolioColumns.get'),
+		create: createTeamworkOperationEndpoint('portfolioColumns.create'),
+		delete: createTeamworkOperationEndpoint('portfolioColumns.delete'),
+	},
+	portfolioCards: {
+		list: createTeamworkOperationEndpoint('portfolioCards.list'),
+		get: createTeamworkOperationEndpoint('portfolioCards.get'),
+		add: createTeamworkOperationEndpoint('portfolioCards.add'),
+		move: createTeamworkOperationEndpoint('portfolioCards.move'),
+		delete: createTeamworkOperationEndpoint('portfolioCards.delete'),
+	},
+	teams: {
+		list: createTeamworkOperationEndpoint('teams.list'),
+		get: createTeamworkOperationEndpoint('teams.get'),
+		create: createTeamworkOperationEndpoint('teams.create'),
+		update: createTeamworkOperationEndpoint('teams.update'),
+		delete: createTeamworkOperationEndpoint('teams.delete'),
+		setMembers: createTeamworkOperationEndpoint('teams.setMembers'),
+		listSubteams: createTeamworkOperationEndpoint('teams.listSubteams'),
+		listMemberIds: createTeamworkOperationEndpoint('teams.listMemberIds'),
+		createForProject: createTeamworkOperationEndpoint('teams.createForProject'),
+		listForProject: createTeamworkOperationEndpoint('teams.listForProject'),
+		listForCompany: createTeamworkOperationEndpoint('teams.listForCompany'),
+		listForPerson: createTeamworkOperationEndpoint('teams.listForPerson'),
+	},
+	time: {
+		list: createTeamworkOperationEndpoint('time.list'),
+		get: createTeamworkOperationEndpoint('time.get'),
+		create: createTeamworkOperationEndpoint('time.create'),
+		createForTask: createTeamworkOperationEndpoint('time.createForTask'),
+		update: createTeamworkOperationEndpoint('time.update'),
+		delete: createTeamworkOperationEndpoint('time.delete'),
+		totals: createTeamworkOperationEndpoint('time.totals'),
+		estimatedTotals: createTeamworkOperationEndpoint('time.estimatedTotals'),
+		loggedByPerson: createTeamworkOperationEndpoint('time.loggedByPerson'),
+		byCompany: createTeamworkOperationEndpoint('time.byCompany'),
+		report: createTeamworkOperationEndpoint('time.report'),
+		reportTotals: createTeamworkOperationEndpoint('time.reportTotals'),
+		reportByType: createTeamworkOperationEndpoint('time.reportByType'),
+		validate: createTeamworkOperationEndpoint('time.validate'),
+	},
+	timers: {
+		list: createTeamworkOperationEndpoint('timers.list'),
+		listMine: createTeamworkOperationEndpoint('timers.listMine'),
+		get: createTeamworkOperationEndpoint('timers.get'),
+		create: createTeamworkOperationEndpoint('timers.create'),
+		update: createTeamworkOperationEndpoint('timers.update'),
+		pause: createTeamworkOperationEndpoint('timers.pause'),
+		resume: createTeamworkOperationEndpoint('timers.resume'),
+		complete: createTeamworkOperationEndpoint('timers.complete'),
+		delete: createTeamworkOperationEndpoint('timers.delete'),
+		undelete: createTeamworkOperationEndpoint('timers.undelete'),
+	},
+} as const;
 
-// `unknown` is necessary for the test-only manifest lookup: a runtime string key cannot retain a literal endpoint ID. Consumers use the nested registry, which keeps exact per-operation inputs and outputs.
+// `unknown` is necessary for the test-only lookup by name: a runtime string key cannot keep a literal operation id. Consumers use the nested registry, which keeps exact per-operation inputs and outputs.
 export const teamworkOperationsById: Record<
 	string,
 	CorsairEndpoint<TeamworkContext, Record<string, unknown>, unknown>
 > = Object.fromEntries(
-	TEAMWORK_OPERATION_IDS.map((id) => [id, teamworkOperationsNested[id]]),
+	TEAMWORK_OPERATION_IDS.map((id) => {
+		const [group, action] = id.split('.') as [string, string];
+		const endpoints: Record<
+			string,
+			Record<
+				string,
+				CorsairEndpoint<TeamworkContext, Record<string, unknown>, unknown>
+			>
+		> = teamworkOperationsNested;
+		const endpoint = endpoints[group]?.[action];
+		if (!endpoint) throw new Error('Teamwork operation is unavailable');
+		return [id, endpoint];
+	}),
 );

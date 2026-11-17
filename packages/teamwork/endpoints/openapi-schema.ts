@@ -234,12 +234,10 @@ function parameterSchema(
 }
 
 const v3TaskRequestOperationIds = new Set([
-	'v3_post_projects_api_v3_me_personaltasks_json',
-	'v3_post_projects_api_v3_taskgroups_taskgroupid_tasks_json',
-	'v3_post_projects_api_v3_tasklists_tasklistid_tasks_json',
-	'v3_patch_projects_api_v3_tasks_taskid_json',
-	'v3_put_projects_api_v3_tasks_taskid_json',
-	'v3_post_projects_api_v3_tasks_taskid_subtasks_json',
+	'tasks.create',
+	'tasks.update',
+	'tasks.createSubtask',
+	'personalTasks.create',
 ]);
 
 // Teamwork's official V3 task examples use compact arrays and strings; keep these request-only compatibility shapes limited to task.Request operations.
@@ -391,20 +389,76 @@ function responseSchema(
 // `{ affected: { taskIds: [] } }` (live run 11-16). Accept no body or a JSON object.
 const noContentResponse = z.union([z.undefined(), z.object({}).passthrough()]);
 
-const schemaCache = new Map<string, z.ZodType>();
-export const teamworkInputSchemas = Object.fromEntries(
-	teamworkOperations.map((operation) => [
-		operation.id,
-		createInputSchema(operation),
-	]),
+// Built on first use, one operation at a time: building all of them at import
+// took ~150 MB of heap and ~0.7 s for an instance that may call two operations.
+const responseDefinitionCache = new Map<string, z.ZodType>();
+const inputSchemaCache = new Map<string, z.ZodType<Record<string, unknown>>>();
+const outputSchemaCache = new Map<string, z.ZodType>();
+const operationsById = new Map(
+	teamworkOperations.map((operation) => [operation.id, operation]),
 );
-export const teamworkOutputSchemas = Object.fromEntries(
-	teamworkOperations.map((operation) => [
-		operation.id,
-		operation.response === null
-			? noContentResponse
-			: responseSchema(operation, schemaCache),
-	]),
-);
+
+function operationFor(id: string): TeamworkOperationDefinition {
+	const operation = operationsById.get(id);
+	if (!operation) throw new Error('Teamwork operation is unavailable');
+	return operation;
+}
+
+// `unknown` is necessary because each operation's path, query and body shapes differ.
+export function getTeamworkInputSchema(
+	id: string,
+): z.ZodType<Record<string, unknown>> {
+	let schema = inputSchemaCache.get(id);
+	if (!schema) {
+		schema = createInputSchema(operationFor(id));
+		inputSchemaCache.set(id, schema);
+	}
+	return schema;
+}
+
+export function getTeamworkOutputSchema(id: string): z.ZodType {
+	let schema = outputSchemaCache.get(id);
+	if (!schema) {
+		const operation = operationFor(id);
+		schema =
+			operation.response === null
+				? noContentResponse
+				: responseSchema(operation, responseDefinitionCache);
+		outputSchemaCache.set(id, schema);
+	}
+	return schema;
+}
+
+/** `input` and `output` are getters, so a schema is built only when something reads it. */
+export function teamworkSchemaEntry(id: string): {
+	readonly input: z.ZodType;
+	readonly output: z.ZodType;
+} {
+	return {
+		get input() {
+			return getTeamworkInputSchema(id);
+		},
+		get output() {
+			return getTeamworkOutputSchema(id);
+		},
+	};
+}
+
+function lazyRecord(
+	build: (id: string) => z.ZodType,
+): Readonly<Record<string, z.ZodType>> {
+	const record: Record<string, z.ZodType> = {};
+	for (const { id } of teamworkOperations) {
+		Object.defineProperty(record, id, {
+			enumerable: true,
+			get: () => build(id),
+		});
+	}
+	return record;
+}
+
+/** Every operation's schemas by id. Reading a key builds that schema (then cached). */
+export const teamworkInputSchemas = lazyRecord(getTeamworkInputSchema);
+export const teamworkOutputSchemas = lazyRecord(getTeamworkOutputSchema);
 
 export type { TeamworkOperationDefinition };
