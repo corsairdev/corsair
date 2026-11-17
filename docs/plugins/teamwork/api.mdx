@@ -1215,9 +1215,9 @@ await corsair.teamwork.api.comments.get({
         type?: string | null
       } | null,
       objectId?: number | null,
-      objectType?: string | number | boolean | null,
+      objectType?: string | null,
       postedDateTime?: string | null,
-      type?: string | number | boolean | null,
+      type?: string | null,
       user?: {
         id?: number | null,
         meta?: {
@@ -1457,9 +1457,9 @@ await corsair.teamwork.api.comments.list({
           type?: string | null
         } | null,
         objectId?: number | null,
-        objectType?: string | number | boolean | null,
+        objectType?: string | null,
         postedDateTime?: string | null,
-        type?: string | number | boolean | null,
+        type?: string | null,
         user?: {
           id?: number | null,
           meta?: {
@@ -1728,7 +1728,7 @@ await corsair.teamwork.api.comments.listNotified({
       type?: string | null
     } | null,
     linkedClientPortalCompanyId?: number | null,
-    loginTarget?: string | number | boolean | null,
+    loginTarget?: string | null,
     meta?: {
     } | null,
     siteOwner?: boolean | null,
@@ -1982,7 +1982,7 @@ await corsair.teamwork.api.companies.addDomains({
     deletedByUser?: number | null,
     domain?: string | null,
     id?: number | null,
-    state?: string | number | boolean | null,
+    state?: string | null,
     updatedAt?: string | null,
     updatedByUser?: number | null
   } | null
@@ -3753,7 +3753,7 @@ await corsair.teamwork.api.companies.updateDomain({
   deletedByUser?: number | null,
   domain?: string | null,
   id?: number | null,
-  state?: string | number | boolean | null,
+  state?: string | null,
   updatedAt?: string | null,
   updatedByUser?: number | null
 } | null
@@ -7144,7 +7144,7 @@ await corsair.teamwork.api.notebooks.create({
       type?: string | null
     } | null
   )[] | null,
-  type?: string | number | boolean | null,
+  type?: string | null,
   updatedAt?: string | null,
   updatedBy?: number | null,
   updatedByUserID?: number | null,
@@ -7539,7 +7539,7 @@ await corsair.teamwork.api.notebooks.get({
       type?: string | null
     } | null
   )[] | null,
-  type?: string | number | boolean | null,
+  type?: string | null,
   updatedAt?: string | null,
   updatedBy?: number | null,
   updatedByUserID?: number | null,
@@ -7965,7 +7965,7 @@ await corsair.teamwork.api.notebooks.list({
         type?: string | null
       } | null
     )[] | null,
-    type?: string | number | boolean | null,
+    type?: string | null,
     updatedAt?: string | null,
     updatedBy?: number | null,
     updatedByUserID?: number | null,
@@ -8586,7 +8586,7 @@ await corsair.teamwork.api.notebooks.update({
       type?: string | null
     } | null
   )[] | null,
-  type?: string | number | boolean | null,
+  type?: string | null,
   updatedAt?: string | null,
   updatedBy?: number | null,
   updatedByUserID?: number | null,
@@ -9064,7 +9064,7 @@ await corsair.teamwork.api.people.get({
     type?: string | null
   } | null,
   linkedClientPortalCompanyId?: number | null,
-  loginTarget?: string | number | boolean | null,
+  loginTarget?: string | null,
   meta?: {
   } | null,
   siteOwner?: boolean | null,
@@ -9348,7 +9348,7 @@ await corsair.teamwork.api.people.list({
       type?: string | null
     } | null,
     linkedClientPortalCompanyId?: number | null,
-    loginTarget?: string | number | boolean | null,
+    loginTarget?: string | null,
     meta?: {
     } | null,
     siteOwner?: boolean | null,
@@ -9593,7 +9593,7 @@ await corsair.teamwork.api.people.me({});
     type?: string | null
   } | null,
   linkedClientPortalCompanyId?: number | null,
-  loginTarget?: string | number | boolean | null,
+  loginTarget?: string | null,
   meta?: {
   } | null,
   phoneNumberMobile?: string | null,
@@ -11053,10 +11053,10 @@ await corsair.teamwork.api.personalTasks.create({
         projectId?: string | null,
         tasklistId?: string | null
       } | null,
-      type?: string | number | boolean | null
+      type?: string | null
     } | null
   )[] | null,
-  priority?: string | number | boolean | null,
+  priority?: string | null,
   progress?: number | null,
   proofs?: (
     {
@@ -11648,10 +11648,10 @@ await corsair.teamwork.api.personalTasks.get({
         projectId?: string | null,
         tasklistId?: string | null
       } | null,
-      type?: string | number | boolean | null
+      type?: string | null
     } | null
   )[] | null,
-  priority?: string | number | boolean | null,
+  priority?: string | null,
   progress?: number | null,
   proofs?: (
     {
@@ -12228,10 +12228,10 @@ await corsair.teamwork.api.personalTasks.list({});
           projectId?: string | null,
           tasklistId?: string | null
         } | null,
-        type?: string | number | boolean | null
+        type?: string | null
       } | null
     )[] | null,
-    priority?: string | number | boolean | null,
+    priority?: string | null,
     progress?: number | null,
     proofs?: (
       {
@@ -14179,7 +14179,7 @@ await corsair.teamwork.api.projectPeople.get({
     type?: string | null
   } | null,
   linkedClientPortalCompanyId?: number | null,
-  loginTarget?: string | number | boolean | null,
+  loginTarget?: string | null,
   meta?: {
   } | null,
   siteOwner?: boolean | null,
@@ -14593,7 +14593,7 @@ await corsair.teamwork.api.projectPeople.list({
       type?: string | null
     } | null,
     linkedClientPortalCompanyId?: number | null,
-    loginTarget?: string | number | boolean | null,
+    loginTarget?: string | null,
     meta?: {
     } | null,
     siteOwner?: boolean | null,
@@ -15699,7 +15699,7 @@ await corsair.teamwork.api.projects.get({
       type?: string | null
     } | null
   )[] | null,
-  defaultPrivacy?: string | number | boolean | null,
+  defaultPrivacy?: string | null,
   deletedAt?: string | null,
   deletedBy?: number | null,
   directFileUploadsEnabled?: boolean | null,
@@ -15794,8 +15794,8 @@ await corsair.teamwork.api.projects.get({
   startAt?: string | null,
   startDate?: string | null,
   startPage?: string | null,
-  status?: string | number | boolean | null,
-  subStatus?: string | number | boolean | null,
+  status?: string | null,
+  subStatus?: string | null,
   tagIds?: (number | null)[] | null,
   tags?: (
     {
@@ -15814,7 +15814,7 @@ await corsair.teamwork.api.projects.get({
   } | null,
   timeBudgetId?: number | null,
   timelogRequiresTask?: boolean | null,
-  type?: string | number | boolean | null,
+  type?: string | null,
   update?: {
     id?: number | null,
     meta?: {
@@ -16394,7 +16394,7 @@ await corsair.teamwork.api.projects.list({
         type?: string | null
       } | null
     )[] | null,
-    defaultPrivacy?: string | number | boolean | null,
+    defaultPrivacy?: string | null,
     deletedAt?: string | null,
     deletedBy?: number | null,
     directFileUploadsEnabled?: boolean | null,
@@ -16489,8 +16489,8 @@ await corsair.teamwork.api.projects.list({
     startAt?: string | null,
     startDate?: string | null,
     startPage?: string | null,
-    status?: string | number | boolean | null,
-    subStatus?: string | number | boolean | null,
+    status?: string | null,
+    subStatus?: string | null,
     tagIds?: (number | null)[] | null,
     tags?: (
       {
@@ -16509,7 +16509,7 @@ await corsair.teamwork.api.projects.list({
     } | null,
     timeBudgetId?: number | null,
     timelogRequiresTask?: boolean | null,
-    type?: string | number | boolean | null,
+    type?: string | null,
     update?: {
       id?: number | null,
       meta?: {
@@ -16919,7 +16919,7 @@ await corsair.teamwork.api.projects.listStarred({});
         type?: string | null
       } | null
     )[] | null,
-    defaultPrivacy?: string | number | boolean | null,
+    defaultPrivacy?: string | null,
     deletedAt?: string | null,
     deletedBy?: number | null,
     directFileUploadsEnabled?: boolean | null,
@@ -17014,8 +17014,8 @@ await corsair.teamwork.api.projects.listStarred({});
     startAt?: string | null,
     startDate?: string | null,
     startPage?: string | null,
-    status?: string | number | boolean | null,
-    subStatus?: string | number | boolean | null,
+    status?: string | null,
+    subStatus?: string | null,
     tagIds?: (number | null)[] | null,
     tags?: (
       {
@@ -17034,7 +17034,7 @@ await corsair.teamwork.api.projects.listStarred({});
     } | null,
     timeBudgetId?: number | null,
     timelogRequiresTask?: boolean | null,
-    type?: string | number | boolean | null,
+    type?: string | null,
     update?: {
       id?: number | null,
       meta?: {
@@ -17813,7 +17813,7 @@ await corsair.teamwork.api.projectTemplates.get({
       type?: string | null
     } | null
   )[] | null,
-  defaultPrivacy?: string | number | boolean | null,
+  defaultPrivacy?: string | null,
   deletedAt?: string | null,
   deletedBy?: number | null,
   directFileUploadsEnabled?: boolean | null,
@@ -17908,8 +17908,8 @@ await corsair.teamwork.api.projectTemplates.get({
   startAt?: string | null,
   startDate?: string | null,
   startPage?: string | null,
-  status?: string | number | boolean | null,
-  subStatus?: string | number | boolean | null,
+  status?: string | null,
+  subStatus?: string | null,
   tagIds?: (number | null)[] | null,
   tags?: (
     {
@@ -17928,7 +17928,7 @@ await corsair.teamwork.api.projectTemplates.get({
   } | null,
   timeBudgetId?: number | null,
   timelogRequiresTask?: boolean | null,
-  type?: string | number | boolean | null,
+  type?: string | null,
   update?: {
     id?: number | null,
     meta?: {
@@ -18337,7 +18337,7 @@ await corsair.teamwork.api.projectTemplates.list({});
         type?: string | null
       } | null
     )[] | null,
-    defaultPrivacy?: string | number | boolean | null,
+    defaultPrivacy?: string | null,
     deletedAt?: string | null,
     deletedBy?: number | null,
     directFileUploadsEnabled?: boolean | null,
@@ -18432,8 +18432,8 @@ await corsair.teamwork.api.projectTemplates.list({});
     startAt?: string | null,
     startDate?: string | null,
     startPage?: string | null,
-    status?: string | number | boolean | null,
-    subStatus?: string | number | boolean | null,
+    status?: string | null,
+    subStatus?: string | null,
     tagIds?: (number | null)[] | null,
     tags?: (
       {
@@ -18452,7 +18452,7 @@ await corsair.teamwork.api.projectTemplates.list({});
     } | null,
     timeBudgetId?: number | null,
     timelogRequiresTask?: boolean | null,
-    type?: string | number | boolean | null,
+    type?: string | null,
     update?: {
       id?: number | null,
       meta?: {
@@ -18578,7 +18578,7 @@ await corsair.teamwork.api.projectTemplates.listRequiredCustomFields({
     } | null,
     projectId?: number | null,
     required?: boolean | null,
-    type?: string | number | boolean | null,
+    type?: string | null,
     unitId?: number | null,
     updatedAt?: string | null,
     updatedBy?: number | null,
@@ -18918,7 +18918,7 @@ await corsair.teamwork.api.projectUpdates.list({});
           mine?: boolean | null
         } | null
       )[] | null,
-      mine?: (string | number | boolean | null)[] | null
+      mine?: (string | null)[] | null
     } | null,
     text?: string | null,
     updatedAt?: string | null
@@ -20067,7 +20067,7 @@ await corsair.teamwork.api.tasklists.get({
     type?: string | null
   } | null,
   projectId?: number | null,
-  status?: string | number | boolean | null,
+  status?: string | null,
   tasklistBudget?: {
     id?: number | null,
     meta?: {
@@ -20311,7 +20311,7 @@ await corsair.teamwork.api.tasklists.list({
       type?: string | null
     } | null,
     projectId?: number | null,
-    status?: string | number | boolean | null,
+    status?: string | null,
     tasklistBudget?: {
       id?: number | null,
       meta?: {
@@ -20552,7 +20552,7 @@ await corsair.teamwork.api.tasklists.listTemplates({});
       type?: string | null
     } | null,
     projectId?: number | null,
-    status?: string | number | boolean | null,
+    status?: string | null,
     tasklistBudget?: {
       id?: number | null,
       meta?: {
@@ -20920,7 +20920,7 @@ await corsair.teamwork.api.taskReminders.create({
       } | null,
       type?: string | null
     } | null,
-    type?: string | number | boolean | null,
+    type?: string | null,
     user?: {
       id?: number | null,
       meta?: {
@@ -21083,7 +21083,7 @@ await corsair.teamwork.api.taskReminders.list({
       } | null,
       type?: string | null
     } | null,
-    type?: string | number | boolean | null,
+    type?: string | null,
     user?: {
       id?: number | null,
       meta?: {
@@ -21192,7 +21192,7 @@ await corsair.teamwork.api.taskReminders.update({
     } | null,
     type?: string | null
   } | null,
-  type?: string | number | boolean | null,
+  type?: string | null,
   user?: {
     id?: number | null,
     meta?: {
@@ -22010,10 +22010,10 @@ await corsair.teamwork.api.tasks.create({
         projectId?: string | null,
         tasklistId?: string | null
       } | null,
-      type?: string | number | boolean | null
+      type?: string | null
     } | null
   )[] | null,
-  priority?: string | number | boolean | null,
+  priority?: string | null,
   progress?: number | null,
   proofs?: (
     {
@@ -22652,10 +22652,10 @@ await corsair.teamwork.api.tasks.createSubtask({
         projectId?: string | null,
         tasklistId?: string | null
       } | null,
-      type?: string | number | boolean | null
+      type?: string | null
     } | null
   )[] | null,
-  priority?: string | number | boolean | null,
+  priority?: string | null,
   progress?: number | null,
   proofs?: (
     {
@@ -23306,10 +23306,10 @@ await corsair.teamwork.api.tasks.get({
         projectId?: string | null,
         tasklistId?: string | null
       } | null,
-      type?: string | number | boolean | null
+      type?: string | null
     } | null
   )[] | null,
-  priority?: string | number | boolean | null,
+  priority?: string | null,
   progress?: number | null,
   proofs?: (
     {
@@ -23892,10 +23892,10 @@ await corsair.teamwork.api.tasks.list({
           projectId?: string | null,
           tasklistId?: string | null
         } | null,
-        type?: string | number | boolean | null
+        type?: string | null
       } | null
     )[] | null,
-    priority?: string | number | boolean | null,
+    priority?: string | null,
     progress?: number | null,
     proofs?: (
       {
@@ -25046,10 +25046,10 @@ await corsair.teamwork.api.tasks.timeReport({});
           projectId?: string | null,
           tasklistId?: string | null
         } | null,
-        type?: string | number | boolean | null
+        type?: string | null
       } | null
     )[] | null,
-    priority?: string | number | boolean | null,
+    priority?: string | null,
     progress?: number | null,
     proofs?: (
       {
@@ -25741,10 +25741,10 @@ await corsair.teamwork.api.tasks.update({
         projectId?: string | null,
         tasklistId?: string | null
       } | null,
-      type?: string | number | boolean | null
+      type?: string | null
     } | null
   )[] | null,
-  priority?: string | number | boolean | null,
+  priority?: string | null,
   progress?: number | null,
   proofs?: (
     {
@@ -27457,7 +27457,7 @@ await corsair.teamwork.api.time.create({
           type?: string | null
         } | null,
         rate?: number | null,
-        source?: string | number | boolean | null,
+        source?: string | null,
         toCurrency?: {
           id?: number | null,
           meta?: {
@@ -27734,7 +27734,7 @@ await corsair.teamwork.api.time.createForTask({
           type?: string | null
         } | null,
         rate?: number | null,
-        source?: string | number | boolean | null,
+        source?: string | null,
         toCurrency?: {
           id?: number | null,
           meta?: {
@@ -28188,7 +28188,7 @@ await corsair.teamwork.api.time.get({
           type?: string | null
         } | null,
         rate?: number | null,
-        source?: string | number | boolean | null,
+        source?: string | null,
         toCurrency?: {
           id?: number | null,
           meta?: {
@@ -28542,7 +28542,7 @@ await corsair.teamwork.api.time.list({
             type?: string | null
           } | null,
           rate?: number | null,
-          source?: string | number | boolean | null,
+          source?: string | null,
           toCurrency?: {
             id?: number | null,
             meta?: {
@@ -28910,7 +28910,7 @@ await corsair.teamwork.api.time.report({
             type?: string | null
           } | null,
           rate?: number | null,
-          source?: string | number | boolean | null,
+          source?: string | null,
           toCurrency?: {
             id?: number | null,
             meta?: {
@@ -29703,7 +29703,7 @@ await corsair.teamwork.api.time.update({
           type?: string | null
         } | null,
         rate?: number | null,
-        source?: string | number | boolean | null,
+        source?: string | null,
         toCurrency?: {
           id?: number | null,
           meta?: {
