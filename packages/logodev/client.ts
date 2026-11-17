@@ -5,8 +5,13 @@ import type {
 } from 'corsair/http';
 import { request } from 'corsair/http';
 
+/**
+ * Every operation goes to the Logo.dev API with the secret key (`sk_`) as a
+ * Bearer token. The image CDN (img.logo.dev) takes only the publishable key and
+ * answers 401 to a secret key, so this plugin does not call it.
+ * https://www.logo.dev/docs/platform/api-keys
+ */
 export const LOGODEV_API_BASE = 'https://api.logo.dev';
-export const LOGODEV_IMAGE_BASE = 'https://img.logo.dev';
 
 const NO_TRANSPORT_RETRIES: RateLimitConfig = {
 	enabled: true,
@@ -18,9 +23,19 @@ const NO_TRANSPORT_RETRIES: RateLimitConfig = {
 	},
 };
 
-export async function searchLogoDev<T>(
+export type LogoDevQuery = Record<
+	string,
+	string | number | boolean | undefined
+>;
+
+export async function logoDevRequest<T>(
 	apiKey: string,
-	query: { q: string; method?: string; limit?: number },
+	options: {
+		method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+		path: string;
+		query?: LogoDevQuery;
+		body?: Record<string, unknown>;
+	},
 ): Promise<T> {
 	const config: OpenAPIConfig = {
 		BASE: LOGODEV_API_BASE,
@@ -33,37 +48,24 @@ export async function searchLogoDev<T>(
 		},
 	};
 	const requestOptions: ApiRequestOptions = {
-		method: 'GET',
-		url: '/v2/search',
-		query: {
-			q: query.q,
-			method: query.method,
-			limit: query.limit,
-		},
+		method: options.method ?? 'GET',
+		url: options.path,
+		query: options.query,
+		...(options.body
+			? { body: options.body, mediaType: 'application/json' }
+			: {}),
 	};
 	return await request<T>(config, requestOptions, {
 		rateLimitConfig: NO_TRANSPORT_RETRIES,
 	});
 }
 
-export async function fetchLogoContentType(
+export async function searchLogoDev<T>(
 	apiKey: string,
-	domain: string,
-): Promise<string> {
-	const config: OpenAPIConfig = {
-		BASE: LOGODEV_IMAGE_BASE,
-		VERSION: '1',
-		WITH_CREDENTIALS: false,
-		CREDENTIALS: 'omit',
-	};
-	const requestOptions: ApiRequestOptions = {
-		method: 'GET',
-		url: `/${domain}`,
-		query: { token: apiKey },
-		responseHeader: 'content-type',
-	};
-	const contentType = await request<string>(config, requestOptions, {
-		rateLimitConfig: NO_TRANSPORT_RETRIES,
+	query: { q: string; method?: string; limit?: number },
+): Promise<T> {
+	return await logoDevRequest<T>(apiKey, {
+		path: '/v2/search',
+		query: { q: query.q, method: query.method, limit: query.limit },
 	});
-	return contentType ?? 'application/octet-stream';
 }

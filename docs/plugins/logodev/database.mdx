@@ -31,6 +31,7 @@ const rows = await corsair.logodev.db.brands.search({
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `object` | `string` | equals, contains, startsWith, endsWith, in |
 | `logoUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `brandId` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
@@ -54,7 +55,11 @@ const rows = await corsair.logodev.db.images.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `domain` | `string` | equals, contains, startsWith, endsWith, in |
-| `contentType` | `string` | equals, contains, startsWith, endsWith, in |
+| `brandId` | `string` | equals, contains, startsWith, endsWith, in |
+| `format` | `string` | equals, contains, startsWith, endsWith, in |
+| `width` | `number` | equals, gt, gte, lt, lte, in |
+| `height` | `number` | equals, gt, gte, lt, lte, in |
+| `etag` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 

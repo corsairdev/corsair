@@ -8,15 +8,326 @@ description: "API reference for the Logo.dev plugin in Corsair: every `logodev.a
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
 
+## Account
+
+### get
+
+`account.get`
+
+Get the plan and API credit balance. Not billed.
+
+**Risk:** `read`
+
+```ts
+await corsair.logodev.api.account.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string,
+  plan?: string,
+  credits?: {
+    remaining?: number,
+    monthly_allowance?: number,
+    purchased?: number,
+    renews_at?: string | null,
+    can_buy_credits?: boolean
+  }
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  request_id?: string,
+  resolution?: {
+    type?: string,
+    value?: string,
+    method?: string
+  },
+  pending?: {
+    reason?: string,
+    message?: string,
+    retry_after_seconds?: number
+  },
+  subscription?: {
+    status?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Brands
+
+### get
+
+`brands.get`
+
+Get a brand profile by its Logo.dev brand id. 5 API credits.
+
+**Risk:** `read`
+
+```ts
+await corsair.logodev.api.brands.get({ id: 'brand_4x0wr3g0000g00400000000004' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Brand id, as returned in data.id. |
+| `noSubscribe` | `boolean` | No | true skips the automatic subscription to this brand. Only matters when webhooks are on for the account. |
+
+Takes the `id` from a lookup's `data.id`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string,
+  id?: string,
+  slug?: string,
+  domain?: string,
+  status?: string,
+  name?: string,
+  description?: string | null,
+  indexed_at?: string | null,
+  is_profane?: boolean,
+  socials?: Record<string, string | null>,
+  colors?: {
+    r?: number,
+    g?: number,
+    b?: number,
+    hex?: string
+  }[],
+  logo?: {
+    object?: string,
+    kind?: string,
+    brand_id?: string,
+    status?: string,
+    url?: string,
+    etag?: string,
+    blurhash?: string | null,
+    source?: {
+      width?: number,
+      height?: number,
+      format?: string,
+      has_transparency?: boolean,
+      is_vector?: boolean
+    },
+    last_updated_at?: string,
+    expires_at?: string
+  } | null,
+  brandmark?: {
+    object?: string,
+    kind?: string,
+    brand_id?: string,
+    status?: string,
+    url?: string,
+    etag?: string,
+    blurhash?: string | null,
+    source?: {
+      width?: number,
+      height?: number,
+      format?: string,
+      has_transparency?: boolean,
+      is_vector?: boolean
+    },
+    last_updated_at?: string,
+    expires_at?: string
+  } | null,
+  social_banners?: any[]
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  request_id?: string,
+  resolution?: {
+    type?: string,
+    value?: string,
+    method?: string
+  },
+  pending?: {
+    reason?: string,
+    message?: string,
+    retry_after_seconds?: number
+  },
+  subscription?: {
+    status?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### lookup
+
+`brands.lookup`
+
+Look up a brand profile (name, description, colors, socials, logo) by domain, ticker, ISIN, crypto symbol or name. 5 API credits.
+
+**Risk:** `read`
+
+```ts
+await corsair.logodev.api.brands.lookup({ domain: 'stripe.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | No | Company domain, such as stripe.com. |
+| `ticker` | `string` | No | Stock ticker, such as AAPL. |
+| `isin` | `string` | No | ISIN, such as US0378331005. |
+| `crypto` | `string` | No | Crypto symbol, such as BTC. |
+| `name` | `string` | No | Brand name. Logo.dev uses the top search match. |
+| `noSubscribe` | `boolean` | No | true skips the automatic subscription to this brand. Only matters when webhooks are on for the account. |
+
+Send exactly one of `domain`, `ticker`, `isin`, `crypto` or `name`. On accounts with webhooks, a lookup also subscribes to the brand unless `noSubscribe` is true. A ready brand is saved to the `brands` table under its domain.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string,
+  id?: string,
+  slug?: string,
+  domain?: string,
+  status?: string,
+  name?: string,
+  description?: string | null,
+  indexed_at?: string | null,
+  is_profane?: boolean,
+  socials?: Record<string, string | null>,
+  colors?: {
+    r?: number,
+    g?: number,
+    b?: number,
+    hex?: string
+  }[],
+  logo?: {
+    object?: string,
+    kind?: string,
+    brand_id?: string,
+    status?: string,
+    url?: string,
+    etag?: string,
+    blurhash?: string | null,
+    source?: {
+      width?: number,
+      height?: number,
+      format?: string,
+      has_transparency?: boolean,
+      is_vector?: boolean
+    },
+    last_updated_at?: string,
+    expires_at?: string
+  } | null,
+  brandmark?: {
+    object?: string,
+    kind?: string,
+    brand_id?: string,
+    status?: string,
+    url?: string,
+    etag?: string,
+    blurhash?: string | null,
+    source?: {
+      width?: number,
+      height?: number,
+      format?: string,
+      has_transparency?: boolean,
+      is_vector?: boolean
+    },
+    last_updated_at?: string,
+    expires_at?: string
+  } | null,
+  social_banners?: any[]
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  request_id?: string,
+  resolution?: {
+    type?: string,
+    value?: string,
+    method?: string
+  },
+  pending?: {
+    reason?: string,
+    message?: string,
+    retry_after_seconds?: number
+  },
+  subscription?: {
+    status?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
 
 ### search
 
 `brands.search`
 
-Search brands by name. Logo.dev charges API credits on every search.
+Search brands by name and get each match with its domain and logo URL. Billed at 1 API credit per 1,000 searches.
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.logodev.api.brands.search({ q: 'shopify', limit: 5 });
@@ -30,7 +341,7 @@ await corsair.logodev.api.brands.search({ q: 'shopify', limit: 5 });
 | `method` | `match \| typeahead` | No | match for full names, typeahead for a prefix. Default match. |
 | `limit` | `number` | No | How many brands to return, from 1 to 25. Default 10. |
 
-Official response is data plus metadata. Each result has a name and a domain. logo_url is returned without the token query.
+Returns `data` (each match's name, domain and logo URL) and `metadata`. The logo URL comes back without its `token` query.
 
 
 
@@ -58,7 +369,20 @@ Official response is data plus metadata. Each result has a name and a domain. lo
 
 ```ts
 {
-  request_id?: string
+  request_id?: string,
+  resolution?: {
+    type?: string,
+    value?: string,
+    method?: string
+  },
+  pending?: {
+    reason?: string,
+    message?: string,
+    retry_after_seconds?: number
+  },
+  subscription?: {
+    status?: string
+  }
 }
 ```
 </Accordion>
@@ -74,7 +398,7 @@ Official response is data plus metadata. Each result has a name and a domain. lo
 
 `logos.fetch`
 
-Fetch the content type of a domain logo from the Logo.dev CDN.
+Get a brand's logo as a temporary download URL with its size, format and blurhash. 2 API credits.
 
 **Risk:** `read`
 
@@ -86,9 +410,13 @@ await corsair.logodev.api.logos.fetch({ domain: 'shopify.com' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `domain` | `string` | Yes | Domain only, such as shopify.com. No scheme or path. |
+| `domain` | `string` | No | Company domain, such as stripe.com. |
+| `ticker` | `string` | No | Stock ticker, such as AAPL. |
+| `isin` | `string` | No | ISIN, such as US0378331005. |
+| `crypto` | `string` | No | Crypto symbol, such as BTC. |
+| `name` | `string` | No | Brand name. Logo.dev uses the top search match. |
 
-Domain is a hostname with no scheme or path. The call returns the public image URL, the content type, and status 200.
+Send exactly one identifier. `data.url` is a temporary download URL that stops working at `data.expires_at`. With a `domain`, the logo's format, size, etag and brand id are saved to the `images` table; the URL is not.
 
 
 
@@ -96,9 +424,633 @@ Domain is a hostname with no scheme or path. The call returns the public image U
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `url` | `string` | Yes | — |
-| `contentType` | `string` | Yes | — |
-| `status` | `200` | Yes | — |
+| `data` | `object` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string,
+  kind?: string,
+  brand_id?: string,
+  status?: string,
+  url?: string,
+  etag?: string,
+  blurhash?: string | null,
+  source?: {
+    width?: number,
+    height?: number,
+    format?: string,
+    has_transparency?: boolean,
+    is_vector?: boolean
+  },
+  last_updated_at?: string,
+  expires_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  request_id?: string,
+  resolution?: {
+    type?: string,
+    value?: string,
+    method?: string
+  },
+  pending?: {
+    reason?: string,
+    message?: string,
+    retry_after_seconds?: number
+  },
+  subscription?: {
+    status?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBrandmark
+
+`logos.getBrandmark`
+
+Get a brand's brandmark (the symbol without the name) as a temporary download URL. 3 API credits.
+
+**Risk:** `read`
+
+```ts
+await corsair.logodev.api.logos.getBrandmark({ ticker: 'AAPL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | No | Company domain, such as stripe.com. |
+| `ticker` | `string` | No | Stock ticker, such as AAPL. |
+| `isin` | `string` | No | ISIN, such as US0378331005. |
+| `crypto` | `string` | No | Crypto symbol, such as BTC. |
+| `name` | `string` | No | Brand name. Logo.dev uses the top search match. |
+
+Same input as `logos.fetch`. Returns the symbol without the name.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string,
+  kind?: string,
+  brand_id?: string,
+  status?: string,
+  url?: string,
+  etag?: string,
+  blurhash?: string | null,
+  source?: {
+    width?: number,
+    height?: number,
+    format?: string,
+    has_transparency?: boolean,
+    is_vector?: boolean
+  },
+  last_updated_at?: string,
+  expires_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  request_id?: string,
+  resolution?: {
+    type?: string,
+    value?: string,
+    method?: string
+  },
+  pending?: {
+    reason?: string,
+    message?: string,
+    retry_after_seconds?: number
+  },
+  subscription?: {
+    status?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Subscriptions
+
+### get
+
+`subscriptions.get`
+
+Check whether the account follows a brand's update events (paid plans).
+
+**Risk:** `read`
+
+```ts
+await corsair.logodev.api.subscriptions.get({ brandId: 'brand_4x0wr3g0000g00400000000004' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | Brand id, as returned in data.id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string,
+  id?: string,
+  brand_id?: string,
+  created_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  request_id?: string,
+  resolution?: {
+    type?: string,
+    value?: string,
+    method?: string
+  },
+  pending?: {
+    reason?: string,
+    message?: string,
+    retry_after_seconds?: number
+  },
+  subscription?: {
+    status?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### subscribe
+
+`subscriptions.subscribe`
+
+Follow a brand's update events (paid plans with webhooks).
+
+**Risk:** `write`
+
+```ts
+await corsair.logodev.api.subscriptions.subscribe({ brandId: 'brand_4x0wr3g0000g00400000000004' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | Brand id, as returned in data.id. |
+
+Safe to repeat: 200 when already subscribed, 201 when new. `409` means the plan's subscription limit is reached.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string,
+  id?: string,
+  brand_id?: string,
+  created_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  request_id?: string,
+  resolution?: {
+    type?: string,
+    value?: string,
+    method?: string
+  },
+  pending?: {
+    reason?: string,
+    message?: string,
+    retry_after_seconds?: number
+  },
+  subscription?: {
+    status?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unsubscribe
+
+`subscriptions.unsubscribe`
+
+Stop following a brand's update events.
+
+**Risk:** `write`
+
+```ts
+await corsair.logodev.api.subscriptions.unsubscribe({ brandId: 'brand_4x0wr3g0000g00400000000004' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | Brand id, as returned in data.id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `unsubscribed` | `true` | Yes | — |
+
+
+
+---
+
+## Webhook Endpoints
+
+### create
+
+`webhookEndpoints.create`
+
+Register a URL to receive brand.updated and brand.indexed events (paid plans).
+
+**Risk:** `write`
+
+```ts
+await corsair.logodev.api.webhookEndpoints.create({ url: 'https://hooks.example.com/logo-dev', filter_types: ['brand.updated'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | HTTPS URL that receives the events. |
+| `description` | `string` | No | — |
+| `filter_types` | `(brand.updated \| brand.indexed)[]` | No | Event types to send. Omit or send [] for all of them. |
+| `disabled` | `boolean` | No | true creates the endpoint switched off. |
+
+`filter_types` takes `brand.updated` and `brand.indexed`; omit it for both. `409` means the plan's endpoint limit is reached.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string,
+  id: string,
+  url?: string,
+  description?: string | null,
+  disabled?: boolean,
+  filter_types?: string[],
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  request_id?: string,
+  resolution?: {
+    type?: string,
+    value?: string,
+    method?: string
+  },
+  pending?: {
+    reason?: string,
+    message?: string,
+    retry_after_seconds?: number
+  },
+  subscription?: {
+    status?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`webhookEndpoints.delete`
+
+Delete a webhook endpoint. This cannot be undone.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.logodev.api.webhookEndpoints.delete({ id: 'ep_2mX9kL4pQ7rT1vW3yZ5aB8cD0e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Webhook endpoint id, such as ep_…. |
+
+Returns `{ id, deleted: true }` after the API confirms with `204`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`webhookEndpoints.get`
+
+Get one webhook endpoint.
+
+**Risk:** `read`
+
+```ts
+await corsair.logodev.api.webhookEndpoints.get({ id: 'ep_2mX9kL4pQ7rT1vW3yZ5aB8cD0e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Webhook endpoint id, such as ep_…. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string,
+  id: string,
+  url?: string,
+  description?: string | null,
+  disabled?: boolean,
+  filter_types?: string[],
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  request_id?: string,
+  resolution?: {
+    type?: string,
+    value?: string,
+    method?: string
+  },
+  pending?: {
+    reason?: string,
+    message?: string,
+    retry_after_seconds?: number
+  },
+  subscription?: {
+    status?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`webhookEndpoints.list`
+
+List the team's webhook endpoints.
+
+**Risk:** `read`
+
+```ts
+await corsair.logodev.api.webhookEndpoints.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string,
+  id: string,
+  url?: string,
+  description?: string | null,
+  disabled?: boolean,
+  filter_types?: string[],
+  created_at?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  request_id?: string,
+  resolution?: {
+    type?: string,
+    value?: string,
+    method?: string
+  },
+  pending?: {
+    reason?: string,
+    message?: string,
+    retry_after_seconds?: number
+  },
+  subscription?: {
+    status?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`webhookEndpoints.update`
+
+Change a webhook endpoint's URL, description, event types or disabled state.
+
+**Risk:** `write`
+
+```ts
+await corsair.logodev.api.webhookEndpoints.update({ id: 'ep_2mX9kL4pQ7rT1vW3yZ5aB8cD0e', disabled: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Webhook endpoint id, such as ep_…. |
+| `url` | `string` | No | — |
+| `description` | `string` | No | — |
+| `filter_types` | `(brand.updated \| brand.indexed)[]` | No | Event types to send. Omit or send [] for all of them. |
+| `disabled` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string,
+  id: string,
+  url?: string,
+  description?: string | null,
+  disabled?: boolean,
+  filter_types?: string[],
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  request_id?: string,
+  resolution?: {
+    type?: string,
+    value?: string,
+    method?: string
+  },
+  pending?: {
+    reason?: string,
+    message?: string,
+    retry_after_seconds?: number
+  },
+  subscription?: {
+    status?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 

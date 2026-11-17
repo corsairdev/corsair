@@ -1,8 +1,9 @@
 import type { CorsairEndpoint } from 'corsair/core';
-import { AuthMissingError, logEventFromContext } from 'corsair/core';
+import { logEventFromContext } from 'corsair/core';
 import { searchLogoDev } from '../client';
 import type { LogoDevContext } from '../context';
 import { LogoDevBrandEntity } from '../schema/database';
+import { requireKey } from './shared';
 import type { SearchBrandsInput, SearchBrandsResponse } from './types';
 import { SearchBrandsInputSchema, SearchBrandsResponseSchema } from './types';
 
@@ -27,11 +28,10 @@ export const searchBrands: CorsairEndpoint<
 	SearchBrandsInput,
 	SearchBrandsResponse
 > = async (ctx, input) => {
-	if (!ctx.key) {
-		throw new AuthMissingError('logodev', 'api_key');
-	}
+	const key = requireKey(ctx);
 	const parsed = SearchBrandsInputSchema.parse(input);
-	const body = await searchLogoDev<unknown>(ctx.key, parsed);
+	// `unknown` until SearchBrandsResponseSchema parses it: untrusted provider JSON.
+	const body = await searchLogoDev<unknown>(key, parsed);
 	const result = SearchBrandsResponseSchema.parse(body);
 	const data = result.data.map((item) => ({
 		...item,

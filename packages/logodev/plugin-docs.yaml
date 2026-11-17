@@ -1,23 +1,62 @@
 displayName: Logo.dev
-description: Search brands by name and fetch a domain logo. Search uses a secret key as a Bearer token. The image CDN uses a publishable key as the token query.
+description: Look up company logos and brand profiles (name, colors, socials, logo files) by domain, ticker, ISIN, crypto symbol or name, search brands by name, and manage brand update webhooks.
 domain: logo.dev
 recommendedAuth: api_key
 overviewNote: |
-  Logo.dev issues two keys. Search calls GET /v2/search with Authorization Bearer and spends API credits. The image call uses the same connected key as the img.logo.dev token query. Returned logo URLs do not include that token.
+  Connect the Logo.dev **secret key** (`sk_…`). Every operation calls the Logo.dev API (`api.logo.dev/v2`) with it as a Bearer token. The publishable key (`pk_…`) only works on the image CDN, which this plugin does not call; the API answers `401` to it.
+
+  Lookups spend API credits: search 1 per 1,000 searches, logo 2, brandmark 3, brand profile 5. Account reads, subscriptions and webhook endpoints are free. Out of credits returns `402`. A brand Logo.dev has not indexed yet comes back as `202` with `data.status` `not_indexed` and `metadata.pending.retry_after_seconds`; retry after that delay (retries are not billed).
+
+  Subscriptions and webhook endpoints need a paid plan with webhooks turned on; the free plan answers `403`.
 examples:
   read:
-    path: brands.search
-    title: Search for a brand
+    path: brands.lookup
+    title: Look up a brand profile by domain
     args:
-      q: shopify
-      limit: 5
+      domain: stripe.com
 apiNotes:
   brands.search: |
-    Official response is data plus metadata. Each result has a name and a domain. logo_url is returned without the token query.
+    Returns `data` (each match's name, domain and logo URL) and `metadata`. The logo URL comes back without its `token` query.
+  brands.lookup: |
+    Send exactly one of `domain`, `ticker`, `isin`, `crypto` or `name`. On accounts with webhooks, a lookup also subscribes to the brand unless `noSubscribe` is true. A ready brand is saved to the `brands` table under its domain.
+  brands.get: |
+    Takes the `id` from a lookup's `data.id`.
   logos.fetch: |
-    Domain is a hostname with no scheme or path. The call returns the public image URL, the content type, and status 200.
+    Send exactly one identifier. `data.url` is a temporary download URL that stops working at `data.expires_at`. With a `domain`, the logo's format, size, etag and brand id are saved to the `images` table; the URL is not.
+  logos.getBrandmark: |
+    Same input as `logos.fetch`. Returns the symbol without the name.
+  subscriptions.subscribe: |
+    Safe to repeat: 200 when already subscribed, 201 when new. `409` means the plan's subscription limit is reached.
+  webhookEndpoints.create: |
+    `filter_types` takes `brand.updated` and `brand.indexed`; omit it for both. `409` means the plan's endpoint limit is reached.
+  webhookEndpoints.delete: |
+    Returns `{ id, deleted: true }` after the API confirms with `204`.
 apiExamples:
   brands.search:
     call: "{ q: 'shopify', limit: 5 }"
+  brands.lookup:
+    call: "{ domain: 'stripe.com' }"
+  brands.get:
+    call: "{ id: 'brand_4x0wr3g0000g00400000000004' }"
   logos.fetch:
     call: "{ domain: 'shopify.com' }"
+  logos.getBrandmark:
+    call: "{ ticker: 'AAPL' }"
+  account.get:
+    call: "{}"
+  subscriptions.get:
+    call: "{ brandId: 'brand_4x0wr3g0000g00400000000004' }"
+  subscriptions.subscribe:
+    call: "{ brandId: 'brand_4x0wr3g0000g00400000000004' }"
+  subscriptions.unsubscribe:
+    call: "{ brandId: 'brand_4x0wr3g0000g00400000000004' }"
+  webhookEndpoints.list:
+    call: "{}"
+  webhookEndpoints.get:
+    call: "{ id: 'ep_2mX9kL4pQ7rT1vW3yZ5aB8cD0e' }"
+  webhookEndpoints.create:
+    call: "{ url: 'https://hooks.example.com/logo-dev', filter_types: ['brand.updated'] }"
+  webhookEndpoints.update:
+    call: "{ id: 'ep_2mX9kL4pQ7rT1vW3yZ5aB8cD0e', disabled: true }"
+  webhookEndpoints.delete:
+    call: "{ id: 'ep_2mX9kL4pQ7rT1vW3yZ5aB8cD0e' }"

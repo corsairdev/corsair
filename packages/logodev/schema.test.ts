@@ -23,14 +23,15 @@ describe('Logo.dev schema', () => {
 		);
 	});
 
-	it('accepts an image row and rejects one with no content type', () => {
+	it('accepts an image row and rejects one with no domain', () => {
 		const parsed = LogoDevImageEntity.parse({
-			domain: 'shopify.com',
-			contentType: 'image/png',
+			domain: 'stripe.com',
+			brandId: 'brand_4x0',
+			format: 'svg',
+			width: 512,
+			height: 512,
 		});
-		expect(parsed.contentType).toBe('image/png');
-		expect(
-			LogoDevImageEntity.safeParse({ domain: 'shopify.com' }).success,
-		).toBe(false);
+		expect(parsed.format).toBe('svg');
+		expect(LogoDevImageEntity.safeParse({ format: 'svg' }).success).toBe(false);
 	});
 });
