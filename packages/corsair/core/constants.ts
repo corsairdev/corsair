@@ -287,10 +287,10 @@ export const BaseProviders = [
 	'freeagent',
 	'freshdesk',
 	'fundable',
-	'gemini',
 	'gagelist',
 	'gamma',
 	'gatherup',
+	'gemini',
 	'genderapi',
 	'genderapiio',
 	'genderize',
@@ -365,6 +365,7 @@ export const BaseProviders = [
 	'jigsawstack',
 	'jira',
 	'jotform',
+	'junglescout',
 	'kadoa',
 	'kaggle',
 	'kalshi',
@@ -964,10 +965,10 @@ export const ProviderDisplayNames = {
 	freeagent: 'FreeAgent',
 	freshdesk: 'Freshdesk',
 	fundable: 'Fundable',
-	gemini: 'Gemini',
 	gagelist: 'Gagelist',
 	gamma: 'Gamma',
 	gatherup: 'GatherUp',
+	gemini: 'Gemini',
 	genderapi: 'Gender API',
 	genderapiio: 'GenderAPI.io',
 	genderize: 'Genderize',
@@ -1042,6 +1043,7 @@ export const ProviderDisplayNames = {
 	jigsawstack: 'JigsawStack',
 	jira: 'Jira',
 	jotform: 'Jotform',
+	junglescout: 'Jungle Scout',
 	kadoa: 'Kadoa',
 	kaggle: 'Kaggle',
 	kalshi: 'Kalshi',
@@ -1648,10 +1650,10 @@ export type AllProviders =
 	| 'freeagent'
 	| 'freshdesk'
 	| 'fundable'
-	| 'gemini'
 	| 'gagelist'
 	| 'gamma'
 	| 'gatherup'
+	| 'gemini'
 	| 'genderapi'
 	| 'genderapiio'
 	| 'genderize'
@@ -1726,6 +1728,7 @@ export type AllProviders =
 	| 'jigsawstack'
 	| 'jira'
 	| 'jotform'
+	| 'junglescout'
 	| 'kadoa'
 	| 'kaggle'
 	| 'kalshi'

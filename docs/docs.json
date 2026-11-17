@@ -3060,6 +3060,14 @@
                 ]
               },
               {
+                "group": "Jungle Scout",
+                "pages": [
+                  "plugins/junglescout/overview",
+                  "plugins/junglescout/api",
+                  "plugins/junglescout/database"
+                ]
+              },
+              {
                 "group": "Kadoa",
                 "pages": [
                   "plugins/kadoa/overview",
