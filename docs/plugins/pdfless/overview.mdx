@@ -1,16 +1,16 @@
 ---
 title: "PDFLess plugin"
 sidebarTitle: "Overview"
-description: "Read a PDFLess workspace and list its document templates. Requests send the API key in the apikey header."
+description: "Generate PDFs from PDFLess document templates, list the templates and read the workspace quota. Requests send the API key in the apikey header."
 ---
 
 Use **PDFLess** through Corsair: one client, typed API calls, local DB sync.
 
-Auth is the apikey header on https://api.pdfless.com. An empty key was measured as HTTP 401 with message "No API key found in request". The workspace model has no id, so a workspace row is stored only when name is present. A template row is stored only when id is present.
+Auth is the apikey header on https://api.pdfless.com. With no key stored, Corsair raises AuthMissingError before any request; a key PDFLess rejects comes back as HTTP 401 ("No API key found in request" when the header is empty). pdfs.generate renders one document against the workspace quota (workspace.get shows remainingQuota), so it is destructive; its download_url expires at `expires`. Template data and PDF passwords are kept out of errors and events. The workspace model has no id, so a workspace row is stored only when name is present. A template row is stored only when id is present.
 
 **What you get:**
 
-- 2 typed API operations
+- 3 typed API operations
 - 2 synced entities (`templates`, `workspaces`) for fast `.search()` / `.list()`
 
 ## Setup
@@ -105,9 +105,19 @@ await tenant.pdfless.api.templates.list({ page: 1, pageSize: 25 });
 ```
 
 
-**Write**
+**Render an invoice PDF from a template**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/pdfless/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.pdfless.api.pdfs.generate({
+	template_id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+	reference_id: 'invoice-42',
+	payload: {
+		customer: { name: 'Ada Lovelace' },
+		total: 42,
+	},
+});
+```
 
 
 See the full list on the [API](/plugins/pdfless/api) page.
