@@ -268,8 +268,21 @@ const RecordUpdateSchema = z
 			),
 	})
 	// The catchall also admits a map so `_expected` type-checks beside the
-	// dynamic field keys; zod still checks `_expected` with its own schema.
-	.catchall(z.union([CellSchema, z.record(z.string(), CellSchema)]));
+	// dynamic field keys; zod still checks `_expected` with its own schema, and
+	// the refine below holds every other key to a plain cell, as on create.
+	.catchall(z.union([CellSchema, z.record(z.string(), CellSchema)]))
+	.superRefine((record, ctx) => {
+		for (const [key, value] of Object.entries(record)) {
+			if (key === 'id' || key === '_expected') continue;
+			if (!CellSchema.safeParse(value).success) {
+				ctx.addIssue({
+					code: 'custom',
+					path: [key],
+					message: 'A field value must be a cell, not a nested object.',
+				});
+			}
+		}
+	});
 
 const RecordsUpdateInputSchema = z.object({
 	workspaceId: WorkspaceIdSchema,

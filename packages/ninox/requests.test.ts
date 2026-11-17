@@ -636,6 +636,17 @@ describe('workspace envelope checks', () => {
 		).rejects.toThrow();
 	});
 
+	it('rejects a nested object in a field on update, as on create', async () => {
+		await expect(
+			endpoints.records.update(makeContext() as never, {
+				workspaceId: WORKSPACE,
+				moduleName: 'CRM',
+				tableName: 'Contacts',
+				records: [{ id: 12, Name: { nested: true } }],
+			}),
+		).rejects.toMatchObject({ name: 'ZodError' });
+	});
+
 	it('lets a typed caller pass _expected beside the field values', () => {
 		// Type-level check: this object must satisfy RecordsUpdateInput's record type.
 		const record: RecordsUpdateInput['records'][number] = {
