@@ -11,7 +11,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Records, Workspace } from './endpoints';
+import { Records, Structure, Workspace } from './endpoints';
 import type {
 	NinoxEndpointInputs,
 	NinoxEndpointOutputs,
@@ -59,6 +59,14 @@ export type NinoxEndpoints = {
 	recordsDelete: NinoxEndpoint<'recordsDelete'>;
 	recordsUpsert: NinoxEndpoint<'recordsUpsert'>;
 	recordsChanges: NinoxEndpoint<'recordsChanges'>;
+	moduleGet: NinoxEndpoint<'moduleGet'>;
+	tableGet: NinoxEndpoint<'tableGet'>;
+	tableCreate: NinoxEndpoint<'tableCreate'>;
+	tableDelete: NinoxEndpoint<'tableDelete'>;
+	fieldCreate: NinoxEndpoint<'fieldCreate'>;
+	fieldDelete: NinoxEndpoint<'fieldDelete'>;
+	viewsList: NinoxEndpoint<'viewsList'>;
+	scriptExecute: NinoxEndpoint<'scriptExecute'>;
 };
 
 export const ninoxEndpointsNested = {
@@ -67,12 +75,18 @@ export const ninoxEndpointsNested = {
 	},
 	modules: {
 		list: Workspace.modules,
+		get: Structure.moduleGet,
 	},
 	tables: {
 		list: Workspace.tables,
+		get: Structure.tableGet,
+		create: Structure.tableCreate,
+		delete: Structure.tableDelete,
 	},
 	fields: {
 		list: Workspace.fields,
+		create: Structure.fieldCreate,
+		delete: Structure.fieldDelete,
 	},
 	records: {
 		list: Records.list,
@@ -82,6 +96,12 @@ export const ninoxEndpointsNested = {
 		delete: Records.remove,
 		upsert: Records.upsert,
 		changes: Records.changes,
+	},
+	views: {
+		list: Structure.viewsList,
+	},
+	scripts: {
+		execute: Structure.scriptExecute,
 	},
 } as const;
 
@@ -129,6 +149,38 @@ export const ninoxEndpointSchemas = {
 	'records.changes': {
 		input: NinoxEndpointInputSchemas.recordsChanges,
 		output: NinoxEndpointOutputSchemas.recordsChanges,
+	},
+	'modules.get': {
+		input: NinoxEndpointInputSchemas.moduleGet,
+		output: NinoxEndpointOutputSchemas.moduleGet,
+	},
+	'tables.get': {
+		input: NinoxEndpointInputSchemas.tableGet,
+		output: NinoxEndpointOutputSchemas.tableGet,
+	},
+	'tables.create': {
+		input: NinoxEndpointInputSchemas.tableCreate,
+		output: NinoxEndpointOutputSchemas.tableCreate,
+	},
+	'tables.delete': {
+		input: NinoxEndpointInputSchemas.tableDelete,
+		output: NinoxEndpointOutputSchemas.tableDelete,
+	},
+	'fields.create': {
+		input: NinoxEndpointInputSchemas.fieldCreate,
+		output: NinoxEndpointOutputSchemas.fieldCreate,
+	},
+	'fields.delete': {
+		input: NinoxEndpointInputSchemas.fieldDelete,
+		output: NinoxEndpointOutputSchemas.fieldDelete,
+	},
+	'views.list': {
+		input: NinoxEndpointInputSchemas.viewsList,
+		output: NinoxEndpointOutputSchemas.viewsList,
+	},
+	'scripts.execute': {
+		input: NinoxEndpointInputSchemas.scriptExecute,
+		output: NinoxEndpointOutputSchemas.scriptExecute,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof ninoxEndpointsNested>;
 
@@ -187,6 +239,44 @@ const ninoxEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Poll a table’s row-level change feed since a timestamp, which needs history tracking enabled on that table',
+	},
+	'modules.get': {
+		riskLevel: 'read',
+		description: 'Read one module (app) by its internal name',
+	},
+	'tables.get': {
+		riskLevel: 'read',
+		description: 'Read one table with all of its field definitions',
+	},
+	'tables.create': {
+		riskLevel: 'write',
+		description:
+			'Create a table in a module; add its fields with fields.create',
+	},
+	'tables.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Delete a table and every record in it',
+	},
+	'fields.create': {
+		riskLevel: 'write',
+		description:
+			'Add a field to a table: text, number, choice, date, reference and the other Ninox types',
+	},
+	'fields.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Delete a field and the value every record held in it',
+	},
+	'views.list': {
+		riskLevel: 'read',
+		description: "List a table's saved views",
+	},
+	'scripts.execute': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description:
+			'Run Ninox script in a module and return its result; a script can change or delete records',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof ninoxEndpointsNested>;
 

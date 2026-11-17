@@ -29,8 +29,17 @@ const RecordIdSchema = z
 	.positive()
 	.describe('The numeric record id.');
 
-/** A cell value: Ninox documents exactly these four types. */
-const CellSchema = z.union([z.string(), z.number(), z.boolean(), z.null()]);
+/**
+ * A cell value: a string, number, boolean or null, or for a `multi` field an
+ * array of option ids (Ninox answers and takes arrays there).
+ */
+const CellSchema = z.union([
+	z.string(),
+	z.number(),
+	z.boolean(),
+	z.null(),
+	z.array(z.union([z.string(), z.number()])),
+]);
 
 /** A record body keyed by the table's own field names. */
 const RowValuesSchema = z
@@ -71,7 +80,10 @@ export type WorkspaceGetInput = z.input<typeof WorkspaceGetInputSchema>;
 
 const ModuleSummarySchema = z
 	.object({
+		moduleId: z.string().nullish(),
 		name: z.string().nullish(),
+		// unknown: labels are keyed by locale ("" is the default).
+		labels: z.record(z.string(), z.unknown()).nullish(),
 		description: z.string().nullish(),
 		afterOpen: z.string().nullish(),
 	})
@@ -255,7 +267,9 @@ const RecordUpdateSchema = z
 				'Field values as they were read. A mismatch rejects the update with 409 unless override is set.',
 			),
 	})
-	.catchall(CellSchema);
+	// The catchall also admits a map so `_expected` type-checks beside the
+	// dynamic field keys; zod still checks `_expected` with its own schema.
+	.catchall(z.union([CellSchema, z.record(z.string(), CellSchema)]));
 
 const RecordsUpdateInputSchema = z.object({
 	workspaceId: WorkspaceIdSchema,
@@ -375,6 +389,190 @@ export type RecordsChangesResponse = z.infer<
 	typeof RecordsChangesResponseSchema
 >;
 
+// ── modules.get, tables.get/create/delete, fields.create/delete ────────────
+
+const ModuleGetInputSchema = z.object({
+	workspaceId: WorkspaceIdSchema,
+	moduleName: ModuleNameSchema,
+});
+
+export type ModuleGetInput = z.input<typeof ModuleGetInputSchema>;
+
+const ModuleGetResponseSchema = z.object({ module: ModuleSummarySchema });
+
+export type ModuleGetResponse = z.infer<typeof ModuleGetResponseSchema>;
+
+const TableRefInputSchema = z.object({
+	workspaceId: WorkspaceIdSchema,
+	moduleName: ModuleNameSchema,
+	tableName: TableNameSchema,
+});
+
+export type TableRefInput = z.input<typeof TableRefInputSchema>;
+
+/** A table with its fields, as Ninox answers a single-table read or a create. */
+const TableDetailSchema = TableSummarySchema.extend({
+	fields: z.array(FieldSchema).nullish(),
+}).loose();
+
+const TableResponseSchema = z.object({ table: TableDetailSchema });
+
+export type TableResponse = z.infer<typeof TableResponseSchema>;
+
+/** Labels keyed by locale; "" is the default label. */
+const LabelsSchema = z
+	.record(z.string(), z.string())
+	.describe('Labels by locale, e.g. { "": "Customers", "de": "Kunden" }.');
+
+const TableCreateInputSchema = z.object({
+	workspaceId: WorkspaceIdSchema,
+	moduleName: ModuleNameSchema,
+	table: z
+		.object({
+			name: z
+				.string()
+				.min(1)
+				.describe('The internal table name used in paths, e.g. customers.'),
+			labels: LabelsSchema,
+			hasFiles: z.boolean().optional(),
+			hasHistory: z.boolean().optional(),
+			isHidden: z.boolean().optional(),
+		})
+		// Ninox documents more keys (permissions, triggers, icon); it checks them.
+		.loose(),
+});
+
+export type TableCreateInput = z.input<typeof TableCreateInputSchema>;
+
+/** A delete answers 204, so this records what was removed. */
+const DeletedSchema = z.object({ deleted: z.literal(true), name: z.string() });
+
+export type NinoxDeleted = z.infer<typeof DeletedSchema>;
+
+export const NINOX_FIELD_TYPES = [
+	'string',
+	'html',
+	'number',
+	'boolean',
+	'choice',
+	'dchoice',
+	'multi',
+	'dmulti',
+	'file',
+	'date',
+	'timestamp',
+	'time',
+	'appointment',
+	'reference',
+	'reverse',
+	'function',
+	'color',
+	'icon',
+] as const;
+
+const FieldCreateInputSchema = z.object({
+	workspaceId: WorkspaceIdSchema,
+	moduleName: ModuleNameSchema,
+	tableName: TableNameSchema,
+	field: z
+		.object({
+			name: z.string().min(1).describe('The internal field name.'),
+			labels: LabelsSchema,
+			type: z.enum(NINOX_FIELD_TYPES),
+			required: z.boolean().optional(),
+			unique: z.boolean().optional(),
+			variant: z
+				.string()
+				.min(1)
+				.optional()
+				.describe(
+					'For a string field: text, multiline-text, email, phone, url, location or signature.',
+				),
+			// unknown: an options array for choice/multi, or an expression string
+			// for dchoice/dmulti, as Ninox documents.
+			options: z
+				.unknown()
+				.optional()
+				.describe(
+					"For choice/multi: [{ label: 'red' }, { label: 'blue' }]; Ninox assigns the ids. For dchoice/dmulti: a selection expression.",
+				),
+			refTableName: z.string().min(1).optional(),
+			expression: z.string().min(1).optional(),
+		})
+		// Other documented keys (roles, index, defaultValue) pass through.
+		.loose(),
+});
+
+export type FieldCreateInput = z.input<typeof FieldCreateInputSchema>;
+
+const FieldResponseSchema = z.object({ field: FieldSchema });
+
+export type FieldResponse = z.infer<typeof FieldResponseSchema>;
+
+const FieldDeleteInputSchema = z.object({
+	workspaceId: WorkspaceIdSchema,
+	moduleName: ModuleNameSchema,
+	tableName: TableNameSchema,
+	fieldName: z.string().min(1).describe('The internal field name.'),
+});
+
+export type FieldDeleteInput = z.input<typeof FieldDeleteInputSchema>;
+
+// ── views.list ────────────────────────────────────────────────────────────
+
+const ViewSchema = z
+	.object({
+		id: z.union([z.string(), z.number()]).nullish(),
+		name: z.string().nullish(),
+		type: z.string().nullish(),
+	})
+	.loose();
+
+const ViewsListResponseSchema = z.object({ views: z.array(ViewSchema) });
+
+export type ViewsListResponse = z.infer<typeof ViewsListResponseSchema>;
+
+// ── scripts.execute ───────────────────────────────────────────────────────
+
+const ScriptExecuteInputSchema = z.object({
+	workspaceId: WorkspaceIdSchema,
+	moduleName: ModuleNameSchema.describe(
+		'The module the script runs in; `do as database` stays inside it.',
+	),
+	script: z
+		.string()
+		.min(1)
+		.describe('Ninox script, e.g. count(select customers).'),
+	tableName: TableNameSchema.optional(),
+	rowId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('A record the script runs against (as `this`).'),
+	mode: z
+		.enum(['wait', 'background'])
+		.optional()
+		.describe(
+			'wait (default) answers the result when the script ends in time; background answers the run at once.',
+		),
+});
+
+export type ScriptExecuteInput = z.input<typeof ScriptExecuteInputSchema>;
+
+/**
+ * `result` is what the script's last expression evaluated to, or absent when
+ * Ninox answered 202 with a run to follow up on instead.
+ */
+const ScriptExecuteResponseSchema = z.object({
+	// unknown: a Ninox script can evaluate to any JSON value.
+	result: z.unknown().optional(),
+	// unknown: the run object Ninox answers with a 202, passed through.
+	run: z.record(z.string(), z.unknown()).optional(),
+});
+
+export type ScriptExecuteResponse = z.infer<typeof ScriptExecuteResponseSchema>;
+
 // ── Registry ──────────────────────────────────────────────────────────────
 
 export type NinoxEndpointInputs = {
@@ -389,6 +587,14 @@ export type NinoxEndpointInputs = {
 	recordsDelete: RecordsDeleteInput;
 	recordsUpsert: RecordsUpsertInput;
 	recordsChanges: RecordsChangesInput;
+	moduleGet: ModuleGetInput;
+	tableGet: TableRefInput;
+	tableCreate: TableCreateInput;
+	tableDelete: TableRefInput;
+	fieldCreate: FieldCreateInput;
+	fieldDelete: FieldDeleteInput;
+	viewsList: TableRefInput;
+	scriptExecute: ScriptExecuteInput;
 };
 
 export type NinoxEndpointOutputs = {
@@ -403,6 +609,14 @@ export type NinoxEndpointOutputs = {
 	recordsDelete: RecordsDeleteResponse;
 	recordsUpsert: RecordsUpsertResponse;
 	recordsChanges: RecordsChangesResponse;
+	moduleGet: ModuleGetResponse;
+	tableGet: TableResponse;
+	tableCreate: TableResponse;
+	tableDelete: NinoxDeleted;
+	fieldCreate: FieldResponse;
+	fieldDelete: NinoxDeleted;
+	viewsList: ViewsListResponse;
+	scriptExecute: ScriptExecuteResponse;
 };
 
 export const NinoxEndpointInputSchemas = {
@@ -417,6 +631,14 @@ export const NinoxEndpointInputSchemas = {
 	recordsDelete: RecordsDeleteInputSchema,
 	recordsUpsert: RecordsUpsertInputSchema,
 	recordsChanges: RecordsChangesInputSchema,
+	moduleGet: ModuleGetInputSchema,
+	tableGet: TableRefInputSchema,
+	tableCreate: TableCreateInputSchema,
+	tableDelete: TableRefInputSchema,
+	fieldCreate: FieldCreateInputSchema,
+	fieldDelete: FieldDeleteInputSchema,
+	viewsList: TableRefInputSchema,
+	scriptExecute: ScriptExecuteInputSchema,
 } as const;
 
 export const NinoxEndpointOutputSchemas = {
@@ -431,4 +653,12 @@ export const NinoxEndpointOutputSchemas = {
 	recordsDelete: RecordsDeletedResponseSchema,
 	recordsUpsert: RecordsUpsertResponseSchema,
 	recordsChanges: RecordsChangesResponseSchema,
+	moduleGet: ModuleGetResponseSchema,
+	tableGet: TableResponseSchema,
+	tableCreate: TableResponseSchema,
+	tableDelete: DeletedSchema,
+	fieldCreate: FieldResponseSchema,
+	fieldDelete: DeletedSchema,
+	viewsList: ViewsListResponseSchema,
+	scriptExecute: ScriptExecuteResponseSchema,
 } as const;

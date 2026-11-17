@@ -22,9 +22,9 @@ export const get: NinoxEndpoints['workspaceGet'] = (ctx, input) =>
 		}),
 		{
 			shape: (raw) => {
-				const data = dataObject(raw);
-				const modules = data.modules;
-				return { modules: Array.isArray(modules) ? modules : [] };
+				// Passed through as sent: the output schema requires an array, so a
+				// malformed `modules` fails instead of reading as an empty workspace.
+				return { modules: dataObject(raw).modules };
 			},
 			log: (_, result) => ({ modules: result.modules.length }),
 		},

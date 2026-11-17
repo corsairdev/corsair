@@ -1,7 +1,7 @@
 import { createCorsair } from 'corsair';
 import type { CorsairEndpoint } from 'corsair/core';
 import { asRecord } from 'corsair/core';
-import type { NinoxPluginOptions } from './index';
+import type { NinoxPluginOptions, RecordsUpdateInput } from './index';
 import { ninox, ninoxEndpointsNested } from './index';
 import {
 	changes,
@@ -288,6 +288,22 @@ describe('records.create', () => {
 		expect(asRecord(result)?.ids).toEqual(['14', '15']);
 	});
 
+	it('sends a multi field as an array of option ids', async () => {
+		// Live 11-17: a multi cell came back as ["1","2"] and was written that way.
+		const { init } = await capture(
+			endpoints.records.create,
+			{
+				workspaceId: WORKSPACE,
+				moduleName: 'CRM',
+				tableName: 'Contacts',
+				records: [{ Name: 'Ada', Tags: ['1', '2'] }],
+			},
+			createdRows,
+			{ status: 201 },
+		);
+		expect(sentBody(init).records).toEqual([{ Name: 'Ada', Tags: ['1', '2'] }]);
+	});
+
 	it('rejects a cell that is an object rather than a scalar', async () => {
 		await expect(
 			endpoints.records.create(makeContext() as never, {
@@ -430,7 +446,7 @@ describe('records.upsert', () => {
 });
 
 describe('records.changes', () => {
-	it('passes since and reads meta.asOf as the next cursor', async () => {
+	it('passes since and lifts asOf out of meta as the next cursor', async () => {
 		const { result, url } = await capture(
 			endpoints.records.changes,
 			{
@@ -463,6 +479,164 @@ describe('records.changes', () => {
 	});
 });
 
+describe('structure, views and scripts', () => {
+	const base = `https://go.ninox.com/api/v1/workspace/${WORKSPACE}/modules/my_app`;
+
+	it('reads one module and one table by name', async () => {
+		const mod = await capture(
+			endpoints.modules.get,
+			{ workspaceId: WORKSPACE, moduleName: 'my_app' },
+			{ data: { moduleId: 'A', name: 'my_app', labels: { '': 'My app' } } },
+		);
+		expect(mod.url).toBe(base);
+		expect(asRecord(asRecord(mod.result)?.module)?.moduleId).toBe('A');
+
+		const table = await capture(
+			endpoints.tables.get,
+			{ workspaceId: WORKSPACE, moduleName: 'my_app', tableName: 'orders' },
+			{ data: { name: 'orders', fields: [{ name: 'qty', type: 'number' }] } },
+		);
+		expect(table.url).toBe(`${base}/tables/orders`);
+		const fieldsOut = asRecord(asRecord(table.result)?.table)?.fields;
+		expect(Array.isArray(fieldsOut) ? fieldsOut.length : 0).toBe(1);
+	});
+
+	it('creates a table with the body Ninox documents', async () => {
+		const { url, init } = await capture(
+			endpoints.tables.create,
+			{
+				workspaceId: WORKSPACE,
+				moduleName: 'my_app',
+				table: { name: 'orders', labels: { '': 'Orders' } },
+			},
+			{ data: { name: 'orders', labels: { '': 'Orders' } } },
+			{ status: 201 },
+		);
+		expect(url).toBe(`${base}/tables`);
+		expect(init.method).toBe('POST');
+		expect(sentBody(init)).toEqual({
+			name: 'orders',
+			labels: { '': 'Orders' },
+		});
+	});
+
+	it('creates a multi field with label options', async () => {
+		const field = {
+			name: 'tags',
+			labels: { '': 'Tags' },
+			type: 'multi' as const,
+			options: [{ label: 'red' }, { label: 'blue' }],
+		};
+		const { url, init } = await capture(
+			endpoints.fields.create,
+			{
+				workspaceId: WORKSPACE,
+				moduleName: 'my_app',
+				tableName: 'orders',
+				field,
+			},
+			{ data: { name: 'tags', type: 'multi' } },
+			{ status: 201 },
+		);
+		expect(url).toBe(`${base}/tables/orders/fields`);
+		expect(sentBody(init)).toEqual(field);
+	});
+
+	it('deletes a field and a table on an empty 204', async () => {
+		const field = await capture(
+			endpoints.fields.delete,
+			{
+				workspaceId: WORKSPACE,
+				moduleName: 'my_app',
+				tableName: 'orders',
+				fieldName: 'temp',
+			},
+			// fetch refuses a body on a 204 mock; an empty 200 is the same to core.
+			'',
+		);
+		expect(field.url).toBe(`${base}/tables/orders/fields/temp`);
+		expect(field.init.method).toBe('DELETE');
+		expect(field.result).toEqual({ deleted: true, name: 'temp' });
+
+		const table = await capture(
+			endpoints.tables.delete,
+			{ workspaceId: WORKSPACE, moduleName: 'my_app', tableName: 'orders' },
+			// fetch refuses a body on a 204 mock; an empty 200 is the same to core.
+			'',
+		);
+		expect(table.result).toEqual({ deleted: true, name: 'orders' });
+	});
+
+	it('lists views from the data envelope', async () => {
+		const { url, result } = await capture(
+			endpoints.views.list,
+			{ workspaceId: WORKSPACE, moduleName: 'my_app', tableName: 'orders' },
+			{ data: [{ id: 'v1', name: 'All' }] },
+		);
+		expect(url).toBe(`${base}/tables/orders/views`);
+		const views = asRecord(result)?.views;
+		expect(Array.isArray(views) ? views.length : 0).toBe(1);
+	});
+
+	it('runs a script and returns its result', async () => {
+		const { url, init, result } = await capture(
+			endpoints.scripts.execute,
+			{
+				workspaceId: WORKSPACE,
+				moduleName: 'my_app',
+				script: 'count(select orders)',
+				mode: 'wait',
+			},
+			{ data: 2 },
+		);
+		const parsed = new URL(url);
+		expect(parsed.pathname).toBe(`/api/v1/workspace/${WORKSPACE}/script/exec`);
+		expect(parsed.searchParams.get('mode')).toBe('wait');
+		expect(sentBody(init)).toEqual({
+			moduleName: 'my_app',
+			script: 'count(select orders)',
+		});
+		expect(result).toEqual({ result: 2 });
+	});
+
+	it('returns the run when Ninox queues the script', async () => {
+		const { result } = await capture(
+			endpoints.scripts.execute,
+			{
+				workspaceId: WORKSPACE,
+				moduleName: 'my_app',
+				script: 'x',
+				mode: 'background',
+			},
+			{ data: { runId: 'r1', status: 'queued' } },
+			{ status: 202 },
+		);
+		expect(asRecord(asRecord(result)?.run)?.runId).toBe('r1');
+	});
+});
+
+describe('workspace envelope checks', () => {
+	it('fails on a malformed modules value instead of reading it as empty', async () => {
+		await expect(
+			capture(
+				endpoints.workspace.get,
+				{ workspaceId: WORKSPACE },
+				{ data: { modules: 'invalid' } },
+			),
+		).rejects.toThrow();
+	});
+
+	it('lets a typed caller pass _expected beside the field values', () => {
+		// Type-level check: this object must satisfy RecordsUpdateInput's record type.
+		const record: RecordsUpdateInput['records'][number] = {
+			id: 12,
+			Status: 'Won',
+			_expected: { Status: 'Open' },
+		};
+		expect(record._expected).toEqual({ Status: 'Open' });
+	});
+});
+
 describe('ninox error reporting', () => {
 	it('reads the JSON error message', async () => {
 		const error = await capture(
@@ -470,7 +644,7 @@ describe('ninox error reporting', () => {
 			{ workspaceId: WORKSPACE, moduleName: 'Nope' },
 			tableNotFound,
 			{ status: 404 },
-		).catch((caught: unknown) => caught);
+		).catch((caught: unknown) => caught); // unknown: a rejection reason has no static type
 
 		expect(String(error)).toContain('Table not found');
 		expect(String(error)).toContain('404');
@@ -482,7 +656,7 @@ describe('ninox error reporting', () => {
 			{ workspaceId: WORKSPACE },
 			unauthorizedText,
 			{ status: 401, contentType: 'text/plain' },
-		).catch((caught: unknown) => caught);
+		).catch((caught: unknown) => caught); // unknown: a rejection reason has no static type
 
 		expect(String(error)).toContain('Unauthorized');
 	});
@@ -493,7 +667,7 @@ describe('ninox error reporting', () => {
 			{ workspaceId: WORKSPACE },
 			unauthorizedText,
 			{ status: 401, contentType: 'text/plain' },
-		).catch((caught: unknown) => caught);
+		).catch((caught: unknown) => caught); // unknown: a rejection reason has no static type
 
 		expect(String(error)).not.toContain(API_KEY);
 	});
@@ -510,12 +684,15 @@ describe('ninox plugin definition', () => {
 		).toBe(false);
 	});
 
-	it('exposes exactly the eleven catalog operations', () => {
+	it('exposes exactly the 19 catalog operations', () => {
 		const nested = Object.entries(ninoxEndpointsNested).flatMap(
 			([group, fns]) => Object.keys(fns).map((name) => `${group}.${name}`),
 		);
 		expect(nested.sort()).toEqual([
+			'fields.create',
+			'fields.delete',
 			'fields.list',
+			'modules.get',
 			'modules.list',
 			'records.changes',
 			'records.create',
@@ -524,7 +701,12 @@ describe('ninox plugin definition', () => {
 			'records.list',
 			'records.update',
 			'records.upsert',
+			'scripts.execute',
+			'tables.create',
+			'tables.delete',
+			'tables.get',
 			'tables.list',
+			'views.list',
 			'workspace.get',
 		]);
 	});
@@ -538,6 +720,16 @@ describe('ninox plugin definition', () => {
 		expect(meta['records.upsert']?.riskLevel).toBe('write');
 		// The change feed is a read even though it is a poll.
 		expect(meta['records.changes']?.riskLevel).toBe('read');
+		for (const name of [
+			'tables.delete',
+			'fields.delete',
+			'scripts.execute',
+		] as const) {
+			expect(meta[name]?.riskLevel).toBe('destructive');
+		}
+		expect(meta['tables.create']?.riskLevel).toBe('write');
+		expect(meta['fields.create']?.riskLevel).toBe('write');
+		expect(meta['views.list']?.riskLevel).toBe('read');
 	});
 
 	it('builds a key from the option, then the stored key, then throws', async () => {
