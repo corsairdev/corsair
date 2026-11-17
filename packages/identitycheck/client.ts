@@ -44,7 +44,9 @@ export async function makeIdentityCheckRequest(
 /**
  * Core keeps the request body on ApiError.request, and verification bodies
  * hold names, emails and phone numbers. Rebuild the error without the body;
- * status, response body and rate-limit data stay as they were.
+ * status, response body and rate-limit data stay as they were. A caught value
+ * can be anything, so it comes in as `unknown`, and anything that is not an
+ * ApiError is returned unchanged.
  */
 function withoutRequestBody(error: unknown): unknown {
 	if (!(error instanceof ApiError) || error.request?.body === undefined)

@@ -216,11 +216,10 @@ describe('IdentityCheck errors', () => {
 			.create(context, {
 				body: { email: 'person@example.test', firstName: 'Example' },
 			})
+			// A rejection can carry any value, so it is narrowed below.
 			.catch((e: unknown) => e);
-		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) throw new Error('expected an ApiError');
 		expect(error).toMatchObject({ status: 400, retryAfter: 1000 });
-		expect(JSON.stringify((error as ApiError).request)).not.toContain(
-			'person@example.test',
-		);
+		expect(JSON.stringify(error.request)).not.toContain('person@example.test');
 	});
 });
