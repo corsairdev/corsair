@@ -562,6 +562,7 @@ export const BaseProviders = [
 	'supersaas',
 	'supabase',
 	'supadata',
+	'supportbee',
 	'surf',
 	'suzanne',
 	'svix',
@@ -1220,6 +1221,7 @@ export const ProviderDisplayNames = {
 	supersaas: 'SuperSaaS',
 	supabase: 'Supabase',
 	supadata: 'Supadata',
+	supportbee: 'Supportbee',
 	surf: 'Surf',
 	suzanne: 'Suzanne',
 	svix: 'Svix',
@@ -1885,6 +1887,7 @@ export type AllProviders =
 	| 'supersaas'
 	| 'supabase'
 	| 'supadata'
+	| 'supportbee'
 	| 'surf'
 	| 'suzanne'
 	| 'svix'

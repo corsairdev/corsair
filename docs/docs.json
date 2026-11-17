@@ -4654,6 +4654,14 @@
                 ]
               },
               {
+                "group": "Supportbee",
+                "pages": [
+                  "plugins/supportbee/overview",
+                  "plugins/supportbee/api",
+                  "plugins/supportbee/database"
+                ]
+              },
+              {
                 "group": "Surf",
                 "pages": [
                   "plugins/surf/overview",
