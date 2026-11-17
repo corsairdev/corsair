@@ -369,6 +369,7 @@ export const BaseProviders = [
 	'klaviyo',
 	'klazify',
 	'kling',
+	'klipfolio',
 	'knack',
 	'kofi',
 	'kommo',
@@ -1003,6 +1004,7 @@ export const ProviderDisplayNames = {
 	klaviyo: 'Klaviyo',
 	klazify: 'Klazify',
 	kling: 'Kling',
+	klipfolio: 'Klipfolio',
 	knack: 'Knack',
 	kofi: 'Ko-fi',
 	kommo: 'Kommo',
@@ -1644,6 +1646,7 @@ export type AllProviders =
 	| 'klaviyo'
 	| 'klazify'
 	| 'kling'
+	| 'klipfolio'
 	| 'knack'
 	| 'kofi'
 	| 'kommo'

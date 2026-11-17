@@ -2460,6 +2460,14 @@
                 ]
               },
               {
+                "group": "Klipfolio",
+                "pages": [
+                  "plugins/klipfolio/overview",
+                  "plugins/klipfolio/api",
+                  "plugins/klipfolio/database"
+                ]
+              },
+              {
                 "group": "Gift Up!",
                 "pages": [
                   "plugins/giftup/overview",
