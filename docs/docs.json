@@ -2348,6 +2348,14 @@
                 ]
               },
               {
+                "group": "Freshdesk",
+                "pages": [
+                  "plugins/freshdesk/overview",
+                  "plugins/freshdesk/api",
+                  "plugins/freshdesk/database"
+                ]
+              },
+              {
                 "group": "Fundable",
                 "pages": [
                   "plugins/fundable/overview",

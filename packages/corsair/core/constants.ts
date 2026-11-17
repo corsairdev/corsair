@@ -280,6 +280,7 @@ export const BaseProviders = [
 	'formbricks',
 	'formdesk',
 	'foursquare',
+	'freshdesk',
 	'fundable',
 	'gemini',
 	'gagelist',
@@ -910,6 +911,7 @@ export const ProviderDisplayNames = {
 	formbricks: 'Formbricks',
 	formdesk: 'Formdesk',
 	foursquare: 'Foursquare',
+	freshdesk: 'Freshdesk',
 	fundable: 'Fundable',
 	gemini: 'Gemini',
 	gagelist: 'Gagelist',
@@ -1547,6 +1549,7 @@ export type AllProviders =
 	| 'formbricks'
 	| 'formdesk'
 	| 'foursquare'
+	| 'freshdesk'
 	| 'fundable'
 	| 'gemini'
 	| 'gagelist'
