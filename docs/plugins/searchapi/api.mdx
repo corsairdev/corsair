@@ -126,7 +126,7 @@ await corsair.searchapi.api.searches.get({ id: 'search_example' });
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 
-GET /api/v1/searches/{id}. This is the json_url. Stores id, status, and engine.
+GET /api/v1/searches/{id}. This is the json_url. Returns the same results and sections as searches.run. Stores id, status, and engine.
 
 
 
@@ -136,6 +136,7 @@ GET /api/v1/searches/{id}. This is the json_url. Stores id, status, and engine.
 |------|------|----------|-------------|
 | `search` | `object` | Yes | — |
 | `results` | `object[]` | Yes | — |
+| `sections` | `Record<string, any>` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="search full type">
@@ -155,7 +156,12 @@ GET /api/v1/searches/{id}. This is the json_url. Stores id, status, and engine.
 {
   position?: number,
   title?: string,
-  link?: string
+  link?: string,
+  displayed_link?: string,
+  snippet?: string,
+  date?: string,
+  source?: string,
+  domain?: string
 }[]
 ```
 </Accordion>
@@ -201,12 +207,12 @@ GET /api/v1/searches/{id}.html. Returns the HTML and does not store it.
 
 `searches.run`
 
-Run a search. This spends a credit. Results are not stored.
+Run a search on any SearchAPI engine (google, google_news, bing, youtube, amazon_search, ...) with location, language, page and time filters. Returns organic results and every other section (answer box, AI overview, knowledge graph, news, local results). Uses one search credit. Results are not stored.
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
-await corsair.searchapi.api.searches.run({ engine: 'google', q: 'example' });
+await corsair.searchapi.api.searches.run({ engine: 'google', q: 'coffee roasters', location: 'Austin,Texas,United States', time_period: 'last_month' });
 ```
 
 **Input**
@@ -214,9 +220,17 @@ await corsair.searchapi.api.searches.run({ engine: 'google', q: 'example' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `engine` | `string` | Yes | — |
-| `q` | `string` | Yes | — |
+| `q` | `string` | No | — |
+| `location` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `device` | `desktop \| mobile \| tablet` | No | — |
+| `page` | `number` | No | — |
+| `safe` | `active \| blur \| off` | No | — |
+| `time_period` | `last_1_minute \| last_5_minutes \| last_15_minutes \| last_30_minutes \| last_hour \| last_day \| last_week \| last_month \| last_year` | No | — |
+| `params` | `Record<string, string \| number \| boolean>` | No | — |
 
-GET /api/v1/search. Stores id, status, and engine. Returns title and link for organic results.
+GET /api/v1/search. engine picks the source (google, google_news, google_maps, bing, youtube, amazon_search and the others in searchapi.io/docs). location, gl, hl, device, page, safe and time_period are typed; any other parameter the engine documents goes in params (for example { video_id } for youtube_transcripts). results holds organic_results (position, title, link, snippet, date, source, domain); sections holds every other part of the answer under SearchAPI's own key (answer_box, ai_overview, knowledge_graph, related_questions, top_stories, local_results, pagination). Uses one search credit. Stores id, status, and engine; the query and results are not stored.
 
 
 
@@ -226,6 +240,7 @@ GET /api/v1/search. Stores id, status, and engine. Returns title and link for or
 |------|------|----------|-------------|
 | `search` | `object` | Yes | — |
 | `results` | `object[]` | Yes | — |
+| `sections` | `Record<string, any>` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="search full type">
@@ -245,7 +260,12 @@ GET /api/v1/search. Stores id, status, and engine. Returns title and link for or
 {
   position?: number,
   title?: string,
-  link?: string
+  link?: string,
+  displayed_link?: string,
+  snippet?: string,
+  date?: string,
+  source?: string,
+  domain?: string
 }[]
 ```
 </Accordion>
