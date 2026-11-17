@@ -59,8 +59,9 @@ export const ip2proxyEndpointSchemas = {
 
 const ip2proxyEndpointMeta = {
 	'proxy.checkProxy': {
-		// Each query spends credits (1 for PX1 through 11 for PX11).
-		riskLevel: 'destructive',
+		// A metered lookup (1 credit for PX1 up to 11 for PX11) that only returns
+		// data, so it stays `read`, like the Ahrefs plugin's metered reads.
+		riskLevel: 'read',
 		description:
 			'Check whether an IP address is a proxy, VPN, Tor exit, or data-center address.',
 	},
