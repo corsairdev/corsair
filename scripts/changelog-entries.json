@@ -8695,5 +8695,32 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/ninox",
+    "dir": "packages/ninox",
+    "name": "Ninox",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/paperform",
+    "dir": "packages/paperform",
+    "name": "Paperform",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/stormglass",
+    "dir": "packages/stormglass",
+    "name": "Stormglass",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
