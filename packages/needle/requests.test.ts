@@ -46,11 +46,6 @@ function makeContext(key = 'sk-ndl-test') {
  * cannot build without a database and a key manager. They only read `ctx.key`
  * and `ctx.log`, both of which `makeContext` provides.
  */
-/**
- * The endpoint functions expect the plugin's full runtime context, which a test
- * cannot build without a database and a key manager. They only read `ctx.key`
- * and `ctx.log`, both of which `makeContext` provides.
- */
 // unknown: each operation takes its own parsed input, and every call site passes
 // a concrete value that the operation's own schema validates.
 //
@@ -437,6 +432,97 @@ describe('campaigns', () => {
 		expect(body).not.toHaveProperty('status');
 	});
 
+	it('sends branching nodes and the campaign settings Needle accepts', async () => {
+		const accountId = '0b9a6c1e-4f6e-4a7b-9c55-2d8f3e1a7b10';
+		const { init } = await capture(
+			endpoints.campaigns.create,
+			{
+				name: 'Branching',
+				graph: {
+					nodes: [
+						{ id: 'start', kind: 'start' },
+						{
+							id: 'connected',
+							kind: 'condition',
+							channel: 'linkedin',
+							connectedAccountId: accountId,
+							test: { predicate: 'is_connection' },
+						},
+						{
+							id: 'wait',
+							kind: 'wait_until',
+							channel: 'linkedin',
+							event: 'linkedin_invite_accepted',
+							timeout: { days: 7 },
+						},
+						{ id: 'end', kind: 'end' },
+					],
+					edges: [
+						{ from: 'start', to: 'connected' },
+						{ from: 'connected', to: 'end', label: 'yes' },
+						{ from: 'connected', to: 'wait', label: 'no' },
+						{ from: 'wait', to: 'end', label: 'on_event' },
+						{ from: 'wait', to: 'end', label: 'on_timeout' },
+					],
+				},
+				schedule: {
+					workingDays: [1, 2, 3],
+					startTime: '08:30',
+					endTime: '16:00',
+				},
+				limits: { minGapSeconds: 40, maxGapSeconds: 90 },
+				suppressionPolicy: { cooldownDays: 14 },
+			},
+			campaign,
+			{ status: 201 },
+		);
+
+		const body = sentBody(init);
+		expect(body.schedule).toEqual({
+			workingDays: [1, 2, 3],
+			startTime: '08:30',
+			endTime: '16:00',
+		});
+		expect(body.limits).toEqual({ minGapSeconds: 40, maxGapSeconds: 90 });
+		expect(body.suppressionPolicy).toEqual({ cooldownDays: 14 });
+		const nodes = asRecord(body.graph)?.nodes;
+		expect(
+			Array.isArray(nodes) ? nodes.map((n) => asRecord(n)?.kind) : [],
+		).toEqual(['start', 'condition', 'wait_until', 'end']);
+	});
+
+	it('rejects a wait_until node without an event and a timeout', async () => {
+		await expect(
+			endpoints.campaigns.create(makeContext(), {
+				name: 'Bad wait',
+				graph: {
+					nodes: [
+						{ id: 'start', kind: 'start' },
+						{ id: 'wait', kind: 'wait_until', channel: 'linkedin' },
+						{ id: 'end', kind: 'end' },
+					],
+					edges: [{ from: 'start', to: 'wait' }],
+				},
+			}),
+		).rejects.toThrow(/wait_until/);
+	});
+
+	it('rejects a sending window outside HH:MM', async () => {
+		await expect(
+			endpoints.campaigns.create(makeContext(), {
+				name: 'Bad window',
+				graph: {
+					nodes: [
+						{ id: 'start', kind: 'start' },
+						{ id: 'end', kind: 'end' },
+					],
+					edges: [{ from: 'start', to: 'end' }],
+				},
+				schedule: { startTime: '9am' },
+			}),
+		).rejects.toThrow();
+	});
+
 	it('rejects a delay node without a duration', async () => {
 		await expect(
 			endpoints.campaigns.create(makeContext(), {
@@ -577,6 +663,23 @@ describe('campaigns', () => {
 		);
 		expect(init.method).toBe('PATCH');
 		expect(sentBody(init)).toEqual({ status: 'active' });
+	});
+
+	it('keeps a sending window sent together with activation', async () => {
+		const { init } = await capture(
+			endpoints.campaigns.update,
+			{
+				campaignId: campaign.campaign.id,
+				status: 'active',
+				schedule: { workingDays: [1, 2, 3, 4, 5], startTime: '10:00' },
+			},
+			campaign,
+		);
+
+		expect(sentBody(init)).toEqual({
+			status: 'active',
+			schedule: { workingDays: [1, 2, 3, 4, 5], startTime: '10:00' },
+		});
 	});
 
 	it('rejects archiving through update, which only takes active or paused', async () => {
@@ -798,6 +901,17 @@ describe('places.search', () => {
 		const first = asRecord(Array.isArray(hits) ? hits[0] : null);
 		expect(first?.city).toBe('Munich');
 		expect(asRecord(first?.location)?.latitude).toBe(48.1583);
+	});
+
+	it('forwards the text-search cursor and returns the next one', async () => {
+		const { result, init } = await capture(
+			endpoints.places.search,
+			{ query: 'dentists in Munich', cursor: 'page-2-token' },
+			{ ...placeHits, cursor: 'page-3-token', remainingUsage: { places: 980 } },
+		);
+
+		expect(sentBody(init).cursor).toBe('page-2-token');
+		expect(asRecord(result)?.cursor).toBe('page-3-token');
 	});
 
 	it('accepts a location without a query', async () => {

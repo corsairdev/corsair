@@ -455,8 +455,10 @@ const CampaignNodeSchema = z
 	.object({
 		id: NodeIdSchema,
 		kind: z
-			.enum(['start', 'end', 'delay', 'action'])
-			.describe('Where the node sits in the sequence.'),
+			.enum(['start', 'end', 'delay', 'action', 'condition', 'wait_until'])
+			.describe(
+				'Where the node sits in the sequence. condition branches on yes/no edges; wait_until waits for an event, then follows on_event or on_timeout.',
+			),
 		label: z.string().max(120).optional(),
 		duration: z
 			.object({
@@ -466,6 +468,37 @@ const CampaignNodeSchema = z
 			})
 			.optional()
 			.describe('How long a delay node waits. Required on a delay node.'),
+		test: z
+			.discriminatedUnion('predicate', [
+				z.object({ predicate: z.literal('is_connection') }),
+				z.object({
+					predicate: z.literal('has_attribute'),
+					attribute: z.string().min(1).max(64),
+					equals: z.string().max(256).optional(),
+				}),
+			])
+			.optional()
+			.describe(
+				'What a condition node checks: a first-degree connection, or a lead attribute (optionally equal to a value). Required on a condition.',
+			),
+		event: z
+			.enum([
+				'linkedin_invite_accepted',
+				'linkedin_message_received',
+				'instagram_message_received',
+			])
+			.optional()
+			.describe('The event a wait_until node waits for. Required on it.'),
+		timeout: z
+			.object({
+				days: z.number().int().min(0).max(90).optional(),
+				hours: z.number().int().min(0).max(23).optional(),
+				minutes: z.number().int().min(0).max(59).optional(),
+			})
+			.optional()
+			.describe(
+				'How long a wait_until node waits before following on_timeout. Required on it.',
+			),
 		channel: z
 			.enum(['linkedin', 'instagram'])
 			.optional()
@@ -499,6 +532,23 @@ const CampaignNodeSchema = z
 				message: 'An action node needs a channel and an action.',
 			});
 		}
+		if (value.kind === 'condition' && (!value.channel || !value.test)) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['test'],
+				message: 'A condition node needs a channel and a test.',
+			});
+		}
+		if (
+			value.kind === 'wait_until' &&
+			(!value.channel || !value.event || !value.timeout)
+		) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['event'],
+				message: 'A wait_until node needs a channel, an event and a timeout.',
+			});
+		}
 	});
 
 const CampaignEdgeSchema = z.object({
@@ -520,9 +570,68 @@ const CampaignGraphSchema = z.object({
 		.describe('How the nodes connect, in order.'),
 });
 
+const HourMinuteSchema = z
+	.string()
+	.regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'Expected HH:MM');
+
+/** When the campaign may send. Needle defaults to weekdays 09:00 to 17:00. */
+const CampaignScheduleSchema = z
+	.object({
+		workingDays: z
+			.array(z.number().int().min(0).max(6))
+			.min(1)
+			.optional()
+			.describe('Days that may send, 0 = Sunday. Defaults to 1-5.'),
+		startTime: HourMinuteSchema.optional().describe('Defaults to 09:00.'),
+		endTime: HourMinuteSchema.optional().describe('Defaults to 17:00.'),
+	})
+	.describe('The sending window.');
+
+const CampaignLimitsSchema = z
+	.object({
+		minGapSeconds: z.number().int().min(10).max(300).optional(),
+		maxGapSeconds: z.number().int().min(10).max(300).optional(),
+	})
+	.describe('The gap between two actions, in seconds. Defaults 30 to 60.');
+
+/** Shared by campaign suppression policies and the suppression list. */
+export const NEEDLE_SUPPRESSION_REASONS = [
+	'manual',
+	'unsubscribed',
+	'not_interested',
+	'existing_customer',
+	'open_opportunity',
+	'competitor',
+	'employee',
+	'invalid_recipient',
+	'complained',
+	'recently_contacted',
+	'unresponsive',
+] as const;
+
+const CampaignSuppressionPolicySchema = z
+	.object({
+		bypassSuppressionReasons: z
+			.array(z.enum(NEEDLE_SUPPRESSION_REASONS))
+			.optional()
+			.describe('Suppression reasons this campaign ignores. Defaults to none.'),
+		cooldownDays: z.number().int().min(0).max(365).optional(),
+		unresponsiveAfterTouches: z.number().int().min(0).max(50).optional(),
+		autoSuppressKeywords: z.array(z.string()).optional(),
+	})
+	.describe('Who the campaign skips and when a lead counts as unresponsive.');
+
+/** The campaign settings Needle accepts on create and update besides the graph. */
+const CampaignSettingsFields = {
+	schedule: CampaignScheduleSchema.optional(),
+	limits: CampaignLimitsSchema.optional(),
+	suppressionPolicy: CampaignSuppressionPolicySchema.optional(),
+};
+
 const CampaignsCreateInputSchema = z.object({
 	name: z.string().min(1).max(256),
 	graph: CampaignGraphSchema,
+	...CampaignSettingsFields,
 });
 
 export type CampaignsCreateInput = z.input<typeof CampaignsCreateInputSchema>;
@@ -537,6 +646,7 @@ const CampaignsUpdateInputSchema = z.object({
 		.optional()
 		.describe('Set active to start or resume, paused to halt contact.'),
 	graph: CampaignGraphSchema.optional(),
+	...CampaignSettingsFields,
 });
 
 export type CampaignsUpdateInput = z.input<typeof CampaignsUpdateInputSchema>;
@@ -662,20 +772,6 @@ export type CampaignsStopLeadsInput = z.input<
 export type CampaignsStopLeadsResponse = BulkResultResponse;
 
 // ── suppressions.* ────────────────────────────────────────────────────────
-
-export const NEEDLE_SUPPRESSION_REASONS = [
-	'manual',
-	'unsubscribed',
-	'not_interested',
-	'existing_customer',
-	'open_opportunity',
-	'competitor',
-	'employee',
-	'invalid_recipient',
-	'complained',
-	'recently_contacted',
-	'unresponsive',
-] as const;
 
 const SuppressionReasonSchema = z.enum(NEEDLE_SUPPRESSION_REASONS);
 
@@ -821,7 +917,22 @@ const PlacesSearchInputSchema = z
 			.optional()
 			.describe('Centre point for a nearby search.'),
 		radiusMeters: z.number().int().min(1).optional(),
-		limit: z.number().int().min(1).optional(),
+		type: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('Place type for a nearby search, e.g. restaurant.'),
+		language: z.string().min(1).optional(),
+		region: z.string().min(1).optional(),
+		limit: z.number().int().min(1).max(20).optional(),
+		cursor: z
+			.string()
+			.min(1)
+			.max(8192)
+			.optional()
+			.describe(
+				'The cursor from the previous text-search page. Nearby search does not page.',
+			),
 	})
 	.superRefine((value, ctx) => {
 		// Needle needs one of the two; a request with neither answers 422.
@@ -860,6 +971,18 @@ export type NeedlePlace = z.infer<typeof PlaceSchema>;
 
 const PlacesSearchResponseSchema = z.object({
 	hits: z.array(PlaceSchema),
+	cursor: z
+		.string()
+		.nullish()
+		.describe(
+			'Pass as `cursor` for the next text-search page; absent on the last.',
+		),
+	remainingUsage: z
+		// unknown: Needle documents the field without a shape; it reports the
+		// account's remaining places quota.
+		.unknown()
+		.optional()
+		.describe("What is left of the account's places quota."),
 });
 
 export type PlacesSearchResponse = z.infer<typeof PlacesSearchResponseSchema>;
