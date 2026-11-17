@@ -8936,5 +8936,11 @@
         "title": "Add a new account beside an unnamed one instead of taking it over"
       }
     ]
+  },
+  {
+    "date": "2026-11-17",
+    "package": "cloud",
+    "version": "0.2.5",
+    "changes": []
   }
 ]
