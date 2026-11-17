@@ -18,8 +18,8 @@ A key comes from https://needle.app/settings/api-keys. It is shown once, so copy
 
 Worth knowing:
 
-- **There is no error code.** Every failure is `{ requestId, error }`, so the status is the only classification: 401 a bad key, 403 a missing scope or plan limit, 409 a duplicate identity, 422 validation. Keep the `requestId`: it is what Needle support asks for, and it is on every `NeedleAPIError`.
-- **Paging is a cursor.** Pass `nextCursor` back as `cursor`; it is null on the last page.
+- **There is no error code.** Every failure is `{ requestId, error }`, so the status is the only classification: 401 a bad key, 403 a missing scope or plan limit, 409 a duplicate identity, 422 validation. Keep the `requestId`: it is what Needle support asks for. An HTTP failure is core's `ApiError`, with the id in `error.body.requestId`; `NeedleAPIError` only covers a transport failure that never got a response.
+- **Paging is a cursor.** Pass `nextCursor` back as `cursor`; it is null on the last page. `places.search` is the exception: a text search returns `cursor` (not `nextCursor`), absent on the last page, and a nearby search does not page.
 - **Only reads are retried on a 5xx.** A failed send or enroll may have gone through, and Needle takes no idempotency key.
 
 **What you get:**
