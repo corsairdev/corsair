@@ -62,6 +62,24 @@ describe('nasdaq error handlers', () => {
 		});
 	});
 
+	it('retries a 429 without a Nasdaq code, a gateway throttle', async () => {
+		const error = apiError(429, undefined, { retryAfter: 1500 });
+		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
+		expect(await strategy(error)).toEqual({
+			maxRetries: 2,
+			headersRetryAfterMs: 1500,
+			retryStrategy: 'exponential_backoff',
+		});
+	});
+
+	it('does not retry a 429 QEAx06, the daily cap', async () => {
+		expect(await strategy(apiError(429, 'QEAx06'))).toEqual({ maxRetries: 0 });
+	});
+
+	it('does not retry QELx06, the temporary account block', async () => {
+		expect(await strategy(apiError(429, 'QELx06'))).toEqual({ maxRetries: 0 });
+	});
+
 	it('does not retry QEAx06, the daily cap', async () => {
 		const error = apiError(403, 'QEAx06');
 		expect(classify(error)).toBe('RATE_LIMIT_ERROR');

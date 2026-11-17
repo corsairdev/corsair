@@ -8,12 +8,13 @@ import { ApiError, request } from 'corsair/http';
 
 export const NASDAQ_API_BASE = 'https://data.nasdaq.com/api/v3';
 
-// Core's request() retries a 429 three times with backoff; the QEAx07 handler
-// in error-handlers.ts adds the documented 30-second wait on top. Nasdaq
-// documents no Retry-After header, so the name is kept only so a proxy that
-// sends one is honoured.
+// Retries belong to error-handlers.ts. Nasdaq's documented 429s are QEAx06, the
+// daily cap that no retry clears, and QEAx07, which asks for a 30-second wait;
+// core's one-to-four-second backoff helps neither and would spend three more
+// calls of a daily allowance. Nasdaq documents no Retry-After header, so the
+// name is kept only so a proxy that sends one is honoured.
 const NASDAQ_RATE_LIMIT_CONFIG: RateLimitConfig = {
-	maxRetries: 3,
+	maxRetries: 0,
 	enabled: true,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,

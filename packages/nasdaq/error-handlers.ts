@@ -29,14 +29,26 @@ const QEAx07_WAIT_MS = 30_000;
 export const errorHandlers = {
 	// QEAx07 asks for a 30-second wait, so the retry uses that window rather
 	// than a short backoff that would burn both attempts inside it. QEAx06 is
-	// the daily cap, which no retry clears.
+	// the daily cap and QELx06 a temporary account block, which no retry clears.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
 			const code = codeOf(error);
 			return statusOf(error) === 429 || code === 'QEAx06' || code === 'QEAx07';
 		},
 		handler: async (error: Error) => {
-			if (codeOf(error) !== 'QEAx07') return { maxRetries: 0 };
+			const code = codeOf(error);
+			// A 429 with no Nasdaq code came from a proxy or gateway, so it is a
+			// short throttle rather than a quota; the transport does not retry
+			// (client.ts), so this does, honouring Retry-After when one is sent.
+			if (code === undefined && statusOf(error) === 429) {
+				return {
+					maxRetries: 2,
+					headersRetryAfterMs:
+						error instanceof ApiError ? error.retryAfter : undefined,
+					retryStrategy: 'exponential_backoff' as const,
+				};
+			}
+			if (code !== 'QEAx07') return { maxRetries: 0 };
 			return {
 				maxRetries: 2,
 				// A real Retry-After still wins over this fallback.
