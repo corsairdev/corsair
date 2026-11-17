@@ -1,16 +1,22 @@
 ---
 title: "Proofly plugin"
 sidebarTitle: "Overview"
-description: "List Proofly campaigns, the signed-in user, and activity logs. Campaigns and the user are stored. The pixel key and activity IP addresses are not."
+description: "Read Proofly campaigns, their notifications and stats, the leads a notification collected, the signed-in user and activity logs, and turn campaigns on or off."
 ---
 
 Use **Proofly** through Corsair: one client, typed API calls, local DB sync.
 
-Auth is the X-Api-Key header on https://proofly.io/api. An empty key was measured as HTTP 400 with ok false. Campaign rows and the user profile are stored. The pixel key is removed before the user object is returned or stored. Activity logs have no id, so they are not stored, and their IP addresses are not written to the event log.
+Auth is the X-Api-Key header on https://proofly.io/api; copy the key from proofly.io/developers while logged in. Free accounts get 10 requests a minute; core retries a 429. Proofly answers a failure with `{ ok: false, error }`, which the plugin throws.
+
+Proofly's API has six routes and the plugin covers all of them:
+
+- **Campaigns.** `campaigns.list` lists them (stored locally). `campaigns.setEnabled` turns one on or off. Proofly's own call is a flip, so the plugin reads the current state first and sends nothing when it already matches (`changed: false`).
+- **Notifications.** `notifications.list` returns a campaign's notifications with their settings and impressions, hovers, clicks and leads. `notifications.getData` returns what a notification collected: what visitors typed (often an email), their IP, page and location. That data is not stored, and events log only counts.
+- **Account.** `user.get` returns the user (stored without the pixel key) and `activity.list` the login activity (not stored; IPs are not logged).
 
 **What you get:**
 
-- 3 typed API operations
+- 6 typed API operations
 - 2 synced entities (`campaigns`, `users`) for fast `.search()` / `.list()`
 
 ## Setup
@@ -105,9 +111,12 @@ await tenant.proofly.api.campaigns.list({});
 ```
 
 
-**Write**
+**`campaigns.setEnabled`**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/proofly/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.proofly.api.campaigns.setEnabled({});
+```
 
 
 See the full list on the [API](/plugins/proofly/api) page.
