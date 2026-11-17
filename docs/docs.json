@@ -4464,6 +4464,14 @@
                 ]
               },
               {
+                "group": "ScreenshotOne",
+                "pages": [
+                  "plugins/screenshotone/overview",
+                  "plugins/screenshotone/api",
+                  "plugins/screenshotone/database"
+                ]
+              },
+              {
                 "group": "Search1API",
                 "pages": [
                   "plugins/search1api/overview",

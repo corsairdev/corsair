@@ -539,6 +539,7 @@ export const BaseProviders = [
 	'scrapedo',
 	'scrapegraphai',
 	'scrapingant',
+	'screenshotone',
 	'search1api',
 	'securitytrails',
 	'semanticscholar',
@@ -1233,6 +1234,7 @@ export const ProviderDisplayNames = {
 	scrapedo: 'Scrape.do',
 	scrapegraphai: 'ScrapeGraphAI',
 	scrapingant: 'ScrapingAnt',
+	screenshotone: 'ScreenshotOne',
 	search1api: 'Search1API',
 	securitytrails: 'SecurityTrails',
 	semanticscholar: 'Semantic Scholar',
@@ -1934,6 +1936,7 @@ export type AllProviders =
 	| 'scrapedo'
 	| 'scrapegraphai'
 	| 'scrapingant'
+	| 'screenshotone'
 	| 'search1api'
 	| 'securitytrails'
 	| 'semanticscholar'
