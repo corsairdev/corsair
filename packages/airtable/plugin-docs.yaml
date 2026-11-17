@@ -24,3 +24,8 @@ exampleWebhook:
   note: React when an Airtable base sends a change notification.
   after: |
     console.log('Airtable event:', result.data);
+apiExamples:
+  webhooks.getPayloads:
+    args:
+      baseId: appXXXXXXXXXXXXXX
+      webhookId: achXXXXXXXXXXXXXX
