@@ -327,6 +327,7 @@ Move a card to another column.
 ```ts
 await corsair.teamwork.api.boardCards.move({
 	path: { id: 1 },
+	body: { cardId: 1, columnId: 2, positionAfterId: 0 },
 });
 ```
 
@@ -386,6 +387,9 @@ Update a board card.
 ```ts
 await corsair.teamwork.api.boardCards.update({
 	path: { id: '1' },
+	body: {
+		card: { due-date: '20261130', priority: 'high' },
+	},
 });
 ```
 
@@ -459,7 +463,10 @@ Create a board column.
 
 ```ts
 await corsair.teamwork.api.boardColumns.create({
-	path: { id: 1 },
+	path: { id: 1470497 },
+	body: {
+		column: { name: 'In review', color: '#4461D7' },
+	},
 });
 ```
 
@@ -833,6 +840,9 @@ Update a board column.
 ```ts
 await corsair.teamwork.api.boardColumns.update({
 	path: { id: '1' },
+	body: {
+		column: { name: 'Ready to ship' },
+	},
 });
 ```
 
@@ -3767,7 +3777,10 @@ Create a file category.
 
 ```ts
 await corsair.teamwork.api.fileCategories.create({
-	path: { id: '1' },
+	path: { id: '1470497' },
+	body: {
+		category: { name: 'Contracts' },
+	},
 });
 ```
 
@@ -4026,6 +4039,9 @@ Update a file category.
 ```ts
 await corsair.teamwork.api.fileCategories.update({
 	path: { id: '1' },
+	body: {
+		category: { name: 'Signed contracts' },
+	},
 });
 ```
 
@@ -4092,7 +4108,10 @@ Attach an uploaded file (pendingFileRef) to a project.
 
 ```ts
 await corsair.teamwork.api.files.addToProject({
-	path: { id: '1' },
+	path: { id: '1470497' },
+	body: {
+		file: { pendingFileRef: 'tf_example-ref', name: 'brief.pdf', notifyCurrentUser: false },
+	},
 });
 ```
 
@@ -4167,7 +4186,12 @@ Attach an uploaded file (pendingFileRef) to a task.
 
 ```ts
 await corsair.teamwork.api.files.addToTask({
-	path: { id: '1' },
+	path: { id: '51453032' },
+	body: {
+		task: {
+			pendingFileAttachments: ['tf_example-ref'],
+		},
+	},
 });
 ```
 
@@ -4240,6 +4264,9 @@ Add a new version to a file.
 ```ts
 await corsair.teamwork.api.files.addVersion({
 	path: { id: '1' },
+	body: {
+		fileversion: { pendingFileRef: 'tf_example-ref' },
+	},
 });
 ```
 
@@ -4305,6 +4332,7 @@ Copy a file to another project.
 ```ts
 await corsair.teamwork.api.files.copy({
 	path: { id: '1' },
+	body: { projectId: 1470498 },
 });
 ```
 
@@ -4672,7 +4700,10 @@ Create a link category.
 
 ```ts
 await corsair.teamwork.api.linkCategories.create({
-	path: { id: '1' },
+	path: { id: '1470497' },
+	body: {
+		category: { name: 'Design references' },
+	},
 });
 ```
 
@@ -5340,7 +5371,10 @@ Update a link.
 
 ```ts
 await corsair.teamwork.api.links.update({
-	path: { id: '1' },
+	path: { id: '711029' },
+	body: {
+		link: { name: 'Brand guide v2', code: 'https://acme.example/brand-v2' },
+	},
 });
 ```
 
@@ -6384,7 +6418,10 @@ Create a notebook category.
 
 ```ts
 await corsair.teamwork.api.notebookCategories.create({
-	path: { id: '1' },
+	path: { id: '1470497' },
+	body: {
+		category: { name: 'Meeting notes' },
+	},
 });
 ```
 
@@ -6643,6 +6680,9 @@ Update a notebook category.
 ```ts
 await corsair.teamwork.api.notebookCategories.update({
 	path: { id: '1' },
+	body: {
+		category: { name: 'Kickoff notes' },
+	},
 });
 ```
 
@@ -6709,7 +6749,8 @@ Copy a notebook to another project.
 
 ```ts
 await corsair.teamwork.api.notebooks.copy({
-	path: { id: '1' },
+	path: { id: '423373' },
+	body: { projectId: 1470498 },
 });
 ```
 
@@ -8099,7 +8140,8 @@ Move a notebook to another project.
 
 ```ts
 await corsair.teamwork.api.notebooks.move({
-	path: { id: '1' },
+	path: { id: '423373' },
+	body: { projectId: 1470498 },
 });
 ```
 
@@ -8627,7 +8669,16 @@ Add a user to the site. Teamwork emails them an invitation unless sendInvite is 
 **Risk:** `destructive`
 
 ```ts
-await corsair.teamwork.api.people.create({});
+await corsair.teamwork.api.people.create({
+	body: {
+		person: {
+			email-address: 'sam@acme.example',
+			first-name: 'Sam',
+			last-name: 'Lee',
+			sendInvite: false,
+		},
+	},
+});
 ```
 
 **Input**
@@ -9938,7 +9989,10 @@ Update a user.
 
 ```ts
 await corsair.teamwork.api.people.update({
-	path: { id: '1' },
+	path: { id: '753865' },
+	body: {
+		person: { first-name: 'Sam', last-name: 'Lee' },
+	},
 });
 ```
 
@@ -12267,7 +12321,11 @@ Create a portfolio board.
 **Risk:** `write`
 
 ```ts
-await corsair.teamwork.api.portfolioBoards.create({});
+await corsair.teamwork.api.portfolioBoards.create({
+	body: {
+		board: { name: 'Client projects', color: '#4461D7' },
+	},
+});
 ```
 
 **Input**
@@ -12457,6 +12515,9 @@ Update a portfolio board.
 ```ts
 await corsair.teamwork.api.portfolioBoards.update({
 	path: { boardId: '1' },
+	body: {
+		board: { name: 'Client projects 2027' },
+	},
 });
 ```
 
@@ -12524,6 +12585,9 @@ Add a project to a portfolio column.
 ```ts
 await corsair.teamwork.api.portfolioCards.add({
 	path: { columnId: '1' },
+	body: {
+		card: { projectId: '1470497' },
+	},
 });
 ```
 
@@ -12878,6 +12942,12 @@ Move a project card to another column.
 ```ts
 await corsair.teamwork.api.portfolioCards.move({
 	path: { cardId: '1' },
+	body: {
+		cardId: '1',
+		columnId: '2',
+		oldColumnId: '1',
+		positionAfterId: 0,
+	},
 });
 ```
 
@@ -12945,6 +13015,9 @@ Add a column to a portfolio board.
 ```ts
 await corsair.teamwork.api.portfolioColumns.create({
 	path: { boardId: '1' },
+	body: {
+		column: { name: 'In progress', color: '#4461D7' },
+	},
 });
 ```
 
@@ -13247,7 +13320,11 @@ Create a project category.
 **Risk:** `write`
 
 ```ts
-await corsair.teamwork.api.projectCategories.create({});
+await corsair.teamwork.api.projectCategories.create({
+	body: {
+		category: { name: 'Client work' },
+	},
+});
 ```
 
 **Input**
@@ -13501,7 +13578,10 @@ Rename or move a project category.
 
 ```ts
 await corsair.teamwork.api.projectCategories.update({
-	path: { id: '1' },
+	path: { id: '56260' },
+	body: {
+		category: { name: 'Client projects' },
+	},
 });
 ```
 
@@ -14829,6 +14909,9 @@ Update a project role.
 ```ts
 await corsair.teamwork.api.projectRoles.update({
 	path: { id: 1 },
+	body: {
+		role: { name: 'Reviewer', users: '753865' },
+	},
 });
 ```
 
@@ -14895,7 +14978,13 @@ Copy a project, optionally with its tasks, milestones and people.
 
 ```ts
 await corsair.teamwork.api.projects.clone({
-	path: { id: '1' },
+	path: { id: '1470497' },
+	body: {
+		cloneProjectName: 'Website relaunch (copy)',
+		copyTasks: true,
+		copyTasklists: true,
+		copyMilestones: true,
+	},
 });
 ```
 
@@ -17051,7 +17140,10 @@ Set a project's billable rates.
 
 ```ts
 await corsair.teamwork.api.projects.setRates({
-	path: { id: '1' },
+	path: { id: '1470497' },
+	body: {
+		rates: { project-default: 12000 },
+	},
 });
 ```
 
@@ -17268,7 +17360,16 @@ Create a project template.
 **Risk:** `write`
 
 ```ts
-await corsair.teamwork.api.projectTemplates.create({});
+await corsair.teamwork.api.projectTemplates.create({
+	body: {
+		project: {
+			name: 'Client onboarding template',
+			templateDateTargetDefault: 'start',
+			use-tasks: true,
+			use-milestones: true,
+		},
+	},
+});
 ```
 
 **Input**
@@ -18540,7 +18641,11 @@ Post a status update on a project. Notifies the people in notifyIds.
 
 ```ts
 await corsair.teamwork.api.projectUpdates.create({
-	path: { projectId: '1' },
+	path: { projectId: '1470497' },
+	body: {
+		update: { text: 'Design signed off, build starts Monday.', health: '2' },
+		notifyIds: '',
+	},
 });
 ```
 
@@ -18837,7 +18942,8 @@ Ask the project owner for a status update. Notifies the owner.
 
 ```ts
 await corsair.teamwork.api.projectUpdates.request({
-	path: { projectId: '1' },
+	path: { projectId: '1470497' },
+	body: { userId: '753865', content: 'Could you post a status update before Friday\'s review?' },
 });
 ```
 
@@ -18896,11 +19002,15 @@ await corsair.teamwork.api.projectUpdates.request({
 
 Edit a project update.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.teamwork.api.projectUpdates.update({
 	path: { updateId: '1' },
+	body: {
+		update: { text: 'Design signed off, build starts Tuesday.' },
+		notifyIds: '',
+	},
 });
 ```
 
@@ -18968,7 +19078,10 @@ Set a person's status.
 
 ```ts
 await corsair.teamwork.api.statuses.create({
-	path: { id: '1' },
+	path: { id: '753865' },
+	body: {
+		userStatus: { status: 'Out until Monday', notify: false },
+	},
 });
 ```
 
@@ -19474,6 +19587,9 @@ Update a status by id.
 ```ts
 await corsair.teamwork.api.statuses.update({
 	path: { id: '1' },
+	body: {
+		userstatus: { status: 'Back Tuesday' },
+	},
 });
 ```
 
@@ -19540,7 +19656,8 @@ Copy a task list, within its project or to another.
 
 ```ts
 await corsair.teamwork.api.tasklists.copy({
-	path: { id: '1' },
+	path: { id: '4073104' },
+	body: { projectId: 1470498, includeCompletedTasks: 0 },
 });
 ```
 
@@ -20463,7 +20580,8 @@ Move a task list to another project.
 
 ```ts
 await corsair.teamwork.api.tasklists.move({
-	path: { id: '1' },
+	path: { id: '4073104' },
+	body: { projectId: '1470498' },
 });
 ```
 
@@ -20525,7 +20643,10 @@ Reorder the task lists in a project.
 
 ```ts
 await corsair.teamwork.api.tasklists.reorder({
-	path: { id: '1' },
+	path: { id: '1470497' },
+	body: {
+		todo-lists: [{ id: 4073104 }, { id: 4073105 }],
+	},
 });
 ```
 
@@ -20591,7 +20712,10 @@ Update a task list.
 
 ```ts
 await corsair.teamwork.api.tasklists.update({
-	path: { id: '1' },
+	path: { id: '4073104' },
+	body: {
+		todo-list: { name: 'Launch week', description: 'Everything for launch day' },
+	},
 });
 ```
 
@@ -21145,7 +21269,8 @@ Copy a task to another project or task list.
 
 ```ts
 await corsair.teamwork.api.tasks.copy({
-	path: { taskId: '1' },
+	path: { taskId: '51453032' },
+	body: { projectId: 1470498, tasklistId: 4073200 },
 });
 ```
 
@@ -24069,7 +24194,8 @@ Move a task to another project or task list.
 
 ```ts
 await corsair.teamwork.api.tasks.move({
-	path: { taskId: '1' },
+	path: { taskId: '51453032' },
+	body: { projectId: 1470498, tasklistId: 4073200 },
 });
 ```
 
@@ -24134,7 +24260,9 @@ Add several tasks to a project at once from lines of text.
 
 ```ts
 await corsair.teamwork.api.tasks.quickAdd({
-	path: { projectId: '1' },
+	path: { projectId: '1470497' },
+	body: { content: 'Draft the launch post
+Pick the hero image', notify: false },
 });
 ```
 
@@ -24210,7 +24338,9 @@ Add several subtasks to a task at once from lines of text.
 
 ```ts
 await corsair.teamwork.api.tasks.quickAddSubtasks({
-	path: { id: '1' },
+	path: { id: '51453032' },
+	body: { content: 'Write the outline
+Find two quotes', notify: false },
 });
 ```
 
@@ -24286,7 +24416,10 @@ Reorder the tasks in a task list.
 
 ```ts
 await corsair.teamwork.api.tasks.reorder({
-	path: { id: '1' },
+	path: { id: '4073104' },
+	body: {
+		todo-items: [{ id: 51453032 }, { id: 51453033 }],
+	},
 });
 ```
 
@@ -24352,7 +24485,8 @@ Set a task's time estimate.
 
 ```ts
 await corsair.teamwork.api.tasks.setEstimate({
-	path: { id: '1' },
+	path: { id: '51453032' },
+	body: { taskEstimatedMinutes: 90 },
 });
 ```
 
@@ -25727,7 +25861,7 @@ await corsair.teamwork.api.teams.create({
 
 ```ts
 {
-  person?: {
+  team?: {
     parentTeamId?: number,
     name?: string,
     logoPendingFileRef?: string,
@@ -25783,7 +25917,10 @@ Create a project-specific team.
 
 ```ts
 await corsair.teamwork.api.teams.createForProject({
-	path: { id: '1' },
+	path: { id: '1470497' },
+	body: {
+		team: { name: 'Launch crew', userIds: '753865' },
+	},
 });
 ```
 
@@ -25817,7 +25954,7 @@ await corsair.teamwork.api.teams.createForProject({
 
 ```ts
 {
-  person?: {
+  team?: {
     parentTeamId?: number,
     name?: string,
     logoPendingFileRef?: string,
@@ -26789,7 +26926,8 @@ Add members to a team, or replace all of them (action defaults to replace).
 
 ```ts
 await corsair.teamwork.api.teams.setMembers({
-	path: { id: '1' },
+	path: { id: '63157' },
+	body: { userIds: '753865', action: 'add' },
 });
 ```
 
@@ -26852,7 +26990,10 @@ Update a team.
 
 ```ts
 await corsair.teamwork.api.teams.update({
-	path: { id: '1' },
+	path: { id: '63157' },
+	body: {
+		team: { name: 'Design and brand' },
+	},
 });
 ```
 
@@ -26886,7 +27027,7 @@ await corsair.teamwork.api.teams.update({
 
 ```ts
 {
-  person?: {
+  team?: {
     parentTeamId?: number,
     name?: string,
     logoPendingFileRef?: string,
