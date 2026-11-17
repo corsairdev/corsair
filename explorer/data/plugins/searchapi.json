@@ -1,0 +1,337 @@
+{
+  "id": "searchapi",
+  "displayName": "SearchAPI",
+  "description": "Read SearchAPI account usage and locations, run a search, and read a cached search.",
+  "npmPackageName": "@corsair-dev/searchapi",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 5,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "searchapi.api.account.get",
+      "shortPath": "account.get",
+      "description": "Read account usage and the hourly limit.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": false,
+            "type": "{ id: string, currentMonthUsage?: number, monthlyAllowance?: number, remainingCredits?: number, remainingSearches?: number, searchesThisHour?: number, hourlyRateLimit?: number, periodStart?: string, periodEnd?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "searchapi.api.locations.list",
+      "shortPath": "locations.list",
+      "description": "Look up Google locations by name.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "locations",
+            "optional": false,
+            "type": "{ id: string, name?: string, canonicalName?: string, countryCode?: string, targetType?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "searchapi.api.searches.get",
+      "shortPath": "searches.get",
+      "description": "Read a cached search by id. Result rows are not stored.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": false,
+            "type": "{ id: string, status?: string, engine?: string }"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ position?: number, title?: string, link?: string, displayed_link?: string, snippet?: string, date?: string, source?: string, domain?: string }[]"
+          },
+          {
+            "key": "sections",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "searchapi.api.searches.html",
+      "shortPath": "searches.html",
+      "description": "Read cached search HTML by id. The HTML is not stored.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "html",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "searchapi.api.searches.run",
+      "shortPath": "searches.run",
+      "description": "Run a search on any SearchAPI engine (google, google_news, bing, youtube, amazon_search, ...) with location, language, page and time filters. Returns organic results and every other section (answer box, AI overview, knowledge graph, news, local results). Uses one search credit. Results are not stored.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "engine",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | mobile | tablet"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "safe",
+            "optional": true,
+            "type": "active | blur | off"
+          },
+          {
+            "key": "time_period",
+            "optional": true,
+            "type": "last_1_minute | last_5_minutes | last_15_minutes | last_30_minutes | last_hour | last_day | last_week | last_month | last_year"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": false,
+            "type": "{ id: string, status?: string, engine?: string }"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ position?: number, title?: string, link?: string, displayed_link?: string, snippet?: string, date?: string, source?: string, domain?: string }[]"
+          },
+          {
+            "key": "sections",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "searchapi.db.accounts.search",
+      "entityName": "accounts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currentMonthUsage",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "monthlyAllowance",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "remainingCredits",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "remainingSearches",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "searchesThisHour",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "hourlyRateLimit",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "periodStart",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "periodEnd",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "searchapi.db.locations.search",
+      "entityName": "locations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "canonicalName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "countryCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "targetType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "searchapi.db.searches.search",
+      "entityName": "searches",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "engine",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

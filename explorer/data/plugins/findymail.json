@@ -1,0 +1,1860 @@
+{
+  "id": "findymail",
+  "displayName": "Findymail",
+  "description": "Find and verify business contact details, manage prospecting lists and signals, and inspect Findymail usage.",
+  "npmPackageName": "@corsair-dev/findymail",
+  "authTypes": ["api_key"],
+  "counts": {
+    "api": 36,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "findymail.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "Get contacts saved",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "draw",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "recordsTotal",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "recordsFiltered",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, email?: string | null, linkedin_url?: string | null, company?: string | null, job_title?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "findymail.api.excludedDomains.add",
+      "shortPath": "excludedDomains.add",
+      "description": "Add excluded domains",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domains",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "list_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "processed_immediately",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "queued",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "list_id",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "findymail.api.excludedDomains.list",
+      "shortPath": "excludedDomains.list",
+      "description": "Get excluded domains",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "list_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, domain?: string | null, excluded_domain_list_id?: number | null }[] | null"
+          },
+          {
+            "key": "current_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "findymail.api.excludedDomains.remove",
+      "shortPath": "excludedDomains.remove",
+      "description": "Remove excluded domains",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ success?: boolean | null, deleted_count?: number | null } | { success?: boolean | null, deleted_count?: number | null }"
+      }
+    },
+    {
+      "path": "findymail.api.exclusionLists.create",
+      "shortPath": "exclusionLists.create",
+      "description": "Create a new exclusion list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "is_shared",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_shared",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_owner",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "findymail.api.exclusionLists.delete",
+      "shortPath": "exclusionLists.delete",
+      "description": "Delete an exclusion list",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "excludedDomainList_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "findymail.api.exclusionLists.get",
+      "shortPath": "exclusionLists.get",
+      "description": "Get exclusion list details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "excludedDomainList_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_shared",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_owner",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "owner_name",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "findymail.api.exclusionLists.list",
+      "shortPath": "exclusionLists.list",
+      "description": "Get all exclusion lists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lists",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, is_shared?: boolean | null, is_owner?: boolean | null, user_id?: number | null, owner_name?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "findymail.api.exclusionLists.update",
+      "shortPath": "exclusionLists.update",
+      "description": "Update an exclusion list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "excludedDomainList_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "is_shared",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "list",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, is_shared?: boolean | null, is_owner?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "findymail.api.intellimatch.lookalikes",
+      "shortPath": "intellimatch.lookalikes",
+      "description": "Search lookalike companies",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "seed",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "same_country",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "same_size",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exclusion_list_ids",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companies",
+            "optional": true,
+            "type": "{ domain?: string | null, name?: string | null, linkedin_url?: string | null, company_size?: string | null, country?: string | null }[] | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "credits_used",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "findymail.api.intellimatch.results",
+      "shortPath": "intellimatch.results",
+      "description": "Get results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hash",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, domain?: string | null, description?: string | null, employee_count_range?: string | null, industries?: string[] | null, country?: string | null, match_score?: number | null, contact_name?: string | null, contact_email?: string | null, contact_job_title?: string | null, contact_phone?: string | null, contact_linkedin_url?: string | null }[] | null"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ current_page?: number | null, per_page?: number | null, total?: number | null, last_page?: number | null, from?: number | null, to?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "findymail.api.intellimatch.search",
+      "shortPath": "intellimatch.search",
+      "description": "Search leads",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "{ find_contact?: boolean, find_email?: boolean, find_phone?: boolean, target_job_titles?: string[] | string[][], lead_list_id?: number, mode?: string, require_email?: boolean, add_to_exclusion_list?: boolean, exclusion_list_id?: number, exclusion_filter_list_ids?: number[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hash",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "findymail.api.intellimatch.status",
+      "shortPath": "intellimatch.status",
+      "description": "Get export status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hash",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_jobs",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "processed_jobs",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "pending_jobs",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "failed_jobs",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "findymail.api.lists.create",
+      "shortPath": "lists.create",
+      "description": "Create a new list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, created_at?: string | null, updated_at?: string | null, shared_with_team?: boolean | null, is_owner?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "findymail.api.lists.delete",
+      "shortPath": "lists.delete",
+      "description": "Delete a given list",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "findymail.api.lists.list",
+      "shortPath": "lists.list",
+      "description": "Get the list of contact lists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lists",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, created_at?: string | null, updated_at?: string | null, shared_with_team?: boolean | null, is_owner?: boolean | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "findymail.api.lists.replace",
+      "shortPath": "lists.replace",
+      "description": "Update a contact list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "isShared",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "shared_with_team",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_owner",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "findymail.api.lists.update",
+      "shortPath": "lists.update",
+      "description": "Update a contact list (PATCH)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "isShared",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "shared_with_team",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_owner",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "findymail.api.monitors.create",
+      "shortPath": "monitors.create",
+      "description": "Create a monitor",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signal_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "keywords",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "post_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "profile_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "engagement_types",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "enrichment_level",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lead_list_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ai_relevance_prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_matches",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "target_companies",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "is_shared",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "icp_filters",
+            "optional": true,
+            "type": "{ industries?: string[], employee_count_ranges?: string[], countries?: string[], job_title_keywords?: string[], seniority_levels?: number[] }"
+          },
+          {
+            "key": "job_offer_title_keywords",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signal_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signal_type_label",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signal_level",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "keywords",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "icp_filters",
+            "optional": true,
+            "type": "{ industries?: string[] | null, employee_count_ranges?: string[] | null, countries?: string[] | null, job_title_keywords?: string[] | null, seniority_levels?: number[] | null } | string | null"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "webhook_paused_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "post_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "profile_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "engagement_types",
+            "optional": true,
+            "type": "string[] | string | null"
+          },
+          {
+            "key": "enrichment_level",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lead_list_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "ai_relevance_prompt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "target_companies",
+            "optional": true,
+            "type": "string[] | string | null"
+          },
+          {
+            "key": "max_matches",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "match_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "is_shared",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_owner",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_team_owner",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "uses_current_users_monitor_cap",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "owner_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "findymail.api.monitors.delete",
+      "shortPath": "monitors.delete",
+      "description": "Delete a monitor",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "findymail.api.monitors.list",
+      "shortPath": "monitors.list",
+      "description": "List monitors",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ownership",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: number | null, name?: string | null, signal_type?: string | null, signal_type_label?: string | null, signal_level?: string | null, status?: string | null, keywords?: string[] | null, icp_filters?: { industries?: string[] | null, employee_count_ranges?: string[] | null, countries?: string[] | null, job_title_keywords?: string[] | null, seniority_levels?: number[] | null } | string | null, webhook_url?: string | null, webhook_paused_at?: string | null, post_url?: string | null, profile_url?: string | null, engagement_types?: string[] | string | null, enrichment_level?: string | null, lead_list_id?: number | string | null, ai_relevance_prompt?: string | null, target_companies?: string[] | string | null, max_matches?: number | null, match_count?: number | null, is_shared?: boolean | null, is_owner?: boolean | null, is_team_owner?: boolean | null, uses_current_users_monitor_cap?: boolean | null, user_id?: number | null, owner_name?: string | null, created_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "findymail.api.monitors.update",
+      "shortPath": "monitors.update",
+      "description": "Update a monitor",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "keywords",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "engagement_types",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "enrichment_level",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lead_list_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ai_relevance_prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_matches",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "target_companies",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "is_shared",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "icp_filters",
+            "optional": true,
+            "type": "{ industries?: string[], employee_count_ranges?: string[], countries?: string[], job_title_keywords?: string[], seniority_levels?: number[] }"
+          },
+          {
+            "key": "job_offer_title_keywords",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signal_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signal_type_label",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signal_level",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "keywords",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "icp_filters",
+            "optional": true,
+            "type": "{ industries?: string[] | null, employee_count_ranges?: string[] | null, countries?: string[] | null, job_title_keywords?: string[] | null, seniority_levels?: number[] | null } | string | null"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "webhook_paused_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "post_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "profile_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "engagement_types",
+            "optional": true,
+            "type": "string[] | string | null"
+          },
+          {
+            "key": "enrichment_level",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lead_list_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "ai_relevance_prompt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "target_companies",
+            "optional": true,
+            "type": "string[] | string | null"
+          },
+          {
+            "key": "max_matches",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "match_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "is_shared",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_owner",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_team_owner",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "owner_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "findymail.api.search.businessProfile",
+      "shortPath": "search.businessProfile",
+      "description": "Find from business profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "linkedin_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "{ name?: string | null, domain?: string | null, email?: string | null } | null"
+          },
+          {
+            "key": "payload",
+            "optional": true,
+            "type": "{ contact?: { name?: string | null, domain?: string | null, email?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "findymail.api.search.company",
+      "shortPath": "search.company",
+      "description": "Get company information",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "linkedin_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company_size",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "industry",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "linkedin_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "findymail.api.search.employees",
+      "shortPath": "search.employees",
+      "description": "Find employees",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "website",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "job_titles",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ name?: string | null, linkedinUrl?: string | null, companyWebsite?: string | null, companyName?: string | null, jobTitle?: string | null }[]"
+      }
+    },
+    {
+      "path": "findymail.api.search.name",
+      "shortPath": "search.name",
+      "description": "Find from name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "{ name?: string | null, domain?: string | null, email?: string | null } | null"
+          },
+          {
+            "key": "payload",
+            "optional": true,
+            "type": "{ contact?: { name?: string | null, domain?: string | null, email?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "findymail.api.search.phone",
+      "shortPath": "search.phone",
+      "description": "Find phone",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "linkedin_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ phone?: string | null, line_type?: string | null } | { phone?: string | null, line_type?: string | null }"
+      }
+    },
+    {
+      "path": "findymail.api.search.reverseEmail",
+      "shortPath": "search.reverseEmail",
+      "description": "Reverse email lookup",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "with_profile",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "linkedin_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fullName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "headline",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "companyLinkedinUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "companyWebsite",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isPremium",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isOpenProfile",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "skills",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "jobs",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "educations",
+            "optional": true,
+            "type": "{ school?: string | null, degree?: string | null, fieldOfStudy?: string | null, startDate?: string | null, endDate?: string | null }[] | null"
+          },
+          {
+            "key": "certificates",
+            "optional": true,
+            "type": "{ name?: string | null, issuingOrganization?: string | null, issueDate?: string | null, expirationDate?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "findymail.api.signals.get",
+      "shortPath": "signals.get",
+      "description": "Get a signal",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "payload",
+            "optional": true,
+            "type": "{ matched_keyword?: string | null, snippet?: string | null } | null"
+          },
+          {
+            "key": "detected_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, job_title?: string | null, linkedin_url?: string | null } | null"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, domain?: string | null, industry?: string | null, employee_count_range?: string | null, country?: string | null } | null"
+          },
+          {
+            "key": "monitors",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, keywords?: string[] | null, enrichment_level?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "findymail.api.signals.list",
+      "shortPath": "signals.list",
+      "description": "List signals",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signal_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "monitor_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "relevance_scores",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, type?: string | null, category?: string | null, payload?: { matched_keyword?: string | null, snippet?: string | null } | null, detected_at?: string | null, expires_at?: string | null, contact?: { id?: number | null, name?: string | null, job_title?: string | null, linkedin_url?: string | null } | null, company?: { id?: number | null, name?: string | null, domain?: string | null, industry?: string | null, employee_count_range?: string | null, country?: string | null } | null, monitors?: { id?: number | null, name?: string | null, keywords?: string[] | null, enrichment_level?: string | null, relevance_score?: number | null, relevance_reasoning?: string | null }[] | null }[] | null"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ current_page?: number | null, per_page?: number | null, total?: number | null, last_page?: number | null, from?: number | null, to?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "findymail.api.technologies.lookup",
+      "shortPath": "technologies.lookup",
+      "description": "Lookup technologies by domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "technologies",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "technologies",
+            "optional": true,
+            "type": "{ name?: string | null, category?: string | null, subcategory?: string | null, last_detected_at?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "findymail.api.technologies.search",
+      "shortPath": "technologies.search",
+      "description": "Search technologies",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ name?: string | null, category?: string | null, subcategory?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "findymail.api.usage.credits",
+      "shortPath": "usage.credits",
+      "description": "Get remaining credits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ credits?: number | null, email?: string | null, has_capacity?: boolean | null, verifier_credits?: number | null } | { credits?: number | null, email?: string | null, has_capacity?: boolean | null, verifier_credits?: number | null }"
+      }
+    },
+    {
+      "path": "findymail.api.usage.summary",
+      "shortPath": "usage.summary",
+      "description": "Get usage",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "{ finder?: number | null, verifier?: number | null } | null"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ date?: string | null, finder?: number | null, verifier?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "findymail.api.usage.teamSummary",
+      "shortPath": "usage.teamSummary",
+      "description": "Get team usage",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "{ finder?: number | null, verifier?: number | null } | null"
+          },
+          {
+            "key": "members",
+            "optional": true,
+            "type": "{ name?: string | null, finder?: number | null, verifier?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "findymail.api.verification.verify",
+      "shortPath": "verification.verify",
+      "description": "Verify an email",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "verified",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

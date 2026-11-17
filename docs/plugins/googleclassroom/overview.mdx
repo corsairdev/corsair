@@ -1,0 +1,131 @@
+---
+title: "Google Classroom plugin"
+sidebarTitle: "Overview"
+description: "Manage Google Classroom courses, rosters, classwork, submissions, add-ons, guardian links, and notification registrations."
+---
+
+Use **Google Classroom** through Corsair: one client, typed API calls.
+
+This plugin uses Google OAuth 2.0 access tokens. The default consent request uses the narrowest 10-scope set that covers all stable operations; set the plugin's oauthScopes option to an even smaller supported set when a deployment enables only selected operations. Enable the Google Classroom API in the Google Cloud project and complete Google's OAuth app verification where required.
+
+The plugin includes Google Pub/Sub notification registration create/delete operations, but does not receive Pub/Sub messages. Configure the topic and message consumer separately. No database migration or inbound webhook handler is needed.
+
+**What you get:**
+
+- 104 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/googleclassroom better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/googleclassroom better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/googleclassroom better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/googleclassroom better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { googleclassroom } from '@corsair-dev/googleclassroom';
+
+export const corsair = createCorsair({
+	plugins: [
+		googleclassroom(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Google Classroom OAuth app.
+
+```ts
+googleclassroom()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'googleclassroom',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`courses.aliases.list`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.googleclassroom.api.courses.aliases.list({});
+```
+
+
+**`courses.aliases.create`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.googleclassroom.api.courses.aliases.create({});
+```
+
+
+See the full list on the [API](/plugins/googleclassroom/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/googleclassroom/api">
+    Every `googleclassroom.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

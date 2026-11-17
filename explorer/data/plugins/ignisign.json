@@ -1,0 +1,2831 @@
+{
+  "id": "ignisign",
+  "displayName": "Ignisign",
+  "description": "Electronic signature and document workflow integration for Ignisign eIDAS-compliant digital signatures.",
+  "npmPackageName": "@corsair-dev/ignisign",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 42,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "ignisign.api.applications.getContext",
+      "shortPath": "applications.getContext",
+      "description": "Get application configuration, environments, and settings context",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_createdAt",
+            "optional": true,
+            "type": "Date | null"
+          },
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ignisignApiVersion",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "envSettings",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "signerProfiles",
+            "optional": true,
+            "type": "Record<string, any[]> | null"
+          },
+          {
+            "key": "signatureProfiles",
+            "optional": true,
+            "type": "Record<string, any[]> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.bareSignatures.getConfiguration",
+      "shortPath": "bareSignatures.getConfiguration",
+      "description": "Get bare signature application configuration and authorized origins",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "DEVELOPMENT | STAGING | PRODUCTION"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "appEnv",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "redirectUris",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "authorizedOrigins",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "eidasLevel",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.bareSignatures.getProofs",
+      "shortPath": "bareSignatures.getProofs",
+      "description": "Fetch cryptographic proofs and signer claims using proof access token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "DEVELOPMENT | STAGING | PRODUCTION"
+          },
+          {
+            "key": "proofToken",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signatureRequestId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "proofs",
+            "optional": true,
+            "type": "{ documentId: string, type?: string | null, documentHash?: string | null, proofB64?: string | null, signingTime?: Date | null }[] | null"
+          },
+          {
+            "key": "signerInformation",
+            "optional": true,
+            "type": "{ fullName?: string | null, lastName?: string | null, firstName?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.bareSignatures.getProofToken",
+      "shortPath": "bareSignatures.getProofToken",
+      "description": "Exchange authorization code for proof access token in bare signature flow",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "DEVELOPMENT | STAGING | PRODUCTION"
+          },
+          {
+            "key": "code_verifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "redirect_uri",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "access_token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "token_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expires_in",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "scope",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.documents.checkAuthenticity",
+      "shortPath": "documents.checkAuthenticity",
+      "description": "Check that a file (base64) is the one that was signed for a document",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileBase64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"application/pdf\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "authenticityValidated",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.documents.downloadOriginalDoc",
+      "shortPath": "documents.downloadOriginalDoc",
+      "description": "Download original document file as binary data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "binary"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.documents.get",
+      "shortPath": "documents.get",
+      "description": "Get document record and metadata by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "documentNature",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "documentHash",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signatureRequestId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fileSize",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dataJsonContent",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "templateDisplayerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "templateDisplayerVersion",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.documents.getContext",
+      "shortPath": "documents.getContext",
+      "description": "Get document context including signature summaries and statements",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "documentNature",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "documentHash",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signatureRequestId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fileSize",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dataJsonContent",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "templateDisplayerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "templateDisplayerVersion",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "statements",
+            "optional": true,
+            "type": "{ _id?: string | null, labelMd?: string | null }[] | null"
+          },
+          {
+            "key": "signatureSummaries",
+            "optional": true,
+            "type": "{ signatureId?: string | null, signerId?: string | null, date?: Date | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.documents.initialize",
+      "shortPath": "documents.initialize",
+      "description": "Initialize a document descriptor for a signature request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "DEVELOPMENT | STAGING | PRODUCTION"
+          },
+          {
+            "key": "signatureRequestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "templateDisplayerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "templateDisplayerVersion",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.documents.provideFileContent",
+      "shortPath": "documents.provideFileContent",
+      "description": "Upload the file or PDF content of a document (base64, sent as multipart)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileBase64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"application/pdf\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "documentNature",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "documentHash",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signatureRequestId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fileSize",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dataJsonContent",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "templateDisplayerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "templateDisplayerVersion",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.documents.provideJsonContent",
+      "shortPath": "documents.provideJsonContent",
+      "description": "Provide structured JSON data content for a document",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "jsonContent",
+            "optional": false,
+            "type": "string | number | boolean | null | any[] | Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "documentNature",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "documentHash",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signatureRequestId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fileSize",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dataJsonContent",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "templateDisplayerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "templateDisplayerVersion",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.documents.providePrivateContent",
+      "shortPath": "documents.providePrivateContent",
+      "description": "Provide SHA-256 document hash for private client-side managed documents",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "documentHash",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "documentNature",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "documentHash",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signatureRequestId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fileSize",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dataJsonContent",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "templateDisplayerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "templateDisplayerVersion",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.documents.remove",
+      "shortPath": "documents.remove",
+      "description": "Delete a document and its associated records",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.documents.removeContent",
+      "shortPath": "documents.removeContent",
+      "description": "Remove document content while preserving the document descriptor",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "documentNature",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "documentHash",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signatureRequestId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fileSize",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dataJsonContent",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "templateDisplayerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "templateDisplayerVersion",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.documents.update",
+      "shortPath": "documents.update",
+      "description": "Update document metadata and display template settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "templateDisplayerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "templateDisplayerVersion",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "documentNature",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "documentHash",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signatureRequestId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fileSize",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dataJsonContent",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "templateDisplayerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "templateDisplayerVersion",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.logCapsules.create",
+      "shortPath": "logCapsules.create",
+      "description": "Create a timestamped log capsule for tamper-proof data verification",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "DEVELOPMENT | STAGING | PRODUCTION"
+          },
+          {
+            "key": "hashSha256_b64",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hashSha256_b64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp_b64",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.proofs.downloadLowLevelSignatureProof",
+      "shortPath": "proofs.downloadLowLevelSignatureProof",
+      "description": "Download cryptographic low-level proof file for a specific signer",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signatureType",
+            "optional": false,
+            "type": "CADES | PKCS7 | PADES_ATTACHED | JWSDET | JWSATT | JADESDET | JADESATT | XADESDET | XADESATT | XMLDSIGDET | XMLDSIGATT"
+          },
+          {
+            "key": "signerId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "binary"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.proofs.downloadSignatureByType",
+      "shortPath": "proofs.downloadSignatureByType",
+      "description": "Download signature proof bundle by proof type (e.g. signed PDF or legal kit)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signatureType",
+            "optional": false,
+            "type": "PDF_WITH_SIGNATURES | ADVANCED_LEGAL_KIT | SIGNED_DATA | C2PA"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "binary"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.seal.signM2M",
+      "shortPath": "seal.signM2M",
+      "description": "Seal a document with an M2M signer (each seal is billed in production)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "DEVELOPMENT | STAGING | PRODUCTION"
+          },
+          {
+            "key": "m2mId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "documentHashSignedByM2MPrivateKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "document",
+            "optional": false,
+            "type": "{ documentType: string, documentHash: string, label?: string, mimeType?: string, contentB64?: string, xmlContent?: string, jsonContent?: string | number | boolean | null | any[] | Record<string, any> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signatureRequestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "documentHash",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "proofBase64",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "proofType",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.signatureRequests.close",
+      "shortPath": "signatureRequests.close",
+      "description": "Close a signature request; signers can no longer sign it (cannot be undone)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signatureRequestId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signatureRequestId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.signatureRequests.createInOneCall",
+      "shortPath": "signatureRequests.createInOneCall",
+      "description": "Create and publish a signature request in a single call; emails signers whose profile uses BySide mode",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signatureMethod",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signers",
+            "optional": false,
+            "type": "{ email: string, firstName?: string, lastName?: string, signerProfileId?: string }[]"
+          },
+          {
+            "key": "documents",
+            "optional": false,
+            "type": "{ originalName: string, mimeType: string, base64?: string, url?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "documentIds",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "signerIds",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "signedBy",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expirationDate",
+            "optional": true,
+            "type": "Date | null"
+          },
+          {
+            "key": "closedAt",
+            "optional": true,
+            "type": "Date | null"
+          },
+          {
+            "key": "signers",
+            "optional": true,
+            "type": "{ signerId?: string | null, externalId?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, status?: string | null, isRecurrent?: boolean | null, signerProfileId?: string | null }[] | null"
+          },
+          {
+            "key": "documents",
+            "optional": true,
+            "type": "{ _id?: string | null, appId?: string | null, appEnv?: string | null, documentNature?: string | null, status?: string | null, documentHash?: string | null, signatureRequestId?: string | null, externalId?: string | null, label?: string | null, description?: string | null, fileName?: string | null, fileSize?: number | null, mimeType?: string | null, dataJsonContent?: string | null, templateDisplayerId?: string | null, templateDisplayerVersion?: number | null, statements?: { _id?: string | null, labelMd?: string | null }[] | null, signatureSummaries?: { signatureId?: string | null, signerId?: string | null, date?: Date | null }[] | null }[] | null"
+          },
+          {
+            "key": "statements",
+            "optional": true,
+            "type": "{ _id?: string | null, labelMd?: string | null }[] | null"
+          },
+          {
+            "key": "signatureProofsUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signatureProofStatus",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.signatureRequests.getContext",
+      "shortPath": "signatureRequests.getContext",
+      "description": "Get full context and details for a signature request",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signatureRequestId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "documentIds",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "signerIds",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "signedBy",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expirationDate",
+            "optional": true,
+            "type": "Date | null"
+          },
+          {
+            "key": "closedAt",
+            "optional": true,
+            "type": "Date | null"
+          },
+          {
+            "key": "signers",
+            "optional": true,
+            "type": "{ signerId?: string | null, externalId?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, status?: string | null, isRecurrent?: boolean | null, signerProfileId?: string | null }[] | null"
+          },
+          {
+            "key": "documents",
+            "optional": true,
+            "type": "{ _id?: string | null, appId?: string | null, appEnv?: string | null, documentNature?: string | null, status?: string | null, documentHash?: string | null, signatureRequestId?: string | null, externalId?: string | null, label?: string | null, description?: string | null, fileName?: string | null, fileSize?: number | null, mimeType?: string | null, dataJsonContent?: string | null, templateDisplayerId?: string | null, templateDisplayerVersion?: number | null, statements?: { _id?: string | null, labelMd?: string | null }[] | null, signatureSummaries?: { signatureId?: string | null, signerId?: string | null, date?: Date | null }[] | null }[] | null"
+          },
+          {
+            "key": "statements",
+            "optional": true,
+            "type": "{ _id?: string | null, labelMd?: string | null }[] | null"
+          },
+          {
+            "key": "signatureProofsUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signatureProofStatus",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.signatureRequests.getStatus",
+      "shortPath": "signatureRequests.getStatus",
+      "description": "Get current status for multiple signature requests",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "DEVELOPMENT | STAGING | PRODUCTION"
+          },
+          {
+            "key": "signatureRequestIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signatureRequests",
+            "optional": false,
+            "type": "{ signatureRequestId: string, status: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.signatureRequests.init",
+      "shortPath": "signatureRequests.init",
+      "description": "Initialize a new empty signature request draft",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "DEVELOPMENT | STAGING | PRODUCTION"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signatureRequestId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.signatureRequests.initSignerSetup",
+      "shortPath": "signatureRequests.initSignerSetup",
+      "description": "Initialize a signer setup session",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "DEVELOPMENT | STAGING | PRODUCTION"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signatureRequestId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.signatureRequests.list",
+      "shortPath": "signatureRequests.list",
+      "description": "List signature requests for an application and environment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "DEVELOPMENT | STAGING | PRODUCTION"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signatureRequests",
+            "optional": false,
+            "type": "{ _id?: string | null, appId?: string | null, appEnv?: string | null, title?: string | null, description?: string | null, status?: string | null, documentIds?: string[] | null, signerIds?: string[] | null, signedBy?: string[] | null, externalId?: string | null, expirationDate?: Date | null, closedAt?: Date | null }[]"
+          },
+          {
+            "key": "paginationData",
+            "optional": false,
+            "type": "{ total: number, page?: number | null, nbEventsPerPage?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.signatureRequests.publish",
+      "shortPath": "signatureRequests.publish",
+      "description": "Publish and launch a signature request; emails signers whose profile uses BySide mode (Embedded signers sign in your app)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signatureRequestId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signatureRequestId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signersBySide",
+            "optional": true,
+            "type": "{ signerId: string, signerExternalId?: string | null }[] | null"
+          },
+          {
+            "key": "signersEmbedded",
+            "optional": true,
+            "type": "{ signerId: string, signerExternalId?: string | null, token?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.signatureRequests.update",
+      "shortPath": "signatureRequests.update",
+      "description": "Update signature request settings, signers, and documents",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signatureRequestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expirationDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expirationDateIsActivated",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "documentIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "signerIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "defaultSignatureMethod",
+            "optional": true,
+            "type": "SIMPLE_STD | ADVANCED_SMS | ADVANCED_STD | QUALIFIED_STD"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "documentIds",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "signerIds",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "signedBy",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expirationDate",
+            "optional": true,
+            "type": "Date | null"
+          },
+          {
+            "key": "closedAt",
+            "optional": true,
+            "type": "Date | null"
+          },
+          {
+            "key": "signers",
+            "optional": true,
+            "type": "{ signerId?: string | null, externalId?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, status?: string | null, isRecurrent?: boolean | null, signerProfileId?: string | null }[] | null"
+          },
+          {
+            "key": "documents",
+            "optional": true,
+            "type": "{ _id?: string | null, appId?: string | null, appEnv?: string | null, documentNature?: string | null, status?: string | null, documentHash?: string | null, signatureRequestId?: string | null, externalId?: string | null, label?: string | null, description?: string | null, fileName?: string | null, fileSize?: number | null, mimeType?: string | null, dataJsonContent?: string | null, templateDisplayerId?: string | null, templateDisplayerVersion?: number | null, statements?: { _id?: string | null, labelMd?: string | null }[] | null, signatureSummaries?: { signatureId?: string | null, signerId?: string | null, date?: Date | null }[] | null }[] | null"
+          },
+          {
+            "key": "statements",
+            "optional": true,
+            "type": "{ _id?: string | null, labelMd?: string | null }[] | null"
+          },
+          {
+            "key": "signatureProofsUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signatureProofStatus",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.signatures.get",
+      "shortPath": "signatures.get",
+      "description": "Get details of a specific signature on a document",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signatureId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signerKeyId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signingIp",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "eidasLevel",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signatures",
+            "optional": true,
+            "type": "{ type: string, signatureFilePath?: string | null, signingTime?: Date | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.signatures.getImages",
+      "shortPath": "signatures.getImages",
+      "description": "Get visual signature images associated with document signers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signatures",
+            "optional": false,
+            "type": "{ signerId: string, imgB64: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.signatures.list",
+      "shortPath": "signatures.list",
+      "description": "List all signatures recorded on a document",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id?: string | null, appId?: string | null, appEnv?: string | null, signerId?: string | null, signerKeyId?: string | null, sessionId?: string | null, documentId?: string | null, status?: string | null, mode?: string | null, signingIp?: string | null, eidasLevel?: string | null, signatures?: { type: string, signatureFilePath?: string | null, signingTime?: Date | null }[] | null }[]"
+      }
+    },
+    {
+      "path": "ignisign.api.signerProfiles.get",
+      "shortPath": "signerProfiles.get",
+      "description": "Get signer profile configuration by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "DEVELOPMENT | STAGING | PRODUCTION"
+          },
+          {
+            "key": "signerProfileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "isRecurrent",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "integrationMode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signatureAuthMethodsConfiguration",
+            "optional": true,
+            "type": "Record<string, { idProofings?: string[] | null, authMethods?: string[] | null }> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.signerProfiles.getInputsNeeded",
+      "shortPath": "signerProfiles.getInputsNeeded",
+      "description": "Get required and optional input constraints for a signer profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "DEVELOPMENT | STAGING | PRODUCTION"
+          },
+          {
+            "key": "signerProfileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signerProfileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "inputsNeeded",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "optionalInputs",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.signerProfiles.list",
+      "shortPath": "signerProfiles.list",
+      "description": "List signer profiles configured for an application environment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "DEVELOPMENT | STAGING | PRODUCTION"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id?: string | null, appId?: string | null, appEnv?: string | null, name?: string | null, description?: string | null, status?: string | null, version?: number | null, isRecurrent?: boolean | null, integrationMode?: string | null, signatureAuthMethodsConfiguration?: Record<string, { idProofings?: string[] | null, authMethods?: string[] | null }> | null }[]"
+      }
+    },
+    {
+      "path": "ignisign.api.signers.create",
+      "shortPath": "signers.create",
+      "description": "Create a new signer in an application environment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "DEVELOPMENT | STAGING | PRODUCTION"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phoneNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nationality",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "birthDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "birthPlace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "birthCountry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signerProfileId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entityType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "alreadyExists",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "authSecret",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.signers.getDetails",
+      "shortPath": "signers.getDetails",
+      "description": "Get detailed signer profile including verified claims and signature requests",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "DEVELOPMENT | STAGING | PRODUCTION"
+          },
+          {
+            "key": "signerId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isRecurrent",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "signerProfileId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "claims",
+            "optional": true,
+            "type": "{ claimRef: string, status: string }[] | null"
+          },
+          {
+            "key": "latestSignatureRequests",
+            "optional": true,
+            "type": "{ _id?: string | null, title?: string | null, status?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.signers.getSummary",
+      "shortPath": "signers.getSummary",
+      "description": "Get signer summary information",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "DEVELOPMENT | STAGING | PRODUCTION"
+          },
+          {
+            "key": "signerId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isRecurrent",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "signerProfileId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.signers.list",
+      "shortPath": "signers.list",
+      "description": "List signers with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "DEVELOPMENT | STAGING | PRODUCTION"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signers",
+            "optional": false,
+            "type": "{ signerId?: string | null, externalId?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, status?: string | null, isRecurrent?: boolean | null, signerProfileId?: string | null }[]"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "signerPerPage",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.signers.regenerateAuthSecret",
+      "shortPath": "signers.regenerateAuthSecret",
+      "description": "Regenerate a signer authentication secret; the previous secret stops working",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "DEVELOPMENT | STAGING | PRODUCTION"
+          },
+          {
+            "key": "signerId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "authSecret",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.signers.revoke",
+      "shortPath": "signers.revoke",
+      "description": "Revoke a signer and their active signature sessions",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "DEVELOPMENT | STAGING | PRODUCTION"
+          },
+          {
+            "key": "signerId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signerId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.signers.search",
+      "shortPath": "signers.search",
+      "description": "Search signers by name, email or external ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "DEVELOPMENT | STAGING | PRODUCTION"
+          },
+          {
+            "key": "filter",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signers",
+            "optional": false,
+            "type": "{ signerId?: string | null, externalId?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, status?: string | null, isRecurrent?: boolean | null, signerProfileId?: string | null }[]"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "signerPerPage",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ignisign.api.signers.update",
+      "shortPath": "signers.update",
+      "description": "Update signer profile inputs and attributes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "appEnv",
+            "optional": true,
+            "type": "DEVELOPMENT | STAGING | PRODUCTION"
+          },
+          {
+            "key": "signerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phoneNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nationality",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "birthDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "birthPlace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "birthCountry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signerProfileId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entityType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "alreadyExists",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "authSecret",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

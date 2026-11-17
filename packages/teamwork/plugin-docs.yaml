@@ -1,0 +1,453 @@
+displayName: Teamwork
+description: Teamwork.com projects, tasks, task lists, milestones, comments, time tracking, timers, people and companies.
+overviewNote: "Store each tenant's Teamwork site as site_name with its API key: acme for acme.teamwork.com, acme.eu for an EU site. The optional siteName plugin option is a global single-site override."
+examples:
+  read:
+    path: tasks.list
+    title: List a project's open tasks
+    args: {"query":{"projectIds":[1470497],"includeCompletedTasks":false}}
+  write:
+    path: tasks.create
+    title: Create a task without emailing anyone
+    args: {"path":{"tasklistId":4073104},"body":{"task":{"name":"Draft the launch post"},"taskOptions":{"notify":false}}}
+apiExamples:
+  projects.list:
+    args: {"query":{"searchTerm":"launch","pageSize":50}}
+  projects.listStarred:
+    args: {}
+  projects.get:
+    args: {"path":{"projectId":1470497},"query":{}}
+  projects.create:
+    args: {"body":{"project":{"name":"Website relaunch","description":"Q1 site rebuild","use-tasks":true}}}
+  projects.update:
+    args: {"path":{"id":"1470497"},"body":{"project":{"description":"Q1 site rebuild, phase 2"}}}
+  projects.delete:
+    args: {"path":{"id":"1"}}
+  projects.clone:
+    args: {"path":{"id":"1470497"},"body":{"cloneProjectName":"Website relaunch (copy)","copyTasks":true,"copyTasklists":true,"copyMilestones":true}}
+  projects.star:
+    args: {"path":{"id":"1"}}
+  projects.getStats:
+    args: {"path":{"id":"1"}}
+  projects.getRates:
+    args: {"path":{"id":"1"}}
+  projects.setRates:
+    args: {"path":{"id":"1470497"},"body":{"rates":{"project-default":12000}}}
+  projects.convertTentative:
+    args: {"path":{"projectId":1}}
+  projects.listTaskPredecessors:
+    args: {"path":{"id":1}}
+  projectMetrics.billable:
+    args: {"query":{"startDate":"2026-01-01","endDate":"2026-01-31"}}
+  projectMetrics.health:
+    args: {}
+  projectMetrics.invoices:
+    args: {}
+  projectMetrics.unbilled:
+    args: {}
+  projectTemplates.list:
+    args: {}
+  projectTemplates.get:
+    args: {"path":{"id":1}}
+  projectTemplates.listRequiredCustomFields:
+    args: {"path":{"id":1}}
+  projectTemplates.create:
+    args: {"body":{"project":{"name":"Client onboarding template","templateDateTargetDefault":"start","use-tasks":true,"use-milestones":true}}}
+  projectCategories.list:
+    args: {}
+  projectCategories.get:
+    args: {"path":{"id":"1"}}
+  projectCategories.create:
+    args: {"body":{"category":{"name":"Client work"}}}
+  projectCategories.update:
+    args: {"path":{"id":"56260"},"body":{"category":{"name":"Client projects"}}}
+  projectCategories.delete:
+    args: {"path":{"id":"1"}}
+  projectUpdates.list:
+    args: {}
+  projectUpdates.create:
+    args: {"path":{"projectId":"1470497"},"body":{"update":{"text":"Design signed off, build starts Monday.","health":"2"},"notifyIds":""}}
+  projectUpdates.update:
+    args: {"path":{"updateId":"1"},"body":{"update":{"text":"Design signed off, build starts Tuesday."},"notifyIds":""}}
+  projectUpdates.delete:
+    args: {"path":{"updateId":"1"}}
+  projectUpdates.request:
+    args: {"path":{"projectId":"1470497"},"body":{"userId":"753865","content":"Could you post a status update before Friday's review?"}}
+  projectPeople.list:
+    args: {"path":{"projectId":1}}
+  projectPeople.get:
+    args: {"path":{"projectId":1,"personId":1}}
+  projectPeople.getPermissions:
+    args: {"path":{"projectId":1,"personId":1}}
+  projectPeople.add:
+    args: {"path":{"projectId":1},"body":{"userIds":[1],"checkTeamIds":[1]}}
+  projectPeople.remove:
+    args: {"path":{"projectId":1,"personId":1}}
+  projectRoles.list:
+    args: {"path":{"id":1}}
+  projectRoles.get:
+    args: {"path":{"id":1}}
+  projectRoles.update:
+    args: {"path":{"id":1},"body":{"role":{"name":"Reviewer","users":"753865"}}}
+  projectRoles.delete:
+    args: {"path":{"id":1}}
+  tasks.list:
+    args: {"query":{"projectIds":[1470497],"includeCompletedTasks":false,"pageSize":50}}
+  tasks.get:
+    args: {"path":{"taskId":51453032},"query":{}}
+  tasks.create:
+    args: {"path":{"tasklistId":4073104},"body":{"task":{"name":"Draft the launch post","description":"First draft by Friday"},"taskOptions":{"notify":false}}}
+  tasks.createSubtask:
+    args: {"path":{"taskId":51453032},"body":{"task":{"name":"Pick the hero image"},"taskOptions":{"notify":false}}}
+  tasks.update:
+    args: {"path":{"taskId":51453032},"body":{"task":{"description":"Second draft"},"taskOptions":{"notify":false}}}
+  tasks.delete:
+    args: {"path":{"taskId":1}}
+  tasks.complete:
+    args: {"path":{"id":"51453032"}}
+  tasks.uncomplete:
+    args: {"path":{"id":"1"}}
+  tasks.quickAdd:
+    args: {"path":{"projectId":"1470497"},"body":{"content":"Draft the launch post\nPick the hero image","notify":false}}
+  tasks.quickAddSubtasks:
+    args: {"path":{"id":"51453032"},"body":{"content":"Write the outline\nFind two quotes","notify":false}}
+  tasks.reorder:
+    args: {"path":{"id":"4073104"},"body":{"todo-items":[{"todo-item":{"id":"51453032"}},{"todo-item":{"id":"51453033"}}]}}
+  tasks.move:
+    args: {"path":{"taskId":"51453032"},"body":{"projectId":1470498,"tasklistId":4073200}}
+  tasks.copy:
+    args: {"path":{"taskId":"51453032"},"body":{"projectId":1470498,"tasklistId":4073200}}
+  tasks.setEstimate:
+    args: {"path":{"id":"51453032"},"body":{"taskEstimatedMinutes":90}}
+  tasks.listDependencies:
+    args: {"path":{"id":"1"}}
+  tasks.listPredecessors:
+    args: {"path":{"id":"1"}}
+  tasks.listRecurring:
+    args: {"path":{"taskId":"1"}}
+  tasks.countCompleted:
+    args: {}
+  tasks.countLate:
+    args: {}
+  tasks.timeReport:
+    args: {}
+  personalTasks.list:
+    args: {}
+  personalTasks.get:
+    args: {"path":{"id":1}}
+  personalTasks.create:
+    args: {"body":{"task":{"name":"Draft the launch post","dueAt":"2026-01-15"},"taskOptions":{"notify":false}}}
+  taskReminders.list:
+    args: {"path":{"id":1}}
+  taskReminders.create:
+    args: {"path":{"taskId":51453032},"body":{"reminder":{"remindAt":"2026-12-08T09:00:00Z","type":"email","userIds":[753865],"note":"Check the draft"}}}
+  taskReminders.update:
+    args: {"path":{"taskId":51453032,"reminderId":500772},"body":{"reminder":{"remindAt":"2026-12-09T09:00:00Z","type":"email","note":"Check the second draft"}}}
+  taskReminders.delete:
+    args: {"path":{"taskId":1,"reminderId":1}}
+  tasklists.list:
+    args: {"query":{"projectIds":[1470497]}}
+  tasklists.get:
+    args: {"path":{"tasklistId":1}}
+  tasklists.create:
+    args: {"path":{"id":"1470497"},"body":{"todo-list":{"name":"Launch","description":"Everything for launch day"}}}
+  tasklists.update:
+    args: {"path":{"id":"4073104"},"body":{"todo-list":{"name":"Launch week","description":"Everything for launch day"}}}
+  tasklists.delete:
+    args: {"path":{"id":"1"}}
+  tasklists.listTemplates:
+    args: {}
+  tasklists.reorder:
+    args: {"path":{"id":"1470497"},"body":{"todo-lists":[{"todo-list":{"id":"4073104"}},{"todo-list":{"id":"4073105"}}]}}
+  tasklists.copy:
+    args: {"path":{"id":"4073104"},"body":{"projectId":1470498,"includeCompletedTasks":0}}
+  tasklists.move:
+    args: {"path":{"id":"4073104"},"body":{"projectId":"1470498"}}
+  milestones.list:
+    args: {"query":{"projectIds":[1470497]}}
+  milestones.get:
+    args: {"path":{"milestoneId":1}}
+  milestones.create:
+    args: {"path":{"id":"1470497"},"body":{"milestone":{"title":"Launch day","deadline":"20261130","responsible-party-ids":"753865","notify":false,"reminder":false}}}
+  milestones.update:
+    args: {"path":{"id":"848392"},"body":{"milestone":{"title":"Launch day (moved)","notify":false}}}
+  milestones.delete:
+    args: {"path":{"id":"1"}}
+  milestones.complete:
+    args: {"path":{"id":"1"}}
+  milestones.uncomplete:
+    args: {"path":{"id":"1"}}
+  milestones.listByDeadline:
+    args: {"query":{"startDate":"2026-01-01","endDate":"2026-01-31"}}
+  people.list:
+    args: {"query":{"projectIds":[1470497]}}
+  people.get:
+    args: {"path":{"personId":1}}
+  people.me:
+    args: {}
+  people.create:
+    args: {"body":{"person":{"email-address":"sam@acme.example","first-name":"Sam","last-name":"Lee","sendInvite":false}}}
+  people.update:
+    args: {"path":{"id":"753865"},"body":{"person":{"first-name":"Sam","last-name":"Lee"}}}
+  people.delete:
+    args: {"path":{"personId":1}}
+  people.listDeleted:
+    args: {}
+  people.myStats:
+    args: {}
+  people.addToProjects:
+    args: {"path":{"userId":1}}
+  people.performance:
+    args: {"query":{"startDate":"2026-01-01","endDate":"2026-01-31"}}
+  people.utilization:
+    args: {"query":{"startDate":"2026-01-01","endDate":"2026-01-31"}}
+  people.taskCompletion:
+    args: {"query":{"startDate":"2026-01-01","endDate":"2026-01-31"}}
+  statuses.list:
+    args: {}
+  statuses.timeline:
+    args: {}
+  statuses.getMine:
+    args: {}
+  statuses.getForPerson:
+    args: {"path":{"id":"1"}}
+  statuses.create:
+    args: {"path":{"id":"753865"},"body":{"userStatus":{"status":"Out until Monday","notify":false}}}
+  statuses.update:
+    args: {"path":{"id":"1"},"body":{"userstatus":{"status":"Back Tuesday"}}}
+  statuses.delete:
+    args: {"path":{"id":"1"}}
+  companies.list:
+    args: {}
+  companies.listForProject:
+    args: {"path":{"id":"1"}}
+  companies.get:
+    args: {"path":{"companyId":1}}
+  companies.create:
+    args: {"body":{"company":{"name":"Acme Inc","website":"https://acme.example"}}}
+  companies.update:
+    args: {"path":{"companyId":1},"body":{"company":{"website":"https://acme.example"}}}
+  companies.delete:
+    args: {"path":{"companyId":1}}
+  companies.setRates:
+    args: {"path":{"companyId":1},"body":{"clientRateByRoleId":{}}}
+  companies.convertCurrency:
+    args: {"path":{"id":1}}
+  companies.addDomains:
+    args: {"path":{"id":1},"body":{"companyDomains":[{"domain":"acme.example","companyId":1}]}}
+  companies.updateDomain:
+    args: {"path":{"id":1},"body":{"companyDomain":{"domain":"acme.example","companyId":1}}}
+  companies.deleteDomain:
+    args: {"path":{"id":1}}
+  comments.list:
+    args: {"query":{"objectIds":[51453032]}}
+  comments.get:
+    args: {"path":{"id":1}}
+  comments.listNotified:
+    args: {"path":{"id":1}}
+  comments.create:
+    args: {"path":{"resource":"tasks","resourceId":"51453032"},"body":{"comment":{"body":"Looks good, ship it.","notify":""}}}
+  comments.update:
+    args: {"path":{"id":1},"body":{"comment":{"body":"Looks good, ship it Monday.","notify":""}}}
+  comments.delete:
+    args: {"path":{"id":1}}
+  comments.markRead:
+    args: {"path":{"id":"1"}}
+  files.listForProject:
+    args: {"path":{"id":"1"}}
+  files.listForTask:
+    args: {"path":{"id":"1"}}
+  files.addToProject:
+    args: {"path":{"id":"1470497"},"body":{"file":{"pendingFileRef":"tf_example-ref","name":"brief.pdf","notifyCurrentUser":false}}}
+  files.addToTask:
+    args: {"path":{"id":"51453032"},"body":{"task":{"pendingFileAttachments":["tf_example-ref"]}}}
+  files.addVersion:
+    args: {"path":{"id":"1"},"body":{"fileversion":{"pendingFileRef":"tf_example-ref"}}}
+  files.delete:
+    args: {"path":{"id":"1"}}
+  files.getShareLink:
+    args: {"path":{"id":"1"}}
+  files.copy:
+    args: {"path":{"id":"1"},"body":{"projectId":1470498}}
+  fileCategories.list:
+    args: {"path":{"id":"1"}}
+  fileCategories.get:
+    args: {"path":{"id":"1"}}
+  fileCategories.create:
+    args: {"path":{"id":"1470497"},"body":{"category":{"name":"Contracts"}}}
+  fileCategories.update:
+    args: {"path":{"id":"1"},"body":{"category":{"name":"Signed contracts"}}}
+  fileCategories.delete:
+    args: {"path":{"id":"1"}}
+  links.list:
+    args: {}
+  links.listForProject:
+    args: {"path":{"id":"1"}}
+  links.get:
+    args: {"path":{"id":"1"}}
+  links.create:
+    args: {"path":{"id":"1470497"},"body":{"link":{"name":"Brand guide","code":"https://acme.example/brand","notify-current-user":false}}}
+  links.update:
+    args: {"path":{"id":"711029"},"body":{"link":{"name":"Brand guide v2","code":"https://acme.example/brand-v2"}}}
+  links.delete:
+    args: {"path":{"id":"1"}}
+  linkCategories.list:
+    args: {"path":{"id":"1"}}
+  linkCategories.get:
+    args: {"path":{"id":"1"}}
+  linkCategories.create:
+    args: {"path":{"id":"1470497"},"body":{"category":{"name":"Design references"}}}
+  linkCategories.delete:
+    args: {"path":{"id":"1"}}
+  notebooks.list:
+    args: {"query":{"projectIds":[1470497]}}
+  notebooks.get:
+    args: {"path":{"notebookId":1}}
+  notebooks.create:
+    args: {"path":{"projectId":1470497},"body":{"notebook":{"name":"Launch notes","contents":"Decisions from the kickoff"}}}
+  notebooks.update:
+    args: {"path":{"notebookId":423373},"body":{"notebook":{"contents":"Decisions from the kickoff, updated","newVersion":true}}}
+  notebooks.delete:
+    args: {"path":{"notebookId":1}}
+  notebooks.lock:
+    args: {"path":{"id":"1"}}
+  notebooks.unlock:
+    args: {"path":{"id":"1"}}
+  notebooks.copy:
+    args: {"path":{"id":"423373"},"body":{"projectId":1470498}}
+  notebooks.move:
+    args: {"path":{"id":"423373"},"body":{"projectId":1470498}}
+  notebooks.listVersions:
+    args: {"path":{"notebookId":1}}
+  notebooks.getVersion:
+    args: {"path":{"versionId":1,"notebookId":1}}
+  notebooks.deleteVersions:
+    args: {"path":{"notebookId":1}}
+  notebookCategories.list:
+    args: {"path":{"id":"1"}}
+  notebookCategories.get:
+    args: {"path":{"id":"1"}}
+  notebookCategories.create:
+    args: {"path":{"id":"1470497"},"body":{"category":{"name":"Meeting notes"}}}
+  notebookCategories.update:
+    args: {"path":{"id":"1"},"body":{"category":{"name":"Kickoff notes"}}}
+  notebookCategories.delete:
+    args: {"path":{"id":"1"}}
+  boardColumns.list:
+    args: {"path":{"id":1}}
+  boardColumns.get:
+    args: {"path":{"id":"1"}}
+  boardColumns.create:
+    args: {"path":{"id":1470497},"body":{"column":{"name":"In review","color":"#4461D7"}}}
+  boardColumns.update:
+    args: {"path":{"id":"1"},"body":{"column":{"name":"Ready to ship"}}}
+  boardColumns.delete:
+    args: {"path":{"id":"1"}}
+  boardCards.list:
+    args: {"path":{"id":"1"}}
+  boardCards.get:
+    args: {"path":{"id":"1"}}
+  boardCards.update:
+    args: {"path":{"id":"1"},"body":{"card":{"due-date":"20261130","priority":"high"}}}
+  boardCards.move:
+    args: {"path":{"id":1},"body":{"cardId":1,"columnId":2,"positionAfterId":0}}
+  boardCards.delete:
+    args: {"path":{"id":"1"}}
+  portfolioBoards.list:
+    args: {}
+  portfolioBoards.create:
+    args: {"body":{"board":{"name":"Client projects","color":"#4461D7"}}}
+  portfolioBoards.update:
+    args: {"path":{"boardId":"1"},"body":{"board":{"name":"Client projects 2027"}}}
+  portfolioBoards.delete:
+    args: {"path":{"boardId":"1"}}
+  portfolioColumns.list:
+    args: {"path":{"boardId":"1"}}
+  portfolioColumns.get:
+    args: {"path":{"columnId":"1"}}
+  portfolioColumns.create:
+    args: {"path":{"boardId":"1"},"body":{"column":{"name":"In progress","color":"#4461D7"}}}
+  portfolioColumns.delete:
+    args: {"path":{"columnId":"1"}}
+  portfolioCards.list:
+    args: {"path":{"columnId":"1"}}
+  portfolioCards.get:
+    args: {"path":{"cardId":"1"}}
+  portfolioCards.add:
+    args: {"path":{"columnId":"1"},"body":{"card":{"projectId":"1470497"}}}
+  portfolioCards.move:
+    args: {"path":{"cardId":"1"},"body":{"cardId":"1","columnId":"2","oldColumnId":"1","positionAfterId":0}}
+  portfolioCards.delete:
+    args: {"path":{"cardId":"1"}}
+  teams.list:
+    args: {}
+  teams.get:
+    args: {"path":{"id":"1"}}
+  teams.create:
+    args: {"body":{"team":{"name":"Design","userIds":"753865"}}}
+  teams.update:
+    args: {"path":{"id":"63157"},"body":{"team":{"name":"Design and brand"}}}
+  teams.delete:
+    args: {"path":{"id":"1"}}
+  teams.setMembers:
+    args: {"path":{"id":"63157"},"body":{"userIds":"753865","action":"add"}}
+  teams.listSubteams:
+    args: {"path":{"id":"1"}}
+  teams.listMemberIds:
+    args: {}
+  teams.createForProject:
+    args: {"path":{"id":"1470497"},"body":{"team":{"name":"Launch crew","userIds":"753865"}}}
+  teams.listForProject:
+    args: {"path":{"id":"1"}}
+  teams.listForCompany:
+    args: {"path":{"id":"1"}}
+  teams.listForPerson:
+    args: {"path":{"id":"1"}}
+  time.list:
+    args: {"query":{"projectIds":[1470497],"startDate":"2026-11-01","endDate":"2026-11-17"}}
+  time.get:
+    args: {"path":{"timelogId":1}}
+  time.create:
+    args: {"path":{"projectId":1470497},"body":{"timelog":{"description":"Planning call","date":"2026-11-17","time":"10:00:00","hours":0,"minutes":30,"isBillable":false}}}
+  time.createForTask:
+    args: {"path":{"taskId":51453032},"body":{"timelog":{"description":"Drafting","date":"2026-11-17","time":"09:00:00","hours":1,"minutes":15,"isBillable":true}}}
+  time.update:
+    args: {"path":{"timelogId":1},"body":{"timelog":{"minutes":45}}}
+  time.delete:
+    args: {"path":{"timelogId":1}}
+  time.totals:
+    args: {"query":{"projectIds":[1470497]}}
+  time.estimatedTotals:
+    args: {}
+  time.loggedByPerson:
+    args: {"path":{"id":"1"}}
+  time.byCompany:
+    args: {}
+  time.report:
+    args: {"query":{"type":"user","startDate":"2026-11-01","endDate":"2026-11-17"}}
+  time.reportTotals:
+    args: {"query":{"startDate":"2026-01-01","endDate":"2026-01-31"}}
+  time.reportByType:
+    args: {"path":{"type":"user"},"query":{"startDate":"2026-11-01","endDate":"2026-11-17"}}
+  time.validate:
+    args: {}
+  timers.list:
+    args: {}
+  timers.listMine:
+    args: {}
+  timers.get:
+    args: {"path":{"timerId":1}}
+  timers.create:
+    args: {"body":{"timer":{"projectId":1470497,"taskId":51453032,"isBillable":false,"isRunning":true}}}
+  timers.update:
+    args: {"path":{"timerId":1},"body":{"timer":{"projectId":1,"taskId":1}}}
+  timers.pause:
+    args: {"path":{"timerId":1}}
+  timers.resume:
+    args: {"path":{"timerId":1}}
+  timers.complete:
+    args: {"path":{"timerId":1}}
+  timers.delete:
+    args: {"path":{"timerId":1},"body":{}}
+  timers.undelete:
+    args: {"path":{"timerId":1}}
