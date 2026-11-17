@@ -455,7 +455,7 @@
           {
             "key": "file",
             "optional": false,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom"
           },
           {
             "key": "extension",

@@ -1,0 +1,40 @@
+displayName: PDFLess
+description: Generate PDFs from PDFLess document templates, list the templates and read the workspace quota. Requests send the API key in the apikey header.
+domain: pdfless.com
+recommendedAuth: api_key
+overviewNote: |
+  Auth is the apikey header on https://api.pdfless.com. With no key stored, Corsair raises AuthMissingError before any request; a key PDFLess rejects comes back as HTTP 401 ("No API key found in request" when the header is empty). pdfs.generate renders one document against the workspace quota (workspace.get shows remainingQuota), so it is destructive; its download_url expires at `expires`. Template data and PDF passwords are kept out of errors and events. The workspace model has no id, so a workspace row is stored only when name is present. A template row is stored only when id is present.
+examples:
+  write:
+    path: pdfs.generate
+    title: Render an invoice PDF from a template
+    args:
+      template_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+      reference_id: invoice-42
+      payload:
+        customer:
+          name: Ada Lovelace
+        total: 42
+  read:
+    path: templates.list
+    title: List document templates
+    args:
+      page: 1
+      pageSize: 25
+apiNotes:
+  workspace.get: |
+    GET /v1/workspaces. Official fields are name, active, created, modified, quota, and remainingQuota.
+  pdfs.generate: |
+    POST /v1/pdfs. `payload` fills the template's variables. The optional `encryption_*` fields password-protect the PDF and set its permissions.
+  templates.list: |
+    GET /v1/document-templates. Query names are Page and PageSize. Official fields are id, name, imagePreviewUrl, pdfPreviewUrl, created, and modified.
+apiExamples:
+  workspace.get:
+    call: "{}"
+  templates.list:
+    call: "{ page: 1, pageSize: 25 }"
+  pdfs.generate:
+    template_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+    payload:
+      customer:
+        name: Ada Lovelace

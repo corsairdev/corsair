@@ -1,0 +1,143 @@
+---
+title: "Logo.dev plugin"
+sidebarTitle: "Overview"
+description: "Look up company logos and brand profiles (name, colors, socials, logo files) by domain, ticker, ISIN, crypto symbol or name, search brands by name, and manage brand update webhooks."
+---
+
+Use **Logo.dev** through Corsair: one client, typed API calls, local DB sync.
+
+Connect the Logo.dev **secret key** (`sk_…`). Every operation calls the Logo.dev API (`api.logo.dev/v2`) with it as a Bearer token. The publishable key (`pk_…`) only works on the image CDN, which this plugin does not call; the API answers `401` to it.
+
+Lookups spend API credits: search 1 per 1,000 searches, logo 2, brandmark 3, brand profile 5. Account reads, subscriptions and webhook endpoints are free. Out of credits returns `402`. A brand Logo.dev has not indexed yet comes back as `202` with `data.status` `not_indexed` and `metadata.pending.retry_after_seconds`; retry after that delay (retries are not billed).
+
+Subscriptions and webhook endpoints need a paid plan with webhooks turned on; the free plan answers `403`.
+
+**What you get:**
+
+- 14 typed API operations
+- 2 synced entities (`brands`, `images`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/logodev better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/logodev better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/logodev better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/logodev better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { logodev } from '@corsair-dev/logodev';
+
+export const corsair = createCorsair({
+	plugins: [
+		logodev(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Logo.dev API key before the first call: `pnpm corsair setup --plugin=logodev --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+logodev()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'logodev',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Look up a brand profile by domain**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.logodev.api.brands.lookup({ domain: 'stripe.com' });
+```
+
+
+**`subscriptions.subscribe`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.logodev.api.subscriptions.subscribe({});
+```
+
+
+See the full list on the [API](/plugins/logodev/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.logodev.db.<entity>.search()` and `.list()`: `brands`, `images`.
+
+See [Database](/plugins/logodev/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/logodev/api">
+    Every `logodev.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/logodev/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

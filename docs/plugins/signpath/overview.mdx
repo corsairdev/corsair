@@ -1,0 +1,147 @@
+---
+title: "SignPath plugin"
+sidebarTitle: "Overview"
+description: "Code signing through SignPath - browse and change projects, signing policies, artifact configurations and certificates, then submit artifacts and hashes for signing, poll their status, approve or deny them, and read the audit log."
+---
+
+Use **SignPath** through Corsair: one client, typed API calls.
+
+Create an API token in SignPath under your user settings, API tokens. The token acts as the user who owns it, so use a dedicated CI user for automation. A token belongs to one user in one organization, and every route carries that organization's id, so set `organizationId` once on the plugin or store `organization_id` on the account.
+
+Things to know before you sign:
+
+- **Signing is asynchronous.** The three `submit` operations return as soon as SignPath queues the work. Poll `signingRequests.getStatus` until `isFinalStatus` is true. The plugin declares those three as jobs, so `get_job` follows the same status field. `resubmit` returns the new request's id (read from the `Location` header SignPath answers with); poll it with `signingRequests.getStatus`.
+- **Nothing is signed until the policy says so.** A signing policy with `numberOfRequiredApprovals` above zero holds each request in `WaitingForApproval` until enough approvers call `signingRequests.approve`. `signingRequests.deny` rejects a request permanently, and `signingRequests.cancel` stops one that has not finished; neither can be undone.
+- **Creating is not enabling.** A new project, signing policy and artifact configuration is inactive. Call the matching `activate` operation, or the configuration will refuse submissions.
+- **Pick the upload route by artifact size.** `submitWithArtifact` sends the bytes in one multipart request (base64 in the input). `submitWithArtifactRetrievalLink` has SignPath download the artifact from a URL you provide, which is what SignPath documents for large files. `submitWithoutArtifact` returns an `uploadLink` you deliver the artifact to afterwards.
+- **Hash and message signing answer immediately.** `signingRequests.signHash` and `signingRequests.signMessage` return the signature in the response, with no artifact and no waiting period. Each needs its algorithm's options object, and the schema rejects the call before sending when it is missing.
+- **Artifact configurations are XML.** `artifactConfigurations.getXml` returns the document as text, and `updateXml` replaces it wholesale; SignPath does not merge.
+- **Paging.** `signingRequests.list` returns `pagination.nextLink`, a full URL that already contains your filters. Pass it back as `nextLink` to read the next page. `auditLog.listEvents` pages with `pagination.nextCursor` instead.
+- **Downloads are not wrapped.** `signingRequests.get` returns `signedArtifactLink`; fetching that link returns the binary itself, which this plugin does not stream.
+- **Preview route.** The two audit log operations call `v1-pre`, the preview path SignPath keeps them under.
+
+**What you get:**
+
+- 34 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/signpath better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/signpath better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/signpath better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/signpath better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { signpath } from '@corsair-dev/signpath';
+
+export const corsair = createCorsair({
+	plugins: [
+		signpath(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the SignPath API key before the first call: `pnpm corsair setup --plugin=signpath --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+signpath()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'signpath',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Check whether a signing request finished**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.signpath.api.signingRequests.getStatus({ signingRequestId: '3fa85f64-5717-4562-b3fc-2c963f66afa6' });
+```
+
+
+**Submit an artifact for signing**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.signpath.api.signingRequests.submitWithArtifact({
+	projectSlug: 'my-app',
+	signingPolicySlug: 'release',
+	artifactBase64: 'TVqQAAMAAAAEAAAA',
+	artifactFileName: 'app.exe',
+	description: 'v1.2.0',
+});
+```
+
+
+See the full list on the [API](/plugins/signpath/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/signpath/api">
+    Every `signpath.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

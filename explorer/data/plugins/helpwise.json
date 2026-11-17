@@ -1,0 +1,1661 @@
+{
+  "id": "helpwise",
+  "displayName": "Helpwise",
+  "description": "Shared team inboxes, conversations, messages, contacts, tags, and analytics for Helpwise.",
+  "npmPackageName": "@corsair-dev/helpwise",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 37,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "api_secret"]
+    }
+  ],
+  "api": [
+    {
+      "path": "helpwise.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a new contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "firstname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "{ phoneTxt: string, phoneNo: string, type?: string }[]"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ id: number, value: string, name?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "isBlocked",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Get a contact by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "isBlocked",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contacts with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nextPage",
+            "optional": true,
+            "type": "string | number | boolean | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: number, firstname?: string | null, lastname?: string | null, displayName?: string | null, company?: string | null, jobTitle?: string | null, emails?: string[] | null, isBlocked?: boolean | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.contacts.search",
+      "shortPath": "contacts.search",
+      "description": "Search contacts by term",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "term",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nextPage",
+            "optional": true,
+            "type": "string | number | boolean | null"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{ id: number, firstname?: string | null, lastname?: string | null, displayName?: string | null, company?: string | null, jobTitle?: string | null, emails?: string[] | null, isBlocked?: boolean | null }[] | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id: number, firstname?: string | null, lastname?: string | null, displayName?: string | null, company?: string | null, jobTitle?: string | null, emails?: string[] | null, isBlocked?: boolean | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update an existing contact by ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "{ phoneTxt: string, phoneNo: string, type?: string }[]"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ id: number, value: string, name?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "isBlocked",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.conversations.assign",
+      "shortPath": "conversations.assign",
+      "description": "Assign conversation to a user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailbox_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "thread_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "assigned_to",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.conversations.close",
+      "shortPath": "conversations.close",
+      "description": "Close conversations by ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.conversations.delete",
+      "shortPath": "conversations.delete",
+      "description": "Permanently delete conversations",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.conversations.get",
+      "shortPath": "conversations.get",
+      "description": "Get a conversation by inbox and conversation ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inboxId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "conversationId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "labelId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "inboxId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "messagesCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "snippet",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "inboxType",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.conversations.list",
+      "shortPath": "conversations.list",
+      "description": "List conversations with filters and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inboxIds",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "labelId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "threads",
+            "optional": false,
+            "type": "{ id: number, messageCount?: number, inboxType?: string, subject?: string | null, snippet?: string | null, inboxId?: number, isRead?: boolean, isArchived?: boolean, isDeleted?: boolean, isSpam?: boolean, date?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.conversations.moveToInbox",
+      "shortPath": "conversations.moveToInbox",
+      "description": "Move conversations back to inbox",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.conversations.spam",
+      "shortPath": "conversations.spam",
+      "description": "Mark conversations as spam",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.conversations.trash",
+      "shortPath": "conversations.trash",
+      "description": "Move conversations to trash",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.customFields.create",
+      "shortPath": "customFields.create",
+      "description": "Create a new custom field",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.customFields.delete",
+      "shortPath": "customFields.delete",
+      "description": "Delete a custom field by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fieldId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.customFields.get",
+      "shortPath": "customFields.get",
+      "description": "Get custom field details by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fieldId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.customFields.list",
+      "shortPath": "customFields.list",
+      "description": "List all custom fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.customFields.listByInbox",
+      "shortPath": "customFields.listByInbox",
+      "description": "List custom fields enabled for an inbox",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inboxId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.customFields.update",
+      "shortPath": "customFields.update",
+      "description": "Update a custom field by ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fieldId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.customFields.updateByInbox",
+      "shortPath": "customFields.updateByInbox",
+      "description": "Update inbox custom field visibility",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inboxId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "hideIds",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "unHideIds",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.inboxes.get",
+      "shortPath": "inboxes.get",
+      "description": "Get mailbox details by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mailbox",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.inboxes.list",
+      "shortPath": "inboxes.list",
+      "description": "List shared mailboxes and inboxes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "mailboxes",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.messages.listEmails",
+      "shortPath": "messages.listEmails",
+      "description": "List emails in a conversation thread",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailboxId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.messages.sendChat",
+      "shortPath": "messages.sendChat",
+      "description": "Send a live chat message in a thread",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailbox_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "thread_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.messages.sendEmail",
+      "shortPath": "messages.sendEmail",
+      "description": "Send an email message through a Helpwise mailbox",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailbox_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bcc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reply_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "thread_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "thread_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.messages.sendSms",
+      "shortPath": "messages.sendSms",
+      "description": "Send an SMS message",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inboxId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "clientNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "hash",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scheduleTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.messages.sendWhatsApp",
+      "shortPath": "messages.sendWhatsApp",
+      "description": "Send a WhatsApp message",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inboxId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "clientNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "{ templateId: number, templateVariables?: string[] }"
+          },
+          {
+            "key": "hash",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scheduleTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.notes.create",
+      "shortPath": "notes.create",
+      "description": "Add an internal note to a conversation thread",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailbox_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "thread_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.reports.getOverall",
+      "shortPath": "reports.getOverall",
+      "description": "Get overall account analytics report",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "inboxId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tagId",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "isBusinessHours",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "helpwise.api.reports.getTags",
+      "shortPath": "reports.getTags",
+      "description": "Get tag analytics report for an inbox",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inboxId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tagId",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "isBusinessHours",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tagReportsOutput",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "mailboxId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalTagReportsOutput",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "isBusinessHours",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.tags.apply",
+      "shortPath": "tags.apply",
+      "description": "Apply tags to conversations",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threadIds",
+            "optional": false,
+            "type": "number[]"
+          },
+          {
+            "key": "tagIds",
+            "optional": false,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.tags.get",
+      "shortPath": "tags.get",
+      "description": "Get tag details by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tagId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "hierarchy",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "inbox",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "List all tags",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name: string, color?: string, parentId?: number | null, hierarchy?: string | null, inbox?: string | null, createdAt?: string }[] | null"
+      }
+    },
+    {
+      "path": "helpwise.api.tags.remove",
+      "shortPath": "tags.remove",
+      "description": "Remove tags from conversations",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threadIds",
+            "optional": false,
+            "type": "number[]"
+          },
+          {
+            "key": "tagIds",
+            "optional": false,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.users.getMe",
+      "shortPath": "users.getMe",
+      "description": "Get current authenticated user profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.users.list",
+      "shortPath": "users.list",
+      "description": "List users in account or mailbox",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailbox_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>[] | { users: Record<string, any>[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "helpwise.api.whatsapp.listTemplates",
+      "shortPath": "whatsapp.listTemplates",
+      "description": "List WhatsApp message templates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailbox_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "templates",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

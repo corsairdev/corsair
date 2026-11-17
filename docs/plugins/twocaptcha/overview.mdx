@@ -1,0 +1,142 @@
+---
+title: "2Captcha plugin"
+sidebarTitle: "Overview"
+description: "Create captcha-solving tasks, read their results, check the account balance, and report tasks as correct or incorrect."
+---
+
+Use **2Captcha** through Corsair: one client, typed API calls.
+
+2Captcha is a paid captcha-solving service: you send it a captcha from a page your own automation works on, its workers solve it, and you get back a token or text to submit. Copy your API key from the 2Captcha dashboard (https://2captcha.com/enterpage); the plugin sends it as `clientKey` to API v2 at `api.2captcha.com`.
+
+Things to know:
+
+- **Every answer is an envelope.** 2Captcha returns HTTP 200 for almost everything and reports the outcome in `errorId`: `0` is success, anything else comes with an `errorCode` such as `ERROR_ZERO_BALANCE`. The plugin throws `TwoCaptchaAPIError` with that code, so a resolved promise means the call worked.
+- **Creating a task costs money.** `tasks.create` charges the account per task, so it is `destructive`. What happens depends on the permissions mode ([Permissions](/concepts/permissions)): `cautious` needs an approval first (with a database Corsair records the request and the call throws until it is approved; without one the call is refused), `strict` and `readonly` refuse it, and `open` or no mode runs it. It is not replayed after a 5xx, since the task may already exist; a 429 or `ERROR_NO_SLOT_AVAILABLE`, where nothing was created, is retried. With no funds it answers `ERROR_ZERO_BALANCE`.
+- **Poll for the result.** `tasks.result` answers `status: "processing"` while workers solve the task; poll every 5-10 seconds until `status` is `ready`, then read `solution` (its fields depend on the captcha kind) and `cost`.
+- **Report outcomes.** `account.reportCorrect` and `account.reportIncorrect` take the task id. A rejected answer is reviewed by 2Captcha, which may refund it; the task is not solved again, and a report cannot be taken back.
+- **Captcha kinds.** `tasks.create` takes a `type` such as `RecaptchaV2TaskProxyless`, `TurnstileTaskProxyless` or `ImageToTextTask`, and the fields that kind needs in `task` (see https://2captcha.com/api-docs). Kinds without "Proxyless" take your proxy fields.
+- **Retries.** `ERROR_NO_SLOT_AVAILABLE` (queue full, nothing created) is retried with backoff. Other codes are permanent. A 5xx is retried for `tasks.result` and `account.balance` only.
+- **No callbacks in this plugin.** 2Captcha can POST a result to a registered URL, but this plugin does not receive that delivery; poll `tasks.result` instead.
+
+**What you get:**
+
+- 5 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/twocaptcha better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/twocaptcha better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/twocaptcha better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/twocaptcha better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { twocaptcha } from '@corsair-dev/twocaptcha';
+
+export const corsair = createCorsair({
+	plugins: [
+		twocaptcha(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the 2Captcha API key before the first call: `pnpm corsair setup --plugin=twocaptcha --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+twocaptcha()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'twocaptcha',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read the account balance**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.twocaptcha.api.account.balance({});
+```
+
+
+**Create a captcha task for a page**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.twocaptcha.api.tasks.create({
+	type: 'RecaptchaV2TaskProxyless',
+	task: { websiteURL: 'https://example.com/login', websiteKey: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI' },
+});
+```
+
+
+See the full list on the [API](/plugins/twocaptcha/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/twocaptcha/api">
+    Every `twocaptcha.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
