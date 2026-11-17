@@ -69,7 +69,7 @@ export type InternalElorusPlugin = BaseElorusPlugin<ElorusPluginOptions>;
 export type ExternalElorusPlugin<T extends ElorusPluginOptions> =
 	BaseElorusPlugin<T>;
 
-export const elorusEndpointSchemas =
+export const elorusEndpointSchemas: typeof elorusOperationSchemas =
 	elorusOperationSchemas satisfies RequiredPluginEndpointSchemas<
 		typeof ElorusEndpoints
 	>;

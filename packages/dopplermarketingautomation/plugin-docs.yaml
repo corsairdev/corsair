@@ -1,0 +1,15 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: Doppler Marketing Automation
+description: Manage email marketing lists, subscribers, campaigns, automations, and reporting in Doppler.
+examples:
+  read:
+    path: lists.list
+    args:
+      accountName: marketing@example.com
+      page: 1
+  write:
+    path: lists.create
+    args:
+      accountName: marketing@example.com
+      list:
+        name: Newsletter

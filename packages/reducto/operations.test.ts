@@ -409,6 +409,56 @@ describe('Reducto endpoint routing', () => {
 		);
 	});
 
+	it('files.upload takes base64 or a data URL, which is what an agent can send', async () => {
+		mockRequest.mockResolvedValue({ file_id: 'reducto://file-2' });
+		const pdf = Buffer.from('%PDF-1.4 invoice');
+		await (Files.upload as AnyEndpoint)(createContext(), {
+			file: {
+				base64: pdf.toString('base64'),
+				filename: 'invoice.pdf',
+				contentType: 'application/pdf',
+			},
+		});
+		const sent = mockRequest.mock.calls.at(-1)?.[2] as {
+			formData: { file: File };
+		};
+		expect(sent.formData.file).toBeInstanceOf(File);
+		expect(sent.formData.file.name).toBe('invoice.pdf');
+		expect(sent.formData.file.type).toBe('application/pdf');
+		expect(Buffer.from(await sent.formData.file.arrayBuffer())).toEqual(pdf);
+
+		await (Files.upload as AnyEndpoint)(createContext(), {
+			file: `data:text/plain;base64,${Buffer.from('hello').toString('base64')}`,
+		});
+		const second = mockRequest.mock.calls.at(-1)?.[2] as {
+			formData: { file: File };
+		};
+		expect(await second.formData.file.text()).toBe('hello');
+		expect(second.formData.file.type).toBe('text/plain');
+	});
+
+	it('files.upload refuses a private address and a missing file before any request', async () => {
+		mockRequest.mockClear();
+		for (const file of [
+			'http://169.254.169.254/latest/meta-data/',
+			'https://127.0.0.1/a.pdf',
+			'file:///etc/passwd',
+		]) {
+			await expect(
+				(Files.upload as AnyEndpoint)(createContext(), { file }),
+			).rejects.toThrow(/file URL/);
+		}
+		await expect(
+			(Files.upload as AnyEndpoint)(createContext(), {}),
+		).rejects.toThrow();
+		await expect(
+			(Files.upload as AnyEndpoint)(createContext(), {
+				file: { path: '/tmp/a.pdf' },
+			}),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
 	it('files.delete sends DELETE /upload/{file_id}', async () => {
 		mockRequest.mockResolvedValue({ file_id: 'reducto://file-1' });
 		await (Files.remove as AnyEndpoint)(createContext(), {
