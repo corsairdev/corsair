@@ -8668,5 +8668,14 @@
     "version": "0.2.3",
     "isNew": false,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/neutrino",
+    "dir": "packages/neutrino",
+    "name": "Neutrino API",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
