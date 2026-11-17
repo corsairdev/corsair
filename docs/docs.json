@@ -4794,6 +4794,14 @@
                 ]
               },
               {
+                "group": "Stormglass",
+                "pages": [
+                  "plugins/stormglass/overview",
+                  "plugins/stormglass/api",
+                  "plugins/stormglass/database"
+                ]
+              },
+              {
                 "group": "Strava",
                 "pages": [
                   "plugins/strava/overview",

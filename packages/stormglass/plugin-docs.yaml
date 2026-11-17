@@ -1,0 +1,37 @@
+displayName: Stormglass
+description: Read Stormglass tide stations, elevation, tide extremes, solar data, and weather.
+domain: stormglass.io
+recommendedAuth: api_key
+overviewNote: |
+  The key is the Authorization header with no Bearer prefix. Missing-key requests to stations, elevation, weather, solar, and tide extremes returned HTTP 403 API key is invalid. A box of four comma-separated numbers returned HTTP 422. The same path with box 58.0,17.0:59.0,18.0 returned HTTP 403. Hourly source maps other than sg are not returned. Coordinates are not written to the event. Every call counts against the daily quota.
+examples:
+  read:
+    path: stations.list
+    title: List stations
+    args: {}
+apiNotes:
+  stations.list: |
+    GET /v2/tide/stations. Stores source and name as the id.
+  stations.area: |
+    GET /v2/tide/stations/area. box is two coordinates separated by a colon.
+  elevation.get: |
+    GET /v2/elevation/point. Stores elevation for the requested coordinate.
+  tides.extremes: |
+    GET /v2/tide/extremes/point. Stores time, type, and height.
+  solar.get: |
+    GET /v2/solar/point. Returns the sg value for each requested param.
+  weather.get: |
+    GET /v2/weather/point. Returns the sg value for each requested param.
+apiExamples:
+  stations.list:
+    call: "{}"
+  stations.area:
+    call: "{ box: '58.0,17.0:59.0,18.0' }"
+  elevation.get:
+    call: "{ lat: 58.8, lng: 17.6 }"
+  tides.extremes:
+    call: "{ lat: 58.8, lng: 17.6 }"
+  solar.get:
+    call: "{ lat: 58.8, lng: 17.6, params: 'uvIndex' }"
+  weather.get:
+    call: "{ lat: 58.8, lng: 17.6, params: 'airTemperature' }"

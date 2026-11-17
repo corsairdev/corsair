@@ -1,0 +1,341 @@
+---
+title: "Stormglass API reference"
+sidebarTitle: "API"
+description: "API reference for the Stormglass plugin in Corsair: every `stormglass.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Elevation
+
+### get
+
+`elevation.get`
+
+Read elevation for one coordinate. This counts against the daily quota.
+
+**Risk:** `write`
+
+```ts
+await corsair.stormglass.api.elevation.get({ lat: 58.8, lng: 17.6 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | — |
+| `lng` | `number` | Yes | — |
+
+GET /v2/elevation/point. Stores elevation for the requested coordinate.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `point` | `object` | Yes | — |
+| `quota` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="point full type">
+
+```ts
+{
+  id: string,
+  elevation?: number
+}
+```
+</Accordion>
+
+<Accordion title="quota full type">
+
+```ts
+{
+  id: string,
+  dailyQuota?: number,
+  requestCount?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Solar
+
+### get
+
+`solar.get`
+
+Read solar values for one coordinate. This counts against the daily quota.
+
+**Risk:** `write`
+
+```ts
+await corsair.stormglass.api.solar.get({ lat: 58.8, lng: 17.6, params: 'uvIndex' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | — |
+| `lng` | `number` | Yes | — |
+| `params` | `string` | Yes | — |
+
+GET /v2/solar/point. Returns the sg value for each requested param.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hours` | `object[]` | Yes | — |
+| `quota` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="hours full type">
+
+```ts
+{
+  time: string,
+  values: Record<string, number>
+}[]
+```
+</Accordion>
+
+<Accordion title="quota full type">
+
+```ts
+{
+  id: string,
+  dailyQuota?: number,
+  requestCount?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Stations
+
+### area
+
+`stations.area`
+
+List tide stations inside a bounding box.
+
+**Risk:** `read`
+
+```ts
+await corsair.stormglass.api.stations.area({ box: '58.0,17.0:59.0,18.0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `box` | `string` | Yes | — |
+
+GET /v2/tide/stations/area. box is two coordinates separated by a colon.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="stations full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  lat?: number,
+  lng?: number,
+  source?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`stations.list`
+
+List tide stations. Each request counts against the daily quota.
+
+**Risk:** `read`
+
+```ts
+await corsair.stormglass.api.stations.list({});
+```
+
+**Input:** _empty object_
+
+GET /v2/tide/stations. Stores source and name as the id.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="stations full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  lat?: number,
+  lng?: number,
+  source?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tides
+
+### extremes
+
+`tides.extremes`
+
+Read high and low tides for one coordinate. This counts against the daily quota.
+
+**Risk:** `write`
+
+```ts
+await corsair.stormglass.api.tides.extremes({ lat: 58.8, lng: 17.6 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | — |
+| `lng` | `number` | Yes | — |
+
+GET /v2/tide/extremes/point. Stores time, type, and height.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `extremes` | `object[]` | Yes | — |
+| `quota` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="extremes full type">
+
+```ts
+{
+  id: string,
+  time?: string,
+  type?: string,
+  height?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="quota full type">
+
+```ts
+{
+  id: string,
+  dailyQuota?: number,
+  requestCount?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Weather
+
+### get
+
+`weather.get`
+
+Read weather values for one coordinate. This counts against the daily quota.
+
+**Risk:** `write`
+
+```ts
+await corsair.stormglass.api.weather.get({ lat: 58.8, lng: 17.6, params: 'airTemperature' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | — |
+| `lng` | `number` | Yes | — |
+| `params` | `string` | Yes | — |
+
+GET /v2/weather/point. Returns the sg value for each requested param.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hours` | `object[]` | Yes | — |
+| `quota` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="hours full type">
+
+```ts
+{
+  time: string,
+  values: Record<string, number>
+}[]
+```
+</Accordion>
+
+<Accordion title="quota full type">
+
+```ts
+{
+  id: string,
+  dailyQuota?: number,
+  requestCount?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
