@@ -577,6 +577,7 @@ export const BaseProviders = [
 	'talenthr',
 	'tally',
 	'telnyx',
+	'teltel',
 	'thanksio',
 	'tavily',
 	'taxjar',
@@ -1244,6 +1245,7 @@ export const ProviderDisplayNames = {
 	talenthr: 'TalentHR',
 	tally: 'Tally',
 	telnyx: 'Telnyx',
+	teltel: 'TelTEL',
 	thanksio: 'Thanks.io',
 	tavily: 'Tavily',
 	taxjar: 'TaxJar',
@@ -1918,6 +1920,7 @@ export type AllProviders =
 	| 'talenthr'
 	| 'tally'
 	| 'telnyx'
+	| 'teltel'
 	| 'thanksio'
 	| 'tavily'
 	| 'taxjar'

@@ -4834,6 +4834,14 @@
                 ]
               },
               {
+                "group": "TelTEL",
+                "pages": [
+                  "plugins/teltel/overview",
+                  "plugins/teltel/api",
+                  "plugins/teltel/database"
+                ]
+              },
+              {
                 "group": "TextIt",
                 "pages": [
                   "plugins/textit/overview",
