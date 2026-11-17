@@ -378,6 +378,7 @@ export const BaseProviders = [
 	'kommo',
 	'kontentai',
 	'krakenio',
+	'launchdarkly',
 	'leexi',
 	'leiga',
 	'lemonsqueezy',
@@ -1033,6 +1034,7 @@ export const ProviderDisplayNames = {
 	kommo: 'Kommo',
 	kontentai: 'Kontent.ai',
 	krakenio: 'Kraken.io',
+	launchdarkly: 'LaunchDarkly',
 	leexi: 'Leexi',
 	leiga: 'Leiga',
 	lemonsqueezy: 'Lemon Squeezy',
@@ -1695,6 +1697,7 @@ export type AllProviders =
 	| 'kommo'
 	| 'kontentai'
 	| 'krakenio'
+	| 'launchdarkly'
 	| 'leexi'
 	| 'leiga'
 	| 'lemonsqueezy'

@@ -3157,6 +3157,14 @@
                 ]
               },
               {
+                "group": "LaunchDarkly",
+                "pages": [
+                  "plugins/launchdarkly/overview",
+                  "plugins/launchdarkly/api",
+                  "plugins/launchdarkly/database"
+                ]
+              },
+              {
                 "group": "Leexi",
                 "pages": [
                   "plugins/leexi/overview",
