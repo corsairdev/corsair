@@ -1,5 +1,5 @@
 import type { ErrorHandlerAndMatchFunction } from 'corsair/core';
-import { NgrokAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
 type HandlerName = keyof typeof errorHandlers;
@@ -23,19 +23,32 @@ async function strategy(error: Error) {
 	});
 }
 
+/** A core ApiError as the client throws it, with ngrok's sanitized body. */
 function apiError(
 	status: number,
-	options: { code?: string; method?: string } = {},
-): NgrokAPIError {
-	return new NgrokAPIError(`ngrok ${status}: failed`, { status, ...options });
+	options: { code?: string; method?: string; retryAfter?: number } = {},
+): ApiError {
+	return new ApiError(
+		{ method: (options.method ?? 'GET') as 'GET', url: '/endpoints' },
+		{
+			url: 'https://api.ngrok.com/endpoints',
+			ok: false,
+			status,
+			statusText: '',
+			body: options.code ? { error_code: options.code, msg: 'failed' } : {},
+		},
+		`ngrok ${status}: failed`,
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 describe('ngrok error handlers', () => {
-	it('retries a 429 with backoff', async () => {
-		const error = apiError(429);
+	it('retries a 429 and passes on its Retry-After', async () => {
+		const error = apiError(429, { retryAfter: 30_000 });
 		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
 		expect(await strategy(error)).toEqual({
 			maxRetries: 3,
+			headersRetryAfterMs: 30_000,
 			retryStrategy: 'exponential_backoff',
 		});
 	});
@@ -104,12 +117,12 @@ describe('mergeErrorHandlers', () => {
 	it('runs a caller handler for a status no builtin covers', () => {
 		const custom = {
 			match: (error: Error) =>
-				error instanceof NgrokAPIError && error.status === 502,
+				error instanceof ApiError && error.status === 502,
 			handler: async () => ({ maxRetries: 9 }),
 		};
 		const merged = mergeErrorHandlers(errorHandlers, { CUSTOM: custom });
 
-		const failure = new NgrokAPIError('bad gateway', { status: 502 });
+		const failure = apiError(502);
 		const firstMatch = Object.entries(merged).find(([, entry]) =>
 			entry?.match?.(failure, {
 				pluginId: 'ngrok',

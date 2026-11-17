@@ -28,59 +28,20 @@ function readString(
 }
 
 /**
- * Every ngrok error has a globally unique code such as `ERR_NGROK_202`, and the
- * same 403 carries two different ones: 200 for a missing Authorization header,
- * 202 for a credential that is not a valid key. Only the code tells them apart,
- * so it is what the handlers classify on.
+ * A transport failure (timeout, DNS, reset) that never got a response. An HTTP
+ * error stays core's `ApiError` (see `sanitizeApiError`), so its status,
+ * Retry-After and ngrok's `error_code` reach core and the handlers.
  */
 export class NgrokAPIError extends Error {
-	readonly status?: number;
-	/** Machine-readable code, e.g. `ERR_NGROK_202`. */
-	readonly code?: string;
-	/** ngrok's operation id for the failed request, quoted to their support. */
-	readonly operationId?: string;
 	readonly method?: string;
 
 	constructor(
 		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			code?: string;
-			operationId?: string;
-			method?: string;
-		} = {},
+		options: { cause?: Error; method?: string } = {},
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'NgrokAPIError';
-		this.status = options.status;
-		this.code = options.code;
-		this.operationId = options.operationId;
 		this.method = options.method;
-	}
-
-	get isRateLimit(): boolean {
-		return this.status === 429;
-	}
-
-	/**
-	 * 200 is a missing Authorization header and 202 a credential shape ngrok
-	 * does not recognise. A 401 with 201 is a revoked key and has its own getter,
-	 * so it is excluded here; otherwise that more specific case would never be
-	 * reachable, because core takes the first handler whose match passes.
-	 */
-	get isAuthError(): boolean {
-		if (this.isRevokedKey) return false;
-		return (
-			this.status === 401 ||
-			this.code === 'ERR_NGROK_200' ||
-			this.code === 'ERR_NGROK_202'
-		);
-	}
-
-	/** 201 is a key that is well-formed but revoked or expired. */
-	get isRevokedKey(): boolean {
-		return this.code === 'ERR_NGROK_201';
 	}
 }
 
@@ -113,6 +74,60 @@ export function describeNgrokError(
 	const text = message ?? fallback;
 	const where = operationId ? ` (operation ${operationId})` : '';
 	return label ? `ngrok ${label}: ${text}${where}` : `${text}${where}`;
+}
+
+/**
+ * Rebuilds ngrok's HTTP error as a core `ApiError` with a readable message, so
+ * status, Retry-After and the rate-limit fields reach core (R8). The body keeps
+ * only ngrok's `error_code`, `msg` and operation id; the sent body is dropped,
+ * because a create can carry a traffic policy or metadata.
+ */
+function sanitizeApiError(error: ApiError): ApiError {
+	const {
+		body: _body,
+		formData: _formData,
+		query: _query,
+		...request
+	} = error.request;
+	const { code, message, operationId } = readNgrokError(error.body);
+	const envelope =
+		code === undefined && message === undefined
+			? undefined
+			: {
+					error_code: code,
+					msg: message,
+					details: operationId ? { operation_id: operationId } : undefined,
+				};
+	return new ApiError(
+		request,
+		{
+			url: error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: envelope,
+		},
+		describeNgrokError(error.status, error.body, error.message),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+}
+
+/** ngrok's `error_code` on a core ApiError, e.g. `ERR_NGROK_202`. */
+export function ngrokErrorCode(error: Error): string | undefined {
+	if (!(error instanceof ApiError)) return undefined;
+	return readNgrokError(error.body).code;
+}
+
+/** The HTTP method of the failed request. */
+export function ngrokErrorMethod(error: Error): string | undefined {
+	if (error instanceof ApiError) return error.request.method;
+	if (error instanceof NgrokAPIError) return error.method;
+	return undefined;
 }
 
 export type NgrokQuery = Record<
@@ -161,18 +176,7 @@ export async function makeNgrokRequest(
 			rateLimitConfig: NGROK_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) {
-			const parsed = readNgrokError(error.body);
-			throw new NgrokAPIError(
-				describeNgrokError(error.status, error.body, error.message),
-				{
-					status: error.status,
-					code: parsed.code,
-					operationId: parsed.operationId,
-					method,
-				},
-			);
-		}
+		if (error instanceof ApiError) throw sanitizeApiError(error);
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new NgrokAPIError(error.message, { cause: error, method });
