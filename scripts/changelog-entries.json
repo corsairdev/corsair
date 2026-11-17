@@ -7037,5 +7037,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/suitedash",
+    "dir": "packages/suitedash",
+    "name": "SuiteDash",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
