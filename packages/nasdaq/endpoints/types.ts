@@ -161,7 +161,7 @@ const TablesExportResponseSchema = z.object({
 		.string()
 		.nullish()
 		.describe(
-			'Fresh, Creating or Regenerating. Nasdaq documents that only Fresh means the link is ready; the nested file.status repeats it.',
+			'fresh, creating or regenerating, lowercase as Nasdaq sends it (its docs capitalise them). Only fresh means the link is ready.',
 		),
 });
 

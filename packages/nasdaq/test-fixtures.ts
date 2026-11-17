@@ -72,7 +72,7 @@ export const tableExportBuilding = {
 	datatable_bulk_download: {
 		file: {
 			link: null,
-			status: 'Creating',
+			status: 'creating',
 			data_snapshot_time: null,
 		},
 		datatable: { last_refreshed_time: '2026-11-14 03:33:13 UTC' },
@@ -84,7 +84,7 @@ export const tableExportFresh = {
 	datatable_bulk_download: {
 		file: {
 			link: 'https://aws-gis-link-pro-us-east-1-datahub.s3.amazonaws.com/export/NDAQ/RTAT10/NDAQ_RTAT10_b8923648.zip?X-Amz-Expires=1800',
-			status: 'Fresh',
+			status: 'fresh',
 			data_snapshot_time: '2026-11-16 11:36:32 UTC',
 		},
 		datatable: { last_refreshed_time: '2026-11-14 03:33:13 UTC' },

@@ -126,7 +126,7 @@ export const metadata: NasdaqEndpoints['tablesMetadata'] = (ctx, input) =>
 
 /**
  * Bulk export queues a zip and answers a signed link, valid for 30 minutes. The
- * first call usually answers `Creating` with a null link, so a caller polls.
+ * first call usually answers `creating` (lowercase, as sent) with a null link, so a caller polls.
  * Nasdaq documents a 60-per-hour cap on this endpoint.
  */
 export const exportTable: NasdaqEndpoints['tablesExport'] = (ctx, input) =>

@@ -78,7 +78,8 @@ describeIfKey('Nasdaq Data Link live API', () => {
 			await corsair.nasdaq.api.tables.export({ table: 'NDAQ/RTAT10' }),
 		);
 
-		// Creating or Fresh; the link only appears once the file exists.
-		expect(['Fresh', 'Creating', 'Regenerating']).toContain(parsed.status);
+		// creating or fresh, lowercase as sent; the link only appears once the
+		// file exists.
+		expect(['fresh', 'creating', 'regenerating']).toContain(parsed.status);
 	}, 30_000);
 });

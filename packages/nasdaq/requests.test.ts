@@ -230,11 +230,11 @@ describe('tables.export', () => {
 
 		expect(new URL(url).searchParams.get('qopts.export')).toBe('true');
 		const exportResult = asRecord(result);
-		expect(exportResult?.status).toBe('Fresh');
+		expect(exportResult?.status).toBe('fresh');
 		expect(asRecord(exportResult?.file)?.link).toContain('NDAQ_RTAT10');
 	});
 
-	it('reports Creating with no link on the first poll', async () => {
+	it('reports creating with no link on the first poll', async () => {
 		const { result } = await capture(
 			endpoints.tables.export,
 			{ table: 'NDAQ/RTAT10' },
@@ -242,7 +242,7 @@ describe('tables.export', () => {
 		);
 
 		const exportResult = asRecord(result);
-		expect(exportResult?.status).toBe('Creating');
+		expect(exportResult?.status).toBe('creating');
 		expect(asRecord(exportResult?.file)?.link).toBeFalsy();
 	});
 
