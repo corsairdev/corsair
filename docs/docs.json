@@ -3528,6 +3528,14 @@
                 ]
               },
               {
+                "group": "Microsoft Clarity",
+                "pages": [
+                  "plugins/microsoftclarity/overview",
+                  "plugins/microsoftclarity/api",
+                  "plugins/microsoftclarity/database"
+                ]
+              },
+              {
                 "group": "Microsoft Teams",
                 "pages": [
                   "plugins/teams/overview",
