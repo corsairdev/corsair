@@ -57,7 +57,7 @@ GET /devices. Stores id, name, width, and height.
 
 `shots.animate`
 
-Take an animated screenshot. This spends a request from the plan.
+Record a page as a video or GIF (default or scroll scenario). Returns a link to the file. Spends a request from the plan.
 
 **Risk:** `write`
 
@@ -69,12 +69,25 @@ await corsair.screenshotone.api.shots.animate({ url: 'https://example.com', scen
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `viewport_width` | `number` | No | — |
+| `viewport_height` | `number` | No | — |
+| `device_scale_factor` | `number` | No | — |
+| `viewport_device` | `string` | No | — |
+| `viewport_mobile` | `boolean` | No | — |
+| `delay` | `number` | No | — |
+| `wait_until` | `(load \| domcontentloaded \| networkidle0 \| networkidle2)[]` | No | — |
+| `timeout` | `number` | No | — |
+| `block_ads` | `boolean` | No | — |
+| `block_cookie_banners` | `boolean` | No | — |
+| `block_trackers` | `boolean` | No | — |
+| `block_chats` | `boolean` | No | — |
+| `dark_mode` | `boolean` | No | — |
 | `url` | `string` | Yes | — |
-| `scenario` | `string` | No | — |
+| `scenario` | `default \| scroll` | No | — |
 | `duration` | `number` | No | — |
-| `format` | `string` | No | — |
+| `format` | `mp4 \| mov \| avi \| webm \| gif` | No | — |
 
-GET /animate with response_type=json. Returns screenshot_url.
+GET /animate with response_type=json. scenario is default or scroll, duration 1-30 s, format mp4, mov, avi, webm or gif. Returns screenshotUrl.
 
 
 
@@ -83,6 +96,7 @@ GET /animate with response_type=json. Returns screenshot_url.
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `screenshotUrl` | `string` | Yes | — |
+| `cacheUrl` | `string` | No | — |
 
 
 
@@ -92,12 +106,12 @@ GET /animate with response_type=json. Returns screenshot_url.
 
 `shots.bulk`
 
-Build bulk screenshot URLs. execute true spends requests immediately.
+Build up to 20 screenshot requests at once; with execute true they run now (one plan request each) and each url gets its status.
 
 **Risk:** `write`
 
 ```ts
-await corsair.screenshotone.api.shots.bulk({ urls: ['https://example.com'] });
+await corsair.screenshotone.api.shots.bulk({ urls: ['https://example.com'], options: { format: 'png' } });
 ```
 
 **Input**
@@ -106,8 +120,39 @@ await corsair.screenshotone.api.shots.bulk({ urls: ['https://example.com'] });
 |------|------|----------|-------------|
 | `urls` | `string[]` | Yes | — |
 | `execute` | `boolean` | No | — |
+| `options` | `object` | No | — |
 
-POST /bulk. Returns response URLs with access_key removed. execute defaults to false.
+POST /bulk. options apply to every url. Returns the /take url built for each request with access_key removed; with execute true (default false) the requests run now and results gives each one's status.
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+  viewport_width?: number,
+  viewport_height?: number,
+  device_scale_factor?: number,
+  viewport_device?: string,
+  viewport_mobile?: boolean,
+  delay?: number,
+  wait_until?: (load | domcontentloaded | networkidle0 | networkidle2)[],
+  timeout?: number,
+  block_ads?: boolean,
+  block_cookie_banners?: boolean,
+  block_trackers?: boolean,
+  block_chats?: boolean,
+  dark_mode?: boolean,
+  format?: png | jpeg | jpg | webp | gif | jp2 | tiff | avif | heif | pdf | html | markdown,
+  full_page?: boolean,
+  selector?: string,
+  image_quality?: number,
+  omit_background?: boolean,
+  cache?: boolean,
+  cache_ttl?: number
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -116,6 +161,20 @@ POST /bulk. Returns response URLs with access_key removed. execute defaults to f
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `urls` | `string[]` | Yes | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  url: string,
+  isSuccessful?: boolean,
+  status?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -125,24 +184,43 @@ POST /bulk. Returns response URLs with access_key removed. execute defaults to f
 
 `shots.take`
 
-Take a screenshot. This spends a request from the plan.
+Screenshot a url, HTML or Markdown as an image or PDF, with viewport, device, full page, selector, blocking and caching options. Returns a link to the file. Spends a request from the plan.
 
 **Risk:** `write`
 
 ```ts
-await corsair.screenshotone.api.shots.take({ url: 'https://example.com' });
+await corsair.screenshotone.api.shots.take({ url: 'https://example.com', format: 'png', full_page: true, block_cookie_banners: true });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `url` | `string` | Yes | — |
-| `scenario` | `string` | No | — |
-| `duration` | `number` | No | — |
-| `format` | `string` | No | — |
+| `viewport_width` | `number` | No | — |
+| `viewport_height` | `number` | No | — |
+| `device_scale_factor` | `number` | No | — |
+| `viewport_device` | `string` | No | — |
+| `viewport_mobile` | `boolean` | No | — |
+| `delay` | `number` | No | — |
+| `wait_until` | `(load \| domcontentloaded \| networkidle0 \| networkidle2)[]` | No | — |
+| `timeout` | `number` | No | — |
+| `block_ads` | `boolean` | No | — |
+| `block_cookie_banners` | `boolean` | No | — |
+| `block_trackers` | `boolean` | No | — |
+| `block_chats` | `boolean` | No | — |
+| `dark_mode` | `boolean` | No | — |
+| `format` | `png \| jpeg \| jpg \| webp \| gif \| jp2 \| tiff \| avif \| heif \| pdf \| html \| markdown` | No | — |
+| `full_page` | `boolean` | No | — |
+| `selector` | `string` | No | — |
+| `image_quality` | `number` | No | — |
+| `omit_background` | `boolean` | No | — |
+| `cache` | `boolean` | No | — |
+| `cache_ttl` | `number` | No | — |
+| `url` | `string` | No | — |
+| `html` | `string` | No | — |
+| `markdown` | `string` | No | — |
 
-GET /take with response_type=json. Returns screenshot_url. The target URL is not stored.
+POST /take with a JSON body and response_type=json, so long html or markdown fits. Pass exactly one of url, html or markdown. Options include format (png, jpg, webp, pdf and more), full_page, selector, viewport_width/height, viewport_device (an id from devices.list), delay, wait_until, the block_* switches, dark_mode and cache/cache_ttl. Returns screenshotUrl, and cacheUrl when cache is true. The target URL is not stored.
 
 
 
@@ -151,6 +229,7 @@ GET /take with response_type=json. Returns screenshot_url. The target URL is not
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `screenshotUrl` | `string` | Yes | — |
+| `cacheUrl` | `string` | No | — |
 
 
 

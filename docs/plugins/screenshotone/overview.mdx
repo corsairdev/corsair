@@ -6,7 +6,7 @@ description: "Read ScreenshotOne usage and devices, and take a still, animated, 
 
 Use **ScreenshotOne** through Corsair: one client, typed API calls, local DB sync.
 
-The key is the access_key query parameter. Empty-key requests returned HTTP 400. GET /usage and GET /devices returned access_key_required. GET /take and GET /animate returned request_not_valid because an empty access_key is not allowed. POST /bulk with an empty access_key query returned access_key_required. POST /take with an empty access_key in the JSON body returned request_not_valid. The plugin uses GET /take so the response is JSON. Screenshot URLs are returned and not stored. User agent strings are not stored. Take, animate, and bulk spend plan requests.
+The key is sent in the X-Access-Key header, so it never appears in a URL or in an error. take, animate and bulk with execute true spend plan requests (the free plan has 100 a month). Screenshot links are returned and not stored. User agent strings are not stored.
 
 **What you get:**
 
