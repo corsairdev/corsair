@@ -140,6 +140,15 @@ export const ListNotificationsResponseSchema = z
 	})
 	.loose();
 
+/** PUT /campaign/{id} success: `{ ok: true, status, data: "Campaign successfully enabled" }`. */
+export const ToggleCampaignResponseSchema = z
+	.object({
+		ok: z.literal(true),
+		status: z.number().optional(),
+		data: z.string(),
+	})
+	.loose();
+
 export const SetCampaignEnabledInputSchema = z.object({
 	campaign_id: NumericId.describe('Campaign id from campaigns.list'),
 	enabled: z

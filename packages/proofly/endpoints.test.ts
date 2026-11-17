@@ -25,6 +25,7 @@ const mockRequest = jest.mocked(request);
 const mockLog = jest.mocked(logEventFromContext);
 
 function context(key: string, db?: ProoflyContext['db']): ProoflyContext {
+	// unknown: the endpoint reads only `key` and `db`; a full context is not needed.
 	return { key, db } as unknown as ProoflyContext;
 }
 
@@ -51,6 +52,7 @@ describe('campaigns.list', () => {
 		const result = await listCampaigns(
 			context('pk_test', {
 				campaigns: { upsertByEntityId: upsert },
+				// unknown: a fake table with only the methods the endpoint calls.
 			} as unknown as ProoflyContext['db']),
 			{},
 		);
@@ -84,6 +86,7 @@ describe('campaigns.list', () => {
 			listCampaigns(
 				context('pk_test', {
 					campaigns: { upsertByEntityId: upsert },
+					// unknown: a fake table with only the methods the endpoint calls.
 				} as unknown as ProoflyContext['db']),
 				{},
 			),
@@ -141,6 +144,7 @@ describe('user.get', () => {
 		const result = await getUser(
 			context('pk_test', {
 				users: { upsertByEntityId: upsert },
+				// unknown: a fake table with only the methods the endpoint calls.
 			} as unknown as ProoflyContext['db']),
 			{},
 		);
@@ -185,6 +189,7 @@ describe('activity.list', () => {
 		const result = await listActivity(
 			context('pk_test', {
 				activity: { upsertByEntityId: upsert },
+				// unknown: a fake table with only the methods the endpoint calls.
 			} as unknown as ProoflyContext['db']),
 			{},
 		);

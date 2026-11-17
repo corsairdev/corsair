@@ -15,6 +15,7 @@ export const getUser: CorsairEndpoint<
 		throw new AuthMissingError('proofly', 'api_key');
 	}
 	GetUserInputSchema.parse(input);
+	// unknown: checked for `ok: false`, then parsed by the response schema.
 	const body = await prooflyGet<unknown>(ctx.key, '/user');
 	if (isProoflyFailure(body)) throw prooflyFailure('/user', body);
 	const parsed = GetUserResponseSchema.parse(body);

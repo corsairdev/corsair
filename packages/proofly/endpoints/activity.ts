@@ -14,6 +14,7 @@ export const listActivity: CorsairEndpoint<
 		throw new AuthMissingError('proofly', 'api_key');
 	}
 	ListActivityInputSchema.parse(input);
+	// unknown: checked for `ok: false`, then parsed by the response schema.
 	const body = await prooflyGet<unknown>(ctx.key, '/activity');
 	if (isProoflyFailure(body)) throw prooflyFailure('/activity', body);
 	const result = ListActivityResponseSchema.parse(body);

@@ -15,6 +15,7 @@ export const listCampaigns: CorsairEndpoint<
 		throw new AuthMissingError('proofly', 'api_key');
 	}
 	ListCampaignsInputSchema.parse(input);
+	// unknown: checked for `ok: false`, then parsed by the response schema.
 	const body = await prooflyGet<unknown>(ctx.key, '/campaigns');
 	if (isProoflyFailure(body)) throw prooflyFailure('/campaigns', body);
 	const result = ListCampaignsResponseSchema.parse(body);
@@ -28,7 +29,7 @@ export const listCampaigns: CorsairEndpoint<
 	return result;
 };
 
-async function storeCampaigns(
+export async function storeCampaigns(
 	ctx: ProoflyContext,
 	campaigns: ListCampaignsResponse['data'],
 ): Promise<void> {

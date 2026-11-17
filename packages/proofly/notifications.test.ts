@@ -102,25 +102,83 @@ describe('notifications.list', () => {
 });
 
 describe('campaigns.setEnabled', () => {
-	it('sends the PUT toggle when the state differs', async () => {
+	it('sends the PUT toggle when the state differs, then confirms and saves it', async () => {
+		const upsert = jest.fn();
 		mockRequest.mockResolvedValueOnce(CAMPAIGNS);
 		mockRequest.mockResolvedValueOnce({
 			ok: true,
 			status: 200,
 			data: 'Campaign successfully disabled',
 		});
-		const result = await setCampaignEnabled(ctx(), {
-			campaign_id: '464014',
-			enabled: false,
+		mockRequest.mockResolvedValueOnce({
+			...CAMPAIGNS,
+			data: [{ ...CAMPAIGNS.data[0], enabled: false }],
 		});
+		const result = await setCampaignEnabled(
+			// unknown: the endpoint reads only `key` and `db.campaigns`.
+			{
+				key: 'pk-test',
+				db: { campaigns: { upsertByEntityId: upsert } },
+			} as unknown as ProoflyContext,
+			{ campaign_id: '464014', enabled: false },
+		);
 		expect(call(0)).toMatchObject({ method: 'GET', url: '/campaigns' });
 		expect(call(1)).toMatchObject({ method: 'PUT', url: '/campaign/464014' });
+		expect(call(2)).toMatchObject({ method: 'GET', url: '/campaigns' });
 		expect(result).toEqual({
 			campaign_id: '464014',
 			enabled: false,
 			changed: true,
 			message: 'Campaign successfully disabled',
 		});
+		expect(upsert).toHaveBeenCalledWith(
+			'464014',
+			expect.objectContaining({ enabled: false }),
+		);
+	});
+
+	it('fails when the PUT reply is not the documented success body', async () => {
+		mockRequest.mockResolvedValueOnce(CAMPAIGNS);
+		mockRequest.mockResolvedValueOnce('<html>oops</html>');
+		await expect(
+			setCampaignEnabled(ctx(), { campaign_id: 464014, enabled: false }),
+		).rejects.toThrow();
+	});
+
+	it('reports a change made elsewhere at the same time', async () => {
+		mockRequest.mockResolvedValueOnce(CAMPAIGNS);
+		mockRequest.mockResolvedValueOnce({
+			ok: true,
+			status: 200,
+			data: 'Campaign successfully disabled',
+		});
+		mockRequest.mockResolvedValueOnce(CAMPAIGNS);
+		await expect(
+			setCampaignEnabled(ctx(), { campaign_id: 464014, enabled: false }),
+		).rejects.toThrow('changed elsewhere');
+	});
+
+	it('runs overlapping calls for one campaign one after the other', async () => {
+		let state = true;
+		const fake = async (
+			_config: unknown,
+			options: { method?: string },
+		): Promise<unknown> => {
+			if (options.method === 'PUT') {
+				state = !state;
+				return { ok: true, status: 200, data: 'toggled' };
+			}
+			return { ...CAMPAIGNS, data: [{ ...CAMPAIGNS.data[0], enabled: state }] };
+		};
+		// never: request() returns a CancelablePromise; a plain async fake
+		// (unknown config and body) stands in for it.
+		mockRequest.mockImplementation(fake as never);
+		const [a, b] = await Promise.all([
+			setCampaignEnabled(ctx(), { campaign_id: 464014, enabled: false }),
+			setCampaignEnabled(ctx(), { campaign_id: 464014, enabled: false }),
+		]);
+		expect(state).toBe(false);
+		expect([a.changed, b.changed].sort()).toEqual([false, true]);
 	});
 
 	it('sends nothing when the campaign already has that state', async () => {

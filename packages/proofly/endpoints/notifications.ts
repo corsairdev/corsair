@@ -7,6 +7,7 @@ import {
 	prooflyRequest,
 } from '../client';
 import type { ProoflyContext } from '../context';
+import { storeCampaigns } from './campaigns';
 import type {
 	GetNotificationDataInput,
 	GetNotificationDataResponse,
@@ -23,6 +24,7 @@ import {
 	ListNotificationsResponseSchema,
 	SetCampaignEnabledInputSchema,
 	SetCampaignEnabledResponseSchema,
+	ToggleCampaignResponseSchema,
 } from './types';
 
 /** GET /campaign/{campaign_id}: the campaign's notifications with stats. */
@@ -50,15 +52,42 @@ export const listNotifications: CorsairEndpoint<
  * sent twice undoes itself, so this reads the campaign's state first and
  * sends the PUT only when it differs from `enabled`.
  */
+// One read-and-flip at a time per key and campaign: two overlapping calls
+// that both saw "on" would each flip, and the second would undo the first.
+const flipsInFlight = new Map<string, Promise<unknown>>();
+
+async function readCampaigns(ctx: ProoflyContext) {
+	// unknown: checked for `ok: false`, then parsed by the response schema.
+	const body = await prooflyGet<unknown>(ctx.key, '/campaigns');
+	if (isProoflyFailure(body)) throw prooflyFailure('/campaigns', body);
+	return ListCampaignsResponseSchema.parse(body).data;
+}
+
 export const setCampaignEnabled: CorsairEndpoint<
 	ProoflyContext,
 	SetCampaignEnabledInput,
 	SetCampaignEnabledResponse
 > = async (ctx, input) => {
 	const { campaign_id, enabled } = SetCampaignEnabledInputSchema.parse(input);
-	const listBody = await prooflyGet<unknown>(ctx.key, '/campaigns');
-	if (isProoflyFailure(listBody)) throw prooflyFailure('/campaigns', listBody);
-	const campaign = ListCampaignsResponseSchema.parse(listBody).data.find(
+	const lock = `${ctx.key}:${campaign_id}`;
+	const previous = flipsInFlight.get(lock) ?? Promise.resolve();
+	const run = previous
+		.catch(() => undefined)
+		.then(() => applyEnabled(ctx, campaign_id, enabled));
+	flipsInFlight.set(lock, run);
+	try {
+		return await run;
+	} finally {
+		if (flipsInFlight.get(lock) === run) flipsInFlight.delete(lock);
+	}
+};
+
+async function applyEnabled(
+	ctx: ProoflyContext,
+	campaign_id: string,
+	enabled: boolean,
+): Promise<SetCampaignEnabledResponse> {
+	const campaign = (await readCampaigns(ctx)).find(
 		(item) => String(item.id) === campaign_id,
 	);
 	if (!campaign) {
@@ -69,16 +98,22 @@ export const setCampaignEnabled: CorsairEndpoint<
 		result = { campaign_id, enabled, changed: false };
 	} else {
 		const path = `/campaign/${encodeURIComponent(campaign_id)}`;
+		// unknown: checked for `ok: false`, then parsed by the response schema.
 		const body = await prooflyRequest<unknown>(ctx.key, 'PUT', path);
 		if (isProoflyFailure(body)) throw prooflyFailure(path, body, 'PUT');
-		// unknown: the success body is `{ ok, status, data: "Campaign successfully enabled" }`.
-		const message = (body as { data?: unknown } | null)?.data;
-		result = {
-			campaign_id,
-			enabled,
-			changed: true,
-			...(typeof message === 'string' ? { message } : {}),
-		};
+		const reply = ToggleCampaignResponseSchema.parse(body);
+		// Read the state back: a change made elsewhere at the same moment would
+		// leave the campaign in the other state, and the caller must know.
+		const after = (await readCampaigns(ctx)).find(
+			(item) => String(item.id) === campaign_id,
+		);
+		if (after) await storeCampaigns(ctx, [after]);
+		if (after?.enabled !== enabled) {
+			throw new Error(
+				`Proofly campaign ${campaign_id} is ${after?.enabled ? 'on' : 'off'} after the change; it was changed elsewhere at the same time`,
+			);
+		}
+		result = { campaign_id, enabled, changed: true, message: reply.data };
 	}
 	const parsed = SetCampaignEnabledResponseSchema.parse(result);
 	await logEventFromContext(
@@ -88,7 +123,7 @@ export const setCampaignEnabled: CorsairEndpoint<
 		'completed',
 	);
 	return parsed;
-};
+}
 
 /**
  * GET /data/{notification_id}: leads and conversions a notification
