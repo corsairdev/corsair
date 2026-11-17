@@ -179,6 +179,16 @@ describe('Teamwork OpenAPI contract schemas', () => {
 		);
 	});
 
+	it('keeps V3 response enums open but of their declared type', () => {
+		const get = teamworkOutputSchemas['tasks.get'];
+		expect(
+			get?.safeParse({ task: { id: 1, priority: 'urgent-new-value' } }).success,
+		).toBe(true);
+		expect(get?.safeParse({ task: { id: 1, priority: true } }).success).toBe(
+			false,
+		);
+	});
+
 	it('keeps the typed operation ID list in sync with the provider manifest', () => {
 		expect([...TEAMWORK_OPERATION_IDS].sort()).toEqual(
 			teamworkOperations.map((operation) => operation.id).sort(),

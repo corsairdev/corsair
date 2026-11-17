@@ -83,7 +83,17 @@ function schemaFromOpenApi(
 					type === 'boolean')))
 	) {
 		// Open enums and loose V1 scalars: a value Teamwork adds later must not fail a read.
-		schema = looseScalar;
+		// V3 enums stay open but keep their declared type, which the public output types promise.
+		schema =
+			looseScalars || !Array.isArray(value.enum)
+				? looseScalar
+				: type === 'string'
+					? z.string()
+					: type === 'integer' || type === 'number'
+						? z.number()
+						: type === 'boolean'
+							? z.boolean()
+							: looseScalar;
 	} else if (Array.isArray(value.enum)) {
 		// zod enums and literals rather than a custom check, so get_schema and the docs show the allowed values.
 		// The V3 spec lists some integer enums as strings (projectHealths: "0".."3"); take the numbers too.
