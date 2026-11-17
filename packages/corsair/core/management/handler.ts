@@ -126,9 +126,7 @@ type RouteCtx = {
 	allowCall: boolean;
 };
 
-// Both plugin-scoped POST routes read `{ args, account }`. The body is
-// unvalidated JSON, so the cast only names the fields; each is checked by its
-// consumer (args by the op / db route, account by parseAccount).
+// The cast only names the fields; each is checked by its consumer.
 function pluginCallBody(body: unknown): { args?: unknown; account?: unknown } {
 	return (body ?? {}) as { args?: unknown; account?: unknown };
 }
@@ -527,7 +525,6 @@ const REQUEST_MODES = new Set<PermissionMode>([
 
 const MAX_SCOPES_HEADER = 8_192;
 
-// raw comes off the wire: a header or a parsed JSON value, checked here.
 function requestMode(raw: unknown): PermissionMode {
 	if (!REQUEST_MODES.has(raw as PermissionMode)) {
 		throw badRequest(
@@ -540,7 +537,6 @@ function requestMode(raw: unknown): PermissionMode {
 // x-corsair-mode-scopes: the caller's open scopes, outermost first, each a
 // mode or { mode?, accounts?: { plugin: { account: mode } } }.
 function parseScopes(raw: string): ModeScope[] {
-	// Untrusted header JSON; every field is checked before it is used.
 	let parsed: unknown;
 	try {
 		parsed = raw.length <= MAX_SCOPES_HEADER ? JSON.parse(raw) : undefined;
@@ -550,22 +546,24 @@ function parseScopes(raw: string): ModeScope[] {
 	if (!Array.isArray(parsed)) {
 		throw badRequest('x-corsair-mode-scopes must be a JSON array of modes');
 	}
+	const object = (value: unknown, what: string): Record<string, unknown> => {
+		if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+			throw badRequest(`x-corsair-mode-scopes: ${what} must be an object`);
+		}
+		return value as Record<string, unknown>;
+	};
 	return parsed.map((scope): ModeScope => {
 		if (typeof scope === 'string') return requestMode(scope);
-		// Still untrusted JSON: each field is unknown until requestMode checks it.
-		const { mode, accounts } = (scope ?? {}) as {
-			mode?: unknown;
-			accounts?: unknown;
-		};
+		const { mode, accounts } = object(scope, 'a scope');
 		const out: Record<string, Record<string, PermissionMode>> = {};
 		for (const [plugin, byAccount] of Object.entries(
-			(accounts ?? {}) as Record<string, unknown>,
+			accounts === undefined ? {} : object(accounts, 'accounts'),
 		)) {
 			out[plugin] = {};
 			for (const [account, m] of Object.entries(
-				(byAccount ?? {}) as Record<string, unknown>,
+				object(byAccount, 'an account map'),
 			)) {
-				out[plugin]![account] = requestMode(m);
+				out[plugin][account] = requestMode(m);
 			}
 		}
 		return {

@@ -39,7 +39,6 @@ jest.mock('../webhooks/resolve-oauth-tenant-link', () => ({
 const KEK = 'test-kek-with-at-least-32-characters!!';
 const REDIRECT = 'https://app.example/oauth/callback';
 
-// A minimal plugin literal; the full CorsairPlugin generics are not needed here.
 const demo = {
 	id: 'demo',
 	options: { authType: 'oauth_2' as const },
@@ -51,7 +50,7 @@ const demo = {
 		scopes: ['read'],
 	},
 	subscribe: async () => undefined,
-} as unknown as CorsairPlugin; // a test literal: the plugin's full generics aren't needed
+} as unknown as CorsairPlugin;
 
 describe('self-hosted OAuth with several accounts', () => {
 	let env: ReturnType<typeof createTestDatabase>;
@@ -106,9 +105,7 @@ describe('self-hosted OAuth with several accounts', () => {
 			redirectUri: REDIRECT,
 		});
 	};
-	const codeOf = (
-		promise: Promise<unknown>, // only the rejection's code is read
-	) =>
+	const codeOf = (promise: Promise<unknown>) =>
 		promise.then(
 			() => undefined,
 			(e) => (e as OAuthCallbackError).code,
@@ -155,7 +152,7 @@ describe('self-hosted OAuth with several accounts', () => {
 			database: getCorsairInternal(corsair).database!,
 			extraAccountFields: ['subscription_id'],
 			account: { ref: 'Account 2' },
-		}) as unknown as { get_subscription_id(): Promise<string | null> }; // a plugin field the base manager type doesn't carry
+		}) as unknown as { get_subscription_id(): Promise<string | null> };
 		expect(await second.get_subscription_id()).toBe('sub-1');
 	});
 

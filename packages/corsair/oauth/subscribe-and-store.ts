@@ -10,8 +10,6 @@ import { subscribeAndReport } from './subscribe-report';
  * can't find it until the first renewal. Throws are the caller's.
  */
 export async function subscribeAndStoreLink(input: {
-	// Both are passed straight to subscribeAndReport, which takes them untyped:
-	// any corsair instance, and the account's key manager typed per plugin.
 	corsair: unknown;
 	internal: CorsairInternalConfig;
 	plugin: CorsairPlugin;
@@ -19,6 +17,7 @@ export async function subscribeAndStoreLink(input: {
 	keys: unknown;
 	authType: AuthTypes;
 	accountId?: string;
+	accountRef?: string;
 	subscribe?: typeof subscribeAndReport;
 }): Promise<void> {
 	const { internal, plugin, authType } = input;
@@ -39,5 +38,6 @@ export async function subscribeAndStoreLink(input: {
 		authType,
 		extraAccountFields: [...(plugin.authConfig?.[authType]?.account ?? [])],
 		...(input.accountId && { accountId: input.accountId }),
+		accountRef: input.accountRef,
 	});
 }

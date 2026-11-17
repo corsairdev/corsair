@@ -7,7 +7,6 @@ import { renewAccounts, renewSubscriptions } from '../oauth/renewal';
 import { resolveAccountFromWebhookLink } from '../webhooks/tenant-links';
 import { createTestDatabase } from './setup-db';
 
-// The keys renewal hands subscribe are the account's key manager; these stubs read only its token.
 type AccountKeys = { get_access_token(): Promise<string | null> };
 
 const internalBase = {

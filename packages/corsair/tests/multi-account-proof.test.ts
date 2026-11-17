@@ -31,7 +31,6 @@ jest.mock('../webhooks/resolve-oauth-tenant-link', () => ({
 
 const KEK = 'test-kek-with-at-least-32-characters!!';
 
-// A minimal plugin literal; the full CorsairPlugin generics are not needed here.
 const mail = {
 	id: 'mail',
 	options: { authType: 'managed' as const },
@@ -47,7 +46,7 @@ const mail = {
 			return true;
 		},
 	},
-} as unknown as CorsairPlugin; // a test literal: the plugin's full generics aren't needed
+} as unknown as CorsairPlugin;
 
 describe('two accounts end to end', () => {
 	let env: ReturnType<typeof createTestDatabase>;
@@ -167,7 +166,7 @@ describe('two accounts end to end', () => {
 		const listed = (await listTenants(internal)).find((x) => x.id === 't1');
 		expect(listed?.accounts).toEqual(t.accounts);
 		const noKek = await describeTenant(
-			{ ...internal, kek: undefined } as unknown as typeof internal, // a config the type forbids: the missing kek is the test
+			{ ...internal, kek: undefined } as unknown as typeof internal,
 			't1',
 		);
 		expect(noKek.accounts[0]).not.toHaveProperty('ref');

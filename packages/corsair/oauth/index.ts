@@ -58,7 +58,6 @@ export type OAuthCallbackErrorCode =
 	| 'plugin_has_no_oauth_config'
 	| 'credentials_not_configured'
 	| 'no_access_token'
-	// Multi-account: which account a connect is for.
 	| 'account_required'
 	| 'account_not_found'
 	| 'account_unnamed'
@@ -110,7 +109,6 @@ type AccountPlan =
 	| { kind: 'row'; id: string; unnamed: boolean }
 	| { kind: 'new' };
 
-// A rejection is unknown; only an account selection error is translated.
 const asCallbackError = (err: unknown): unknown =>
 	err instanceof AccountSelectionError
 		? new OAuthCallbackError(err.code, err.message)

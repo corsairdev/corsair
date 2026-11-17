@@ -141,7 +141,7 @@ export async function processManagedOAuthDelivery(
 	}
 
 	const accountKm = createAccountKeyManager({
-		account: accountId ? { ref: accountId } : undefined,
+		account: account ? { ref: account.id } : undefined,
 		authType,
 		integrationName: pluginId,
 		tenantId,
@@ -193,6 +193,7 @@ export async function processManagedOAuthDelivery(
 					authType,
 					extraAccountFields,
 					accountId,
+					accountRef: account?.id,
 				});
 			} catch (error) {
 				console.warn(
@@ -228,6 +229,7 @@ export async function processManagedOAuthDelivery(
 			keys: accountKm,
 			authType,
 			accountId,
+			accountRef: account?.id,
 		});
 	} catch (error) {
 		console.warn(

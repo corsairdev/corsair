@@ -111,6 +111,8 @@ export async function setWebhookTenantLink(options: {
 	extraAccountFields?: readonly string[];
 	// Target a specific account row; absent = the tenant's default account.
 	accountId?: string;
+	// The identity the write is for; the account must still answer to it.
+	accountRef?: string;
 }): Promise<void> {
 	const {
 		database,
@@ -126,6 +128,7 @@ export async function setWebhookTenantLink(options: {
 		options.accountId ??
 		(await resolveAccountForTenant({ database, pluginId, tenantId })).accountId;
 
+	const accountRef = options.accountRef ?? options.accountId;
 	let wroteViaKeyManager = false;
 
 	if (authType) {
@@ -136,7 +139,7 @@ export async function setWebhookTenantLink(options: {
 			kek,
 			database,
 			extraAccountFields,
-			account: options.accountId ? { ref: options.accountId } : undefined,
+			account: accountRef ? { ref: accountRef } : undefined,
 		});
 		const setterName = `set_${link.linkType}`;
 		const setter = (accountKeyManager as Record<string, unknown>)[setterName];

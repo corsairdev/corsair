@@ -213,8 +213,13 @@ export type IntegrationKeyManagerFor<
 export type AccountKeyManagerFor<
 	T extends AuthTypes,
 	Config extends PluginAuthConfig | undefined = undefined,
-> = BaseKeyManager &
-	AllFieldAccessors<AccountFieldNames<T, Config>> &
+> = BaseKeyManager & {
+	/**
+	 * Runs `run` once for concurrent callers with the same name on this account,
+	 * however each caller reached it.
+	 */
+	single_flight: <R>(name: string, run: () => Promise<R>) => Promise<R>;
+} & AllFieldAccessors<AccountFieldNames<T, Config>> &
 	(T extends 'oauth_2'
 		? {
 				/**

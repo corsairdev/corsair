@@ -26,7 +26,6 @@ import { createTestDatabase } from './setup-db';
 
 const KEK = 'test-kek-with-at-least-32-characters!!';
 
-// A minimal plugin literal; the full CorsairPlugin generics are not needed here.
 const demo = {
 	id: 'demo',
 	options: { authType: 'oauth_2' as const },
@@ -42,7 +41,7 @@ const demo = {
 			return true;
 		},
 	},
-} as unknown as CorsairPlugin; // a test literal: the plugin's full generics aren't needed
+} as unknown as CorsairPlugin;
 
 describe('withTenant account scope', () => {
 	let env: ReturnType<typeof createTestDatabase>;

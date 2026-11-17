@@ -1,6 +1,13 @@
 import { ManagementApiError } from '../management/errors';
 import { activeMode, currentModeScopes } from '../permissions';
 
+// Header values must be Latin-1; \uXXXX escapes keep the JSON valid and ASCII.
+const asciiJson = (value: unknown): string =>
+	JSON.stringify(value).replace(
+		/[\u0080-\uffff]/g,
+		(c) => `\\u${c.charCodeAt(0).toString(16).padStart(4, '0')}`,
+	);
+
 export type CloudTransport = {
 	baseUrl: string;
 	apiKey: string;
@@ -86,9 +93,7 @@ export async function cloudRequest<T>(
 				// The scope is process-local, so the mode travels for the server to
 				// judge an operation by it.
 				...(mode ? { 'x-corsair-mode': mode } : {}),
-				...(perAccount
-					? { 'x-corsair-mode-scopes': JSON.stringify(scopes) }
-					: {}),
+				...(perAccount ? { 'x-corsair-mode-scopes': asciiJson(scopes) } : {}),
 			},
 			body: body === undefined ? undefined : JSON.stringify(body),
 			signal: controller.signal,

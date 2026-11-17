@@ -76,6 +76,12 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 	config: CorsairIntegration<Plugins>,
 ): CorsairSingleTenantClient<Plugins> | CorsairTenantWrapper<Plugins> {
+	if (config.multiAccount === true && !config.multiTenancy) {
+		throw new Error(
+			'createCorsair: multiAccount requires multiTenancy: accounts are chosen per tenant with withTenant(tenantId, { accounts })',
+		);
+	}
+
 	if (
 		config.hub?.projectApiKey?.startsWith('ck_cloud_') &&
 		hasCloudBaseUrl(config.hub)

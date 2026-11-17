@@ -11,6 +11,7 @@ import {
 	generateDEK,
 	reEncryptConfig,
 } from './encryption';
+import { singleFlight } from './single-flight';
 import type {
 	AccountKeyContext,
 	AccountKeyManagerFor,
@@ -602,6 +603,9 @@ export function createAccountKeyManager<T extends AuthTypes>(
 			cachedDekSource = encryptedNewDek;
 			return newDek;
 		},
+
+		single_flight: async <R>(name: string, run: () => Promise<R>) =>
+			singleFlight(database, `${name}:${(await ctx.getAccount()).id}`, run),
 
 		// Auto-generated field accessors
 		...createFieldAccessors(getDecryptedConfig, updateConfig, allFields),

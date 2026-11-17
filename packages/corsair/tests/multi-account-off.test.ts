@@ -11,6 +11,7 @@ import type { CorsairTenantWrapper } from '../core/client';
 import type { CorsairPlugin } from '../core/plugins';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
 import { processManagedOAuthDelivery } from '../hub/managed-oauth';
+import { subscribeAndReport } from '../oauth/subscribe-report';
 import { setupCorsair } from '../setup';
 import type { EndpointCtx } from './multi-account-fixtures';
 import { dynamic } from './multi-account-fixtures';
@@ -40,7 +41,15 @@ const mail = {
 	endpoints: {
 		token: async (ctx: EndpointCtx) => ctx.keys.get_access_token(),
 	},
-} as unknown as CorsairPlugin; // a test literal: the plugin's full generics aren't needed
+} as unknown as CorsairPlugin;
+
+describe('multiAccount without multiTenancy', () => {
+	it('is refused at construction', () => {
+		expect(() =>
+			createCorsair({ plugins: [mail], multiAccount: true } as never),
+		).toThrow(/multiAccount requires multiTenancy/);
+	});
+});
 
 describe('multiAccount off (default)', () => {
 	let env: ReturnType<typeof createTestDatabase>;
@@ -107,7 +116,7 @@ describe('multiAccount off (default)', () => {
 			tenantId: 't1',
 			kek: KEK,
 			database: database(),
-		}) as unknown as { get_refresh_token: () => Promise<string | null> }; // narrowed to the one getter under test
+		}) as unknown as { get_refresh_token: () => Promise<string | null> };
 		expect(await km.get_refresh_token()).toBeFalsy();
 	});
 
@@ -126,7 +135,7 @@ describe('multiAccount off (default)', () => {
 			tenantId: 't1',
 			kek: KEK,
 			database: database(),
-		}) as unknown as { get_refresh_token: () => Promise<string | null> }; // narrowed to the one getter under test
+		}) as unknown as { get_refresh_token: () => Promise<string | null> };
 		expect(await km.get_refresh_token()).toBe('rt-a');
 	});
 
@@ -163,5 +172,44 @@ describe('multiAccount off (default)', () => {
 		}
 		const t = dynamic<'mail'>(corsair).withTenant('t1');
 		expect(await t.mail.api.token()).toBe('tok-a');
+	});
+
+	it('a delivery that lost its row to another identity does not write its link', async () => {
+		const linked = {
+			...mail,
+			id: 'linked',
+			authConfig: { managed: { account: ['team_id'] as const } },
+		} as unknown as CorsairPlugin;
+		const c = createCorsair({
+			plugins: [linked],
+			database: env.db,
+			kek: KEK,
+			multiTenancy: true,
+		});
+		getCorsairInternal(c).database!.isPg = false;
+		await setupCorsair(c, { tenantId: 't1' });
+		const deliverLinked = (id: string) =>
+			processManagedOAuthDelivery(c, {
+				plugin: 'linked',
+				tenantId: 't1',
+				accessToken: `tok-${id}`,
+				account: { id },
+			});
+		jest.mocked(subscribeAndReport).mockImplementationOnce(async () => {
+			await deliverLinked('b');
+			return { linkType: 'team_id', externalId: 'T-A' };
+		});
+		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+		await deliverLinked('a');
+		warn.mockRestore();
+		const km = createAccountKeyManager({
+			authType: 'managed',
+			integrationName: 'linked',
+			tenantId: 't1',
+			kek: KEK,
+			database: database(),
+			extraAccountFields: ['team_id'],
+		}) as unknown as { get_team_id: () => Promise<string | null> };
+		expect(await km.get_team_id()).toBeNull();
 	});
 });

@@ -29,12 +29,11 @@ import { resolveOAuthWebhookTenantLink } from '../webhooks/resolve-oauth-tenant-
 const KEK = 'test-kek-with-at-least-32-characters!!';
 const SECRET = 'csec_accounts';
 
-// A minimal plugin literal; the full CorsairPlugin generics are not needed here.
 const gmail = {
 	id: 'gmail',
 	options: { authType: 'managed' as const },
 	authConfig: { managed: { account: ['team_id'] as const } },
-} as unknown as CorsairPlugin; // a test literal: the plugin's full generics aren't needed
+} as unknown as CorsairPlugin;
 
 describe('managed oauth delivery by account identity', () => {
 	let env: ReturnType<typeof createTestDatabase>;
@@ -68,10 +67,10 @@ describe('managed oauth delivery by account identity', () => {
 			extraAccountFields: ['team_id'],
 			account: ref ? { ref } : undefined,
 		});
-	// The manager's static type carries no plugin-specific account fields.
 	const teamIdOf = (ref: string) =>
-		(km(ref) as unknown as { get_team_id(): Promise<string | null> }) // a plugin field the base manager type doesn't carry
-			.get_team_id();
+		(
+			km(ref) as unknown as { get_team_id(): Promise<string | null> }
+		).get_team_id();
 	const deliver = (
 		accessToken: string,
 		account?: { id: string; label?: string },

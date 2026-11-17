@@ -475,7 +475,7 @@ describe('call and db routes with an account', () => {
 		endpoints: {
 			token: async (ctx: EndpointCtx) => ctx.keys.get_access_token(),
 		},
-	} as unknown as CorsairPlugin; // a test literal: the plugin's full generics aren't needed
+	} as unknown as CorsairPlugin;
 
 	let env: ReturnType<typeof createTestDatabase>;
 	let corsair: ReturnType<typeof createCorsair>;
@@ -526,10 +526,7 @@ describe('call and db routes with an account', () => {
 		}).set_access_token(token);
 	}
 
-	const post = (
-		path: string,
-		body: unknown, // any JSON body the route accepts
-	) =>
+	const post = (path: string, body: unknown) =>
 		handler(
 			new Request(`https://app.test${path}`, {
 				method: 'POST',
@@ -541,7 +538,6 @@ describe('call and db routes with an account', () => {
 			}),
 		);
 
-	// body is any JSON the route accepts.
 	const postWithScopes = (path: string, body: unknown, scopes: string) =>
 		handler(
 			new Request(`https://app.test${path}`, {
@@ -589,6 +585,24 @@ describe('call and db routes with an account', () => {
 			'{',
 		);
 		expect(garbled.status).toBe(400);
+	});
+
+	it.each([
+		['a null entry', [null]],
+		['an array entry', [[]]],
+		['a number entry', [3]],
+		['non-object accounts', [{ accounts: 'x' }]],
+		['array accounts', [{ accounts: [] }]],
+		['a non-object plugin map', [{ accounts: { demo: 'readonly' } }]],
+		['a null plugin map', [{ accounts: { demo: null } }]],
+	])('refuses a malformed scope: %s', async (_name, scopes) => {
+		await addAccount('a', 'a@x.com', 'tok-a');
+		const res = await postWithScopes(
+			'/t1/demo/call/token',
+			{ account: 'a' },
+			JSON.stringify(scopes),
+		);
+		expect(res.status).toBe(400);
 	});
 
 	it("call with account binds that account's token", async () => {

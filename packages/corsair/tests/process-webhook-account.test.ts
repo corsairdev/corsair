@@ -27,11 +27,9 @@ function signedHeaders(body: string, secret: string) {
 	};
 }
 
-const teamOf = (
-	request: { body: unknown }, // a raw webhook body, read by path
-) => (request.body as { team_id?: string }).team_id;
+const teamOf = (request: { body: unknown }) =>
+	(request.body as { team_id?: string }).team_id;
 
-// A minimal plugin literal; the full CorsairPlugin generics are not needed here.
 const slack = {
 	id: 'slack',
 	options: { authType: 'oauth_2' as const },
@@ -41,7 +39,6 @@ const slack = {
 		entities: { notes: z.object({ title: z.string() }) },
 	},
 	pluginWebhookMatcher: () => true,
-	// A raw webhook body, read by path.
 	pluginTenantWebhookMatcher: (request: { body: unknown }) => {
 		const externalId = teamOf(request);
 		return externalId ? { linkType: 'team_id', externalId } : null;
@@ -57,7 +54,7 @@ const slack = {
 			},
 		},
 	},
-} as unknown as CorsairPlugin; // a test literal: the plugin's full generics aren't needed
+} as unknown as CorsairPlugin;
 
 describe('webhooks run as the account the delivery matched', () => {
 	let env: ReturnType<typeof createTestDatabase>;

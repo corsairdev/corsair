@@ -70,7 +70,6 @@ const providerError = (providerStatus: number, body: unknown) =>
  * The optional `account` a caller binds, from a body or query value.
  * Present means a non-empty string, as on disconnect.
  */
-// raw is unvalidated request input, narrowed to a string below.
 export function parseAccount(raw: unknown): string | undefined {
 	if (raw === undefined) return undefined;
 	if (typeof raw !== 'string' || !raw.trim()) {
@@ -190,8 +189,7 @@ export function resolveTenantClient(
 		cache.set(cacheKey, cached);
 		return { client: cached, tenantId, cacheKey };
 	}
-	// corsair is an opaque `unknown` here (the management layer is built before
-	// the client's generic type is known); withTenant exists on every instance.
+	// The client's generic type isn't known here; withTenant is on every instance.
 	const withTenant = (
 		corsair as {
 			withTenant: (t: string, o?: unknown) => unknown;
