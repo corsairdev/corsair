@@ -23,6 +23,7 @@ import type {
 import {
 	DocumentInputSchema,
 	DocumentStatusResponseSchema,
+	EmptyInputSchema,
 	ParserIdInputSchema,
 	ResultInputSchema,
 	ResultSchema,
@@ -69,7 +70,8 @@ export const ping: CorsairEndpoint<
 	DocparserContext,
 	EmptyInput,
 	PingResponse
-> = async (ctx) => {
+> = async (ctx, input) => {
+	EmptyInputSchema.parse(input ?? {});
 	const body = asRecord(await docparserGet<unknown>(ctx.key, '/v1/ping'));
 	const msg = text(body?.msg);
 	if (!msg) throw new Error('Docparser ping response was missing msg');
@@ -83,7 +85,8 @@ export const listParsers: CorsairEndpoint<
 	DocparserContext,
 	EmptyInput,
 	ParserListResponse
-> = async (ctx) => {
+> = async (ctx, input) => {
+	EmptyInputSchema.parse(input ?? {});
 	const parsers = listOf(
 		await docparserGet<unknown>(ctx.key, '/v1/parsers'),
 		'parsers',
@@ -233,5 +236,5 @@ export const getDocumentStatus: CorsairEndpoint<
 		{ count: 1 },
 		'completed',
 	);
-	return { status, done };
+	return DocumentStatusResponseSchema.parse({ status, done });
 };

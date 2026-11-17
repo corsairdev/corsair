@@ -14,7 +14,7 @@ description: "API reference for the Docparser plugin in Corsair: every `docparse
 
 `documents.fetch`
 
-Import a document from a public URL into a parser. Uses one parsing credit. Parsing takes a few minutes; check documents.status, then read results.get.
+Import a document from a public URL into a parser. Uses parsing credits (one per 5 pages). Parsing takes a few minutes; check documents.status, then read results.get.
 
 **Risk:** `destructive`
 
@@ -84,7 +84,7 @@ await corsair.docparser.api.documents.reintegrate({ parserId: 'balhnyuzdezt', do
 
 `documents.reparse`
 
-Parse documents again with the parser's current rules. Uses parsing credits.
+Parse documents again with the parser's current rules, replacing their parsed data. Uses no extra credits.
 
 **Risk:** `destructive`
 
@@ -170,7 +170,7 @@ await corsair.docparser.api.documents.status({ parserId: 'balhnyuzdezt', documen
 
 `documents.upload`
 
-Upload a base64-encoded document into a parser. Uses one parsing credit. Parsing takes a few minutes; check documents.status, then read results.get.
+Upload a base64-encoded document into a parser. Uses parsing credits (one per 5 pages). Parsing takes a few minutes; check documents.status, then read results.get.
 
 **Risk:** `destructive`
 

@@ -12,6 +12,8 @@ import type {
 import {
 	DocumentIdsInputSchema,
 	FetchDocumentInputSchema,
+	ImportResponseSchema,
+	ScheduledResponseSchema,
 	UploadDocumentInputSchema,
 } from './types';
 
@@ -33,12 +35,12 @@ function importOf(body: unknown, idKey: 'id' | 'document_id'): ImportResponse {
 	const documentId = text(row?.[idKey]);
 	if (!documentId)
 		throw new Error('Docparser import response was missing the document id');
-	return {
+	return ImportResponseSchema.parse({
 		documentId,
 		quotaUsed: num(row?.quota_used),
 		quotaLeft: num(row?.quota_left),
 		quotaRefill: text(row?.quota_refill),
-	};
+	});
 }
 
 export const fetchDocument: CorsairEndpoint<
@@ -116,7 +118,7 @@ async function schedule(
 		{ count: scheduled },
 		'completed',
 	);
-	return { scheduled };
+	return ScheduledResponseSchema.parse({ scheduled });
 }
 
 export const reparseDocuments: CorsairEndpoint<

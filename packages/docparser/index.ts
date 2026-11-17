@@ -110,9 +110,10 @@ export const docparserEndpointSchemas = {
 
 const read = (description: string) =>
 	({ riskLevel: 'read', description }) as const;
-// Each imported or re-parsed document uses one of the account's parsing
-// credits, and re-integrating sends the data to the parser's integrations
-// again, so these are destructive (R8: credit spending and sends).
+// Importing a document uses parsing credits (one per 5 pages, first parse
+// only); re-parsing overwrites the stored parsed data; re-integrating sends it
+// to the parser's integrations again. R8: credit spending, overwrites and
+// sends are destructive.
 const destructive = (description: string) =>
 	({ riskLevel: 'destructive', description }) as const;
 
@@ -125,16 +126,16 @@ const docparserEndpointMeta = {
 	),
 	'results.get': read('Get the parsed data of one document.'),
 	'documents.fetch': destructive(
-		'Import a document from a public URL into a parser. Uses one parsing credit. Parsing takes a few minutes; check documents.status, then read results.get.',
+		'Import a document from a public URL into a parser. Uses parsing credits (one per 5 pages). Parsing takes a few minutes; check documents.status, then read results.get.',
 	),
 	'documents.upload': destructive(
-		'Upload a base64-encoded document into a parser. Uses one parsing credit. Parsing takes a few minutes; check documents.status, then read results.get.',
+		'Upload a base64-encoded document into a parser. Uses parsing credits (one per 5 pages). Parsing takes a few minutes; check documents.status, then read results.get.',
 	),
 	'documents.status': read(
 		'Check whether a document has been imported and parsed (done), and list any failed jobs.',
 	),
 	'documents.reparse': destructive(
-		"Parse documents again with the parser's current rules. Uses parsing credits.",
+		"Parse documents again with the parser's current rules, replacing their parsed data. Uses no extra credits.",
 	),
 	'documents.reintegrate': destructive(
 		"Send documents' parsed data to the parser's integrations and webhooks again.",

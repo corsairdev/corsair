@@ -1,5 +1,5 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export const DOCPARSER_API_BASE = 'https://api.docparser.com';
 
@@ -7,6 +7,36 @@ export type DocparserQuery = Record<
 	string,
 	string | number | boolean | undefined
 >;
+
+/**
+ * Core's ApiError keeps the request's form fields. For imports those are the
+ * whole document (base64) or its URL, so they are replaced before the error
+ * leaves the plugin. Status, body and rate-limit fields stay.
+ */
+function withoutDocument(error: ApiError): ApiError {
+	const form = error.request.formData;
+	if (!form || !('file_content' in form || 'url' in form)) return error;
+	const cleaned = { ...form };
+	if ('file_content' in cleaned) cleaned.file_content = '[REDACTED]';
+	if ('url' in cleaned) cleaned.url = '[REDACTED]';
+	return new ApiError(
+		{ ...error.request, formData: cleaned },
+		{
+			url: error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		error.message,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+}
 
 export async function docparserRequest<T>(
 	apiKey: string | undefined,
@@ -34,8 +64,12 @@ export async function docparserRequest<T>(
 		query: options.query,
 		formData: options.formData,
 	};
-	// Core's request() retries a 429 itself, honouring Retry-After.
-	return await request<T>(config, requestOptions);
+	try {
+		// Core's request() retries a 429 itself, honouring Retry-After.
+		return await request<T>(config, requestOptions);
+	} catch (error) {
+		throw error instanceof ApiError ? withoutDocument(error) : error;
+	}
 }
 
 export async function docparserGet<T>(

@@ -274,6 +274,33 @@ describe('docparser', () => {
 		});
 	});
 
+	it('keeps the document out of a propagated error', async () => {
+		mockRequest.mockRejectedValue(
+			new ApiError(
+				{
+					method: 'POST',
+					url: '/v1/document/upload/abc123',
+					formData: { file_content: 'JVBERi0xSECRET', file_name: 'a.pdf' },
+				},
+				{
+					url: 'https://api.docparser.com/v1/document/upload/abc123',
+					ok: false,
+					status: 403,
+					statusText: 'Forbidden',
+					body: { error: 'Forbidden' },
+				},
+				'Forbidden',
+			),
+		);
+		const error = await uploadDocument(context(), {
+			parserId: 'abc123',
+			fileContent: 'JVBERi0xSECRET',
+		}).catch((e: unknown) => e);
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(403);
+		expect(JSON.stringify((error as ApiError).request)).not.toContain('SECRET');
+	});
+
 	it('schedules a reparse with document_ids[]', async () => {
 		mockRequest.mockResolvedValue({ total_reparsed: 2, msg: '' });
 		const result = await reparseDocuments(context(), {
