@@ -62,7 +62,7 @@ export type DraftableComparison = z.infer<typeof ComparisonSchema>;
 const ExportKind = z
 	.enum(['single_page', 'combined', 'left', 'right'])
 	.describe(
-		'single_page: both documents on one page; combined: the comparison with change details; left or right: one document with its changes highlighted.',
+		'single_page: the right document only, with highlights and deletion markers showing the changes; combined: both documents side by side; left or right: that document only.',
 	);
 
 const ExportSchema = z
@@ -169,7 +169,7 @@ export const CreateExportInputSchema = z.object({
 	include_cover_page: z
 		.boolean()
 		.optional()
-		.describe('Add a summary cover page (combined exports).'),
+		.describe('Add a cover page (combined exports only).'),
 });
 export const CreateExportResponseSchema = ExportSchema;
 

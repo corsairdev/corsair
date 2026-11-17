@@ -339,8 +339,8 @@ await corsair.draftable.api.exports.create({ comparison: 'contract-v1-v2', kind:
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `comparison` | `string` | Yes | Comparison identifier from comparisons.list or comparisons.create. |
-| `kind` | `single_page \| combined \| left \| right` | Yes | single_page: both documents on one page; combined: the comparison with change details; left or right: one document with its changes highlighted. |
-| `include_cover_page` | `boolean` | No | Add a summary cover page (combined exports). |
+| `kind` | `single_page \| combined \| left \| right` | Yes | single_page: the right document only, with highlights and deletion markers showing the changes; combined: both documents side by side; left or right: that document only. |
+| `include_cover_page` | `boolean` | No | Add a cover page (combined exports only). |
 
 
 
