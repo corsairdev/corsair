@@ -1,0 +1,148 @@
+---
+title: "NetHunt CRM plugin"
+sidebarTitle: "Overview"
+description: "List NetHunt folders and their field names, search and page records, read the change history, and create, update, comment on, log calls against and delete records."
+---
+
+Use **NetHunt CRM** through Corsair: one client, typed API calls.
+
+NetHunt's API needs two credentials. The **email** is the account address and the **API key** is the legacy key from NetHunt's Settings, Apps and other integrations, API key (LEGACY), Generate. The newer `nh_live_` tokens under Settings, API & MCP answer 401 on these routes (checked live 2026-11-17). Both are stored on the account: the plugin sends them as HTTP Basic auth, where the email is the username and the key is the password.
+
+Set both before the first call, for example `pnpm corsair setup --plugin=nethunt --tenant=acme api_key=<key> email=<you@example.com>`, or pass `key` and `email` in the plugin options. `account.verify` confirms the pair works and returns the user behind it.
+
+What to know before you write:
+
+- **Folders hold user-defined fields.** `folders.list` gives the ids, and `folders.fields` gives the names a create or update may set. There are no fixed columns, so call both before building a field map.
+- **A create and an update take different shapes.** `records.create` takes a flat `fields` map plus a required `timeZone`, which NetHunt needs to interpret date values. `records.update` takes `fieldActions`, one entry per field, each able to `overwrite`, `remove` or `add`. Combining `overwrite` with `remove` is rejected here because NetHunt forbids it.
+- **A delete goes over POST and answers `{}`.** So does linking a Gmail thread. Both return a small result the plugin derives from the call that succeeded, rather than from a body that carries nothing.
+- **`records.changes` is the only route that reports a delete.** Each change lists, per field, the values removed (`remove`) and added (`add`), and the user who made it as `{ personalName, emailAddress }`. It is a change log, not a snapshot history: it has no full before and after values.
+- **Reads page by time, not by offset.** `records.recent` and `records.updated` default their window to 24 hours and take a `since` instant. NetHunt takes `fieldName` repeatedly for one call, which the plugin sends as separate parameters.
+
+Worth knowing:
+
+- **NetHunt sends no error codes.** A bad email or key is a **401 with a plain-text body**, not JSON. A missing folder or record is a 404 with an empty body. The plugin reads both.
+- **A 5xx on a write is never retried.** NetHunt takes no idempotency key, so a retried create or update can double up. A 5xx on a read is retried twice.
+
+**What you get:**
+
+- 16 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/nethunt better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/nethunt better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/nethunt better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/nethunt better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { nethunt } from '@corsair-dev/nethunt';
+
+export const corsair = createCorsair({
+	plugins: [
+		nethunt(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the NetHunt CRM API key before the first call: `pnpm corsair setup --plugin=nethunt --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+nethunt()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'nethunt',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the folders this account can read**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.nethunt.api.folders.list({});
+```
+
+
+**Create a record in a folder**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.nethunt.api.records.create({
+	folderId: '596f644b8f6d05e16c24b810',
+	timeZone: 'Europe/London',
+	fields: { Name: 'John Doe', Country: 'GB' },
+});
+```
+
+
+See the full list on the [API](/plugins/nethunt/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/nethunt/api">
+    Every `nethunt.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
