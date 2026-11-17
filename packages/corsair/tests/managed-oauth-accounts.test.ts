@@ -162,6 +162,18 @@ describe('managed oauth delivery by account identity', () => {
 		expect(await km('b').get_access_token()).toBe('at-second');
 	});
 
+	// The hub holds a second account whose delivery never landed: the unnamed
+	// row is still the first account's, so reconnecting it keeps that row.
+	it('reconnecting the first account adopts the unnamed row even when the hub knows another', async () => {
+		await deliver('at-first');
+		await deliver('at-first-again', { id: 'a', label: 'a@x.com' }, [
+			{ id: 'a', label: 'a@x.com' },
+			{ id: 'b', label: 'b@x.com' },
+		]);
+		expect(await rows()).toHaveLength(1);
+		expect(await km('a').get_access_token()).toBe('at-first-again');
+	});
+
 	it('an unnamed row is still adopted when the hub knows only the account being delivered', async () => {
 		await deliver('at-legacy');
 		await deliver('at-new', { id: 'a', label: 'a@x.com' }, [

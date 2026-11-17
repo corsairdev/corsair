@@ -204,7 +204,7 @@ export type BrowserDeliveryPayload = {
 	providerData?: Record<string, unknown>;
 	/** Provider account identity for multi-account delivery (`deliveryMode: oauth.tokens`). */
 	account?: { id: string; label?: string };
-	/** Every account the hub holds for the plugin and tenant (`deliveryMode: oauth.tokens`). */
+	/** Every account the hub holds for the plugin and tenant, oldest first (`deliveryMode: oauth.tokens`). */
 	accounts?: { id: string; label?: string }[];
 	/** SDK permission token to approve or deny (`deliveryMode: permission.*`). */
 	permissionToken?: string;

@@ -47,8 +47,8 @@ export type ProcessManagedOAuthDeliveryOptions = {
 	providerData?: Record<string, unknown>;
 	// Provider account identity; absent = the tenant's default account.
 	account?: { id: string; label?: string };
-	// Every account the hub holds for this plugin and tenant, so an account
-	// from before names can be told apart from the one being delivered.
+	// Every account the hub holds for this plugin and tenant, oldest first, so
+	// an account from before names can be told apart from the one being delivered.
 	accounts?: { id: string; label?: string }[];
 };
 
