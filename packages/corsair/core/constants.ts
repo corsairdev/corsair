@@ -586,6 +586,7 @@ export const BaseProviders = [
 	'synthflowai',
 	'taggun',
 	'talenthr',
+	'tapfiliate',
 	'tally',
 	'telnyx',
 	'teltel',
@@ -1267,6 +1268,7 @@ export const ProviderDisplayNames = {
 	synthflowai: 'Synthflow AI',
 	taggun: 'Taggun',
 	talenthr: 'TalentHR',
+	tapfiliate: 'Tapfiliate',
 	tally: 'Tally',
 	telnyx: 'Telnyx',
 	teltel: 'TelTEL',
@@ -1955,6 +1957,7 @@ export type AllProviders =
 	| 'synthflowai'
 	| 'taggun'
 	| 'talenthr'
+	| 'tapfiliate'
 	| 'tally'
 	| 'telnyx'
 	| 'teltel'

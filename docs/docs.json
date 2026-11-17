@@ -4855,6 +4855,14 @@
                 ]
               },
               {
+                "group": "Tapfiliate",
+                "pages": [
+                  "plugins/tapfiliate/overview",
+                  "plugins/tapfiliate/api",
+                  "plugins/tapfiliate/database"
+                ]
+              },
+              {
                 "group": "Tavily",
                 "pages": [
                   "plugins/tavily/overview",
