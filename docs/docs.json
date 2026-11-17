@@ -3711,6 +3711,14 @@
                 ]
               },
               {
+                "group": "Pipedrive",
+                "pages": [
+                  "plugins/pipedrive/overview",
+                  "plugins/pipedrive/api",
+                  "plugins/pipedrive/database"
+                ]
+              },
+              {
                 "group": "Placid",
                 "pages": [
                   "plugins/placid/overview",

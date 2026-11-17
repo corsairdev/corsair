@@ -446,6 +446,7 @@ export const BaseProviders = [
 	'perplexityai',
 	'phantombuster',
 	'pinecone',
+	'pipedrive',
 	'placid',
 	'plain',
 	'ploid',
@@ -1099,6 +1100,7 @@ export const ProviderDisplayNames = {
 	perplexityai: 'Perplexity AI',
 	phantombuster: 'PhantomBuster',
 	pinecone: 'Pinecone',
+	pipedrive: 'Pipedrive',
 	placid: 'Placid',
 	plain: 'Plain',
 	ploid: 'Ploid',
@@ -1759,6 +1761,7 @@ export type AllProviders =
 	| 'perplexityai'
 	| 'phantombuster'
 	| 'pinecone'
+	| 'pipedrive'
 	| 'placid'
 	| 'plain'
 	| 'ploid'
