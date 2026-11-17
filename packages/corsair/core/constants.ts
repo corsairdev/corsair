@@ -376,6 +376,7 @@ export const BaseProviders = [
 	'jira',
 	'jobnimbus',
 	'jotform',
+	'jumpcloud',
 	'junglescout',
 	'kadoa',
 	'kaggle',
@@ -1084,6 +1085,7 @@ export const ProviderDisplayNames = {
 	jira: 'Jira',
 	jobnimbus: 'JobNimbus',
 	jotform: 'Jotform',
+	jumpcloud: 'JumpCloud',
 	junglescout: 'Jungle Scout',
 	kadoa: 'Kadoa',
 	kaggle: 'Kaggle',
@@ -1799,6 +1801,7 @@ export type AllProviders =
 	| 'jira'
 	| 'jobnimbus'
 	| 'jotform'
+	| 'jumpcloud'
 	| 'junglescout'
 	| 'kadoa'
 	| 'kaggle'
