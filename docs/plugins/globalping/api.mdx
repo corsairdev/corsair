@@ -99,12 +99,12 @@ GET /v1/limits. Stores the measurements.create bucket.
 
 `measurements.create`
 
-Create a network measurement. This spends credits.
+Start a ping, traceroute, dns, mtr or http test from Globalping probes, picked by location. Uses the hourly measurement allowance, then account credits.
 
 **Risk:** `write`
 
 ```ts
-await corsair.globalping.api.measurements.create({ type: 'ping', target: 'example.com' });
+await corsair.globalping.api.measurements.create({ type: 'ping', target: 'example.com', locations: [{ magic: 'Germany', limit: 2 }], measurementOptions: { packets: 3 } });
 ```
 
 **Input**
@@ -113,9 +113,56 @@ await corsair.globalping.api.measurements.create({ type: 'ping', target: 'exampl
 |------|------|----------|-------------|
 | `type` | `ping \| traceroute \| dns \| mtr \| http` | Yes | — |
 | `target` | `string` | Yes | — |
+| `locations` | `object[] \| string` | No | — |
 | `limit` | `number` | No | — |
+| `timeout` | `number` | No | — |
+| `measurementOptions` | `object` | No | — |
 
-POST /v1/measurements. Stores id, probesCount, and type.
+POST /v1/measurements. locations takes filters such as { magic: 'Germany', limit: 2 } or { country: 'US' }, or the id of an earlier measurement to reuse its probes. measurementOptions holds the options for the chosen type (packets, protocol, port, query, resolver, request). The test runs in the background: read it with measurements.get. Stores id, probesCount, and type.
+
+<AccordionGroup>
+<Accordion title="locations full type">
+
+```ts
+{
+  magic?: string,
+  continent?: string,
+  region?: string,
+  country?: string,
+  state?: string,
+  city?: string,
+  asn?: number,
+  network?: string,
+  tags?: string[],
+  limit?: number
+}[] | string
+```
+</Accordion>
+
+<Accordion title="measurementOptions full type">
+
+```ts
+{
+  packets?: number,
+  protocol?: ICMP | TCP | UDP | HTTP | HTTPS | HTTP2,
+  port?: number,
+  ipVersion?: 4 | 6,
+  query?: {
+    type: string
+  },
+  resolver?: string,
+  trace?: boolean,
+  request?: {
+    host?: string,
+    path?: string,
+    query?: string,
+    method?: HEAD | GET | OPTIONS,
+    headers?: Record<string, string>
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -124,6 +171,10 @@ POST /v1/measurements. Stores id, probesCount, and type.
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `measurement` | `object` | Yes | — |
+| `target` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `results` | `object[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="measurement full type">
@@ -137,6 +188,35 @@ POST /v1/measurements. Stores id, probesCount, and type.
 }
 ```
 </Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  probe: {
+    continent?: string,
+    region?: string,
+    country?: string,
+    state?: string | null,
+    city?: string,
+    asn?: number,
+    network?: string,
+    latitude?: number,
+    longitude?: number,
+    tags?: string[]
+  },
+  result: {
+    status: string,
+    rawOutput?: string | null,
+    resolvedAddress?: string | null,
+    resolvedHostname?: string | null,
+    statusCode?: number,
+    statusCodeName?: string,
+    stats?: Record<string, number | null>
+  }
+}[]
+```
+</Accordion>
 </AccordionGroup>
 
 
@@ -147,7 +227,7 @@ POST /v1/measurements. Stores id, probesCount, and type.
 
 `measurements.get`
 
-Read a measurement by id. Results are not stored.
+Read a measurement by id with each probe's result. Poll until status is finished. Results are not stored.
 
 **Risk:** `read`
 
@@ -161,7 +241,7 @@ await corsair.globalping.api.measurements.get({ id: 'example' });
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 
-GET /v1/measurements/{id}. Stores id, type, status, and probesCount.
+GET /v1/measurements/{id}. Returns one result per probe (probe location plus status, rawOutput, resolvedAddress, stats and the type's timings, hops or answers). While status is in-progress, wait at least 500 ms and read again. Stores id, type, status, and probesCount; results are returned but not stored.
 
 
 
@@ -170,6 +250,10 @@ GET /v1/measurements/{id}. Stores id, type, status, and probesCount.
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `measurement` | `object` | Yes | — |
+| `target` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `results` | `object[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="measurement full type">
@@ -181,6 +265,35 @@ GET /v1/measurements/{id}. Stores id, type, status, and probesCount.
   type?: string,
   status?: string
 }
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  probe: {
+    continent?: string,
+    region?: string,
+    country?: string,
+    state?: string | null,
+    city?: string,
+    asn?: number,
+    network?: string,
+    latitude?: number,
+    longitude?: number,
+    tags?: string[]
+  },
+  result: {
+    status: string,
+    rawOutput?: string | null,
+    resolvedAddress?: string | null,
+    resolvedHostname?: string | null,
+    statusCode?: number,
+    statusCodeName?: string,
+    stats?: Record<string, number | null>
+  }
+}[]
 ```
 </Accordion>
 </AccordionGroup>

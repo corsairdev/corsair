@@ -15,8 +15,9 @@ import type {
 	LimitResponse,
 	MeasurementResponse,
 	ProbeListResponse,
+	ProbeResult,
 } from './types';
-import { CreateInputSchema, GetInputSchema } from './types';
+import { CreateInputSchema, GetInputSchema, ProbeResultSchema } from './types';
 
 function text(value: unknown): string | undefined {
 	return typeof value === 'string' && value.length > 0 ? value : undefined;
@@ -26,6 +27,39 @@ function num(value: unknown): number | undefined {
 	return typeof value === 'number' && Number.isFinite(value)
 		? value
 		: undefined;
+}
+
+// unknown: the raw results array; each probe and result is read field by field.
+function resultsFrom(value: unknown): ProbeResult[] {
+	if (!Array.isArray(value)) return [];
+	return value.flatMap((item) => {
+		const row = asRecord(item);
+		const probe = asRecord(row?.probe);
+		const result = asRecord(row?.result);
+		const status = text(result?.status);
+		if (!probe || !result || !status) return [];
+		const { resolvers: _resolvers, ...probeFields } = probe;
+		const parsed = ProbeResultSchema.safeParse({
+			probe: {
+				continent: text(probeFields.continent),
+				region: text(probeFields.region),
+				country: text(probeFields.country),
+				state: probeFields.state === null ? null : text(probeFields.state),
+				city: text(probeFields.city),
+				asn: num(probeFields.asn),
+				network: text(probeFields.network),
+				latitude: num(probeFields.latitude),
+				longitude: num(probeFields.longitude),
+				tags: Array.isArray(probeFields.tags)
+					? probeFields.tags.filter(
+							(tag): tag is string => typeof tag === 'string',
+						)
+					: undefined,
+			},
+			result: { ...result, status },
+		});
+		return parsed.success ? [parsed.data] : [];
+	});
 }
 
 export const listProbes: CorsairEndpoint<
@@ -133,7 +167,14 @@ export const createMeasurement: CorsairEndpoint<
 		{
 			type: parsed.type,
 			target: parsed.target,
+			...(parsed.locations === undefined
+				? {}
+				: { locations: parsed.locations }),
 			...(parsed.limit === undefined ? {} : { limit: parsed.limit }),
+			...(parsed.timeout === undefined ? {} : { timeout: parsed.timeout }),
+			...(parsed.measurementOptions === undefined
+				? {}
+				: { measurementOptions: parsed.measurementOptions }),
 		},
 	);
 	const row = asRecord(body);
@@ -201,5 +242,11 @@ export const getMeasurement: CorsairEndpoint<
 		{ count: 1 },
 		'completed',
 	);
-	return { measurement: measurement.data };
+	return {
+		measurement: measurement.data,
+		target: text(row?.target),
+		createdAt: text(row?.createdAt),
+		updatedAt: text(row?.updatedAt),
+		results: resultsFrom(row?.results),
+	};
 };

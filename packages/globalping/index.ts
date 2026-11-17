@@ -78,9 +78,12 @@ const globalpingEndpointMeta = {
 	'health.get': read('Read the Globalping health check.'),
 	'measurements.create': {
 		riskLevel: 'write',
-		description: 'Create a network measurement. This spends credits.',
+		description:
+			'Start a ping, traceroute, dns, mtr or http test from Globalping probes, picked by location. Uses the hourly measurement allowance, then account credits.',
 	},
-	'measurements.get': read('Read a measurement by id. Results are not stored.'),
+	'measurements.get': read(
+		"Read a measurement by id with each probe's result. Poll until status is finished. Results are not stored.",
+	),
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof globalpingEndpointsNested
 >;
