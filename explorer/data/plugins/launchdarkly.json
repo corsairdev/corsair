@@ -1,0 +1,3483 @@
+{
+  "id": "launchdarkly",
+  "displayName": "LaunchDarkly",
+  "description": "Manage LaunchDarkly feature flags, environments, projects, user segments, audit logs, account members, teams, custom roles, and contexts via the LaunchDarkly REST API.",
+  "npmPackageName": "@corsair-dev/launchdarkly",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 53,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "launchdarkly.api.accessTokens.create",
+      "shortPath": "accessTokens.create",
+      "description": "Create a new personal or service access token",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "reader | writer | admin"
+          },
+          {
+            "key": "customRoleIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "serviceToken",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "defaultApiVersion",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "expiry",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customRoleIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "serviceToken",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "defaultApiVersion",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "creationDate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastModified",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.accessTokens.delete",
+      "shortPath": "accessTokens.delete",
+      "description": "Revoke and delete an access token",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "launchdarkly.api.accessTokens.get",
+      "shortPath": "accessTokens.get",
+      "description": "Get details of an access token by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customRoleIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "serviceToken",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "defaultApiVersion",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "creationDate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastModified",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.accessTokens.list",
+      "shortPath": "accessTokens.list",
+      "description": "List access tokens in the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "showAll",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ _id: string, name?: string, description?: string, role?: string, customRoleIds?: string[], token?: string, serviceToken?: boolean, defaultApiVersion?: number, creationDate?: number, lastModified?: number, _links?: Record<string, { href?: string, type?: string }> }[]"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.accountMembers.delete",
+      "shortPath": "accountMembers.delete",
+      "description": "Remove an account member from the account",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "launchdarkly.api.accountMembers.get",
+      "shortPath": "accountMembers.get",
+      "description": "Get details of an account member by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customRoles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "_pendingInvite",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "_verified",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.accountMembers.invite",
+      "shortPath": "accountMembers.invite",
+      "description": "Invite new members to the account",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "members",
+            "optional": false,
+            "type": "{ email: string, role?: reader | writer | admin | owner/admin | no_access, customRoles?: string[], roleAttributes?: Record<string, string[]>, teamKeys?: string[], password?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ _id: string, email: string, firstName?: string, lastName?: string, role: string, customRoles?: string[], _pendingInvite?: boolean, _verified?: boolean, _links?: Record<string, { href?: string, type?: string }> }[]"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.accountMembers.list",
+      "shortPath": "accountMembers.list",
+      "description": "List all account members",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ _id: string, email: string, firstName?: string, lastName?: string, role: string, customRoles?: string[], _pendingInvite?: boolean, _verified?: boolean, _links?: Record<string, { href?: string, type?: string }> }[]"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.accountMembers.update",
+      "shortPath": "accountMembers.update",
+      "description": "Update an account member role or permissions via JSON Patch",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "patch",
+            "optional": false,
+            "type": "({ op: add | replace | test, path: string, value: any } | { op: remove, path: string } | { op: move | copy, from: string, path: string })[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customRoles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "_pendingInvite",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "_verified",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.auditLog.get",
+      "shortPath": "auditLog.get",
+      "description": "Get a specific audit log entry by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shortDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "member",
+            "optional": true,
+            "type": "{ _id?: string, email?: string, firstName?: string, lastName?: string }"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.auditLog.list",
+      "shortPath": "auditLog.list",
+      "description": "List recent audit log entries in the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "before",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "spec",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "member",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ _id: string, date: number, kind: string, name?: string, description?: string, shortDescription?: string, comment?: string, member?: { _id?: string, email?: string, firstName?: string, lastName?: string }, _links?: Record<string, { href?: string, type?: string }> }[]"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.contexts.get",
+      "shortPath": "contexts.get",
+      "description": "Get evaluation context by kind and key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "environmentKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "continuationToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "includeTotalCount",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_environmentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ context: any, lastSeen?: string, applicationId?: string, associatedContexts?: any, _links?: Record<string, { href?: string, type?: string }> }[]"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "continuationToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.contexts.listKinds",
+      "shortPath": "contexts.listKinds",
+      "description": "List context kinds defined in a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ key: string, name?: string, description?: string, archived?: boolean, _version?: number }[]"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.contexts.search",
+      "shortPath": "contexts.search",
+      "description": "Search for evaluation contexts in an environment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "environmentKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "continuationToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "includeTotalCount",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_environmentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ context: any, lastSeen?: string, applicationId?: string, associatedContexts?: any, _links?: Record<string, { href?: string, type?: string }> }[]"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "continuationToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.customRoles.create",
+      "shortPath": "customRoles.create",
+      "description": "Create a new custom role",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "policy",
+            "optional": false,
+            "type": "{ effect: allow | deny, resources?: string[], notResources?: string[], actions?: string[], notActions?: string[] }[]"
+          },
+          {
+            "key": "basePermissions",
+            "optional": true,
+            "type": "reader | no_access"
+          },
+          {
+            "key": "resourceCategory",
+            "optional": true,
+            "type": "organization | project | any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "policy",
+            "optional": true,
+            "type": "{ effect: allow | deny, resources?: string[], notResources?: string[], actions?: string[], notActions?: string[] }[]"
+          },
+          {
+            "key": "basePermissions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.customRoles.delete",
+      "shortPath": "customRoles.delete",
+      "description": "Permanently delete a custom role",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customRoleKey",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "launchdarkly.api.customRoles.get",
+      "shortPath": "customRoles.get",
+      "description": "Get a custom role by key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customRoleKey",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "policy",
+            "optional": true,
+            "type": "{ effect: allow | deny, resources?: string[], notResources?: string[], actions?: string[], notActions?: string[] }[]"
+          },
+          {
+            "key": "basePermissions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.customRoles.list",
+      "shortPath": "customRoles.list",
+      "description": "List custom roles in the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ _id: string, key: string, name: string, description?: string, policy?: { effect: allow | deny, resources?: string[], notResources?: string[], actions?: string[], notActions?: string[] }[], basePermissions?: string, _links?: Record<string, { href?: string, type?: string }> }[]"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.customRoles.update",
+      "shortPath": "customRoles.update",
+      "description": "Update a custom role policy via JSON Patch",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customRoleKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "patch",
+            "optional": false,
+            "type": "({ op: add | replace | test, path: string, value: any } | { op: remove, path: string } | { op: move | copy, from: string, path: string })[]"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "policy",
+            "optional": true,
+            "type": "{ effect: allow | deny, resources?: string[], notResources?: string[], actions?: string[], notActions?: string[] }[]"
+          },
+          {
+            "key": "basePermissions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.environments.create",
+      "shortPath": "environments.create",
+      "description": "Create a new environment in a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "defaultTtl",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "secureMode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "defaultTrackEvents",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "confirmChanges",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "requireComments",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "critical",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "apiKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobileKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "defaultTtl",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "secureMode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "defaultTrackEvents",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "requireComments",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "confirmChanges",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "critical",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.environments.delete",
+      "shortPath": "environments.delete",
+      "description": "Permanently delete an environment",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "environmentKey",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "launchdarkly.api.environments.get",
+      "shortPath": "environments.get",
+      "description": "Get details of a specific environment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "environmentKey",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "apiKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobileKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "defaultTtl",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "secureMode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "defaultTrackEvents",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "requireComments",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "confirmChanges",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "critical",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.environments.list",
+      "shortPath": "environments.list",
+      "description": "List all environments in a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ _id: string, key: string, name: string, apiKey?: string, mobileKey?: string, color: string, defaultTtl?: number, secureMode?: boolean, defaultTrackEvents?: boolean, requireComments?: boolean, confirmChanges?: boolean, tags?: string[], critical?: boolean, _links?: Record<string, { href?: string, type?: string }> }[]"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.environments.resetMobileKey",
+      "shortPath": "environments.resetMobileKey",
+      "description": "Reset the mobile key for an environment",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "environmentKey",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "apiKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobileKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "defaultTtl",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "secureMode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "defaultTrackEvents",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "requireComments",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "confirmChanges",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "critical",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.environments.resetSdkKey",
+      "shortPath": "environments.resetSdkKey",
+      "description": "Reset the SDK key for an environment",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "environmentKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expiry",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "apiKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobileKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "defaultTtl",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "secureMode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "defaultTrackEvents",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "requireComments",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "confirmChanges",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "critical",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.environments.update",
+      "shortPath": "environments.update",
+      "description": "Update environment configuration via JSON Patch",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "environmentKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "patch",
+            "optional": false,
+            "type": "({ op: add | replace | test, path: string, value: any } | { op: remove, path: string } | { op: move | copy, from: string, path: string })[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "apiKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobileKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "defaultTtl",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "secureMode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "defaultTrackEvents",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "requireComments",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "confirmChanges",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "critical",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.featureFlags.create",
+      "shortPath": "featureFlags.create",
+      "description": "Create a new feature flag in a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "clone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "variations",
+            "optional": true,
+            "type": "{ value: any, name?: string, description?: string }[]"
+          },
+          {
+            "key": "temporary",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "includeInSnippet",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "clientSideAvailability",
+            "optional": true,
+            "type": "{ usingMobileKey?: boolean, usingEnvironmentId?: boolean }"
+          },
+          {
+            "key": "defaults",
+            "optional": true,
+            "type": "{ onVariation?: number, offVariation?: number }"
+          },
+          {
+            "key": "customProperties",
+            "optional": true,
+            "type": "Record<string, { name: string, value: string[] }>"
+          },
+          {
+            "key": "purpose",
+            "optional": true,
+            "type": "migration | holdout"
+          },
+          {
+            "key": "migrationSettings",
+            "optional": true,
+            "type": "{ contextKind?: string, stageCount: 2 | 4 | 6 }"
+          },
+          {
+            "key": "maintainerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maintainerTeamKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "initialPrerequisites",
+            "optional": true,
+            "type": "{ key: string, variationId: string }[]"
+          },
+          {
+            "key": "isFlagOn",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creationDate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "temporary",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "variations",
+            "optional": true,
+            "type": "{ _id?: string, value: any, name?: string, description?: string }[]"
+          },
+          {
+            "key": "_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.featureFlags.delete",
+      "shortPath": "featureFlags.delete",
+      "description": "Permanently delete a feature flag",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "featureFlagKey",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "launchdarkly.api.featureFlags.get",
+      "shortPath": "featureFlags.get",
+      "description": "Get details of a feature flag",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "featureFlagKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "env",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creationDate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "temporary",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "variations",
+            "optional": true,
+            "type": "{ _id?: string, value: any, name?: string, description?: string }[]"
+          },
+          {
+            "key": "_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.featureFlags.getStatus",
+      "shortPath": "featureFlags.getStatus",
+      "description": "Get the status of a feature flag in an environment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "environmentKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "featureFlagKey",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastRequested",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "default",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.featureFlags.list",
+      "shortPath": "featureFlags.list",
+      "description": "List feature flags in a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "env",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filterEnv",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ key: string, name: string, kind?: string, description?: string, creationDate?: number, archived?: boolean, temporary?: boolean, tags?: string[], variations?: { _id?: string, value: any, name?: string, description?: string }[], _version?: number, _links?: Record<string, { href?: string, type?: string }> }[]"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.featureFlags.listStatuses",
+      "shortPath": "featureFlags.listStatuses",
+      "description": "List statuses for all feature flags in an environment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "environmentKey",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ name?: string, lastRequested?: string | null, default?: any, _links?: Record<string, { href?: string, type?: string }> }[]"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.featureFlags.update",
+      "shortPath": "featureFlags.update",
+      "description": "Update feature flag rules and variations via JSON Patch (turning a flag on or off, or changing targeting, changes what live apps serve)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "featureFlagKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "patch",
+            "optional": false,
+            "type": "({ op: add | replace | test, path: string, value: any } | { op: remove, path: string } | { op: move | copy, from: string, path: string })[]"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ignoreConflicts",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dryRun",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creationDate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "temporary",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "variations",
+            "optional": true,
+            "type": "{ _id?: string, value: any, name?: string, description?: string }[]"
+          },
+          {
+            "key": "_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a new project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "includeInSnippetByDefault",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "defaultClientSideAvailability",
+            "optional": true,
+            "type": "{ usingMobileKey: boolean, usingEnvironmentId: boolean }"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "environments",
+            "optional": true,
+            "type": "{ key: string, name: string, color: string, defaultTtl?: number, secureMode?: boolean, defaultTrackEvents?: boolean, confirmChanges?: boolean, requireComments?: boolean, tags?: string[], critical?: boolean, source?: { key?: string, version?: number } }[]"
+          },
+          {
+            "key": "namingConvention",
+            "optional": true,
+            "type": "{ case?: camelCase | upperCamelCase | snakeCase | kebabCase | constantCase, prefix?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "includeInSnippetByDefault",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "environments",
+            "optional": true,
+            "type": "{ _id?: string, key: string, name: string, color?: string, apiKey?: string, mobileKey?: string, critical?: boolean, tags?: string[] }[]"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Permanently delete a project",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "launchdarkly.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Get details of a specific project by project key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "includeInSnippetByDefault",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "environments",
+            "optional": true,
+            "type": "{ _id?: string, key: string, name: string, color?: string, apiKey?: string, mobileKey?: string, critical?: boolean, tags?: string[] }[]"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List all projects in the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ _id: string, key: string, name: string, includeInSnippetByDefault?: boolean, tags?: string[], environments?: { _id?: string, key: string, name: string, color?: string, apiKey?: string, mobileKey?: string, critical?: boolean, tags?: string[] }[], _links?: Record<string, { href?: string, type?: string }> }[]"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Update project configuration via JSON Patch",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "patch",
+            "optional": false,
+            "type": "({ op: add | replace | test, path: string, value: any } | { op: remove, path: string } | { op: move | copy, from: string, path: string })[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "includeInSnippetByDefault",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "environments",
+            "optional": true,
+            "type": "{ _id?: string, key: string, name: string, color?: string, apiKey?: string, mobileKey?: string, critical?: boolean, tags?: string[] }[]"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.root.get",
+      "shortPath": "root.get",
+      "description": "Get LaunchDarkly root API metadata and resource links",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "links",
+            "optional": false,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.segments.create",
+      "shortPath": "segments.create",
+      "description": "Create a new user segment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "environmentKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "unbounded",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "unboundedContextKind",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "creationDate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "excluded",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.segments.delete",
+      "shortPath": "segments.delete",
+      "description": "Permanently delete a user segment",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "environmentKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "segmentKey",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "launchdarkly.api.segments.get",
+      "shortPath": "segments.get",
+      "description": "Get details of a user segment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "environmentKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "segmentKey",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "creationDate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "excluded",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.segments.list",
+      "shortPath": "segments.list",
+      "description": "List user segments in an environment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "environmentKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ key: string, name: string, description?: string | null, tags?: string[], creationDate?: number, version?: number, included?: string[], excluded?: string[], rules?: any[], _links?: Record<string, { href?: string, type?: string }> }[]"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.segments.update",
+      "shortPath": "segments.update",
+      "description": "Update user segment rules via JSON Patch (changes who flags that use the segment target)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "environmentKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "segmentKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "patch",
+            "optional": false,
+            "type": "({ op: add | replace | test, path: string, value: any } | { op: remove, path: string } | { op: move | copy, from: string, path: string })[]"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "creationDate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "excluded",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "List tags across resources in the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "pre",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "asOf",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.teams.create",
+      "shortPath": "teams.create",
+      "description": "Create a new team",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "memberIDs",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "customRoleKeys",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "memberIDs",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "customRoleKeys",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "_creationDate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.teams.delete",
+      "shortPath": "teams.delete",
+      "description": "Permanently delete a team",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamKey",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "launchdarkly.api.teams.get",
+      "shortPath": "teams.get",
+      "description": "Get details of a team by key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "memberIDs",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "customRoleKeys",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "_creationDate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.teams.list",
+      "shortPath": "teams.list",
+      "description": "List teams in the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ key: string, name: string, description?: string, memberIDs?: string[], customRoleKeys?: string[], _creationDate?: number, _version?: number, _links?: Record<string, { href?: string, type?: string }> }[]"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.teams.update",
+      "shortPath": "teams.update",
+      "description": "Update a team via semantic instructions",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "instructions",
+            "optional": false,
+            "type": "({ kind: addCustomRoles | removeCustomRoles | addMembers | removeMembers | replaceMembers, values: string[] } | { kind: updateDescription, value: string } | { kind: updateName, value: string } | { kind: addRoleAttribute, key: string, values: string[] } | { kind: removeRoleAttribute, key: string } | { kind: updateRoleAttribute, key: string, values: string[] } | { kind: replaceRoleAttributes, value: Record<string, string[]> } | { kind: addPermissionGrants | removePermissionGrants, memberIDs: string[], actionSet?: string, actions?: string[] })[]"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "memberIDs",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "customRoleKeys",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "_creationDate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.users.get",
+      "shortPath": "users.get",
+      "description": "Get user record in an environment by user key (deprecated by LaunchDarkly; accounts on contexts answer 404, use contexts.get)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "environmentKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "userKey",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ key: string, ip?: string, country?: string, email?: string, firstName?: string, lastName?: string, avatar?: string, name?: string, anonymous?: boolean, custom?: Record<string, any> }"
+          },
+          {
+            "key": "environmentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastPing",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.users.list",
+      "shortPath": "users.list",
+      "description": "List users in an environment (deprecated by LaunchDarkly; accounts on contexts answer 404, use contexts.search)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "environmentKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "searchAfter",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ user?: { key: string, ip?: string, country?: string, email?: string, firstName?: string, lastName?: string, avatar?: string, name?: string, anonymous?: boolean, custom?: Record<string, any> }, environmentId?: string, lastPing?: string, _links?: Record<string, { href?: string, type?: string }> }[]"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "launchdarkly.api.users.search",
+      "shortPath": "users.search",
+      "description": "Search users in an environment by query string (deprecated by LaunchDarkly; accounts on contexts answer 404, use contexts.search)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "environmentKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "searchAfter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ user?: { key: string, ip?: string, country?: string, email?: string, firstName?: string, lastName?: string, avatar?: string, name?: string, anonymous?: boolean, custom?: Record<string, any> }, environmentId?: string, lastPing?: string, _links?: Record<string, { href?: string, type?: string }> }[]"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "Record<string, { href?: string, type?: string }>"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
