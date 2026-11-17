@@ -1,10 +1,20 @@
 ---
 title: "Nango plugin"
 sidebarTitle: "Overview"
-description: "Nango plugin for Corsair"
+description: "Manage Nango integrations, connections, Connect sessions, syncs and synced records, call tools, and proxy requests to your end users' APIs."
 ---
 
 Use **Nango** through Corsair: one client, typed API calls.
+
+The [Nango API](https://nango.dev/docs/reference/api) authenticates with an environment secret key (Environment settings &gt; API keys). Use the key of the environment you want the agent to work in (dev or prod); a scoped key limits which operations succeed.
+
+The plugin covers integrations, connections, Connect sessions, functions, syncs and records, tool calls, legacy actions, providers, environment variables and the proxy (GET, POST, PUT, PATCH, DELETE).
+
+**Secrets.** `connections.get` drops the connection's third-party credentials unless you pass `include_credentials: true`, and `connections.import` never returns the credentials it sent. `integrations.get` with `include: ["credentials"]` and `environment.getVariables` return secrets in plain text. Errors never carry the request body or the environment key.
+
+**Risk.** Proxy writes, tool calls and legacy actions act on your end customer's third-party account, so they are `destructive`, as are deletes, `connections.setMetadata` (replaces all metadata) and `connections.import` (can overwrite a connection's credentials).
+
+Not included: environment and API-key administration, webhook signing-key rotation, function compile/deploy, sync variants, record pruning and inbound webhooks.
 
 **What you get:**
 
@@ -94,19 +104,25 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`connections.get`**
+**`connections.list`**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.nango.api.connections.get({});
+await tenant.nango.api.connections.list({
+	tags: { end_user_id: 'user-123' },
+	limit: 20,
+});
 ```
 
 
-**`actions.trigger`**
+**`sessions.create`**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.nango.api.actions.trigger({});
+await tenant.nango.api.sessions.create({
+	tags: { end_user_id: 'user-123' },
+	allowed_integrations: ['github'],
+});
 ```
 
 

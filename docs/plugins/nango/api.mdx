@@ -19,7 +19,12 @@ Run a legacy action for a connection synchronously. Actions can write to the end
 **Risk:** `destructive`
 
 ```ts
-await corsair.nango.api.actions.trigger({});
+await corsair.nango.api.actions.trigger({
+	connection_id: 'user-123',
+	provider_config_key: 'github',
+	action_name: 'create-issue',
+	input: { title: 'Bug' },
+});
 ```
 
 **Input**
@@ -49,7 +54,7 @@ Delete a connection and its stored credentials.
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.nango.api.connections.delete({});
+await corsair.nango.api.connections.delete({ connectionId: 'user-123', provider_config_key: 'github' });
 ```
 
 **Input**
@@ -80,7 +85,7 @@ Get one connection. Pass include_credentials: true to also return its live third
 **Risk:** `read`
 
 ```ts
-await corsair.nango.api.connections.get({});
+await corsair.nango.api.connections.get({ connectionId: 'user-123', provider_config_key: 'github' });
 ```
 
 **Input**
@@ -93,6 +98,8 @@ await corsair.nango.api.connections.get({});
 | `force_refresh` | `boolean` | No | Refresh the access token even if it has not expired. |
 | `refresh_token` | `boolean` | No | Also return the refresh token (needs include_credentials). |
 | `refresh_github_app_jwt_token` | `boolean` | No | — |
+
+Credentials are dropped unless `include_credentials` is true. Pass `refresh_token: true` as well to also get the refresh token.
 
 
 
@@ -173,7 +180,11 @@ Create a connection from credentials you already hold, or overwrite an existing 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.nango.api.connections.import({});
+await corsair.nango.api.connections.import({
+	provider_config_key: 'my-api',
+	connection_id: 'user-123',
+	credentials: { type: 'API_KEY', apiKey: 'placeholder' },
+});
 ```
 
 **Input**
@@ -329,7 +340,9 @@ List connections (no credentials), filtered by connection ID or tags, with page 
 **Risk:** `read`
 
 ```ts
-await corsair.nango.api.connections.list({});
+await corsair.nango.api.connections.list({
+	tags: { end_user_id: 'user-123' },
+});
 ```
 
 **Input**
@@ -396,7 +409,13 @@ Edit a connection: replace its tags or set a webhook URL override.
 **Risk:** `write`
 
 ```ts
-await corsair.nango.api.connections.patch({});
+await corsair.nango.api.connections.patch({
+	connectionId: 'user-123',
+	provider_config_key: 'github',
+	body: {
+		tags: { plan: 'pro' },
+	},
+});
 ```
 
 **Input**
@@ -446,7 +465,11 @@ Replace the whole metadata object of one or more connections; keys not passed ar
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.nango.api.connections.setMetadata({});
+await corsair.nango.api.connections.setMetadata({
+	connection_id: 'user-123',
+	provider_config_key: 'github',
+	metadata: { team: 'core' },
+});
 ```
 
 **Input**
@@ -480,7 +503,11 @@ Merge keys into the metadata of one or more connections.
 **Risk:** `write`
 
 ```ts
-await corsair.nango.api.connections.updateMetadata({});
+await corsair.nango.api.connections.updateMetadata({
+	connection_id: 'user-123',
+	provider_config_key: 'github',
+	metadata: { team: 'core' },
+});
 ```
 
 **Input**
@@ -550,7 +577,7 @@ Delete a deployed function, e.g. a catalog sync enabled in the dashboard; functi
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.nango.api.functions.delete({});
+await corsair.nango.api.functions.delete({ uniqueKey: 'github', name: 'issues' });
 ```
 
 **Input**
@@ -560,6 +587,8 @@ await corsair.nango.api.functions.delete({});
 | `uniqueKey` | `string` | Yes | The integration ID (unique_key). |
 | `name` | `string` | Yes | The function name. |
 | `type` | `action \| sync \| tool \| function` | Yes | — |
+
+Also pass the required `type`: `action`, `sync`, `tool` or `function` (e.g. `type: "sync"`).
 
 
 
@@ -593,7 +622,7 @@ Get one function of an integration, with its schema and deployment state.
 **Risk:** `read`
 
 ```ts
-await corsair.nango.api.functions.get({});
+await corsair.nango.api.functions.get({ uniqueKey: 'github', name: 'issues' });
 ```
 
 **Input**
@@ -642,7 +671,7 @@ Get a function's TypeScript source code.
 **Risk:** `read`
 
 ```ts
-await corsair.nango.api.functions.getCode({});
+await corsair.nango.api.functions.getCode({ uniqueKey: 'github', name: 'create-issue' });
 ```
 
 **Input**
@@ -675,7 +704,7 @@ List an integration's functions (syncs, tools, on-event functions), including Na
 **Risk:** `read`
 
 ```ts
-await corsair.nango.api.functions.list({});
+await corsair.nango.api.functions.list({ uniqueKey: 'github', search: 'issue', limit: 20 });
 ```
 
 **Input**
@@ -729,7 +758,16 @@ Create an integration for a provider, optionally with developer app credentials 
 **Risk:** `write`
 
 ```ts
-await corsair.nango.api.integrations.create({});
+await corsair.nango.api.integrations.create({
+	unique_key: 'github',
+	provider: 'github',
+	credentials: {
+		type: 'OAUTH2',
+		client_id: 'placeholder',
+		client_secret: 'placeholder',
+		scopes: 'repo,read:user',
+	},
+});
 ```
 
 **Input**
@@ -803,7 +841,7 @@ Delete an integration and every connection that uses it.
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.nango.api.integrations.delete({});
+await corsair.nango.api.integrations.delete({ uniqueKey: 'github' });
 ```
 
 **Input**
@@ -833,7 +871,7 @@ Get an integration. include: ["credentials"] also returns the developer app clie
 **Risk:** `read`
 
 ```ts
-await corsair.nango.api.integrations.get({});
+await corsair.nango.api.integrations.get({ uniqueKey: 'github' });
 ```
 
 **Input**
@@ -929,7 +967,7 @@ Edit an integration; fields left out keep their value.
 **Risk:** `write`
 
 ```ts
-await corsair.nango.api.integrations.update({});
+await corsair.nango.api.integrations.update({ uniqueKey: 'github', display_name: 'GitHub' });
 ```
 
 **Input**
@@ -1005,7 +1043,7 @@ Get one provider's auth mode, proxy settings and required connection fields.
 **Risk:** `read`
 
 ```ts
-await corsair.nango.api.providers.get({});
+await corsair.nango.api.providers.get({ provider: 'github' });
 ```
 
 **Input**
@@ -1051,7 +1089,7 @@ List the APIs Nango supports; filter with search (the full list has over 1,000).
 **Risk:** `read`
 
 ```ts
-await corsair.nango.api.providers.list({});
+await corsair.nango.api.providers.list({ search: 'github' });
 ```
 
 **Input**
@@ -1099,7 +1137,7 @@ Send a DELETE through Nango's proxy to the end customer's API with the connectio
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.nango.api.proxy.delete({});
+await corsair.nango.api.proxy.delete({ connection_id: 'user-123', provider_config_key: 'github', path: '/user/starred/acme/app' });
 ```
 
 **Input**
@@ -1130,7 +1168,12 @@ Send a GET through Nango's proxy to the end customer's API with the connection's
 **Risk:** `read`
 
 ```ts
-await corsair.nango.api.proxy.get({});
+await corsair.nango.api.proxy.get({
+	connection_id: 'user-123',
+	provider_config_key: 'github',
+	path: '/user/repos',
+	query: { per_page: 10 },
+});
 ```
 
 **Input**
@@ -1143,6 +1186,8 @@ await corsair.nango.api.proxy.get({});
 | `query` | `Record<string, string \| number \| boolean>` | No | — |
 | `headers` | `Record<string, string>` | No | Headers passed on to the external API (sent as Nango-Proxy-&lt;name&gt;). |
 | `retries` | `number` | No | Retries Nango makes on failure, with exponential back-off. |
+
+`path` is relative to the provider's base URL. Headers in `headers` are sent on as `Nango-Proxy-<name>`.
 
 
 
@@ -1160,7 +1205,12 @@ Send a PATCH through Nango's proxy to the end customer's API with the connection
 **Risk:** `destructive`
 
 ```ts
-await corsair.nango.api.proxy.patch({});
+await corsair.nango.api.proxy.patch({
+	connection_id: 'user-123',
+	provider_config_key: 'github',
+	path: '/repos/acme/app/issues/1',
+	body: { state: 'closed' },
+});
 ```
 
 **Input**
@@ -1191,7 +1241,12 @@ Send a POST through Nango's proxy to the end customer's API with the connection'
 **Risk:** `destructive`
 
 ```ts
-await corsair.nango.api.proxy.post({});
+await corsair.nango.api.proxy.post({
+	connection_id: 'user-123',
+	provider_config_key: 'github',
+	path: '/repos/acme/app/issues',
+	body: { title: 'Bug' },
+});
 ```
 
 **Input**
@@ -1222,7 +1277,7 @@ Send a PUT through Nango's proxy to the end customer's API with the connection's
 **Risk:** `destructive`
 
 ```ts
-await corsair.nango.api.proxy.put({});
+await corsair.nango.api.proxy.put({ connection_id: 'user-123', provider_config_key: 'github', path: '/user/starred/acme/app' });
 ```
 
 **Input**
@@ -1255,7 +1310,12 @@ List the records a sync stored for a connection and model, paginated with next_c
 **Risk:** `read`
 
 ```ts
-await corsair.nango.api.records.list({});
+await corsair.nango.api.records.list({
+	provider_config_key: 'github',
+	connection_id: 'user-123',
+	model: 'GithubIssue',
+	limit: 100,
+});
 ```
 
 **Input**
@@ -1271,6 +1331,8 @@ await corsair.nango.api.records.list({});
 | `modified_after` | `string` | No | ISO 8601 timestamp. |
 | `ids` | `string[]` | No | — |
 | `variant` | `string` | No | — |
+
+Page with `next_cursor` until it is null; a page can hold fewer than `limit` records.
 
 
 
@@ -1305,6 +1367,8 @@ await corsair.nango.api.scripts.getConfig({});
 |------|------|----------|-------------|
 | `format` | `nango \| openai` | No | "openai" returns tool definitions in OpenAI function format. |
 
+`format: "openai"` returns the functions as OpenAI tool definitions.
+
 
 
 **Output:** `Record<string, any>[] \| Record<string, any>`
@@ -1323,7 +1387,10 @@ Create a Connect session; returns a short-lived token and a connect link an end 
 **Risk:** `write`
 
 ```ts
-await corsair.nango.api.sessions.create({});
+await corsair.nango.api.sessions.create({
+	tags: { end_user_id: 'user-123' },
+	allowed_integrations: ['github'],
+});
 ```
 
 **Input**
@@ -1337,6 +1404,8 @@ await corsair.nango.api.sessions.create({});
 | `overrides` | `object` | No | — |
 | `webhook_url_override` | `string` | No | — |
 | `allowed_integrations` | `string[]` | No | Integration IDs the end user may connect. |
+
+Either `tags` or `end_user` is required; Nango recommends tags. Give the returned `connect_link` to the end user.
 
 <AccordionGroup>
 <Accordion title="end_user full type">
@@ -1420,7 +1489,7 @@ Create a Connect session that re-authorizes an existing connection, keeping its 
 **Risk:** `write`
 
 ```ts
-await corsair.nango.api.sessions.reconnect({});
+await corsair.nango.api.sessions.reconnect({ connection_id: 'user-123', integration_id: 'github' });
 ```
 
 **Input**
@@ -1520,7 +1589,11 @@ Pause the schedule of syncs for one connection or all.
 **Risk:** `write`
 
 ```ts
-await corsair.nango.api.syncs.pause({});
+await corsair.nango.api.syncs.pause({
+	provider_config_key: 'github',
+	connection_id: 'user-123',
+	syncs: ['issues'],
+});
 ```
 
 **Input**
@@ -1564,7 +1637,11 @@ Start the schedule of syncs for one connection or all; they run now and then on 
 **Risk:** `write`
 
 ```ts
-await corsair.nango.api.syncs.start({});
+await corsair.nango.api.syncs.start({
+	provider_config_key: 'github',
+	connection_id: 'user-123',
+	syncs: ['issues'],
+});
 ```
 
 **Input**
@@ -1608,7 +1685,7 @@ Get the status, schedule, last result and record counts of syncs.
 **Risk:** `read`
 
 ```ts
-await corsair.nango.api.syncs.status({});
+await corsair.nango.api.syncs.status({ provider_config_key: 'github', connection_id: 'user-123', syncs: '*' });
 ```
 
 **Input**
@@ -1661,7 +1738,11 @@ Run syncs once now, for one connection or all; reset starts from scratch.
 **Risk:** `write`
 
 ```ts
-await corsair.nango.api.syncs.trigger({});
+await corsair.nango.api.syncs.trigger({
+	provider_config_key: 'github',
+	connection_id: 'user-123',
+	syncs: ['issues'],
+});
 ```
 
 **Input**
@@ -1672,6 +1753,8 @@ await corsair.nango.api.syncs.trigger({});
 | `connection_id` | `string` | No | Limit to one connection; omit for every connection. |
 | `syncs` | `string[] \| object[]` | Yes | Sync names, or &#123; name, variant &#125; objects (variant is required; the default is "base"). |
 | `opts` | `object` | No | — |
+
+`syncs` takes names, or `{ name, variant }` objects where `variant` is required (the default variant is `base`).
 
 <AccordionGroup>
 <Accordion title="syncs full type">
@@ -1716,7 +1799,12 @@ Override a sync's frequency for one connection, or restore the default with null
 **Risk:** `write`
 
 ```ts
-await corsair.nango.api.syncs.updateFrequency({});
+await corsair.nango.api.syncs.updateFrequency({
+	provider_config_key: 'github',
+	connection_id: 'user-123',
+	sync_name: 'issues',
+	frequency: 'every 2 hours',
+});
 ```
 
 **Input**
@@ -1752,7 +1840,12 @@ Call a deployed tool for a connection and return its output. Tools can write to 
 **Risk:** `destructive`
 
 ```ts
-await corsair.nango.api.tools.call({});
+await corsair.nango.api.tools.call({
+	connectionId: 'user-123',
+	name: 'list-repos',
+	provider_config_key: 'github',
+	input: {},
+});
 ```
 
 **Input**

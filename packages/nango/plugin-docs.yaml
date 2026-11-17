@@ -33,11 +33,11 @@ apiExamples:
   integrations.create: { unique_key: github, provider: github, credentials: { type: OAUTH2, client_id: placeholder, client_secret: placeholder, scopes: "repo,read:user" } }
   integrations.update: { uniqueKey: github, display_name: GitHub }
   integrations.delete: { uniqueKey: github }
-  functions.list: { uniqueKey: github, type: tool, limit: 20 }
-  functions.get: { uniqueKey: github, name: issues, type: sync }
+  functions.list: { uniqueKey: github, search: issue, limit: 20 }
+  functions.get: { uniqueKey: github, name: issues }
   functions.getCode: { uniqueKey: github, name: create-issue }
-  functions.delete: { uniqueKey: github, name: issues, type: sync }
-  scripts.getConfig: { format: openai }
+  functions.delete: { uniqueKey: github, name: issues }
+  scripts.getConfig: {}
   providers.list: { search: github }
   providers.get: { provider: github }
   syncs.trigger: { provider_config_key: github, connection_id: user-123, syncs: [issues] }
@@ -55,6 +55,8 @@ apiExamples:
   proxy.patch: { connection_id: user-123, provider_config_key: github, path: /repos/acme/app/issues/1, body: { state: closed } }
   proxy.delete: { connection_id: user-123, provider_config_key: github, path: /user/starred/acme/app }
 apiNotes:
+  functions.delete: 'Also pass the required `type`: `action`, `sync`, `tool` or `function` (e.g. `type: "sync"`).'
+  scripts.getConfig: '`format: "openai"` returns the functions as OpenAI tool definitions.'
   sessions.create: Either `tags` or `end_user` is required; Nango recommends tags. Give the returned `connect_link` to the end user.
   connections.get: 'Credentials are dropped unless `include_credentials` is true. Pass `refresh_token: true` as well to also get the refresh token.'
   syncs.trigger: '`syncs` takes names, or `{ name, variant }` objects where `variant` is required (the default variant is `base`).'
