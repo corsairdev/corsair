@@ -299,6 +299,7 @@ export type CorsairCloudInstanceHandle<Registry = CorsairCloudRegistry> =
 			tenantId: string;
 			plugin: string;
 			account?: string;
+			// Deprecated: its result was never typed, and callers ignore it.
 		}): Promise<unknown>;
 		/** @deprecated Use `connect.createSession`. */
 		createConnectLink(input: CreateCloudConnectLinkInput): Promise<ConnectLink>;

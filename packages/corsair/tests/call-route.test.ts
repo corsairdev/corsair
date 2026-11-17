@@ -338,7 +338,7 @@ const githubStub = {
 			create: async (_ctx: unknown, args: unknown) => ({ echoed: args }),
 		},
 	},
-} as unknown as CorsairPlugin; // a test literal: the plugin's full generics aren't needed
+} as unknown as CorsairPlugin;
 
 async function readJson<T>(res: Response): Promise<T> {
 	return (await res.json()) as T;
@@ -541,11 +541,8 @@ describe('call and db routes with an account', () => {
 			}),
 		);
 
-	const postWithScopes = (
-		path: string,
-		body: unknown,
-		scopes: string, // any JSON body the route accepts
-	) =>
+	// body is any JSON the route accepts.
+	const postWithScopes = (path: string, body: unknown, scopes: string) =>
 		handler(
 			new Request(`https://app.test${path}`, {
 				method: 'POST',

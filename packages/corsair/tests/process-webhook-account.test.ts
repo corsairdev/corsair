@@ -41,8 +41,8 @@ const slack = {
 		entities: { notes: z.object({ title: z.string() }) },
 	},
 	pluginWebhookMatcher: () => true,
+	// A raw webhook body, read by path.
 	pluginTenantWebhookMatcher: (request: { body: unknown }) => {
-		// a raw webhook body, read by path
 		const externalId = teamOf(request);
 		return externalId ? { linkType: 'team_id', externalId } : null;
 	},

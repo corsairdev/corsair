@@ -110,6 +110,7 @@ type AccountPlan =
 	| { kind: 'row'; id: string; unnamed: boolean }
 	| { kind: 'new' };
 
+// A rejection is unknown; only an account selection error is translated.
 const asCallbackError = (err: unknown): unknown =>
 	err instanceof AccountSelectionError
 		? new OAuthCallbackError(err.code, err.message)

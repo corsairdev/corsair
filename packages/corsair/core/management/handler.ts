@@ -552,6 +552,7 @@ function parseScopes(raw: string): ModeScope[] {
 	}
 	return parsed.map((scope): ModeScope => {
 		if (typeof scope === 'string') return requestMode(scope);
+		// Still untrusted JSON: each field is unknown until requestMode checks it.
 		const { mode, accounts } = (scope ?? {}) as {
 			mode?: unknown;
 			accounts?: unknown;

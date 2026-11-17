@@ -52,10 +52,11 @@ describe('permission mode per account', () => {
 	let env: ReturnType<typeof createTestDatabase>;
 	let corsair: CorsairTenantWrapper<readonly [CorsairPlugin]>;
 	const tenant = (account?: string) =>
+		// Plugin trees are keyed by runtime ids, and withTenant's options pass
+		// through untouched, so the client is viewed through this shape.
 		(
 			corsair as unknown as {
-				// plugin trees are keyed by runtime ids
-				withTenant(t: string, o?: unknown): Tenant; // options pass through untouched
+				withTenant(t: string, o?: unknown): Tenant;
 			}
 		).withTenant('t1', account ? { accounts: { demo: account } } : undefined)
 			.demo.api;
