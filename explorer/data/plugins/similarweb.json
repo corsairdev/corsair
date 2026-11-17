@@ -1,0 +1,367 @@
+{
+  "id": "similarweb",
+  "displayName": "Similarweb",
+  "description": "Digital rank data from Similarweb - a domain's global, country and industry rank, an app's store rank, the top-ranked sites, the category tree, and the account's capabilities and remaining data credits.",
+  "npmPackageName": "@corsair-dev/similarweb",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 9,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "similarweb.api.apps.describe",
+      "shortPath": "apps.describe",
+      "description": "Read the countries, stores, modes and devices the app rank operation accepts, which is the only way to know a valid mode",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_rank",
+            "optional": false,
+            "type": "{ countries: string[], stores: { store: string, mode: string, device: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "similarweb.api.apps.rank",
+      "shortPath": "apps.rank",
+      "description": "Read an app's store rank day by day for one country and chart, from the App Store or Google Play",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "store",
+            "optional": false,
+            "type": "Google | Apple",
+            "description": "Google for Android, Apple for iOS."
+          },
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string",
+            "description": "The store id, such as com.whatsapp or 310633997."
+          },
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string",
+            "description": "A two-letter ISO code, or world."
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string",
+            "description": "An app category, or all. Sent as all when omitted."
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "string",
+            "description": "The chart to read, such as free, paid, topselling_free or topgrossing. apps.describe lists every accepted value per store. Sent as topselling_free when omitted, which both stores accept."
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "androidphone | iphone | ipad",
+            "description": "androidphone, iphone or ipad. Sent as the store's phone (androidphone or iphone) when omitted."
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number",
+            "description": "Days back from today. Sent as 90 when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ request?: Record<string, any> | null, status?: string | null, last_updated?: string | null }"
+          },
+          {
+            "key": "ranks",
+            "optional": false,
+            "type": "{ date: string, value?: number | null }[]",
+            "description": "One entry per day, oldest first."
+          }
+        ]
+      }
+    },
+    {
+      "path": "similarweb.api.capabilities.get",
+      "shortPath": "capabilities.get",
+      "description": "Read what the subscription entitles this account to, keyed by capability name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "capabilities",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "What the account is entitled to, keyed by capability name. The keys depend on the subscription."
+          }
+        ]
+      }
+    },
+    {
+      "path": "similarweb.api.categories.list",
+      "shortPath": "categories.list",
+      "description": "Read the website category tree, with each child mapping to the Parent~Child slug the rank routes accept",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "categories",
+            "optional": false,
+            "type": "Record<string, Record<string, string>>",
+            "description": "Top-level category to its children, each child mapping to the Parent~Child slug. A top level with no children is an empty object."
+          }
+        ]
+      }
+    },
+    {
+      "path": "similarweb.api.usage.get",
+      "shortPath": "usage.get",
+      "description": "Read the data credit allowance and how many this user has left; costs no credits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "allowance",
+            "optional": true,
+            "type": "number | null",
+            "description": "Credits allocated to this user for the period."
+          },
+          {
+            "key": "user_remaining",
+            "optional": true,
+            "type": "number | null",
+            "description": "Credits this user has left."
+          },
+          {
+            "key": "used",
+            "optional": true,
+            "type": "number | null",
+            "description": "allowance minus user_remaining, when both are present."
+          }
+        ]
+      }
+    },
+    {
+      "path": "similarweb.api.websites.countryRank",
+      "shortPath": "websites.countryRank",
+      "description": "Read a domain's rank within one country month by month, for a country code the subscription includes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "The domain without 'www.' or brackets, lower case, such as cnn.com. A path or capital letters make Similarweb answer 401."
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string",
+            "description": "The first month. Omit both dates for the last 28 days."
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string",
+            "description": "The last month."
+          },
+          {
+            "key": "main_domain_only",
+            "optional": true,
+            "type": "boolean",
+            "description": "True for the main domain only, false to include subdomains. Defaults to false."
+          },
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string",
+            "description": "A two-letter ISO country code. Which countries are available depends on the subscription; capabilities.get lists them. Worldwide is not supported here; use websites.globalRank."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ request?: Record<string, any> | null, status?: string | null, last_updated?: string | null }"
+          },
+          {
+            "key": "country_rank",
+            "optional": false,
+            "type": "{ date: string, country_rank?: number | null }[]",
+            "description": "One entry per month, oldest first."
+          }
+        ]
+      }
+    },
+    {
+      "path": "similarweb.api.websites.globalRank",
+      "shortPath": "websites.globalRank",
+      "description": "Read a domain's global rank month by month, based on estimated unique visitors and page views across desktop and mobile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "The domain without 'www.' or brackets, lower case, such as cnn.com. A path or capital letters make Similarweb answer 401."
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string",
+            "description": "The first month. Omit both dates for the last 28 days."
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string",
+            "description": "The last month."
+          },
+          {
+            "key": "main_domain_only",
+            "optional": true,
+            "type": "boolean",
+            "description": "True for the main domain only, false to include subdomains. Defaults to false."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ request?: Record<string, any> | null, status?: string | null, last_updated?: string | null }"
+          },
+          {
+            "key": "global_rank",
+            "optional": false,
+            "type": "{ date: string, global_rank?: number | null }[]",
+            "description": "One entry per month, oldest first."
+          }
+        ]
+      }
+    },
+    {
+      "path": "similarweb.api.websites.industryRank",
+      "shortPath": "websites.industryRank",
+      "description": "Read a domain's industry and its rank within that industry worldwide, as the current reading rather than a series",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "The domain without 'www.' or brackets, lower case, such as cnn.com. A path or capital letters make Similarweb answer 401."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ request?: Record<string, any> | null, status?: string | null, last_updated?: string | null }"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string | null",
+            "description": "The industry path, such as E-commerce_and_Shopping/Marketplace."
+          },
+          {
+            "key": "rank",
+            "optional": true,
+            "type": "number | null",
+            "description": "The rank within that industry, worldwide."
+          }
+        ]
+      }
+    },
+    {
+      "path": "similarweb.api.websites.topSites",
+      "shortPath": "websites.topSites",
+      "description": "Read the highest-ranked domains worldwide across desktop and mobile, up to 5000 of them",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "How many sites to return, up to 5000. Defaults to 10."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ request?: Record<string, any> | null, status?: string | null, last_updated?: string | null }"
+          },
+          {
+            "key": "top_sites",
+            "optional": false,
+            "type": "{ domain: string, rank?: number | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

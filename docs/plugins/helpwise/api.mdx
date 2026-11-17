@@ -1,0 +1,1444 @@
+---
+title: "Helpwise API reference"
+sidebarTitle: "API"
+description: "API reference for the Helpwise plugin in Corsair: every `helpwise.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a new contact
+
+**Risk:** `write`
+
+```ts
+await corsair.helpwise.api.contacts.create({
+	firstname: 'Alex',
+	emails: ['alex@example.com'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `firstname` | `string` | Yes | — |
+| `lastname` | `string` | No | — |
+| `company` | `string` | No | — |
+| `jobTitle` | `string` | No | — |
+| `emails` | `string[]` | No | — |
+| `phones` | `object[]` | No | — |
+| `customFields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="phones full type">
+
+```ts
+{
+  phoneTxt: string,
+  phoneNo: string,
+  type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+  id: number,
+  value: string,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `firstname` | `string \| null` | No | — |
+| `lastname` | `string \| null` | No | — |
+| `displayName` | `string \| null` | No | — |
+| `company` | `string \| null` | No | — |
+| `jobTitle` | `string \| null` | No | — |
+| `emails` | `string[] \| null` | No | — |
+| `isBlocked` | `boolean \| null` | No | — |
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Get a contact by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.helpwise.api.contacts.get({ contactId: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `firstname` | `string \| null` | No | — |
+| `lastname` | `string \| null` | No | — |
+| `displayName` | `string \| null` | No | — |
+| `company` | `string \| null` | No | — |
+| `jobTitle` | `string \| null` | No | — |
+| `emails` | `string[] \| null` | No | — |
+| `isBlocked` | `boolean \| null` | No | — |
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List contacts with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.helpwise.api.contacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nextPage` | `string \| number \| boolean \| null` | No | — |
+| `results` | `object[] \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: number,
+  firstname?: string | null,
+  lastname?: string | null,
+  displayName?: string | null,
+  company?: string | null,
+  jobTitle?: string | null,
+  emails?: string[] | null,
+  isBlocked?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`contacts.search`
+
+Search contacts by term
+
+**Risk:** `read`
+
+```ts
+await corsair.helpwise.api.contacts.search({ term: 'Alex' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `term` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nextPage` | `string \| number \| boolean \| null` | No | — |
+| `result` | `object[] \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: number,
+  firstname?: string | null,
+  lastname?: string | null,
+  displayName?: string | null,
+  company?: string | null,
+  jobTitle?: string | null,
+  emails?: string[] | null,
+  isBlocked?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  id: number,
+  firstname?: string | null,
+  lastname?: string | null,
+  displayName?: string | null,
+  company?: string | null,
+  jobTitle?: string | null,
+  emails?: string[] | null,
+  isBlocked?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update an existing contact by ID
+
+**Risk:** `write`
+
+```ts
+await corsair.helpwise.api.contacts.update({ contactId: 50, firstname: 'Alex' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `number` | Yes | — |
+| `firstname` | `string` | No | — |
+| `lastname` | `string` | No | — |
+| `company` | `string` | No | — |
+| `jobTitle` | `string` | No | — |
+| `emails` | `string[]` | No | — |
+| `phones` | `object[]` | No | — |
+| `customFields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="phones full type">
+
+```ts
+{
+  phoneTxt: string,
+  phoneNo: string,
+  type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+  id: number,
+  value: string,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `firstname` | `string \| null` | No | — |
+| `lastname` | `string \| null` | No | — |
+| `displayName` | `string \| null` | No | — |
+| `company` | `string \| null` | No | — |
+| `jobTitle` | `string \| null` | No | — |
+| `emails` | `string[] \| null` | No | — |
+| `isBlocked` | `boolean \| null` | No | — |
+
+
+
+---
+
+## Conversations
+
+### assign
+
+`conversations.assign`
+
+Assign conversation to a user
+
+**Risk:** `write`
+
+```ts
+await corsair.helpwise.api.conversations.assign({ mailbox_id: 10, thread_id: 101, assigned_to: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailbox_id` | `number` | Yes | — |
+| `thread_id` | `number` | Yes | — |
+| `assigned_to` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### close
+
+`conversations.close`
+
+Close conversations by ID
+
+**Risk:** `write`
+
+```ts
+await corsair.helpwise.api.conversations.close({
+	ids: [101],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `number[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`conversations.delete`
+
+Permanently delete conversations
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpwise.api.conversations.delete({
+	ids: [101],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `number[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`conversations.get`
+
+Get a conversation by inbox and conversation ID
+
+**Risk:** `read`
+
+```ts
+await corsair.helpwise.api.conversations.get({ inboxId: 10, conversationId: 101 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inboxId` | `number` | Yes | — |
+| `conversationId` | `number` | Yes | — |
+| `labelId` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `inboxId` | `number` | No | — |
+| `messagesCount` | `number` | No | — |
+| `subject` | `string \| null` | No | — |
+| `snippet` | `string \| null` | No | — |
+| `inboxType` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`conversations.list`
+
+List conversations with filters and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.helpwise.api.conversations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inboxIds` | `number[]` | No | — |
+| `labelId` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nextPageToken` | `string` | No | — |
+| `threads` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="threads full type">
+
+```ts
+{
+  id: number,
+  messageCount?: number,
+  inboxType?: string,
+  subject?: string | null,
+  snippet?: string | null,
+  inboxId?: number,
+  isRead?: boolean,
+  isArchived?: boolean,
+  isDeleted?: boolean,
+  isSpam?: boolean,
+  date?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### moveToInbox
+
+`conversations.moveToInbox`
+
+Move conversations back to inbox
+
+**Risk:** `write`
+
+```ts
+await corsair.helpwise.api.conversations.moveToInbox({
+	ids: [101],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `number[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### spam
+
+`conversations.spam`
+
+Mark conversations as spam
+
+**Risk:** `write`
+
+```ts
+await corsair.helpwise.api.conversations.spam({
+	ids: [101],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `number[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### trash
+
+`conversations.trash`
+
+Move conversations to trash
+
+**Risk:** `write`
+
+```ts
+await corsair.helpwise.api.conversations.trash({
+	ids: [101],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `number[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+## Custom Fields
+
+### create
+
+`customFields.create`
+
+Create a new custom field
+
+**Risk:** `write`
+
+```ts
+await corsair.helpwise.api.customFields.create({ name: 'VIP Tier', description: 'Customer VIP level' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | No | — |
+| `message` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`customFields.delete`
+
+Delete a custom field by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpwise.api.customFields.delete({ fieldId: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fieldId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`customFields.get`
+
+Get custom field details by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.helpwise.api.customFields.get({ fieldId: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fieldId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, any>` | No | — |
+| `message` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`customFields.list`
+
+List all custom fields
+
+**Risk:** `read`
+
+```ts
+await corsair.helpwise.api.customFields.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, any>[]` | No | — |
+| `message` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### listByInbox
+
+`customFields.listByInbox`
+
+List custom fields enabled for an inbox
+
+**Risk:** `read`
+
+```ts
+await corsair.helpwise.api.customFields.listByInbox({ inboxId: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inboxId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, any>[]` | No | — |
+| `message` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`customFields.update`
+
+Update a custom field by ID
+
+**Risk:** `write`
+
+```ts
+await corsair.helpwise.api.customFields.update({ fieldId: 12, name: 'VIP Tier Updated' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fieldId` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | No | — |
+| `message` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### updateByInbox
+
+`customFields.updateByInbox`
+
+Update inbox custom field visibility
+
+**Risk:** `write`
+
+```ts
+await corsair.helpwise.api.customFields.updateByInbox({
+	inboxId: 10,
+	hideIds: [12],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inboxId` | `number` | Yes | — |
+| `hideIds` | `number[]` | No | — |
+| `unHideIds` | `number[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | No | — |
+| `message` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+## Inboxes
+
+### get
+
+`inboxes.get`
+
+Get mailbox details by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.helpwise.api.inboxes.get({ id: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `mailbox` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### list
+
+`inboxes.list`
+
+List shared mailboxes and inboxes
+
+**Risk:** `read`
+
+```ts
+await corsair.helpwise.api.inboxes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| string` | No | — |
+| `limit` | `number \| string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `Record<string, any>[] \| null` | No | — |
+| `mailboxes` | `Record<string, any>[]` | No | — |
+
+
+
+---
+
+## Messages
+
+### listEmails
+
+`messages.listEmails`
+
+List emails in a conversation thread
+
+**Risk:** `read`
+
+```ts
+await corsair.helpwise.api.messages.listEmails({ mailboxId: 10, threadId: 101 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailboxId` | `number` | Yes | — |
+| `threadId` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `Record<string, any>[]` | No | — |
+
+
+
+---
+
+### sendChat
+
+`messages.sendChat`
+
+Send a live chat message in a thread
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpwise.api.messages.sendChat({ mailbox_id: 10, thread_id: 101, message: 'How may I assist you today?' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailbox_id` | `number` | Yes | — |
+| `thread_id` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### sendEmail
+
+`messages.sendEmail`
+
+Send an email message through a Helpwise mailbox
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpwise.api.messages.sendEmail({
+	mailbox_id: 10,
+	to: 'customer@example.com',
+	subject: 'Support follow-up',
+	body: '<p>Hello from support</p>',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailbox_id` | `number` | Yes | — |
+| `to` | `string` | Yes | — |
+| `cc` | `string` | No | — |
+| `bcc` | `string` | No | — |
+| `subject` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+| `reply_to` | `string` | No | — |
+| `thread_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `message` | `string` | No | — |
+| `thread_id` | `number` | No | — |
+| `message_id` | `number` | No | — |
+
+
+
+---
+
+### sendSms
+
+`messages.sendSms`
+
+Send an SMS message
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpwise.api.messages.sendSms({ inboxId: 10, clientNumber: '+15551234567', body: 'Your ticket has been updated' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inboxId` | `number` | Yes | — |
+| `clientNumber` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+| `hash` | `string` | No | — |
+| `scheduleTime` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `message` | `string` | No | — |
+| `data` | `any` | No | — |
+
+
+
+---
+
+### sendWhatsApp
+
+`messages.sendWhatsApp`
+
+Send a WhatsApp message
+
+**Risk:** `destructive`
+
+```ts
+await corsair.helpwise.api.messages.sendWhatsApp({ inboxId: 10, clientNumber: '+15551234567', body: 'Your ticket has been updated' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inboxId` | `number` | Yes | — |
+| `clientNumber` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+| `template` | `object` | No | — |
+| `hash` | `string` | No | — |
+| `scheduleTime` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="template full type">
+
+```ts
+{
+  templateId: number,
+  templateVariables?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `message` | `string` | No | — |
+| `data` | `any` | No | — |
+
+
+
+---
+
+## Notes
+
+### create
+
+`notes.create`
+
+Add an internal note to a conversation thread
+
+**Risk:** `write`
+
+```ts
+await corsair.helpwise.api.notes.create({ mailbox_id: 10, thread_id: 101, message: 'Internal review completed' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailbox_id` | `number` | Yes | — |
+| `thread_id` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `message` | `string` | No | — |
+| `note_id` | `number` | No | — |
+
+
+
+---
+
+## Reports
+
+### getOverall
+
+`reports.getOverall`
+
+Get overall account analytics report
+
+**Risk:** `read`
+
+```ts
+await corsair.helpwise.api.reports.getOverall({ start: '2025-01-01', end: '2025-01-31' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | `string` | Yes | — |
+| `end` | `string` | Yes | — |
+| `inboxId` | `number` | No | — |
+| `tagId` | `number[]` | No | — |
+| `isBusinessHours` | `number` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### getTags
+
+`reports.getTags`
+
+Get tag analytics report for an inbox
+
+**Risk:** `read`
+
+```ts
+await corsair.helpwise.api.reports.getTags({ inboxId: 10, start: '2025-01-01', end: '2025-01-31' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inboxId` | `number` | Yes | — |
+| `start` | `string` | Yes | — |
+| `end` | `string` | Yes | — |
+| `tagId` | `number[]` | No | — |
+| `isBusinessHours` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tagReportsOutput` | `Record<string, any>[]` | No | — |
+| `mailboxId` | `number` | No | — |
+| `totalTagReportsOutput` | `number` | No | — |
+| `isBusinessHours` | `string \| number` | No | — |
+
+
+
+---
+
+## Tags
+
+### apply
+
+`tags.apply`
+
+Apply tags to conversations
+
+**Risk:** `write`
+
+```ts
+await corsair.helpwise.api.tags.apply({
+	threadIds: [101],
+	tagIds: [5],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `threadIds` | `number[]` | Yes | — |
+| `tagIds` | `number[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`tags.get`
+
+Get tag details by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.helpwise.api.tags.get({ tagId: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tagId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `color` | `string` | No | — |
+| `parentId` | `number \| null` | No | — |
+| `hierarchy` | `string \| null` | No | — |
+| `inbox` | `string \| null` | No | — |
+| `createdAt` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`tags.list`
+
+List all tags
+
+**Risk:** `read`
+
+```ts
+await corsair.helpwise.api.tags.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[] \| null`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  color?: string,
+  parentId?: number | null,
+  hierarchy?: string | null,
+  inbox?: string | null,
+  createdAt?: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### remove
+
+`tags.remove`
+
+Remove tags from conversations
+
+**Risk:** `write`
+
+```ts
+await corsair.helpwise.api.tags.remove({
+	threadIds: [101],
+	tagIds: [5],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `threadIds` | `number[]` | Yes | — |
+| `tagIds` | `number[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+## Users
+
+### getMe
+
+`users.getMe`
+
+Get current authenticated user profile
+
+**Risk:** `read`
+
+```ts
+await corsair.helpwise.api.users.getMe({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### list
+
+`users.list`
+
+List users in account or mailbox
+
+**Risk:** `read`
+
+```ts
+await corsair.helpwise.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailbox_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `Record<string, any>[] \| object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+Record<string, any>[] | {
+  users: Record<string, any>[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Whatsapp
+
+### listTemplates
+
+`whatsapp.listTemplates`
+
+List WhatsApp message templates
+
+**Risk:** `read`
+
+```ts
+await corsair.helpwise.api.whatsapp.listTemplates({ mailbox_id: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailbox_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `templates` | `Record<string, any>[]` | No | — |
+
+
+
+---
+
