@@ -1,6 +1,6 @@
 import { createCorsair } from 'corsair';
 import type { CorsairEndpoint } from 'corsair/core';
-import { asRecord } from 'corsair/core';
+import { AuthMissingError, asRecord } from 'corsair/core';
 import type { NeutrinoPluginOptions } from './index';
 import { neutrino, neutrinoEndpointsNested } from './index';
 import {
@@ -29,9 +29,10 @@ const API_KEY = 'test-api-key';
 
 function makeContext() {
 	return {
-		key: API_KEY,
+		// The key builder hands endpoints the pair already combined.
+		key: `${USER_ID}:${API_KEY}`,
 		authType: 'api_key' as const,
-		options: { userId: USER_ID } as NeutrinoPluginOptions,
+		options: {} as NeutrinoPluginOptions,
 		tenantId: 'default',
 		log: async () => undefined,
 		db: {},
@@ -98,24 +99,22 @@ describe('credential transport', () => {
 		expect(headers.get('authorization')).toBeNull();
 	});
 
-	it('falls back to the stored user id when no option is set', async () => {
-		const original = globalThis.fetch;
-		let header: string | null = null;
-		globalThis.fetch = (async (_url: string, options: RequestInit) => {
-			header = new Headers(options.headers).get('api-key');
-			return new Response(JSON.stringify(ipInfo), {
-				status: 200,
-				headers: { 'Content-Type': 'application/json' },
-			});
-		}) as typeof fetch;
-
+	it('sets a longer timeout on email verify than on a plain lookup', async () => {
+		// Core aborts after config.TIMEOUT; an SMTP probe can take 60 s.
+		const timeouts: number[] = [];
+		const original = AbortSignal.timeout;
+		AbortSignal.timeout = (ms: number) => {
+			timeouts.push(ms);
+			return original.call(AbortSignal, ms);
+		};
 		try {
-			const ctx = { ...makeContext(), options: {} as NeutrinoPluginOptions };
-			await endpoints.ip.info(ctx as never, { ip: '1.1.1.1' });
-			expect(header).toBe(`${USER_ID}:${API_KEY}`);
+			await capture(endpoints.email.verify, { email: 'a@b.com' }, emailVerify);
+			await capture(endpoints.ip.info, { ip: '1.1.1.1' }, ipInfo);
 		} finally {
-			globalThis.fetch = original;
+			AbortSignal.timeout = original;
 		}
+		expect(timeouts[0]).toBeGreaterThanOrEqual(60_000);
+		expect(timeouts[1]).toBe(20_000);
 	});
 });
 
@@ -397,13 +396,95 @@ describe('messaging.smsVerify', () => {
 		expect(asRecord(result)?.['security-code']).toBe('482913');
 	});
 
-	it('rejects a code length outside the documented range', async () => {
+	it('accepts code lengths up to 12 and rejects 13', async () => {
+		const { url } = await capture(
+			endpoints.messaging.smsVerify,
+			{ number: '+61412345678', codeLength: 12 },
+			smsVerify,
+		);
+		expect(new URL(url).searchParams.get('code-length')).toBe('12');
 		await expect(
 			endpoints.messaging.smsVerify(makeContext() as never, {
 				number: '+61412345678',
-				codeLength: 12,
+				codeLength: 13,
 			}),
 		).rejects.toThrow();
+	});
+});
+
+describe('messaging.phoneVerify and verifySecurityCode', () => {
+	it('calls the number with the code settings', async () => {
+		const { result, url } = await capture(
+			endpoints.messaging.phoneVerify,
+			{ number: '+61412345678', codeLength: 6, playbackDelay: 500 },
+			{ 'number-valid': true, calling: true, 'security-code': '123456' },
+		);
+		const parsed = new URL(url);
+		expect(parsed.pathname).toBe('/phone-verify');
+		expect(parsed.searchParams.get('code-length')).toBe('6');
+		expect(parsed.searchParams.get('playback-delay')).toBe('500');
+		expect(asRecord(result)?.calling).toBe(true);
+	});
+
+	it('checks a code by its hyphenated parameter names', async () => {
+		const { result, url } = await capture(
+			endpoints.messaging.verifySecurityCode,
+			{ securityCode: '123456', limitBy: 'user-42' },
+			{ verified: false },
+		);
+		const parsed = new URL(url);
+		expect(parsed.pathname).toBe('/verify-security-code');
+		expect(parsed.searchParams.get('security-code')).toBe('123456');
+		expect(parsed.searchParams.get('limit-by')).toBe('user-42');
+		expect(asRecord(result)?.verified).toBe(false);
+	});
+});
+
+describe('form-body operations', () => {
+	it('posts bad-word-filter content as a urlencoded form', async () => {
+		const { result, url, init } = await capture(
+			endpoints.text.badWordFilter,
+			{ content: 'some text', censorCharacter: '*' },
+			{
+				'bad-words-list': [],
+				'bad-words-total': 0,
+				'censored-content': 'some text',
+				'is-bad': false,
+			},
+		);
+		expect(new URL(url).pathname).toBe('/bad-word-filter');
+		expect(init.method).toBe('POST');
+		const body = new URLSearchParams(String(init.body));
+		expect(body.get('content')).toBe('some text');
+		expect(body.get('censor-character')).toBe('*');
+		// An unset field is left out, not sent as "undefined".
+		expect(body.has('catalog')).toBe(false);
+		expect(asRecord(result)?.['is-bad']).toBe(false);
+	});
+
+	it('posts browser-bot statements joined by new lines', async () => {
+		const { url, init } = await capture(
+			endpoints.web.browserBot,
+			{
+				url: 'https://example.com',
+				selector: 'h1',
+				exec: ['document.title', '1 + 1'],
+			},
+			{
+				url: 'https://example.com',
+				title: 'Example Domain',
+				'is-error': false,
+				'http-status-code': 200,
+				elements: [{ tag: 'h1', text: 'Example Domain' }],
+				'exec-results': [{ statement: 'document.title', result: 'Example' }],
+			},
+		);
+		expect(new URL(url).pathname).toBe('/browser-bot');
+		const body = new URLSearchParams(String(init.body));
+		expect(body.get('url')).toBe('https://example.com');
+		expect(body.get('selector')).toBe('h1');
+		expect(body.get('exec')).toBe('document.title\n1 + 1');
+		expect(body.has('user-agent')).toBe(false);
 	});
 });
 
@@ -459,7 +540,7 @@ describe('neutrino plugin definition', () => {
 		});
 	});
 
-	it('exposes exactly the 16 catalog operations', () => {
+	it('exposes exactly the 20 catalog operations', () => {
 		const nested = Object.entries(neutrinoEndpointsNested).flatMap(
 			([group, fns]) => Object.keys(fns).map((name) => `${group}.${name}`),
 		);
@@ -473,9 +554,13 @@ describe('neutrino plugin definition', () => {
 			'ip.blocklist',
 			'ip.info',
 			'ip.probe',
+			'messaging.phoneVerify',
 			'messaging.smsVerify',
+			'messaging.verifySecurityCode',
 			'phone.hlrLookup',
 			'phone.validate',
+			'text.badWordFilter',
+			'web.browserBot',
 			'web.domainLookup',
 			'web.hostReputation',
 			'web.uaLookup',
@@ -483,44 +568,65 @@ describe('neutrino plugin definition', () => {
 		]);
 	});
 
-	it('marks only the SMS send as destructive', () => {
+	it('marks the SMS and call sends destructive and browser-bot write', () => {
 		const meta = neutrino().endpointMeta ?? {};
+		const notRead: Record<string, string> = {
+			// Both reach a real person and spend credits (R8).
+			'messaging.smsVerify': 'destructive',
+			'messaging.phoneVerify': 'destructive',
+			// `exec` can click or submit on a third-party page.
+			'web.browserBot': 'write',
+		};
 		for (const [name, entry] of Object.entries(meta)) {
-			// The SMS send spends a credit and sends a real message, so R8
-			// requires the approval a destructive call gets. Every other route
-			// only reads.
-			const expected = name === 'messaging.smsVerify' ? 'destructive' : 'read';
-			expect({ name, risk: entry.riskLevel }).toEqual({
+			const expected = notRead[name] ?? 'read';
+			expect({ name, risk: entry?.riskLevel }).toEqual({
 				name,
 				risk: expected,
 			});
 		}
 		expect(meta['messaging.smsVerify']?.irreversible).toBe(true);
+		expect(meta['messaging.phoneVerify']?.irreversible).toBe(true);
 	});
 
-	it('builds a key from the option, then the stored key, then throws', async () => {
-		const plugin = neutrino();
+	it('combines the stored user id and key into one value', async () => {
+		const keys = {
+			get_api_key: () => Promise.resolve('stored-key'),
+			get_user_id: () => Promise.resolve('stored-user'),
+		};
 		await expect(
-			plugin.keyBuilder?.(
-				{
-					authType: 'api_key',
-					options: {},
-					keys: { get_api_key: () => Promise.resolve('stored') },
-				} as never,
+			neutrino().keyBuilder?.(
+				{ authType: 'api_key', options: {}, keys } as never,
 				'endpoint',
 			),
-		).resolves.toBe('stored');
+		).resolves.toBe('stored-user:stored-key');
 
+		// Options win over the stored values, as for every plugin's `key`.
 		await expect(
-			plugin.keyBuilder?.(
-				{
-					authType: 'api_key',
-					options: {},
-					keys: { get_api_key: () => Promise.resolve(undefined) },
-				} as never,
+			neutrino({ key: 'opt-key', userId: 'opt-user' }).keyBuilder?.(
+				{ authType: 'api_key', options: {}, keys } as never,
 				'endpoint',
 			),
-		).rejects.toThrow();
+		).resolves.toBe('opt-user:opt-key');
+	});
+
+	it('throws AuthMissingError when either half is missing', async () => {
+		for (const keys of [
+			{
+				get_api_key: () => Promise.resolve(undefined),
+				get_user_id: () => Promise.resolve('u'),
+			},
+			{
+				get_api_key: () => Promise.resolve('k'),
+				get_user_id: () => Promise.resolve(undefined),
+			},
+		]) {
+			await expect(
+				neutrino().keyBuilder?.(
+					{ authType: 'api_key', options: {}, keys } as never,
+					'endpoint',
+				),
+			).rejects.toBeInstanceOf(AuthMissingError);
+		}
 	});
 
 	it('is creatable through createCorsair', () => {

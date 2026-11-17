@@ -27,9 +27,13 @@ const NEUTRINO_RATE_LIMIT_CONFIG: RateLimitConfig = {
  * Neutrino takes two credentials on every call: the account's `user-id` and one
  * of its API keys. Its own docs allow combining them in one `API-Key` header as
  * `user-id:api-key`, which is what this plugin sends, so neither credential
- * lands in a query string that a proxy would log.
+ * lands in a query string that a proxy would log. The key builder returns the
+ * pair already combined, so this is `ctx.key` as it arrives.
  */
-export type NeutrinoCredentials = { userId: string; apiKey: string };
+export type NeutrinoCredentials = string;
+
+/** Core's request timeout when an operation sets none. */
+const DEFAULT_TIMEOUT_MS = 20_000;
 
 /** The code Neutrino sends when the credentials are wrong or missing. */
 const ACCESS_DENIED = 43;
@@ -141,22 +145,39 @@ export type NeutrinoRequest = {
 	query?: NeutrinoQuery;
 	/** A urlencoded body, which is the form Neutrino documents for POST. */
 	form?: Record<string, string | number | boolean | undefined>;
+	/**
+	 * Core aborts a request after 20 s. Email Verify (an SMTP probe) and the
+	 * methods that load a page can take up to a minute, so they set more.
+	 */
+	timeoutMs?: number;
 };
+
+/** Urlencodes a form, dropping unset fields rather than sending "undefined". */
+function encodeForm(
+	form: Record<string, string | number | boolean | undefined>,
+): string {
+	const params = new URLSearchParams();
+	for (const [name, value] of Object.entries(form)) {
+		if (value !== undefined) params.append(name, String(value));
+	}
+	return params.toString();
+}
 
 // unknown: callers parse the body with the endpoint's zod output schema. Several
 // Neutrino methods answer a file rather than JSON, so a caller checks first.
 export async function makeNeutrinoRequest(
 	credentials: NeutrinoCredentials,
-	{ method, path, query, form }: NeutrinoRequest,
+	{ method, path, query, form, timeoutMs }: NeutrinoRequest,
 ): Promise<unknown> {
 	const config: OpenAPIConfig = {
 		BASE: NEUTRINO_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
+		TIMEOUT: timeoutMs ?? DEFAULT_TIMEOUT_MS,
 		HEADERS: {
 			Accept: 'application/json',
-			'API-Key': `${credentials.userId}:${credentials.apiKey}`,
+			'API-Key': credentials,
 		},
 	};
 
@@ -166,9 +187,7 @@ export async function makeNeutrinoRequest(
 		query,
 		// Neutrino takes POST parameters urlencoded, and `corsair/http` passes a
 		// string body through with whatever media type it is given.
-		body: form
-			? new URLSearchParams(form as Record<string, string>).toString()
-			: undefined,
+		body: form ? encodeForm(form) : undefined,
 		mediaType: form ? 'application/x-www-form-urlencoded' : undefined,
 	};
 

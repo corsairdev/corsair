@@ -6,13 +6,6 @@ import { makeNeutrinoRequest } from '../client';
 
 type LogFields = Record<string, string | number | boolean | undefined>;
 
-/** Resolves the account-level `user_id`, the username half of the credential. */
-async function resolveUserId(ctx: NeutrinoContext): Promise<string> {
-	if (ctx.options?.userId) return ctx.options.userId;
-	const stored = await ctx.keys?.get_user_id?.();
-	return stored ?? '';
-}
-
 /**
  * Validates the input, sends the request, shapes and validates the response,
  * then logs the event. Inputs are not logged whole: they can hold email
@@ -32,11 +25,8 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
-	const userId = await resolveUserId(ctx);
-	const raw = await makeNeutrinoRequest(
-		{ userId, apiKey: ctx.key },
-		toRequest(parsed),
-	);
+	// ctx.key is the `user-id:api-key` pair the key builder combined.
+	const raw = await makeNeutrinoRequest(ctx.key, toRequest(parsed));
 	const result = operation.output.parse(
 		options.shape ? options.shape(raw, parsed) : raw,
 	);

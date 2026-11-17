@@ -12,7 +12,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Email, Geocode, Ip, Messaging, Phone, Web } from './endpoints';
+import { Email, Geocode, Ip, Messaging, Phone, Text, Web } from './endpoints';
 import type {
 	NeutrinoEndpointInputs,
 	NeutrinoEndpointOutputs,
@@ -45,8 +45,10 @@ export type NeutrinoContext = CorsairPluginContext<
 	typeof neutrinoAuthConfig
 >;
 
-export type NeutrinoKeyBuilderContext =
-	KeyBuilderContext<NeutrinoPluginOptions>;
+export type NeutrinoKeyBuilderContext = KeyBuilderContext<
+	NeutrinoPluginOptions,
+	typeof neutrinoAuthConfig
+>;
 
 export type NeutrinoBoundEndpoints = BindEndpoints<
 	typeof neutrinoEndpointsNested
@@ -76,6 +78,10 @@ export type NeutrinoEndpoints = {
 	binLookup: NeutrinoEndpoint<'binLookup'>;
 	convert: NeutrinoEndpoint<'convert'>;
 	smsVerify: NeutrinoEndpoint<'smsVerify'>;
+	verifySecurityCode: NeutrinoEndpoint<'verifySecurityCode'>;
+	phoneVerify: NeutrinoEndpoint<'phoneVerify'>;
+	badWordFilter: NeutrinoEndpoint<'badWordFilter'>;
+	browserBot: NeutrinoEndpoint<'browserBot'>;
 };
 
 export const neutrinoEndpointsNested = {
@@ -97,6 +103,10 @@ export const neutrinoEndpointsNested = {
 		domainLookup: Web.domainLookup,
 		hostReputation: Web.hostReputation,
 		urlInfo: Web.urlInfo,
+		browserBot: Web.browserBot,
+	},
+	text: {
+		badWordFilter: Text.badWordFilter,
 	},
 	geocode: {
 		address: Geocode.address,
@@ -108,6 +118,8 @@ export const neutrinoEndpointsNested = {
 	},
 	messaging: {
 		smsVerify: Messaging.smsVerify,
+		phoneVerify: Messaging.phoneVerify,
+		verifySecurityCode: Messaging.verifySecurityCode,
 	},
 } as const;
 
@@ -175,6 +187,22 @@ export const neutrinoEndpointSchemas = {
 	'messaging.smsVerify': {
 		input: NeutrinoEndpointInputSchemas.smsVerify,
 		output: NeutrinoEndpointOutputSchemas.smsVerify,
+	},
+	'messaging.phoneVerify': {
+		input: NeutrinoEndpointInputSchemas.phoneVerify,
+		output: NeutrinoEndpointOutputSchemas.phoneVerify,
+	},
+	'messaging.verifySecurityCode': {
+		input: NeutrinoEndpointInputSchemas.verifySecurityCode,
+		output: NeutrinoEndpointOutputSchemas.verifySecurityCode,
+	},
+	'text.badWordFilter': {
+		input: NeutrinoEndpointInputSchemas.badWordFilter,
+		output: NeutrinoEndpointOutputSchemas.badWordFilter,
+	},
+	'web.browserBot': {
+		input: NeutrinoEndpointInputSchemas.browserBot,
+		output: NeutrinoEndpointOutputSchemas.browserBot,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof neutrinoEndpointsNested
@@ -275,7 +303,31 @@ const neutrinoEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Generate a security code and text it to a number, which sends a real SMS and costs a credit; compare it with verifySecurityCode',
+			'Generate a security code and text it to a number, which sends a real SMS and costs a credit; check the code the person types with verifySecurityCode',
+	},
+	'messaging.phoneVerify': {
+		// Places a real phone call and spends credits (R8).
+		riskLevel: 'destructive',
+		irreversible: true,
+		description:
+			'Call a number and read out a generated security code, which reaches a real person and costs credits; check the code with verifySecurityCode',
+	},
+	'messaging.verifySecurityCode': {
+		riskLevel: 'read',
+		description:
+			'Check a code a person typed against the codes smsVerify and phoneVerify sent, optionally capping failed attempts per user',
+	},
+	'text.badWordFilter': {
+		riskLevel: 'read',
+		description:
+			'Scan text or a page for profanity and return the words found and a censored copy',
+	},
+	'web.browserBot': {
+		// Fetching a page is a read, but `exec` runs JavaScript on a third-party
+		// site (clicks, form submits), which can change things there.
+		riskLevel: 'write',
+		description:
+			'Load a page in a real browser, optionally run JavaScript on it (click, fill, submit), and return the rendered content and selected elements',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof neutrinoEndpointsNested>;
 
@@ -285,7 +337,8 @@ export type BaseNeutrinoPlugin<T extends NeutrinoPluginOptions> = CorsairPlugin<
 	typeof neutrinoEndpointsNested,
 	{},
 	T,
-	typeof defaultAuthType
+	typeof defaultAuthType,
+	typeof neutrinoAuthConfig
 >;
 
 export type InternalNeutrinoPlugin = BaseNeutrinoPlugin<NeutrinoPluginOptions>;
@@ -312,17 +365,23 @@ export function neutrino<const T extends NeutrinoPluginOptions>(
 		endpointSchemas: neutrinoEndpointSchemas,
 		pluginWebhookMatcher: () => false,
 		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
+		// Neutrino needs the user id and the key together, so the key builder
+		// returns them as the one `user-id:api-key` value the API-Key header
+		// takes. Endpoints never read either half from options.
 		keyBuilder: async (ctx: NeutrinoKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key) {
-				return options.key;
+			if (source !== 'endpoint') {
+				throw new AuthMissingError('neutrino', ctx.authType ?? 'api_key');
 			}
-
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				if (res) return res;
+			const apiKey =
+				options.key ??
+				(ctx.authType === 'api_key' ? await ctx.keys.get_api_key() : null);
+			const userId =
+				options.userId ??
+				(ctx.authType === 'api_key' ? await ctx.keys.get_user_id() : null);
+			if (!apiKey || !userId) {
+				throw new AuthMissingError('neutrino', ctx.authType ?? 'api_key');
 			}
-
-			throw new AuthMissingError('neutrino', ctx.authType ?? 'api_key');
+			return `${userId}:${apiKey}`;
 		},
 	} satisfies InternalNeutrinoPlugin;
 }
@@ -330,8 +389,12 @@ export function neutrino<const T extends NeutrinoPluginOptions>(
 export { NeutrinoAPIError } from './client';
 
 export type {
+	BadWordFilterInput,
+	BadWordFilterResponse,
 	BinLookupInput,
 	BinLookupResponse,
+	BrowserBotInput,
+	BrowserBotResponse,
 	ConvertInput,
 	ConvertResponse,
 	DomainLookupInput,
@@ -356,10 +419,14 @@ export type {
 	NeutrinoEndpointOutputs,
 	PhoneInput,
 	PhoneValidateResponse,
+	PhoneVerifyInput,
+	PhoneVerifyResponse,
 	SmsVerifyInput,
 	SmsVerifyResponse,
 	UaLookupInput,
 	UaLookupResponse,
 	UrlInfoInput,
 	UrlInfoResponse,
+	VerifySecurityCodeInput,
+	VerifySecurityCodeResponse,
 } from './endpoints/types';

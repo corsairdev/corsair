@@ -44,8 +44,8 @@ export const domainLookup: NeutrinoEndpoints['domainLookup'] = (ctx, input) =>
 			query: { host },
 		}),
 		{
-			log: ({ host }, result) => ({
-				host,
+			// The host can be a customer's domain, so it is not logged.
+			log: (_, result) => ({
 				valid: result.valid ?? undefined,
 				malicious: result['is-malicious'] ?? undefined,
 			}),
@@ -74,8 +74,8 @@ export const hostReputation: NeutrinoEndpoints['hostReputation'] = (
 			query: { host },
 		}),
 		{
-			log: ({ host }, result) => ({
-				host,
+			// The host can be a customer's IP address, so it is not logged.
+			log: (_, result) => ({
 				listed: result['is-listed'] ?? undefined,
 				lists: result['list-count'] ?? undefined,
 			}),
@@ -99,12 +99,63 @@ export const urlInfo: NeutrinoEndpoints['urlInfo'] = (ctx, input) =>
 			method: 'GET',
 			path: '/url-info',
 			query: { url, 'fetch-content': fetchContent },
+			// Neutrino loads the page itself, which can take its full 60 s.
+			timeoutMs: 75_000,
 		}),
 		{
 			log: (_, result) => ({
 				status: result['http-status-message'] ?? undefined,
 				ok: result['http-ok'] ?? undefined,
 				loadTime: result['load-time'] ?? undefined,
+			}),
+		},
+	);
+
+/**
+ * Loads a page in a real browser on Neutrino's side, runs any JavaScript given
+ * in `exec` (clicks, form fills) and returns the rendered content and the
+ * elements a selector matched. The parameters go in a form body, which is how
+ * Neutrino documents this method.
+ */
+export const browserBot: NeutrinoEndpoints['browserBot'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'web.browserBot',
+			input: Inputs.browserBot,
+			output: Outputs.browserBot,
+		},
+		input,
+		({
+			url,
+			timeout,
+			delay,
+			selector,
+			exec,
+			userAgent,
+			ignoreCertificateErrors,
+		}) => ({
+			method: 'POST',
+			path: '/browser-bot',
+			form: {
+				url,
+				timeout,
+				delay,
+				selector,
+				// Neutrino reads `exec` as one string of statements separated by
+				// semicolons or new lines.
+				exec: exec?.join('\n'),
+				'user-agent': userAgent,
+				'ignore-certificate-errors': ignoreCertificateErrors,
+			},
+			// The page timeout plus the delay, plus margin for Neutrino's own work.
+			timeoutMs: ((timeout ?? 30) + (delay ?? 0) + 20) * 1000,
+		}),
+		{
+			log: (_, result) => ({
+				status: result['http-status-code'] ?? undefined,
+				error: result['is-error'] ?? undefined,
+				elements: result.elements?.length ?? undefined,
 			}),
 		},
 	);

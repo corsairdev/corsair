@@ -130,13 +130,13 @@ export const uaLookup = {
 	type: 'browser',
 	name: 'Chrome',
 	version: '130.0',
-	'version-major': 130,
+	'version-major': '130',
 	'browser-engine': 'Blink',
 	'browser-release': '130',
 	os: 'macOS',
 	'os-family': 'macOS',
 	'os-version': '10.15.7',
-	'os-version-major': 10,
+	'os-version-major': '10',
 	'is-mobile': false,
 	'is-webview': false,
 	'device-brand': 'Apple',
@@ -147,7 +147,7 @@ export const domainLookup = {
 	valid: true,
 	fqdn: 'neutrinoapi.com',
 	tld: 'com',
-	'tld-cc': false,
+	'tld-cc': '',
 	'is-subdomain': false,
 	'is-malicious': false,
 	'is-gov': false,
@@ -194,7 +194,7 @@ export const urlInfo = {
 };
 
 export const geocodeAddress = {
-	found: true,
+	found: 1,
 	locations: [
 		{
 			country: 'New Zealand',

@@ -26,10 +26,11 @@ function pathOf(error: Error): string {
 }
 
 /**
- * A plain GET normally replays safely on a 5xx, but messaging.smsVerify is a GET
- * that sends a real SMS, so a 5xx could mean the message already went out.
+ * A lookup replays safely on a 5xx. These do not: the SMS and the call may
+ * already have reached the person, and browser-bot may already have run the
+ * caller's JavaScript (a click or a form submit) on the page.
  */
-const SENDS_MESSAGE_PATH = '/sms-verify';
+const NO_REPLAY_PATHS = ['/sms-verify', '/phone-verify', '/browser-bot'];
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
@@ -60,11 +61,10 @@ export const errorHandlers = {
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// Every wrapped route is a GET, so a 5xx replays safely except on the one
-	// route that sends a message.
+	// A 5xx replays safely except on the routes above.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			!pathOf(error).endsWith(SENDS_MESSAGE_PATH) &&
+			!NO_REPLAY_PATHS.some((path) => pathOf(error).endsWith(path)) &&
 			(statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,

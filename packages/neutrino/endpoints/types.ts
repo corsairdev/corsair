@@ -307,16 +307,22 @@ const UaLookupResponseSchema = z
 		type: z.string().nullish(),
 		name: z.string().nullish(),
 		version: z.string().nullish(),
-		'version-major': z.number().nullish(),
+		// The spec and the live API send these as strings ("87"); a number is
+		// accepted too so an older answer cannot fail a call.
+		'version-major': z.union([z.string(), z.number()]).nullish(),
 		'browser-engine': z.string().nullish(),
 		'browser-release': z.string().nullish(),
 		os: z.string().nullish(),
 		'os-family': z.string().nullish(),
 		'os-version': z.string().nullish(),
-		'os-version-major': z.number().nullish(),
+		'os-version-major': z.union([z.string(), z.number()]).nullish(),
 		'is-mobile': z.boolean().nullish(),
 		'is-webview': z.boolean().nullish(),
 		'device-brand': z.string().nullish(),
+		'device-model': z.string().nullish(),
+		'browser-name': z.string().nullish(),
+		'browser-version': z.string().nullish(),
+		'is-app': z.boolean().nullish(),
 	})
 	.loose();
 
@@ -340,7 +346,8 @@ const DomainLookupResponseSchema = z
 		fqdn: z.string().nullish(),
 		'is-subdomain': z.boolean().nullish(),
 		tld: z.string().nullish(),
-		'tld-cc': z.boolean().nullish(),
+		// The ISO country code of a country-code TLD, or "" for any other TLD.
+		'tld-cc': z.string().nullish(),
 		rank: z.number().nullish(),
 		'is-gov': z.boolean().nullish(),
 		'is-opennic': z.boolean().nullish(),
@@ -444,7 +451,8 @@ export type GeocodeAddressInput = z.input<typeof GeocodeAddressInputSchema>;
 
 const GeocodeAddressResponseSchema = z
 	.object({
-		found: z.boolean().nullish(),
+		// A match count here, unlike geocode-reverse where it is a boolean.
+		found: z.number().nullish(),
 		locations: z.array(LocationSchema).nullish(),
 	})
 	.loose();
@@ -564,9 +572,9 @@ const SmsVerifyInputSchema = z.object({
 		.number()
 		.int()
 		.min(4)
-		.max(8)
+		.max(12)
 		.optional()
-		.describe('How many digits the generated security code has.'),
+		.describe('How many digits the generated security code has (4 to 12).'),
 	countryCode: z.string().min(2).max(2).optional(),
 	languageCode: z.string().min(2).max(2).optional(),
 	brandName: z.string().min(1).optional(),
@@ -583,6 +591,174 @@ const SmsVerifyResponseSchema = z
 	.loose();
 
 export type SmsVerifyResponse = z.infer<typeof SmsVerifyResponseSchema>;
+
+// ── messaging.verifySecurityCode ──────────────────────────────────────────
+
+const VerifySecurityCodeInputSchema = z.object({
+	securityCode: z
+		.string()
+		.min(1)
+		.describe('The code the person typed in, from smsVerify or phoneVerify.'),
+	limitBy: z
+		.string()
+		.min(1)
+		.optional()
+		.describe(
+			'Any id for the person (user id, IP) to cap failed attempts per value against brute force.',
+		),
+});
+
+export type VerifySecurityCodeInput = z.input<
+	typeof VerifySecurityCodeInputSchema
+>;
+
+const VerifySecurityCodeResponseSchema = z
+	.object({
+		verified: z.boolean().nullish(),
+	})
+	.loose();
+
+export type VerifySecurityCodeResponse = z.infer<
+	typeof VerifySecurityCodeResponseSchema
+>;
+
+// ── messaging.phoneVerify ─────────────────────────────────────────────────
+
+const PhoneVerifyInputSchema = z.object({
+	number: z.string().min(1).describe('The phone number to call.'),
+	codeLength: z
+		.number()
+		.int()
+		.min(4)
+		.max(12)
+		.optional()
+		.describe('How many digits the generated security code has (4 to 12).'),
+	playbackDelay: z
+		.number()
+		.int()
+		.min(0)
+		.optional()
+		.describe('Milliseconds between each digit read out.'),
+	countryCode: z.string().min(2).max(2).optional(),
+	languageCode: z.string().min(2).max(2).optional(),
+});
+
+export type PhoneVerifyInput = z.input<typeof PhoneVerifyInputSchema>;
+
+const PhoneVerifyResponseSchema = z
+	.object({
+		'number-valid': z.boolean().nullish(),
+		calling: z.boolean().nullish(),
+		'security-code': z.string().nullish(),
+	})
+	.loose();
+
+export type PhoneVerifyResponse = z.infer<typeof PhoneVerifyResponseSchema>;
+
+// ── text.badWordFilter ────────────────────────────────────────────────────
+
+const BadWordFilterInputSchema = z.object({
+	content: z
+		.string()
+		.min(1)
+		.describe('The text to scan, or a URL whose page text Neutrino scans.'),
+	censorCharacter: z
+		.string()
+		.min(1)
+		.max(1)
+		.optional()
+		.describe('Replace each letter of a bad word with this character.'),
+	catalog: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('Which word list to use: "strict" (the default) or "obscene".'),
+});
+
+export type BadWordFilterInput = z.input<typeof BadWordFilterInputSchema>;
+
+const BadWordFilterResponseSchema = z
+	.object({
+		'bad-words-list': z.array(z.string()).nullish(),
+		'bad-words-total': z.number().nullish(),
+		'censored-content': z.string().nullish(),
+		'is-bad': z.boolean().nullish(),
+	})
+	.loose();
+
+export type BadWordFilterResponse = z.infer<typeof BadWordFilterResponseSchema>;
+
+// ── web.browserBot ────────────────────────────────────────────────────────
+
+const BrowserBotInputSchema = z.object({
+	url: z.string().min(1).describe('The page to load in a real browser.'),
+	timeout: z
+		.number()
+		.int()
+		.min(1)
+		.max(120)
+		.optional()
+		.describe(
+			'Seconds to wait for the page to load (Neutrino defaults to 30).',
+		),
+	delay: z
+		.number()
+		.int()
+		.min(0)
+		.max(10)
+		.optional()
+		.describe('Seconds to wait after the page loads, for scripts to finish.'),
+	selector: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('A CSS selector; the matching elements come back in `elements`.'),
+	exec: z
+		.array(z.string().min(1))
+		.optional()
+		.describe(
+			'JavaScript statements to run on the page in order, e.g. click or fill a field; their values come back in `exec-results`.',
+		),
+	userAgent: z.string().min(1).optional(),
+	ignoreCertificateErrors: z.boolean().optional(),
+});
+
+export type BrowserBotInput = z.input<typeof BrowserBotInputSchema>;
+
+const BrowserBotResponseSchema = z
+	.object({
+		url: z.string().nullish(),
+		content: z.string().nullish(),
+		'mime-type': z.string().nullish(),
+		title: z.string().nullish(),
+		'is-error': z.boolean().nullish(),
+		'is-timeout': z.boolean().nullish(),
+		'error-message': z.string().nullish(),
+		'http-status-code': z.number().nullish(),
+		'http-status-message': z.string().nullish(),
+		'is-http-ok': z.boolean().nullish(),
+		'is-http-redirect': z.boolean().nullish(),
+		'http-redirect-url': z.string().nullish(),
+		'server-ip': z.string().nullish(),
+		'load-time': z.number().nullish(),
+		// unknown: header names and values are whatever the page's server sent.
+		'response-headers': z.record(z.string(), z.unknown()).nullish(),
+		'is-secure': z.boolean().nullish(),
+		// unknown: TLS details are a provider object we pass through untouched.
+		'security-details': z.record(z.string(), z.unknown()).nullish(),
+		// unknown: each element is the provider's own shape (tag, attributes,
+		// text, html); callers read the fields they asked for with `selector`.
+		elements: z.array(z.record(z.string(), z.unknown())).nullish(),
+		// unknown: each entry holds the return value of one `exec` statement.
+		'exec-results': z.array(z.record(z.string(), z.unknown())).nullish(),
+		'language-code': z.string().nullish(),
+		'url-valid': z.boolean().nullish(),
+		'content-size': z.number().nullish(),
+		'server-hostname': z.string().nullish(),
+	})
+	.loose();
+
+export type BrowserBotResponse = z.infer<typeof BrowserBotResponseSchema>;
 
 // ── Registry ──────────────────────────────────────────────────────────────
 
@@ -603,6 +779,10 @@ export type NeutrinoEndpointInputs = {
 	binLookup: BinLookupInput;
 	convert: ConvertInput;
 	smsVerify: SmsVerifyInput;
+	verifySecurityCode: VerifySecurityCodeInput;
+	phoneVerify: PhoneVerifyInput;
+	badWordFilter: BadWordFilterInput;
+	browserBot: BrowserBotInput;
 };
 
 export type NeutrinoEndpointOutputs = {
@@ -622,6 +802,10 @@ export type NeutrinoEndpointOutputs = {
 	binLookup: BinLookupResponse;
 	convert: ConvertResponse;
 	smsVerify: SmsVerifyResponse;
+	verifySecurityCode: VerifySecurityCodeResponse;
+	phoneVerify: PhoneVerifyResponse;
+	badWordFilter: BadWordFilterResponse;
+	browserBot: BrowserBotResponse;
 };
 
 export const NeutrinoEndpointInputSchemas = {
@@ -641,6 +825,10 @@ export const NeutrinoEndpointInputSchemas = {
 	binLookup: BinLookupInputSchema,
 	convert: ConvertInputSchema,
 	smsVerify: SmsVerifyInputSchema,
+	verifySecurityCode: VerifySecurityCodeInputSchema,
+	phoneVerify: PhoneVerifyInputSchema,
+	badWordFilter: BadWordFilterInputSchema,
+	browserBot: BrowserBotInputSchema,
 } as const;
 
 export const NeutrinoEndpointOutputSchemas = {
@@ -660,4 +848,8 @@ export const NeutrinoEndpointOutputSchemas = {
 	binLookup: BinLookupResponseSchema,
 	convert: ConvertResponseSchema,
 	smsVerify: SmsVerifyResponseSchema,
+	verifySecurityCode: VerifySecurityCodeResponseSchema,
+	phoneVerify: PhoneVerifyResponseSchema,
+	badWordFilter: BadWordFilterResponseSchema,
+	browserBot: BrowserBotResponseSchema,
 } as const;

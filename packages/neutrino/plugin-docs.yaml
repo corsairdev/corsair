@@ -1,5 +1,5 @@
 displayName: Neutrino API
-description: Look up IP geolocation and blocklists, validate and verify email addresses and phone numbers, parse user agents, check domain and host reputation, inspect URLs, geocode addresses, look up card BINs, convert units and send SMS codes.
+description: Look up IP geolocation and blocklists, validate and verify email addresses and phone numbers, parse user agents, check domain and host reputation, inspect URLs, geocode addresses, look up card BINs, convert units, filter profanity, drive a headless browser, and send and check SMS or voice security codes.
 domain: neutrinoapi.com
 recommendedAuth: api_key
 overviewNote: |
@@ -12,13 +12,16 @@ overviewNote: |
   - **IP.** `ip.info` geolocates an address, `ip.blocklist` checks the blocklists Neutrino tracks with a flag per threat type, and `ip.probe` reports the hosting provider rather than the place.
   - **Email.** `email.validate` checks syntax, domain and MX without contacting the mailbox. `email.verify` adds an SMTP probe and reports `verified` separately from `valid`, because a server can accept a domain and still refuse the mailbox check.
   - **Phone.** `phone.validate` parses a number into its international and local forms with the carrier prefix. `phone.hlrLookup` queries the carrier's home location register for whether the number is live and whether it was ported.
-  - **Web.** `web.uaLookup` parses a User-Agent, `web.domainLookup` reads domain facts and blocklists, `web.hostReputation` checks a host against many DNSBLs, and `web.urlInfo` inspects a URL.
-  - **Geocode, commerce, messaging.** Forward and reverse geocoding, card BIN facts, unit and currency conversion, and an SMS code send.
+  - **Web.** `web.uaLookup` parses a User-Agent, `web.domainLookup` reads domain facts and blocklists, `web.hostReputation` checks a host against many DNSBLs, `web.urlInfo` inspects a URL, and `web.browserBot` loads a page in a real browser and can run JavaScript on it.
+  - **Text.** `text.badWordFilter` finds profanity in text and returns a censored copy.
+  - **Geocode, commerce.** Forward and reverse geocoding, card BIN facts, and unit and currency conversion.
+  - **Messaging.** `messaging.smsVerify` texts a security code and `messaging.phoneVerify` reads one out in a call; `messaging.verifySecurityCode` checks the code the person types.
 
   Worth knowing before you call:
 
   - **`web.urlInfo` and the phone HLR lookup make Neutrino do outside work.** The first fetches the page themselves, and the second queries a carrier, so both cost more and can fail on a target that refuses them.
-  - **`messaging.smsVerify` sends a real SMS** and spends a credit. The code it returns is the same code the recipient gets, which is what `verifySecurityCode` compares against. A 5xx on this route is never retried, because the message may already have gone out.
+  - **`messaging.smsVerify` and `messaging.phoneVerify` reach a real person** and spend credits, so both are `destructive`. Neutrino keeps the code it sent, and `messaging.verifySecurityCode` checks what the person types. A 5xx on these routes is never retried, because the message or call may already have gone out.
+  - **`web.browserBot` is `write`.** Loading a page only reads, but its `exec` statements run on the third-party page and can click or submit forms there.
   - **Parameters are hyphenated.** `country-code`, `bin-number`, `from-value`, `fetch-content`, `code-length`. The plugin maps its own camelCase inputs onto those names, so a caller writes `countryCode` and `binNumber`.
   - **A convert result comes twice.** `result` is a string and `result-float` a number; use the one the surrounding code needs rather than parsing the first.
 
@@ -68,8 +71,18 @@ apiExamples:
     call: "{ fromValue: 100, fromType: 'USD', toType: 'EUR' }"
   messaging.smsVerify:
     call: "{ number: '+61412345678', codeLength: 6 }"
+  messaging.phoneVerify:
+    call: "{ number: '+61412345678', codeLength: 6 }"
+  messaging.verifySecurityCode:
+    call: "{ securityCode: '123456', limitBy: 'user-42' }"
+  text.badWordFilter:
+    call: "{ content: 'Some text to check', censorCharacter: '*' }"
+  web.browserBot:
+    call: "{ url: 'https://example.com', selector: 'h1' }"
 apiNotes:
   email.verify: 'verified is separate from valid: the domain can be valid and the mailbox check still refused.'
   messaging.smsVerify: 'Sends a real SMS and spends a credit. A 5xx on this route is not retried.'
+  messaging.phoneVerify: 'Places a real call and spends credits. A 5xx on this route is not retried.'
+  web.browserBot: 'exec runs JavaScript on the page, so this is write; a 5xx is not retried.'
   web.urlInfo: 'Neutrino fetches the URL themselves, so a redirect is followed by them and the call costs more than a header read.'
   commerce.convert: 'result is a string and result-float a number; both are returned.'

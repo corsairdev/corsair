@@ -50,6 +50,8 @@ export const verify: NeutrinoEndpoints['emailVerify'] = (ctx, input) =>
 			method: 'GET',
 			path: '/email-verify',
 			query: { email },
+			// Neutrino documents up to 60 s when the mail server is slow.
+			timeoutMs: 75_000,
 		}),
 		{
 			log: ({ email }, result) => ({
