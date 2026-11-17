@@ -1,0 +1,132 @@
+displayName: Storyblok
+description: Headless CMS content from Storyblok - manage stories, components, datasources and their entries, tags, asset metadata, releases and webhook endpoints through the Management API.
+domain: storyblok.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a personal access token in Storyblok under Account Settings, then Personal access tokens. Pass it as the plugin's `key` option or store it on the account; Storyblok expects the raw token in the `Authorization` header, with no `Bearer` prefix.
+
+  Two more settings are needed because every Management API route is scoped to one space on one regional host:
+
+  - `spaceId`: the numeric space id. `spaces.list` is the way to find it.
+  - `region`: `eu`, `us`, `ca`, `ap` or `cn`, matching where the space is hosted. It defaults to `eu`. A space only answers on its own host, and asking the wrong one looks like a missing space rather than a configuration mistake.
+
+  Both can be set as plugin options or stored on the account as `space_id` and `region`.
+
+  Things to know before you write:
+
+  - **Publishing is a GET.** `stories.publish` and `stories.unpublish` are served as GETs but change published state, so both are writes here. A retry of either repeats the state change.
+  - **`stories.list` omits content.** The list route returns stories without their `content` field. Pass `with_summary` for a summary, or read the story with `stories.get`.
+  - **`content` is the schema's own JSON.** A story's content is one object per component field, with a `component` key naming the content type. The plugin passes it through untyped rather than guessing at a shape that depends on each project's components.
+  - **Components are field schemas.** Editing a component changes the shape every story of that type is parsed against, and a removed field's values stay in existing stories, hidden from the editor, until a migration removes them.
+  - **Asset writes are metadata only.** `assets.update` changes alt text, title, copyright, focus point, privacy and the publish window. Uploading new bytes uses a separate signed-upload flow that this plugin does not wrap.
+  - **Webhook actions come from the API.** `webhooks.listActions` reads the accepted action names rather than hardcoding them, because Storyblok adds events over time.
+  - **Paging totals are in headers.** Storyblok reports `total` and `per_page` as response headers, which this client cannot return alongside the body, so page until an array comes back short or empty.
+  - **Some writes answer 204.** Updating a tag, a datasource entry or an asset, and deleting a tag, a datasource or a datasource entry, return no body. Those updates return what was sent; those deletes return `{ id, deleted: true }`.
+  - **Releases need an enterprise plan** (Premium or Elite). On Starter, Growth and Growth Plus, the trial included, `releases.create`, `releases.get`, `releases.update` and `releases.delete` answer 422 "This feature is available on Enterprise plans"; `releases.list` still works and returns an empty list.
+  - **Rate limits are plan-based**, 3 requests per second on Starter and 6 on paid plans, with a 429 to back off on.
+examples:
+  read:
+    path: stories.list
+    title: List published stories under a slug prefix
+    args:
+      by_slugs: posts/*
+      is_published: true
+      per_page: 50
+  write:
+    path: stories.create
+    title: Create a page and publish it
+    args:
+      name: Home
+      slug: home
+      content:
+        component: page
+        title: Welcome
+      publish: true
+apiExamples:
+  stories.list:
+    call: "{ by_slugs: 'posts/*', is_published: true, per_page: 50 }"
+  stories.get:
+    call: "{ story_id: 369689 }"
+  stories.create:
+    call: "{ name: 'Home', slug: 'home', content: { component: 'page', title: 'Welcome' }, publish: true }"
+  stories.update:
+    call: "{ story_id: 369689, name: 'Home', slug: 'home', content: { component: 'page', title: 'Hello' } }"
+  stories.publish:
+    call: "{ story_id: 369689 }"
+  stories.unpublish:
+    call: "{ story_id: 369689 }"
+  stories.delete:
+    call: "{ story_id: 369689 }"
+  spaces.list:
+    call: "{ per_page: 100 }"
+  spaces.get: {}
+  components.list: {}
+  components.create:
+    call: "{ name: 'page', display_name: 'Page', schema: { title: { type: 'text' } }, is_root: true }"
+  components.update:
+    call: "{ component_id: 12345, name: 'page', schema: { title: { type: 'text' }, subtitle: { type: 'text' } } }"
+  components.delete:
+    call: "{ component_id: 12345 }"
+  datasources.list: {}
+  datasources.get:
+    call: "{ datasource_id: 777 }"
+  datasources.create:
+    call: "{ name: 'Countries', slug: 'countries' }"
+  datasources.update:
+    call: "{ datasource_id: 777, name: 'Countries', slug: 'countries-v2' }"
+  datasources.delete:
+    call: "{ datasource_id: 777 }"
+  datasourceEntries.list:
+    call: "{ datasource_id: 777 }"
+  datasourceEntries.get:
+    call: "{ datasource_entry_id: 888 }"
+  datasourceEntries.create:
+    call: "{ name: 'Netherlands', value: 'nl', datasource_id: 777 }"
+  datasourceEntries.update:
+    call: "{ datasource_entry_id: 888, name: 'The Netherlands', value: 'nl', datasource_id: 777 }"
+  datasourceEntries.delete:
+    call: "{ datasource_entry_id: 888 }"
+  tags.list: {}
+  tags.create:
+    call: "{ name: 'landing', story_id: 369689 }"
+  tags.update:
+    call: "{ tag_id: '5', name: 'landing-page' }"
+  tags.delete:
+    call: "{ tag_id: '5' }"
+  webhooks.list: {}
+  webhooks.get:
+    call: "{ webhook_endpoint_id: 4569 }"
+  webhooks.create:
+    call: "{ name: 'Rebuild Website', endpoint: 'https://example.com/hooks/storyblok', actions: ['story.published'], secret: 'shared-secret' }"
+  webhooks.update:
+    call: "{ webhook_endpoint_id: 4569, name: 'Rebuild Website', endpoint: 'https://example.com/hooks/storyblok', actions: ['story.published', 'story.unpublished'], activated: true }"
+  webhooks.delete:
+    call: "{ webhook_endpoint_id: 4569 }"
+  webhooks.listActions: {}
+  assets.list:
+    call: "{ search: 'logo' }"
+  assets.get:
+    call: "{ asset_id: 900 }"
+  assets.update:
+    call: "{ asset_id: 900, alt: 'Company logo', title: 'Logo' }"
+  assets.delete:
+    call: "{ asset_id: 900 }"
+  assets.bulkDelete:
+    call: "{ ids: [900, 901] }"
+  releases.list: {}
+  releases.get:
+    call: "{ release_id: 321 }"
+  releases.create:
+    call: "{ name: 'Spring launch', release_at: '2026-03-01T09:00:00.000Z' }"
+  releases.update:
+    call: "{ release_id: 321, name: 'Spring launch', do_release: true }"
+  releases.delete:
+    call: "{ release_id: 321 }"
+apiNotes:
+  stories.create: 'Storyblok requires both content and slug. content is the schema''s own JSON: one object per component field with a component key naming the content type.'
+  stories.publish: 'Served as a GET, but it changes published state, so it is a write here and a retry repeats the change. Pass release_id to group the story in a release instead.'
+  stories.unpublish: 'Served as a GET, but it stops the Content Delivery API serving the story.'
+  assets.update: 'Metadata only: alt text, title, copyright, focus point, privacy and the publish window. Uploading new bytes is a separate signed-upload flow that is not wrapped.'
+  webhooks.listActions: 'Reads the accepted action names from Storyblok rather than hardcoding them, so a new event needs no plugin change.'
+  components.update: 'Replacing a component''s schema changes the shape every story of that type is parsed against, and a removed field''s values stay in existing stories, hidden from the editor, until a migration removes them.'
+  stories.list: 'This route returns stories without their content; use with_summary for a summary or stories.get for the full story. Storyblok reports total and per_page in response headers, which this client cannot return with the body, so page until an array comes back short or empty.'
