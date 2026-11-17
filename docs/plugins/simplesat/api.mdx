@@ -1,0 +1,1276 @@
+---
+title: "Simplesat API reference"
+sidebarTitle: "API"
+description: "API reference for the Simplesat plugin in Corsair: every `simplesat.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Answers
+
+### get
+
+`answers.get`
+
+Read one answer with its question, chosen option, sentiment and comment
+
+**Risk:** `read`
+
+```ts
+await corsair.simplesat.api.answers.get({ answer_id: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `answer_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `question` | `object \| null` | No | — |
+| `choice` | `string \| null` | No | — |
+| `choice_label` | `string \| null` | No | — |
+| `choices` | `string[] \| null` | No | — |
+| `sentiment` | `string \| null` | No | — |
+| `comment` | `string \| null` | No | — |
+| `follow_up_answer` | `string \| null` | No | — |
+| `follow_up_answer_choice` | `string \| null` | No | — |
+| `follow_up_answer_choices` | `string[] \| null` | No | — |
+| `survey` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="question full type">
+
+```ts
+{
+  id?: number | null,
+  text?: string | null,
+  metric?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="survey full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`answers.search`
+
+Search answers by date range and filters such as sentiment, across every survey
+
+**Risk:** `read`
+
+```ts
+await corsair.simplesat.api.answers.search({ start_date: '2024-01-01T00:00:00Z', filters: [{ key: 'sentiment', values: ['positive'], comparison: 'is' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, from 1. |
+| `page_size` | `number` | No | Results per page, up to 250. Defaults to 50. |
+| `next` | `string` | No | The `next` path from the previous page. It replaces the other filters, because Simplesat already encoded them into it. |
+| `start_date` | `string` | No | ISO 8601. |
+| `end_date` | `string` | No | ISO 8601. |
+| `filters` | `object[]` | No | — |
+
+A POST because it takes a filter list and date range, but its next links are followed with a GET.
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  key: string,
+  values: string[],
+  attribute?: string,
+  comparison: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | No | Path of the next page, or null on the last one. Pass it back as `next`. |
+| `previous` | `string \| null` | No | — |
+| `count` | `number \| null` | No | Total matching records. |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: number | null,
+  question?: {
+    id?: number | null,
+    text?: string | null,
+    metric?: string | null
+  } | null,
+  choice?: string | null,
+  choice_label?: string | null,
+  choices?: string[] | null,
+  sentiment?: string | null,
+  comment?: string | null,
+  follow_up_answer?: string | null,
+  follow_up_answer_choice?: string | null,
+  follow_up_answer_choices?: string[] | null,
+  survey?: {
+    id?: number | null,
+    name?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`answers.update`
+
+Change an answer's chosen option, comment or sentiment. The question and survey it belongs to are fixed
+
+**Risk:** `write`
+
+```ts
+await corsair.simplesat.api.answers.update({ answer_id: '1', sentiment: 'positive' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `answer_id` | `string` | Yes | — |
+| `choice` | `string \| null` | No | The chosen option id. |
+| `choices` | `string[] \| null` | No | The chosen option ids, for a multi-select question. |
+| `comment` | `string \| null` | No | — |
+| `sentiment` | `string \| null` | No | — |
+| `follow_up_answer` | `string \| null` | No | — |
+| `follow_up_answer_choice` | `string \| null` | No | — |
+| `follow_up_answer_choices` | `string[] \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `question` | `object \| null` | No | — |
+| `choice` | `string \| null` | No | — |
+| `choice_label` | `string \| null` | No | — |
+| `choices` | `string[] \| null` | No | — |
+| `sentiment` | `string \| null` | No | — |
+| `comment` | `string \| null` | No | — |
+| `follow_up_answer` | `string \| null` | No | — |
+| `follow_up_answer_choice` | `string \| null` | No | — |
+| `follow_up_answer_choices` | `string[] \| null` | No | — |
+| `survey` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="question full type">
+
+```ts
+{
+  id?: number | null,
+  text?: string | null,
+  metric?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="survey full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Customers
+
+### bulk
+
+`customers.bulk`
+
+Queue many customer upserts in one request. The answer carries a request_id rather than the stored records, because the write is queued
+
+**Risk:** `write`
+
+```ts
+await corsair.simplesat.api.customers.bulk({ customers: [{ external_id: '1', email: 'a@example.com' }, { external_id: '2', email: 'b@example.com' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customers` | `object[]` | Yes | The customers to create or update. |
+
+Queued rather than applied: the answer carries a request_id and a message, not the stored records.
+
+<AccordionGroup>
+<Accordion title="customers full type">
+
+```ts
+{
+  external_id?: string | null,
+  email?: string | null,
+  name?: string | null,
+  company?: string | null,
+  language?: string | null,
+  tags?: string[] | null,
+  custom_attributes?: Record<string, any> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string \| null` | No | — |
+| `detail` | `string \| null` | No | — |
+
+
+
+---
+
+### create
+
+`customers.create`
+
+Create or update a customer. Simplesat matches on external_id or email, so it is an upsert rather than a plain create
+
+**Risk:** `write`
+
+```ts
+await corsair.simplesat.api.customers.create({ external_id: '12345', email: 'tester@simplesat.io', name: 'Tester McTestFace' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `external_id` | `string \| null` | No | Your own id for this customer. |
+| `email` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `company` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `custom_attributes` | `Record<string, any> \| null` | No | — |
+
+An upsert: Simplesat matches on external_id or email rather than always inserting, so send one of them. The schema rejects a customer with neither.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `company` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `custom_attributes` | `Record<string, any> \| null` | No | — |
+
+
+
+---
+
+### get
+
+`customers.get`
+
+Read one customer by their Simplesat id, with their tags and custom attributes
+
+**Risk:** `read`
+
+```ts
+await corsair.simplesat.api.customers.get({ customer_id: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer_id` | `string` | Yes | The Simplesat customer id. An external id answers 404. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `company` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `custom_attributes` | `Record<string, any> \| null` | No | — |
+
+
+
+---
+
+### list
+
+`customers.list`
+
+List customers with filters for when they were created or modified and whether they are subscribed; follow `next` for the following page
+
+**Risk:** `read`
+
+```ts
+await corsair.simplesat.api.customers.list({ page_size: 50, subscribed: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, from 1. |
+| `page_size` | `number` | No | Results per page, up to 250. Defaults to 50. |
+| `next` | `string` | No | The `next` path from the previous page. It replaces the other filters, because Simplesat already encoded them into it. |
+| `created_after` | `string` | No | ISO 8601. |
+| `created_before` | `string` | No | ISO 8601. |
+| `modified_after` | `string` | No | ISO 8601. |
+| `modified_before` | `string` | No | ISO 8601. |
+| `subscribed` | `boolean` | No | — |
+
+Pass the path from a previous page as `next`. Every list answers `{ next, previous, count, results }`, and `next` is a same-host path the plugin checks before use.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | No | Path of the next page, or null on the last one. Pass it back as `next`. |
+| `previous` | `string \| null` | No | — |
+| `count` | `number \| null` | No | Total matching records. |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: number | null,
+  external_id?: string | null,
+  email?: string | null,
+  name?: string | null,
+  company?: string | null,
+  language?: string | null,
+  tags?: string[] | null,
+  custom_attributes?: Record<string, any> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`customers.update`
+
+Update one customer by their Simplesat id, replacing the fields sent
+
+**Risk:** `write`
+
+```ts
+await corsair.simplesat.api.customers.update({ customer_id: '1', name: 'Renamed', company: 'Simplesat' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer_id` | `string` | Yes | The Simplesat customer id. |
+| `external_id` | `string \| null` | No | Your own id for this customer. |
+| `email` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `company` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `custom_attributes` | `Record<string, any> \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `company` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `custom_attributes` | `Record<string, any> \| null` | No | — |
+
+
+
+---
+
+## Questions
+
+### list
+
+`questions.list`
+
+List the questions behind the surveys, filtered by survey or metric, with their types and choices
+
+**Risk:** `read`
+
+```ts
+await corsair.simplesat.api.questions.list({ survey_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, from 1. |
+| `page_size` | `number` | No | Results per page, up to 250. Defaults to 50. |
+| `next` | `string` | No | The `next` path from the previous page. It replaces the other filters, because Simplesat already encoded them into it. |
+| `survey_id` | `number` | No | — |
+| `metric` | `string` | No | — |
+
+Filter by survey_id, or by metric such as csat, to see the questions behind a survey.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | No | Path of the next page, or null on the last one. Pass it back as `next`. |
+| `previous` | `string \| null` | No | — |
+| `count` | `number \| null` | No | Total matching records. |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: number | null,
+  survey?: {
+    id?: number | null,
+    name?: string | null
+  } | null,
+  order?: number | null,
+  metric?: string | null,
+  type?: string | null,
+  text?: string | null,
+  rating_scale?: boolean | null,
+  required?: boolean | null,
+  choices?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Responses
+
+### create
+
+`responses.create`
+
+Create a response, or update the one that already matches it. `created` backdates it, which is how a survey answered elsewhere is imported
+
+**Risk:** `write`
+
+```ts
+await corsair.simplesat.api.responses.create({ survey_id: 1, answers: [{ question_id: 1, choice: '3' }], customer: { email: 'tester@simplesat.io' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `survey_id` | `number` | Yes | — |
+| `language` | `string` | No | — |
+| `created` | `string` | No | Backdates the response, when the survey was answered elsewhere. |
+| `tags` | `string[]` | No | — |
+| `answers` | `object[]` | No | — |
+| `team_members` | `object[]` | No | — |
+| `ticket` | `object` | No | — |
+| `customer` | `object` | No | — |
+
+Creates a response or updates the one that already matches it. `created` backdates it, which is how a survey answered elsewhere is imported. A `comment` sent with a multiple-choice answer is not stored (seen live); put written feedback on the follow-up comment question.
+
+<AccordionGroup>
+<Accordion title="answers full type">
+
+```ts
+{
+  question_id: number,
+  choice?: string,
+  choices?: string[],
+  comment?: string,
+  sentiment?: string,
+  follow_up_answer?: string,
+  follow_up_answer_choice?: string,
+  follow_up_answer_choices?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="team_members full type">
+
+```ts
+{
+  email: string,
+  role: string,
+  is_primary: boolean,
+  external_id?: string,
+  name?: string,
+  custom_attributes?: Record<string, any>
+}[]
+```
+</Accordion>
+
+<Accordion title="ticket full type">
+
+```ts
+{
+  external_id?: string,
+  subject?: string,
+  custom_attributes?: Record<string, any>
+}
+```
+</Accordion>
+
+<Accordion title="customer full type">
+
+```ts
+{
+  email: string,
+  external_id?: string,
+  name?: string,
+  tags?: string[],
+  company?: string,
+  custom_attributes?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `survey_id` | `number \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `created` | `string \| null` | No | ISO 8601. |
+| `modified` | `string \| null` | No | ISO 8601. |
+| `ip_address` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `ticket` | `object \| null` | No | — |
+| `team_members` | `object[] \| null` | No | — |
+| `customer` | `object \| null` | No | — |
+| `answers` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="ticket full type">
+
+```ts
+{
+  external_id?: string | null,
+  subject?: string | null,
+  custom_attributes?: Record<string, any> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="team_members full type">
+
+```ts
+{
+  external_id?: string | null,
+  name?: string | null,
+  email?: string | null,
+  role?: string | null,
+  is_primary?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="customer full type">
+
+```ts
+{
+  id?: number | null,
+  external_id?: string | null,
+  email?: string | null,
+  name?: string | null,
+  company?: string | null,
+  language?: string | null,
+  tags?: string[] | null,
+  custom_attributes?: Record<string, any> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="answers full type">
+
+```ts
+{
+  id?: number | null,
+  question?: {
+    id?: number | null,
+    text?: string | null,
+    metric?: string | null
+  } | null,
+  choice?: string | null,
+  choice_label?: string | null,
+  choices?: string[] | null,
+  sentiment?: string | null,
+  comment?: string | null,
+  follow_up_answer?: string | null,
+  follow_up_answer_choice?: string | null,
+  follow_up_answer_choices?: string[] | null,
+  survey?: {
+    id?: number | null,
+    name?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`responses.get`
+
+Read one response with its survey, customer, answers and team members
+
+**Risk:** `read`
+
+```ts
+await corsair.simplesat.api.responses.get({ response_id: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `response_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `survey_id` | `number \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `created` | `string \| null` | No | ISO 8601. |
+| `modified` | `string \| null` | No | ISO 8601. |
+| `ip_address` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `ticket` | `object \| null` | No | — |
+| `team_members` | `object[] \| null` | No | — |
+| `customer` | `object \| null` | No | — |
+| `answers` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="ticket full type">
+
+```ts
+{
+  external_id?: string | null,
+  subject?: string | null,
+  custom_attributes?: Record<string, any> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="team_members full type">
+
+```ts
+{
+  external_id?: string | null,
+  name?: string | null,
+  email?: string | null,
+  role?: string | null,
+  is_primary?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="customer full type">
+
+```ts
+{
+  id?: number | null,
+  external_id?: string | null,
+  email?: string | null,
+  name?: string | null,
+  company?: string | null,
+  language?: string | null,
+  tags?: string[] | null,
+  custom_attributes?: Record<string, any> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="answers full type">
+
+```ts
+{
+  id?: number | null,
+  question?: {
+    id?: number | null,
+    text?: string | null,
+    metric?: string | null
+  } | null,
+  choice?: string | null,
+  choice_label?: string | null,
+  choices?: string[] | null,
+  sentiment?: string | null,
+  comment?: string | null,
+  follow_up_answer?: string | null,
+  follow_up_answer_choice?: string | null,
+  follow_up_answer_choices?: string[] | null,
+  survey?: {
+    id?: number | null,
+    name?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`responses.search`
+
+Search responses by date range and filters such as customer email, with each response's answers and team members
+
+**Risk:** `read`
+
+```ts
+await corsair.simplesat.api.responses.search({ created_start_date: '2024-01-01T00:00:00Z', filters: [{ key: 'customer.email', values: ['tester@simplesat.io'], comparison: 'is' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, from 1. |
+| `page_size` | `number` | No | Results per page, up to 250. Defaults to 50. |
+| `next` | `string` | No | The `next` path from the previous page. It replaces the other filters, because Simplesat already encoded them into it. |
+| `start_date` | `string` | No | ISO 8601. |
+| `created_start_date` | `string` | No | ISO 8601. |
+| `end_date` | `string` | No | ISO 8601. |
+| `created_end_date` | `string` | No | ISO 8601. |
+| `modified_start_date` | `string` | No | ISO 8601. |
+| `modified_end_date` | `string` | No | ISO 8601. |
+| `filters` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  key: string,
+  values: string[],
+  attribute?: string,
+  comparison: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | No | Path of the next page, or null on the last one. Pass it back as `next`. |
+| `previous` | `string \| null` | No | — |
+| `count` | `number \| null` | No | Total matching records. |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: number | null,
+  survey_id?: number | null,
+  language?: string | null,
+  created?: string | null,
+  modified?: string | null,
+  ip_address?: string | null,
+  tags?: string[] | null,
+  ticket?: {
+    external_id?: string | null,
+    subject?: string | null,
+    custom_attributes?: Record<string, any> | null
+  } | null,
+  team_members?: {
+    external_id?: string | null,
+    name?: string | null,
+    email?: string | null,
+    role?: string | null,
+    is_primary?: boolean | null
+  }[] | null,
+  customer?: {
+    id?: number | null,
+    external_id?: string | null,
+    email?: string | null,
+    name?: string | null,
+    company?: string | null,
+    language?: string | null,
+    tags?: string[] | null,
+    custom_attributes?: Record<string, any> | null
+  } | null,
+  answers?: {
+    id?: number | null,
+    question?: {
+      id?: number | null,
+      text?: string | null,
+      metric?: string | null
+    } | null,
+    choice?: string | null,
+    choice_label?: string | null,
+    choices?: string[] | null,
+    sentiment?: string | null,
+    comment?: string | null,
+    follow_up_answer?: string | null,
+    follow_up_answer_choice?: string | null,
+    follow_up_answer_choices?: string[] | null,
+    survey?: {
+      id?: number | null,
+      name?: string | null
+    } | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`responses.update`
+
+Update one response by id. The body takes the same shape as a create, so the whole response is sent back
+
+**Risk:** `write`
+
+```ts
+await corsair.simplesat.api.responses.update({ response_id: '1', survey_id: 1, answers: [{ question_id: 1, sentiment: 'negative' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `response_id` | `string` | Yes | — |
+| `survey_id` | `number` | Yes | — |
+| `language` | `string` | No | — |
+| `created` | `string` | No | Backdates the response, when the survey was answered elsewhere. |
+| `tags` | `string[]` | No | — |
+| `answers` | `object[]` | No | — |
+| `team_members` | `object[]` | No | — |
+| `ticket` | `object` | No | — |
+| `customer` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="answers full type">
+
+```ts
+{
+  question_id: number,
+  choice?: string,
+  choices?: string[],
+  comment?: string,
+  sentiment?: string,
+  follow_up_answer?: string,
+  follow_up_answer_choice?: string,
+  follow_up_answer_choices?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="team_members full type">
+
+```ts
+{
+  email: string,
+  role: string,
+  is_primary: boolean,
+  external_id?: string,
+  name?: string,
+  custom_attributes?: Record<string, any>
+}[]
+```
+</Accordion>
+
+<Accordion title="ticket full type">
+
+```ts
+{
+  external_id?: string,
+  subject?: string,
+  custom_attributes?: Record<string, any>
+}
+```
+</Accordion>
+
+<Accordion title="customer full type">
+
+```ts
+{
+  email: string,
+  external_id?: string,
+  name?: string,
+  tags?: string[],
+  company?: string,
+  custom_attributes?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `survey_id` | `number \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `created` | `string \| null` | No | ISO 8601. |
+| `modified` | `string \| null` | No | ISO 8601. |
+| `ip_address` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `ticket` | `object \| null` | No | — |
+| `team_members` | `object[] \| null` | No | — |
+| `customer` | `object \| null` | No | — |
+| `answers` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="ticket full type">
+
+```ts
+{
+  external_id?: string | null,
+  subject?: string | null,
+  custom_attributes?: Record<string, any> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="team_members full type">
+
+```ts
+{
+  external_id?: string | null,
+  name?: string | null,
+  email?: string | null,
+  role?: string | null,
+  is_primary?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="customer full type">
+
+```ts
+{
+  id?: number | null,
+  external_id?: string | null,
+  email?: string | null,
+  name?: string | null,
+  company?: string | null,
+  language?: string | null,
+  tags?: string[] | null,
+  custom_attributes?: Record<string, any> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="answers full type">
+
+```ts
+{
+  id?: number | null,
+  question?: {
+    id?: number | null,
+    text?: string | null,
+    metric?: string | null
+  } | null,
+  choice?: string | null,
+  choice_label?: string | null,
+  choices?: string[] | null,
+  sentiment?: string | null,
+  comment?: string | null,
+  follow_up_answer?: string | null,
+  follow_up_answer_choice?: string | null,
+  follow_up_answer_choices?: string[] | null,
+  survey?: {
+    id?: number | null,
+    name?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Surveys
+
+### email
+
+`surveys.email`
+
+Send a survey to one customer by email. This notifies a real person, and the survey is identified by its token
+
+**Risk:** `destructive`
+
+```ts
+await corsair.simplesat.api.surveys.email({ survey_token: 'z_3OxYijnEkfZSt6hLKxCRxBlu4CPQ9feLUAW4Eaen4', customer: { email: 'tester@simplesat.io' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `survey_token` | `string` | Yes | — |
+| `customer` | `object` | Yes | The customer to send the survey to. |
+
+Takes the survey_token from surveys.list, not the numeric survey id, and schedules a real email to the customer.
+
+<AccordionGroup>
+<Accordion title="customer full type">
+
+```ts
+{
+  email: string,
+  id?: string | null,
+  name?: string | null,
+  external_id?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `detail` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`surveys.list`
+
+List the surveys on the account with their metric, type and survey_token
+
+**Risk:** `read`
+
+```ts
+await corsair.simplesat.api.surveys.list({ name: 'CSAT' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, from 1. |
+| `page_size` | `number` | No | Results per page, up to 250. Defaults to 50. |
+| `next` | `string` | No | The `next` path from the previous page. It replaces the other filters, because Simplesat already encoded them into it. |
+| `name` | `string` | No | Only surveys whose name matches. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | No | Path of the next page, or null on the last one. Pass it back as `next`. |
+| `previous` | `string \| null` | No | — |
+| `count` | `number \| null` | No | Total matching records. |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  metric?: string | null,
+  survey_token?: string | null,
+  survey_type?: string | null,
+  brand_name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Team Members
+
+### create
+
+`teamMembers.create`
+
+Create or update a team member, which is how a response is attributed to the person who handled it
+
+**Risk:** `write`
+
+```ts
+await corsair.simplesat.api.teamMembers.create({ external_id: '1', email: 'tester@simplesat.io', name: 'Tester McTestFace' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `external_id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `custom_attributes` | `Record<string, any> \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `custom_attributes` | `Record<string, any> \| null` | No | — |
+| `groups` | `string[] \| null` | No | — |
+
+
+
+---
+
+### get
+
+`teamMembers.get`
+
+Read one team member with their groups and custom attributes
+
+**Risk:** `read`
+
+```ts
+await corsair.simplesat.api.teamMembers.get({ team_member_id: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_member_id` | `string` | Yes | The Simplesat team member id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `custom_attributes` | `Record<string, any> \| null` | No | — |
+| `groups` | `string[] \| null` | No | — |
+
+
+
+---
+

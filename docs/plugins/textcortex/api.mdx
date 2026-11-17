@@ -1,0 +1,463 @@
+---
+title: "TextCortex API reference"
+sidebarTitle: "API"
+description: "API reference for the TextCortex plugin in Corsair: every `textcortex.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Balance
+
+### get
+
+`balance.get`
+
+Read the remaining API credits, the funding source and the wallet amount
+
+**Risk:** `read`
+
+```ts
+await corsair.textcortex.api.balance.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `remaining_credits` | `number \| null` | No | — |
+| `api_credit_purchases_allowed` | `boolean \| null` | No | — |
+| `billing_source` | `object \| null` | No | — |
+| `wallet` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="billing_source full type">
+
+```ts
+{
+  available?: boolean | null,
+  type?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="wallet full type">
+
+```ts
+{
+  currency?: string | null,
+  remaining_amount?: number | null,
+  seat_id?: string | null,
+  wallet_id?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Capabilities
+
+### get
+
+`capabilities.get`
+
+Read the features enabled for the key, such as image generation
+
+**Risk:** `read`
+
+```ts
+await corsair.textcortex.api.capabilities.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string \| null` | No | — |
+| `api_version` | `string \| null` | No | — |
+| `openai_compatible` | `Record<string, any> \| null` | No | — |
+| `textcortex` | `Record<string, any> \| null` | No | — |
+
+
+
+---
+
+## Chat
+
+### completions
+
+`chat.completions`
+
+Generate a chat completion from a conversation, which spends credits on every call
+
+**Risk:** `destructive`
+
+```ts
+await corsair.textcortex.api.chat.completions({ model: 'gpt-6-luna', messages: [{ role: 'user', content: 'Hello' }], temperature: 0.7 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | A model ID from `models.list`. Use the base ID and set `reasoning_effort` rather than a `-thinking` variant, which is deprecated. |
+| `messages` | `object[]` | Yes | The conversation, oldest first. |
+| `max_tokens` | `number` | No | Cap the tokens generated. |
+| `temperature` | `number` | No | Sampling temperature, 0 to 2. |
+| `top_p` | `number` | No | Nucleus sampling probability, 0 to 1. |
+| `n` | `number` | No | How many completions to generate. |
+| `stop` | `string \| string[]` | No | A stop sequence, or a list of them. |
+| `presence_penalty` | `number` | No | — |
+| `frequency_penalty` | `number` | No | — |
+| `seed` | `number` | No | A seed for reproducible output. |
+| `user` | `string` | No | A caller-side user identifier for abuse tracking. |
+| `reasoning_effort` | `none \| low \| medium \| high` | No | How much reasoning the model should spend, for models that grade it. |
+| `response_format` | `object` | No | Ask for a structured answer, e.g. `{ type: "json_object" }`. |
+
+Spends credits; messages take a plain string content, and a temperature runs from 0 to 2.
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  role: system | user | assistant | tool,
+  content: string,
+  name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="response_format full type">
+
+```ts
+{
+  type: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string \| null` | No | — |
+| `created` | `number \| null` | No | — |
+| `model` | `string \| null` | No | — |
+| `choices` | `object[]` | Yes | — |
+| `usage` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="choices full type">
+
+```ts
+{
+  index?: number | null,
+  finish_reason?: string | null,
+  message?: {
+    role?: string | null,
+    content?: string | any[] | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  completion_tokens?: number | null,
+  prompt_tokens?: number | null,
+  total_tokens?: number | null,
+  prompt_tokens_details?: {
+    cached_tokens?: number | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Images
+
+### create
+
+`images.create`
+
+Generate an image from a prompt, returning its URL, and spend credits per image
+
+**Risk:** `destructive`
+
+```ts
+await corsair.textcortex.api.images.create({ prompt: 'A red bicycle on a white background', size: '1024x1024' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `prompt` | `string` | Yes | What the image should show. |
+| `model` | `string` | No | An image model ID. The API picks its default when omitted. |
+| `n` | `1` | No | How many images to generate. TextCortex accepts only 1. |
+| `size` | `string` | No | The output size as "WIDTHxHEIGHT", e.g. "1024x1024". |
+| `response_format` | `url` | No | TextCortex returns a URL only; base64 is not offered. |
+
+Spends credits per image. TextCortex makes one image per call and returns a URL.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created` | `number \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  url?: string | null,
+  image_id?: string | null,
+  model?: string | null,
+  file_type?: string | null,
+  width?: number | null,
+  height?: number | null,
+  revised_prompt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Models
+
+### list
+
+`models.list`
+
+List the chat models available to the key, with their IDs and owners
+
+**Risk:** `read`
+
+```ts
+await corsair.textcortex.api.models.list({});
+```
+
+**Input:** _empty object_
+
+Use the base model ID rather than a deprecated -thinking variant; chat.completions takes reasoning_effort for that.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  created?: number | null,
+  object?: string | null,
+  owned_by?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Responses
+
+### create
+
+`responses.create`
+
+Generate one response from a prompt and optional instructions, which spends credits
+
+**Risk:** `destructive`
+
+```ts
+await corsair.textcortex.api.responses.create({ model: 'gpt-6-luna', input: 'Say hello', instructions: 'You are a friendly assistant.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | A model ID from `models.list`. Use the base ID; `-thinking` variants are deprecated. |
+| `input` | `string` | Yes | The prompt or conversation text. |
+| `instructions` | `string` | No | A system instruction that applies to the whole response. |
+| `max_output_tokens` | `number` | No | — |
+| `temperature` | `number` | No | — |
+| `top_p` | `number` | No | — |
+| `store` | `false` | No | TextCortex requires this to be false, since it stores no conversation. |
+
+Spends credits; store is always sent as false and store: true is rejected.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string \| null` | No | — |
+| `created_at` | `number \| null` | No | — |
+| `model` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `output` | `object[] \| null` | No | — |
+| `incomplete_details` | `object \| null` | No | — |
+| `output_text` | `string \| null` | No | — |
+| `usage` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="output full type">
+
+```ts
+{
+  type?: string | null,
+  text?: string | null,
+  id?: string | null,
+  role?: string | null,
+  status?: string | null,
+  content?: {
+    type?: string | null,
+    text?: string | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="incomplete_details full type">
+
+```ts
+{
+  reason?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  input_tokens?: number | null,
+  output_tokens?: number | null,
+  total_tokens?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Web
+
+### search
+
+`web.search`
+
+Search the web and return matching sources with snippets; each search spends credits
+
+**Risk:** `read`
+
+```ts
+await corsair.textcortex.api.web.search({ query: 'textcortex api', limit: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | What to search for. |
+| `limit` | `number` | No | How many results to return, 1 to 10; TextCortex defaults to 5. |
+| `website` | `string` | No | Only return results from this website, e.g. "example.com". |
+
+Spends credits per search; returns up to 10 results in `data`, and `website` limits them to one site.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string \| null` | No | — |
+| `query` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `limit` | `number \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+| `usage` | `object \| null` | No | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string | null,
+  url?: string | null,
+  snippet?: string | null,
+  score?: number | null,
+  published_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  billing?: string | null,
+  cost?: number | null,
+  currency?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  filtered_result_count?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
