@@ -206,6 +206,7 @@ describe('Gemini offline unit tests', () => {
 			name: 'models/veo/operations/123',
 			done: true,
 			error: { code: 3, message: 'failed' },
+			state: 'FAILED',
 		});
 		expect(result.success).toBe(true);
 	});
