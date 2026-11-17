@@ -19,6 +19,7 @@ import type {
 } from './types';
 import {
 	AccountResponseSchema,
+	EmptyInputSchema,
 	HtmlResponseSchema,
 	IdInputSchema,
 	LocationInputSchema,
@@ -112,7 +113,8 @@ export const getAccount: CorsairEndpoint<
 	SearchApiContext,
 	EmptyInput,
 	AccountResponse
-> = async (ctx) => {
+> = async (ctx, input) => {
+	EmptyInputSchema.parse(input ?? {});
 	const body = await searchApiGet<unknown>(ctx.key, '/api/v1/me');
 	const accountRow = asRecord(asRecord(body)?.account);
 	const usage = asRecord(asRecord(body)?.api_usage);

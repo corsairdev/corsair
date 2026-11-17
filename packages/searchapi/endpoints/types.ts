@@ -5,7 +5,7 @@ import {
 	SearchApiSearchEntity,
 } from '../schema/database';
 
-export const EmptyInputSchema = z.object({});
+export const EmptyInputSchema = z.object({}).strict();
 export type EmptyInput = z.infer<typeof EmptyInputSchema>;
 
 export const LocationInputSchema = z.object({

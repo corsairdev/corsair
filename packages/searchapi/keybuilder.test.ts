@@ -8,6 +8,7 @@ function ctx(stored: string | null): KeyContext {
 	return {
 		authType: 'api_key',
 		keys: { get_api_key: jest.fn().mockResolvedValue(stored) },
+		// unknown: a partial key context with only the lookup the keyBuilder calls.
 	} as unknown as KeyContext;
 }
 

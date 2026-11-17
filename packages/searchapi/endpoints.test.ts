@@ -25,6 +25,7 @@ const mockRequest = jest.mocked(request);
 const mockLog = jest.mocked(logEventFromContext);
 
 function context(key?: string, db?: SearchApiContext['db']): SearchApiContext {
+	// unknown: a partial context with only the fields these endpoints read.
 	return { key, db } as unknown as SearchApiContext;
 }
 
@@ -51,6 +52,7 @@ describe('searchapi', () => {
 		const result = await getAccount(
 			context('sekrit', {
 				accounts: { upsertByEntityId: upsert },
+				// unknown: a stub table with only the upsert the endpoint calls.
 			} as unknown as SearchApiContext['db']),
 			{},
 		);
@@ -106,6 +108,7 @@ describe('searchapi', () => {
 		const result = await runSearch(
 			context(undefined, {
 				searches: { upsertByEntityId: upsert },
+				// unknown: a stub table with only the upsert the endpoint calls.
 			} as unknown as SearchApiContext['db']),
 			{ engine: 'google', q: 'secret-query' },
 		);
@@ -269,6 +272,7 @@ describe('searchapi', () => {
 		const result = await getSearchHtml(
 			context('sekrit', {
 				searches: { upsertByEntityId: upsert },
+				// unknown: a stub table with only the upsert the endpoint calls.
 			} as unknown as SearchApiContext['db']),
 			{ id: 'search_abc' },
 		);
@@ -288,6 +292,11 @@ describe('searchapi', () => {
 
 	it('rejects an unsafe id before calling the API', async () => {
 		await expect(getSearchHtml(context(), { id: '../me' })).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('rejects unexpected input on account.get', async () => {
+		await expect(getAccount(context('k'), { x: 1 } as never)).rejects.toThrow();
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
