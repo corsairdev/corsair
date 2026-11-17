@@ -1,4 +1,5 @@
+import * as Account from './account';
 import * as Widgets from './widgets';
 
-export { Widgets };
+export { Account, Widgets };
 export * from './types';

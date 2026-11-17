@@ -39,7 +39,9 @@ describeIfKey('NiftyImages live API', () => {
 		expect(Array.isArray(parsed.stats)).toBe(true);
 		for (const row of parsed.stats) {
 			// Counts are numbers, and a silent widget reports zeroes.
-			expect(typeof row.Views === 'number' || row.Views == null).toBe(true);
+			expect(
+				typeof row.Impressions === 'number' || row.Impressions == null,
+			).toBe(true);
 		}
 	}, 30_000);
 

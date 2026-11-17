@@ -55,7 +55,7 @@ export const stats: NiftyimagesEndpoints['widgetsStats'] = (ctx, input) =>
 		},
 	);
 
-/** Lists the users a widget recorded, with their view and click counts. */
+/** Lists the users a widget recorded, with their image and impression counts. */
 export const users: NiftyimagesEndpoints['widgetsUsers'] = (ctx, input) =>
 	call(
 		ctx,
@@ -104,10 +104,15 @@ export const userStats: NiftyimagesEndpoints['widgetUserStats'] = (
 		{
 			// The docs show this endpoint's payload without an envelope, so a bare
 			// object is accepted as well as `{ stats }`.
-			shape: (raw) => (asRecord(raw)?.stats ? raw : { stats: raw }),
+			// Checked by key, so `{ stats: null }` fails the schema instead of
+			// being wrapped again.
+			shape: (raw) => {
+				const record = asRecord(raw);
+				return record && 'stats' in record ? raw : { stats: raw };
+			},
 			log: ({ widgetKey }, result) => ({
 				widgetKey,
-				views: result.stats.Views ?? undefined,
+				impressions: result.stats.Impressions ?? undefined,
 			}),
 		},
 	);
