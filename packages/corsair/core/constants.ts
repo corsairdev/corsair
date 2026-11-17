@@ -544,6 +544,7 @@ export const BaseProviders = [
 	'shortcut',
 	'shortio',
 	'signwell',
+	'similarweb',
 	'simlacom',
 	'simpleanalytics',
 	'simplekpi',
@@ -1219,6 +1220,7 @@ export const ProviderDisplayNames = {
 	shortcut: 'Shortcut',
 	shortio: 'Short.io',
 	signwell: 'SignWell',
+	similarweb: 'Similarweb',
 	simlacom: 'Simla.com',
 	simpleanalytics: 'Simple Analytics',
 	simplekpi: 'SimpleKPI',
@@ -1901,6 +1903,7 @@ export type AllProviders =
 	| 'shortcut'
 	| 'shortio'
 	| 'signwell'
+	| 'similarweb'
 	| 'simlacom'
 	| 'simpleanalytics'
 	| 'simplekpi'
