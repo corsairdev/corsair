@@ -35,6 +35,7 @@ export async function stormglassGet<T>(
 	});
 }
 
+// Narrows untyped provider JSON; callers check each field they read.
 export function asRecord(value: unknown): Record<string, unknown> | undefined {
 	return value && typeof value === 'object'
 		? (value as Record<string, unknown>)

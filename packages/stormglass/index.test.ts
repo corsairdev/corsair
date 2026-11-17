@@ -1,6 +1,7 @@
 import { AuthMissingError } from 'corsair/core';
 import { stormglass } from './index';
 
+// The plugin's typed maps are cast to plain records to iterate them in tests.
 type Meta = Record<string, { riskLevel: string }>;
 type KeyBuilder = (ctx: unknown, source: string) => Promise<string>;
 
@@ -32,5 +33,12 @@ describe('Stormglass plugin', () => {
 				'endpoint',
 			),
 		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('raises AuthMissingError when core has no key manager', async () => {
+		const keyBuilder = stormglass().keyBuilder as unknown as KeyBuilder;
+		await expect(keyBuilder({}, 'endpoint')).rejects.toBeInstanceOf(
+			AuthMissingError,
+		);
 	});
 });

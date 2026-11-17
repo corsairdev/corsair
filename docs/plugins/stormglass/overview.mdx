@@ -100,17 +100,11 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**Get tomorrow's wind and waves**
+**Get the wind and wave forecast**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.stormglass.api.weather.get({
-	lat: 58.7984,
-	lng: 17.8081,
-	params: 'windSpeed,waveHeight',
-	start: '2024-06-02',
-	end: '2024-06-03',
-});
+await tenant.stormglass.api.weather.get({ lat: 58.7984, lng: 17.8081, params: 'windSpeed,waveHeight' });
 ```
 
 

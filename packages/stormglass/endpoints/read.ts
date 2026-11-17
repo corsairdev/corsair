@@ -34,10 +34,20 @@ import {
 	TideStationSchema,
 } from './types';
 
+/**
+ * Local tables, or undefined when no database is configured. Core still hands
+ * out stub tables then, whose writes throw, so `ctx.db` alone is not the signal.
+ */
+function store(ctx: StormglassContext) {
+	return ctx.database ? ctx.db : undefined;
+}
+
+// Provider JSON is untyped until these helpers check each field.
 function text(value: unknown): string | undefined {
 	return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
 
+// Same as text(): narrows one untyped JSON value.
 function num(value: unknown): number | undefined {
 	return typeof value === 'number' && Number.isFinite(value)
 		? value
@@ -59,6 +69,7 @@ async function save<T extends { id: string }>(
 	}
 }
 
+// body is the raw JSON response; fields are checked one by one below.
 function stationsOf(body: unknown) {
 	const data = asRecord(body)?.data;
 	if (!Array.isArray(data)) {
@@ -79,6 +90,7 @@ function stationsOf(body: unknown) {
 	});
 }
 
+// body is the raw JSON response.
 function quotaOf(body: unknown, id: string) {
 	const meta = asRecord(asRecord(body)?.meta);
 	return StormglassQuotaEntity.parse({
@@ -89,6 +101,7 @@ function quotaOf(body: unknown, id: string) {
 }
 
 /** meta.station on tide responses: the station whose data answered. */
+// body is the raw JSON response.
 function tideStationOf(body: unknown) {
 	const station = asRecord(asRecord(asRecord(body)?.meta)?.station);
 	if (!station) return undefined;
@@ -102,6 +115,7 @@ function tideStationOf(body: unknown) {
 }
 
 /** Source values of one hourly parameter object, e.g. { sg: 10.3, noaa: 10.1 }. */
+// value is one raw hourly parameter object.
 function sourceValues(value: unknown): Record<string, number> {
 	const out: Record<string, number> = {};
 	for (const [source, raw] of Object.entries(asRecord(value) ?? {})) {
@@ -133,6 +147,7 @@ function splitList(value: string | undefined) {
 		.filter(Boolean);
 }
 
+// body is the raw JSON response.
 function hoursOf(body: unknown, params: string[], sources: string[]) {
 	const hours = asRecord(body)?.hours;
 	if (!Array.isArray(hours))
@@ -162,7 +177,7 @@ export const listStations: CorsairEndpoint<
 	const body = await stormglassGet<unknown>(ctx.key, '/v2/tide/stations');
 	const stations = stationsOf(body);
 	for (const station of stations)
-		await save(ctx.db?.stations, station, 'station');
+		await save(store(ctx)?.stations, station, 'station');
 	await logEventFromContext(
 		ctx,
 		'stormglass.stations.list',
@@ -183,7 +198,7 @@ export const listStationsInArea: CorsairEndpoint<
 	});
 	const stations = stationsOf(body);
 	for (const station of stations)
-		await save(ctx.db?.stations, station, 'station');
+		await save(store(ctx)?.stations, station, 'station');
 	await logEventFromContext(
 		ctx,
 		'stormglass.stations.area',
@@ -211,8 +226,8 @@ export const getElevation: CorsairEndpoint<
 		throw new Error('Stormglass elevation response was missing elevation');
 	}
 	const quota = quotaOf(body, 'elevation');
-	await save(ctx.db?.points, point, 'point');
-	await save(ctx.db?.quotas, quota, 'quota');
+	await save(store(ctx)?.points, point, 'point');
+	await save(store(ctx)?.quotas, quota, 'quota');
 	await logEventFromContext(
 		ctx,
 		'stormglass.elevation.get',
@@ -268,9 +283,9 @@ export const getExtremes: CorsairEndpoint<
 		return extreme.success ? [extreme.data] : [];
 	});
 	for (const extreme of extremes)
-		await save(ctx.db?.extremes, extreme, 'extreme');
+		await save(store(ctx)?.extremes, extreme, 'extreme');
 	const quota = quotaOf(body, 'extremes');
-	await save(ctx.db?.quotas, quota, 'quota');
+	await save(store(ctx)?.quotas, quota, 'quota');
 	await logEventFromContext(
 		ctx,
 		'stormglass.tides.extremes',
@@ -303,7 +318,7 @@ export const getSeaLevel: CorsairEndpoint<
 		return [{ time, height: preferred(sources, []), sources }];
 	});
 	const quota = quotaOf(body, 'seaLevel');
-	await save(ctx.db?.quotas, quota, 'quota');
+	await save(store(ctx)?.quotas, quota, 'quota');
 	await logEventFromContext(
 		ctx,
 		'stormglass.tides.seaLevel',
@@ -333,7 +348,7 @@ export const getAstronomy: CorsairEndpoint<
 		return day.success ? [day.data] : [];
 	});
 	const quota = quotaOf(body, 'astronomy');
-	await save(ctx.db?.quotas, quota, 'quota');
+	await save(store(ctx)?.quotas, quota, 'quota');
 	await logEventFromContext(
 		ctx,
 		'stormglass.astronomy.get',
@@ -369,7 +384,7 @@ async function series(
 	});
 	const hours = hoursOf(body, params, sources);
 	const quota = quotaOf(body, quotaId);
-	await save(ctx.db?.quotas, quota, 'quota');
+	await save(store(ctx)?.quotas, quota, 'quota');
 	await logEventFromContext(ctx, event, { count: hours.length }, 'completed');
 	return { hours, quota };
 }

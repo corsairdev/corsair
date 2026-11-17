@@ -33,7 +33,12 @@ function context(
 	key?: string,
 	db?: StormglassContext['db'],
 ): StormglassContext {
-	return { key, db } as unknown as StormglassContext;
+	// A real database is present whenever tables are passed in.
+	return {
+		key,
+		db,
+		database: db ? {} : undefined,
+	} as unknown as StormglassContext;
 }
 
 describe('stormglass', () => {
@@ -285,6 +290,24 @@ describe('stormglass', () => {
 		expect(save).toHaveBeenCalledTimes(2);
 		expect(mockLog.mock.calls[0]?.[1]).toBe('stormglass.tides.extremes');
 		expect(mockLog.mock.calls[0]?.[2]).toEqual({ count: 2 });
+	});
+
+	it('skips saves when core has no database', async () => {
+		const upsert = jest
+			.fn()
+			.mockRejectedValue(new Error('Database not configured'));
+		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+		mockRequest.mockResolvedValue({
+			data: [{ name: 'boulogne', lat: 50.7, lng: 1.5, source: 'sg' }],
+		});
+		const ctx = {
+			db: { stations: { upsertByEntityId: upsert } },
+			database: undefined,
+		} as unknown as StormglassContext;
+		await listStations(ctx, {});
+		expect(upsert).not.toHaveBeenCalled();
+		expect(warn).not.toHaveBeenCalled();
+		warn.mockRestore();
 	});
 
 	it('rejects an unknown datum', async () => {
