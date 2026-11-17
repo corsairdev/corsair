@@ -39,6 +39,8 @@ function buildCtx(): HelpScoutContext {
 			set_webhook_signature: () => Promise.resolve(),
 			get_access_token: () => Promise.resolve('test-api-key'),
 			set_access_token: () => Promise.resolve(),
+			get_api_key: () => Promise.resolve(null),
+			set_api_key: () => Promise.resolve(),
 			get_refresh_token: () => Promise.resolve(null),
 			set_refresh_token: () => Promise.resolve(),
 			get_expires_at: () => Promise.resolve(null),
