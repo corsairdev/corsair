@@ -88,6 +88,9 @@ const globalpingEndpointMeta = {
 	typeof globalpingEndpointsNested
 >;
 
+// Core's messages for a tenant with no Globalping account yet (plain Errors, no class to match).
+const NO_ACCOUNT = /^(Account not found|No DEK found for account)/;
+
 const defaultAuthType = 'api_key' as const satisfies AuthTypes;
 
 export const globalpingAuthConfig = {
@@ -132,12 +135,15 @@ export function globalping<const T extends GlobalpingPluginOptions>(
 			if (source === 'endpoint' && options.key) return options.key;
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				// The key is optional: Globalping serves every route anonymously with a
-				// lower hourly limit. With no stored account (or no key in it) the
-				// lookup throws or returns null; both mean "call without a token".
+				// lower hourly limit. No stored account or key means "call without a
+				// token"; any other failure (database, decryption) is passed on.
 				try {
 					return (await ctx.keys.get_api_key()) ?? '';
-				} catch {
-					return '';
+				} catch (error) {
+					if (error instanceof Error && NO_ACCOUNT.test(error.message)) {
+						return '';
+					}
+					throw error;
 				}
 			}
 			return '';

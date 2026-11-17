@@ -36,10 +36,38 @@ describe('globalping keyBuilder (the key is optional)', () => {
 		await expect(
 			plugin.keyBuilder?.(
 				ctx(async () => {
-					throw new Error('Account not found');
+					throw new Error(
+						'Account not found for tenant "t" and integration "globalping". Make sure to create the account first.',
+					);
 				}),
 				'endpoint',
 			),
 		).resolves.toBe('');
+	});
+
+	it('goes anonymous when the account has no key material yet', async () => {
+		const plugin = globalping();
+		await expect(
+			plugin.keyBuilder?.(
+				ctx(async () => {
+					throw new Error(
+						'No DEK found for account (tenant: "t", integration: "globalping"). Initialize the account first.',
+					);
+				}),
+				'endpoint',
+			),
+		).resolves.toBe('');
+	});
+
+	it('passes other key lookup failures on instead of dropping the token', async () => {
+		const plugin = globalping();
+		await expect(
+			plugin.keyBuilder?.(
+				ctx(async () => {
+					throw new Error('Unsupported state or unable to authenticate data');
+				}),
+				'endpoint',
+			),
+		).rejects.toThrow('unable to authenticate');
 	});
 });
