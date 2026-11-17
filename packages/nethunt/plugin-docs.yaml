@@ -3,7 +3,7 @@ description: List NetHunt folders and their field names, search and page records
 domain: nethunt.com
 recommendedAuth: api_key
 overviewNote: |
-  NetHunt's API needs two credentials. The **email** is the account address and the **API key** is generated in NetHunt under Settings, Integrations, API. Both are stored on the account: the plugin sends them as HTTP Basic auth, where the email is the username and the key is the password.
+  NetHunt's API needs two credentials. The **email** is the account address and the **API key** is the legacy key from NetHunt's Settings, Apps and other integrations, API key (LEGACY), Generate. The newer `nh_live_` tokens under Settings, API & MCP answer 401 on these routes (checked live 2026-11-17). Both are stored on the account: the plugin sends them as HTTP Basic auth, where the email is the username and the key is the password.
 
   Set both before the first call, for example `pnpm corsair setup --plugin=nethunt --tenant=acme api_key=<key> email=<you@example.com>`, or pass `key` and `email` in the plugin options. `account.verify` confirms the pair works and returns the user behind it.
 
