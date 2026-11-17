@@ -198,6 +198,7 @@ export const BaseProviders = [
 	'customgpt',
 	'customjs',
 	'cuttly',
+	'd2lbrightspace',
 	'dadataru',
 	'daffy',
 	'databox',
@@ -871,6 +872,7 @@ export const ProviderDisplayNames = {
 	customgpt: 'CustomGPT',
 	customjs: 'CustomJS',
 	cuttly: 'Cutt.ly',
+	d2lbrightspace: 'D2L Brightspace',
 	dadataru: 'Dadataru',
 	daffy: 'Daffy',
 	databox: 'Databox',
@@ -1551,6 +1553,7 @@ export type AllProviders =
 	| 'customgpt'
 	| 'customjs'
 	| 'cuttly'
+	| 'd2lbrightspace'
 	| 'dadataru'
 	| 'daffy'
 	| 'databox'
