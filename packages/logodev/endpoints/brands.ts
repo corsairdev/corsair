@@ -2,8 +2,7 @@ import type { CorsairEndpoint } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
 import { logoDevRequest } from '../client';
 import type { LogoDevContext } from '../context';
-import { LogoDevBrandEntity } from '../schema/database';
-import { requireKey } from './shared';
+import { requireKey, saveBrand } from './shared';
 import type { BrandResponse, GetBrandInput, LookupBrandInput } from './types';
 import {
 	BrandResponseSchema,
@@ -51,22 +50,15 @@ export const getBrand: CorsairEndpoint<
 	return result;
 };
 
-/** Saves a ready brand under its domain. A 202 (still indexing) has no name yet and is skipped. */
+/** Saves a ready brand under its domain. A 202 (still indexing) has no domain yet and is skipped. */
 async function storeBrand(
 	ctx: LogoDevContext,
 	result: BrandResponse,
 ): Promise<void> {
-	if (!ctx.db?.brands) return;
-	const row = LogoDevBrandEntity.safeParse({
+	await saveBrand(ctx, {
 		domain: result.data.domain,
 		name: result.data.name,
 		object: result.data.object,
 		brandId: result.data.id,
 	});
-	if (!row.success) return;
-	try {
-		await ctx.db.brands.upsertByEntityId(row.data.domain, row.data);
-	} catch {
-		console.warn('Failed to save Logo.dev brand');
-	}
 }

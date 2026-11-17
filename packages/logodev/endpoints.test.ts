@@ -53,13 +53,20 @@ function context(
 	key: string,
 	upsert?: jest.Mock,
 	imageUpsert?: jest.Mock,
+	saved?: Record<string, unknown>,
 ): LogoDevContext {
+	// A partial mock context: only the fields the endpoints read are set.
 	return {
 		key,
 		db:
 			upsert || imageUpsert
 				? {
-						brands: { upsertByEntityId: upsert ?? jest.fn() },
+						brands: {
+							upsertByEntityId: upsert ?? jest.fn(),
+							findByEntityId: jest
+								.fn()
+								.mockResolvedValue(saved ? { data: saved } : null),
+						},
 						images: { upsertByEntityId: imageUpsert ?? jest.fn() },
 					}
 				: undefined,
@@ -239,6 +246,47 @@ describe('brands.lookup and brands.get', () => {
 			object: 'brand',
 			brandId: 'brand_4x0',
 		});
+	});
+
+	it('keeps the logo URL a search saved when a lookup saves the brand id', async () => {
+		const upsert = jest.fn().mockResolvedValue(undefined);
+		mockRequest.mockResolvedValue({ data: BRAND, metadata: META });
+		await lookupBrand(
+			context('sk_test', upsert, undefined, {
+				domain: 'stripe.com',
+				name: 'Stripe',
+				object: 'search_result',
+				logoUrl: 'https://img.logo.dev/stripe.com',
+			}),
+			{ domain: 'stripe.com' },
+		);
+		expect(upsert).toHaveBeenCalledWith('stripe.com', {
+			domain: 'stripe.com',
+			name: 'Stripe',
+			object: 'brand',
+			logoUrl: 'https://img.logo.dev/stripe.com',
+			brandId: 'brand_4x0',
+		});
+	});
+
+	it('keeps the brand id a lookup saved when a search saves the logo URL', async () => {
+		const upsert = jest.fn().mockResolvedValue(undefined);
+		mockRequest.mockResolvedValue(SEARCH_BODY);
+		await searchBrands(
+			context('sk_test', upsert, undefined, {
+				domain: 'shopify.com',
+				name: 'Shopify',
+				brandId: 'brand_shop',
+			}),
+			{ q: 'shopify' },
+		);
+		expect(upsert).toHaveBeenCalledWith(
+			'shopify.com',
+			expect.objectContaining({
+				brandId: 'brand_shop',
+				logoUrl: 'https://img.logo.dev/shopify.com',
+			}),
+		);
 	});
 
 	it('sends nosubscribe=true and a ticker when asked', async () => {

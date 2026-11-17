@@ -2,8 +2,7 @@ import type { CorsairEndpoint } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
 import { searchLogoDev } from '../client';
 import type { LogoDevContext } from '../context';
-import { LogoDevBrandEntity } from '../schema/database';
-import { requireKey } from './shared';
+import { requireKey, saveBrand } from './shared';
 import type { SearchBrandsInput, SearchBrandsResponse } from './types';
 import { SearchBrandsInputSchema, SearchBrandsResponseSchema } from './types';
 
@@ -51,19 +50,12 @@ async function storeBrands(
 	ctx: LogoDevContext,
 	brands: SearchBrandsResponse['data'],
 ): Promise<void> {
-	if (!ctx.db?.brands) return;
 	for (const item of brands) {
-		const row = LogoDevBrandEntity.safeParse({
+		await saveBrand(ctx, {
 			domain: item.domain,
 			name: item.name,
 			object: item.object,
 			logoUrl: item.logo_url,
 		});
-		if (!row.success) continue;
-		try {
-			await ctx.db.brands.upsertByEntityId(row.data.domain, row.data);
-		} catch {
-			console.warn('Failed to save Logo.dev brand');
-		}
 	}
 }
