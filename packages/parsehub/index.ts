@@ -90,7 +90,7 @@ const parsehubEndpointMeta = {
 			'Get one project with its last run, last ready run and the 20 most recent runs.',
 	},
 	'projects.run': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Start a run of a project on the ParseHub cloud. Returns the new run; poll runs.get until data_ready.',
 	},

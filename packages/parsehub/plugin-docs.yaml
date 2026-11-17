@@ -30,7 +30,7 @@ apiNotes:
   projects.list: |
     Omit offset, limit or include_options to take the service default. include_options is sent as 1 or 0.
   projects.run: |
-    `start_value_override` is sent as a JSON string. `send_email: true` emails the account owner when the run ends.
+    `start_value_override` is sent as a JSON string. `send_email: true` emails the account owner when the run ends. The operation is `destructive` because it starts a cloud run against the plan's quota and can send that email.
 apiExamples:
   projects.list:
     offset: 0

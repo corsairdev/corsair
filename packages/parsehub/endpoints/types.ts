@@ -63,6 +63,7 @@ export type ParsehubProject = z.infer<typeof ProjectSchema>;
  * Extracted data. Its shape is whatever the project's templates select, so it
  * stays open: a JSON object (or array) for `json`, a CSV string for `csv`.
  */
+// unknown: the data's keys and values come from each user's own project.
 const RunDataSchema = z.union([
 	z.record(z.string(), z.unknown()),
 	z.array(z.unknown()),
@@ -119,6 +120,7 @@ export const RunProjectInputSchema = z.object({
 		.min(1)
 		.optional()
 		.describe('Template to start with. Defaults to the project main template.'),
+	// unknown: the global scope is whatever the project's templates read.
 	start_value_override: z
 		.record(z.string(), z.unknown())
 		.optional()

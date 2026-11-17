@@ -12,6 +12,7 @@ if (!KEY) {
 
 describeLive('ParseHub live', () => {
 	it('lists projects', async () => {
+		// unknown: the live reply is checked by the schema below.
 		const response = await makeParsehubRequest<unknown>(KEY as string, {
 			path: '/projects',
 		});

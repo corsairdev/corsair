@@ -233,7 +233,7 @@ Omit offset, limit or include_options to take the service default. include_optio
 
 Start a run of a project on the ParseHub cloud. Returns the new run; poll runs.get until data_ready.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.parsehub.api.projects.run({
@@ -253,7 +253,7 @@ await corsair.parsehub.api.projects.run({
 | `start_value_override` | `Record<string, any>` | No | Starting global scope for the run, e.g. &#123; "query": "San Francisco" &#125;. Sent as a JSON string. |
 | `send_email` | `boolean` | No | Email the account owner when the run completes or fails. Default false. |
 
-`start_value_override` is sent as a JSON string. `send_email: true` emails the account owner when the run ends.
+`start_value_override` is sent as a JSON string. `send_email: true` emails the account owner when the run ends. The operation is `destructive` because it starts a cloud run against the plan's quota and can send that email.
 
 
 

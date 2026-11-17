@@ -42,6 +42,7 @@ function context(
 					},
 				}
 			: undefined,
+		// unknown: a partial test double of the plugin context.
 	} as unknown as ParsehubContext;
 }
 
@@ -83,6 +84,7 @@ beforeEach(() => {
 });
 
 describe('wire format of every operation', () => {
+	// unknown: one table holds every operation, each with its own input and reply shape.
 	type Case = {
 		name: string;
 		run: (ctx: ParsehubContext) => Promise<unknown>;
@@ -324,14 +326,15 @@ describe('stored projects', () => {
 		expect(JSON.stringify(upsert.mock.calls)).not.toContain('test-key');
 	});
 
-	it('keeps the stored title when a response has none', async () => {
+	it('leaves a stored project alone when a reply has no title', async () => {
 		const upsert = jest.fn().mockResolvedValue(undefined);
 		const find = jest
 			.fn()
 			.mockResolvedValue({ data: { token: 'p1', title: 'Old' } });
 		mockRequest.mockResolvedValue({ token: 'p1', title: null });
 		await getProject(context('k', { upsert, find }), { project_token: 'p1' });
-		expect(upsert).toHaveBeenCalledWith('p1', { token: 'p1', title: 'Old' });
+		expect(find).toHaveBeenCalledWith('p1');
+		expect(upsert).not.toHaveBeenCalled();
 	});
 
 	it('returns the list when the database write fails', async () => {

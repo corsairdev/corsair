@@ -123,8 +123,8 @@ export const getLastReadyData: CorsairEndpoint<
 };
 
 /**
- * Saves each project's token and title. A response without a title keeps
- * the stored one.
+ * Saves each project's token and title. A response without a title leaves
+ * a stored project as it is.
  */
 async function storeProjects(
 	ctx: ParsehubContext,
@@ -134,10 +134,13 @@ async function storeProjects(
 	for (const project of projects) {
 		try {
 			const existing = await ctx.db.projects.findByEntityId(project.token);
+			// A reply without a title carries nothing new for a stored project:
+			// skip the write so it cannot put back a title another call changed.
+			if (project.title == null && existing) continue;
 			const row = ParsehubProjectEntity.safeParse({
 				...existing?.data,
 				token: project.token,
-				title: project.title ?? existing?.data.title,
+				title: project.title ?? undefined,
 			});
 			if (!row.success) continue;
 			await ctx.db.projects.upsertByEntityId(project.token, row.data);

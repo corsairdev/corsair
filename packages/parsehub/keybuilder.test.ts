@@ -3,6 +3,7 @@ import { parsehub } from './index';
 
 describe('ParseHub keyBuilder and risk levels', () => {
 	const plugin = parsehub();
+	// unknown: the test calls keyBuilder with a minimal context double.
 	const build = plugin.keyBuilder as unknown as (
 		ctx: unknown,
 		source: string,
@@ -26,12 +27,12 @@ describe('ParseHub keyBuilder and risk levels', () => {
 		);
 	});
 
-	it('marks cancel and delete destructive and the run a write', () => {
+	it('marks run, cancel and delete destructive', () => {
 		const meta = plugin.endpointMeta as Record<string, { riskLevel: string }>;
 		expect(Object.keys(meta)).toHaveLength(8);
 		expect(meta['runs.cancel']?.riskLevel).toBe('destructive');
 		expect(meta['runs.delete']?.riskLevel).toBe('destructive');
-		expect(meta['projects.run']?.riskLevel).toBe('write');
+		expect(meta['projects.run']?.riskLevel).toBe('destructive');
 		expect(meta['runs.getData']?.riskLevel).toBe('read');
 	});
 });

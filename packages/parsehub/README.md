@@ -14,7 +14,7 @@ pnpm add @corsair-dev/parsehub
 |-----------|--------------|------|-------------|
 | `projects.list` | `parsehub.api.projects.list` | `read` | List the scraping projects on the ParseHub account, 20 at a time. |
 | `projects.get` | `parsehub.api.projects.get` | `read` | Get one project with its last run, last ready run and the 20 most recent runs. |
-| `projects.run` | `parsehub.api.projects.run` | `write` | Start a run of a project on the ParseHub cloud. Returns the new run; poll runs.get until data_ready. |
+| `projects.run` | `parsehub.api.projects.run` | `destructive` | Start a run of a project on the ParseHub cloud. Returns the new run; poll runs.get until data_ready. |
 | `projects.getLastReadyData` | `parsehub.api.projects.getLastReadyData` | `read` | Get the extracted data of the most recent run of a project that has data ready. |
 | `runs.get` | `parsehub.api.runs.get` | `read` | Get one run: status, data_ready, page count and timing. |
 | `runs.getData` | `parsehub.api.runs.getData` | `read` | Get the data a run extracted, as JSON or CSV. |
