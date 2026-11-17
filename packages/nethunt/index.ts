@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { joinCredentials } from './client';
 import { Account, Folders, Records } from './endpoints';
 import type {
 	NethuntEndpointInputs,
@@ -45,7 +46,10 @@ export type NethuntContext = CorsairPluginContext<
 	typeof nethuntAuthConfig
 >;
 
-export type NethuntKeyBuilderContext = KeyBuilderContext<NethuntPluginOptions>;
+export type NethuntKeyBuilderContext = KeyBuilderContext<
+	NethuntPluginOptions,
+	typeof nethuntAuthConfig
+>;
 
 export type NethuntBoundEndpoints = BindEndpoints<
 	typeof nethuntEndpointsNested
@@ -64,6 +68,9 @@ export type NethuntEndpoints = {
 	recordsRecent: NethuntEndpoint<'recordsRecent'>;
 	recordsUpdated: NethuntEndpoint<'recordsUpdated'>;
 	recordsChanges: NethuntEndpoint<'recordsChanges'>;
+	recordsRecentComments: NethuntEndpoint<'recordsRecentComments'>;
+	recordsRecentCallLogs: NethuntEndpoint<'recordsRecentCallLogs'>;
+	recordsRecentFiles: NethuntEndpoint<'recordsRecentFiles'>;
 	recordsCreate: NethuntEndpoint<'recordsCreate'>;
 	recordsUpdate: NethuntEndpoint<'recordsUpdate'>;
 	recordsDelete: NethuntEndpoint<'recordsDelete'>;
@@ -83,6 +90,9 @@ export const nethuntEndpointsNested = {
 		recent: Records.recent,
 		updated: Records.updated,
 		changes: Records.changes,
+		recentComments: Records.recentComments,
+		recentCallLogs: Records.recentCallLogs,
+		recentFiles: Records.recentFiles,
 		create: Records.create,
 		update: Records.update,
 		delete: Records.remove,
@@ -119,6 +129,18 @@ export const nethuntEndpointSchemas = {
 	'records.changes': {
 		input: NethuntEndpointInputSchemas.recordsChanges,
 		output: NethuntEndpointOutputSchemas.recordsChanges,
+	},
+	'records.recentComments': {
+		input: NethuntEndpointInputSchemas.recordsRecentComments,
+		output: NethuntEndpointOutputSchemas.recordsRecentComments,
+	},
+	'records.recentCallLogs': {
+		input: NethuntEndpointInputSchemas.recordsRecentCallLogs,
+		output: NethuntEndpointOutputSchemas.recordsRecentCallLogs,
+	},
+	'records.recentFiles': {
+		input: NethuntEndpointInputSchemas.recordsRecentFiles,
+		output: NethuntEndpointOutputSchemas.recordsRecentFiles,
 	},
 	'records.create': {
 		input: NethuntEndpointInputSchemas.recordsCreate,
@@ -194,7 +216,22 @@ const nethuntEndpointMeta = {
 	'records.changes': {
 		riskLevel: 'read',
 		description:
-			'Read the audit trail for a folder: who changed which field, when, with before and after values, including deletes',
+			'Read the audit trail for a folder: who changed which field and when, as the values removed and added, including deletes',
+	},
+	'records.recentComments': {
+		riskLevel: 'read',
+		description:
+			'List comments added to records in a folder after a timestamp; NetHunt defaults the window to 24 hours',
+	},
+	'records.recentCallLogs': {
+		riskLevel: 'read',
+		description:
+			'List calls logged on records in a folder after a timestamp, with start, end and duration',
+	},
+	'records.recentFiles': {
+		riskLevel: 'read',
+		description:
+			'List Google Drive files attached to records in a folder after a timestamp',
 	},
 	'records.create': {
 		riskLevel: 'write',
@@ -238,7 +275,8 @@ export type BaseNethuntPlugin<T extends NethuntPluginOptions> = CorsairPlugin<
 	typeof nethuntEndpointsNested,
 	{},
 	T,
-	typeof defaultAuthType
+	typeof defaultAuthType,
+	typeof nethuntAuthConfig
 >;
 
 export type InternalNethuntPlugin = BaseNethuntPlugin<NethuntPluginOptions>;
@@ -265,22 +303,24 @@ export function nethunt<const T extends NethuntPluginOptions>(
 		endpointSchemas: nethuntEndpointSchemas,
 		pluginWebhookMatcher: () => false,
 		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
+		// NetHunt's credential is an email and key pair. Both are resolved here,
+		// per tenant, and handed to the endpoints as one `email:apiKey` string,
+		// so a missing half raises AuthMissingError instead of an unsigned call.
 		keyBuilder: async (ctx: NethuntKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key) {
-				return options.key;
+			if (source !== 'endpoint') return '';
+			const apiKey =
+				options.key ??
+				(ctx.authType === 'api_key' ? await ctx.keys?.get_api_key() : null);
+			const email = options.email ?? (await ctx.keys?.get_email?.());
+			if (!apiKey || !email) {
+				throw new AuthMissingError('nethunt', ctx.authType ?? 'api_key');
 			}
-
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				if (res) return res;
-			}
-
-			throw new AuthMissingError('nethunt', ctx.authType ?? 'api_key');
+			return joinCredentials({ email, apiKey });
 		},
 	} satisfies InternalNethuntPlugin;
 }
 
-export { NethuntAPIError } from './client';
+export { joinCredentials, splitCredentials } from './client';
 
 export type {
 	AccountVerifyInput,

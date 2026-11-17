@@ -1,17 +1,17 @@
-import { asRecord } from 'corsair/core';
 import type {
 	ApiRequestOptions,
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
+import { request } from 'corsair/http';
 
 export const NETHUNT_API_BASE = 'https://nethunt.com/api/v1';
 
-// Retries belong to error-handlers.ts. NetHunt documents no Retry-After, so the
-// header name is kept only so a proxy that sends one is honoured.
+// Core's request() retries a 429 three times with backoff and honours a
+// Retry-After header if one is sent, so the 429 handler in error-handlers.ts
+// does not retry again. NetHunt documents no Retry-After.
 const NETHUNT_RATE_LIMIT_CONFIG: RateLimitConfig = {
-	maxRetries: 0,
+	maxRetries: 3,
 	enabled: true,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
@@ -26,69 +26,23 @@ const NETHUNT_RATE_LIMIT_CONFIG: RateLimitConfig = {
  */
 export type NethuntCredentials = { email: string; apiKey: string };
 
-// unknown: the record is an untyped error body; one field is read at a time.
-function readString(
-	record: Record<string, unknown> | null | undefined,
-	key: string,
-): string | undefined {
-	const value = record?.[key];
-	return typeof value === 'string' && value.length > 0 ? value : undefined;
-}
-
 /**
- * NetHunt's documented error answers are thin. A bad credential on any route is
- * a **401 with a plain-text body** ("Your email address or API key does not
- * appear to be valid"), not JSON. A missing record is a 404 with an empty body,
- * and the success bodies are JSON. So a JSON body is the only reliable signal
- * that the error came from the API rather than the edge.
+ * The keyBuilder returns the Basic credential as `email:apiKey`, so the
+ * per-tenant pair reaches the client through `ctx.key` alone. The key itself
+ * holds no colon, so the split is at the last one.
  */
-export class NethuntAPIError extends Error {
-	readonly status?: number;
-	/** The provider's own `message`, when the body was JSON. */
-	readonly detail?: string;
-	readonly method?: string;
-
-	constructor(
-		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			detail?: string;
-			method?: string;
-		} = {},
-	) {
-		super(message, options.cause ? { cause: options.cause } : undefined);
-		this.name = 'NethuntAPIError';
-		this.status = options.status;
-		this.detail = options.detail;
-		this.method = options.method;
-	}
-
-	get isRateLimit(): boolean {
-		return this.status === 429;
-	}
-
-	/** NetHunt answers a bad email/key pair with 401, not 403. */
-	get isAuthError(): boolean {
-		return this.status === 401;
-	}
+export function joinCredentials({ email, apiKey }: NethuntCredentials): string {
+	return `${email}:${apiKey}`;
 }
 
-// unknown: see NethuntAPIError.
-export function describeNethuntError(
-	status: number | undefined,
-	body: unknown,
-	fallback: string,
-): string {
-	const record = asRecord(body);
-	const text =
-		readString(record, 'message') ??
-		readString(record, 'error') ??
-		// A 401 body is plain text and arrives as a string.
-		(typeof body === 'string' && body.length > 0 ? body : undefined) ??
-		fallback;
-	const label = status === undefined ? '' : `NetHunt ${status}: `;
-	return `${label}${text}`;
+export function splitCredentials(key: string): NethuntCredentials {
+	const at = key.lastIndexOf(':');
+	if (at <= 0 || at === key.length - 1) {
+		throw new Error(
+			'NetHunt needs the account email and the API key; set both before calling.',
+		);
+	}
+	return { email: key.slice(0, at), apiKey: key.slice(at + 1) };
 }
 
 /**
@@ -133,27 +87,12 @@ export async function makeNethuntRequest(
 		mediaType: body === undefined ? undefined : 'application/json',
 	};
 
-	try {
-		return await request<unknown>(config, requestOptions, {
-			rateLimitConfig: NETHUNT_RATE_LIMIT_CONFIG,
-		});
-	} catch (error) {
-		if (error instanceof ApiError) {
-			throw new NethuntAPIError(
-				describeNethuntError(error.status, error.body, error.message),
-				{
-					status: error.status,
-					detail: readString(asRecord(error.body), 'message'),
-					method,
-				},
-			);
-		}
-		// DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new NethuntAPIError(error.message, { cause: error, method });
-		}
-		throw new NethuntAPIError('Unknown NetHunt error', { method });
-	}
+	// NetHunt answers a bad pair with a 401 plain-text body and has no error
+	// codes, so core's ApiError goes through unchanged: its status is what the
+	// handlers read.
+	return request<unknown>(config, requestOptions, {
+		rateLimitConfig: NETHUNT_RATE_LIMIT_CONFIG,
+	});
 }
 
 /** Encodes one path segment. Folder ids are hex, but names can repeat. */

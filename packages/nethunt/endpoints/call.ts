@@ -2,19 +2,9 @@ import { logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { NethuntContext } from '..';
 import type { NethuntRequest } from '../client';
-import { makeNethuntRequest } from '../client';
+import { makeNethuntRequest, splitCredentials } from '../client';
 
 type LogFields = Record<string, string | number | boolean | undefined>;
-
-/**
- * Resolves the account-level `email`, the username half of NetHunt's Basic
- * auth. The inline option wins so a caller can test without storing one.
- */
-async function resolveEmail(ctx: NethuntContext): Promise<string> {
-	if (ctx.options?.email) return ctx.options.email;
-	const stored = await ctx.keys?.get_email?.();
-	return stored ?? '';
-}
 
 /**
  * Validates the input, sends the request, shapes and validates the response,
@@ -35,9 +25,9 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
-	const email = await resolveEmail(ctx);
+	// ctx.key is the `email:apiKey` pair the keyBuilder resolved per tenant.
 	const raw = await makeNethuntRequest(
-		{ email, apiKey: ctx.key },
+		splitCredentials(ctx.key),
 		toRequest(parsed),
 	);
 	const result = operation.output.parse(

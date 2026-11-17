@@ -1,5 +1,5 @@
 import type { ErrorHandlerAndMatchFunction } from 'corsair/core';
-import { NethuntAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
 type HandlerName = keyof typeof errorHandlers;
@@ -23,21 +23,26 @@ async function strategy(error: Error) {
 	});
 }
 
-function apiError(
-	status: number,
-	method: 'GET' | 'POST' = 'GET',
-): NethuntAPIError {
-	return new NethuntAPIError(`NetHunt ${status}: failed`, { status, method });
+/** Core's ApiError, which the client passes through unchanged. */
+function apiError(status: number, method: 'GET' | 'POST' = 'GET'): ApiError {
+	return new ApiError(
+		{ method, url: '/zapier/triggers/readable-folder' },
+		{
+			url: 'https://nethunt.com/api/v1/zapier/triggers/readable-folder',
+			ok: false,
+			status,
+			statusText: '',
+			body: 'failed',
+		},
+		`NetHunt ${status}: failed`,
+	);
 }
 
 describe('nethunt error handlers', () => {
-	it('retries a 429 with backoff', async () => {
+	it('does not replay a 429 core already retried', async () => {
 		const error = apiError(429);
 		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
-		expect(await strategy(error)).toEqual({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff',
-		});
+		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
 	it('does not retry a 401, which is a bad email or key', async () => {
@@ -99,12 +104,12 @@ describe('mergeErrorHandlers', () => {
 	it('runs a caller handler for a status no builtin covers', () => {
 		const custom = {
 			match: (error: Error) =>
-				error instanceof NethuntAPIError && error.status === 502,
+				error instanceof ApiError && error.status === 502,
 			handler: async () => ({ maxRetries: 9 }),
 		};
 		const merged = mergeErrorHandlers(errorHandlers, { CUSTOM: custom });
 
-		const failure = new NethuntAPIError('bad gateway', { status: 502 });
+		const failure = apiError(502);
 		const firstMatch = Object.entries(merged).find(([, entry]) =>
 			entry?.match?.(failure, {
 				pluginId: 'nethunt',

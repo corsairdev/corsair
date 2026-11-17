@@ -34,8 +34,7 @@ export const verify: NethuntEndpoints['accountVerify'] = (ctx, input) =>
 				}
 				return { user: first.user };
 			},
-			log: (_, result) => ({
-				email: result.user.emailAddress ?? undefined,
-			}),
+			// The user's email stays in the result only, never in the event.
+			log: () => ({ verified: true }),
 		},
 	);
