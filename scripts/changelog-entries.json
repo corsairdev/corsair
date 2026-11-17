@@ -8587,5 +8587,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/nethunt",
+    "dir": "packages/nethunt",
+    "name": "NetHunt CRM",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
