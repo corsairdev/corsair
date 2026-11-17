@@ -1,16 +1,22 @@
 ---
 title: "Sensibo plugin"
 sidebarTitle: "Overview"
-description: "List the Sensibo pods on an account. The key is sent as the apiKey query parameter."
+description: "Read and control Sensibo smart AC controllers (pods), their schedules, timers, Climate React and sensor history."
 ---
 
 Use **Sensibo** through Corsair: one client, typed API calls, local DB sync.
 
-An empty key comes back as HTTP 403. The client does not send a bearer token.
+Things to know before you call:
+
+- **The key goes in the query string.** Sensibo takes the API key as the `apiKey` query parameter; the client sends no bearer token. Create a key at home.sensibo.com/me/api. With no key stored, Corsair raises `AuthMissingError` before any request; a key Sensibo rejects comes back as HTTP 403.
+- **Ask for the fields you need.** `devices.list` returns only pod ids unless you pass `fields` (`*` for everything, or a list such as `id,room,acState,measurements`).
+- **AC values come from the pod's remote.** Valid `mode`, `fanLevel`, `swing` and `light` values are in the pod's `remoteCapabilities` (`devices.get` with `fields: '*'`). An AC state can be partial, such as `{ on: false }`.
+- **Writes change a real air conditioner.** `acStates.set`, timers, schedules and Climate React act on the physical unit. `timer.set` and `climateReact.configure` replace the current timer or Climate React settings.
+- **Unknown ids are 404.** A pod or sensor that is not on the account answers 404 "No such device or device is not associated with user".
 
 **What you get:**
 
-- 1 typed API operations
+- 19 typed API operations
 - 1 synced entity (`pods`) for fast `.search()` / `.list()`
 
 ## Setup
@@ -97,17 +103,23 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**List Sensibo pods**
+**List Sensibo pods with their rooms and AC state**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.sensibo.api.devices.list({ fields: 'id,room' });
+await tenant.sensibo.api.devices.list({ fields: 'id,room,acState' });
 ```
 
 
-**Write**
+**Turn the AC on in cool mode at 22 degrees**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/sensibo/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.sensibo.api.acStates.set({
+	deviceId: 'abc123',
+	acState: { on: true, mode: 'cool', targetTemperature: 22 },
+});
+```
 
 
 See the full list on the [API](/plugins/sensibo/api) page.

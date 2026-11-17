@@ -8,27 +8,26 @@ description: "API reference for the Sensibo plugin in Corsair: every `sensibo.ap
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
 
-## Devices
+## Ac States
 
 ### list
 
-`devices.list`
+`acStates.list`
 
-List every Sensibo pod on the authenticated account.
+List the current and recent AC states of a pod, newest first.
 
 **Risk:** `read`
 
 ```ts
-await corsair.sensibo.api.devices.list({ fields: 'id,room' });
+await corsair.sensibo.api.acStates.list({ deviceId: 'abc123', limit: 5 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `fields` | `string` | No | Comma-separated pod fields to return. |
-
-Pass a comma-separated field list when you want a smaller pod object. Omit it to take the service default.
+| `deviceId` | `string` | Yes | Pod (device) id from devices.list. |
+| `limit` | `number` | No | How many recent states to return (1 to 20). |
 
 
 
@@ -44,7 +43,1161 @@ Pass a comma-separated field list when you want a smaller pod object. Omit it to
 
 ```ts
 {
+  id?: string,
+  status?: string | null,
+  reason?: string | null,
+  acState?: {
+    on?: boolean | null,
+    mode?: string | null,
+    fanLevel?: string | null,
+    targetTemperature?: number | null,
+    temperatureUnit?: string | null,
+    swing?: string | null,
+    horizontalSwing?: string | null,
+    light?: string | null
+  } | null,
+  changedProperties?: string[] | null,
+  failureReason?: string | null
 }[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### set
+
+`acStates.set`
+
+Set the AC state of a pod (on/off, mode, fan level, target temperature, swing).
+
+**Risk:** `write`
+
+```ts
+await corsair.sensibo.api.acStates.set({
+	deviceId: 'abc123',
+	acState: { on: false },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | Pod (device) id from devices.list. |
+| `acState` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="acState full type">
+
+```ts
+{
+  on?: boolean,
+  mode?: string,
+  fanLevel?: string,
+  targetTemperature?: number,
+  temperatureUnit?: C | F,
+  swing?: string,
+  horizontalSwing?: string,
+  light?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string,
+  status?: string | null,
+  reason?: string | null,
+  acState?: {
+    on?: boolean | null,
+    mode?: string | null,
+    fanLevel?: string | null,
+    targetTemperature?: number | null,
+    temperatureUnit?: string | null,
+    swing?: string | null,
+    horizontalSwing?: string | null,
+    light?: string | null
+  } | null,
+  changedProperties?: string[] | null,
+  failureReason?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setProperty
+
+`acStates.setProperty`
+
+Change one property of the AC state of a pod, such as on or targetTemperature.
+
+**Risk:** `write`
+
+```ts
+await corsair.sensibo.api.acStates.setProperty({ deviceId: 'abc123', property: 'targetTemperature', newValue: 23 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | Pod (device) id from devices.list. |
+| `property` | `on \| mode \| fanLevel \| targetTemperature \| temperatureUnit \| swing \| horizontalSwing \| light` | Yes | The one AC state property to change. |
+| `newValue` | `string \| number \| boolean` | Yes | The new value, e.g. true for on, 22 for targetTemperature. |
+| `currentAcState` | `object` | No | The current AC state, which Sensibo uses to fill in the other properties. |
+
+`property` names one field of the AC state. Sensibo fills in the rest from `currentAcState` when you pass it.
+
+<AccordionGroup>
+<Accordion title="currentAcState full type">
+
+```ts
+{
+  on?: boolean,
+  mode?: string,
+  fanLevel?: string,
+  targetTemperature?: number,
+  temperatureUnit?: C | F,
+  swing?: string,
+  horizontalSwing?: string,
+  light?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string,
+  status?: string | null,
+  reason?: string | null,
+  acState?: {
+    on?: boolean | null,
+    mode?: string | null,
+    fanLevel?: string | null,
+    targetTemperature?: number | null,
+    temperatureUnit?: string | null,
+    swing?: string | null,
+    horizontalSwing?: string | null,
+    light?: string | null
+  } | null,
+  changedProperties?: string[] | null,
+  failureReason?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Climate React
+
+### configure
+
+`climateReact.configure`
+
+Set the Climate React thresholds and the AC states it applies; replaces the current Climate React settings.
+
+**Risk:** `write`
+
+```ts
+await corsair.sensibo.api.climateReact.configure({
+	deviceId: 'abc123',
+	enabled: true,
+	lowTemperatureThreshold: 22,
+	lowTemperatureState: { on: false },
+	highTemperatureThreshold: 25,
+	highTemperatureState: { on: true, mode: 'cool' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | Pod (device) id from devices.list. |
+| `enabled` | `boolean` | Yes | Whether Climate React runs. |
+| `type` | `string` | No | What the thresholds measure, e.g. temperature, humidity, feelsLike. |
+| `lowTemperatureThreshold` | `number` | Yes | Low threshold that triggers lowTemperatureState. |
+| `lowTemperatureState` | `object` | Yes | AC state applied when the reading drops below the low threshold. |
+| `highTemperatureThreshold` | `number` | Yes | High threshold that triggers highTemperatureState. |
+| `highTemperatureState` | `object` | Yes | AC state applied when the reading rises above the high threshold. |
+
+<AccordionGroup>
+<Accordion title="lowTemperatureState full type">
+
+```ts
+{
+  on?: boolean,
+  mode?: string,
+  fanLevel?: string,
+  targetTemperature?: number,
+  temperatureUnit?: C | F,
+  swing?: string,
+  horizontalSwing?: string,
+  light?: string
+}
+```
+</Accordion>
+
+<Accordion title="highTemperatureState full type">
+
+```ts
+{
+  on?: boolean,
+  mode?: string,
+  fanLevel?: string,
+  targetTemperature?: number,
+  temperatureUnit?: C | F,
+  swing?: string,
+  horizontalSwing?: string,
+  light?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `result` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  enabled?: boolean | null,
+  type?: string | null,
+  lowTemperatureThreshold?: number | null,
+  lowTemperatureState?: {
+    on?: boolean | null,
+    mode?: string | null,
+    fanLevel?: string | null,
+    targetTemperature?: number | null,
+    temperatureUnit?: string | null,
+    swing?: string | null,
+    horizontalSwing?: string | null,
+    light?: string | null
+  } | null,
+  highTemperatureThreshold?: number | null,
+  highTemperatureState?: {
+    on?: boolean | null,
+    mode?: string | null,
+    fanLevel?: string | null,
+    targetTemperature?: number | null,
+    temperatureUnit?: string | null,
+    swing?: string | null,
+    horizontalSwing?: string | null,
+    light?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`climateReact.get`
+
+Get the Climate React (smart mode) settings of a pod.
+
+**Risk:** `read`
+
+```ts
+await corsair.sensibo.api.climateReact.get({ deviceId: 'abc123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | Pod (device) id from devices.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `result` | `object \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  enabled?: boolean | null,
+  type?: string | null,
+  lowTemperatureThreshold?: number | null,
+  lowTemperatureState?: {
+    on?: boolean | null,
+    mode?: string | null,
+    fanLevel?: string | null,
+    targetTemperature?: number | null,
+    temperatureUnit?: string | null,
+    swing?: string | null,
+    horizontalSwing?: string | null,
+    light?: string | null
+  } | null,
+  highTemperatureThreshold?: number | null,
+  highTemperatureState?: {
+    on?: boolean | null,
+    mode?: string | null,
+    fanLevel?: string | null,
+    targetTemperature?: number | null,
+    temperatureUnit?: string | null,
+    swing?: string | null,
+    horizontalSwing?: string | null,
+    light?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setEnabled
+
+`climateReact.setEnabled`
+
+Turn Climate React on or off for a pod.
+
+**Risk:** `write`
+
+```ts
+await corsair.sensibo.api.climateReact.setEnabled({ deviceId: 'abc123', enabled: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | Pod (device) id from devices.list. |
+| `enabled` | `boolean` | Yes | true enables Climate React, false disables it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `result` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  enabled?: boolean | null,
+  type?: string | null,
+  lowTemperatureThreshold?: number | null,
+  lowTemperatureState?: {
+    on?: boolean | null,
+    mode?: string | null,
+    fanLevel?: string | null,
+    targetTemperature?: number | null,
+    temperatureUnit?: string | null,
+    swing?: string | null,
+    horizontalSwing?: string | null,
+    light?: string | null
+  } | null,
+  highTemperatureThreshold?: number | null,
+  highTemperatureState?: {
+    on?: boolean | null,
+    mode?: string | null,
+    fanLevel?: string | null,
+    targetTemperature?: number | null,
+    temperatureUnit?: string | null,
+    swing?: string | null,
+    horizontalSwing?: string | null,
+    light?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Devices
+
+### get
+
+`devices.get`
+
+Get one pod: room, AC state, measurements and remote capabilities.
+
+**Risk:** `read`
+
+```ts
+await corsair.sensibo.api.devices.get({ deviceId: 'abc123', fields: '*' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | Pod (device) id from devices.list. |
+| `fields` | `string` | No | Comma-separated pod fields to return, or "*" for all. Sensibo returns only ids when it is omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string,
+  room?: {
+    uid?: string | null,
+    name?: string | null
+  } | null,
+  acState?: {
+    on?: boolean | null,
+    mode?: string | null,
+    fanLevel?: string | null,
+    targetTemperature?: number | null,
+    temperatureUnit?: string | null,
+    swing?: string | null,
+    horizontalSwing?: string | null,
+    light?: string | null
+  } | null,
+  productModel?: string | null,
+  measurements?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`devices.list`
+
+List the Sensibo pods (AC controllers) on the account. Pass fields="*" for full pod details.
+
+**Risk:** `read`
+
+```ts
+await corsair.sensibo.api.devices.list({ fields: 'id,room' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string` | No | Comma-separated pod fields to return, or "*" for all. Sensibo returns only ids when it is omitted. |
+
+Pass a comma-separated field list for a smaller pod object, or `*` for all fields. Without it Sensibo returns ids only.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `result` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string,
+  room?: {
+    uid?: string | null,
+    name?: string | null
+  } | null,
+  acState?: {
+    on?: boolean | null,
+    mode?: string | null,
+    fanLevel?: string | null,
+    targetTemperature?: number | null,
+    temperatureUnit?: string | null,
+    swing?: string | null,
+    horizontalSwing?: string | null,
+    light?: string | null
+  } | null,
+  productModel?: string | null,
+  measurements?: Record<string, any> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Door Sensors
+
+### listEvents
+
+`doorSensors.listEvents`
+
+List the open and close events of a door sensor.
+
+**Risk:** `read`
+
+```ts
+await corsair.sensibo.api.doorSensors.listEvents({ sensorId: 'ds_abc123', days: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sensorId` | `string` | Yes | Door sensor id (starts with ds_). |
+| `days` | `number` | No | Number of days of history to analyse (Sensibo default 1). |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  status: string,
+  result: {
+    timestamp?: string | null,
+    event?: string | null
+  }[]
+} | {
+  timestamp?: string | null,
+  event?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Events
+
+### list
+
+`events.list`
+
+List the events of a pod: AC state changes, schedule and Climate React changes, motion and geofence events.
+
+**Risk:** `read`
+
+```ts
+await corsair.sensibo.api.events.list({ deviceId: 'abc123', daysBackwards: 2 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | Pod (device) id from devices.list. |
+| `daysBackwards` | `number` | No | Number of days back to return (Sensibo default 1). |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  status: string,
+  result: {
+    event_id?: number | null,
+    timestamp?: string | null,
+    event_kind?: string | null,
+    event_description?: string | null,
+    details?: Record<string, any> | null,
+    object_id?: string | null,
+    object_kind?: string | null
+  }[]
+} | {
+  event_id?: number | null,
+  timestamp?: string | null,
+  event_kind?: string | null,
+  event_description?: string | null,
+  details?: Record<string, any> | null,
+  object_id?: string | null,
+  object_kind?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Measurements
+
+### history
+
+`measurements.history`
+
+Get the temperature and humidity readings of a pod for the last few days.
+
+**Risk:** `read`
+
+```ts
+await corsair.sensibo.api.measurements.history({ deviceId: 'abc123', days: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | Pod (device) id from devices.list. |
+| `days` | `number` | No | Number of days back to return (Sensibo default 1). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  temperature?: {
+    time?: string | null,
+    value?: number | null
+  }[] | null,
+  humidity?: {
+    time?: string | null,
+    value?: number | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Schedules
+
+### create
+
+`schedules.create`
+
+Create a schedule that applies an AC state at a local time, once or on chosen weekdays.
+
+**Risk:** `write`
+
+```ts
+await corsair.sensibo.api.schedules.create({
+	deviceId: 'abc123',
+	targetTimeLocal: '22:15',
+	timezone: 'Europe/Oslo',
+	acState: { on: false },
+	recurOnDaysOfWeek: ['sunday', 'tuesday'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | Pod (device) id from devices.list. |
+| `targetTimeLocal` | `string` | Yes | Local time in 24-hour HH:MM, e.g. 22:15. |
+| `timezone` | `string` | Yes | IANA timezone the time is in, e.g. Europe/Oslo. |
+| `acState` | `object` | Yes | AC state applied at that time. |
+| `recurOnDaysOfWeek` | `(sunday \| monday \| tuesday \| wednesday \| thursday \| friday \| saturday)[]` | Yes | Days the schedule repeats on; an empty list runs it once. |
+
+`recurOnDaysOfWeek` takes lowercase weekday names. An empty list runs the schedule once at the next `targetTimeLocal`.
+
+<AccordionGroup>
+<Accordion title="acState full type">
+
+```ts
+{
+  on?: boolean,
+  mode?: string,
+  fanLevel?: string,
+  targetTemperature?: number,
+  temperatureUnit?: C | F,
+  swing?: string,
+  horizontalSwing?: string,
+  light?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `result` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | null,
+  isEnabled?: boolean | null,
+  acState?: {
+    on?: boolean | null,
+    mode?: string | null,
+    fanLevel?: string | null,
+    targetTemperature?: number | null,
+    temperatureUnit?: string | null,
+    swing?: string | null,
+    horizontalSwing?: string | null,
+    light?: string | null
+  } | null,
+  targetTimeLocal?: string | null,
+  timezone?: string | null,
+  recurringDays?: string[] | null,
+  nextTime?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`schedules.delete`
+
+Delete one schedule of a pod.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.sensibo.api.schedules.delete({ deviceId: 'abc123', scheduleId: 'sch123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | Pod (device) id from devices.list. |
+| `scheduleId` | `string` | Yes | Schedule id from schedules.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `result` | `any` | No | — |
+
+
+
+---
+
+### get
+
+`schedules.get`
+
+Get one schedule of a pod.
+
+**Risk:** `read`
+
+```ts
+await corsair.sensibo.api.schedules.get({ deviceId: 'abc123', scheduleId: 'sch123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | Pod (device) id from devices.list. |
+| `scheduleId` | `string` | Yes | Schedule id from schedules.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | null,
+  isEnabled?: boolean | null,
+  acState?: {
+    on?: boolean | null,
+    mode?: string | null,
+    fanLevel?: string | null,
+    targetTemperature?: number | null,
+    temperatureUnit?: string | null,
+    swing?: string | null,
+    horizontalSwing?: string | null,
+    light?: string | null
+  } | null,
+  targetTimeLocal?: string | null,
+  timezone?: string | null,
+  recurringDays?: string[] | null,
+  nextTime?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`schedules.list`
+
+List the schedules of a pod.
+
+**Risk:** `read`
+
+```ts
+await corsair.sensibo.api.schedules.list({ deviceId: 'abc123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | Pod (device) id from devices.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `result` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | null,
+  isEnabled?: boolean | null,
+  acState?: {
+    on?: boolean | null,
+    mode?: string | null,
+    fanLevel?: string | null,
+    targetTemperature?: number | null,
+    temperatureUnit?: string | null,
+    swing?: string | null,
+    horizontalSwing?: string | null,
+    light?: string | null
+  } | null,
+  targetTimeLocal?: string | null,
+  timezone?: string | null,
+  recurringDays?: string[] | null,
+  nextTime?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setEnabled
+
+`schedules.setEnabled`
+
+Enable or pause one schedule of a pod.
+
+**Risk:** `write`
+
+```ts
+await corsair.sensibo.api.schedules.setEnabled({ deviceId: 'abc123', scheduleId: 'sch123', isEnabled: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | Pod (device) id from devices.list. |
+| `scheduleId` | `string` | Yes | Schedule id from schedules.list. |
+| `isEnabled` | `boolean` | Yes | true enables the schedule, false pauses it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `result` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | null,
+  isEnabled?: boolean | null,
+  acState?: {
+    on?: boolean | null,
+    mode?: string | null,
+    fanLevel?: string | null,
+    targetTemperature?: number | null,
+    temperatureUnit?: string | null,
+    swing?: string | null,
+    horizontalSwing?: string | null,
+    light?: string | null
+  } | null,
+  targetTimeLocal?: string | null,
+  timezone?: string | null,
+  recurringDays?: string[] | null,
+  nextTime?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Timer
+
+### delete
+
+`timer.delete`
+
+Delete the timer on a pod.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.sensibo.api.timer.delete({ deviceId: 'abc123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | Pod (device) id from devices.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `result` | `any` | No | — |
+
+
+
+---
+
+### get
+
+`timer.get`
+
+Get the timer set on a pod, if any.
+
+**Risk:** `read`
+
+```ts
+await corsair.sensibo.api.timer.get({ deviceId: 'abc123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | Pod (device) id from devices.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `result` | `object \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | null,
+  isEnabled?: boolean | null,
+  acState?: {
+    on?: boolean | null,
+    mode?: string | null,
+    fanLevel?: string | null,
+    targetTemperature?: number | null,
+    temperatureUnit?: string | null,
+    swing?: string | null,
+    horizontalSwing?: string | null,
+    light?: string | null
+  } | null,
+  targetTime?: string | null,
+  secondsRemaining?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### set
+
+`timer.set`
+
+Set a timer that applies an AC state a number of minutes from now; replaces any current timer.
+
+**Risk:** `write`
+
+```ts
+await corsair.sensibo.api.timer.set({
+	deviceId: 'abc123',
+	minutesFromNow: 30,
+	acState: { on: false },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | Pod (device) id from devices.list. |
+| `minutesFromNow` | `number` | Yes | Minutes from now when the timer fires. |
+| `acState` | `object` | Yes | AC state applied when the timer fires. |
+
+<AccordionGroup>
+<Accordion title="acState full type">
+
+```ts
+{
+  on?: boolean,
+  mode?: string,
+  fanLevel?: string,
+  targetTemperature?: number,
+  temperatureUnit?: C | F,
+  swing?: string,
+  horizontalSwing?: string,
+  light?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `result` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | null,
+  isEnabled?: boolean | null,
+  acState?: {
+    on?: boolean | null,
+    mode?: string | null,
+    fanLevel?: string | null,
+    targetTemperature?: number | null,
+    temperatureUnit?: string | null,
+    swing?: string | null,
+    horizontalSwing?: string | null,
+    light?: string | null
+  } | null,
+  targetTime?: string | null,
+  secondsRemaining?: number | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
