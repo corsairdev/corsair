@@ -447,6 +447,7 @@ export const BaseProviders = [
 	'neutrino',
 	'newrelic',
 	'ngrok',
+	'ninox',
 	'neverbounce',
 	'newsapi',
 	'nextdns',
@@ -1164,6 +1165,7 @@ export const ProviderDisplayNames = {
 	neutrino: 'Neutrino API',
 	newrelic: 'New Relic',
 	ngrok: 'ngrok',
+	ninox: 'Ninox',
 	neverbounce: 'NeverBounce',
 	newsapi: 'NewsAPI',
 	nextdns: 'NextDNS',
@@ -1888,6 +1890,7 @@ export type AllProviders =
 	| 'neutrino'
 	| 'newrelic'
 	| 'ngrok'
+	| 'ninox'
 	| 'neverbounce'
 	| 'newsapi'
 	| 'nextdns'

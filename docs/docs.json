@@ -3691,6 +3691,14 @@
                 ]
               },
               {
+                "group": "Ninox",
+                "pages": [
+                  "plugins/ninox/overview",
+                  "plugins/ninox/api",
+                  "plugins/ninox/database"
+                ]
+              },
+              {
                 "group": "Neon",
                 "pages": [
                   "plugins/neon/overview",
