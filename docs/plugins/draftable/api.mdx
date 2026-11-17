@@ -10,11 +10,249 @@ description: "API reference for the Draftable plugin in Corsair: every `draftabl
 
 ## Comparisons
 
+### create
+
+`comparisons.create`
+
+Compare two documents given by URL (PDF, Word, PowerPoint, RTF or text). Uses one comparison from the plan quota.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.draftable.api.comparisons.create({ identifier: 'contract-v1-v2', left: { source_url: 'https://example.com/contract-v1.pdf', file_type: 'pdf', display_name: 'v1' }, right: { source_url: 'https://example.com/contract-v2.docx', file_type: 'docx' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `left` | `object` | Yes | The original document. |
+| `right` | `object` | Yes | The new document. |
+| `identifier` | `string` | No | Your own unique id for the comparison. Draftable makes one when omitted. |
+| `public` | `boolean` | No | Let anyone with the viewer link see it. Default false (signed links only). |
+| `expiry_time` | `string` | No | ISO-8601 time after which Draftable deletes the comparison. |
+
+<AccordionGroup>
+<Accordion title="left full type">
+
+```ts
+{
+  source_url: string,
+  file_type: pdf | docx | docm | doc | rtf | pptx | pptm | ppt | txt,
+  display_name?: string
+}
+```
+</Accordion>
+
+<Accordion title="right full type">
+
+```ts
+{
+  source_url: string,
+  file_type: pdf | docx | docm | doc | rtf | pptx | pptm | ppt | txt,
+  display_name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `comparison_type` | `string \| null` | No | — |
+| `viewer_url` | `string \| null` | No | — |
+| `left` | `object \| null` | No | — |
+| `right` | `object \| null` | No | — |
+| `creation_time` | `string \| null` | No | — |
+| `expiry_time` | `string \| null` | No | — |
+| `public` | `boolean \| null` | No | — |
+| `ready` | `boolean \| null` | No | — |
+| `ready_time` | `string \| null` | No | — |
+| `failed` | `boolean \| null` | No | — |
+| `error_message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="left full type">
+
+```ts
+{
+  file_type?: string | null,
+  source_url?: string | null,
+  display_name?: string | null,
+  page_count?: number | null,
+  original_document_size_bytes?: number | null,
+  highlighted_document_size_bytes?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="right full type">
+
+```ts
+{
+  file_type?: string | null,
+  source_url?: string | null,
+  display_name?: string | null,
+  page_count?: number | null,
+  original_document_size_bytes?: number | null,
+  highlighted_document_size_bytes?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`comparisons.delete`
+
+Delete a comparison and its documents from Draftable.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.draftable.api.comparisons.delete({ identifier: 'contract-v1-v2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | Comparison identifier from comparisons.list or comparisons.create. |
+
+Draftable answers a successful delete with an empty 204; the operation then returns `{ identifier, deleted: true }`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`comparisons.get`
+
+Get one comparison: both documents, page counts, and whether it is ready or failed.
+
+**Risk:** `read`
+
+```ts
+await corsair.draftable.api.comparisons.get({ identifier: 'contract-v1-v2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | Comparison identifier from comparisons.list or comparisons.create. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `comparison_type` | `string \| null` | No | — |
+| `viewer_url` | `string \| null` | No | — |
+| `left` | `object \| null` | No | — |
+| `right` | `object \| null` | No | — |
+| `creation_time` | `string \| null` | No | — |
+| `expiry_time` | `string \| null` | No | — |
+| `public` | `boolean \| null` | No | — |
+| `ready` | `boolean \| null` | No | — |
+| `ready_time` | `string \| null` | No | — |
+| `failed` | `boolean \| null` | No | — |
+| `error_message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="left full type">
+
+```ts
+{
+  file_type?: string | null,
+  source_url?: string | null,
+  display_name?: string | null,
+  page_count?: number | null,
+  original_document_size_bytes?: number | null,
+  highlighted_document_size_bytes?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="right full type">
+
+```ts
+{
+  file_type?: string | null,
+  source_url?: string | null,
+  display_name?: string | null,
+  page_count?: number | null,
+  original_document_size_bytes?: number | null,
+  highlighted_document_size_bytes?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getViewerUrl
+
+`comparisons.getViewerUrl`
+
+Get a link to view a comparison in the Draftable viewer, signed for a limited time unless the comparison is public.
+
+**Risk:** `read`
+
+```ts
+await corsair.draftable.api.comparisons.getViewerUrl({ identifier: 'contract-v1-v2', valid_for_minutes: 60 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | Comparison identifier from comparisons.list or comparisons.create. |
+| `valid_for_minutes` | `number` | No | How long a signed link stays valid. Default 30 minutes. Ignored for public comparisons. |
+| `wait` | `boolean` | No | Show a loading page until the comparison is ready instead of an error. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `signed` | `boolean` | Yes | — |
+| `valid_until` | `string \| null` | Yes | — |
+
+
+
+---
+
 ### list
 
 `comparisons.list`
 
-Paginated list of document comparisons.
+List the comparisons on the Draftable account.
 
 **Risk:** `read`
 
@@ -29,7 +267,7 @@ await corsair.draftable.api.comparisons.list({ limit: 20, offset: 0 });
 | `limit` | `number` | No | Page size. |
 | `offset` | `number` | No | Number of comparisons to skip. |
 
-Omit limit or offset to take the service default. The call does not create a comparison.
+Omit limit or offset to take the service default.
 
 
 
@@ -38,6 +276,8 @@ Omit limit or offset to take the service default. The call does not create a com
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `count` | `number` | Yes | — |
+| `limit` | `number \| null` | No | — |
+| `offset` | `number \| null` | No | — |
 | `results` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -45,10 +285,114 @@ Omit limit or offset to take the service default. The call does not create a com
 
 ```ts
 {
+  identifier: string,
+  comparison_type?: string | null,
+  viewer_url?: string | null,
+  left?: {
+    file_type?: string | null,
+    source_url?: string | null,
+    display_name?: string | null,
+    page_count?: number | null,
+    original_document_size_bytes?: number | null,
+    highlighted_document_size_bytes?: number | null
+  } | null,
+  right?: {
+    file_type?: string | null,
+    source_url?: string | null,
+    display_name?: string | null,
+    page_count?: number | null,
+    original_document_size_bytes?: number | null,
+    highlighted_document_size_bytes?: number | null
+  } | null,
+  creation_time?: string | null,
+  expiry_time?: string | null,
+  public?: boolean | null,
+  ready?: boolean | null,
+  ready_time?: string | null,
+  failed?: boolean | null,
+  error_message?: string | null
 }[]
 ```
 </Accordion>
 </AccordionGroup>
+
+
+
+---
+
+## Exports
+
+### create
+
+`exports.create`
+
+Start a PDF export of a comparison. Poll exports.get until ready, then download its url.
+
+**Risk:** `write`
+
+```ts
+await corsair.draftable.api.exports.create({ comparison: 'contract-v1-v2', kind: 'combined', include_cover_page: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comparison` | `string` | Yes | Comparison identifier from comparisons.list or comparisons.create. |
+| `kind` | `single_page \| combined \| left \| right` | Yes | single_page: both documents on one page; combined: the comparison with change details; left or right: one document with its changes highlighted. |
+| `include_cover_page` | `boolean` | No | Add a summary cover page (combined exports). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `comparison` | `string \| null` | No | — |
+| `kind` | `string \| null` | No | — |
+| `ready` | `boolean \| null` | No | — |
+| `failed` | `boolean \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `error_message` | `string \| null` | No | — |
+| `include_cover_page` | `boolean \| null` | No | — |
+
+
+
+---
+
+### get
+
+`exports.get`
+
+Get an export: whether it is ready and the URL to download the PDF.
+
+**Risk:** `read`
+
+```ts
+await corsair.draftable.api.exports.get({ identifier: 'LDwVznhV' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | Export identifier from exports.create. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `comparison` | `string \| null` | No | — |
+| `kind` | `string \| null` | No | — |
+| `ready` | `boolean \| null` | No | — |
+| `failed` | `boolean \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `error_message` | `string \| null` | No | — |
+| `include_cover_page` | `boolean \| null` | No | — |
 
 
 
