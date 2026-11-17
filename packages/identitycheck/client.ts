@@ -8,6 +8,7 @@ export async function makeIdentityCheckRequest(
 	url: string,
 	key: string,
 	body?: Record<string, unknown>,
+	responseType?: 'binary',
 ): Promise<unknown> {
 	if (!key.trim()) throw new AuthMissingError('identitycheck', 'api_key');
 	return request(
@@ -22,6 +23,7 @@ export async function makeIdentityCheckRequest(
 			method,
 			url,
 			...(body === undefined ? {} : { body, mediaType: 'application/json' }),
+			...(responseType ? { responseType } : {}),
 		},
 		{
 			rateLimitConfig: {

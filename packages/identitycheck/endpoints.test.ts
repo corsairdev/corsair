@@ -3,7 +3,7 @@ import {
 	PermissionRequiredError,
 	runWithMode,
 } from 'corsair/core';
-import { ApiError, request } from 'corsair/http';
+import { ApiError, FileOutputSchema, request } from 'corsair/http';
 import { identityCheckEndpointSchemas, identitycheck } from './index';
 
 jest.mock('corsair/http', () => {
@@ -133,5 +133,56 @@ describe('IdentityCheck public endpoint seam', () => {
 			maxRetries: 0,
 			headersRetryAfterMs: 3000,
 		});
+	});
+});
+
+describe('IdentityCheck risk levels', () => {
+	it('marks every call that spends plan credit or contacts a person destructive', () => {
+		const meta = plugin.endpointMeta ?? {};
+		for (const op of [
+			'verification.create',
+			'verification.sms',
+			'verification.kyb',
+			'verification.tranche2',
+		] as const) {
+			expect(meta[op]?.riskLevel).toBe('destructive');
+		}
+		expect(meta['verification.get']?.riskLevel).toBe('read');
+		expect(meta['verification.image']?.riskLevel).toBe('read');
+	});
+});
+
+describe('IdentityCheck image download', () => {
+	it('reads the image as bytes from the encoded route and returns a file', async () => {
+		const bytes = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x80]);
+		mockedRequest.mockResolvedValue({ bytes, contentType: 'image/jpeg' });
+		const input = identityCheckEndpointSchemas[
+			'verification.image'
+		].input.parse({ verificationId: 'ver 1', imageId: 'img#2' });
+		const file = await endpoints.verification.image(context, input);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				HEADERS: { Authorization: 'Basic key-test' },
+			}),
+			{
+				method: 'GET',
+				url: '/api/v1/verification/image/ver%201/img%232',
+				responseType: 'binary',
+			},
+			expect.anything(),
+		);
+		expect(FileOutputSchema.parse(file)).toEqual(file);
+		expect(file).toMatchObject({ contentType: 'image/jpeg', byteLength: 6 });
+		expect(file.contentBase64).toBe(Buffer.from(bytes).toString('base64'));
+	});
+
+	it.each([
+		{ verificationId: '..', imageId: 'a' },
+		{ verificationId: 'a', imageId: 'b/c' },
+	])('rejects unsafe image path IDs %o', async (input) => {
+		await expect(
+			endpoints.verification.image(context, input),
+		).rejects.toThrow();
+		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 });

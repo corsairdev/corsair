@@ -66,27 +66,35 @@ export const identityCheckEndpointSchemas = {
 	'verification.kyb': { input: inputs.kyb, output: outputs.kyb },
 	'verification.tranche2': { input: inputs.tranche2, output: outputs.tranche2 },
 	'verification.get': { input: inputs.get, output: outputs.get },
+	'verification.image': { input: inputs.image, output: outputs.image },
 } satisfies RequiredPluginEndpointSchemas<typeof endpoints>;
 const meta = {
 	'verification.create': {
-		riskLevel: 'write',
-		description: 'Start an individual verification',
+		riskLevel: 'destructive',
+		description:
+			'Start an individual verification; it uses plan credit, and with emailUser "Yes" StackGo emails the person an invitation',
 	},
 	'verification.sms': {
 		riskLevel: 'destructive',
-		description: 'Start a verification and invite by SMS',
+		description:
+			'Start a verification and invite the person by SMS; it uses plan credit',
 	},
 	'verification.kyb': {
-		riskLevel: 'write',
-		description: 'Start a business KYB check',
+		riskLevel: 'destructive',
+		description: 'Start a business KYB check; it uses plan credit',
 	},
 	'verification.tranche2': {
-		riskLevel: 'write',
-		description: 'Start a Tranche 2 workflow',
+		riskLevel: 'destructive',
+		description: 'Start a Tranche 2 workflow; it uses plan credit',
 	},
 	'verification.get': {
 		riskLevel: 'read',
 		description: 'Retrieve a verification and result',
+	},
+	'verification.image': {
+		riskLevel: 'read',
+		description:
+			'Download a document or selfie image captured during a verification (needs the verification.image key scope)',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof endpoints>;
 export const identityCheckAuthConfig = {

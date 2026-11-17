@@ -1,8 +1,11 @@
+import type { BinaryResponse } from 'corsair/http';
+import { toFileOutput } from 'corsair/http';
 import type { IdentityCheckEndpoints } from '..';
 import { makeIdentityCheckRequest } from '../client';
 import {
 	CreateInputSchema,
 	GetInputSchema,
+	ImageInputSchema,
 	VerificationObjectSchema,
 } from './types';
 
@@ -53,3 +56,16 @@ export const get: IdentityCheckEndpoints['get'] = async (ctx, input) =>
 			ctx.key,
 		),
 	);
+// The image is the captured file itself: read it as bytes so a JPEG or PDF
+// survives instead of being decoded as text.
+export const image: IdentityCheckEndpoints['image'] = async (ctx, input) => {
+	const { verificationId, imageId } = ImageInputSchema.parse(input);
+	const { bytes, contentType } = (await makeIdentityCheckRequest(
+		'GET',
+		`/api/v1/verification/image/${encodeURIComponent(verificationId)}/${encodeURIComponent(imageId)}`,
+		ctx.key,
+		undefined,
+		'binary',
+	)) as BinaryResponse;
+	return toFileOutput(bytes, contentType);
+};
