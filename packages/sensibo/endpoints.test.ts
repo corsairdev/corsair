@@ -65,6 +65,7 @@ function context(
 					},
 				}
 			: undefined,
+		// unknown: a partial test double of the plugin context.
 	} as unknown as SensiboContext;
 }
 
@@ -74,6 +75,7 @@ function lastCall() {
 	return { config, options };
 }
 
+// unknown: fixtures cover every operation's result shape.
 const ok = (result: unknown) => ({ status: 'success', result });
 const AC = { on: true, mode: 'cool', fanLevel: 'auto', targetTemperature: 22 };
 
@@ -82,6 +84,7 @@ beforeEach(() => {
 });
 
 describe('wire format of every operation', () => {
+	// unknown: one table holds every operation, each with its own input and reply shape.
 	type Case = {
 		name: string;
 		run: (ctx: SensiboContext) => Promise<unknown>;
@@ -476,17 +479,22 @@ describe('stored pods', () => {
 		expect(JSON.stringify(upsert.mock.calls)).not.toContain('test-key');
 	});
 
-	it('keeps the stored room name when a narrow fields list leaves the room out', async () => {
+	it('leaves a stored pod alone when a narrow fields list leaves the room out', async () => {
 		const upsert = jest.fn().mockResolvedValue(undefined);
 		const find = jest
 			.fn()
 			.mockResolvedValue({ data: { id: 'pod-1', roomName: 'Kitchen' } });
 		mockRequest.mockResolvedValue(ok([{ id: 'pod-1' }]));
 		await listDevices(context('k', { upsert, find }), { fields: 'id' });
-		expect(upsert).toHaveBeenCalledWith('pod-1', {
-			id: 'pod-1',
-			roomName: 'Kitchen',
-		});
+		expect(find).toHaveBeenCalledWith('pod-1');
+		expect(upsert).not.toHaveBeenCalled();
+	});
+
+	it('stores a new pod even when the room is left out', async () => {
+		const upsert = jest.fn().mockResolvedValue(undefined);
+		mockRequest.mockResolvedValue(ok([{ id: 'pod-2' }]));
+		await listDevices(context('k', { upsert }), { fields: 'id' });
+		expect(upsert).toHaveBeenCalledWith('pod-2', { id: 'pod-2' });
 	});
 
 	it('stores the pod from devices.get', async () => {

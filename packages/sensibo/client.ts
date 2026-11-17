@@ -12,6 +12,7 @@ export type SensiboRequest = {
 	path: string;
 	version?: SensiboApiVersion;
 	query?: Record<string, string | number | undefined>;
+	// unknown: each operation's zod input schema has already checked the body.
 	body?: Record<string, unknown>;
 };
 

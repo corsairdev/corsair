@@ -23,6 +23,7 @@ export async function callSensibo<S extends z.ZodTypeAny>(
 	eventPayload: Record<string, string> = {},
 ): Promise<z.infer<S>> {
 	const key = requireKey(ctx);
+	// unknown: the raw reply is untrusted until `output` parses it below.
 	const body = await makeSensiboRequest<unknown>(key, req);
 	const result = output.parse(body);
 	await logEventFromContext(

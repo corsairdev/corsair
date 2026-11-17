@@ -3,6 +3,7 @@ import { sensibo } from './index';
 
 describe('Sensibo keyBuilder', () => {
 	const plugin = sensibo();
+	// unknown: the test calls keyBuilder with a minimal context double.
 	const build = plugin.keyBuilder as unknown as (
 		ctx: unknown,
 		source: string,

@@ -57,7 +57,7 @@ export const getDevice: CorsairEndpoint<
 
 /**
  * Saves each pod that has an id. A response made with a narrow `fields` list
- * may leave the room out, so a missing room keeps the stored room name.
+ * may leave the room out; then a stored pod is left as it is.
  */
 async function storePods(
 	ctx: SensiboContext,
@@ -68,14 +68,14 @@ async function storePods(
 		if (typeof pod.id !== 'string' || pod.id.length === 0) continue;
 		try {
 			const existing = await ctx.db.pods.findByEntityId(pod.id);
-			const roomName =
-				pod.room === undefined
-					? existing?.data.roomName
-					: (pod.room?.name ?? undefined);
+			// A response without `room` carries nothing new for a stored pod:
+			// skip the write so it cannot put back a room name another call
+			// changed in the meantime.
+			if (pod.room === undefined && existing) continue;
 			const row = SensiboPodEntity.safeParse({
 				...existing?.data,
 				id: pod.id,
-				roomName,
+				roomName: pod.room?.name ?? undefined,
 			});
 			if (!row.success) continue;
 			await ctx.db.pods.upsertByEntityId(pod.id, row.data);

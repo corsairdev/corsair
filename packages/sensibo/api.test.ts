@@ -10,6 +10,7 @@ if (!KEY) {
 
 describeLive('Sensibo live', () => {
 	it('lists pods', async () => {
+		// unknown: the live reply is checked by the schema below.
 		const response = await makeSensiboRequest<unknown>(KEY as string, {
 			path: '/users/me/pods',
 			query: { fields: '*' },
