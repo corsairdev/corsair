@@ -1,0 +1,233 @@
+import type { ApiRequestOptions } from 'corsair/http';
+import { ApiError } from 'corsair/http';
+import type { z } from 'zod';
+import { makeModelryRequest } from '../client';
+import type { ModelryContext } from '../index';
+import * as t from './types';
+
+type Schema = z.ZodType;
+function endpoint<I extends Schema, O extends Schema>(
+	input: I,
+	output: O,
+	build: (args: z.output<I>) => ApiRequestOptions,
+) {
+	return async (
+		ctx: ModelryContext,
+		args: z.input<I>,
+	): Promise<z.output<O>> => {
+		const parsed = input.parse(args);
+		return output.parse(await makeModelryRequest(ctx.key, build(parsed)));
+	};
+}
+// Modelry answers an empty list with 404 and `{ "data": [] }` (documented as its
+// "Not Found Response" for lists, and seen live on products and embeds), and an
+// empty modeling-request asset list with 204. Both mean "no results", so lists
+// return them instead of throwing. A 404 whose body is not an empty list (a
+// missing parent, `{ "data": null }`) still throws.
+// Core resolves a 204, a body without Content-Type and unparseable JSON all as
+// undefined, so the asset list (the route documented to answer 204) asks core
+// to raise a 204 as an ApiError through the request's `errors` map. Only that
+// confirmed 204 reads as empty; an unreadable 200 fails the output schema on
+// every list.
+function listEndpoint<I extends Schema, O extends Schema>(
+	input: I,
+	output: O,
+	build: (args: z.output<I>) => ApiRequestOptions,
+	emptyOnNoContent = false,
+) {
+	return async (
+		ctx: ModelryContext,
+		args: z.input<I>,
+	): Promise<z.output<O>> => {
+		const parsed = input.parse(args);
+		const options = build(parsed);
+		try {
+			return output.parse(
+				await makeModelryRequest(
+					ctx.key,
+					emptyOnNoContent
+						? { ...options, errors: { ...options.errors, 204: 'No Content' } }
+						: options,
+				),
+			);
+		} catch (error) {
+			if (
+				emptyOnNoContent &&
+				error instanceof ApiError &&
+				error.status === 204
+			) {
+				return output.parse({ data: [] });
+			}
+			const data = error instanceof ApiError ? error.body?.data : undefined;
+			if (error instanceof ApiError && error.status === 404) {
+				if (Array.isArray(data) && data.length === 0) {
+					return output.parse(error.body);
+				}
+			}
+			throw error;
+		}
+	};
+}
+type ListQueryValue = string | number | string[] | undefined;
+const arrayQuery = (
+	query: Record<string, ListQueryValue>,
+): Record<string, ListQueryValue> =>
+	Object.fromEntries(
+		Object.entries(query).map(([key, value]) => [
+			Array.isArray(value) ? `${key}[]` : key,
+			value,
+		]),
+	);
+const body = <T extends object>(value: T) =>
+	({ body: value, mediaType: 'application/json' }) as const;
+export const products_list = listEndpoint(
+	t.products_listInput,
+	t.list,
+	(a) => ({
+		method: 'GET',
+		url: '/v1/products',
+		query: arrayQuery(a),
+	}),
+);
+export const products_get = endpoint(t.products_getInput, t.single, (a) => ({
+	method: 'GET',
+	url: '/v1/products/{id}',
+	path: { id: a.id },
+}));
+export const products_create = endpoint(
+	t.products_createInput,
+	t.single,
+	(a) => ({ method: 'POST', url: '/v1/products', ...body(a) }),
+);
+export const products_update = endpoint(
+	t.products_updateInput,
+	t.single,
+	(a) => ({
+		method: 'PUT',
+		url: '/v1/products/{id}',
+		path: { id: a.id },
+		...body({ product: a.product }),
+	}),
+);
+export const products_delete = endpoint(
+	t.products_deleteInput,
+	t.empty,
+	(a) => ({ method: 'DELETE', url: '/v1/products/{id}', path: { id: a.id } }),
+);
+export const modelingRequests_list = listEndpoint(
+	t.modelingRequests_listInput,
+	t.list,
+	(a) => ({
+		method: 'GET',
+		url: '/v1/modeling-requests',
+		query: arrayQuery(a),
+	}),
+);
+export const modelingRequests_get = endpoint(
+	t.modelingRequests_getInput,
+	t.single,
+	(a) => ({ method: 'GET', url: '/v1/modeling-requests/{id_or_sku}', path: a }),
+);
+export const modelingRequests_approve = endpoint(
+	t.modelingRequests_approveInput,
+	t.single,
+	(a) => ({
+		method: 'PUT',
+		url: '/v1/modeling-requests/{id_or_sku}/approve',
+		path: a,
+	}),
+);
+export const modelingRequests_reject = endpoint(
+	t.modelingRequests_rejectInput,
+	t.single,
+	(a) => ({
+		method: 'PUT',
+		url: '/v1/modeling-requests/{id_or_sku}/reject',
+		path: a,
+	}),
+);
+export const modelingRequests_create = endpoint(
+	t.modelingRequests_createInput,
+	t.single,
+	(a) => ({ method: 'POST', url: '/v1/modeling-requests', ...body(a) }),
+);
+export const modelingRequests_assets = listEndpoint(
+	t.modelingRequests_assetsInput,
+	t.list,
+	(a) => ({
+		method: 'GET',
+		url: '/v1/modeling-requests/{modeling_request_id_or_sku}/assets',
+		path: { modeling_request_id_or_sku: a.modeling_request_id_or_sku },
+		query: { page: a.page, per_page: a.per_page },
+	}),
+	true,
+);
+export const productAssets_create = endpoint(
+	t.productAssets_createInput,
+	t.single,
+	(a) => ({
+		method: 'POST',
+		url: '/v1/products/{product_id}/assets',
+		path: { product_id: a.product_id },
+		...body({ blob_id: a.blob_id, tags: a.tags }),
+	}),
+);
+export const productAssets_delete = endpoint(
+	t.productAssets_deleteInput,
+	t.empty,
+	(a) => ({
+		method: 'DELETE',
+		url: '/v1/products/{product_id}/assets/{id}',
+		path: a,
+	}),
+);
+export const embeds_list = listEndpoint(t.embeds_listInput, t.list, (a) => ({
+	method: 'GET',
+	url: '/v1/products/{product_id}/embeds',
+	path: { product_id: a.product_id },
+	query: { page: a.page, per_page: a.per_page },
+}));
+export const embeds_get = endpoint(t.embeds_getInput, t.single, (a) => ({
+	method: 'GET',
+	url: '/v1/products/{product_id}/embeds/{id}',
+	path: a,
+}));
+export const embeds_delete = endpoint(t.embeds_deleteInput, t.empty, (a) => ({
+	method: 'DELETE',
+	url: '/v1/products/{product_id}/embeds/{id}',
+	path: a,
+}));
+export const embeds_publish = endpoint(
+	t.embeds_publishInput,
+	t.single,
+	(a) => ({
+		method: 'PUT',
+		url: '/v1/products/{product_id}/embeds/{id}/publish',
+		path: a,
+	}),
+);
+export const reviews_create = endpoint(
+	t.reviews_createInput,
+	t.reviewOutput,
+	(a) => ({
+		method: 'POST',
+		url: '/v1/modeling-requests/{modeling_request_id_or_sku}/review_issues',
+		path: { modeling_request_id_or_sku: a.modeling_request_id_or_sku },
+		...body({ review_issues: a.review_issues }),
+	}),
+);
+export const uploads_blob = endpoint(
+	t.uploads_blobInput,
+	t.blobOutput,
+	(a) => ({ method: 'POST', url: '/v1/blobs', ...body(a) }),
+);
+export const uploads_file = endpoint(
+	t.uploads_fileInput,
+	t.uploadOutput,
+	(a) => ({ method: 'POST', url: '/v1/uploads', ...body(a) }),
+);
+export const workspaces_list = listEndpoint(
+	t.workspaces_listInput,
+	t.list,
+	(a) => ({ method: 'GET', url: '/v1/workspaces', query: a }),
+);
