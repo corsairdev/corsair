@@ -6,6 +6,8 @@ import type {
 import { request } from 'corsair/http';
 
 export const IP2WHOIS_API_BASE = 'https://api.ip2whois.com';
+/** Hosted-domain lookups live on their own host. */
+export const IP2WHOIS_DOMAINS_BASE = 'https://domains.ip2whois.com';
 
 const NO_TRANSPORT_RETRIES: RateLimitConfig = {
 	enabled: true,
@@ -19,11 +21,11 @@ const NO_TRANSPORT_RETRIES: RateLimitConfig = {
 
 export async function makeIp2whoisRequest<T>(
 	apiKey: string,
-	path: '/v2' | '/hosteddomain',
+	path: '/v2' | '/domains',
 	query: Record<string, string | number | undefined>,
 ): Promise<T> {
 	const config: OpenAPIConfig = {
-		BASE: IP2WHOIS_API_BASE,
+		BASE: path === '/domains' ? IP2WHOIS_DOMAINS_BASE : IP2WHOIS_API_BASE,
 		VERSION: '2',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',

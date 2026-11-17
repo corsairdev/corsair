@@ -62,7 +62,7 @@ export const lookupHosted: CorsairEndpoint<
 	}
 
 	const parsed = HostedLookupInputSchema.parse(input);
-	const body = await makeIp2whoisRequest<unknown>(ctx.key, '/hosteddomain', {
+	const body = await makeIp2whoisRequest<unknown>(ctx.key, '/domains', {
 		ip: parsed.ip,
 		page: parsed.page,
 	});
@@ -101,11 +101,8 @@ async function storeHostedDomains(
 	domains: HostedLookupResponse['domains'],
 ): Promise<void> {
 	if (!ctx.db?.hostedDomains) return;
-	for (const item of domains) {
-		const row = Ip2whoisHostedDomainEntity.safeParse({
-			domain: item.domain,
-			hostIp,
-		});
+	for (const domain of domains) {
+		const row = Ip2whoisHostedDomainEntity.safeParse({ domain, hostIp });
 		if (!row.success) continue;
 		try {
 			await ctx.db.hostedDomains.upsertByEntityId(

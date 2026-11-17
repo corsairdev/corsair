@@ -40,7 +40,7 @@ const HOSTED_SAMPLE = {
 	page: 1,
 	per_page: 20,
 	total_pages: 1,
-	domains: [{ domain: 'dns.google' }],
+	domains: ['dns.google'],
 };
 
 function context(
@@ -167,9 +167,12 @@ describe('hosted.lookup', () => {
 		mockRequest.mockResolvedValue(HOSTED_SAMPLE);
 		const result = await lookupHosted(context('test-key'), { ip: '8.8.8.8' });
 		expect(result).toEqual(HOSTED_SAMPLE);
+		expect(mockRequest.mock.calls[0]?.[0]?.BASE).toBe(
+			'https://domains.ip2whois.com',
+		);
 		const options = mockRequest.mock.calls[0]?.[1];
 		expect(options).toMatchObject({
-			url: '/hosteddomain',
+			url: '/domains',
 			query: {
 				key: 'test-key',
 				format: 'json',
@@ -185,6 +188,23 @@ describe('hosted.lookup', () => {
 		);
 		const payload = mockLog.mock.calls[0]?.[2] as Record<string, unknown>;
 		expect(payload.ip).toBeUndefined();
+	});
+
+	it('parses the documented page of domain-name strings', async () => {
+		mockRequest.mockResolvedValue({
+			ip: '8.8.8.8',
+			total_domains: 3857,
+			page: 1,
+			per_page: 100,
+			total_pages: 39,
+			domains: ['000180.top', '00100tet.xyz'],
+		});
+		const result = await lookupHosted(context('test-key'), {
+			ip: '8.8.8.8',
+			page: 1,
+		});
+		expect(result.domains).toEqual(['000180.top', '00100tet.xyz']);
+		expect(mockRequest.mock.calls[0]?.[1].query?.page).toBe(1);
 	});
 
 	it('rejects an empty address before calling the API', async () => {
@@ -206,7 +226,7 @@ describe('hosted.lookup', () => {
 		const upsert = jest.fn().mockResolvedValue(undefined);
 		mockRequest.mockResolvedValue({
 			...HOSTED_SAMPLE,
-			domains: [{ domain: 'dns.google' }, {}],
+			domains: ['dns.google', ''],
 		});
 		await lookupHosted(context('test-key', { hostedDomains: upsert }), {
 			ip: '8.8.8.8',

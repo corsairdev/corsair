@@ -35,7 +35,8 @@ export const HostedLookupResponseSchema = z
 		page: z.number(),
 		per_page: z.number(),
 		total_pages: z.number(),
-		domains: z.array(z.object({ domain: z.string().optional() }).passthrough()),
+		// A list of domain names, e.g. ["000180.top"]. The free plan returns one per page.
+		domains: z.array(z.string()),
 	})
 	.passthrough();
 
