@@ -47,6 +47,7 @@ describe('workspace.get', () => {
 		const result = await getWorkspace(
 			context('ak_test', {
 				workspaces: { upsertByEntityId: upsert },
+				// unknown: a partial test double of the plugin database.
 			} as unknown as PdfLessContext['db']),
 			{},
 		);
@@ -75,6 +76,7 @@ describe('workspace.get', () => {
 		const result = await getWorkspace(
 			context('ak_test', {
 				workspaces: { upsertByEntityId: upsert },
+				// unknown: a partial test double of the plugin database.
 			} as unknown as PdfLessContext['db']),
 			{},
 		);
@@ -127,6 +129,7 @@ describe('templates.list', () => {
 		const result = await listTemplates(
 			context('ak_test', {
 				templates: { upsertByEntityId: upsert },
+				// unknown: a partial test double of the plugin database.
 			} as unknown as PdfLessContext['db']),
 			{ page: 1, pageSize: 25 },
 		);
@@ -162,6 +165,7 @@ describe('templates.list', () => {
 			listTemplates(
 				context('ak_test', {
 					templates: { upsertByEntityId: upsert },
+					// unknown: a partial test double of the plugin database.
 				} as unknown as PdfLessContext['db']),
 				{},
 			),
@@ -269,6 +273,17 @@ describe('pdfs.generate', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
+	it('accepts the documented null download_url', async () => {
+		const reply = {
+			status: 'success',
+			data: { ...REPLY.data, download_url: null },
+		};
+		mockRequest.mockResolvedValue(reply);
+		await expect(
+			generatePdf(context('k'), { template_id: TEMPLATE, payload: {} }),
+		).resolves.toEqual(reply);
+	});
+
 	it('rejects a reply without a download_url', async () => {
 		mockRequest.mockResolvedValue({ status: 'success', data: {} });
 		await expect(
@@ -278,7 +293,7 @@ describe('pdfs.generate', () => {
 	});
 
 	it('keeps template data and passwords out of a failed request error', async () => {
-		// never: the mock rejects the way core's request() does on a 403.
+		// unknown/never: the mock ignores the config and rejects the way core's request() does on a 403.
 		mockRequest.mockImplementation(((_config: unknown, options: never) => {
 			throw new ApiError(
 				options,
@@ -297,6 +312,7 @@ describe('pdfs.generate', () => {
 			template_id: TEMPLATE,
 			payload: { customer: { email: 'ada@example.com' } },
 			encryption_owner_password: 'owner-secret',
+			// unknown: whatever the call throws is checked below.
 		}).catch((e: unknown) => e);
 		expect(error).toBeInstanceOf(ApiError);
 		const apiError = error as ApiError;

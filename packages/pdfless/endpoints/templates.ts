@@ -15,6 +15,7 @@ export const listTemplates: CorsairEndpoint<
 		throw new AuthMissingError('pdfless', 'api_key');
 	}
 	const parsed = ListTemplatesInputSchema.parse(input ?? {});
+	// unknown: the raw reply is untrusted until the schema parses it below.
 	const body = await pdflessGet<unknown>(ctx.key, '/v1/document-templates', {
 		Page: parsed.page,
 		PageSize: parsed.pageSize,

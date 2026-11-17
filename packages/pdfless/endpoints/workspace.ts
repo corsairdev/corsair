@@ -15,6 +15,7 @@ export const getWorkspace: CorsairEndpoint<
 		throw new AuthMissingError('pdfless', 'api_key');
 	}
 	GetWorkspaceInputSchema.parse(input ?? {});
+	// unknown: the raw reply is untrusted until the schema parses it below.
 	const body = await pdflessGet<unknown>(ctx.key, '/v1/workspaces');
 	const result = GetWorkspaceResponseSchema.parse(body);
 	await storeWorkspace(ctx, result);

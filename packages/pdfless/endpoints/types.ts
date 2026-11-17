@@ -82,7 +82,7 @@ export const GeneratePdfResponseSchema = z
 			.object({
 				reference_id: z.string().nullable().optional(),
 				template_id: z.string().nullable().optional(),
-				download_url: z.string(),
+				download_url: z.string().nullable(),
 				expires: z.string().nullable().optional(),
 				created_at: z.string().nullable().optional(),
 			})

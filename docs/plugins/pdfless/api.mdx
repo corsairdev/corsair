@@ -63,7 +63,7 @@ POST /v1/pdfs. `payload` fills the template's variables. The optional `encryptio
 {
   reference_id?: string | null,
   template_id?: string | null,
-  download_url: string,
+  download_url: string | null,
   expires?: string | null,
   created_at?: string | null
 }
