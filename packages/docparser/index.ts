@@ -9,16 +9,36 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import type { DocparserContext } from './context';
-import { listModels, listParsers, listResults, ping } from './endpoints';
 import {
+	fetchDocument,
+	getDocumentStatus,
+	getResult,
+	listModels,
+	listParsers,
+	listResults,
+	ping,
+	reintegrateDocuments,
+	reparseDocuments,
+	uploadDocument,
+} from './endpoints';
+import {
+	DocumentIdsInputSchema,
+	DocumentInputSchema,
+	DocumentStatusResponseSchema,
 	EmptyInputSchema,
+	FetchDocumentInputSchema,
+	ImportResponseSchema,
 	ModelListResponseSchema,
 	ParserIdInputSchema,
 	ParserListResponseSchema,
 	PingResponseSchema,
+	ResultInputSchema,
 	ResultListResponseSchema,
 	ResultsInputSchema,
+	ScheduledResponseSchema,
+	UploadDocumentInputSchema,
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { DocparserSchema } from './schema';
@@ -40,7 +60,14 @@ const docparserEndpointsNested = {
 	ping,
 	parsers: { list: listParsers },
 	models: { list: listModels },
-	results: { list: listResults },
+	results: { list: listResults, get: getResult },
+	documents: {
+		fetch: fetchDocument,
+		upload: uploadDocument,
+		status: getDocumentStatus,
+		reparse: reparseDocuments,
+		reintegrate: reintegrateDocuments,
+	},
 } as const;
 
 const docparserWebhooksNested = {} as const;
@@ -56,19 +83,61 @@ export const docparserEndpointSchemas = {
 		input: ResultsInputSchema,
 		output: ResultListResponseSchema,
 	},
+	'results.get': { input: ResultInputSchema, output: ResultListResponseSchema },
+	'documents.fetch': {
+		input: FetchDocumentInputSchema,
+		output: ImportResponseSchema,
+	},
+	'documents.upload': {
+		input: UploadDocumentInputSchema,
+		output: ImportResponseSchema,
+	},
+	'documents.status': {
+		input: DocumentInputSchema,
+		output: DocumentStatusResponseSchema,
+	},
+	'documents.reparse': {
+		input: DocumentIdsInputSchema,
+		output: ScheduledResponseSchema,
+	},
+	'documents.reintegrate': {
+		input: DocumentIdsInputSchema,
+		output: ScheduledResponseSchema,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof docparserEndpointsNested
 >;
 
 const read = (description: string) =>
 	({ riskLevel: 'read', description }) as const;
+// Each imported or re-parsed document uses one of the account's parsing
+// credits, and re-integrating sends the data to the parser's integrations
+// again, so these are destructive (R8: credit spending and sends).
+const destructive = (description: string) =>
+	({ riskLevel: 'destructive', description }) as const;
 
 const docparserEndpointMeta = {
 	ping: read('Check that the API key is accepted.'),
-	'parsers.list': read('List document parsers.'),
-	'models.list': read('List model layouts for one parser.'),
+	'parsers.list': read('List document parsers (id and label).'),
+	'models.list': read('List the model layouts of one parser.'),
 	'results.list': read(
-		'List parsed documents. Parsed field values are not stored.',
+		"Get the parsed data of a parser's documents, newest first (100 by default). Filter by upload or processing date or remote id. Each row holds the fields the parser extracted.",
+	),
+	'results.get': read('Get the parsed data of one document.'),
+	'documents.fetch': destructive(
+		'Import a document from a public URL into a parser. Uses one parsing credit. Parsing takes a few minutes; check documents.status, then read results.get.',
+	),
+	'documents.upload': destructive(
+		'Upload a base64-encoded document into a parser. Uses one parsing credit. Parsing takes a few minutes; check documents.status, then read results.get.',
+	),
+	'documents.status': read(
+		'Check whether a document has been imported and parsed (done), and list any failed jobs.',
+	),
+	'documents.reparse': destructive(
+		"Parse documents again with the parser's current rules. Uses parsing credits.",
+	),
+	'documents.reintegrate': destructive(
+		"Send documents' parsed data to the parser's integrations and webhooks again.",
 	),
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof docparserEndpointsNested
@@ -118,8 +187,13 @@ export function docparser<const T extends DocparserPluginOptions>(
 			if (source === 'endpoint' && options.key) return options.key;
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const key = await ctx.keys.get_api_key();
-				return key ?? '';
+				if (!key) throw new AuthMissingError('docparser', 'api_key');
+				return key;
 			}
+			// No stored key and no key manager: ask for a connection instead of
+			// sending an unauthenticated request.
+			if (source === 'endpoint')
+				throw new AuthMissingError('docparser', 'api_key');
 			return '';
 		},
 	} satisfies InternalDocparserPlugin;

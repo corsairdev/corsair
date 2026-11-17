@@ -12,10 +12,16 @@ pnpm add @corsair-dev/docparser
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `models.list` | `docparser.api.models.list` | `read` | List model layouts for one parser. |
-| `parsers.list` | `docparser.api.parsers.list` | `read` | List document parsers. |
+| `documents.fetch` | `docparser.api.documents.fetch` | `destructive` | Import a document from a public URL into a parser. Uses one parsing credit. Parsing takes a few minutes; check documents.status, then read results.get. |
+| `documents.reintegrate` | `docparser.api.documents.reintegrate` | `destructive` | Send documents' parsed data to the parser's integrations and webhooks again. |
+| `documents.reparse` | `docparser.api.documents.reparse` | `destructive` | Parse documents again with the parser's current rules. Uses parsing credits. |
+| `documents.status` | `docparser.api.documents.status` | `read` | Check whether a document has been imported and parsed (done), and list any failed jobs. |
+| `documents.upload` | `docparser.api.documents.upload` | `destructive` | Upload a base64-encoded document into a parser. Uses one parsing credit. Parsing takes a few minutes; check documents.status, then read results.get. |
+| `models.list` | `docparser.api.models.list` | `read` | List the model layouts of one parser. |
+| `parsers.list` | `docparser.api.parsers.list` | `read` | List document parsers (id and label). |
 | `ping` | `docparser.api.ping` | `read` | Check that the API key is accepted. |
-| `results.list` | `docparser.api.results.list` | `read` | List parsed documents. Parsed field values are not stored. |
+| `results.get` | `docparser.api.results.get` | `read` | Get the parsed data of one document. |
+| `results.list` | `docparser.api.results.list` | `read` | Get the parsed data of a parser's documents, newest first (100 by default). Filter by upload or processing date or remote id. Each row holds the fields the parser extracted. |
 
 ## Auth
 

@@ -1,12 +1,13 @@
+import type { DocparserContext } from './context';
 import { ping } from './endpoints/read';
 
-console.warn('Skipping the live Docparser ping in unit tests.');
+const key = process.env.DOCPARSER_API_KEY;
+const live = key ? it : it.skip;
+if (!key) {
+	console.warn('Skipping live Docparser tests: DOCPARSER_API_KEY is not set.');
+}
 
-const live = it.skip;
-
-live('pings Docparser when a key is present', async () => {
-	const key = process.env.DOCPARSER_API_KEY;
-	if (!key) return;
-	const result = await ping({ key } as never, {});
-	expect(result.ping.id).toBe('ping');
+live('pings Docparser', async () => {
+	const result = await ping({ key } as DocparserContext, {});
+	expect(result.ping.msg).toBe('pong');
 });
