@@ -14,7 +14,9 @@ export type PluginWebhookMatchers = {
 
 export type WebhookPluginTenantMatch = {
 	plugin: AllProviders | (string & {});
-	tenantMatch: WebhookTenantMatch;
+	// Ordered most-specific first (e.g. Slack user link before the workspace
+	// link); resolve them in order and take the first that finds a tenant.
+	tenantMatches: WebhookTenantMatch[];
 };
 
 /**
@@ -44,10 +46,15 @@ export function matchWebhookPluginAndTenant(
 	const plugin = plugins[pluginId];
 	if (!plugin?.pluginTenantWebhookMatcher) return null;
 
-	const tenantMatch = plugin.pluginTenantWebhookMatcher(request);
-	if (!tenantMatch) return null;
+	const result = plugin.pluginTenantWebhookMatcher(request);
+	const tenantMatches = result
+		? Array.isArray(result)
+			? result
+			: [result]
+		: [];
+	if (tenantMatches.length === 0) return null;
 
-	return { plugin: pluginId, tenantMatch };
+	return { plugin: pluginId, tenantMatches };
 }
 
 /**

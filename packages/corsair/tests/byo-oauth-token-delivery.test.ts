@@ -96,10 +96,12 @@ describe('processManagedOAuthDelivery — BYO (oauth_2) mode', () => {
 	});
 
 	it('registers the webhook tenant link under oauth_2, not managed', async () => {
-		(resolveOAuthWebhookTenantLink as jest.Mock).mockResolvedValue({
-			linkType: 'organization_id',
-			externalId: 'org_1',
-		});
+		(resolveOAuthWebhookTenantLink as jest.Mock).mockResolvedValue([
+			{
+				linkType: 'organization_id',
+				externalId: 'org_1',
+			},
+		]);
 		env = createTestDatabase();
 		const corsair = makeCorsair(env);
 		await setupCorsair(corsair);

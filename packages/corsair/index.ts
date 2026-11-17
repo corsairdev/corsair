@@ -121,6 +121,7 @@ export {
 	resolveAccountFromWebhookLink,
 	resolveTenantFromWebhookLink,
 	resolveTenantIdFromWebhookLink,
+	resolveTenantIdFromWebhookMatches,
 	setWebhookTenantLink,
 	type WebhookTenantLink,
 } from './webhooks/tenant-links';
