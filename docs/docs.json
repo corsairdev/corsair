@@ -4429,6 +4429,14 @@
                 ]
               },
               {
+                "group": "SimpleKPI",
+                "pages": [
+                  "plugins/simplekpi/overview",
+                  "plugins/simplekpi/api",
+                  "plugins/simplekpi/database"
+                ]
+              },
+              {
                 "group": "Slack",
                 "pages": [
                   "plugins/slack/overview",
