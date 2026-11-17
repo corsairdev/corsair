@@ -1,5 +1,6 @@
 import type { CorsairEndpoint } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { asRecord, paperformRequest, seg } from '../client';
 import type { PaperformContext } from '../context';
 import { parseWebhook, productOf } from './read';
@@ -27,6 +28,7 @@ import {
 	WebhookIdInputSchema,
 } from './types';
 
+// body is the raw JSON response.
 function item(body: unknown, key: string) {
 	const row = asRecord(asRecord(asRecord(body)?.results)?.[key]);
 	if (!row) throw new Error(`Paperform ${key} response was missing`);
@@ -34,10 +36,18 @@ function item(body: unknown, key: string) {
 }
 
 /** Keep only the fields the caller set, so an update never blanks the rest. */
+// fields are the already-validated optional inputs.
 function defined(fields: Record<string, unknown>) {
 	return Object.fromEntries(
 		Object.entries(fields).filter(([, value]) => value !== undefined),
 	);
+}
+
+/** Paperform answers a delete with { status: 'ok' }; anything else is not a delete. */
+// body is the raw JSON response.
+function confirmDeleted(body: unknown, what: string) {
+	if (asRecord(body)?.status !== 'ok')
+		throw new Error(`Paperform did not confirm the ${what} delete`);
 }
 
 async function done(ctx: PaperformContext, event: string) {
@@ -50,16 +60,27 @@ export const deleteSubmission: CorsairEndpoint<
 	DeletedResponse
 > = async (ctx, input) => {
 	const parsed = SubmissionInputSchema.parse(input ?? {});
-	await paperformRequest<unknown>(
-		ctx.key,
-		'DELETE',
-		`/v1/forms/${seg(parsed.form)}/submissions/${seg(parsed.id)}`,
-	);
-	// Drop the local row only after Paperform confirmed the delete.
 	try {
-		await ctx.db?.submissions?.deleteByEntityId(parsed.id);
-	} catch {
-		console.warn('Failed to remove the local Paperform submission');
+		confirmDeleted(
+			await paperformRequest<unknown>(
+				ctx.key,
+				'DELETE',
+				`/v1/forms/${seg(parsed.form)}/submissions/${seg(parsed.id)}`,
+			),
+			'submission',
+		);
+	} catch (error) {
+		// A 404 means it is already gone on Paperform's side; still drop the
+		// local row so a retry can clean up.
+		if (!(error instanceof ApiError && error.status === 404)) throw error;
+	}
+	// Drop the local row only after Paperform confirmed the delete.
+	if (ctx.database) {
+		try {
+			await ctx.db?.submissions?.deleteByEntityId(parsed.id);
+		} catch {
+			console.warn('Failed to remove the local Paperform submission');
+		}
 	}
 	await done(ctx, 'paperform.submissions.delete');
 	return { deleted: true };
@@ -128,10 +149,13 @@ export const deleteCoupon: CorsairEndpoint<
 	DeletedResponse
 > = async (ctx, input) => {
 	const parsed = CouponInputSchema.parse(input ?? {});
-	await paperformRequest<unknown>(
-		ctx.key,
-		'DELETE',
-		`/v1/forms/${seg(parsed.form)}/coupons/${seg(parsed.code)}`,
+	confirmDeleted(
+		await paperformRequest<unknown>(
+			ctx.key,
+			'DELETE',
+			`/v1/forms/${seg(parsed.form)}/coupons/${seg(parsed.code)}`,
+		),
+		'coupon',
 	);
 	await done(ctx, 'paperform.coupons.delete');
 	return { deleted: true };
@@ -163,10 +187,13 @@ export const deleteWebhook: CorsairEndpoint<
 	DeletedResponse
 > = async (ctx, input) => {
 	const parsed = WebhookIdInputSchema.parse(input ?? {});
-	await paperformRequest<unknown>(
-		ctx.key,
-		'DELETE',
-		`/v1/webhooks/${seg(parsed.id)}`,
+	confirmDeleted(
+		await paperformRequest<unknown>(
+			ctx.key,
+			'DELETE',
+			`/v1/webhooks/${seg(parsed.id)}`,
+		),
+		'webhook',
 	);
 	await done(ctx, 'paperform.webhooks.delete');
 	return { deleted: true };

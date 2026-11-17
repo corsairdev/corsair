@@ -34,7 +34,7 @@ await corsair.paperform.api.coupons.create({ form: 'eqadkzns', code: 'WELCOME10'
 | `discountPercentage` | `number` | No | — |
 | `expiresAt` | `string \| null` | No | ISO date-time the coupon stops working. null never expires. |
 
-POST /v1/forms/{slug_or_id}/coupons.
+`POST /v1/forms/{slug_or_id}/coupons`.
 
 
 
@@ -83,7 +83,7 @@ await corsair.paperform.api.coupons.delete({ form: 'eqadkzns', code: 'WELCOME10'
 | `form` | `string` | Yes | Form slug, custom slug or id (from forms.list). |
 | `code` | `string` | Yes | Coupon code. |
 
-DELETE /v1/forms/{slug_or_id}/coupons/{code}.
+`DELETE /v1/forms/{slug_or_id}/coupons/{code}`.
 
 
 
@@ -116,7 +116,7 @@ await corsair.paperform.api.coupons.get({ form: 'eqadkzns', code: 'WELCOME10' })
 | `form` | `string` | Yes | Form slug, custom slug or id (from forms.list). |
 | `code` | `string` | Yes | Coupon code. |
 
-GET /v1/forms/{slug_or_id}/coupons/{code}.
+`GET /v1/forms/{slug_or_id}/coupons/{code}`.
 
 
 
@@ -164,7 +164,7 @@ await corsair.paperform.api.coupons.list({ form: 'eqadkzns' });
 |------|------|----------|-------------|
 | `form` | `string` | Yes | Form slug, custom slug or id (from forms.list). |
 
-GET /v1/forms/{slug_or_id}/coupons.
+`GET /v1/forms/{slug_or_id}/coupons`.
 
 
 
@@ -218,7 +218,7 @@ await corsair.paperform.api.coupons.update({ form: 'eqadkzns', code: 'WELCOME10'
 | `discountPercentage` | `number` | No | — |
 | `expiresAt` | `string \| null` | No | ISO date-time the coupon stops working. null never expires. |
 
-PUT /v1/forms/{slug_or_id}/coupons/{code}.
+`PUT /v1/forms/{slug_or_id}/coupons/{code}`.
 
 
 
@@ -269,7 +269,7 @@ await corsair.paperform.api.fields.list({ form: 'eqadkzns' });
 | `form` | `string` | Yes | Form slug, custom slug or id (from forms.list). |
 | `search` | `string` | No | Text to search for. |
 
-GET /v1/forms/{slug_or_id}/fields.
+`GET /v1/forms/{slug_or_id}/fields`.
 
 
 
@@ -318,7 +318,7 @@ await corsair.paperform.api.files.sign({ url: 'https://paperform.co/file/s3.amaz
 |------|------|----------|-------------|
 | `url` | `string` | Yes | File URL from a submission answer (a paperform.co file link). |
 
-POST /v1/files/sign. Only works for files uploaded to your own forms.
+`POST /v1/files/sign`. Only works for files uploaded to your own forms.
 
 
 
@@ -354,7 +354,7 @@ await corsair.paperform.api.forms.get({ form: 'eqadkzns' });
 |------|------|----------|-------------|
 | `form` | `string` | Yes | Form slug, custom slug or id (from forms.list). |
 
-GET /v1/forms/{slug_or_id}.
+`GET /v1/forms/{slug_or_id}`.
 
 
 
@@ -414,7 +414,7 @@ await corsair.paperform.api.forms.list({ search: 'order', limit: 20 });
 | `beforeDate` | `string` | No | Only results created before this date (YYYY-MM-DD or ISO). |
 | `sort` | `ASC \| DESC` | No | Order by creation date. |
 
-GET /v1/forms. Stores id, title, slug, space id, live flag and submission count.
+`GET /v1/forms`. Stores id, title, slug, space id, live flag and submission count.
 
 
 
@@ -483,7 +483,7 @@ await corsair.paperform.api.partialSubmissions.get({ form: 'eqadkzns', id: '6afc
 | `form` | `string` | Yes | Form slug, custom slug or id (from forms.list). |
 | `id` | `string` | Yes | Submission id. |
 
-GET /v1/forms/{slug_or_id}/partial-submissions/{id}.
+`GET /v1/forms/{slug_or_id}/partial-submissions/{id}`.
 
 
 
@@ -539,7 +539,7 @@ await corsair.paperform.api.partialSubmissions.list({ form: 'eqadkzns' });
 | `beforeDate` | `string` | No | Only results created before this date (YYYY-MM-DD or ISO). |
 | `sort` | `ASC \| DESC` | No | Order by creation date. |
 
-GET /v1/forms/{slug_or_id}/partial-submissions.
+`GET /v1/forms/{slug_or_id}/partial-submissions`.
 
 
 
@@ -604,7 +604,7 @@ await corsair.paperform.api.products.get({ form: 'eqadkzns', sku: 'tshirt-small'
 | `form` | `string` | Yes | Form slug, custom slug or id (from forms.list). |
 | `sku` | `string` | Yes | Product SKU. |
 
-GET /v1/forms/{slug_or_id}/products/{sku}.
+`GET /v1/forms/{slug_or_id}/products/{sku}`.
 
 
 
@@ -655,7 +655,7 @@ await corsair.paperform.api.products.list({ form: 'eqadkzns' });
 | `form` | `string` | Yes | Form slug, custom slug or id (from forms.list). |
 | `search` | `string` | No | Text to search for. |
 
-GET /v1/forms/{slug_or_id}/products.
+`GET /v1/forms/{slug_or_id}/products`.
 
 
 
@@ -712,7 +712,7 @@ await corsair.paperform.api.products.update({ form: 'eqadkzns', sku: 'tshirt-sma
 | `maximum` | `number \| null` | No | — |
 | `discountable` | `boolean` | No | — |
 
-PUT /v1/forms/{slug_or_id}/products/{sku}. Business API.
+`PUT /v1/forms/{slug_or_id}/products/{sku}`. Business API.
 
 
 
@@ -764,7 +764,7 @@ await corsair.paperform.api.spaces.forms({ id: '10001131833' });
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 
-GET /v1/spaces/{id}/forms.
+`GET /v1/spaces/{id}/forms`.
 
 
 
@@ -830,7 +830,7 @@ await corsair.paperform.api.spaces.get({ id: '10001131833' });
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 
-GET /v1/spaces/{id}.
+`GET /v1/spaces/{id}`.
 
 
 
@@ -883,7 +883,7 @@ await corsair.paperform.api.spaces.list({});
 | `beforeDate` | `string` | No | Only results created before this date (YYYY-MM-DD or ISO). |
 | `sort` | `ASC \| DESC` | No | Order by creation date. |
 
-GET /v1/spaces.
+`GET /v1/spaces`.
 
 
 
@@ -945,7 +945,7 @@ await corsair.paperform.api.submissions.delete({ form: 'eqadkzns', id: '6afc3d80
 | `form` | `string` | Yes | Form slug, custom slug or id (from forms.list). |
 | `id` | `string` | Yes | Submission id. |
 
-DELETE /v1/forms/{slug_or_id}/submissions/{id}. The local row goes only after Paperform confirms.
+`DELETE /v1/forms/{slug_or_id}/submissions/{id}`. The local row goes only after Paperform confirms.
 
 
 
@@ -978,7 +978,7 @@ await corsair.paperform.api.submissions.get({ form: 'eqadkzns', id: '6afc3d806e6
 | `form` | `string` | Yes | Form slug, custom slug or id (from forms.list). |
 | `id` | `string` | Yes | Submission id. |
 
-GET /v1/forms/{slug_or_id}/submissions/{id}.
+`GET /v1/forms/{slug_or_id}/submissions/{id}`.
 
 
 
@@ -1034,7 +1034,7 @@ await corsair.paperform.api.submissions.list({ form: 'eqadkzns', afterDate: '202
 | `beforeDate` | `string` | No | Only results created before this date (YYYY-MM-DD or ISO). |
 | `sort` | `ASC \| DESC` | No | Order by creation date. |
 
-GET /v1/forms/{slug_or_id}/submissions. Stores id, form id and created date only.
+`GET /v1/forms/{slug_or_id}/submissions`. Stores id, form id and created date only.
 
 
 
@@ -1104,7 +1104,7 @@ await corsair.paperform.api.translations.list({});
 | `beforeDate` | `string` | No | Only results created before this date (YYYY-MM-DD or ISO). |
 | `sort` | `ASC \| DESC` | No | Order by creation date. |
 
-GET /v1/translations. Stores id, title and language; not the mapping.
+`GET /v1/translations`. Stores id, title and language; not the mapping.
 
 
 
@@ -1166,7 +1166,7 @@ await corsair.paperform.api.webhooks.create({ form: 'eqadkzns', targetUrl: 'http
 | `targetUrl` | `string` | Yes | HTTPS URL Paperform posts each submission to. |
 | `triggers` | `(submission \| partial_submission)[]` | Yes | Events that fire the webhook. |
 
-POST /v1/forms/{slug_or_id}/webhooks. Business API. The target URL stays out of events.
+`POST /v1/forms/{slug_or_id}/webhooks`. Business API. The target URL stays out of events.
 
 
 
@@ -1212,7 +1212,7 @@ await corsair.paperform.api.webhooks.delete({ id: '5d40fdaf174b4c0007043072' });
 |------|------|----------|-------------|
 | `id` | `string` | Yes | Webhook id. |
 
-DELETE /v1/webhooks/{id}. Business API.
+`DELETE /v1/webhooks/{id}`. Business API.
 
 
 
@@ -1251,7 +1251,7 @@ await corsair.paperform.api.webhooks.list({ form: 'eqadkzns' });
 | `beforeDate` | `string` | No | Only results created before this date (YYYY-MM-DD or ISO). |
 | `sort` | `ASC \| DESC` | No | Order by creation date. |
 
-GET /v1/forms/{slug_or_id}/webhooks.
+`GET /v1/forms/{slug_or_id}/webhooks`.
 
 
 

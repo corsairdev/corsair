@@ -1,6 +1,7 @@
 import { AuthMissingError } from 'corsair/core';
 import { paperform } from './index';
 
+// The plugin's typed maps are cast to plain records to iterate them in tests.
 type Meta = Record<string, { riskLevel: string }>;
 type KeyBuilder = (ctx: unknown, source: string) => Promise<string>;
 
@@ -33,5 +34,8 @@ describe('Paperform plugin', () => {
 				'endpoint',
 			),
 		).rejects.toBeInstanceOf(AuthMissingError);
+		await expect(keyBuilder({}, 'endpoint')).rejects.toBeInstanceOf(
+			AuthMissingError,
+		);
 	});
 });

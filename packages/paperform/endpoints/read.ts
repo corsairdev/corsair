@@ -59,14 +59,24 @@ import {
 	WebhookSchema,
 } from './types';
 
+// Narrows one untyped JSON value.
 export function text(value: unknown): string | undefined {
 	return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
 
 /** Paperform sends most ids as strings and some (spaces) as numbers. */
+// Same as text(); numeric ids become strings.
 export function idText(value: unknown): string | undefined {
 	if (typeof value === 'number' && Number.isFinite(value)) return String(value);
 	return text(value);
+}
+
+/**
+ * Local tables, or undefined when no database is configured. Core still hands
+ * out stub tables then, whose writes throw, so `ctx.db` alone is not the signal.
+ */
+function store(ctx: PaperformContext) {
+	return ctx.database ? ctx.db : undefined;
 }
 
 export async function save<T extends { id: string }>(
@@ -84,10 +94,12 @@ export async function save<T extends { id: string }>(
 	}
 }
 
+// body is the raw JSON response.
 function results(body: unknown) {
 	return asRecord(asRecord(body)?.results);
 }
 
+// body is the raw JSON response.
 function resultList(body: unknown, key: string): unknown[] {
 	const list = results(body)?.[key];
 	if (!Array.isArray(list))
@@ -95,12 +107,14 @@ function resultList(body: unknown, key: string): unknown[] {
 	return list;
 }
 
+// body is the raw JSON response.
 function resultItem(body: unknown, key: string): Record<string, unknown> {
 	const item = asRecord(results(body)?.[key]);
 	if (!item) throw new Error(`Paperform ${key} response was missing`);
 	return item;
 }
 
+// body is the raw JSON response.
 function pageOf(body: unknown) {
 	const root = asRecord(body);
 	return {
@@ -175,7 +189,8 @@ async function saveForms(
 	ctx: PaperformContext,
 	forms: ReturnType<typeof FormSchema.parse>[],
 ) {
-	for (const form of forms) await save(ctx.db?.forms, formEntity(form), 'form');
+	for (const form of forms)
+		await save(store(ctx)?.forms, formEntity(form), 'form');
 }
 
 async function saveSubmissions(
@@ -184,7 +199,7 @@ async function saveSubmissions(
 ) {
 	for (const submission of submissions) {
 		await save(
-			ctx.db?.submissions,
+			store(ctx)?.submissions,
 			PaperformSubmissionEntity.parse({
 				id: submission.id,
 				formId: text(submission.form_id),
@@ -268,7 +283,7 @@ export const listSpaces: CorsairEndpoint<
 	const spaces = rows(resultList(body, 'spaces'), parseSpace);
 	for (const space of spaces) {
 		await save(
-			ctx.db?.spaces,
+			store(ctx)?.spaces,
 			PaperformSpaceEntity.parse({ id: space.id, name: text(space.name) }),
 			'space',
 		);
@@ -289,7 +304,7 @@ export const getSpace: CorsairEndpoint<
 	);
 	const space = SpaceSchema.parse(withIds(resultItem(body, 'space'), ['id']));
 	await save(
-		ctx.db?.spaces,
+		store(ctx)?.spaces,
 		PaperformSpaceEntity.parse({ id: space.id, name: text(space.name) }),
 		'space',
 	);
@@ -329,7 +344,7 @@ export const listTranslations: CorsairEndpoint<
 	);
 	for (const translation of translations) {
 		await save(
-			ctx.db?.translations,
+			store(ctx)?.translations,
 			PaperformTranslationEntity.parse({
 				id: translation.id,
 				title: text(translation.title),
@@ -440,6 +455,7 @@ export const listProducts: CorsairEndpoint<
 };
 
 /** The product read and update routes answer with `product` or a one-item `products` list. */
+// body is the raw JSON response.
 export function productOf(body: unknown) {
 	const found = results(body);
 	const single = asRecord(found?.product);

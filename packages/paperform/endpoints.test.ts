@@ -53,7 +53,12 @@ function table() {
 }
 
 function context(key?: string, db?: Record<string, unknown>): PaperformContext {
-	return { key, db } as unknown as PaperformContext;
+	// A real database is present whenever tables are passed in.
+	return {
+		key,
+		db,
+		database: db ? {} : undefined,
+	} as unknown as PaperformContext;
 }
 
 function call(n = 0) {
@@ -141,6 +146,7 @@ describe('paperform', () => {
 				mediaType: undefined,
 			});
 			expect(result.forms[0]?.space_id).toBe('10001131833');
+			expect(mockRequest.mock.calls[0]?.[2]).toBeUndefined();
 			expect(result.page).toEqual({
 				total: 1,
 				hasMore: false,
@@ -305,6 +311,53 @@ describe('paperform', () => {
 			});
 			expect(submissions.deleteByEntityId).toHaveBeenCalledWith(SUBMISSION.id);
 			expect(result).toEqual({ deleted: true });
+		});
+
+		it('treats a 404 as already deleted and drops the local row', async () => {
+			mockRequest.mockRejectedValue(
+				new ApiError(
+					{ method: 'DELETE', url: '/v1/forms/eqadkzns/submissions/x' },
+					{
+						url: 'https://api.paperform.co/v1/forms/eqadkzns/submissions/x',
+						ok: false,
+						status: 404,
+						statusText: 'Not Found',
+						body: { status: 'error', error_type: 'not_found' },
+					},
+					'Not Found',
+				),
+			);
+			const submissions = table();
+			await expect(
+				deleteSubmission(context(undefined, { submissions }), {
+					form: 'eqadkzns',
+					id: 'x',
+				}),
+			).resolves.toEqual({ deleted: true });
+			expect(submissions.deleteByEntityId).toHaveBeenCalledWith('x');
+		});
+
+		it('refuses a delete Paperform did not confirm', async () => {
+			mockRequest.mockResolvedValue({ status: 'error' });
+			await expect(
+				deleteCoupon(context(), { form: 'eqadkzns', code: 'X' }),
+			).rejects.toThrow('did not confirm');
+		});
+
+		it('skips saves when core has no database', async () => {
+			const upsert = jest
+				.fn()
+				.mockRejectedValue(new Error('Database not configured'));
+			const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+			mockRequest.mockResolvedValue({ results: { forms: [FORM] }, ...PAGE });
+			const ctx = {
+				db: { forms: { upsertByEntityId: upsert } },
+				database: undefined,
+			} as unknown as PaperformContext;
+			await listForms(ctx, {});
+			expect(upsert).not.toHaveBeenCalled();
+			expect(warn).not.toHaveBeenCalled();
+			warn.mockRestore();
 		});
 
 		it('keeps the local row when the delete fails', async () => {

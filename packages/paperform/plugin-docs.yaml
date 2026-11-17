@@ -4,7 +4,7 @@ domain: paperform.co
 recommendedAuth: api_key
 overviewNote: |
   Create an access token under Account settings > Access tokens in Paperform; it is sent as a Bearer token. The API comes with Paperform's paid plans and its free trial. Two tiers matter: the Standard API covers reads, submissions, partial submissions, coupons and file links; `products.update`, `webhooks.create` and `webhooks.delete` need the Business API and answer 402 on other plans.
-  Forms are addressed by slug, custom slug or id (`form`). Submission answers (`data`) are keyed by field key; `fields.list` maps each key to its question title and type. Lists return 20 rows by default; page with `limit` (up to 100) and `skip`, or filter with `afterDate`, `beforeDate`, `afterId` and `beforeId`.
+  Forms are addressed by slug, custom slug or id (`form`). Submission answers (`data`) are keyed by field key; `fields.list` maps each key to its question title and type. `forms.list`, `spaces.list`, `translations.list`, `submissions.list`, `partialSubmissions.list` and `webhooks.list` return 20 rows by default; page them with `limit` (up to 100) and `skip`, or filter with `afterDate`, `beforeDate`, `afterId` and `beforeId`. `fields.list`, `products.list`, `coupons.list` and `spaces.forms` return everything in one response.
   Only form, space, translation and submission metadata is stored locally. Submission answers, device details and IP addresses are returned to the caller but not stored, and are kept out of events.
   Paperform sends space ids as numbers and product prices as strings; the plugin returns ids as strings and prices as sent.
 references:
@@ -28,53 +28,53 @@ examples:
       discountPercentage: 10
 apiNotes:
   forms.list: |
-    GET /v1/forms. Stores id, title, slug, space id, live flag and submission count.
+    `GET /v1/forms`. Stores id, title, slug, space id, live flag and submission count.
   forms.get: |
-    GET /v1/forms/{slug_or_id}.
+    `GET /v1/forms/{slug_or_id}`.
   fields.list: |
-    GET /v1/forms/{slug_or_id}/fields.
+    `GET /v1/forms/{slug_or_id}/fields`.
   submissions.list: |
-    GET /v1/forms/{slug_or_id}/submissions. Stores id, form id and created date only.
+    `GET /v1/forms/{slug_or_id}/submissions`. Stores id, form id and created date only.
   submissions.get: |
-    GET /v1/forms/{slug_or_id}/submissions/{id}.
+    `GET /v1/forms/{slug_or_id}/submissions/{id}`.
   submissions.delete: |
-    DELETE /v1/forms/{slug_or_id}/submissions/{id}. The local row goes only after Paperform confirms.
+    `DELETE /v1/forms/{slug_or_id}/submissions/{id}`. The local row goes only after Paperform confirms.
   partialSubmissions.list: |
-    GET /v1/forms/{slug_or_id}/partial-submissions.
+    `GET /v1/forms/{slug_or_id}/partial-submissions`.
   partialSubmissions.get: |
-    GET /v1/forms/{slug_or_id}/partial-submissions/{id}.
+    `GET /v1/forms/{slug_or_id}/partial-submissions/{id}`.
   products.list: |
-    GET /v1/forms/{slug_or_id}/products.
+    `GET /v1/forms/{slug_or_id}/products`.
   products.get: |
-    GET /v1/forms/{slug_or_id}/products/{sku}.
+    `GET /v1/forms/{slug_or_id}/products/{sku}`.
   products.update: |
-    PUT /v1/forms/{slug_or_id}/products/{sku}. Business API.
+    `PUT /v1/forms/{slug_or_id}/products/{sku}`. Business API.
   coupons.list: |
-    GET /v1/forms/{slug_or_id}/coupons.
+    `GET /v1/forms/{slug_or_id}/coupons`.
   coupons.get: |
-    GET /v1/forms/{slug_or_id}/coupons/{code}.
+    `GET /v1/forms/{slug_or_id}/coupons/{code}`.
   coupons.create: |
-    POST /v1/forms/{slug_or_id}/coupons.
+    `POST /v1/forms/{slug_or_id}/coupons`.
   coupons.update: |
-    PUT /v1/forms/{slug_or_id}/coupons/{code}.
+    `PUT /v1/forms/{slug_or_id}/coupons/{code}`.
   coupons.delete: |
-    DELETE /v1/forms/{slug_or_id}/coupons/{code}.
+    `DELETE /v1/forms/{slug_or_id}/coupons/{code}`.
   webhooks.list: |
-    GET /v1/forms/{slug_or_id}/webhooks.
+    `GET /v1/forms/{slug_or_id}/webhooks`.
   webhooks.create: |
-    POST /v1/forms/{slug_or_id}/webhooks. Business API. The target URL stays out of events.
+    `POST /v1/forms/{slug_or_id}/webhooks`. Business API. The target URL stays out of events.
   webhooks.delete: |
-    DELETE /v1/webhooks/{id}. Business API.
+    `DELETE /v1/webhooks/{id}`. Business API.
   files.sign: |
-    POST /v1/files/sign. Only works for files uploaded to your own forms.
+    `POST /v1/files/sign`. Only works for files uploaded to your own forms.
   spaces.list: |
-    GET /v1/spaces.
+    `GET /v1/spaces`.
   spaces.get: |
-    GET /v1/spaces/{id}.
+    `GET /v1/spaces/{id}`.
   spaces.forms: |
-    GET /v1/spaces/{id}/forms.
+    `GET /v1/spaces/{id}/forms`.
   translations.list: |
-    GET /v1/translations. Stores id, title and language; not the mapping.
+    `GET /v1/translations`. Stores id, title and language; not the mapping.
 apiExamples:
   forms.list:
     call: "{ search: 'order', limit: 20 }"

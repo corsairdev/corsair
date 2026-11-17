@@ -304,6 +304,10 @@ export function paperform<const T extends PaperformPluginOptions>(
 				if (!key) throw new AuthMissingError('paperform', 'api_key');
 				return key;
 			}
+			// No stored key and no key manager: ask for a connection instead of
+			// sending an unauthenticated request.
+			if (source === 'endpoint')
+				throw new AuthMissingError('paperform', 'api_key');
 			return '';
 		},
 	} satisfies InternalPaperformPlugin;
