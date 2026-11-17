@@ -1,0 +1,1 @@
+export { importContent } from './read';

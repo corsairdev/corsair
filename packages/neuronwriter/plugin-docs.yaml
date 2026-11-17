@@ -1,0 +1,19 @@
+displayName: NeuronWriter
+description: Import HTML or a page URL into an existing NeuronWriter query.
+domain: neuronwriter.com
+recommendedAuth: api_key
+overviewNote: |
+  The key is the X-API-KEY header. An invalid key on import content returned HTTP 401. The HTML and the source URL are not stored.
+examples:
+  read:
+    path: content.import
+    title: Import HTML
+    args:
+      query: abc123
+      html: <p>Hello</p>
+apiNotes:
+  content.import: |
+    POST /neuron-api/0.5/writer/import-content. Stores the query id, status, and content score.
+apiExamples:
+  content.import:
+    call: "{ query: 'abc123', html: '<p>Hello</p>' }"

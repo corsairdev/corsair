@@ -1,0 +1,59 @@
+---
+title: "NeuronWriter API reference"
+sidebarTitle: "API"
+description: "API reference for the NeuronWriter plugin in Corsair: every `neuronwriter.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Content
+
+### import
+
+`content.import`
+
+Import HTML or a page into a query. The content is not stored.
+
+**Risk:** `write`
+
+```ts
+await corsair.neuronwriter.api.content.import({ query: 'abc123', html: '<p>Hello</p>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `html` | `string` | No | — |
+| `url` | `string` | No | — |
+
+POST /neuron-api/0.5/writer/import-content. Stores the query id, status, and content score.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `imported` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="imported full type">
+
+```ts
+{
+  id: string,
+  status?: string,
+  contentScore?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
