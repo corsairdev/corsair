@@ -3782,6 +3782,14 @@
                 ]
               },
               {
+                "group": "PDFLess",
+                "pages": [
+                  "plugins/pdfless/overview",
+                  "plugins/pdfless/api",
+                  "plugins/pdfless/database"
+                ]
+              },
+              {
                 "group": "PDFMonkey",
                 "pages": [
                   "plugins/pdfmonkey/overview",

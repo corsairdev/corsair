@@ -455,6 +455,7 @@ export const BaseProviders = [
 	'parseur',
 	'pdfapi',
 	'pdfco',
+	'pdfless',
 	'pdfmonkey',
 	'pdl',
 	'perplexityai',
@@ -1143,6 +1144,7 @@ export const ProviderDisplayNames = {
 	parseur: 'Parseur',
 	pdfapi: 'PDF-API.io',
 	pdfco: 'PDF.co',
+	pdfless: 'PDFLess',
 	pdfmonkey: 'PDFMonkey',
 	pdl: 'People Data Labs',
 	perplexityai: 'Perplexity AI',
@@ -1838,6 +1840,7 @@ export type AllProviders =
 	| 'parseur'
 	| 'pdfapi'
 	| 'pdfco'
+	| 'pdfless'
 	| 'pdfmonkey'
 	| 'pdl'
 	| 'perplexityai'
