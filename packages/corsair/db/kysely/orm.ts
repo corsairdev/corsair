@@ -1,4 +1,10 @@
-import type { Expression, Kysely, SelectQueryBuilder, SqlBool } from 'kysely';
+import type {
+	Expression,
+	ExpressionBuilder,
+	Kysely,
+	SelectQueryBuilder,
+	SqlBool,
+} from 'kysely';
 import { SqliteAdapter, sql } from 'kysely';
 import type { ZodTypeAny } from 'zod';
 import { z } from 'zod';
@@ -308,16 +314,27 @@ function parseCountValue(countVal: unknown): number {
 	return Number.parseInt(String(countVal ?? 0), 10);
 }
 
+function accountIn(
+	eb: ExpressionBuilder<CorsairKyselyDatabase, 'corsair_entities'>,
+	accountId: string | string[],
+) {
+	return Array.isArray(accountId)
+		? eb('account_id', 'in', accountId)
+		: eb('account_id', '=', accountId);
+}
+
 function baseQuery(
 	db: Kysely<CorsairKyselyDatabase>,
-	accountId: string,
+	accountId: string | string[],
 	entityTypeName: string,
 ): EntityQueryBuilder {
-	return db
+	const q = db
 		.selectFrom('corsair_entities')
 		.selectAll()
-		.where('account_id', '=', accountId)
+		.where((eb) => accountIn(eb, accountId))
 		.where('entity_type', '=', entityTypeName);
+	// A merged set needs a stable order for limit/offset to page it.
+	return Array.isArray(accountId) ? q.orderBy('created_at').orderBy('id') : q;
 }
 
 export type EntityDataAtRest = {
@@ -332,6 +349,8 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 	version: string,
 	dataSchema: DataSchema,
 	atRest?: EntityDataAtRest,
+	// Reads span these accounts when there are 2+; writes always use getAccountId.
+	fanOut?: () => Promise<{ id: string; label?: string }[]>,
 ): PluginEntityClient<DataSchema> {
 	const dataFieldTypes = getDataFieldTypes(dataSchema);
 	// Successful unwraps only. A missing or rejected key is not stored, and a
@@ -372,14 +391,53 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 		} as TypedEntity<DataSchema>;
 	}
 
+	// Account ids to read from, plus row tags when the read spans 2+ accounts.
+	async function readScope(): Promise<{
+		ids: string | string[];
+		labels?: Map<string, string>;
+	}> {
+		const accounts = fanOut ? await fanOut() : [];
+		if (accounts.length < 2) return { ids: await getAccountId() };
+		return {
+			ids: accounts.map((a) => a.id),
+			labels: new Map(accounts.map((a) => [a.id, a.label ?? a.id])),
+		};
+	}
+
+	// Same entity_id in several accounts: the oldest account wins (ids are in
+	// that order), regardless of row timestamps.
+	async function findOldest(entityId: string) {
+		const { ids, labels } = await readScope();
+		const q = baseQuery(db, ids, entityTypeName).where(
+			'entity_id',
+			'=',
+			entityId,
+		);
+		const rows = await q.execute();
+		if (!Array.isArray(ids)) return { row: rows[0], labels };
+		rows.sort((a, b) => ids.indexOf(a.account_id) - ids.indexOf(b.account_id));
+		return { row: rows[0], labels };
+	}
+
 	async function parseRows(
 		rows: CorsairEntity[],
-		accountId: string,
+		labels?: Map<string, string>,
 	): Promise<TypedEntity<DataSchema>[]> {
-		if (rows.length === 0) return [];
-		// One account owns every row in the query. Load its key once.
-		const dek = atRest ? await accountDek(accountId) : undefined;
-		return Promise.all(rows.map((row) => parseRow(row, dek)));
+		const deks = new Map<string, string>();
+		if (atRest) {
+			await Promise.all(
+				[...new Set(rows.map((r) => r.account_id))].map(async (id) =>
+					deks.set(id, await accountDek(id)),
+				),
+			);
+		}
+		return Promise.all(
+			rows.map(async (row) => {
+				const parsed = await parseRow(row, deks.get(row.account_id));
+				const account = labels?.get(row.account_id);
+				return account ? { ...parsed, account } : parsed;
+			}),
+		);
 	}
 
 	async function storedData(
@@ -397,16 +455,13 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 
 	return {
 		findByEntityId: async (entityId) => {
-			const accountId = await getAccountId();
-			const row = await baseQuery(db, accountId, entityTypeName)
-				.where('entity_id', '=', entityId)
-				.executeTakeFirst();
-			return row ? parseRow(row) : null;
+			const { row, labels } = await findOldest(entityId);
+			return row ? (await parseRows([row], labels))[0]! : null;
 		},
 
 		existsByEntityId: async (entityId) => {
-			const accountId = await getAccountId();
-			const row = await baseQuery(db, accountId, entityTypeName)
+			const { ids } = await readScope();
+			const row = await baseQuery(db, ids, entityTypeName)
 				.select('id')
 				.where('entity_id', '=', entityId)
 				.executeTakeFirst();
@@ -414,38 +469,34 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 		},
 
 		findIdByEntityId: async (entityId) => {
-			const accountId = await getAccountId();
-			const row = await baseQuery(db, accountId, entityTypeName)
-				.select('id')
-				.where('entity_id', '=', entityId)
-				.executeTakeFirst();
+			const { row } = await findOldest(entityId);
 			return row?.id ?? null;
 		},
 
 		findById: async (id) => {
-			const accountId = await getAccountId();
-			const row = await baseQuery(db, accountId, entityTypeName)
+			const { ids, labels } = await readScope();
+			const row = await baseQuery(db, ids, entityTypeName)
 				.where('id', '=', id)
 				.executeTakeFirst();
-			return row ? parseRow(row) : null;
+			return row ? (await parseRows([row], labels))[0]! : null;
 		},
 
 		findManyByEntityIds: async (entityIds) => {
 			if (entityIds.length === 0) return [];
-			const accountId = await getAccountId();
-			const rows = await baseQuery(db, accountId, entityTypeName)
+			const { ids, labels } = await readScope();
+			const rows = await baseQuery(db, ids, entityTypeName)
 				.where('entity_id', 'in', entityIds)
 				.execute();
-			return parseRows(rows, accountId);
+			return parseRows(rows, labels);
 		},
 
 		list: async (options) => {
-			const accountId = await getAccountId();
-			let q = baseQuery(db, accountId, entityTypeName);
+			const { ids, labels } = await readScope();
+			let q = baseQuery(db, ids, entityTypeName);
 			if (typeof options?.limit === 'number') q = q.limit(options.limit);
 			if (typeof options?.offset === 'number') q = q.offset(options.offset);
 			const rows = await q.execute();
-			return parseRows(rows, accountId);
+			return parseRows(rows, labels);
 		},
 
 		search: async (options) => {
@@ -459,8 +510,8 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 					'Entity JSON field search cannot run while encryptDataAtRest is enabled. The stored document is ciphertext.',
 				);
 			}
-			const accountId = await getAccountId();
-			let q = baseQuery(db, accountId, entityTypeName);
+			const { ids, labels } = await readScope();
+			let q = baseQuery(db, ids, entityTypeName);
 
 			const reservedKeys = new Set(['data', 'limit', 'offset']);
 			for (const [key, filterValue] of Object.entries(options)) {
@@ -480,7 +531,7 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 			if (typeof options.offset === 'number') q = q.offset(options.offset);
 
 			const rows = await q.execute();
-			return parseRows(rows, accountId);
+			return parseRows(rows, labels);
 		},
 
 		upsertByEntityId: async (entityId, data) => {
@@ -562,11 +613,11 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 		},
 
 		count: async () => {
-			const accountId = await getAccountId();
+			const { ids } = await readScope();
 			const row = await db
 				.selectFrom('corsair_entities')
 				.select((eb) => eb.fn.countAll().as('count'))
-				.where('account_id', '=', accountId)
+				.where((eb) => accountIn(eb, ids))
 				.where('entity_type', '=', entityTypeName)
 				.executeTakeFirst();
 			return parseCountValue((row as { count?: unknown })?.count);

@@ -4,11 +4,16 @@ import {
 	parseHubReconnectBody,
 } from '../contracts/connect-api';
 import { resolveHubDeliveryUrl } from '../resolve-delivery-url';
-import { CORSAIR_SDK_VERSION } from '../sdk-version';
+import { CORSAIR_SDK_CAPABILITIES, CORSAIR_SDK_VERSION } from '../sdk-version';
 import type { HubConfig } from '../types';
 
-function corsairSdkVersionHeader(): Record<string, string> {
-	return { 'x-corsair-sdk-version': CORSAIR_SDK_VERSION };
+function corsairSdkHeaders(hub: HubConfig): Record<string, string> {
+	return {
+		'x-corsair-sdk-version': CORSAIR_SDK_VERSION,
+		...(hub.multiAccount
+			? { 'x-corsair-capabilities': CORSAIR_SDK_CAPABILITIES }
+			: {}),
+	};
 }
 
 export function normalizeHubApiUrl(apiUrl: string): string {
@@ -145,7 +150,7 @@ export async function hubApiPost<T>(input: {
 			authorization: `Bearer ${input.hub.projectApiKey}`,
 			...appDeliveryUrlHeader(input.hub),
 			...instanceKeyHeader(input.hub),
-			...corsairSdkVersionHeader(),
+			...corsairSdkHeaders(input.hub),
 			...input.extraHeaders,
 		},
 		body: JSON.stringify(input.body),
