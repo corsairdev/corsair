@@ -19,6 +19,8 @@ import {
 	PurchaseTreesInputSchema,
 } from './types';
 
+// Each purchase adds its own required fields (number, country, units) on top
+// of the shared ones; they are already checked by that operation's zod schema.
 type PurchaseFields = {
 	idempotencyKey?: string;
 	name?: string;

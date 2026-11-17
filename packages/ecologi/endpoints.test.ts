@@ -1,7 +1,13 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
 import type { EcologiContext } from './context';
-import { getImpact, getTrees } from './endpoints/get';
+import {
+	getCarbonOffset,
+	getCarbonRemoval,
+	getHabitat,
+	getImpact,
+	getTrees,
+} from './endpoints/get';
 import {
 	purchaseCarbonAvoidance,
 	purchaseCarbonRemoval,
@@ -26,6 +32,8 @@ const mockRequest = jest.mocked(request);
 const mockLog = jest.mocked(logEventFromContext);
 
 function context(db?: EcologiContext['db']): EcologiContext {
+	// A partial mock context: the endpoints read only `key` and `db`, so the
+	// rest is left out on purpose. The `db` fixtures below are partial too.
 	return { key: 'sekrit', db } as unknown as EcologiContext;
 }
 
@@ -127,6 +135,37 @@ describe('ecologi reads', () => {
 		expect(result.total.total).toBe(3);
 		expect(warn).toHaveBeenCalledWith('Failed to save Ecologi total');
 		warn.mockRestore();
+	});
+});
+
+describe.each([
+	['carbonOffsets.get', getCarbonOffset, 'carbonOffsets', 'carbon-offset'],
+	['carbonRemovals.get', getCarbonRemoval, 'carbonRemovals', 'carbon-removal'],
+	['habitats.get', getHabitat, 'habitats', 'habitat-restoration'],
+] as const)('%s', (_name, endpoint, table, path) => {
+	beforeEach(() => {
+		jest.clearAllMocks();
+	});
+
+	it(`reads /users/{username}/${path} and saves the total to ${table}`, async () => {
+		const upsert = jest.fn().mockResolvedValue(undefined);
+		mockRequest.mockResolvedValue({ total: 187.4, pending: 14.9 });
+		const result = await endpoint(
+			context({
+				[table]: { upsertByEntityId: upsert },
+			} as unknown as EcologiContext['db']),
+			{ username: 'business-name' },
+		);
+		expect(result.total).toEqual({
+			id: 'business-name',
+			total: 187.4,
+			pending: 14.9,
+		});
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'GET',
+			url: `/users/business-name/${path}`,
+		});
+		expect(upsert).toHaveBeenCalledWith('business-name', result.total);
 	});
 });
 

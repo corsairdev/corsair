@@ -6,6 +6,8 @@ import { EcologiImpactEntity, EcologiTotalEntity } from '../schema/database';
 import type { ImpactResponse, TotalResponse, UsernameInput } from './types';
 import { UsernameInputSchema } from './types';
 
+// The reporting bodies are untrusted provider JSON, so they stay `unknown`
+// and each field is checked before it is read.
 function numberAt(value: unknown): number | undefined {
 	return typeof value === 'number' && Number.isFinite(value)
 		? value
