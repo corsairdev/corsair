@@ -4938,6 +4938,14 @@
                 ]
               },
               {
+                "group": "Thinkific",
+                "pages": [
+                  "plugins/thinkific/overview",
+                  "plugins/thinkific/api",
+                  "plugins/thinkific/database"
+                ]
+              },
+              {
                 "group": "Ticketmaster",
                 "pages": [
                   "plugins/ticketmaster/overview",

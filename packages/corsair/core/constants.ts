@@ -598,6 +598,7 @@ export const BaseProviders = [
 	'telegram',
 	'textit',
 	'textrazor',
+	'thinkific',
 	'ticketmaster',
 	'ticktick',
 	'tikhub',
@@ -1276,6 +1277,7 @@ export const ProviderDisplayNames = {
 	telegram: 'Telegram',
 	textit: 'TextIt',
 	textrazor: 'TextRazor',
+	thinkific: 'Thinkific',
 	ticketmaster: 'Ticketmaster',
 	ticktick: 'TickTick',
 	tikhub: 'TikHub',
@@ -1961,6 +1963,7 @@ export type AllProviders =
 	| 'telegram'
 	| 'textit'
 	| 'textrazor'
+	| 'thinkific'
 	| 'ticketmaster'
 	| 'ticktick'
 	| 'tikhub'
