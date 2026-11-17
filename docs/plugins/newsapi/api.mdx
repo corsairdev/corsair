@@ -19,7 +19,7 @@ Search articles across NewsAPI sources.
 **Risk:** `read`
 
 ```ts
-await corsair.newsapi.api.articles.everything({ q: 'corsair' });
+await corsair.newsapi.api.articles.everything({ q: 'corsair', searchIn: 'title', from: '2026-11-01', sortBy: 'publishedAt' });
 ```
 
 **Input**
@@ -29,12 +29,16 @@ await corsair.newsapi.api.articles.everything({ q: 'corsair' });
 | `q` | `string` | No | — |
 | `sources` | `string` | No | — |
 | `domains` | `string` | No | — |
+| `excludeDomains` | `string` | No | — |
+| `searchIn` | `string` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
 | `language` | `string` | No | — |
 | `sortBy` | `string` | No | — |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
 
-GET /v2/everything. Requires q, sources, or domains. A row is stored when url is present.
+GET /v2/everything. Requires q, sources, or domains. from and to take an ISO 8601 date or date-time, searchIn limits the match to title, description and/or content, excludeDomains drops domains. totalResults is returned for paging. A row is stored when url is present.
 
 
 
@@ -43,6 +47,7 @@ GET /v2/everything. Requires q, sources, or domains. A row is stored when url is
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `articles` | `object[]` | Yes | — |
+| `totalResults` | `number` | No | — |
 
 <AccordionGroup>
 <Accordion title="articles full type">
@@ -89,7 +94,7 @@ await corsair.newsapi.api.articles.headlines({ country: 'us' });
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
 
-GET /v2/top-headlines. sources cannot be combined with country or category.
+GET /v2/top-headlines. sources cannot be combined with country or category. totalResults is returned for paging.
 
 
 
@@ -98,6 +103,7 @@ GET /v2/top-headlines. sources cannot be combined with country or category.
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `articles` | `object[]` | Yes | — |
+| `totalResults` | `number` | No | — |
 
 <AccordionGroup>
 <Accordion title="articles full type">
@@ -149,6 +155,7 @@ GET /v1/articles. source is required. The top-level source string is stored as s
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `articles` | `object[]` | Yes | — |
+| `totalResults` | `number` | No | — |
 
 <AccordionGroup>
 <Accordion title="articles full type">
