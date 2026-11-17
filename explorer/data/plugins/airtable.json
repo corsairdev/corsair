@@ -402,12 +402,49 @@
       "description": "Get webhook payloads",
       "riskLevel": "read",
       "input": {
-        "kind": "inline",
-        "type": "unknown"
+        "kind": "object",
+        "fields": [
+          {
+            "key": "baseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
       },
       "output": {
-        "kind": "inline",
-        "type": "unknown"
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "mightHaveMore",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "payloads",
+            "optional": false,
+            "type": "any[]"
+          }
+        ]
       }
     }
   ],

@@ -1,0 +1,159 @@
+---
+title: "TaxJar plugin"
+sidebarTitle: "Overview"
+description: "Sales tax automation with TaxJar - calculate tax for a cart, look up rates and nexus regions, validate addresses, record order and refund transactions, and manage tax-exempt customers."
+---
+
+Use **TaxJar** through Corsair: one client, typed API calls.
+
+Create a token at taxjar.com under Account, API Access. The plugin sends it as `Authorization: Bearer <token>`, which is the form TaxJar documents alongside `Token token="..."`.
+
+Things to know before you call:
+
+- **Amounts come back as strings.** Transaction and rate responses send money and tax rates as decimal strings (`"16.5"`, `"0.0625"`), while the `taxes` answer sends numbers. The schemas accept the form each route actually sends, and the exported `readNumber` helper converts either one.
+- **Shipping is required on a transaction.** `orders.create` and `refunds.create` reject a payload without `shipping`, even when it is 0. The schema enforces it before the request, so you get a clear error instead of TaxJar's 422.
+- **Calculation is not a transaction.** `taxes.calculate` reports what you should collect. It records nothing, which is why it is a read; use `orders.create` to record the sale for filing.
+- **An update may be refused after filing.** TaxJar accepts `orders.update` and `refunds.update` until the period is filed; after that the API refuses the change. The plugin does not retry a rejected update.
+- **A refund points at its order.** Send `transaction_reference_id` on `refunds.create` so the refund nets against the original order in reporting.
+- **Customer exemption applies forward.** A customer created with `exemption_type` exempts later transactions that cite its `customer_id`. Omitting `exempt_regions` covers every region.
+- **The list routes return IDs only.** `orders.list`, `refunds.list` and `customers.list` answer an array of IDs under their key, not full records; call the `get` endpoint for the details.
+- **Date formats differ by route.** The transaction routes document `YYYY/MM/DD` and also accept `YYYY-MM-DD`.
+- **Deletes cannot be undone.** A deleted transaction leaves the tax report, and a deleted customer loses its exemption.
+
+**What you get:**
+
+- 21 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/taxjar better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/taxjar better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/taxjar better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/taxjar better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { taxjar } from '@corsair-dev/taxjar';
+
+export const corsair = createCorsair({
+	plugins: [
+		taxjar(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the TaxJar API key before the first call: `pnpm corsair setup --plugin=taxjar --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+taxjar()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'taxjar',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Calculate the tax for a two-state order**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.taxjar.api.taxes.calculate({
+	from_country: 'US',
+	from_state: 'FL',
+	from_zip: '33018',
+	to_country: 'US',
+	to_state: 'OR',
+	to_zip: '97035',
+	amount: 15,
+	shipping: 1.5,
+});
+```
+
+
+**Record an order transaction**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.taxjar.api.orders.create({
+	transaction_id: '123',
+	transaction_date: '2026-11-15',
+	to_country: 'US',
+	to_zip: '90002',
+	to_state: 'CA',
+	amount: 16.5,
+	shipping: 1.5,
+	sales_tax: 0.95,
+});
+```
+
+
+See the full list on the [API](/plugins/taxjar/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/taxjar/api">
+    Every `taxjar.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
