@@ -4581,6 +4581,14 @@
                 ]
               },
               {
+                "group": "SuperSaaS",
+                "pages": [
+                  "plugins/supersaas/overview",
+                  "plugins/supersaas/api",
+                  "plugins/supersaas/database"
+                ]
+              },
+              {
                 "group": "Surf",
                 "pages": [
                   "plugins/surf/overview",
