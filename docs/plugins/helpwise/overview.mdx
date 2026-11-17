@@ -6,7 +6,7 @@ description: "Shared team inboxes, conversations, messages, contacts, tags, and 
 
 Use **Helpwise** through Corsair: one client, typed API calls.
 
-Helpwise authentication requires both an API Key and API Secret from Helpwise Settings > API (HTTP Basic auth header formatted as `API_KEY:API_SECRET`). Run the Corsair database migration once before passing the connection to `createCorsair`; creating a SQLite file does not create Corsair's tables. Before creating a tenant connect link, mount a Hub delivery handler as described in [Connect / OAuth](/management/connect). A call for a tenant with no stored key fails with `AuthMissingError`, which carries a connect link when Hub is configured.
+Helpwise authentication requires both an API Key and API Secret from Helpwise Settings &gt; API (HTTP Basic auth header formatted as `API_KEY:API_SECRET`). Run the Corsair database migration once before passing the connection to `createCorsair`; creating a SQLite file does not create Corsair's tables. Before creating a tenant connect link, mount a Hub delivery handler as described in [Connect / OAuth](/management/connect). A call for a tenant with no stored key fails with `AuthMissingError`, which carries a connect link when Hub is configured.
 
 **What you get:**
 
