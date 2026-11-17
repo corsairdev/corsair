@@ -161,7 +161,10 @@ describe('IdentityCheck image download', () => {
 		const input = identityCheckEndpointSchemas[
 			'verification.image'
 		].input.parse({ verificationId: 'ver 1', imageId: 'img#2' });
+		const parse = jest.spyOn(FileOutputSchema, 'parse');
 		const file = await endpoints.verification.image(context, input);
+		expect(parse).toHaveBeenCalledWith(file);
+		parse.mockRestore();
 		expect(mockedRequest).toHaveBeenCalledWith(
 			expect.objectContaining({
 				HEADERS: { Authorization: 'Basic key-test' },

@@ -1,5 +1,5 @@
 import type { BinaryResponse } from 'corsair/http';
-import { toFileOutput } from 'corsair/http';
+import { FileOutputSchema, toFileOutput } from 'corsair/http';
 import type { IdentityCheckEndpoints } from '..';
 import { makeIdentityCheckRequest } from '../client';
 import {
@@ -67,5 +67,5 @@ export const image: IdentityCheckEndpoints['image'] = async (ctx, input) => {
 		undefined,
 		'binary',
 	)) as BinaryResponse;
-	return toFileOutput(bytes, contentType);
+	return FileOutputSchema.parse(toFileOutput(bytes, contentType));
 };
