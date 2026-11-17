@@ -126,6 +126,13 @@ type RouteCtx = {
 	allowCall: boolean;
 };
 
+// Both plugin-scoped POST routes read `{ args, account }`. The body is
+// unvalidated JSON, so the cast only names the fields; each is checked by its
+// consumer (args by the op / db route, account by parseAccount).
+function pluginCallBody(body: unknown): { args?: unknown; account?: unknown } {
+	return (body ?? {}) as { args?: unknown; account?: unknown };
+}
+
 // The resolver's result is authoritative for the two routes that take a raw
 // tenantId. A string scopes the request; null means the caller isn't
 // authenticated for any tenant; undefined means no resolver, so trust the
@@ -370,7 +377,7 @@ const ROUTES: Route[] = [
 			// rows with no policy in front of it. Server mode only, like the other
 			// admin routes — an end-user handler must not expose it to a browser.
 			assertAdminRouteAllowed(scopedTenant);
-			const input = (body ?? {}) as { args?: unknown; account?: unknown };
+			const input = pluginCallBody(body);
 			// apply() takes an object as an empty argument list, so an `args` of
 			// the wrong shape would call the method with nothing and report success.
 			if (input.args !== undefined && !Array.isArray(input.args)) {
@@ -416,7 +423,7 @@ const ROUTES: Route[] = [
 			allowCall,
 		}) => {
 			if (!allowCall) throw callDisabled();
-			const input = (body ?? {}) as { args?: unknown; account?: unknown };
+			const input = pluginCallBody(body);
 			// The URL tenant is client-controlled; when resolveTenant is configured
 			// the resolver's value is authoritative (and null → 401), same as every
 			// other tenant-taking route. No resolver → the URL value is trusted.

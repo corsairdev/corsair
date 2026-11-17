@@ -186,10 +186,12 @@ export function resolveTenantClient(
 	const cache = mapFor(clientCacheByCorsair, corsair as object);
 	const cached = cache.get(cacheKey);
 	if (cached) {
-		cache.delete(cacheKey); // LRU: move to most-recently-used
+		cache.delete(cacheKey);
 		cache.set(cacheKey, cached);
 		return { client: cached, tenantId, cacheKey };
 	}
+	// corsair is an opaque `unknown` here (the management layer is built before
+	// the client's generic type is known); withTenant exists on every instance.
 	const withTenant = (
 		corsair as {
 			withTenant: (t: string, o?: unknown) => unknown;
@@ -298,6 +300,8 @@ export async function resolveCall(
 		internal,
 		{ plugin, tenant, account },
 		(client) => {
+			// The client's plugin namespaces are keyed by plugin id; the id was
+			// checked against internal.plugins in withTenantClient.
 			const pluginNs = (client as Record<string, unknown>)[plugin] as
 				| { api?: unknown }
 				| undefined;

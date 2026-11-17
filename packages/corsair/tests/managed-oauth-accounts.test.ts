@@ -99,6 +99,23 @@ describe('managed oauth delivery by account identity', () => {
 		expect(await km().get_access_token()).toBe('at-default');
 	});
 
+	it('a delivery with no account is refused when the tenant has two accounts', async () => {
+		await deliver('at-a', { id: 'a' });
+		await deliver('at-b', { id: 'b' });
+		const err = await deliver('at-none').catch((e) => e);
+		expect(err).toBeInstanceOf(ManagedOAuthDeliveryError);
+		expect(err.code).toBe('account_required');
+		expect(await km('a').get_access_token()).toBe('at-a');
+		expect(await km('b').get_access_token()).toBe('at-b');
+	});
+
+	it('a delivery with no account still writes the only account', async () => {
+		await deliver('at-a', { id: 'a' });
+		await deliver('at-next');
+		expect(await rows()).toHaveLength(1);
+		expect(await km('a').get_access_token()).toBe('at-next');
+	});
+
 	it('a delivery with an empty account id is treated as no account', async () => {
 		await deliver('at-blank', { id: '  ' });
 		expect(await rows()).toHaveLength(1);

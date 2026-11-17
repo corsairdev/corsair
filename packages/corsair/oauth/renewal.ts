@@ -2,7 +2,7 @@ import type { CorsairInternalConfig, CorsairKeyBuilderBase } from '../core';
 import { createAccountKeyManager } from '../core';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
 import { getPluginAuthType } from '../core/utils/plugin-auth';
-import { setWebhookTenantLink } from '../webhooks/tenant-links';
+import { subscribeAndStoreLink } from './subscribe-and-store';
 import { subscribeAndReport } from './subscribe-report';
 
 export type SubscribableAccountRow = {
@@ -63,22 +63,16 @@ export async function renewAccounts(input: {
 					'endpoint',
 				);
 			}
-			const link = await doSubscribe(corsair, plugin, row.tenantId, keys);
-			// Providers mint a new link on renewal; webhooks bind by the stored one.
-			if (link) {
-				await setWebhookTenantLink({
-					database: internal.database,
-					kek: internal.kek,
-					pluginId: plugin.id,
-					tenantId: row.tenantId,
-					link,
-					authType,
-					extraAccountFields: [
-						...(plugin.authConfig?.[authType]?.account ?? []),
-					],
-					...(row.accountId && { accountId: row.accountId }),
-				});
-			}
+			await subscribeAndStoreLink({
+				corsair,
+				internal,
+				plugin,
+				tenantId: row.tenantId,
+				keys,
+				authType,
+				accountId: row.accountId,
+				subscribe: doSubscribe,
+			});
 			renewed.push(label);
 		} catch (error) {
 			console.warn(

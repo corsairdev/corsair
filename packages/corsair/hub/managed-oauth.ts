@@ -1,10 +1,14 @@
 import { createAccountKeyManager } from '../core';
-import { AccountSelectionError, upsertAccount } from '../core/account-lookup';
+import {
+	AccountSelectionError,
+	listAccountSummaries,
+	upsertAccount,
+} from '../core/account-lookup';
 import {
 	getCorsairInternal,
 	requireCorsairPlugin,
 } from '../core/utils/corsair-instance';
-import { subscribeAndReport } from '../oauth/subscribe-report';
+import { subscribeAndStoreLink } from '../oauth/subscribe-and-store';
 import { resolveOAuthWebhookTenantLink } from '../webhooks/resolve-oauth-tenant-link';
 import { setWebhookTenantLink } from '../webhooks/tenant-links';
 import { ensureCorsairProvisionedForTenant } from './internal/provision';
@@ -103,6 +107,21 @@ export async function processManagedOAuthDelivery(
 	await ensureCorsairProvisionedForTenant(corsair, tenantId);
 
 	let accountId: string | undefined;
+	if (!account && internal.multiAccount) {
+		// Without a name, the delivery would land on the oldest account.
+		const accounts = await listAccountSummaries({
+			db: internal.database.db,
+			kek: internal.kek,
+			integrationName: pluginId,
+			tenantId,
+		});
+		if (accounts.length > 1) {
+			throw new ManagedOAuthDeliveryError(
+				'account_required',
+				`${pluginId} has ${accounts.length} accounts for tenant "${tenantId}": the delivery must name one`,
+			);
+		}
+	}
 	if (account) {
 		try {
 			({ accountId } = await upsertAccount({
@@ -201,21 +220,15 @@ export async function processManagedOAuthDelivery(
 	}
 
 	try {
-		const link = await subscribeAndReport(corsair, plugin, tenantId, accountKm);
-		// Renewal stores the link it gets back; so must connect, or this
-		// account's events can't find it until the first renewal.
-		if (link) {
-			await setWebhookTenantLink({
-				database: internal.database,
-				kek: internal.kek,
-				pluginId,
-				tenantId,
-				link,
-				authType,
-				extraAccountFields: plugin.authConfig?.[authType]?.account ?? [],
-				accountId,
-			});
-		}
+		await subscribeAndStoreLink({
+			corsair,
+			internal,
+			plugin,
+			tenantId,
+			keys: accountKm,
+			authType,
+			accountId,
+		});
 	} catch (error) {
 		console.warn(
 			`[corsair:managed-oauth] subscribe failed for '${pluginId}' tenant '${tenantId}':`,

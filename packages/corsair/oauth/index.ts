@@ -33,7 +33,7 @@ import {
 import { resolveOAuthWebhookTenantLink } from '../webhooks/resolve-oauth-tenant-link';
 import { setWebhookTenantLink } from '../webhooks/tenant-links';
 import { buildOAuthAuthorizeUrl } from './authorize-url';
-import { subscribeAndReport } from './subscribe-report';
+import { subscribeAndStoreLink } from './subscribe-and-store';
 
 // Re-export state utilities for backward compatibility (barrel oauth.ts re-exports these)
 export { decodeOAuthState, encodeOAuthState } from '../core/auth/state';
@@ -559,26 +559,15 @@ export async function processOAuthCallback(
 	// subscribe capability (class-2 webhooks) skip this entirely.
 	if (plugin.subscribe) {
 		try {
-			const link = await subscribeAndReport(
+			await subscribeAndStoreLink({
 				corsair,
+				internal,
 				plugin,
 				tenantId,
-				accountKm,
-			);
-			// Renewal stores the link it gets back; so must connect, or a new
-			// account's events can't find it until the first renewal.
-			if (link) {
-				await setWebhookTenantLink({
-					database: internal.database,
-					kek: internal.kek,
-					pluginId,
-					tenantId,
-					link,
-					authType: 'oauth_2',
-					extraAccountFields: plugin.authConfig?.oauth_2?.account ?? [],
-					...(accountId && { accountId }),
-				});
-			}
+				keys: accountKm,
+				authType: 'oauth_2',
+				accountId,
+			});
 		} catch (error) {
 			console.warn(
 				`[corsair:oauth] BYO subscribe failed for '${pluginId}' tenant '${tenantId}':`,
