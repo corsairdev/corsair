@@ -613,4 +613,20 @@ describe('planRelease on a git repo', () => {
 			'{\n\t"name": "@x/a",\n\t"peer": { "version": "0.1.0" },\n\t"version": "0.1.1"\n}\n',
 		);
 	});
+
+	it('applyBump keeps CORSAIR_SDK_VERSION equal to the corsair package version', () => {
+		write(
+			'packages/corsair/package.json',
+			'{\n\t"name": "corsair",\n\t"version": "0.2.1"\n}\n',
+		);
+		write(
+			'packages/corsair/hub/sdk-version.ts',
+			"/** Keep in sync. */\nexport const CORSAIR_SDK_VERSION = '0.2.1';\n\nexport const CORSAIR_SDK_CAPABILITIES = 'multi-account';\n",
+		);
+		applyBump(cwd, { dir: 'packages/corsair', from: '0.2.1', to: '0.2.2' });
+		assert.equal(
+			readFileSync(join(cwd, 'packages/corsair/hub/sdk-version.ts'), 'utf-8'),
+			"/** Keep in sync. */\nexport const CORSAIR_SDK_VERSION = '0.2.2';\n\nexport const CORSAIR_SDK_CAPABILITIES = 'multi-account';\n",
+		);
+	});
 });

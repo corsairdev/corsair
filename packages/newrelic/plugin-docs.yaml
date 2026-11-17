@@ -1,0 +1,86 @@
+displayName: New Relic
+description: Read New Relic applications and metrics, search entities, list alert issues, manage alert policies and NRQL alert conditions, record deployment markers, and run NRQL queries through NerdGraph.
+domain: newrelic.com
+recommendedAuth: api_key
+overviewNote: |
+  Use a **user key**, not a license key. Create one at https://one.newrelic.com/api-keys under **Create a key**, choosing **User** as the key type. A license key only ingests data and cannot read any of this.
+
+  The plugin talks to two surfaces, both under the same key:
+
+  - **REST v2** for applications, metrics and alerts, at `api.newrelic.com/v2`.
+  - **NerdGraph**, the GraphQL API, for NRQL, accounts, entities, issues and deployment markers, at `api.newrelic.com/graphql`.
+
+  An EU account uses `api.eu.newrelic.com` for both, and **a key is only valid in its own region**. Pass `region: 'eu'` on any call from an EU account; the default is `us`.
+
+  What to know:
+
+  - **`health_status` is a colour**, such as `green`, `orange`, `red`, `gray` or `unknown`. The REST API says `orange` where the UI shows yellow, and `unknown` means the app has no alert policy attached.
+  - **`reporting` goes false after ten quiet minutes**, and `last_reported_at` is then an empty string rather than a timestamp, so a missing time is not an error.
+  - **A metric window defaults to the last 30 minutes** when `from` is omitted. `summarize: true` collapses the window into one value per metric, which is what most dashboards want.
+  - **REST v2 pages through a `Link` header**, which this plugin cannot read, so `page` is an input. A long list needs an explicit page walk.
+  - **`alerts.conditions` covers APM, browser and mobile conditions only.** NRQL conditions, which most accounts use, are `alerts.nrqlConditions` and its create, update and delete.
+  - **Updates replace the whole object.** `alerts.updatePolicy` needs both `name` and `incident_preference`, and `alerts.updateNrqlCondition` needs the whole condition: New Relic answers 422, 500 or 400 to a partial body. Read the current values first.
+  - **Find GUIDs with `entities.search`.** It takes an entity filter such as `type = 'APPLICATION'`, `domain = 'APM'` or `name LIKE 'checkout'`, and pages with `nextCursor`.
+  - **`issues.list` is the current incident model** (NerdGraph `aiIssues`). `title`, `description` and a few other fields are lists even when they hold one value.
+  - **A deployment marker cannot be deleted.** `changeTracking.createDeployment` writes it on the entity's charts for good, so it is `destructive`: the permission policy decides whether it needs approval (cautious asks, strict refuses, open runs it).
+  - **A NRQL query is a NerdGraph call.** `accountId` is required, and the answer carries the time window New Relic actually ran over, which can differ from the `SINCE` clause.
+  - **A bad NRQL query answers 200 with an `errors` array.** The plugin turns that into a thrown error rather than returning rows that are silently empty.
+  - **Deleting a policy deletes its conditions**, and New Relic has no restore call.
+  - **`incident_preference` is one of `PER_POLICY`, `PER_CONDITION` or `PER_CONDITION_AND_TARGET`** and decides whether alerts roll up per policy, per condition, or per condition and signal. It defaults to `PER_POLICY`.
+examples:
+  read:
+    path: applications.list
+    title: List applications with their health
+    args: {}
+  write:
+    path: alerts.createPolicy
+    title: Create an alert policy
+    args:
+      name: EMEA API alerts
+apiExamples:
+  accounts.list:
+    call: "{}"
+  entities.search:
+    call: "{ query: \"domain = 'APM' AND type = 'APPLICATION'\" }"
+  entities.get:
+    call: "{ guids: ['MTIzNDU2N3xBUE18QVBQTElDQVRJT058MTEyOTA4Mg'] }"
+  issues.list:
+    call: "{ accountId: 1234567, states: ['ACTIVATED'] }"
+  changeTracking.createDeployment:
+    call: "{ entityGuid: 'MTIzNDU2N3xBUE18QVBQTElDQVRJT058MTEyOTA4Mg', version: '1.4.2', commit: 'a1b2c3d' }"
+  alerts.updatePolicy:
+    call: "{ policyId: 41534, name: 'EMEA API alerts', incident_preference: 'PER_CONDITION' }"
+  alerts.nrqlConditions:
+    call: "{ policyId: 41534 }"
+  alerts.createNrqlCondition:
+    call: "{ policyId: 41534, condition: { name: 'Error spike', enabled: true, value_function: 'single_value', terms: [{ duration: '5', operator: 'above', priority: 'critical', threshold: '10', time_function: 'all' }], nrql: { query: \"SELECT count(*) FROM TransactionError\" } } }"
+  alerts.updateNrqlCondition:
+    call: "{ conditionId: 69879675, condition: { name: 'Error spike', enabled: false, value_function: 'single_value', terms: [{ duration: '5', operator: 'above', priority: 'critical', threshold: '20', time_function: 'all' }], nrql: { query: \"SELECT count(*) FROM TransactionError\" } } }"
+  alerts.deleteNrqlCondition:
+    call: "{ conditionId: 69879675 }"
+  applications.list:
+    call: "{ name: 'Web', page: 1 }"
+  applications.get:
+    call: "{ applicationId: 1129082 }"
+  metrics.get:
+    call: "{ applicationId: 1129082, names: ['Apdex', 'Errors/all'], summarize: true }"
+  alerts.policies:
+    call: "{ name: 'Browser Agent Alert Policy' }"
+  alerts.createPolicy:
+    call: "{ name: 'EMEA API alerts', incident_preference: 'PER_CONDITION' }"
+  alerts.deletePolicy:
+    call: "{ policyId: 41534 }"
+  alerts.conditions:
+    call: "{ policyId: 41534 }"
+  query.nrql:
+    call: "{ accountId: 1234567, query: 'SELECT count(*) FROM Transaction SINCE 1 hour ago' }"
+apiNotes:
+  alerts.updatePolicy: 'Send both name and incident_preference; New Relic replaces the policy and refuses a partial body.'
+  alerts.updateNrqlCondition: 'Send the whole condition; a partial body answers 400.'
+  changeTracking.createDeployment: 'Markers cannot be deleted afterwards.'
+  issues.list: 'title and description are lists in NerdGraph.'
+  applications.list: 'health_status is green, orange, red or unknown; orange is the REST spelling of the UI yellow.'
+  metrics.get: 'Without from, New Relic returns the last 30 minutes. summarize collapses the window into one value per metric.'
+  alerts.deletePolicy: 'Deleting a policy also deletes its conditions, and there is no restore call.'
+  alerts.conditions: 'Only APM, browser and mobile conditions; external service, synthetic and NRQL conditions are separate endpoints.'
+  query.nrql: 'Runs through NerdGraph, so accountId is required. A bad query answers 200 with an errors array, which the plugin throws.'

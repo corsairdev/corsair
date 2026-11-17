@@ -1,0 +1,62 @@
+---
+title: "Microsoft Clarity API reference"
+sidebarTitle: "API"
+description: "API reference for Microsoft Clarity: every `microsoftclarity.api.*` operation with input and output types."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Insights
+
+### get
+
+`insights.get`
+
+Export project dashboard metrics for the past 1 to 3 days with optional dimension breakdowns
+
+**Risk:** `read`
+
+```ts
+await corsair.microsoftclarity.api.insights.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `numOfDays` | `number` | Yes | — |
+| `dimension1` | `string` | No | — |
+| `dimension2` | `string` | No | — |
+| `dimension3` | `string` | No | — |
+
+Use `numOfDays` 1, 2, or 3 and up to three optional dimension values. Metric information fields vary with the metric and requested breakdown; counts can be numbers or strings, and averages are null when the project had no traffic.
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  metricName: string,
+  information: {
+    totalSessionCount?: string | number | null,
+    totalBotSessionCount?: string | number | null,
+    distinctUserCount?: string | number | null,
+    distantUserCount?: string | number | null,
+    pagesPerSessionPercentage?: number | null,
+    PagesPerSessionPercentage?: number | null,
+    OS?: string | null
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
