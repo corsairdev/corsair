@@ -3327,6 +3327,14 @@
                 ]
               },
               {
+                "group": "Logo.dev",
+                "pages": [
+                  "plugins/logodev/overview",
+                  "plugins/logodev/api",
+                  "plugins/logodev/database"
+                ]
+              },
+              {
                 "group": "Loyverse",
                 "pages": [
                   "plugins/loyverse/overview",
