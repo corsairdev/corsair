@@ -1,0 +1,1075 @@
+displayName: "Simla.com"
+description: Access and manage customers, orders, catalogs, loyalty, deliveries, tickets, telephony and other resources through the current Simla.com REST API v5.
+domain: simla.com
+recommendedAuth: api_key
+factory:
+  note: Each connection stores its API key and account subdomain (acme for https://acme.simla.com). Set `subdomain` here only to override the stored one.
+overviewNote: |
+  Connect with an API key and the account subdomain (`acme` for `https://acme.simla.com`; the full URL works too). Requests use `X-API-KEY` and `https://{subdomain}.simla.com/api/v5/`. POST nested values are JSON strings inside form-urlencoded bodies. Responses are checked for structure only, because live data differs from the published models (string ids, lists where the model has an object).
+
+  List operations pass through the documented `page`/`limit` pagination metadata; cursor-based operations accept their documented cursor parameter. The account is limited to 10 requests per second per IP (40 for telephony); the provider may respond with 503 when the limit is exceeded.
+
+  Binary upload expects base64 in `body`; binary download responses are `{ kind: 'binary', contentType, base64 }` and the client enforces a 20 MiB safety limit.
+
+  The plugin excludes the 27 provider-hosted integration-module callback/configuration routes, the `update-scopes` route (it mints a new API key) and all inbound webhook receiving/management (outside issue #2408).
+examples:
+  read:
+    path: api.apiVersions.get
+    title: Read the available Simla.com API versions
+  write:
+    path: customers.create.post
+    title: Create a customer record
+apiNotes:
+  files.upload.post: Pass a base64-encoded string in `body`; the provider documents this request as `application/octet-stream`.
+  files.byIdDownload.get: Returns the file bytes in a base64 envelope; maximum response size is capped by the client at 20 MiB.
+  telephony.getCallsByIdRecord.get: Returns call-recording bytes in a base64 envelope; maximum response size is capped by the client at 20 MiB.
+  orders.byExternalidPlatesByPlateidPrint.get: "Returns the printed form as a file stream, so the output is a base64 envelope (`kind`, `contentType`, `base64`) capped at 20 MiB."
+  dataBook.referenceCouriersCreate.post: The official OpenAPI marks `courier.firstName` required but omits its type and constraints; the plugin enforces its presence, while the value shape is unverified.
+  dataBook.referenceCouriersByIdEdit.post: The official OpenAPI marks `courier.firstName` required but omits its type and constraints; the plugin enforces its presence, while the value shape is unverified.
+  telephony.callEvent.post: The official OpenAPI marks `phone`, `type`, and `code` required but omits their types; the plugin enforces their presence, while their value shapes are unverified.
+apiExamples:
+  api.apiVersions.get:
+    args: {}
+  api.credentials.get:
+    args: {}
+  cost.list.get:
+    args: {}
+  cost.create.post:
+    args:
+      "body":
+        "cost":
+          "dateFrom": "2025-01-01"
+  cost.delete.post:
+    args:
+      "body":
+        "ids": []
+  cost.upload.post:
+    args:
+      "body":
+        "costs": []
+  cost.getById.get:
+    args:
+      "path":
+        "id": 1
+  cost.byIdDelete.post:
+    args:
+      "path":
+        "id": 1
+  cost.byIdEdit.post:
+    args:
+      "path":
+        "id": "17"
+      "body":
+        "cost":
+          "dateFrom": "2025-01-01"
+  customFields.list.get:
+    args: {}
+  customFields.dictionaries.get:
+    args: {}
+  customFields.dictionariesCreate.post:
+    args:
+      "body":
+        "customDictionary":
+          "name": "demo"
+          "elements": []
+  customFields.getDictionariesByCode.get:
+    args:
+      "path":
+        "code": "demo"
+  customFields.dictionariesByCodeEdit.post:
+    args:
+      "path":
+        "code": "demo"
+      "body":
+        "customDictionary":
+          "name": "demo"
+          "elements": []
+  customFields.byEntityCreate.post:
+    args:
+      "path":
+        "entity": "order"
+      "body":
+        "customField":
+          "name": "demo"
+  customFields.getByEntityByCode.get:
+    args:
+      "path":
+        "entity": "order"
+        "code": "demo"
+  customFields.byEntityByCodeEdit.post:
+    args:
+      "path":
+        "entity": "order"
+        "code": "demo"
+      "body":
+        "customField":
+          "name": "demo"
+          "ordering": 0
+  customers.list.get:
+    args:
+      "query":
+        "filter[subscriptions][channel]": "email"
+        "filter[subscriptions][subscribed]": false
+  customers.combine.post:
+    args:
+      "body":
+        "customers":
+          - "id": 2
+        "resultCustomer":
+          "id": 1
+  customers.create.post:
+    args:
+      "body":
+        "customer":
+          "externalId": "demo"
+  customers.fixExternalIds.post:
+    args:
+      "body":
+        "customers": []
+  customers.history.get:
+    args: {}
+  customers.notes.get:
+    args: {}
+  customers.notesCreate.post:
+    args:
+      "body":
+        "note":
+          "managerId": 1
+  customers.notesByIdDelete.post:
+    args:
+      "path":
+        "id": 1
+  customers.pushTokens.get:
+    args: {}
+  customers.pushTokensBatch.post:
+    args:
+      "body":
+        "pushTokens": []
+  customers.upload.post:
+    args:
+      "body":
+        "site": "demo"
+  customers.getByExternalid.get:
+    args:
+      "path":
+        "externalId": "demo"
+  customers.byExternalidEdit.post:
+    args:
+      "path":
+        "externalId": "demo"
+      "body":
+        "customer":
+          "externalId": "demo"
+  customers.byExternalidSubscriptions.post:
+    args:
+      "path":
+        "externalId": "demo"
+      "body":
+        "by": "demo"
+  corporateCustomers.list.get:
+    args: {}
+  corporateCustomers.combine.post:
+    args:
+      "body":
+        "resultCustomer":
+          "id": 1
+  corporateCustomers.create.post:
+    args:
+      "body":
+        "customerCorporate":
+          "externalId": "demo"
+  corporateCustomers.fixExternalIds.post:
+    args:
+      "body":
+        "customersCorporate": []
+  corporateCustomers.history.get:
+    args: {}
+  corporateCustomers.notes.get:
+    args: {}
+  corporateCustomers.notesCreate.post:
+    args:
+      "body":
+        "note":
+          "managerId": 1
+  corporateCustomers.notesByIdDelete.post:
+    args:
+      "path":
+        "id": 1
+  corporateCustomers.upload.post:
+    args:
+      "body":
+        "site": "demo"
+  corporateCustomers.getByExternalid.get:
+    args:
+      "path":
+        "externalId": "demo"
+  corporateCustomers.getByExternalidAddresses.get:
+    args:
+      "path":
+        "externalId": "demo"
+  corporateCustomers.byExternalidAddressesCreate.post:
+    args:
+      "path":
+        "externalId": "demo"
+      "body":
+        "address":
+          "index": "demo"
+  corporateCustomers.byExternalidAddressesByEntityexternalidEdit.post:
+    args:
+      "path":
+        "externalId": "demo"
+        "entityExternalId": "demo"
+      "body":
+        "address":
+          "index": "demo"
+  corporateCustomers.getByExternalidCompanies.get:
+    args:
+      "path":
+        "externalId": "demo"
+  corporateCustomers.byExternalidCompaniesCreate.post:
+    args:
+      "path":
+        "externalId": "demo"
+      "body":
+        "company":
+          "isMain": false
+  corporateCustomers.byExternalidCompaniesByEntityexternalidEdit.post:
+    args:
+      "path":
+        "externalId": "demo"
+        "entityExternalId": "demo"
+      "body":
+        "company":
+          "isMain": false
+  corporateCustomers.getByExternalidContacts.get:
+    args:
+      "path":
+        "externalId": "demo"
+  corporateCustomers.byExternalidContactsCreate.post:
+    args:
+      "path":
+        "externalId": "demo"
+      "body":
+        "contact":
+          "isMain": false
+  corporateCustomers.byExternalidContactsByEntityexternalidEdit.post:
+    args:
+      "path":
+        "externalId": "demo"
+        "entityExternalId": "demo"
+      "body":
+        "contact":
+          "isMain": false
+  corporateCustomers.byExternalidEdit.post:
+    args:
+      "path":
+        "externalId": "demo"
+      "body":
+        "customerCorporate":
+          "externalId": "demo"
+  customerInteraction.cartBySiteClear.post:
+    args:
+      "path":
+        "site": "demo"
+      "body":
+        "cart":
+          "clearedAt": "2025-01-01 12:00:00+00:00"
+  customerInteraction.cartBySiteSet.post:
+    args:
+      "path":
+        "site": "demo"
+      "body":
+        "cart":
+          "externalId": "demo"
+  customerInteraction.getCartBySiteByCustomerid.get:
+    args:
+      "path":
+        "customerId": "demo"
+        "site": "demo"
+  customerInteraction.getFavoritesBySiteByCustomerid.get:
+    args:
+      "path":
+        "site": "demo"
+        "customerId": "demo"
+  customerInteraction.favoritesBySiteByCustomeridAdd.post:
+    args:
+      "path":
+        "site": "demo"
+        "customerId": "demo"
+      "body":
+        "favorite":
+          "offer":
+            "id": 1
+  customerInteraction.favoritesBySiteByCustomeridRemove.post:
+    args:
+      "path":
+        "site": "demo"
+        "customerId": "demo"
+      "body":
+        "favorite":
+          "offer":
+            "id": 1
+  deliveries.deliveryCalculate.post:
+    args:
+      "body":
+        "order":
+          "weight": 1
+  deliveries.deliveryGenericBySubcodeTracking.post:
+    args:
+      "path":
+        "subcode": "demo"
+      "body":
+        "statusUpdate": []
+  deliveries.deliveryShipments.get:
+    args: {}
+  deliveries.deliveryShipmentsCreate.post:
+    args:
+      "body":
+        "deliveryShipment":
+          "store": "demo"
+          "managerId": 1
+          "date": "2025-01-01"
+          "time":
+            "from": "12:00"
+  deliveries.getDeliveryShipmentsById.get:
+    args:
+      "path":
+        "id": 1
+  deliveries.deliveryShipmentsByIdEdit.post:
+    args:
+      "path":
+        "id": 1
+      "body":
+        "deliveryShipment":
+          "store": "demo"
+          "managerId": 1
+          "date": "2025-01-01"
+          "time":
+            "from": "12:00"
+  files.list.get:
+    args: {}
+  files.upload.post:
+    args:
+      "body": "QQ=="
+  files.getById.get:
+    args:
+      "path":
+        "id": 1
+  files.byIdDelete.post:
+    args:
+      "path":
+        "id": 1
+  files.byIdDownload.get:
+    args:
+      "path":
+        "id": 1
+  files.byIdEdit.post:
+    args:
+      "path":
+        "id": 1
+      "body":
+        "file":
+          "filename": "demo"
+  integration.getIntegrationModulesByCode.get:
+    args:
+      "path":
+        "code": "demo"
+  integration.integrationModulesByCodeEdit.post:
+    args:
+      "path":
+        "code": "demo"
+      "body":
+        "integrationModule":
+          "code": "demo"
+          "integrationCode": "demo"
+          "clientId": "demo"
+  knowledgeBase.documents.get:
+    args: {}
+  knowledgeBase.documentsCreate.post:
+    args:
+      "body":
+        "document":
+          "title": "demo"
+  knowledgeBase.documentsHistory.get:
+    args:
+      "query":
+        "filter[documentId]": 0
+        "filter[sinceId]": 0
+  knowledgeBase.getDocumentsById.get:
+    args:
+      "path":
+        "id": "demo"
+  knowledgeBase.documentsByIdDelete.post:
+    args:
+      "path":
+        "id": "demo"
+  knowledgeBase.documentsByIdEdit.post:
+    args:
+      "path":
+        "id": "demo"
+      "body":
+        "document":
+          "title": "demo"
+  knowledgeBase.sections.get:
+    args: {}
+  knowledgeBase.sectionsCreate.post:
+    args:
+      "body":
+        "section":
+          "name": "demo"
+  knowledgeBase.sectionsByIdDelete.post:
+    args:
+      "path":
+        "id": 1
+  knowledgeBase.sectionsByIdEdit.post:
+    args:
+      "path":
+        "id": 1
+      "body":
+        "section":
+          "name": "demo"
+  loyalty.accountCreate.post:
+    args:
+      "body":
+        "loyaltyAccount":
+          "customer":
+            "id": 1
+  loyalty.getAccountById.get:
+    args:
+      "path":
+        "id": 1
+  loyalty.accountByIdActivate.post:
+    args:
+      "path":
+        "id": 1
+  loyalty.accountByIdBonusCharge.post:
+    args:
+      "path":
+        "id": 1
+      "body":
+        "amount": 1
+  loyalty.accountByIdBonusCredit.post:
+    args:
+      "path":
+        "id": 1
+      "body":
+        "amount": 1
+  loyalty.getAccountByIdBonusOperations.get:
+    args:
+      "path":
+        "id": 1
+  loyalty.getAccountByIdBonusByStatusDetails.get:
+    args:
+      "path":
+        "id": 1
+        "status": "demo"
+  loyalty.accountByIdEdit.post:
+    args:
+      "path":
+        "id": 1
+      "body":
+        "loyaltyAccount":
+          "phoneNumber": "demo"
+  loyalty.accounts.get:
+    args: {}
+  loyalty.bonusOperations.get:
+    args: {}
+  loyalty.calculate.post:
+    args:
+      "body":
+        "order":
+          "privilegeType": "demo"
+  loyalty.loyalties.get:
+    args: {}
+  loyalty.getLoyaltiesById.get:
+    args:
+      "path":
+        "id": 1
+  notifications.send.post:
+    args:
+      "body":
+        "notification":
+          "type": "api.info"
+          "message": "demo"
+  orders.list.get:
+    args: {}
+  orders.combine.post:
+    args:
+      "body":
+        "order":
+          "id": 1
+        "resultOrder":
+          "id": 1
+  orders.create.post:
+    args:
+      "body":
+        "order":
+          "number": "demo"
+  orders.fixExternalIds.post:
+    args:
+      "body":
+        "orders": []
+  orders.history.get:
+    args:
+      "query":
+        "filter[orderId]": 0
+        "filter[sinceId]": 0
+  orders.linksCreate.post:
+    args:
+      "body":
+        "link":
+          "comment": "demo"
+  orders.loyaltyApply.post:
+    args:
+      "body":
+        "order":
+          "id": 1
+  orders.loyaltyCancelBonusOperations.post:
+    args:
+      "body":
+        "order":
+          "id": 1
+  orders.paymentsCreate.post:
+    args:
+      "body":
+        "payment":
+          "order":
+            "id": 1
+          "type": "demo"
+  orders.paymentsByIdDelete.post:
+    args:
+      "path":
+        "id": 1
+  orders.paymentsByIdEdit.post:
+    args:
+      "path":
+        "id": "demo"
+      "body":
+        "payment":
+          "externalId": "demo"
+  orders.statuses.get:
+    args: {}
+  orders.upload.post:
+    args:
+      "body":
+        "site": "demo"
+  orders.getByExternalid.get:
+    args:
+      "path":
+        "externalId": "demo"
+  orders.byExternalidDeliveryCancel.post:
+    args:
+      "path":
+        "externalId": "demo"
+      "body":
+        "by": "demo"
+  orders.byExternalidEdit.post:
+    args:
+      "path":
+        "externalId": "demo"
+      "body":
+        "order":
+          "number": "demo"
+  orders.byExternalidPlatesByPlateidPrint.get:
+    args:
+      "path":
+        "externalId": "demo"
+        "plateId": 1
+  ordersPicking.packs.get:
+    args: {}
+  ordersPicking.packsCreate.post:
+    args:
+      "body":
+        "pack":
+          "purchasePrice": 0
+  ordersPicking.packsHistory.get:
+    args: {}
+  ordersPicking.getPacksById.get:
+    args:
+      "path":
+        "id": 1
+  ordersPicking.packsByIdDelete.post:
+    args:
+      "path":
+        "id": 1
+  ordersPicking.packsByIdEdit.post:
+    args:
+      "path":
+        "id": 1
+      "body":
+        "pack":
+          "purchasePrice": 0
+  payments.paymentCheck.post:
+    args:
+      "body":
+        "check":
+          "invoiceUuid": "demo"
+          "amount": 1
+          "currency": "demo"
+  payments.paymentCreateInvoice.post:
+    args:
+      "body":
+        "createInvoice":
+          "paymentId": 1
+  payments.paymentInvoiceImport.post:
+    args:
+      "body":
+        "invoice":
+          "paymentId": 1
+          "externalId": "demo"
+          "amount": 1
+          "currency": "demo"
+          "status": "demo"
+          "createdAt": "2025-01-01 12:00:00"
+          "paidAt": "2025-01-01 12:00:00"
+  payments.getPaymentInvoiceByInvoiceuuid.get:
+    args:
+      "path":
+        "invoiceUuid": "demo"
+  payments.paymentUpdateInvoice.post:
+    args:
+      "body":
+        "updateInvoice":
+          "invoiceUuid": "demo"
+  dataBook.referenceCostGroups.get:
+    args: {}
+  dataBook.referenceCostGroupsByCodeEdit.post:
+    args:
+      "path":
+        "code": "demo"
+      "body":
+        "costGroup":
+          "code": "demo"
+          "name": "demo"
+          "ordering": 0
+          "color": "#ffd298"
+  dataBook.referenceCostItems.get:
+    args: {}
+  dataBook.referenceCostItemsByCodeEdit.post:
+    args:
+      "path":
+        "code": "demo"
+      "body":
+        "costItem":
+          "code": "demo"
+  dataBook.referenceCountries.get:
+    args: {}
+  dataBook.referenceCouriers.get:
+    args: {}
+  dataBook.referenceCouriersCreate.post:
+    args:
+      "body":
+        "courier":
+          "firstName": "demo"
+  dataBook.referenceCouriersByIdEdit.post:
+    args:
+      "path":
+        "id": "17"
+      "body":
+        "courier":
+          "firstName": "demo"
+  dataBook.referenceCurrencies.get:
+    args: {}
+  dataBook.referenceCurrenciesCreate.post:
+    args:
+      "body":
+        "currency":
+          "code": "USD"
+  dataBook.referenceCurrenciesByIdEdit.post:
+    args:
+      "path":
+        "id": "17"
+      "body":
+        "currency":
+          "code": "USD"
+  dataBook.referenceDeliveryServices.get:
+    args: {}
+  dataBook.referenceDeliveryServicesByCodeEdit.post:
+    args:
+      "path":
+        "code": "demo"
+      "body":
+        "deliveryService":
+          "name": "demo"
+          "code": "demo"
+  dataBook.referenceDeliveryTypes.get:
+    args: {}
+  dataBook.referenceDeliveryTypesByCodeEdit.post:
+    args:
+      "path":
+        "code": "demo"
+      "body":
+        "deliveryType":
+          "name": "demo"
+          "defaultCost": 0
+          "defaultNetCost": 0
+  dataBook.referenceLegalEntities.get:
+    args: {}
+  dataBook.referenceLegalEntitiesByCodeEdit.post:
+    args:
+      "path":
+        "code": "demo"
+      "body":
+        "legalEntity":
+          "contragentType": "legal-entity"
+  dataBook.referenceMgChannels.get:
+    args: {}
+  dataBook.referenceOrderMethods.get:
+    args: {}
+  dataBook.referenceOrderMethodsByCodeEdit.post:
+    args:
+      "path":
+        "code": "demo"
+      "body":
+        "orderMethod":
+          "name": "demo"
+  dataBook.referenceOrderTypes.get:
+    args: {}
+  dataBook.referenceOrderTypesByCodeEdit.post:
+    args:
+      "path":
+        "code": "demo"
+      "body":
+        "orderType":
+          "name": "demo"
+          "ordering": 0
+  dataBook.referencePaymentStatuses.get:
+    args: {}
+  dataBook.referencePaymentStatusesByCodeEdit.post:
+    args:
+      "path":
+        "code": "demo"
+      "body":
+        "paymentStatus":
+          "name": "demo"
+          "ordering": 0
+  dataBook.referencePaymentTypes.get:
+    args: {}
+  dataBook.referencePaymentTypesByCodeEdit.post:
+    args:
+      "path":
+        "code": "demo"
+      "body":
+        "paymentType":
+          "name": "demo"
+  dataBook.referencePriceTypes.get:
+    args: {}
+  dataBook.referencePriceTypesByCodeEdit.post:
+    args:
+      "path":
+        "code": "demo"
+      "body":
+        "priceType":
+          "code": "demo"
+  dataBook.referenceProductStatuses.get:
+    args: {}
+  dataBook.referenceProductStatusesByCodeEdit.post:
+    args:
+      "path":
+        "code": "demo"
+      "body":
+        "productStatus":
+          "name": "demo"
+  dataBook.referencePushCategories.get:
+    args: {}
+  dataBook.referencePushCategoriesByCodeEdit.post:
+    args:
+      "path":
+        "code": "demo"
+      "body":
+        "pushCategory":
+          "name": "demo"
+  dataBook.referenceSites.get:
+    args: {}
+  dataBook.referenceSitesByCodeEdit.post:
+    args:
+      "path":
+        "code": "demo"
+      "body":
+        "site":
+          "name": "demo"
+  dataBook.getReferenceSitesByCodeTracker.get:
+    args:
+      "path":
+        "code": "demo"
+  dataBook.referenceStatusGroups.get:
+    args: {}
+  dataBook.referenceStatuses.get:
+    args: {}
+  dataBook.referenceStatusesByCodeEdit.post:
+    args:
+      "path":
+        "code": "demo"
+      "body":
+        "status":
+          "name": "demo"
+          "ordering": 0
+          "group": "demo"
+  dataBook.referenceStores.get:
+    args: {}
+  dataBook.referenceStoresByCodeEdit.post:
+    args:
+      "path":
+        "code": "demo"
+      "body":
+        "store":
+          "name": "demo"
+  dataBook.referenceSubscriptions.get:
+    args: {}
+  dataBook.referenceSubscriptionsByChannelByCodeEdit.post:
+    args:
+      "path":
+        "channel": "demo"
+        "code": "demo"
+      "body":
+        "subscription":
+          "channel": "email"
+          "name": "demo"
+          "ordering": 0
+  dataBook.referenceTicketChannels.get:
+    args: {}
+  dataBook.referenceTicketChannelsCreate.post:
+    args:
+      "body":
+        "ticketChannel":
+          "name": "demo"
+  dataBook.referenceTicketChannelsByIdEdit.post:
+    args:
+      "path":
+        "id": "17"
+      "body":
+        "ticketChannel":
+          "name": "demo"
+  dataBook.referenceTicketStatusGroups.get:
+    args: {}
+  dataBook.referenceTicketStatusGroupsCreate.post:
+    args:
+      "body":
+        "ticketStatusGroup":
+          "name": "demo"
+  dataBook.referenceTicketStatusGroupsByIdEdit.post:
+    args:
+      "path":
+        "id": "17"
+      "body":
+        "ticketStatusGroup":
+          "name": "demo"
+  dataBook.referenceTicketStatuses.get:
+    args: {}
+  dataBook.referenceTicketStatusesCreate.post:
+    args:
+      "body":
+        "ticketStatus":
+          "name": "demo"
+          "group":
+            "id": 1
+  dataBook.referenceTicketStatusesByIdEdit.post:
+    args:
+      "path":
+        "id": "17"
+      "body":
+        "ticketStatus":
+          "name": "demo"
+  dataBook.referenceTicketSubtopics.get:
+    args: {}
+  dataBook.referenceTicketSubtopicsCreate.post:
+    args:
+      "body":
+        "ticketSubtopic":
+          "name": "demo"
+          "topic":
+            "id": 1
+  dataBook.referenceTicketSubtopicsByIdEdit.post:
+    args:
+      "path":
+        "id": "17"
+      "body":
+        "ticketSubtopic":
+          "name": "demo"
+  dataBook.referenceTicketTopics.get:
+    args: {}
+  dataBook.referenceTicketTopicsCreate.post:
+    args:
+      "body":
+        "ticketTopic":
+          "name": "demo"
+  dataBook.referenceTicketTopicsByIdEdit.post:
+    args:
+      "path":
+        "id": "17"
+      "body":
+        "ticketTopic":
+          "name": "demo"
+  dataBook.referenceTicketTypes.get:
+    args: {}
+  dataBook.referenceTicketTypesCreate.post:
+    args:
+      "body":
+        "ticketType":
+          "name": "demo"
+  dataBook.referenceTicketTypesByIdEdit.post:
+    args:
+      "path":
+        "id": "17"
+      "body":
+        "ticketType":
+          "name": "demo"
+  dataBook.referenceUnits.get:
+    args: {}
+  dataBook.referenceUnitsByCodeEdit.post:
+    args:
+      "path":
+        "code": "demo"
+      "body":
+        "unit":
+          "name": "demo"
+          "sym": "demo"
+  segments.list.get:
+    args: {}
+  settings.list.get:
+    args: {}
+  store.inventories.get:
+    args: {}
+  store.inventoriesUpload.post:
+    args:
+      "body":
+        "offers": []
+  store.offers.get:
+    args: {}
+  store.pricesUpload.post:
+    args:
+      "body":
+        "prices": []
+  store.productGroups.get:
+    args: {}
+  store.productGroupsCreate.post:
+    args:
+      "body":
+        "productGroup":
+          "name": "demo"
+  store.productGroupsByExternalidEdit.post:
+    args:
+      "path":
+        "externalId": "demo"
+      "body":
+        "productGroup":
+          "name": "demo"
+  store.products.get:
+    args: {}
+  store.productsBatchCreate.post:
+    args:
+      "body":
+        "products": []
+  store.productsBatchEdit.post:
+    args:
+      "body":
+        "products": []
+  store.productsProperties.get:
+    args: {}
+  store.productsPropertiesValues.get:
+    args: {}
+  tasks.list.get:
+    args: {}
+  tasks.create.post:
+    args: {}
+  tasks.history.get:
+    args:
+      "query":
+        "filter[taskId]": 0
+        "filter[sinceId]": 0
+  tasks.getById.get:
+    args:
+      "path":
+        "id": 1
+  tasks.getByIdComments.get:
+    args:
+      "path":
+        "id": 1
+  tasks.byIdEdit.post:
+    args:
+      "path":
+        "id": 1
+  telephony.callEvent.post:
+    args:
+      body:
+        phone: "+15555550100"
+        type: in
+        code: "101"
+  telephony.calls.get:
+    args: {}
+  telephony.callsUpload.post:
+    args: {}
+  telephony.getCallsByIdRecord.get:
+    args:
+      "path":
+        "id": 1
+  telephony.manager.get:
+    args:
+      "query":
+        "phone": "demo"
+  tickets.list.get:
+    args: {}
+  tickets.comments.get:
+    args: {}
+  tickets.commentsCreate.post:
+    args: {}
+  tickets.commentsByIdDelete.post:
+    args:
+      "path":
+        "id": 1
+  tickets.commentsByIdEdit.post:
+    args:
+      "path":
+        "id": 1
+  tickets.create.post:
+    args: {}
+  tickets.history.get:
+    args:
+      "query":
+        "filter[ticketId]": 0
+        "filter[sinceId]": 0
+  tickets.getByExternalid.get:
+    args:
+      "path":
+        "externalId": "demo"
+  tickets.byExternalidEdit.post:
+    args:
+      "path":
+        "externalId": "demo"
+  users.userGroups.get:
+    args: {}
+  users.list.get:
+    args: {}
+  users.getById.get:
+    args:
+      "path":
+        "id": 1
+  users.byIdStatus.post:
+    args:
+      "path":
+        "id": 1
+      "body":
+        "status": "free"
+  verification.smsConfirm.post:
+    args:
+      "body":
+        "verification":
+          "code": "demo"
+  verification.getSmsByCheckidStatus.get:
+    args:
+      "path":
+        "checkId": "demo"
+  webAnalytics.clientIdsUpload.post:
+    args:
+      "body":
+        "clientIds": []
+  webAnalytics.sourcesUpload.post:
+    args:
+      "body":
+        "sources": []
+  webAnalytics.visitsUpload.post:
+    args:
+      "body":
+        "visits": []
+  statistics.statisticUpdate.get:
+    args: {}

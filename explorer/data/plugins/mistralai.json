@@ -1,0 +1,4226 @@
+{
+  "id": "mistralai",
+  "displayName": "Mistral AI",
+  "description": "Mistral AI's model API. Run chat, fill-in-the-middle and agent completions, create embeddings, moderate and classify text, read documents with OCR, transcribe and synthesize speech, and manage models, files, batch jobs and agents.",
+  "npmPackageName": "@corsair-dev/mistralai",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 52,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "mistralai.api.agents.complete",
+      "shortPath": "agents.complete",
+      "description": "Run an agent on a list of messages with the agent's instructions and tools; spends Mistral credits",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agent_id",
+            "optional": false,
+            "type": "string",
+            "description": "Id of the agent to run."
+          },
+          {
+            "key": "max_tokens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "min_tokens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stop",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "random_seed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "({ role: system, content: string | ({ type: text, text: string } | { type: image_url, image_url: string | { url: string, detail?: string } } | { type: document_url, document_url: string, document_name?: string } | { type: file, file_id: string } | { type: input_audio, input_audio: string } | { type: string })[] } | { role: user, content: string | ({ type: text, text: string } | { type: image_url, image_url: string | { url: string, detail?: string } } | { type: document_url, document_url: string, document_name?: string } | { type: file, file_id: string } | { type: input_audio, input_audio: string } | { type: string })[] | null } | { role: assistant, content?: string | ({ type: text, text: string } | { type: image_url, image_url: string | { url: string, detail?: string } } | { type: document_url, document_url: string, document_name?: string } | { type: file, file_id: string } | { type: input_audio, input_audio: string } | { type: string })[] | null, tool_calls?: { id?: string, type?: function, function: { name: string, arguments: string | Record<string, any> }, index?: number }[] | null, prefix?: boolean | null } | { role: tool, content: string | ({ type: text, text: string } | { type: image_url, image_url: string | { url: string, detail?: string } } | { type: document_url, document_url: string, document_name?: string } | { type: file, file_id: string } | { type: input_audio, input_audio: string } | { type: string })[] | null, tool_call_id?: string | null, name?: string | null })[]",
+            "description": "Conversation so far: { role: \"system\" | \"user\" | \"assistant\" | \"tool\", content }."
+          },
+          {
+            "key": "response_format",
+            "optional": true,
+            "type": "{ type: text | json_object | json_schema, json_schema?: { name: string, description?: string, schema: Record<string, any>, strict?: boolean } }"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "({ type: function, function: { name: string, description?: string, strict?: boolean, parameters: Record<string, any> } } | { type: image_generation, tool_configuration?: { exclude?: string[], include?: string[], requires_confirmation?: string[] } } | { type: document_library, library_ids: string[], tool_configuration?: { exclude?: string[], include?: string[], requires_confirmation?: string[] } } | { type: connector, connector_id: string, authorization?: Record<string, any>, tool_configuration?: { exclude?: string[], include?: string[], requires_confirmation?: string[] } })[]"
+          },
+          {
+            "key": "tool_choice",
+            "optional": true,
+            "type": "auto | none | any | required | { type: function, function: { name: string } }"
+          },
+          {
+            "key": "presence_penalty",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "frequency_penalty",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "repetition_penalty",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "top_k",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "n",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "logprobs",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "top_logprobs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "prediction",
+            "optional": true,
+            "type": "{ type: content, content: string }"
+          },
+          {
+            "key": "parallel_tool_calls",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "reasoning_effort",
+            "optional": true,
+            "type": "none | minimal | low | medium | high | xhigh | max"
+          },
+          {
+            "key": "prompt_mode",
+            "optional": true,
+            "type": "reasoning"
+          },
+          {
+            "key": "guardrails",
+            "optional": true,
+            "type": "{ block_on_error?: boolean, moderation_llm_v1?: Record<string, any>, moderation_llm_v2?: Record<string, any> }[]"
+          },
+          {
+            "key": "prompt_cache_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "service_tier",
+            "optional": true,
+            "type": "auto | standard_only"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ prompt_tokens?: number | null, completion_tokens?: number | null, total_tokens?: number | null, prompt_audio_seconds?: number | null } | null"
+          },
+          {
+            "key": "choices",
+            "optional": false,
+            "type": "{ index: number, message?: { role?: string | null, content?: string | any[] | null, tool_calls?: { id?: string, type?: function, function: { name: string, arguments: string | Record<string, any> }, index?: number }[] | null, prefix?: boolean | null } | null, finish_reason?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.agents.create",
+      "shortPath": "agents.create",
+      "description": "Create an agent: a model with instructions, tools and default settings (beta). Mistral refuses agent creation for some organizations with 403 \"Use Managed Agents instead\"; existing agents can still be listed, read, versioned and deleted",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "Model id, for example mistral-small-latest. models.list lists the ones this key can use."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "({ type: function, function: { name: string, description?: string, strict?: boolean, parameters: Record<string, any> } } | { type: web_search, tool_configuration?: { exclude?: string[], include?: string[], requires_confirmation?: string[] } } | { type: web_search_premium, tool_configuration?: { exclude?: string[], include?: string[], requires_confirmation?: string[] } } | { type: code_interpreter, tool_configuration?: { exclude?: string[], include?: string[], requires_confirmation?: string[] } } | { type: image_generation, tool_configuration?: { exclude?: string[], include?: string[], requires_confirmation?: string[] } } | { type: document_library, library_ids: string[], tool_configuration?: { exclude?: string[], include?: string[], requires_confirmation?: string[] } } | { type: connector, connector_id: string, authorization?: Record<string, any>, tool_configuration?: { exclude?: string[], include?: string[], requires_confirmation?: string[] } })[]"
+          },
+          {
+            "key": "completion_args",
+            "optional": true,
+            "type": "{ stop?: string | string[], presence_penalty?: number, frequency_penalty?: number, temperature?: number, top_p?: number, max_tokens?: number, random_seed?: number, prediction?: { type: content, content: string }, response_format?: { type: text | json_object | json_schema, json_schema?: { name: string, description?: string, schema: Record<string, any>, strict?: boolean } }, tool_choice?: auto | none | any | required, reasoning_effort?: none | minimal | low | medium | high | xhigh | max }"
+          },
+          {
+            "key": "guardrails",
+            "optional": true,
+            "type": "{ block_on_error?: boolean, moderation_llm_v1?: Record<string, any>, moderation_llm_v2?: Record<string, any> }[]"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "handoffs",
+            "optional": true,
+            "type": "string[]",
+            "description": "Ids of agents this one can hand the conversation to."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "version_message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "completion_args",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "handoffs",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "versions",
+            "optional": true,
+            "type": "number[] | null"
+          },
+          {
+            "key": "version_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deployment_chat",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.agents.delete",
+      "shortPath": "agents.delete",
+      "description": "Delete an agent; cannot be undone (beta)",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agent_id",
+            "optional": false,
+            "type": "string",
+            "description": "Agent id, from agents.create or agents.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.agents.deleteAlias",
+      "shortPath": "agents.deleteAlias",
+      "description": "Remove a version alias from an agent; the version itself stays (beta)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agent_id",
+            "optional": false,
+            "type": "string",
+            "description": "Agent id, from agents.create or agents.list."
+          },
+          {
+            "key": "alias",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.agents.get",
+      "shortPath": "agents.get",
+      "description": "Get an agent, at its current version or at a given version or alias (beta)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agent_id",
+            "optional": false,
+            "type": "string",
+            "description": "Agent id, from agents.create or agents.list."
+          },
+          {
+            "key": "agent_version",
+            "optional": true,
+            "type": "number | string",
+            "description": "A version number or an alias; the current version if omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "completion_args",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "handoffs",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "versions",
+            "optional": true,
+            "type": "number[] | null"
+          },
+          {
+            "key": "version_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deployment_chat",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.agents.getVersion",
+      "shortPath": "agents.getVersion",
+      "description": "Get one version of an agent by number or alias (beta)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agent_id",
+            "optional": false,
+            "type": "string",
+            "description": "Agent id, from agents.create or agents.list."
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string",
+            "description": "A version number or an alias, as a string."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "completion_args",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "handoffs",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "versions",
+            "optional": true,
+            "type": "number[] | null"
+          },
+          {
+            "key": "version_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deployment_chat",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.agents.list",
+      "shortPath": "agents.list",
+      "description": "List agents, filtered by name, search text or metadata; page with page_token (beta)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_token",
+            "optional": true,
+            "type": "string",
+            "description": "next_page_token from the previous page."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deployment_chat",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sources",
+            "optional": true,
+            "type": "(api | playground | agent_builder_v1)[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Only agents whose metadata has these key/values."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, object?: string | null, name: string, model: string, description?: string | null, instructions?: string | null, tools?: Record<string, any>[] | null, completion_args?: Record<string, any> | null, handoffs?: string[] | null, metadata?: Record<string, any> | null, version: number, versions?: number[] | null, version_message?: string | null, owner_id?: string | null, created_at: string, updated_at: string, deployment_chat?: boolean | null, source?: string | null }[]"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.agents.listAliases",
+      "shortPath": "agents.listAliases",
+      "description": "List an agent's version aliases (beta)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agent_id",
+            "optional": false,
+            "type": "string",
+            "description": "Agent id, from agents.create or agents.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ alias: string, version: number, created_at: string, updated_at: string }[]"
+      }
+    },
+    {
+      "path": "mistralai.api.agents.listVersions",
+      "shortPath": "agents.listVersions",
+      "description": "List an agent's versions; page with page and page_size (beta)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agent_id",
+            "optional": false,
+            "type": "string",
+            "description": "Agent id, from agents.create or agents.list."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, object?: string | null, name: string, model: string, description?: string | null, instructions?: string | null, tools?: Record<string, any>[] | null, completion_args?: Record<string, any> | null, handoffs?: string[] | null, metadata?: Record<string, any> | null, version: number, versions?: number[] | null, version_message?: string | null, owner_id?: string | null, created_at: string, updated_at: string, deployment_chat?: boolean | null, source?: string | null }[]"
+      }
+    },
+    {
+      "path": "mistralai.api.agents.setVersion",
+      "shortPath": "agents.setVersion",
+      "description": "Switch an agent to another of its versions (beta)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agent_id",
+            "optional": false,
+            "type": "string",
+            "description": "Agent id, from agents.create or agents.list."
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "number",
+            "description": "The version to make current."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "completion_args",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "handoffs",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "versions",
+            "optional": true,
+            "type": "number[] | null"
+          },
+          {
+            "key": "version_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deployment_chat",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.agents.update",
+      "shortPath": "agents.update",
+      "description": "Change an agent; each update creates a new version (beta)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agent_id",
+            "optional": false,
+            "type": "string",
+            "description": "Agent id, from agents.create or agents.list."
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deployment_chat",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "({ type: function, function: { name: string, description?: string, strict?: boolean, parameters: Record<string, any> } } | { type: web_search, tool_configuration?: { exclude?: string[], include?: string[], requires_confirmation?: string[] } } | { type: web_search_premium, tool_configuration?: { exclude?: string[], include?: string[], requires_confirmation?: string[] } } | { type: code_interpreter, tool_configuration?: { exclude?: string[], include?: string[], requires_confirmation?: string[] } } | { type: image_generation, tool_configuration?: { exclude?: string[], include?: string[], requires_confirmation?: string[] } } | { type: document_library, library_ids: string[], tool_configuration?: { exclude?: string[], include?: string[], requires_confirmation?: string[] } } | { type: connector, connector_id: string, authorization?: Record<string, any>, tool_configuration?: { exclude?: string[], include?: string[], requires_confirmation?: string[] } })[]"
+          },
+          {
+            "key": "completion_args",
+            "optional": true,
+            "type": "{ stop?: string | string[], presence_penalty?: number, frequency_penalty?: number, temperature?: number, top_p?: number, max_tokens?: number, random_seed?: number, prediction?: { type: content, content: string }, response_format?: { type: text | json_object | json_schema, json_schema?: { name: string, description?: string, schema: Record<string, any>, strict?: boolean } }, tool_choice?: auto | none | any | required, reasoning_effort?: none | minimal | low | medium | high | xhigh | max }"
+          },
+          {
+            "key": "guardrails",
+            "optional": true,
+            "type": "{ block_on_error?: boolean, moderation_llm_v1?: Record<string, any>, moderation_llm_v2?: Record<string, any> }[]"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "handoffs",
+            "optional": true,
+            "type": "string[]",
+            "description": "Ids of agents this one can hand the conversation to."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "version_message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "completion_args",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "handoffs",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "versions",
+            "optional": true,
+            "type": "number[] | null"
+          },
+          {
+            "key": "version_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deployment_chat",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.agents.upsertAlias",
+      "shortPath": "agents.upsertAlias",
+      "description": "Point a version alias such as production at an agent version, creating it if needed (beta)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agent_id",
+            "optional": false,
+            "type": "string",
+            "description": "Agent id, from agents.create or agents.list."
+          },
+          {
+            "key": "alias",
+            "optional": false,
+            "type": "string",
+            "description": "Alias name, for example production."
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "number",
+            "description": "The version the alias points to."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "alias",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.audio.speech",
+      "shortPath": "audio.speech",
+      "description": "Turn text into speech; returns base64 audio (mp3 by default); spends Mistral credits",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string",
+            "description": "Text to speak."
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "voice_id",
+            "optional": true,
+            "type": "string",
+            "description": "A voice from voices.list."
+          },
+          {
+            "key": "ref_audio",
+            "optional": true,
+            "type": "string",
+            "description": "Base64 reference audio to clone, instead of voice_id."
+          },
+          {
+            "key": "response_format",
+            "optional": true,
+            "type": "pcm | wav | mp3 | flac | opus"
+          },
+          {
+            "key": "expressiveness",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "audio_data",
+            "optional": false,
+            "type": "string",
+            "description": "The audio, base64, in response_format (mp3 by default)."
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.audio.transcribe",
+      "shortPath": "audio.transcribe",
+      "description": "Transcribe audio from base64 content, a URL or an uploaded file, optionally with speakers and timestamps; spends Mistral credits",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "A transcription model, for example voxtral-mini-latest."
+          },
+          {
+            "key": "content_base64",
+            "optional": true,
+            "type": "string",
+            "description": "File content, base64 (a data: URL prefix is accepted)."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the audio file, with content_base64."
+          },
+          {
+            "key": "file_url",
+            "optional": true,
+            "type": "string",
+            "description": "Public URL of the audio."
+          },
+          {
+            "key": "file_id",
+            "optional": true,
+            "type": "string",
+            "description": "An uploaded file id."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "diarize",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "context_bias",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "timestamp_granularities",
+            "optional": true,
+            "type": "(segment | word)[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "segments",
+            "optional": true,
+            "type": "{ text: string, start?: number | null, end?: number | null, speaker_id?: string | null }[] | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ prompt_tokens?: number | null, completion_tokens?: number | null, total_tokens?: number | null, prompt_audio_seconds?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.audioAgents.create",
+      "shortPath": "audioAgents.create",
+      "description": "Create a voice agent: speech-to-text, LLM and text-to-speech settings, instructions and tools",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "configuration",
+            "optional": false,
+            "type": "{ llm?: { model?: string }, tts?: { model?: string, voice_id?: string, expressiveness?: number }, stt?: Record<string, any>, turn?: Record<string, any>, instructions?: string, tools?: Record<string, any>[], welcome_message?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "owner_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "configuration",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.audioAgents.delete",
+      "shortPath": "audioAgents.delete",
+      "description": "Delete a voice agent; cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agent_id",
+            "optional": false,
+            "type": "string",
+            "description": "Audio agent id (uuid), from audioAgents.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.audioAgents.get",
+      "shortPath": "audioAgents.get",
+      "description": "Get a voice agent, optionally at a given version",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agent_id",
+            "optional": false,
+            "type": "string",
+            "description": "Audio agent id (uuid), from audioAgents.list."
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "owner_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "configuration",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.audioAgents.list",
+      "shortPath": "audioAgents.list",
+      "description": "List voice agents; page with page_token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_token",
+            "optional": true,
+            "type": "string",
+            "description": "next_page_token from the previous page."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, owner_id: string, name?: string | null, description?: string | null, created_at: string, updated_at: string, version?: number | null, configuration?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.audioAgents.listSessions",
+      "shortPath": "audioAgents.listSessions",
+      "description": "List a voice agent's sessions; page with page_token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agent_id",
+            "optional": false,
+            "type": "string",
+            "description": "Audio agent id (uuid), from audioAgents.list."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_token",
+            "optional": true,
+            "type": "string",
+            "description": "next_page_token from the previous page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, agent_id: string, started_at?: string | null, duration?: number | null, phone_number_id?: string | null }[]"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.audioAgents.listVersions",
+      "shortPath": "audioAgents.listVersions",
+      "description": "List a voice agent's versions; page with page_token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agent_id",
+            "optional": false,
+            "type": "string",
+            "description": "Audio agent id (uuid), from audioAgents.list."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_token",
+            "optional": true,
+            "type": "string",
+            "description": "next_page_token from the previous page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, owner_id: string, name?: string | null, description?: string | null, created_at: string, updated_at: string, version?: number | null, configuration?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.audioAgents.update",
+      "shortPath": "audioAgents.update",
+      "description": "Replace a voice agent's name, description and configuration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agent_id",
+            "optional": false,
+            "type": "string",
+            "description": "Audio agent id (uuid), from audioAgents.list."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "configuration",
+            "optional": false,
+            "type": "{ llm?: { model?: string }, tts?: { model?: string, voice_id?: string, expressiveness?: number }, stt?: Record<string, any>, turn?: Record<string, any>, instructions?: string, tools?: Record<string, any>[], welcome_message?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "owner_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "configuration",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.batch.cancel",
+      "shortPath": "batch.cancel",
+      "description": "Ask Mistral to cancel a batch job: status goes to CANCELLATION_REQUESTED, then CANCELLED; there is no way to resume it",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string",
+            "description": "Batch job id (uuid), from batch.create or batch.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "input_files",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "endpoint",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "agent_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "output_file",
+            "optional": true,
+            "type": "string | null",
+            "description": "File id of the results; read it with files.getSignedUrl."
+          },
+          {
+            "key": "error_file",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "errors",
+            "optional": false,
+            "type": "{ message: string, count?: number | null }[]"
+          },
+          {
+            "key": "outputs",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "QUEUED | RUNNING | SUCCESS | FAILED | TIMEOUT_EXCEEDED | CANCELLATION_REQUESTED | CANCELLED | string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_requests",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "completed_requests",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "succeeded_requests",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "failed_requests",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "started_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.batch.create",
+      "shortPath": "batch.create",
+      "description": "Start a batch job that runs many requests to one endpoint, from uploaded .jsonl files or inline; spends Mistral credits and needs a Mistral plan with billing enabled (402 otherwise). Follow it with batch.get until status is SUCCESS, FAILED, TIMEOUT_EXCEEDED or CANCELLED",
+      "riskLevel": "destructive",
+      "job": {
+        "idPath": "id",
+        "status": {
+          "op": "batch.get",
+          "idArg": "job_id",
+          "statusPath": "status",
+          "done": ["SUCCESS"],
+          "failed": ["FAILED", "TIMEOUT_EXCEEDED", "CANCELLED"]
+        },
+        "cancel": {
+          "op": "batch.cancel",
+          "idArg": "job_id"
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endpoint",
+            "optional": false,
+            "type": "/v1/chat/completions | /v1/embeddings | /v1/fim/completions | /v1/moderations | /v1/chat/moderations | /v1/ocr | /v1/classifications | /v1/chat/classifications | /v1/conversations | /v1/audio/transcriptions",
+            "description": "The API every request in the batch calls."
+          },
+          {
+            "key": "input_files",
+            "optional": true,
+            "type": "string[]",
+            "description": "Ids of .jsonl files uploaded with purpose batch, one request per line."
+          },
+          {
+            "key": "requests",
+            "optional": true,
+            "type": "{ custom_id?: string, body: Record<string, any> }[]",
+            "description": "Requests inline, instead of input_files."
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "agent_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "timeout_hours",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "input_files",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "endpoint",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "agent_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "output_file",
+            "optional": true,
+            "type": "string | null",
+            "description": "File id of the results; read it with files.getSignedUrl."
+          },
+          {
+            "key": "error_file",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "errors",
+            "optional": false,
+            "type": "{ message: string, count?: number | null }[]"
+          },
+          {
+            "key": "outputs",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "QUEUED | RUNNING | SUCCESS | FAILED | TIMEOUT_EXCEEDED | CANCELLATION_REQUESTED | CANCELLED | string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_requests",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "completed_requests",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "succeeded_requests",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "failed_requests",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "started_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.batch.delete",
+      "shortPath": "batch.delete",
+      "description": "Ask Mistral to delete a batch job; cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string",
+            "description": "Batch job id (uuid), from batch.create or batch.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.batch.get",
+      "shortPath": "batch.get",
+      "description": "Where a batch job stands: status, request counts, and output_file once it's done",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string",
+            "description": "Batch job id (uuid), from batch.create or batch.list."
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include the results in outputs (small batches only)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "input_files",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "endpoint",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "agent_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "output_file",
+            "optional": true,
+            "type": "string | null",
+            "description": "File id of the results; read it with files.getSignedUrl."
+          },
+          {
+            "key": "error_file",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "errors",
+            "optional": false,
+            "type": "{ message: string, count?: number | null }[]"
+          },
+          {
+            "key": "outputs",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "QUEUED | RUNNING | SUCCESS | FAILED | TIMEOUT_EXCEEDED | CANCELLATION_REQUESTED | CANCELLED | string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_requests",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "completed_requests",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "succeeded_requests",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "failed_requests",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "started_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.batch.list",
+      "shortPath": "batch.list",
+      "description": "List batch jobs, filtered by status, model or date; page with page and page_size",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "agent_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_after",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 date-time, for example 2026-11-01T00:00:00Z."
+          },
+          {
+            "key": "created_by_me",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "(QUEUED | RUNNING | SUCCESS | FAILED | TIMEOUT_EXCEEDED | CANCELLATION_REQUESTED | CANCELLED)[]"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "created | -created"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id: string, object?: string | null, input_files: string[], metadata?: Record<string, any> | null, endpoint: string, model?: string | null, agent_id?: string | null, output_file?: string | null, error_file?: string | null, errors: { message: string, count?: number | null }[], outputs?: Record<string, any>[] | null, status: QUEUED | RUNNING | SUCCESS | FAILED | TIMEOUT_EXCEEDED | CANCELLATION_REQUESTED | CANCELLED | string, created_at: number, total_requests: number, completed_requests: number, succeeded_requests: number, failed_requests: number, started_at?: number | null, completed_at?: number | null }[] | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.chat.complete",
+      "shortPath": "chat.complete",
+      "description": "Generate a chat answer from a list of messages, with optional tools and JSON output; spends Mistral credits",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "Model id, for example mistral-small-latest. models.list lists the ones this key can use."
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "top_p",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "safe_prompt",
+            "optional": true,
+            "type": "boolean",
+            "description": "Prepend Mistral's safety system prompt."
+          },
+          {
+            "key": "max_tokens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "min_tokens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stop",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "random_seed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "({ role: system, content: string | ({ type: text, text: string } | { type: image_url, image_url: string | { url: string, detail?: string } } | { type: document_url, document_url: string, document_name?: string } | { type: file, file_id: string } | { type: input_audio, input_audio: string } | { type: string })[] } | { role: user, content: string | ({ type: text, text: string } | { type: image_url, image_url: string | { url: string, detail?: string } } | { type: document_url, document_url: string, document_name?: string } | { type: file, file_id: string } | { type: input_audio, input_audio: string } | { type: string })[] | null } | { role: assistant, content?: string | ({ type: text, text: string } | { type: image_url, image_url: string | { url: string, detail?: string } } | { type: document_url, document_url: string, document_name?: string } | { type: file, file_id: string } | { type: input_audio, input_audio: string } | { type: string })[] | null, tool_calls?: { id?: string, type?: function, function: { name: string, arguments: string | Record<string, any> }, index?: number }[] | null, prefix?: boolean | null } | { role: tool, content: string | ({ type: text, text: string } | { type: image_url, image_url: string | { url: string, detail?: string } } | { type: document_url, document_url: string, document_name?: string } | { type: file, file_id: string } | { type: input_audio, input_audio: string } | { type: string })[] | null, tool_call_id?: string | null, name?: string | null })[]",
+            "description": "Conversation so far: { role: \"system\" | \"user\" | \"assistant\" | \"tool\", content }."
+          },
+          {
+            "key": "response_format",
+            "optional": true,
+            "type": "{ type: text | json_object | json_schema, json_schema?: { name: string, description?: string, schema: Record<string, any>, strict?: boolean } }"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "({ type: function, function: { name: string, description?: string, strict?: boolean, parameters: Record<string, any> } } | { type: image_generation, tool_configuration?: { exclude?: string[], include?: string[], requires_confirmation?: string[] } } | { type: document_library, library_ids: string[], tool_configuration?: { exclude?: string[], include?: string[], requires_confirmation?: string[] } } | { type: connector, connector_id: string, authorization?: Record<string, any>, tool_configuration?: { exclude?: string[], include?: string[], requires_confirmation?: string[] } })[]"
+          },
+          {
+            "key": "tool_choice",
+            "optional": true,
+            "type": "auto | none | any | required | { type: function, function: { name: string } }"
+          },
+          {
+            "key": "presence_penalty",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "frequency_penalty",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "repetition_penalty",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "top_k",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "n",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "logprobs",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "top_logprobs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "prediction",
+            "optional": true,
+            "type": "{ type: content, content: string }"
+          },
+          {
+            "key": "parallel_tool_calls",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "reasoning_effort",
+            "optional": true,
+            "type": "none | minimal | low | medium | high | xhigh | max"
+          },
+          {
+            "key": "prompt_mode",
+            "optional": true,
+            "type": "reasoning"
+          },
+          {
+            "key": "guardrails",
+            "optional": true,
+            "type": "{ block_on_error?: boolean, moderation_llm_v1?: Record<string, any>, moderation_llm_v2?: Record<string, any> }[]"
+          },
+          {
+            "key": "prompt_cache_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "service_tier",
+            "optional": true,
+            "type": "auto | standard_only"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ prompt_tokens?: number | null, completion_tokens?: number | null, total_tokens?: number | null, prompt_audio_seconds?: number | null } | null"
+          },
+          {
+            "key": "choices",
+            "optional": false,
+            "type": "{ index: number, message?: { role?: string | null, content?: string | any[] | null, tool_calls?: { id?: string, type?: function, function: { name: string, arguments: string | Record<string, any> }, index?: number }[] | null, prefix?: boolean | null } | null, finish_reason?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.classifiers.classify",
+      "shortPath": "classifiers.classify",
+      "description": "Classify texts with a fine-tuned classifier model; spends Mistral credits",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "A moderation or classifier model, for example mistral-moderation-latest."
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string | string[]",
+            "description": "One text or a list of texts."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "Record<string, { scores: Record<string, number> }>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.classifiers.classifyChat",
+      "shortPath": "classifiers.classifyChat",
+      "description": "Classify conversations with a fine-tuned classifier model; spends Mistral credits",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "A fine-tuned classifier model id."
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "{ messages: ({ role: system, content: string | ({ type: text, text: string } | { type: image_url, image_url: string | { url: string, detail?: string } } | { type: document_url, document_url: string, document_name?: string } | { type: file, file_id: string } | { type: input_audio, input_audio: string } | { type: string })[] } | { role: user, content: string | ({ type: text, text: string } | { type: image_url, image_url: string | { url: string, detail?: string } } | { type: document_url, document_url: string, document_name?: string } | { type: file, file_id: string } | { type: input_audio, input_audio: string } | { type: string })[] | null } | { role: assistant, content?: string | ({ type: text, text: string } | { type: image_url, image_url: string | { url: string, detail?: string } } | { type: document_url, document_url: string, document_name?: string } | { type: file, file_id: string } | { type: input_audio, input_audio: string } | { type: string })[] | null, tool_calls?: { id?: string, type?: function, function: { name: string, arguments: string | Record<string, any> }, index?: number }[] | null, prefix?: boolean | null } | { role: tool, content: string | ({ type: text, text: string } | { type: image_url, image_url: string | { url: string, detail?: string } } | { type: document_url, document_url: string, document_name?: string } | { type: file, file_id: string } | { type: input_audio, input_audio: string } | { type: string })[] | null, tool_call_id?: string | null, name?: string | null })[] } | { messages: ({ role: system, content: string | ({ type: text, text: string } | { type: image_url, image_url: string | { url: string, detail?: string } } | { type: document_url, document_url: string, document_name?: string } | { type: file, file_id: string } | { type: input_audio, input_audio: string } | { type: string })[] } | { role: user, content: string | ({ type: text, text: string } | { type: image_url, image_url: string | { url: string, detail?: string } } | { type: document_url, document_url: string, document_name?: string } | { type: file, file_id: string } | { type: input_audio, input_audio: string } | { type: string })[] | null } | { role: assistant, content?: string | ({ type: text, text: string } | { type: image_url, image_url: string | { url: string, detail?: string } } | { type: document_url, document_url: string, document_name?: string } | { type: file, file_id: string } | { type: input_audio, input_audio: string } | { type: string })[] | null, tool_calls?: { id?: string, type?: function, function: { name: string, arguments: string | Record<string, any> }, index?: number }[] | null, prefix?: boolean | null } | { role: tool, content: string | ({ type: text, text: string } | { type: image_url, image_url: string | { url: string, detail?: string } } | { type: document_url, document_url: string, document_name?: string } | { type: file, file_id: string } | { type: input_audio, input_audio: string } | { type: string })[] | null, tool_call_id?: string | null, name?: string | null })[] }[]",
+            "description": "{ messages } or a list of them."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "Record<string, { scores: Record<string, number> }>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.classifiers.moderate",
+      "shortPath": "classifiers.moderate",
+      "description": "Score texts against moderation categories (sexual, hate, violence, self-harm…); spends Mistral credits",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "A moderation or classifier model, for example mistral-moderation-latest."
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string | string[]",
+            "description": "One text or a list of texts."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ categories?: Record<string, boolean> | null, category_scores?: Record<string, number> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.classifiers.moderateChat",
+      "shortPath": "classifiers.moderateChat",
+      "description": "Score a conversation against moderation categories; spends Mistral credits",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "A moderation model, for example mistral-moderation-latest."
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "({ role: system, content: string | ({ type: text, text: string } | { type: image_url, image_url: string | { url: string, detail?: string } } | { type: document_url, document_url: string, document_name?: string } | { type: file, file_id: string } | { type: input_audio, input_audio: string } | { type: string })[] } | { role: user, content: string | ({ type: text, text: string } | { type: image_url, image_url: string | { url: string, detail?: string } } | { type: document_url, document_url: string, document_name?: string } | { type: file, file_id: string } | { type: input_audio, input_audio: string } | { type: string })[] | null } | { role: assistant, content?: string | ({ type: text, text: string } | { type: image_url, image_url: string | { url: string, detail?: string } } | { type: document_url, document_url: string, document_name?: string } | { type: file, file_id: string } | { type: input_audio, input_audio: string } | { type: string })[] | null, tool_calls?: { id?: string, type?: function, function: { name: string, arguments: string | Record<string, any> }, index?: number }[] | null, prefix?: boolean | null } | { role: tool, content: string | ({ type: text, text: string } | { type: image_url, image_url: string | { url: string, detail?: string } } | { type: document_url, document_url: string, document_name?: string } | { type: file, file_id: string } | { type: input_audio, input_audio: string } | { type: string })[] | null, tool_call_id?: string | null, name?: string | null })[] | ({ role: system, content: string | ({ type: text, text: string } | { type: image_url, image_url: string | { url: string, detail?: string } } | { type: document_url, document_url: string, document_name?: string } | { type: file, file_id: string } | { type: input_audio, input_audio: string } | { type: string })[] } | { role: user, content: string | ({ type: text, text: string } | { type: image_url, image_url: string | { url: string, detail?: string } } | { type: document_url, document_url: string, document_name?: string } | { type: file, file_id: string } | { type: input_audio, input_audio: string } | { type: string })[] | null } | { role: assistant, content?: string | ({ type: text, text: string } | { type: image_url, image_url: string | { url: string, detail?: string } } | { type: document_url, document_url: string, document_name?: string } | { type: file, file_id: string } | { type: input_audio, input_audio: string } | { type: string })[] | null, tool_calls?: { id?: string, type?: function, function: { name: string, arguments: string | Record<string, any> }, index?: number }[] | null, prefix?: boolean | null } | { role: tool, content: string | ({ type: text, text: string } | { type: image_url, image_url: string | { url: string, detail?: string } } | { type: document_url, document_url: string, document_name?: string } | { type: file, file_id: string } | { type: input_audio, input_audio: string } | { type: string })[] | null, tool_call_id?: string | null, name?: string | null })[][]",
+            "description": "One conversation, or a list of conversations."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ categories?: Record<string, boolean> | null, category_scores?: Record<string, number> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.embeddings.create",
+      "shortPath": "embeddings.create",
+      "description": "Turn one or more texts into embedding vectors; spends Mistral credits",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "An embedding model, for example mistral-embed."
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string | string[]",
+            "description": "One text or a list of texts."
+          },
+          {
+            "key": "output_dimension",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "output_dtype",
+            "optional": true,
+            "type": "float | int8 | uint8 | binary | ubinary"
+          },
+          {
+            "key": "encoding_format",
+            "optional": true,
+            "type": "float | base64"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ prompt_tokens?: number | null, completion_tokens?: number | null, total_tokens?: number | null, prompt_audio_seconds?: number | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object?: string | null, embedding?: number[] | string | null, index?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.files.delete",
+      "shortPath": "files.delete",
+      "description": "Delete an uploaded file; cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string",
+            "description": "File id (uuid), from files.upload or files.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.files.get",
+      "shortPath": "files.get",
+      "description": "Get a file's details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string",
+            "description": "File id (uuid), from files.upload or files.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "bytes",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "purpose",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sample_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "num_lines",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "mimetype",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signature",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.files.getSignedUrl",
+      "shortPath": "files.getSignedUrl",
+      "description": "A temporary download URL for a file's content, such as a batch job's output_file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string",
+            "description": "File id (uuid), from files.upload or files.list."
+          },
+          {
+            "key": "expiry",
+            "optional": true,
+            "type": "number",
+            "description": "Hours the URL stays valid (Mistral default 24)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.files.list",
+      "shortPath": "files.list",
+      "description": "List uploaded files, filtered by purpose or name; page with page and page_size",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "include_total",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "purpose",
+            "optional": true,
+            "type": "fine-tune | batch | ocr | agentic_safety | audio"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sample_type",
+            "optional": true,
+            "type": "(pretrain | instruct | batch_request | batch_result | batch_error)[]"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "(upload | repository | mistral)[]"
+          },
+          {
+            "key": "mimetypes",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, object: string, bytes: number, created_at: number, filename: string, purpose: string, sample_type?: string | null, num_lines?: number | null, mimetype?: string | null, source?: string | null, signature?: string | null, expires_at?: number | null, visibility?: string | null }[]"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.files.upload",
+      "shortPath": "files.upload",
+      "description": "Upload a file (base64, up to 512 MB) for batch jobs, fine-tuning or OCR; returns its id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string",
+            "description": "Name to store the file under, for example requests.jsonl."
+          },
+          {
+            "key": "content_base64",
+            "optional": false,
+            "type": "string",
+            "description": "File content, base64 (a data: URL prefix is accepted)."
+          },
+          {
+            "key": "purpose",
+            "optional": true,
+            "type": "fine-tune | batch | ocr | agentic_safety | audio",
+            "description": "fine-tune, batch (a .jsonl of requests for batch.create), ocr or agentic_safety."
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "workspace | user"
+          },
+          {
+            "key": "expiry",
+            "optional": true,
+            "type": "number",
+            "description": "Hours until Mistral deletes the file."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "bytes",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "purpose",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sample_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "num_lines",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "mimetype",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signature",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.fim.complete",
+      "shortPath": "fim.complete",
+      "description": "Fill in code between a prompt and a suffix with a Codestral model; spends Mistral credits",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "A code model, for example codestral-latest."
+          },
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string",
+            "description": "Code before the gap."
+          },
+          {
+            "key": "suffix",
+            "optional": true,
+            "type": "string",
+            "description": "Code after the gap."
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "top_p",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_tokens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "min_tokens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stop",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "random_seed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "prompt_cache_key",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ prompt_tokens?: number | null, completion_tokens?: number | null, total_tokens?: number | null, prompt_audio_seconds?: number | null } | null"
+          },
+          {
+            "key": "choices",
+            "optional": false,
+            "type": "{ index: number, message?: { role?: string | null, content?: string | any[] | null, tool_calls?: { id?: string, type?: function, function: { name: string, arguments: string | Record<string, any> }, index?: number }[] | null, prefix?: boolean | null } | null, finish_reason?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.models.archive",
+      "shortPath": "models.archive",
+      "description": "Archive a fine-tuned model; models.unarchive restores it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string",
+            "description": "Model id, for example mistral-small-latest or ft:… for a fine-tune."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.models.delete",
+      "shortPath": "models.delete",
+      "description": "Delete a fine-tuned model; cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string",
+            "description": "Model id, for example mistral-small-latest or ft:… for a fine-tune."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.models.get",
+      "shortPath": "models.get",
+      "description": "Get a model's details and capabilities",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string",
+            "description": "Model id, for example mistral-small-latest or ft:… for a fine-tune."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "owned_by",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "capabilities",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "max_context_length",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "aliases",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "deprecation",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deprecation_replacement_model",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "default_model_temperature",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null",
+            "description": "base or fine-tuned."
+          },
+          {
+            "key": "job",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "root",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.models.list",
+      "shortPath": "models.list",
+      "description": "List the base and fine-tuned models this key can use, with their capabilities",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id: string, object?: string | null, created?: number | null, owned_by?: string | null, capabilities?: Record<string, any> | null, name?: string | null, description?: string | null, max_context_length?: number | null, aliases?: string[] | null, deprecation?: string | null, deprecation_replacement_model?: string | null, default_model_temperature?: number | null, type?: string | null, job?: string | null, root?: string | null, archived?: boolean | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.models.unarchive",
+      "shortPath": "models.unarchive",
+      "description": "Restore an archived fine-tuned model",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string",
+            "description": "Model id, for example mistral-small-latest or ft:… for a fine-tune."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.models.update",
+      "shortPath": "models.update",
+      "description": "Rename a fine-tuned model or change its description",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string",
+            "description": "Model id, for example mistral-small-latest or ft:… for a fine-tune."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "owned_by",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "root",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "root_version",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "capabilities",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "max_context_length",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "aliases",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "job",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "model_type",
+            "optional": true,
+            "type": "string | null",
+            "description": "completion or classifier."
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.ocr.process",
+      "shortPath": "ocr.process",
+      "description": "Read a PDF or image (URL or uploaded file) into markdown per page, with optional structured annotations; spends Mistral credits",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "An OCR model, for example mistral-ocr-latest."
+          },
+          {
+            "key": "document",
+            "optional": false,
+            "type": "{ type: document_url, document_url: string, document_name?: string } | { type: image_url, image_url: string | { url: string, detail?: string } } | { type: file, file_id: string }",
+            "description": "{ type: \"document_url\", document_url } for a PDF, { type: \"image_url\", image_url } for an image, or { type: \"file\", file_id } for an uploaded file. document_url and image_url take a URL or a base64 data URL, for example \"data:application/pdf;base64,...\" or \"data:image/png;base64,...\"."
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "string | number[]",
+            "description": "Pages to read, 0-based, for example [0, 1] or \"0-3\"."
+          },
+          {
+            "key": "include_image_base64",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "image_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "image_min_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "bbox_annotation_format",
+            "optional": true,
+            "type": "{ type: text | json_object | json_schema, json_schema?: { name: string, description?: string, schema: Record<string, any>, strict?: boolean } }"
+          },
+          {
+            "key": "document_annotation_format",
+            "optional": true,
+            "type": "{ type: text | json_object | json_schema, json_schema?: { name: string, description?: string, schema: Record<string, any>, strict?: boolean } }"
+          },
+          {
+            "key": "document_annotation_prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "table_format",
+            "optional": true,
+            "type": "markdown | html"
+          },
+          {
+            "key": "extract_header",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "extract_footer",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_blocks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "confidence_scores_granularity",
+            "optional": true,
+            "type": "word | page | block"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pages",
+            "optional": false,
+            "type": "{ index: number, markdown: string, images?: { id: string, image_base64?: string | null, image_annotation?: string | null }[] | null, header?: string | null, footer?: string | null, dimensions?: { dpi: number, height: number, width: number } | null }[]"
+          },
+          {
+            "key": "document_annotation",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "usage_info",
+            "optional": false,
+            "type": "{ pages_processed: number, doc_size_bytes?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.responses.countInputTokens",
+      "shortPath": "responses.countInputTokens",
+      "description": "Count the input tokens a responses.create call would use, without running it",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "Model id, for example mistral-small-latest. models.list lists the ones this key can use."
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string | Record<string, any>[]",
+            "description": "A prompt, or a list of items such as { role: \"user\", content: \"…\" }."
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "{ type: function | namespace, name: string, description?: string, parameters?: Record<string, any>, strict?: boolean, tools?: Record<string, any>[] }[]"
+          },
+          {
+            "key": "tool_choice",
+            "optional": true,
+            "type": "none | auto | required | { type: function, name: string }"
+          },
+          {
+            "key": "parallel_tool_calls",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "reasoning",
+            "optional": true,
+            "type": "{ effort?: none | minimal | low | medium | high | xhigh | max }"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "{ format?: Record<string, any>, verbosity?: low | medium | high }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input_tokens",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.responses.create",
+      "shortPath": "responses.create",
+      "description": "Generate a response with the Responses API (input items, tools, reasoning); spends Mistral credits",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "Model id, for example mistral-small-latest. models.list lists the ones this key can use."
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string | Record<string, any>[]",
+            "description": "A prompt, or a list of items such as { role: \"user\", content: \"…\" }."
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "{ type: function | namespace, name: string, description?: string, parameters?: Record<string, any>, strict?: boolean, tools?: Record<string, any>[] }[]"
+          },
+          {
+            "key": "tool_choice",
+            "optional": true,
+            "type": "none | auto | required | { type: function, name: string }"
+          },
+          {
+            "key": "parallel_tool_calls",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "reasoning",
+            "optional": true,
+            "type": "{ effort?: none | minimal | low | medium | high | xhigh | max }"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "{ format?: Record<string, any>, verbosity?: low | medium | high }"
+          },
+          {
+            "key": "max_output_tokens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "top_p",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "max_tool_calls",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "prompt_cache_key",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "output",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ code: string, message: string } | null"
+          },
+          {
+            "key": "incomplete_details",
+            "optional": true,
+            "type": "{ reason?: string | null } | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ input_tokens: number, output_tokens: number, total_tokens: number } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.voices.create",
+      "shortPath": "voices.create",
+      "description": "Create a custom voice from a base64 audio sample",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "languages",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "female | male | neutral"
+          },
+          {
+            "key": "age",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "retention_notice",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sample_audio",
+            "optional": true,
+            "type": "string",
+            "description": "Base64 audio sample of the voice to clone."
+          },
+          {
+            "key": "sample_filename",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "languages",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "age",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "retention_notice",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string",
+            "description": "preset or custom."
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.voices.delete",
+      "shortPath": "voices.delete",
+      "description": "Delete a custom voice; cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voice_id",
+            "optional": false,
+            "type": "string",
+            "description": "Voice id, from voices.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "languages",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "age",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "retention_notice",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string",
+            "description": "preset or custom."
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.voices.get",
+      "shortPath": "voices.get",
+      "description": "Get a voice",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voice_id",
+            "optional": false,
+            "type": "string",
+            "description": "Voice id, from voices.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "languages",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "age",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "retention_notice",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string",
+            "description": "preset or custom."
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.voices.list",
+      "shortPath": "voices.list",
+      "description": "List preset and custom voices for audio.speech; page with page_token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_token",
+            "optional": true,
+            "type": "string",
+            "description": "next_page_token from the previous page."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "all | custom | preset"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "(female | male | neutral)[]"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "ivc | pvc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, slug?: string | null, languages?: string[] | null, gender?: string | null, age?: number | null, tags?: string[] | null, color?: string | null, description?: string | null, retention_notice?: number | null, created_at: string, user_id?: string | null, kind?: string | null, type: string }[]"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mistralai.api.voices.update",
+      "shortPath": "voices.update",
+      "description": "Change a custom voice's name, languages, tags or details",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voice_id",
+            "optional": false,
+            "type": "string",
+            "description": "Voice id, from voices.list."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "languages",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "female | male | neutral"
+          },
+          {
+            "key": "age",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "retention_notice",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "languages",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "age",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "retention_notice",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string",
+            "description": "preset or custom."
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

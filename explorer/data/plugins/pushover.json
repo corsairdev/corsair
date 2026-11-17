@@ -1,0 +1,1060 @@
+{
+  "id": "pushover",
+  "displayName": "Pushover",
+  "description": "Send notifications and manage Pushover receipts, groups, glances, licenses, and teams.",
+  "npmPackageName": "@corsair-dev/pushover",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 23,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "user_key"]
+    }
+  ],
+  "api": [
+    {
+      "path": "pushover.api.apps.limits",
+      "shortPath": "apps.limits",
+      "description": "Get the monthly message limit and remaining quota",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "1"
+          },
+          {
+            "key": "request",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "remaining",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "reset",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushover.api.glances.update",
+      "shortPath": "glances.update",
+      "description": "Update a user widget glance",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string",
+            "description": "User or group key; defaults to the connected account's own user key"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subtext",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | \"\""
+          },
+          {
+            "key": "percent",
+            "optional": true,
+            "type": "number | \"\""
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "1"
+          },
+          {
+            "key": "request",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushover.api.groups.addUser",
+      "shortPath": "groups.addUser",
+      "description": "Add a user to a delivery group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "memo",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "1"
+          },
+          {
+            "key": "request",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushover.api.groups.create",
+      "shortPath": "groups.create",
+      "description": "Create a delivery group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "1"
+          },
+          {
+            "key": "request",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "group",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushover.api.groups.disableUser",
+      "shortPath": "groups.disableUser",
+      "description": "Disable a delivery group user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "1"
+          },
+          {
+            "key": "request",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushover.api.groups.enableUser",
+      "shortPath": "groups.enableUser",
+      "description": "Enable a delivery group user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "1"
+          },
+          {
+            "key": "request",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushover.api.groups.get",
+      "shortPath": "groups.get",
+      "description": "Get a delivery group and its users",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "1"
+          },
+          {
+            "key": "request",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ user: string, device: string | null, memo: string | null, disabled: boolean, name?: string, email?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushover.api.groups.list",
+      "shortPath": "groups.list",
+      "description": "List delivery groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "1"
+          },
+          {
+            "key": "request",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "groups",
+            "optional": false,
+            "type": "{ group: string, name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushover.api.groups.removeUser",
+      "shortPath": "groups.removeUser",
+      "description": "Remove a user from a delivery group",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "1"
+          },
+          {
+            "key": "request",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushover.api.groups.rename",
+      "shortPath": "groups.rename",
+      "description": "Rename a delivery group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "1"
+          },
+          {
+            "key": "request",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushover.api.licenses.assign",
+      "shortPath": "licenses.assign",
+      "description": "Permanently assign a license credit",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "os",
+            "optional": true,
+            "type": "Android | iOS | Desktop | \"\""
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "1"
+          },
+          {
+            "key": "request",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushover.api.licenses.get",
+      "shortPath": "licenses.get",
+      "description": "Get remaining license credits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "1"
+          },
+          {
+            "key": "request",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushover.api.messages.send",
+      "shortPath": "messages.send",
+      "description": "Send a notification to a user or group",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string",
+            "description": "User or group key; defaults to the connected account's own user key"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "monospace",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "-2 | -1 | 0 | 1 | 2"
+          },
+          {
+            "key": "retry",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "expire",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "callback",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ttl",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sound",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attachment_base64",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attachment_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "encrypted",
+            "optional": true,
+            "type": "0 | 1"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "1"
+          },
+          {
+            "key": "request",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "receipt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushover.api.receipts.cancel",
+      "shortPath": "receipts.cancel",
+      "description": "Cancel retries for an emergency notification",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "receipt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "1"
+          },
+          {
+            "key": "request",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushover.api.receipts.cancelByTag",
+      "shortPath": "receipts.cancelByTag",
+      "description": "Cancel emergency notification retries by tag",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "1"
+          },
+          {
+            "key": "request",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushover.api.receipts.get",
+      "shortPath": "receipts.get",
+      "description": "Get an emergency notification receipt",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "receipt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "1"
+          },
+          {
+            "key": "request",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "acknowledged",
+            "optional": false,
+            "type": "0 | 1"
+          },
+          {
+            "key": "acknowledged_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "acknowledged_by",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "acknowledged_by_device",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_delivered_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "expired",
+            "optional": false,
+            "type": "0 | 1"
+          },
+          {
+            "key": "expires_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "called_back",
+            "optional": false,
+            "type": "0 | 1"
+          },
+          {
+            "key": "called_back_at",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushover.api.sounds.list",
+      "shortPath": "sounds.list",
+      "description": "List available notification sounds",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "1"
+          },
+          {
+            "key": "request",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sounds",
+            "optional": false,
+            "type": "Record<string, string>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushover.api.subscriptions.migrate",
+      "shortPath": "subscriptions.migrate",
+      "description": "Migrate a user key to a subscription key",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscription",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "device_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sound",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "1"
+          },
+          {
+            "key": "request",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subscribed_user_key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushover.api.teams.addUser",
+      "shortPath": "teams.addUser",
+      "description": "Invite or add a team user using a team token",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instant",
+            "optional": true,
+            "type": "true"
+          },
+          {
+            "key": "admin",
+            "optional": true,
+            "type": "true"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "1"
+          },
+          {
+            "key": "request",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushover.api.teams.get",
+      "shortPath": "teams.get",
+      "description": "Get team details using a team token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "1"
+          },
+          {
+            "key": "request",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ id: string, name: string, email: string, administrator: boolean, devices: { name: string, os: string, os_version: string, enabled: boolean, administratively_disabled: boolean }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushover.api.teams.removeUser",
+      "shortPath": "teams.removeUser",
+      "description": "Remove a team user using a team token",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "1"
+          },
+          {
+            "key": "request",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushover.api.teams.revokeInvitation",
+      "shortPath": "teams.revokeInvitation",
+      "description": "Revoke a team invitation using a team token",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "1"
+          },
+          {
+            "key": "request",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushover.api.users.validate",
+      "shortPath": "users.validate",
+      "description": "Validate a user or group and list its devices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string",
+            "description": "User or group key; defaults to the connected account's own user key"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "1"
+          },
+          {
+            "key": "request",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "devices",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "licenses",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

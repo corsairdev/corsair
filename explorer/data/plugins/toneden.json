@@ -1,0 +1,1668 @@
+{
+  "id": "toneden",
+  "displayName": "ToneDen",
+  "description": "Manage smart links, contests and social unlocks, ad campaigns and playbook campaigns, and read their performance data.",
+  "npmPackageName": "@corsair-dev/toneden",
+  "authTypes": ["oauth_2", "api_key"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 36,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "tenant_external_id"
+      ]
+    },
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "toneden.api.attachments.create",
+      "shortPath": "attachments.create",
+      "description": "Create a contest or a social unlock",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string",
+            "description": "contest or unlock"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "artwork_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "link_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_private",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_hidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "actions",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attachment",
+            "optional": false,
+            "type": "{ id?: number | null, owner_id?: number | null, type?: string | null, actions?: number | null, artwork_url?: string | null, title?: string | null, link_path?: string | null, is_private?: boolean | null, is_hidden?: boolean | null, secret_token?: string | null, message?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toneden.api.attachments.delete",
+      "shortPath": "attachments.delete",
+      "description": "Delete a contest or unlock; there is no restore route",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attachment_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ success: boolean } | {}"
+      }
+    },
+    {
+      "path": "toneden.api.attachments.entries",
+      "shortPath": "attachments.entries",
+      "description": "Read a contest entry time series, by platform",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attachment_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string",
+            "description": "Earliest date to include; ToneDen defaults to the attachment creation"
+          },
+          {
+            "key": "aggregate_interval",
+            "optional": true,
+            "type": "day | hour | week",
+            "description": "One data point per day (default), hour or week"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "totals",
+            "optional": true,
+            "type": "{} | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toneden.api.attachments.entriesTotals",
+      "shortPath": "attachments.entriesTotals",
+      "description": "Read entry counts over the past day, week, month and lifetime",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attachment_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "totals",
+            "optional": true,
+            "type": "{} | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toneden.api.attachments.get",
+      "shortPath": "attachments.get",
+      "description": "Read one contest or unlock with its actions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attachment_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attachment",
+            "optional": false,
+            "type": "{ id?: number | null, owner_id?: number | null, type?: string | null, actions?: number | null, artwork_url?: string | null, title?: string | null, link_path?: string | null, is_private?: boolean | null, is_hidden?: boolean | null, secret_token?: string | null, message?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toneden.api.attachments.listForUser",
+      "shortPath": "attachments.listForUser",
+      "description": "List one user's contests and social unlocks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "unlock | contest",
+            "description": "Which kind of attachment to list; ToneDen requires it"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attachments",
+            "optional": false,
+            "type": "{ id?: number | null, owner_id?: number | null, type?: string | null, actions?: number | null, artwork_url?: string | null, title?: string | null, link_path?: string | null, is_private?: boolean | null, is_hidden?: boolean | null, secret_token?: string | null, message?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toneden.api.attachments.unlockPlatforms",
+      "shortPath": "attachments.unlockPlatforms",
+      "description": "Read unlock counts by platform",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attachment_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "totals",
+            "optional": true,
+            "type": "{} | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toneden.api.attachments.unlocks",
+      "shortPath": "attachments.unlocks",
+      "description": "Read a social unlock time series",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attachment_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string",
+            "description": "Earliest date to include; ToneDen defaults to the attachment creation"
+          },
+          {
+            "key": "aggregate_interval",
+            "optional": true,
+            "type": "day | hour | week",
+            "description": "One data point per day (default), hour or week"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "totals",
+            "optional": true,
+            "type": "{} | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toneden.api.attachments.unlocksTotals",
+      "shortPath": "attachments.unlocksTotals",
+      "description": "Read unlock counts over the past day, week, month and lifetime",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attachment_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "totals",
+            "optional": true,
+            "type": "{} | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toneden.api.attachments.update",
+      "shortPath": "attachments.update",
+      "description": "Change the fields of one contest or unlock",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attachment_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string",
+            "description": "contest or unlock"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "artwork_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "link_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_private",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_hidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "actions",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attachment",
+            "optional": false,
+            "type": "{ id?: number | null, owner_id?: number | null, type?: string | null, actions?: number | null, artwork_url?: string | null, title?: string | null, link_path?: string | null, is_private?: boolean | null, is_hidden?: boolean | null, secret_token?: string | null, message?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toneden.api.campaigns.create",
+      "shortPath": "campaigns.create",
+      "description": "Create an ad campaign on Facebook or Google; creating one can start spend, so review the body before calling",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_campaign",
+            "optional": false,
+            "type": "{ id?: number | null, title?: string | null, status?: string | null, target_type?: string | null, target?: string | null, user_id?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toneden.api.campaigns.creativeInsights",
+      "shortPath": "campaigns.creativeInsights",
+      "description": "Read performance data for each ad within a campaign",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "series",
+            "optional": true,
+            "type": "{}[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toneden.api.campaigns.delete",
+      "shortPath": "campaigns.delete",
+      "description": "Delete an ad campaign; there is no restore route",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ success: boolean } | {}"
+      }
+    },
+    {
+      "path": "toneden.api.campaigns.get",
+      "shortPath": "campaigns.get",
+      "description": "Read one ad campaign",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_campaign",
+            "optional": false,
+            "type": "{ id?: number | null, title?: string | null, status?: string | null, target_type?: string | null, target?: string | null, user_id?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toneden.api.campaigns.insights",
+      "shortPath": "campaigns.insights",
+      "description": "Read one campaign performance data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "series",
+            "optional": true,
+            "type": "{}[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toneden.api.campaigns.list",
+      "shortPath": "campaigns.list",
+      "description": "List one user's ad campaigns",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_campaigns",
+            "optional": false,
+            "type": "{ id?: number | null, title?: string | null, status?: string | null, target_type?: string | null, target?: string | null, user_id?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toneden.api.campaigns.update",
+      "shortPath": "campaigns.update",
+      "description": "Change an ad campaign; only the given fields are sent",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_campaign",
+            "optional": false,
+            "type": "{ id?: number | null, title?: string | null, status?: string | null, target_type?: string | null, target?: string | null, user_id?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toneden.api.links.create",
+      "shortPath": "links.create",
+      "description": "Create a link with its target, artwork, services and social settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target_type",
+            "optional": true,
+            "type": "string",
+            "description": "What the link promotes"
+          },
+          {
+            "key": "target_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subdomain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shortened_path",
+            "optional": true,
+            "type": "string",
+            "description": "Check availability with `links.validPath` first"
+          },
+          {
+            "key": "isrc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "upc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "show_socials",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "skip_landing_page",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sort_services_by_clickthroughs",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "use_saved_service",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "affiliate_codes",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Affiliate codes by store, e.g. { itunes, amazon }"
+          },
+          {
+            "key": "pixels",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "services",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "social_settings",
+            "optional": true,
+            "type": "{}[]",
+            "description": "Social profile links shown on the landing page"
+          },
+          {
+            "key": "header",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata_description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata_image_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bg_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bg_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preview_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoplay_preview",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "button_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "call_to_action",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "link",
+            "optional": false,
+            "type": "{ id?: number | null, title?: string | null, user_id?: number | null, target_type?: string | null, target_url?: string | null, custom_domain?: string | null, subdomain?: string | null, shortened_path?: string | null, isrc?: string | null, upc?: string | null, click_count?: number | null, clickthrough_count?: number | null, show_socials?: boolean | null, skip_landing_page?: boolean | null, sort_services_by_clickthroughs?: boolean | null, use_saved_service?: boolean | null, affiliate_codes?: Record<string, string | null> | null, pixels?: {}[] | null, services?: {}[] | null, social_settings?: {}[] | null, header?: string | null, metadata_title?: string | null, metadata_description?: string | null, metadata_image_url?: string | null, author?: string | null, bg_color?: string | null, bg_url?: string | null, image_url?: string | null, preview_url?: string | null, autoplay_preview?: boolean | null, button_color?: string | null, call_to_action?: string | null, date?: string | null, location?: string | null, price?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toneden.api.links.delete",
+      "shortPath": "links.delete",
+      "description": "Delete a link; there is no restore route",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "link_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ success: boolean } | {}"
+      }
+    },
+    {
+      "path": "toneden.api.links.expand",
+      "shortPath": "links.expand",
+      "description": "Expand a music or podcast URL into the tracking pixels, affiliate codes and services a link would carry",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "A music or podcast URL to expand into a link"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "pixels",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "services",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "socials",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toneden.api.links.get",
+      "shortPath": "links.get",
+      "description": "Read one link with its services, pixels and social settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "link_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "link",
+            "optional": false,
+            "type": "{ id?: number | null, title?: string | null, user_id?: number | null, target_type?: string | null, target_url?: string | null, custom_domain?: string | null, subdomain?: string | null, shortened_path?: string | null, isrc?: string | null, upc?: string | null, click_count?: number | null, clickthrough_count?: number | null, show_socials?: boolean | null, skip_landing_page?: boolean | null, sort_services_by_clickthroughs?: boolean | null, use_saved_service?: boolean | null, affiliate_codes?: Record<string, string | null> | null, pixels?: {}[] | null, services?: {}[] | null, social_settings?: {}[] | null, header?: string | null, metadata_title?: string | null, metadata_description?: string | null, metadata_image_url?: string | null, author?: string | null, bg_color?: string | null, bg_url?: string | null, image_url?: string | null, preview_url?: string | null, autoplay_preview?: boolean | null, button_color?: string | null, call_to_action?: string | null, date?: string | null, location?: string | null, price?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toneden.api.links.insights",
+      "shortPath": "links.insights",
+      "description": "Read one link's performance over a date window",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "link_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "metric",
+            "optional": false,
+            "type": "clicks | clickthroughs | rsvps",
+            "description": "Which action to count; `rsvps` only works on livestream links"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 date; only actions after it are counted"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 date; only actions before it are counted"
+          },
+          {
+            "key": "aggregate_interval",
+            "optional": true,
+            "type": "day | hour | week"
+          },
+          {
+            "key": "aggregate_geo",
+            "optional": true,
+            "type": "city | country | region"
+          },
+          {
+            "key": "aggregate_by_referrer",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "aggregate_by_service",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "for_distinct_fans",
+            "optional": true,
+            "type": "boolean",
+            "description": "Count one action per fan"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "series",
+            "optional": true,
+            "type": "{}[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toneden.api.links.insightsOverview",
+      "shortPath": "links.insightsOverview",
+      "description": "Read a summary of one link's performance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "link_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "series",
+            "optional": true,
+            "type": "{}[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toneden.api.links.listForUser",
+      "shortPath": "links.listForUser",
+      "description": "List one user's links",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "target_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ id?: number | null, title?: string | null, user_id?: number | null, target_type?: string | null, target_url?: string | null, custom_domain?: string | null, subdomain?: string | null, shortened_path?: string | null, isrc?: string | null, upc?: string | null, click_count?: number | null, clickthrough_count?: number | null, show_socials?: boolean | null, skip_landing_page?: boolean | null, sort_services_by_clickthroughs?: boolean | null, use_saved_service?: boolean | null, affiliate_codes?: Record<string, string | null> | null, pixels?: {}[] | null, services?: {}[] | null, social_settings?: {}[] | null, header?: string | null, metadata_title?: string | null, metadata_description?: string | null, metadata_image_url?: string | null, author?: string | null, bg_color?: string | null, bg_url?: string | null, image_url?: string | null, preview_url?: string | null, autoplay_preview?: boolean | null, button_color?: string | null, call_to_action?: string | null, date?: string | null, location?: string | null, price?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toneden.api.links.update",
+      "shortPath": "links.update",
+      "description": "Change the fields of one link; only the given fields are sent",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "link_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target_type",
+            "optional": true,
+            "type": "string",
+            "description": "What the link promotes"
+          },
+          {
+            "key": "target_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subdomain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shortened_path",
+            "optional": true,
+            "type": "string",
+            "description": "Check availability with `links.validPath` first"
+          },
+          {
+            "key": "isrc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "upc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "show_socials",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "skip_landing_page",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sort_services_by_clickthroughs",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "use_saved_service",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "affiliate_codes",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Affiliate codes by store, e.g. { itunes, amazon }"
+          },
+          {
+            "key": "pixels",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "services",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "social_settings",
+            "optional": true,
+            "type": "{}[]",
+            "description": "Social profile links shown on the landing page"
+          },
+          {
+            "key": "header",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata_description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata_image_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bg_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bg_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preview_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoplay_preview",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "button_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "call_to_action",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "link",
+            "optional": false,
+            "type": "{ id?: number | null, title?: string | null, user_id?: number | null, target_type?: string | null, target_url?: string | null, custom_domain?: string | null, subdomain?: string | null, shortened_path?: string | null, isrc?: string | null, upc?: string | null, click_count?: number | null, clickthrough_count?: number | null, show_socials?: boolean | null, skip_landing_page?: boolean | null, sort_services_by_clickthroughs?: boolean | null, use_saved_service?: boolean | null, affiliate_codes?: Record<string, string | null> | null, pixels?: {}[] | null, services?: {}[] | null, social_settings?: {}[] | null, header?: string | null, metadata_title?: string | null, metadata_description?: string | null, metadata_image_url?: string | null, author?: string | null, bg_color?: string | null, bg_url?: string | null, image_url?: string | null, preview_url?: string | null, autoplay_preview?: boolean | null, button_color?: string | null, call_to_action?: string | null, date?: string | null, location?: string | null, price?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toneden.api.links.validPath",
+      "shortPath": "links.validPath",
+      "description": "Check whether a path and subdomain are still available; answers 200 with `valid: false` rather than failing",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string",
+            "description": "The path to check"
+          },
+          {
+            "key": "subdomain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_domain",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "valid",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toneden.api.offlineConversions.upload",
+      "shortPath": "offlineConversions.upload",
+      "description": "Upload offline conversions for a user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "events",
+            "optional": false,
+            "type": "{ user: { email?: string, phone?: string, id?: string, city?: string, state?: string, country?: string, zip?: string, gender?: m | f, first_name?: string, last_name?: string }, event: ViewContent | Search | AddToCart | AddToWishlist | InitiateCheckout | AddPaymentInfo | Purchase | Lead, timestamp: number, value?: number }[]",
+            "description": "The conversion events; sent as the request body array"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ success: boolean } | {}"
+      }
+    },
+    {
+      "path": "toneden.api.playbooks.create",
+      "shortPath": "playbooks.create",
+      "description": "Create a playbook campaign from a template",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "playbook_campaign",
+            "optional": false,
+            "type": "{ id?: number | null, title?: string | null, user_id?: number | null, template_id?: number | null, is_archived?: boolean | null, status?: string | null, subcampaigns?: {}[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toneden.api.playbooks.delete",
+      "shortPath": "playbooks.delete",
+      "description": "Delete a playbook campaign; there is no restore route",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ success: boolean } | {}"
+      }
+    },
+    {
+      "path": "toneden.api.playbooks.get",
+      "shortPath": "playbooks.get",
+      "description": "Read one playbook campaign",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "playbook_campaign",
+            "optional": false,
+            "type": "{ id?: number | null, title?: string | null, user_id?: number | null, template_id?: number | null, is_archived?: boolean | null, status?: string | null, subcampaigns?: {}[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toneden.api.playbooks.update",
+      "shortPath": "playbooks.update",
+      "description": "Change a playbook campaign title or archive state",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "playbook_campaign",
+            "optional": false,
+            "type": "{ id?: number | null, title?: string | null, user_id?: number | null, template_id?: number | null, is_archived?: boolean | null, status?: string | null, subcampaigns?: {}[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toneden.api.userLists.create",
+      "shortPath": "userLists.create",
+      "description": "Create a user list for a Facebook custom audience; the feature requires access from ToneDen support",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "external_ad_account_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_lists",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, type?: string | null, external_ad_account_id?: string | null, size?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toneden.api.userLists.list",
+      "shortPath": "userLists.list",
+      "description": "List one user's advertising user lists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_lists",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, type?: string | null, external_ad_account_id?: string | null, size?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toneden.api.userLists.updateContacts",
+      "shortPath": "userLists.updateContacts",
+      "description": "Add or remove people in a user list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "add",
+            "optional": true,
+            "type": "{ email?: string, phone?: string, id?: string, city?: string, state?: string, country?: string, zip?: string, gender?: m | f, first_name?: string, last_name?: string }[]"
+          },
+          {
+            "key": "remove",
+            "optional": true,
+            "type": "{ email?: string, phone?: string, id?: string, city?: string, state?: string, country?: string, zip?: string, gender?: m | f, first_name?: string, last_name?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ success: boolean } | {}"
+      }
+    },
+    {
+      "path": "toneden.api.users.get",
+      "shortPath": "users.get",
+      "description": "Read a user profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number | me",
+            "description": "A user ID, or 'me' for the connected user"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id?: number | null, username?: string | null, display_name?: string | null, email?: string | null, type?: string | null, about?: string | null, avatar_url?: string | null, account_count?: number | null, birthday?: string | null, city?: string | null, country?: string | null, first_name?: string | null, last_name?: string | null, state?: string | null, subscription_id?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toneden.api.users.update",
+      "shortPath": "users.update",
+      "description": "Change a user profile's name, email or location",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "about",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "avatar_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id?: number | null, username?: string | null, display_name?: string | null, email?: string | null, type?: string | null, about?: string | null, avatar_url?: string | null, account_count?: number | null, birthday?: string | null, city?: string | null, country?: string | null, first_name?: string | null, last_name?: string | null, state?: string | null, subscription_id?: number | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

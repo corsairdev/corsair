@@ -12,9 +12,35 @@
  */
 
 export { ApiError } from './async-core/ApiError';
-export type { ApiRequestOptions } from './async-core/ApiRequestOptions';
+export type {
+	ApiRequestOptions,
+	BinaryResponse,
+} from './async-core/ApiRequestOptions';
 export type { ApiResult } from './async-core/ApiResult';
+export type {
+	FileInput,
+	FileOutput,
+	ResolvedFile,
+	ResolveFileOptions,
+} from './async-core/files';
+export {
+	FILE_OUTPUT_MAX_BYTES,
+	FileInputSchema,
+	FileOutputSchema,
+	resolveFileInput,
+	toFileOutput,
+} from './async-core/files';
 export type { OpenAPIConfig } from './async-core/OpenAPI';
+export type {
+	DownloadDeps,
+	DownloadOptions,
+	PublicDownload,
+} from './async-core/public-download';
+export {
+	downloadPublicFile,
+	isBlockedAddress,
+	UnsafeUrlError,
+} from './async-core/public-download';
 export type { RateLimitConfig } from './async-core/rate-limit';
 export { request } from './async-core/request';
 export type {
