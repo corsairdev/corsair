@@ -1,4 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
+import type { BinaryResponse } from 'corsair/http';
+import { toFileOutput } from 'corsair/http';
 import { makeAuthenticatedGoogleDriveRequest } from '../client';
 import type { GoogleDriveBoundEndpoints, GoogleDriveEndpoints } from '../index';
 import type { GoogleDriveEndpointOutputs } from './types';
@@ -272,15 +274,21 @@ export const download: GoogleDriveEndpoints['filesDownload'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeAuthenticatedGoogleDriveRequest<
-		GoogleDriveEndpointOutputs['filesDownload']
-	>(`/files/${input.fileId}`, ctx, {
-		method: 'GET',
-		query: {
-			alt: 'media',
-			acknowledgeAbuse: input.acknowledgeAbuse,
-		},
-	});
+	// Read as bytes: decoding a PDF or image as text replaces every byte that
+	// isn't valid UTF-8. toFileOutput returns a text file as text.
+	const { bytes, contentType } =
+		await makeAuthenticatedGoogleDriveRequest<BinaryResponse>(
+			`/files/${input.fileId}`,
+			ctx,
+			{
+				method: 'GET',
+				query: {
+					alt: 'media',
+					acknowledgeAbuse: input.acknowledgeAbuse,
+				},
+				responseType: 'binary',
+			},
+		);
 
 	await logEventFromContext(
 		ctx,
@@ -288,7 +296,7 @@ export const download: GoogleDriveEndpoints['filesDownload'] = async (
 		{ ...input },
 		'completed',
 	);
-	return result;
+	return toFileOutput(bytes, contentType);
 };
 
 export const share: GoogleDriveEndpoints['filesShare'] = async (ctx, input) => {
