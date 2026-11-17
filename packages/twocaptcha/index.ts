@@ -99,27 +99,27 @@ const defaultAuthType = 'api_key' as const;
 
 const twocaptchaEndpointMeta = {
 	'tasks.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Create a captcha-solving task and charge the account for it; returns the task id to poll',
+			'Create a captcha-solving task, which the account pays for; returns the task id to poll',
 	},
 	'tasks.result': {
 		riskLevel: 'read',
 		description:
-			'Read a task result, returning a not-ready state while the captcha is still being solved',
+			'Read a task result: processing while workers solve it, then ready with the solution and cost',
 	},
 	'account.balance': {
 		riskLevel: 'read',
-		description: 'Read the account balance',
+		description: 'Read the account balance in USD',
 	},
 	'account.reportCorrect': {
 		riskLevel: 'write',
-		description:
-			'Report a token the site accepted, which improves the account solving rating',
+		description: 'Report that the site accepted a task answer',
 	},
 	'account.reportIncorrect': {
-		riskLevel: 'write',
-		description: 'Report a token the site rejected, which refunds the task',
+		riskLevel: 'destructive',
+		description:
+			'Report that the site rejected a task answer; 2Captcha reviews it and may refund the task',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof twocaptchaEndpointsNested
@@ -175,7 +175,7 @@ export function twocaptcha<const T extends TwoCaptchaPluginOptions>(
 	} satisfies InternalTwoCaptchaPlugin;
 }
 
-export { readEnvelope, TwoCaptchaAPIError } from './client';
+export { assertSucceeded, TwoCaptchaAPIError } from './client';
 
 export type {
 	CreateTaskInput,

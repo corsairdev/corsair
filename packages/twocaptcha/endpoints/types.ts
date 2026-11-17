@@ -25,87 +25,67 @@ const JsonValueSchema: z.ZodType<JsonValue> = z.lazy(() =>
 	]),
 );
 
-/**
- * 2Captcha's API v2 answers `{ status, request, error_text }`. `status` is `1`
- * for success and `0` for failure, and a still-solving task answers `0` with
- * `request: 'CAPCHA_NOT_READY'`, which the result endpoint reports as a
- * `not_ready` state rather than an error.
- *
- * `request` carries different things per route: a task id string, a token, a
- * balance number, or `OK` for a report.
- */
+// Responses are parsed loosely: 2Captcha sends ids as numbers, amounts as
+// strings or numbers, and adds fields over time.
+const NumberOrString = z.union([z.number(), z.string()]);
+
+/** `createTask`: `{ errorId: 0, taskId }`. */
 const TaskCreatedSchema = z
 	.object({
-		status: z.number(),
-		request: z.union([z.string(), z.number()]).nullish(),
-		error_text: z.string().nullish(),
+		errorId: z.number(),
+		taskId: NumberOrString,
 	})
 	.loose();
 export type TaskCreatedOutput = z.output<typeof TaskCreatedSchema>;
 
 /**
- * A task result. `status: 1` means `request` holds the solution; `status: 0`
- * with `CAPCHA_NOT_READY` means poll again. The schema keeps both so a caller
- * can wait on the same call.
+ * `getTaskResult`: `status` is `processing` while workers solve the task
+ * (poll again in 5-10 s) and `ready` with a `solution` once done. The
+ * solution's fields depend on the captcha kind (`token`, `gRecaptchaResponse`,
+ * `text`, ...). `cost` is what the task was charged, in USD.
  */
 const TaskResultSchema = z
 	.object({
-		status: z.number(),
-		request: z.union([z.string(), z.number()]).nullish(),
-		error_text: z.string().nullish(),
-		/** Present when the task was created with `task: {}`; a raw payload. */
+		errorId: z.number(),
+		status: z.string().describe('`ready` or `processing`'),
 		solution: z.record(z.string(), JsonValueSchema).nullish(),
+		cost: NumberOrString.nullish(),
+		ip: z.string().nullish(),
+		createTime: z.number().nullish(),
+		endTime: z.number().nullish(),
+		solveCount: z.number().nullish(),
 	})
 	.loose();
 export type TaskResultOutput = z.output<typeof TaskResultSchema>;
 
+/** `getBalance`: `{ errorId: 0, balance }`, in USD. */
 const BalanceSchema = z
 	.object({
-		status: z.number(),
-		request: z.union([z.string(), z.number()]).nullish(),
-		error_text: z.string().nullish(),
+		errorId: z.number(),
+		balance: NumberOrString,
 	})
 	.loose();
 
+/** `reportCorrect` / `reportIncorrect`: `{ errorId: 0, status: 'success' }`. */
 const ReportSchema = z
 	.object({
-		status: z.number(),
-		request: z.union([z.string(), z.number()]).nullish(),
-		error_text: z.string().nullish(),
+		errorId: z.number(),
+		status: z.string().nullish(),
 	})
 	.loose();
 
 /**
- * The captcha kinds the task API accepts. 2Captcha names each one with a
- * `type` string, and each kind takes its own fields inside `task`.
- */
-const CaptchaTypeSchema = z.enum([
-	'RecaptchaV2TaskProxyless',
-	'RecaptchaV3TaskProxyless',
-	'RecaptchaV2EnterpriseTaskProxyless',
-	'HCaptchaTaskProxyless',
-	'FunCaptchaTaskProxyless',
-	'TurnstileTaskProxyless',
-	'GeeTestTaskProxyless',
-	'AmazonTaskProxyless',
-	'KeyCaptchaTaskProxyless',
-	'LeminTaskProxyless',
-	'CapyTaskProxyless',
-	'AtbCaptchaTaskProxyless',
-]);
-
-/**
- * The per-kind fields. Most kinds need `websiteURL` and one site key field, and
- * the names differ (`websiteKey`, `sitekey`, `websitePublicKey`), so they are
- * typed as the union of the documented names rather than one name per kind.
+ * The per-kind fields of a task. Each captcha kind takes its own fields, and
+ * the key field name differs (`websiteKey`, `websitePublicKey`, `gt` and
+ * `challenge` for GeeTest, `body` for an image), so the common documented
+ * fields are typed and any other field the kind needs passes through.
+ * https://2captcha.com/api-docs
  */
 const TaskBodySchema = z
 	.object({
 		websiteURL: z.string().min(1).optional(),
 		websiteKey: z.string().optional(),
-		sitekey: z.string().optional(),
 		websitePublicKey: z.string().optional(),
-		websiteSToken: z.string().optional(),
 		recaptchaDataSValue: z.string().optional(),
 		pageAction: z
 			.string()
@@ -123,72 +103,56 @@ const TaskBodySchema = z
 			.string()
 			.optional()
 			.describe('Must match the browser that will use the token'),
+		cookies: z.string().optional(),
 		proxyType: z.enum(['http', 'https', 'socks4', 'socks5']).optional(),
 		proxyAddress: z.string().optional(),
-		proxyPort: z.number().int().min(1).max(65535).optional(),
+		proxyPort: z
+			.union([z.number().int().min(1).max(65535), z.string()])
+			.optional(),
 		proxyLogin: z.string().optional(),
 		proxyPassword: z.string().optional(),
 		gt: z.string().optional().describe('GeeTest gt value'),
 		challenge: z.string().optional().describe('GeeTest challenge value'),
-		apiServer: z.string().optional(),
-		jsApiKey: z.string().optional(),
+		body: z.string().optional().describe('Image captchas: the image as base64'),
 	})
 	.loose();
 
-const CreateTaskInputSchema = z
-	.object({
-		type: CaptchaTypeSchema,
-		task: TaskBodySchema,
-		soft_id: z
-			.number()
-			.int()
-			.optional()
-			.describe('Referral id; leave it out to send none'),
-		callback: z
-			.string()
-			.optional()
-			.describe('A URL to POST the result to instead of polling'),
-	})
-	.superRefine((value, ctx) => {
-		// The proxyless kinds all need a page and a key of some spelling.
-		const hasKey =
-			value.task.websiteKey !== undefined ||
-			value.task.sitekey !== undefined ||
-			value.task.websitePublicKey !== undefined;
-		if (value.task.websiteURL === undefined) {
-			ctx.addIssue({
-				code: 'custom',
-				message: '`task.websiteURL` is required',
-				path: ['task', 'websiteURL'],
-			});
-		}
-		if (!hasKey) {
-			ctx.addIssue({
-				code: 'custom',
-				message:
-					'One of `websiteKey`, `sitekey` or `websitePublicKey` is required, depending on the captcha kind',
-				path: ['task'],
-			});
-		}
-		// A proxy kind without its address and port cannot be dispatched.
-		if (
-			value.type.endsWith('Task') === false &&
-			value.task.proxyType === undefined &&
-			(value.task.proxyAddress !== undefined ||
-				value.task.proxyPort !== undefined)
-		) {
-			ctx.addIssue({
-				code: 'custom',
-				message:
-					'`proxyType` is required when a proxy address or port is given',
-				path: ['task', 'proxyType'],
-			});
-		}
-	});
+const CreateTaskInputSchema = z.object({
+	type: z
+		.string()
+		.min(1)
+		.describe(
+			'The captcha kind, such as RecaptchaV2TaskProxyless, RecaptchaV3TaskProxyless, TurnstileTaskProxyless, GeeTestTaskProxyless or ImageToTextTask; the *Task variants without "Proxyless" take your proxy fields',
+		),
+	task: TaskBodySchema.describe(
+		'The fields for this kind, sent inside the task object next to `type`',
+	),
+	language_pool: z
+		.string()
+		.optional()
+		.describe('Worker language for image and text captchas, such as en'),
+	soft_id: z
+		.number()
+		.int()
+		.optional()
+		.describe('Software catalog id; leave it out to send none'),
+	callback: z
+		.string()
+		.url()
+		.optional()
+		.describe(
+			'A registered URL 2Captcha POSTs the result to; this plugin does not receive it, so poll tasks.result',
+		),
+});
 export type CreateTaskInput = z.input<typeof CreateTaskInputSchema>;
 
+// 2Captcha task ids are integers; a numeric string is accepted and sent as one.
+const TaskIdSchema = z
+	.union([z.number().int().positive(), z.string().regex(/^\d+$/)])
+	.transform((value) => Number(value));
+
 const GetTaskResultInputSchema = z.object({
-	task_id: z.string().min(1).describe('The task id `tasks.create` returned'),
+	task_id: TaskIdSchema.describe('The task id `tasks.create` returned'),
 });
 export type GetTaskResultInput = z.input<typeof GetTaskResultInputSchema>;
 
@@ -196,20 +160,19 @@ const GetBalanceInputSchema = z.object({});
 export type GetBalanceInput = z.input<typeof GetBalanceInputSchema>;
 
 const ReportCorrectInputSchema = z.object({
-	task_id: z.string().min(1).describe('A task whose token the site accepted'),
+	task_id: TaskIdSchema.describe('A task whose answer the site accepted'),
 });
 export type ReportCorrectInput = z.input<typeof ReportCorrectInputSchema>;
 
 const ReportIncorrectInputSchema = z.object({
-	task_id: z
-		.string()
-		.min(1)
-		.describe('A task whose token the site rejected; the account is refunded'),
+	task_id: TaskIdSchema.describe(
+		'A task whose answer the site rejected; 2Captcha reviews the complaint and may refund it',
+	),
 });
 export type ReportIncorrectInput = z.input<typeof ReportIncorrectInputSchema>;
 
-/** What a caller should do with a result. */
-export type TaskState = 'ready' | 'not_ready';
+/** `tasks.result` status values documented today; others may follow. */
+export type TaskState = 'ready' | 'processing';
 
 export type TwoCaptchaEndpointInputs = {
 	createTask: CreateTaskInput;

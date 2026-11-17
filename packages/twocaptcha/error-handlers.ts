@@ -1,10 +1,12 @@
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { TwoCaptchaAPIError } from './client';
 
 /**
- * 2Captcha's error vocabulary is a set of `ERROR_` codes, and most arrive on an
- * HTTP 200. The docs say each one is permanent except for two: the request
- * limit and "no slot available", which mean wait and try again.
+ * 2Captcha's error vocabulary is a set of `ERROR_` codes on an HTTP 200
+ * (https://2captcha.com/api-docs/error-codes). Only "no slot available" means
+ * wait and try again; the rest are permanent. A non-200 answer is the
+ * provider's own trouble and reaches here as core's ApiError.
  */
 export const errorHandlers = {
 	// `ERROR_ZERO_BALANCE`: the account cannot pay for the task. Nothing was
@@ -14,47 +16,48 @@ export const errorHandlers = {
 			error instanceof TwoCaptchaAPIError && error.isInsufficientBalance,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// `ERROR_CAPTCHA_UNSOLVABLE`: the workers could not solve it. A retry would
-	// create a new billable task, so the caller decides rather than the plugin.
+	// `ERROR_CAPTCHA_UNSOLVABLE`: the workers could not solve it (2Captcha
+	// returns the price). A retry means a new task, so the caller decides.
 	VALIDATION_ERROR: {
 		match: (error: Error) => {
 			return (
 				error.name === 'ZodError' ||
 				(error instanceof TwoCaptchaAPIError &&
 					(error.isUnsolved ||
-						error.code === 'ERROR_WRONG_CAPTCHA_ID' ||
+						error.code === 'ERROR_NO_SUCH_CAPCHA_ID' ||
 						error.code === 'ERROR_BAD_PARAMETERS' ||
-						error.code === 'ERROR_WRONG_GOOGLEKEY' ||
-						error.code === 'ERROR_WRONG_PAGEURL'))
+						error.code === 'ERROR_TASK_ABSENT' ||
+						error.code === 'ERROR_TASK_NOT_SUPPORTED' ||
+						error.code === 'ERROR_RECAPTCHA_INVALID_SITEKEY' ||
+						error.code === 'ERROR_PAGEURL'))
 			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// `ERROR_WRONG_USER_KEY` and `ERROR_KEY_DOES_NOT_EXIST`.
+	// `ERROR_KEY_DOES_NOT_EXIST`, a blocked IP or a suspended account.
 	AUTH_ERROR: {
 		match: (error: Error) =>
 			error instanceof TwoCaptchaAPIError && error.isAuthError,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 429, `ERROR_TOO_MANY_REQUESTS` or `ERROR_NO_SLOT_AVAILABLE`: the queue is
-	// full. Both answer on HTTP 200, so the code is what identifies them.
+	// `ERROR_NO_SLOT_AVAILABLE` on an HTTP 200: the queue is full and no task
+	// was created, so trying again is safe even for createTask. An HTTP 429 is
+	// retried by core's transport before it gets here.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) =>
 			error instanceof TwoCaptchaAPIError && error.isRateLimit,
-		handler: async (error: Error) => ({
+		handler: async () => ({
 			maxRetries: 3,
-			headersRetryAfterMs:
-				error instanceof TwoCaptchaAPIError ? error.retryAfter : undefined,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
-	// A 5xx is the provider's own trouble; the docs say to retry with backoff.
-	// Only reads are replayed: `createTask` is billable and not idempotent.
+	// A 5xx: the docs say wait a few seconds and repeat. createTask is not
+	// replayed, because the task may have been created and charged.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof TwoCaptchaAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			error instanceof ApiError &&
+			error.status >= 500 &&
+			!String(error.url ?? '').includes('/createTask'),
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

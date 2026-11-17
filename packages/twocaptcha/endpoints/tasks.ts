@@ -6,70 +6,51 @@ import {
 } from './types';
 
 /**
- * Creates a captcha task and returns its id. The task is billable from this
- * call, so a failure here is not retried: a replay would create a second task.
- *
- * Every value in `task` goes into the form body under its own name, which is
- * how the v2 task API expects the per-kind fields.
+ * Creates a captcha task and returns its id. The account is charged for the
+ * task, so a failure here is not replayed: a replay could create a second task.
+ * https://2captcha.com/api-docs/create-task
  */
 export const create: TwoCaptchaEndpoints['tasksCreate'] = async (ctx, input) =>
 	call(
 		ctx,
 		{
 			event: 'tasks.create',
+			method: 'createTask',
 			input: TwoCaptchaEndpointInputSchemas.createTask,
 			output: TwoCaptchaEndpointOutputSchemas.createTask,
 		},
 		input,
-		(parsed) => {
-			// The task fields are flattened into the form, and `task` itself is the
-			// literal marker the v2 API reads to return JSON rather than redirect.
-			const formData: Record<string, string | number | boolean | undefined> = {
-				method: 'post',
-				task: 'task',
-				type: parsed.type,
-				soft_id: parsed.soft_id,
-				callback: parsed.callback,
-			};
-			for (const [key, value] of Object.entries(parsed.task)) {
-				if (value === undefined) continue;
-				formData[key] =
-					typeof value === 'object' && value !== null
-						? JSON.stringify(value)
-						: (value as string | number | boolean);
-			}
-			return { method: 'POST', path: 'createTask', formData };
-		},
+		(parsed) => ({
+			task: { ...parsed.task, type: parsed.type },
+			languagePool: parsed.language_pool,
+			softId: parsed.soft_id,
+			callbackUrl: parsed.callback,
+		}),
 		{
 			log: (parsed, result) => ({
 				type: parsed.type,
-				task_id:
-					result.request === undefined ? undefined : String(result.request),
+				task_id: String(result.taskId),
 			}),
 		},
 	);
 
 /**
- * Reads a task result. While the task is still being solved the provider
- * answers `status: 0` with `CAPCHA_NOT_READY`; that state is returned rather
- * than thrown so a caller can wait and poll again.
+ * Reads a task result. While workers are still solving it the answer is
+ * `status: 'processing'`; poll again after 5-10 seconds until `ready`.
+ * https://2captcha.com/api-docs/get-task-result
  */
 export const result: TwoCaptchaEndpoints['tasksResult'] = async (ctx, input) =>
 	call(
 		ctx,
 		{
 			event: 'tasks.result',
+			method: 'getTaskResult',
 			input: TwoCaptchaEndpointInputSchemas.getTaskResult,
 			output: TwoCaptchaEndpointOutputSchemas.getTaskResult,
 		},
 		input,
-		(parsed) => ({
-			method: 'GET',
-			path: 'getTaskResult',
-			query: { taskId: parsed.task_id },
-		}),
+		(parsed) => ({ taskId: parsed.task_id }),
 		{
-			allowNotReady: true,
 			log: (parsed, result) => ({
 				task_id: parsed.task_id,
 				status: result.status,

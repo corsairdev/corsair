@@ -60,15 +60,15 @@ describe('twocaptcha plugin definition', () => {
 		).toEqual({
 			'account.balance': 'read',
 			'account.reportCorrect': 'write',
-			'account.reportIncorrect': 'write',
-			'tasks.create': 'write',
+			'account.reportIncorrect': 'destructive',
+			'tasks.create': 'destructive',
 			'tasks.result': 'read',
 		});
 	});
 
-	it('marks task creation as a write, because it is billable', () => {
+	it('marks task creation destructive, because the account pays for it', () => {
 		const meta = plugin.endpointMeta ?? {};
-		expect(meta['tasks.create']?.riskLevel).toBe('write');
+		expect(meta['tasks.create']?.riskLevel).toBe('destructive');
 	});
 
 	it('has input and output schemas for every endpoint', () => {
