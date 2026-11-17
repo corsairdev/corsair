@@ -1,0 +1,3662 @@
+---
+title: "Supportbee API reference"
+sidebarTitle: "API"
+description: "API reference for the Supportbee plugin in Corsair: every `supportbee.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Attachments
+
+### create
+
+`attachments.create`
+
+Upload one file and get the id to attach to a reply, comment, draft or ticket
+
+**Risk:** `write`
+
+```ts
+await corsair.supportbee.api.attachments.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filename` | `string` | Yes | — |
+| `content` | `string` | Yes | — |
+| `content_type` | `string` | No | — |
+
+Sends `multipart/form-data` with the file under `files[]`, which is the field name the route documents. `content` is base64, with or without a data URI prefix. The answer carries the `id` to pass in `content.attachment_ids` on a reply, comment, draft or ticket.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `created_at` | `string \| number \| null` | No | — |
+| `filename` | `string \| null` | No | — |
+| `content_type` | `string \| null` | No | — |
+| `url` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="url full type">
+
+```ts
+{
+  original?: string | null,
+  thumb?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Comments
+
+### create
+
+`comments.create`
+
+Add an internal comment to a ticket. Only staff see it; the requester is not notified
+
+**Risk:** `write`
+
+```ts
+await corsair.supportbee.api.comments.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticket_id` | `number` | Yes | — |
+| `content` | `object` | Yes | — |
+
+Wraps the payload in `comment` and answers the created comment. Nothing leaves SupportBee.
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  text?: string,
+  html?: string,
+  attachment_ids?: number[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comment` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="comment full type">
+
+```ts
+{
+  id: number,
+  created_at?: string | number | null,
+  ticket?: {
+    replies_count?: number | null,
+    comments_count?: number | null
+  } | null,
+  commenter?: {
+    id?: number | null,
+    email?: string | null,
+    name?: string | null,
+    agent?: boolean | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null,
+  content?: {
+    text?: string | null,
+    html?: string | null,
+    attachments?: {
+      id?: number | null,
+      created_at?: string | number | null,
+      filename?: string | null,
+      content_type?: string | null,
+      url?: {
+        original?: string | null,
+        thumb?: string | null
+      } | null
+    }[] | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`comments.list`
+
+List the internal comments on one ticket
+
+**Risk:** `read`
+
+```ts
+await corsair.supportbee.api.comments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticket_id` | `number` | Yes | — |
+
+Answers `{ comments }`. A comment is internal: only staff see it, and the requester is not notified.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comments` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="comments full type">
+
+```ts
+{
+  id: number,
+  created_at?: string | number | null,
+  ticket?: {
+    replies_count?: number | null,
+    comments_count?: number | null
+  } | null,
+  commenter?: {
+    id?: number | null,
+    email?: string | null,
+    name?: string | null,
+    agent?: boolean | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null,
+  content?: {
+    text?: string | null,
+    html?: string | null,
+    attachments?: {
+      id?: number | null,
+      created_at?: string | number | null,
+      filename?: string | null,
+      content_type?: string | null,
+      url?: {
+        original?: string | null,
+        thumb?: string | null
+      } | null
+    }[] | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Drafts
+
+### create
+
+`drafts.create`
+
+Save a reply draft on a ticket
+
+**Risk:** `write`
+
+```ts
+await corsair.supportbee.api.drafts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticket_id` | `number` | Yes | — |
+| `content` | `object` | Yes | — |
+| `cc` | `string` | No | — |
+| `bcc` | `string` | No | — |
+
+Wraps the payload in `draft` and answers the created draft. `content` needs `text` or `html`. **`cc` and `bcc` are comma-separated strings on this route**, not the arrays the reply route takes.
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  text?: string,
+  html?: string,
+  attachment_ids?: number[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `draft` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="draft full type">
+
+```ts
+{
+  id?: number | null,
+  cc?: {
+    email?: string | null,
+    name?: string | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  }[] | null,
+  bcc?: {
+    email?: string | null,
+    name?: string | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  }[] | null,
+  last_saved_by?: {
+    id?: number | null,
+    email?: string | null,
+    name?: string | null,
+    agent?: boolean | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null,
+  last_saved_at?: string | number | null,
+  content?: {
+    text?: string | null,
+    html?: string | null,
+    attachments?: {
+      id?: number | null,
+      created_at?: string | number | null,
+      filename?: string | null,
+      content_type?: string | null,
+      url?: {
+        original?: string | null,
+        thumb?: string | null
+      } | null
+    }[] | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`drafts.delete`
+
+Delete the reply draft on a ticket. The draft text is not returned anywhere afterwards
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supportbee.api.drafts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticket_id` | `number` | Yes | — |
+
+Answers 204 and reports `{ ticket_id, deleted: true }`. The draft text is gone; nothing returns it.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticket_id` | `number` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`drafts.get`
+
+Read the reply draft on a ticket, or a new one quoting the last message when none exists
+
+**Risk:** `read`
+
+```ts
+await corsair.supportbee.api.drafts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticket_id` | `number` | Yes | — |
+| `quote` | `boolean` | No | — |
+| `time_zone` | `string` | No | — |
+
+Answers `{ draft }`. When no draft exists the route returns a new one quoting the last message, so `quote: false` gives an empty draft instead. `time_zone` changes how the quoted date is written.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `draft` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="draft full type">
+
+```ts
+{
+  id?: number | null,
+  cc?: {
+    email?: string | null,
+    name?: string | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  }[] | null,
+  bcc?: {
+    email?: string | null,
+    name?: string | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  }[] | null,
+  last_saved_by?: {
+    id?: number | null,
+    email?: string | null,
+    name?: string | null,
+    agent?: boolean | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null,
+  last_saved_at?: string | number | null,
+  content?: {
+    text?: string | null,
+    html?: string | null,
+    attachments?: {
+      id?: number | null,
+      created_at?: string | number | null,
+      filename?: string | null,
+      content_type?: string | null,
+      url?: {
+        original?: string | null,
+        thumb?: string | null
+      } | null
+    }[] | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`drafts.update`
+
+Replace the reply draft on a ticket
+
+**Risk:** `write`
+
+```ts
+await corsair.supportbee.api.drafts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticket_id` | `number` | Yes | — |
+| `content` | `object` | Yes | — |
+| `cc` | `string` | No | — |
+| `bcc` | `string` | No | — |
+
+Sends PUT to the same path as the create, with a `draft` wrapper. Answers 404 when no draft exists, so create before updating.
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  text?: string,
+  html?: string,
+  attachment_ids?: number[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `draft` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="draft full type">
+
+```ts
+{
+  id?: number | null,
+  cc?: {
+    email?: string | null,
+    name?: string | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  }[] | null,
+  bcc?: {
+    email?: string | null,
+    name?: string | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  }[] | null,
+  last_saved_by?: {
+    id?: number | null,
+    email?: string | null,
+    name?: string | null,
+    agent?: boolean | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null,
+  last_saved_at?: string | number | null,
+  content?: {
+    text?: string | null,
+    html?: string | null,
+    attachments?: {
+      id?: number | null,
+      created_at?: string | number | null,
+      filename?: string | null,
+      content_type?: string | null,
+      url?: {
+        original?: string | null,
+        thumb?: string | null
+      } | null
+    }[] | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Emails
+
+### create
+
+`emails.create`
+
+Add a forwarding address. SupportBee generates the address that mail is forwarded to
+
+**Risk:** `write`
+
+```ts
+await corsair.supportbee.api.emails.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `filter_spam` | `boolean` | No | — |
+| `use_agent_name` | `boolean` | No | — |
+
+Wraps the payload in `forwarding_address`. `email` is the address you will forward from. `filter_spam` runs a spam filter on incoming mail, and `use_agent_name` puts the agent's name in replies instead of the address name.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `forwarding_address` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="forwarding_address full type">
+
+```ts
+{
+  id?: number | null,
+  forward_to?: string | null,
+  from?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`emails.list`
+
+List the forwarding addresses that turn mail into tickets
+
+**Risk:** `read`
+
+```ts
+await corsair.supportbee.api.emails.list({});
+```
+
+**Input:** _empty object_
+
+Answers `{ forwarding_addresses }`. Each one has the `from` address a mailbox forwards and the generated `forward_to` address SupportBee reads. Despite the route name, this manages forwarding, not mail.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `forwarding_addresses` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="forwarding_addresses full type">
+
+```ts
+{
+  id?: number | null,
+  forward_to?: string | null,
+  from?: string | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Filters
+
+### create
+
+`filters.create`
+
+Link a rule to a consequence, which is what makes the filter act on matching tickets
+
+**Risk:** `write`
+
+```ts
+await corsair.supportbee.api.filters.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rule_id` | `string` | Yes | — |
+| `consequence_id` | `string` | Yes | — |
+
+Links the two ids, which is what makes the filter act. The route documents 201 with no body, so the plugin reports `{ rule_id, consequence_id, created: true }`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rule_id` | `string` | Yes | — |
+| `consequence_id` | `string` | Yes | — |
+| `filter_id` | `string` | No | The new filter id, when returned. |
+| `created` | `true` | Yes | — |
+
+
+
+---
+
+### createConsequence
+
+`filters.createConsequence`
+
+Create the action half of a filter: archive, spam, trash, label or assign
+
+**Risk:** `write`
+
+```ts
+await corsair.supportbee.api.filters.createConsequence({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `archive` | `boolean` | No | — |
+| `spam` | `boolean` | No | — |
+| `trash` | `boolean` | No | — |
+| `label` | `string` | No | — |
+| `assign_user` | `string` | No | — |
+| `assign_team` | `string` | No | — |
+
+Creates the action half and answers `{ consequence: { id } }`. It can archive, spam, trash, label or assign, and **a consequence assigns a user or a team, not both**, so the schema rejects that pair. `assign_user` and `assign_team` are strings, not numbers.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `consequence` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="consequence full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createRule
+
+`filters.createRule`
+
+Create the matching half of a filter. It does nothing until a filter links it to a consequence
+
+**Risk:** `write`
+
+```ts
+await corsair.supportbee.api.filters.createRule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requester_email` | `string` | No | — |
+| `delivered_to` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `body` | `string` | No | — |
+
+Creates the matching half of a filter and answers `{ rule: { id } }`. A rule matches on `requester_email`, `delivered_to`, `subject` or `body`. It does nothing until `filters.create` links it to a consequence.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rule` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="rule full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Labels
+
+### list
+
+`labels.list`
+
+List the company label names and colours
+
+**Risk:** `read`
+
+```ts
+await corsair.supportbee.api.labels.list({});
+```
+
+**Input:** _empty object_
+
+Answers `{ labels: [{ name, color }] }`. A ticket can only be given a label that exists here, so read this before `tickets.addLabel`.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `labels` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="labels full type">
+
+```ts
+{
+  name?: string | null,
+  color?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Replies
+
+### create
+
+`replies.create`
+
+Send a reply to the requester. The mail leaves SupportBee, so this reaches the real customer
+
+**Risk:** `destructive`
+
+```ts
+await corsair.supportbee.api.replies.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticket_id` | `number` | Yes | — |
+| `content` | `object` | Yes | — |
+| `cc` | `string[]` | No | — |
+| `bcc` | `string[]` | No | — |
+| `on_behalf_of` | `object` | No | — |
+
+**This sends mail to the real customer.** The payload is wrapped in `reply`. `content` takes `text`, `html` or both plus `attachment_ids`. `on_behalf_of` lets an admin reply as another agent, and a user trying that gets a 403.
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  text?: string,
+  html?: string,
+  attachment_ids?: number[]
+}
+```
+</Accordion>
+
+<Accordion title="on_behalf_of full type">
+
+```ts
+{
+  id?: number,
+  email?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reply` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="reply full type">
+
+```ts
+{
+  id: number,
+  created_at?: string | number | null,
+  summary?: string | null,
+  cc?: string[] | null,
+  bcc?: string[] | null,
+  ticket?: {
+    replies_count?: number | null,
+    comments_count?: number | null
+  } | null,
+  replier?: {
+    id?: number | null,
+    email?: string | null,
+    name?: string | null,
+    agent?: boolean | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null,
+  content?: {
+    body?: string | null,
+    html?: string | null,
+    attachments?: {
+      id?: number | null,
+      created_at?: string | number | null,
+      filename?: string | null,
+      content_type?: string | null,
+      url?: {
+        original?: string | null,
+        thumb?: string | null
+      } | null
+    }[] | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`replies.get`
+
+Read one reply on one ticket
+
+**Risk:** `read`
+
+```ts
+await corsair.supportbee.api.replies.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticket_id` | `number` | Yes | — |
+| `id` | `number` | Yes | — |
+
+Answers one reply. The path is `/tickets/{ticket_id}/replies/{id}`, so both ids are needed even though the reply id is unique.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `created_at` | `string \| number \| null` | No | — |
+| `summary` | `string \| null` | No | — |
+| `cc` | `string[] \| null` | No | — |
+| `bcc` | `string[] \| null` | No | — |
+| `ticket` | `object \| null` | No | — |
+| `replier` | `object \| null` | No | — |
+| `content` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="ticket full type">
+
+```ts
+{
+  replies_count?: number | null,
+  comments_count?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="replier full type">
+
+```ts
+{
+  id?: number | null,
+  email?: string | null,
+  name?: string | null,
+  agent?: boolean | null,
+  picture?: {
+    thumb20?: string | null,
+    thumb24?: string | null,
+    thumb32?: string | null,
+    thumb48?: string | null,
+    thumb64?: string | null,
+    thum128?: string | null,
+    thum256?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="content full type">
+
+```ts
+{
+  body?: string | null,
+  html?: string | null,
+  attachments?: {
+    id?: number | null,
+    created_at?: string | number | null,
+    filename?: string | null,
+    content_type?: string | null,
+    url?: {
+      original?: string | null,
+      thumb?: string | null
+    } | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`replies.list`
+
+List the replies on one ticket
+
+**Risk:** `read`
+
+```ts
+await corsair.supportbee.api.replies.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticket_id` | `number` | Yes | — |
+
+Answers `{ replies }` with no paging. Each reply carries its replier and the ticket's reply and comment counts.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `replies` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+  id: number,
+  created_at?: string | number | null,
+  summary?: string | null,
+  cc?: string[] | null,
+  bcc?: string[] | null,
+  ticket?: {
+    replies_count?: number | null,
+    comments_count?: number | null
+  } | null,
+  replier?: {
+    id?: number | null,
+    email?: string | null,
+    name?: string | null,
+    agent?: boolean | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null,
+  content?: {
+    body?: string | null,
+    html?: string | null,
+    attachments?: {
+      id?: number | null,
+      created_at?: string | number | null,
+      filename?: string | null,
+      content_type?: string | null,
+      url?: {
+        original?: string | null,
+        thumb?: string | null
+      } | null
+    }[] | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reports
+
+### avgFirstResponseTime
+
+`reports.avgFirstResponseTime`
+
+Daily average first-response time, as string data points with timestamps
+
+**Risk:** `read`
+
+```ts
+await corsair.supportbee.api.reports.avgFirstResponseTime({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `number` | No | — |
+| `team` | `number` | No | — |
+| `label` | `string` | No | — |
+| `since` | `string \| number` | No | — |
+
+Answers `{ data_points: [{ value, timestamp }] }`. **`value` arrives as a string** even when it is a number, so parse it before doing arithmetic. `user`, `team` and `label` narrow the window and `since` takes any documented date format.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data_points` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data_points full type">
+
+```ts
+{
+  value?: string | null,
+  timestamp?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### repliesCount
+
+`reports.repliesCount`
+
+Daily reply count, as string data points with timestamps
+
+**Risk:** `read`
+
+```ts
+await corsair.supportbee.api.reports.repliesCount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `number` | No | — |
+| `team` | `number` | No | — |
+| `label` | `string` | No | — |
+| `since` | `string \| number` | No | — |
+
+Answers `{ data_points }`, one point per day, with `value` as a string. A `since` date sets the start of the window.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data_points` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data_points full type">
+
+```ts
+{
+  value?: string | null,
+  timestamp?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ticketsCount
+
+`reports.ticketsCount`
+
+Daily ticket count, as string data points with timestamps
+
+**Risk:** `read`
+
+```ts
+await corsair.supportbee.api.reports.ticketsCount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `number` | No | — |
+| `team` | `number` | No | — |
+| `label` | `string` | No | — |
+| `since` | `string \| number` | No | — |
+
+Answers `{ data_points }`, one point per day, with `value` as a string. A `since` date sets the start of the window.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data_points` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data_points full type">
+
+```ts
+{
+  value?: string | null,
+  timestamp?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Snippets
+
+### create
+
+`snippets.create`
+
+Create a reply snippet with plain text or HTML
+
+**Risk:** `write`
+
+```ts
+await corsair.supportbee.api.snippets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `tags` | `string` | No | — |
+| `content` | `object` | Yes | — |
+
+Wraps the payload in `snippet`. `content` needs `text` or `html`; `tags` is one comma-separated string.
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  text?: string,
+  html?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `snippet` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="snippet full type">
+
+```ts
+{
+  id: number,
+  created_at?: string | number | null,
+  name?: string | null,
+  tags?: string | null,
+  content?: {
+    text?: string | null,
+    html?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`snippets.delete`
+
+Delete a reply snippet. The text is not returned anywhere afterwards
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supportbee.api.snippets.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+Answers 204 and reports `{ id, deleted: true }`. The snippet text is gone.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### list
+
+`snippets.list`
+
+List the reply snippets of the desk
+
+**Risk:** `read`
+
+```ts
+await corsair.supportbee.api.snippets.list({});
+```
+
+**Input:** _empty object_
+
+Answers `{ snippets }` with no paging.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `snippets` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="snippets full type">
+
+```ts
+{
+  id: number,
+  created_at?: string | number | null,
+  name?: string | null,
+  tags?: string | null,
+  content?: {
+    text?: string | null,
+    html?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`snippets.update`
+
+Change a snippet name, tags or content
+
+**Risk:** `write`
+
+```ts
+await corsair.supportbee.api.snippets.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `tags` | `string` | No | — |
+| `content` | `object` | Yes | — |
+| `id` | `number` | Yes | — |
+
+Sends PUT to the id with a `snippet` wrapper, and the whole record is replaced.
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  text?: string,
+  html?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `snippet` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="snippet full type">
+
+```ts
+{
+  id: number,
+  created_at?: string | number | null,
+  name?: string | null,
+  tags?: string | null,
+  content?: {
+    text?: string | null,
+    html?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Teams
+
+### list
+
+`teams.list`
+
+List the teams of the desk, optionally with their members
+
+**Risk:** `read`
+
+```ts
+await corsair.supportbee.api.teams.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `with_users` | `boolean` | No | — |
+| `user` | `string` | No | — |
+
+Answers `{ teams }`. `with_users: true` adds each team's members, and `user` narrows to the teams one user belongs to.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teams` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="teams full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  picture?: {
+    thumb20?: string | null,
+    thumb24?: string | null,
+    thumb32?: string | null,
+    thumb48?: string | null,
+    thumb64?: string | null,
+    thum128?: string | null,
+    thum256?: string | null
+  }[] | {
+    thumb20?: string | null,
+    thumb24?: string | null,
+    thumb32?: string | null,
+    thumb48?: string | null,
+    thumb64?: string | null,
+    thum128?: string | null,
+    thum256?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tickets
+
+### addLabel
+
+`tickets.addLabel`
+
+Add a label to a ticket. The label has to exist on the company first
+
+**Risk:** `write`
+
+```ts
+await corsair.supportbee.api.tickets.addLabel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticket_id` | `number` | Yes | — |
+| `label_name` | `string` | Yes | — |
+
+The label name is a path segment. The label **must already exist on the company**, so create it in the dashboard or read `labels.list` first. Answers `{ label }`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `label` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="label full type">
+
+```ts
+{
+  id?: number | null,
+  label?: string | null,
+  ticket?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### archive
+
+`tickets.archive`
+
+Archive a ticket, which takes it out of the default list. The ticket stays readable
+
+**Risk:** `write`
+
+```ts
+await corsair.supportbee.api.tickets.archive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+Answers 204 and reports `{ id, updated: true }`. Archiving takes the ticket out of the default list; it stays readable by id.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `updated` | `true` | Yes | — |
+
+
+
+---
+
+### assignTeam
+
+`tickets.assignTeam`
+
+Assign a ticket to a team. Reassigning to another team clears the user assignee
+
+**Risk:** `write`
+
+```ts
+await corsair.supportbee.api.tickets.assignTeam({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `team_id` | `number` | Yes | — |
+
+Wraps the id in `team_assignment` and answers that record. Reassigning a ticket that already has a team and a user clears the user assignee.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_assignment` | `object \| null` | No | — |
+| `asignee` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="team_assignment full type">
+
+```ts
+{
+  id?: number | null,
+  created_at?: string | number | null,
+  ticket?: {
+    id?: number | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="asignee full type">
+
+```ts
+{
+  team?: {
+    id?: number | null,
+    email?: string | null,
+    name?: string | null,
+    agent?: boolean | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | {
+    id?: number | null,
+    name?: string | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### assignUser
+
+`tickets.assignUser`
+
+Assign a ticket to a user. If the ticket is already assigned to a team, the user must be a member of it
+
+**Risk:** `write`
+
+```ts
+await corsair.supportbee.api.tickets.assignUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `user_id` | `number` | Yes | — |
+
+Wraps the id in `user_assignment` and answers that record plus an `asignee` object. If the ticket is already assigned to a team, the user must be a member of that team.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_assignment` | `object \| null` | No | — |
+| `asignee` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user_assignment full type">
+
+```ts
+{
+  id?: number | null,
+  created_at?: string | number | null,
+  ticket?: {
+    id?: number | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="asignee full type">
+
+```ts
+{
+  user?: {
+    id?: number | null,
+    email?: string | null,
+    name?: string | null,
+    agent?: boolean | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | {
+    id?: number | null,
+    name?: string | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### audit
+
+`tickets.audit`
+
+Read the audit trail of one ticket, oldest action first
+
+**Risk:** `read`
+
+```ts
+await corsair.supportbee.api.tickets.audit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+Answers `{ audit }`, the actions on the ticket oldest first. Each entry has an `action`, an `actor` (null for a system action), a `severity` of `info` or `error`, and a `happened_at`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audit` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="audit full type">
+
+```ts
+{
+  action?: string | null,
+  actor?: {
+    name?: string | null,
+    profile_picture_url?: string | null
+  } | null,
+  url?: string | null,
+  severity?: string | null,
+  happened_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`tickets.create`
+
+Open a ticket for a requester, which emails them when notify_requester is set. This plugin always sends the API token
+
+**Risk:** `destructive`
+
+```ts
+await corsair.supportbee.api.tickets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subject` | `string` | No | — |
+| `requester_name` | `string` | No | — |
+| `requester_email` | `string` | No | — |
+| `cc` | `string[]` | No | — |
+| `bcc` | `string[]` | No | — |
+| `notify_requester` | `boolean` | No | — |
+| `content` | `object` | No | — |
+| `forwarding_address_id` | `string \| number` | No | — |
+
+Wraps the payload in `ticket` and answers the created ticket. SupportBee also accepts this route without a token, but this plugin always sends the account's token, so the 8-a-minute token limit applies. `content` takes `text`, `html` or both, plus `attachment_ids` from `attachments.create`. `notify_requester: true` sends a copy and suppresses the auto-response.
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  text?: string,
+  html?: string,
+  attachment_ids?: number[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `subject` | `string \| null` | No | — |
+| `replies_count` | `number \| null` | No | — |
+| `comments_count` | `number \| null` | No | — |
+| `last_activity_at` | `string \| number \| null` | No | — |
+| `created_at` | `string \| number \| null` | No | — |
+| `unanswered` | `boolean \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `spam` | `boolean \| null` | No | — |
+| `summary` | `string \| null` | No | — |
+| `source` | `string[] \| Record<string, string \| null> \| null` | No | — |
+| `cc` | `string[] \| null` | No | — |
+| `bcc` | `string[] \| null` | No | — |
+| `labels` | `object[] \| null` | No | — |
+| `requester` | `object \| null` | No | — |
+| `content` | `object \| null` | No | — |
+| `current_user_asignee` | `object \| null` | No | — |
+| `current_team_asignee` | `object \| null` | No | — |
+| `current_user_assignee` | `object \| null` | No | — |
+| `current_team_assignee` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="labels full type">
+
+```ts
+(string | {
+  id?: number | null,
+  name?: string | null,
+  color?: string | null
+})[] | null
+```
+</Accordion>
+
+<Accordion title="requester full type">
+
+```ts
+{
+  id?: number | null,
+  email?: string | null,
+  name?: string | null,
+  role?: string | null,
+  agent?: boolean | null,
+  picture?: {
+    thumb20?: string | null,
+    thumb24?: string | null,
+    thumb32?: string | null,
+    thumb48?: string | null,
+    thumb64?: string | null,
+    thum128?: string | null,
+    thum256?: string | null
+  }[] | {
+    thumb20?: string | null,
+    thumb24?: string | null,
+    thumb32?: string | null,
+    thumb48?: string | null,
+    thumb64?: string | null,
+    thum128?: string | null,
+    thum256?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="content full type">
+
+```ts
+{
+  text?: string | null,
+  html?: string | null,
+  attachments?: {
+    id?: number | null,
+    created_at?: string | number | null,
+    filename?: string | null,
+    content_type?: string | null,
+    url?: {
+      original?: string | null,
+      thumb?: string | null
+    } | null
+  }[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="current_user_asignee full type">
+
+```ts
+{
+  id?: number | null,
+  email?: string | null,
+  name?: string | null,
+  agent?: boolean | null,
+  picture?: {
+    thumb20?: string | null,
+    thumb24?: string | null,
+    thumb32?: string | null,
+    thumb48?: string | null,
+    thumb64?: string | null,
+    thum128?: string | null,
+    thum256?: string | null
+  }[] | {
+    thumb20?: string | null,
+    thumb24?: string | null,
+    thumb32?: string | null,
+    thumb48?: string | null,
+    thumb64?: string | null,
+    thum128?: string | null,
+    thum256?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="current_team_asignee full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  picture?: {
+    thumb20?: string | null,
+    thumb24?: string | null,
+    thumb32?: string | null,
+    thumb48?: string | null,
+    thumb64?: string | null,
+    thum128?: string | null,
+    thum256?: string | null
+  }[] | {
+    thumb20?: string | null,
+    thumb24?: string | null,
+    thumb32?: string | null,
+    thumb48?: string | null,
+    thumb64?: string | null,
+    thum128?: string | null,
+    thum256?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="current_user_assignee full type">
+
+```ts
+{
+  id?: number | null,
+  email?: string | null,
+  name?: string | null,
+  agent?: boolean | null,
+  picture?: {
+    thumb20?: string | null,
+    thumb24?: string | null,
+    thumb32?: string | null,
+    thumb48?: string | null,
+    thumb64?: string | null,
+    thum128?: string | null,
+    thum256?: string | null
+  }[] | {
+    thumb20?: string | null,
+    thumb24?: string | null,
+    thumb32?: string | null,
+    thumb48?: string | null,
+    thumb64?: string | null,
+    thum128?: string | null,
+    thum256?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="current_team_assignee full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  picture?: {
+    thumb20?: string | null,
+    thumb24?: string | null,
+    thumb32?: string | null,
+    thumb48?: string | null,
+    thumb64?: string | null,
+    thum128?: string | null,
+    thum256?: string | null
+  }[] | {
+    thumb20?: string | null,
+    thumb24?: string | null,
+    thumb32?: string | null,
+    thumb48?: string | null,
+    thumb64?: string | null,
+    thum128?: string | null,
+    thum256?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`tickets.delete`
+
+Delete a trashed ticket for good. Only an admin can delete, and only a ticket already in the trash
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supportbee.api.tickets.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+Answers 204 and the plugin reports `{ id, deleted: true }`. **Only a trashed ticket can be deleted**, and only an admin can call it; anything else answers 404. This is the permanent one: `tickets.trash` is the restorable step before it.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`tickets.get`
+
+Read one ticket with its requester, content and assignment
+
+**Risk:** `read`
+
+```ts
+await corsair.supportbee.api.tickets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+Answers `{ ticket }`. The ticket carries its requester, content, labels, and its current user and team assignee. The API spells those two `current_user_asignee` and `current_team_asignee`, with one `g`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticket` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="ticket full type">
+
+```ts
+{
+  id: number,
+  subject?: string | null,
+  replies_count?: number | null,
+  comments_count?: number | null,
+  last_activity_at?: string | number | null,
+  created_at?: string | number | null,
+  unanswered?: boolean | null,
+  archived?: boolean | null,
+  spam?: boolean | null,
+  summary?: string | null,
+  source?: string[] | Record<string, string | null> | null,
+  cc?: string[] | null,
+  bcc?: string[] | null,
+  labels?: (string | {
+    id?: number | null,
+    name?: string | null,
+    color?: string | null
+  })[] | null,
+  requester?: {
+    id?: number | null,
+    email?: string | null,
+    name?: string | null,
+    role?: string | null,
+    agent?: boolean | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null,
+  content?: {
+    text?: string | null,
+    html?: string | null,
+    attachments?: {
+      id?: number | null,
+      created_at?: string | number | null,
+      filename?: string | null,
+      content_type?: string | null,
+      url?: {
+        original?: string | null,
+        thumb?: string | null
+      } | null
+    }[] | null
+  } | null,
+  current_user_asignee?: {
+    id?: number | null,
+    email?: string | null,
+    name?: string | null,
+    agent?: boolean | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null,
+  current_team_asignee?: {
+    id?: number | null,
+    name?: string | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null,
+  current_user_assignee?: {
+    id?: number | null,
+    email?: string | null,
+    name?: string | null,
+    agent?: boolean | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null,
+  current_team_assignee?: {
+    id?: number | null,
+    name?: string | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tickets.list`
+
+List unarchived tickets in last-activity order, filtered by assignee, team, label, requester or date
+
+**Risk:** `read`
+
+```ts
+await corsair.supportbee.api.tickets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `per_page` | `number` | No | — |
+| `page` | `number` | No | — |
+| `archived` | `string` | No | — |
+| `spam` | `boolean` | No | — |
+| `trash` | `boolean` | No | — |
+| `replies` | `boolean` | No | — |
+| `max_replies` | `number` | No | — |
+| `assigned_user` | `string` | No | — |
+| `assigned_team` | `string` | No | — |
+| `label` | `string` | No | — |
+| `since` | `string \| number` | No | — |
+| `until` | `string \| number` | No | — |
+| `sort_by` | `string` | No | — |
+| `requester_emails` | `string` | No | — |
+| `total_only` | `boolean` | No | — |
+
+Answers `{ tickets, total, current_page, per_page, total_pages }`, 15 a page in last-activity order. Only unarchived tickets are returned unless `archived` sets another scope. `sort_by` takes `last_activity_at` or `created_at`, and `requester_emails` takes a comma-separated list. `total_only: true` returns the count and no tickets.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number \| null` | No | — |
+| `current_page` | `number \| null` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+| `tickets` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="tickets full type">
+
+```ts
+{
+  id: number,
+  subject?: string | null,
+  replies_count?: number | null,
+  comments_count?: number | null,
+  last_activity_at?: string | number | null,
+  created_at?: string | number | null,
+  unanswered?: boolean | null,
+  archived?: boolean | null,
+  spam?: boolean | null,
+  summary?: string | null,
+  source?: string[] | Record<string, string | null> | null,
+  cc?: string[] | null,
+  bcc?: string[] | null,
+  labels?: (string | {
+    id?: number | null,
+    name?: string | null,
+    color?: string | null
+  })[] | null,
+  requester?: {
+    id?: number | null,
+    email?: string | null,
+    name?: string | null,
+    role?: string | null,
+    agent?: boolean | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null,
+  content?: {
+    text?: string | null,
+    html?: string | null,
+    attachments?: {
+      id?: number | null,
+      created_at?: string | number | null,
+      filename?: string | null,
+      content_type?: string | null,
+      url?: {
+        original?: string | null,
+        thumb?: string | null
+      } | null
+    }[] | null
+  } | null,
+  current_user_asignee?: {
+    id?: number | null,
+    email?: string | null,
+    name?: string | null,
+    agent?: boolean | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null,
+  current_team_asignee?: {
+    id?: number | null,
+    name?: string | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null,
+  current_user_assignee?: {
+    id?: number | null,
+    email?: string | null,
+    name?: string | null,
+    agent?: boolean | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null,
+  current_team_assignee?: {
+    id?: number | null,
+    name?: string | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### markAnswered
+
+`tickets.markAnswered`
+
+Mark a ticket answered without sending a reply, which is how an off-system answer is recorded
+
+**Risk:** `write`
+
+```ts
+await corsair.supportbee.api.tickets.markAnswered({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+Answers 204. Use this to record an answer given outside SupportBee, without sending a reply.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `updated` | `true` | Yes | — |
+
+
+
+---
+
+### markSpam
+
+`tickets.markSpam`
+
+Mark a ticket as spam
+
+**Risk:** `write`
+
+```ts
+await corsair.supportbee.api.tickets.markSpam({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+Answers 204. A spam ticket is out of the default list but still counted in the total.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `updated` | `true` | Yes | — |
+
+
+
+---
+
+### markUnanswered
+
+`tickets.markUnanswered`
+
+Mark a ticket unanswered so it returns to the open queue
+
+**Risk:** `write`
+
+```ts
+await corsair.supportbee.api.tickets.markUnanswered({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+Answers 204. The ticket returns to the open queue, which is what an unanswered ticket looks like.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `updated` | `true` | Yes | — |
+
+
+
+---
+
+### removeLabel
+
+`tickets.removeLabel`
+
+Remove one label from a ticket
+
+**Risk:** `write`
+
+```ts
+await corsair.supportbee.api.tickets.removeLabel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticket_id` | `number` | Yes | — |
+| `label_name` | `string` | Yes | — |
+
+Answers 204, and the plugin reports `{ ticket_id, label_name, removed: true }`. The ticket keeps existing; only the label link goes.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticket_id` | `number` | Yes | — |
+| `label_name` | `string` | Yes | — |
+| `removed` | `true` | Yes | — |
+
+
+
+---
+
+### search
+
+`tickets.search`
+
+Search tickets by text across subjects, bodies and requesters
+
+**Risk:** `read`
+
+```ts
+await corsair.supportbee.api.tickets.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `per_page` | `number` | No | — |
+| `page` | `number` | No | — |
+| `spam` | `boolean` | No | — |
+| `trash` | `boolean` | No | — |
+
+The parameter is **`query`**, not `q`. Answers the same wrapper as the list route. `spam` and `trash` widen the search to those scopes, and a blank query is rejected before the request is sent.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number \| null` | No | — |
+| `current_page` | `number \| null` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+| `tickets` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tickets full type">
+
+```ts
+{
+  id: number,
+  subject?: string | null,
+  replies_count?: number | null,
+  comments_count?: number | null,
+  last_activity_at?: string | number | null,
+  created_at?: string | number | null,
+  unanswered?: boolean | null,
+  archived?: boolean | null,
+  spam?: boolean | null,
+  summary?: string | null,
+  source?: string[] | Record<string, string | null> | null,
+  cc?: string[] | null,
+  bcc?: string[] | null,
+  labels?: (string | {
+    id?: number | null,
+    name?: string | null,
+    color?: string | null
+  })[] | null,
+  requester?: {
+    id?: number | null,
+    email?: string | null,
+    name?: string | null,
+    role?: string | null,
+    agent?: boolean | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null,
+  content?: {
+    text?: string | null,
+    html?: string | null,
+    attachments?: {
+      id?: number | null,
+      created_at?: string | number | null,
+      filename?: string | null,
+      content_type?: string | null,
+      url?: {
+        original?: string | null,
+        thumb?: string | null
+      } | null
+    }[] | null
+  } | null,
+  current_user_asignee?: {
+    id?: number | null,
+    email?: string | null,
+    name?: string | null,
+    agent?: boolean | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null,
+  current_team_asignee?: {
+    id?: number | null,
+    name?: string | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null,
+  current_user_assignee?: {
+    id?: number | null,
+    email?: string | null,
+    name?: string | null,
+    agent?: boolean | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null,
+  current_team_assignee?: {
+    id?: number | null,
+    name?: string | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### trash
+
+`tickets.trash`
+
+Move a ticket to the trash. It stays restorable until an admin deletes it
+
+**Risk:** `write`
+
+```ts
+await corsair.supportbee.api.tickets.trash({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+Answers 204 and moves the ticket to the trash. It stays restorable with `tickets.untrash` until an admin deletes it.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `updated` | `true` | Yes | — |
+
+
+
+---
+
+### unarchive
+
+`tickets.unarchive`
+
+Return an archived ticket to the default list
+
+**Risk:** `write`
+
+```ts
+await corsair.supportbee.api.tickets.unarchive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+Answers 204 and returns the ticket to the default list.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `updated` | `true` | Yes | — |
+
+
+
+---
+
+### unassignTeam
+
+`tickets.unassignTeam`
+
+Remove the ticket team assignee
+
+**Risk:** `write`
+
+```ts
+await corsair.supportbee.api.tickets.unassignTeam({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+Answers 204 and clears the team assignee.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `updated` | `true` | Yes | — |
+
+
+
+---
+
+### unassignUser
+
+`tickets.unassignUser`
+
+Remove the ticket assignee
+
+**Risk:** `write`
+
+```ts
+await corsair.supportbee.api.tickets.unassignUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+Answers 204 and clears the user assignee.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `updated` | `true` | Yes | — |
+
+
+
+---
+
+### unmarkSpam
+
+`tickets.unmarkSpam`
+
+Clear the spam flag from a ticket
+
+**Risk:** `write`
+
+```ts
+await corsair.supportbee.api.tickets.unmarkSpam({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+Answers 204 and clears the spam flag.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `updated` | `true` | Yes | — |
+
+
+
+---
+
+### untrash
+
+`tickets.untrash`
+
+Restore a trashed ticket
+
+**Risk:** `write`
+
+```ts
+await corsair.supportbee.api.tickets.untrash({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+Answers 204 and restores a trashed ticket.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `updated` | `true` | Yes | — |
+
+
+
+---
+
+## Users
+
+### addMember
+
+`users.addMember`
+
+Add a user to a customer group
+
+**Risk:** `write`
+
+```ts
+await corsair.supportbee.api.users.addMember({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `member_id` | `number` | Yes | — |
+
+Wraps the id in `member` and answers the updated group. **There is no route to remove a member**; the document has only GET and POST on this path.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  type?: string | null,
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  name?: string | null,
+  role?: string | null,
+  agent?: boolean | null,
+  two_factor_authentication_enabled?: boolean | null,
+  picture?: {
+    thumb20?: string | null,
+    thumb24?: string | null,
+    thumb32?: string | null,
+    thumb48?: string | null,
+    thumb64?: string | null,
+    thum128?: string | null,
+    thum256?: string | null
+  } | null,
+  can_members_access_group_tickets?: boolean | null,
+  email_domains?: string[] | null,
+  members_count?: number | null,
+  active_tickets_count?: number | null,
+  requested_tickets_count?: number | null,
+  teams?: {
+    id?: number | null,
+    name?: string | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`users.create`
+
+Create a user or a customer group. A new agent or admin gets an invitation email; a group is a user with type customer_group
+
+**Risk:** `destructive`
+
+```ts
+await corsair.supportbee.api.users.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `role` | `number` | No | — |
+| `team_ids` | `number[]` | No | — |
+| `type` | `string` | No | — |
+| `can_members_access_group_tickets` | `boolean \| null` | No | — |
+| `email_domains` | `string[]` | No | — |
+
+Wraps the payload in `user`. `name` is the one required field because a customer group has no email. `role` is 9 for collaborator, 10 for agent and 20 for admin; omit it for a customer. `type: 'customer_group'` creates a group instead of a user.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  type?: string | null,
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  name?: string | null,
+  role?: string | null,
+  agent?: boolean | null,
+  two_factor_authentication_enabled?: boolean | null,
+  picture?: {
+    thumb20?: string | null,
+    thumb24?: string | null,
+    thumb32?: string | null,
+    thumb48?: string | null,
+    thumb64?: string | null,
+    thum128?: string | null,
+    thum256?: string | null
+  } | null,
+  can_members_access_group_tickets?: boolean | null,
+  email_domains?: string[] | null,
+  members_count?: number | null,
+  active_tickets_count?: number | null,
+  requested_tickets_count?: number | null,
+  teams?: {
+    id?: number | null,
+    name?: string | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`users.get`
+
+Read one user or customer group
+
+**Risk:** `read`
+
+```ts
+await corsair.supportbee.api.users.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `max_tickets` | `number` | No | — |
+
+Answers `{ user }`. `max_tickets` caps the tickets listed on the record.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  type?: string | null,
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  name?: string | null,
+  role?: string | null,
+  agent?: boolean | null,
+  two_factor_authentication_enabled?: boolean | null,
+  picture?: {
+    thumb20?: string | null,
+    thumb24?: string | null,
+    thumb32?: string | null,
+    thumb48?: string | null,
+    thumb64?: string | null,
+    thum128?: string | null,
+    thum256?: string | null
+  } | null,
+  can_members_access_group_tickets?: boolean | null,
+  email_domains?: string[] | null,
+  members_count?: number | null,
+  active_tickets_count?: number | null,
+  requested_tickets_count?: number | null,
+  teams?: {
+    id?: number | null,
+    name?: string | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`users.list`
+
+List the users and customer groups of the desk, optionally with invited members or roles
+
+**Risk:** `read`
+
+```ts
+await corsair.supportbee.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `with_invited` | `boolean` | No | — |
+| `with_roles` | `string` | No | — |
+| `type` | `string` | No | — |
+
+Answers `{ users }`, which are the desk's users **and** its customer groups. `type: 'customer_group'` narrows it to groups, `with_invited: true` adds members who have not accepted yet, and `with_roles` takes a comma-separated list.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id: number,
+  type?: string | null,
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  name?: string | null,
+  role?: string | null,
+  agent?: boolean | null,
+  two_factor_authentication_enabled?: boolean | null,
+  picture?: {
+    thumb20?: string | null,
+    thumb24?: string | null,
+    thumb32?: string | null,
+    thumb48?: string | null,
+    thumb64?: string | null,
+    thum128?: string | null,
+    thum256?: string | null
+  } | null,
+  can_members_access_group_tickets?: boolean | null,
+  email_domains?: string[] | null,
+  members_count?: number | null,
+  active_tickets_count?: number | null,
+  requested_tickets_count?: number | null,
+  teams?: {
+    id?: number | null,
+    name?: string | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMembers
+
+`users.listMembers`
+
+List the members of a customer group
+
+**Risk:** `read`
+
+```ts
+await corsair.supportbee.api.users.listMembers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+Answers `{ users }`, the members of one customer group. Answers 404 when the id is not a group.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id: number,
+  type?: string | null,
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  name?: string | null,
+  role?: string | null,
+  agent?: boolean | null,
+  two_factor_authentication_enabled?: boolean | null,
+  picture?: {
+    thumb20?: string | null,
+    thumb24?: string | null,
+    thumb32?: string | null,
+    thumb48?: string | null,
+    thumb64?: string | null,
+    thum128?: string | null,
+    thum256?: string | null
+  } | null,
+  can_members_access_group_tickets?: boolean | null,
+  email_domains?: string[] | null,
+  members_count?: number | null,
+  active_tickets_count?: number | null,
+  requested_tickets_count?: number | null,
+  teams?: {
+    id?: number | null,
+    name?: string | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`users.update`
+
+Change a user name, email, role, teams or group settings. The caller cannot update their own account here
+
+**Risk:** `write`
+
+```ts
+await corsair.supportbee.api.users.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `email` | `string` | No | — |
+| `name` | `string` | No | — |
+| `role` | `number` | No | — |
+| `team_ids` | `number[]` | No | — |
+| `type` | `string` | No | — |
+| `can_members_access_group_tickets` | `boolean \| null` | No | — |
+| `email_domains` | `string[]` | No | — |
+
+Sends PUT with a `user` wrapper, and only the fields you pass change. **The token's own user cannot be updated here**; SupportBee says to use the UI for that.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  type?: string | null,
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  name?: string | null,
+  role?: string | null,
+  agent?: boolean | null,
+  two_factor_authentication_enabled?: boolean | null,
+  picture?: {
+    thumb20?: string | null,
+    thumb24?: string | null,
+    thumb32?: string | null,
+    thumb48?: string | null,
+    thumb64?: string | null,
+    thum128?: string | null,
+    thum256?: string | null
+  } | null,
+  can_members_access_group_tickets?: boolean | null,
+  email_domains?: string[] | null,
+  members_count?: number | null,
+  active_tickets_count?: number | null,
+  requested_tickets_count?: number | null,
+  teams?: {
+    id?: number | null,
+    name?: string | null,
+    picture?: {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    }[] | {
+      thumb20?: string | null,
+      thumb24?: string | null,
+      thumb32?: string | null,
+      thumb48?: string | null,
+      thumb64?: string | null,
+      thum128?: string | null,
+      thum256?: string | null
+    } | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -1,0 +1,1608 @@
+{
+  "id": "supersaas",
+  "displayName": "SuperSaaS",
+  "description": "Appointment scheduling API for managing users, bookings, slots, and schedules.",
+  "npmPackageName": "@corsair-dev/supersaas",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 20,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "account_name"]
+    }
+  ],
+  "api": [
+    {
+      "path": "supersaas.api.bookings.create",
+      "shortPath": "bookings.create",
+      "description": "Book an appointment; SuperSaaS may email the customer a confirmation, depending on the schedule settings. A resource schedule needs start and finish, a capacity schedule needs a slot id",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schedule_id",
+            "optional": false,
+            "type": "number",
+            "description": "The schedule id, the number at the end of the Configure Overview URL."
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string",
+            "description": "A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone."
+          },
+          {
+            "key": "finish",
+            "optional": true,
+            "type": "string",
+            "description": "A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone."
+          },
+          {
+            "key": "slot_id",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "resource_id",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "full_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "field_1",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "field_2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "field_1_r",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "field_2_r",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "super_field",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "form_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | string",
+            "description": "Create the booking on behalf of this user (id or your own key)."
+          },
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "boolean",
+            "description": "Trigger the schedule's webhooks for this booking."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "created",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The new record id, from the Location header."
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string",
+            "description": "The new record URL SuperSaaS returned."
+          }
+        ]
+      }
+    },
+    {
+      "path": "supersaas.api.bookings.delete",
+      "shortPath": "bookings.delete",
+      "description": "Delete a booking, which frees its time for someone else and cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schedule_id",
+            "optional": false,
+            "type": "number",
+            "description": "The schedule id, the number at the end of the Configure Overview URL."
+          },
+          {
+            "key": "booking_id",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supersaas.api.bookings.get",
+      "shortPath": "bookings.get",
+      "description": "Read a single booking by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schedule_id",
+            "optional": false,
+            "type": "number",
+            "description": "The schedule id, the number at the end of the Configure Overview URL."
+          },
+          {
+            "key": "booking_id",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string | null",
+            "description": "A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone."
+          },
+          {
+            "key": "finish",
+            "optional": true,
+            "type": "string | null",
+            "description": "A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone."
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_on",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "schedule_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "schedule_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "waitlisted",
+            "optional": true,
+            "type": "boolean | string | null",
+            "description": "false, or \"W\" (documented) / true when on the waiting list."
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "user_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "full_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "resource_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "resource_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "slot_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "long",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "field_1",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "field_2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "field_1_r",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "field_2_r",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "super_field",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "form_id",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supersaas.api.bookings.list",
+      "shortPath": "bookings.list",
+      "description": "List bookings for a schedule, optionally within a start and finish window (resource and service schedules)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schedule_id",
+            "optional": false,
+            "type": "number",
+            "description": "The schedule id, the number at the end of the Configure Overview URL."
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string",
+            "description": "Only bookings from this time (resource and service schedules)."
+          },
+          {
+            "key": "finish",
+            "optional": true,
+            "type": "string",
+            "description": "Only bookings up to this time (resource and service schedules)."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records to return. For paging use schedules.range."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: number | string | null, start?: string | null, finish?: string | null, created_on?: string | null, updated_on?: string | null, created_by?: string | null, schedule_id?: number | string | null, schedule_name?: string | null, price?: number | string | null, waitlisted?: boolean | string | null, deleted?: boolean | null, user_id?: number | string | null, user_name?: string | null, full_name?: string | null, email?: string | null, address?: string | null, mobile?: string | null, phone?: string | null, country?: string | null, resource_id?: number | string | null, resource_name?: string | null, slot_id?: number | string | null, lat?: number | null, long?: number | null, field_1?: string | null, field_2?: string | null, field_1_r?: string | null, field_2_r?: string | null, super_field?: string | null, form_id?: number | string | null }[]"
+      }
+    },
+    {
+      "path": "supersaas.api.bookings.update",
+      "shortPath": "bookings.update",
+      "description": "Change a booking's time or details; SuperSaaS may email the customer about the change, depending on the schedule settings",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schedule_id",
+            "optional": false,
+            "type": "number",
+            "description": "The schedule id, the number at the end of the Configure Overview URL."
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string",
+            "description": "A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone."
+          },
+          {
+            "key": "finish",
+            "optional": true,
+            "type": "string",
+            "description": "A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone."
+          },
+          {
+            "key": "slot_id",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "resource_id",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "full_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "field_1",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "field_2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "field_1_r",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "field_2_r",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "super_field",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "form_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "booking_id",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supersaas.api.schedules.agenda",
+      "shortPath": "schedules.agenda",
+      "description": "Read one user's appointments, either within a schedule or across the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schedule_id",
+            "optional": true,
+            "type": "number",
+            "description": "The schedule id, the number at the end of the Configure Overview URL."
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string",
+            "description": "The user's name or id, or 0 for the administrator."
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bookings",
+            "optional": true,
+            "type": "{ id?: number | string | null, start?: string | null, finish?: string | null, created_on?: string | null, updated_on?: string | null, created_by?: string | null, schedule_id?: number | string | null, schedule_name?: string | null, price?: number | string | null, waitlisted?: boolean | string | null, deleted?: boolean | null, user_id?: number | string | null, user_name?: string | null, full_name?: string | null, email?: string | null, address?: string | null, mobile?: string | null, phone?: string | null, country?: string | null, resource_id?: number | string | null, resource_name?: string | null, slot_id?: number | string | null, lat?: number | null, long?: number | null, field_1?: string | null, field_2?: string | null, field_1_r?: string | null, field_2_r?: string | null, super_field?: string | null, form_id?: number | string | null }[] | null"
+          },
+          {
+            "key": "slots",
+            "optional": true,
+            "type": "{ id?: number | string | null, start?: string | null, finish?: string | null, title?: string | null, description?: string | null, location?: string | null, created_on?: string | null, updated_on?: string | null, count?: number | null, capacity?: number | null, price?: number | string | null, resource_id?: number | string | null, resource_name?: string | null, bookings?: { id?: number | string | null, start?: string | null, finish?: string | null, created_on?: string | null, updated_on?: string | null, created_by?: string | null, schedule_id?: number | string | null, schedule_name?: string | null, price?: number | string | null, waitlisted?: boolean | string | null, deleted?: boolean | null, user_id?: number | string | null, user_name?: string | null, full_name?: string | null, email?: string | null, address?: string | null, mobile?: string | null, phone?: string | null, country?: string | null, resource_id?: number | string | null, resource_name?: string | null, slot_id?: number | string | null, lat?: number | null, long?: number | null, field_1?: string | null, field_2?: string | null, field_1_r?: string | null, field_2_r?: string | null, super_field?: string | null, form_id?: number | string | null }[] | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supersaas.api.schedules.changes",
+      "shortPath": "schedules.changes",
+      "description": "Read the changes to a schedule since a time, which is how a sync catches up; omitting the time gives the ten most recent",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schedule_id",
+            "optional": false,
+            "type": "number",
+            "description": "The schedule id, the number at the end of the Configure Overview URL."
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "Only changes after this UTC time (YYYY-MM-DD HH:MM:SS), not the schedule timezone. Omitted shows the ten most recent."
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "Only changes before this UTC time (YYYY-MM-DD HH:MM:SS)."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records to return."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip, to read past a full page."
+          },
+          {
+            "key": "slot",
+            "optional": true,
+            "type": "boolean",
+            "description": "Group the answer by slot (capacity schedules)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bookings",
+            "optional": true,
+            "type": "{ id?: number | string | null, start?: string | null, finish?: string | null, created_on?: string | null, updated_on?: string | null, created_by?: string | null, schedule_id?: number | string | null, schedule_name?: string | null, price?: number | string | null, waitlisted?: boolean | string | null, deleted?: boolean | null, user_id?: number | string | null, user_name?: string | null, full_name?: string | null, email?: string | null, address?: string | null, mobile?: string | null, phone?: string | null, country?: string | null, resource_id?: number | string | null, resource_name?: string | null, slot_id?: number | string | null, lat?: number | null, long?: number | null, field_1?: string | null, field_2?: string | null, field_1_r?: string | null, field_2_r?: string | null, super_field?: string | null, form_id?: number | string | null }[] | null"
+          },
+          {
+            "key": "slots",
+            "optional": true,
+            "type": "{ id?: number | string | null, start?: string | null, finish?: string | null, title?: string | null, description?: string | null, location?: string | null, created_on?: string | null, updated_on?: string | null, count?: number | null, capacity?: number | null, price?: number | string | null, resource_id?: number | string | null, resource_name?: string | null, bookings?: { id?: number | string | null, start?: string | null, finish?: string | null, created_on?: string | null, updated_on?: string | null, created_by?: string | null, schedule_id?: number | string | null, schedule_name?: string | null, price?: number | string | null, waitlisted?: boolean | string | null, deleted?: boolean | null, user_id?: number | string | null, user_name?: string | null, full_name?: string | null, email?: string | null, address?: string | null, mobile?: string | null, phone?: string | null, country?: string | null, resource_id?: number | string | null, resource_name?: string | null, slot_id?: number | string | null, lat?: number | null, long?: number | null, field_1?: string | null, field_2?: string | null, field_1_r?: string | null, field_2_r?: string | null, super_field?: string | null, form_id?: number | string | null }[] | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supersaas.api.schedules.free",
+      "shortPath": "schedules.free",
+      "description": "Read the free spaces in a schedule after a time, which is the availability check",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schedule_id",
+            "optional": false,
+            "type": "number",
+            "description": "The schedule id, the number at the end of the Configure Overview URL."
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string",
+            "description": "Return free spaces that occur after this time."
+          },
+          {
+            "key": "maxresults",
+            "optional": true,
+            "type": "number",
+            "description": "Spaces to return, default 10."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bookings",
+            "optional": true,
+            "type": "{ id?: number | string | null, start?: string | null, finish?: string | null, created_on?: string | null, updated_on?: string | null, created_by?: string | null, schedule_id?: number | string | null, schedule_name?: string | null, price?: number | string | null, waitlisted?: boolean | string | null, deleted?: boolean | null, user_id?: number | string | null, user_name?: string | null, full_name?: string | null, email?: string | null, address?: string | null, mobile?: string | null, phone?: string | null, country?: string | null, resource_id?: number | string | null, resource_name?: string | null, slot_id?: number | string | null, lat?: number | null, long?: number | null, field_1?: string | null, field_2?: string | null, field_1_r?: string | null, field_2_r?: string | null, super_field?: string | null, form_id?: number | string | null }[] | null"
+          },
+          {
+            "key": "slots",
+            "optional": true,
+            "type": "{ id?: number | string | null, start?: string | null, finish?: string | null, title?: string | null, description?: string | null, location?: string | null, created_on?: string | null, updated_on?: string | null, count?: number | null, capacity?: number | null, price?: number | string | null, resource_id?: number | string | null, resource_name?: string | null, bookings?: { id?: number | string | null, start?: string | null, finish?: string | null, created_on?: string | null, updated_on?: string | null, created_by?: string | null, schedule_id?: number | string | null, schedule_name?: string | null, price?: number | string | null, waitlisted?: boolean | string | null, deleted?: boolean | null, user_id?: number | string | null, user_name?: string | null, full_name?: string | null, email?: string | null, address?: string | null, mobile?: string | null, phone?: string | null, country?: string | null, resource_id?: number | string | null, resource_name?: string | null, slot_id?: number | string | null, lat?: number | null, long?: number | null, field_1?: string | null, field_2?: string | null, field_1_r?: string | null, field_2_r?: string | null, super_field?: string | null, form_id?: number | string | null }[] | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supersaas.api.schedules.range",
+      "shortPath": "schedules.range",
+      "description": "List the appointments in a schedule between two times",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schedule_id",
+            "optional": false,
+            "type": "number",
+            "description": "The schedule id, the number at the end of the Configure Overview URL."
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "Appointments starting at or after this."
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "Appointments starting before this."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records to return."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip, to read past a full page."
+          },
+          {
+            "key": "slot",
+            "optional": true,
+            "type": "boolean",
+            "description": "Group the answer by slot (capacity schedules)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bookings",
+            "optional": true,
+            "type": "{ id?: number | string | null, start?: string | null, finish?: string | null, created_on?: string | null, updated_on?: string | null, created_by?: string | null, schedule_id?: number | string | null, schedule_name?: string | null, price?: number | string | null, waitlisted?: boolean | string | null, deleted?: boolean | null, user_id?: number | string | null, user_name?: string | null, full_name?: string | null, email?: string | null, address?: string | null, mobile?: string | null, phone?: string | null, country?: string | null, resource_id?: number | string | null, resource_name?: string | null, slot_id?: number | string | null, lat?: number | null, long?: number | null, field_1?: string | null, field_2?: string | null, field_1_r?: string | null, field_2_r?: string | null, super_field?: string | null, form_id?: number | string | null }[] | null"
+          },
+          {
+            "key": "slots",
+            "optional": true,
+            "type": "{ id?: number | string | null, start?: string | null, finish?: string | null, title?: string | null, description?: string | null, location?: string | null, created_on?: string | null, updated_on?: string | null, count?: number | null, capacity?: number | null, price?: number | string | null, resource_id?: number | string | null, resource_name?: string | null, bookings?: { id?: number | string | null, start?: string | null, finish?: string | null, created_on?: string | null, updated_on?: string | null, created_by?: string | null, schedule_id?: number | string | null, schedule_name?: string | null, price?: number | string | null, waitlisted?: boolean | string | null, deleted?: boolean | null, user_id?: number | string | null, user_name?: string | null, full_name?: string | null, email?: string | null, address?: string | null, mobile?: string | null, phone?: string | null, country?: string | null, resource_id?: number | string | null, resource_name?: string | null, slot_id?: number | string | null, lat?: number | null, long?: number | null, field_1?: string | null, field_2?: string | null, field_1_r?: string | null, field_2_r?: string | null, super_field?: string | null, form_id?: number | string | null }[] | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supersaas.api.slots.create",
+      "shortPath": "slots.create",
+      "description": "Create a slot on a capacity schedule, which appointments are then booked into",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schedule_id",
+            "optional": false,
+            "type": "number",
+            "description": "The schedule id, the number at the end of the Configure Overview URL."
+          },
+          {
+            "key": "start",
+            "optional": false,
+            "type": "string",
+            "description": "A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone."
+          },
+          {
+            "key": "finish",
+            "optional": false,
+            "type": "string",
+            "description": "A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone."
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "capacity",
+            "optional": true,
+            "type": "number",
+            "description": "Bookings the slot takes; 0 closes it."
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "created",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The new record id, from the Location header."
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string",
+            "description": "The new record URL SuperSaaS returned."
+          }
+        ]
+      }
+    },
+    {
+      "path": "supersaas.api.slots.delete",
+      "shortPath": "slots.delete",
+      "description": "Delete a slot and the capacity it offered, and this cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schedule_id",
+            "optional": false,
+            "type": "number",
+            "description": "The schedule id, the number at the end of the Configure Overview URL."
+          },
+          {
+            "key": "slot_id",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supersaas.api.slots.get",
+      "shortPath": "slots.get",
+      "description": "Read one slot with its capacity and how many places are taken",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schedule_id",
+            "optional": false,
+            "type": "number",
+            "description": "The schedule id, the number at the end of the Configure Overview URL."
+          },
+          {
+            "key": "slot_id",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string | null",
+            "description": "A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone."
+          },
+          {
+            "key": "finish",
+            "optional": true,
+            "type": "string | null",
+            "description": "A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone."
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_on",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Bookings in the slot (free reads)."
+          },
+          {
+            "key": "capacity",
+            "optional": true,
+            "type": "number | null",
+            "description": "Null or empty means no limit; 0 accepts no bookings."
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "resource_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "resource_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "bookings",
+            "optional": true,
+            "type": "{ id?: number | string | null, start?: string | null, finish?: string | null, created_on?: string | null, updated_on?: string | null, created_by?: string | null, schedule_id?: number | string | null, schedule_name?: string | null, price?: number | string | null, waitlisted?: boolean | string | null, deleted?: boolean | null, user_id?: number | string | null, user_name?: string | null, full_name?: string | null, email?: string | null, address?: string | null, mobile?: string | null, phone?: string | null, country?: string | null, resource_id?: number | string | null, resource_name?: string | null, slot_id?: number | string | null, lat?: number | null, long?: number | null, field_1?: string | null, field_2?: string | null, field_1_r?: string | null, field_2_r?: string | null, super_field?: string | null, form_id?: number | string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supersaas.api.slots.list",
+      "shortPath": "slots.list",
+      "description": "List the slots of a capacity schedule in a time window",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schedule_id",
+            "optional": false,
+            "type": "number",
+            "description": "The schedule id, the number at the end of the Configure Overview URL."
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "Slots from this time (sent as start)."
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "Slots up to this time (sent as finish)."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records to return, default 100, max 2500."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: number | string | null, start?: string | null, finish?: string | null, title?: string | null, description?: string | null, location?: string | null, created_on?: string | null, updated_on?: string | null, count?: number | null, capacity?: number | null, price?: number | string | null, resource_id?: number | string | null, resource_name?: string | null, bookings?: { id?: number | string | null, start?: string | null, finish?: string | null, created_on?: string | null, updated_on?: string | null, created_by?: string | null, schedule_id?: number | string | null, schedule_name?: string | null, price?: number | string | null, waitlisted?: boolean | string | null, deleted?: boolean | null, user_id?: number | string | null, user_name?: string | null, full_name?: string | null, email?: string | null, address?: string | null, mobile?: string | null, phone?: string | null, country?: string | null, resource_id?: number | string | null, resource_name?: string | null, slot_id?: number | string | null, lat?: number | null, long?: number | null, field_1?: string | null, field_2?: string | null, field_1_r?: string | null, field_2_r?: string | null, super_field?: string | null, form_id?: number | string | null }[] | null }[]"
+      }
+    },
+    {
+      "path": "supersaas.api.slots.update",
+      "shortPath": "slots.update",
+      "description": "Change a slot's time or capacity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schedule_id",
+            "optional": false,
+            "type": "number",
+            "description": "The schedule id, the number at the end of the Configure Overview URL."
+          },
+          {
+            "key": "slot_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string",
+            "description": "A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone."
+          },
+          {
+            "key": "finish",
+            "optional": true,
+            "type": "string",
+            "description": "A local wall-clock value, as YYYY-MM-DD or YYYY-MM-DD HH:MM:SS. SuperSaaS applies the schedule timezone."
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "capacity",
+            "optional": true,
+            "type": "number",
+            "description": "Bookings the slot takes; 0 closes it."
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supersaas.api.users.create",
+      "shortPath": "users.create",
+      "description": "Create a user. The name is the login name and is the only required field; SuperSaaS assigns the id and returns it in a Location header",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The login name, max 50 characters. It must be a valid email address when the account uses email as the login name."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "full_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null",
+            "description": "A two-letter ISO 3166-1 code."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string | null",
+            "description": "An IANA TZ identifier."
+          },
+          {
+            "key": "field_1",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "field_2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "super_field",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "credit",
+            "optional": true,
+            "type": "string | null",
+            "description": "A credit level; the format is set on the Payment Setup screen."
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "3 | 4 | -1",
+            "description": "3 regular, 4 superuser, -1 blocked."
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string | null",
+            "description": "A group id, never the group name."
+          },
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "boolean",
+            "description": "Trigger the account webhooks as part of the write."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "created",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The new record id, from the Location header."
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string",
+            "description": "The new record URL SuperSaaS returned."
+          }
+        ]
+      }
+    },
+    {
+      "path": "supersaas.api.users.createWithKey",
+      "shortPath": "users.createWithKey",
+      "description": "Create a user under a key you choose. Reusing that key updates the existing record instead of creating another",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string",
+            "description": "Your own key for this user, such as 1234fk. Reusing it updates the existing record instead of creating another."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The login name, max 50 characters. It must be a valid email address when the account uses email as the login name."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "full_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null",
+            "description": "A two-letter ISO 3166-1 code."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string | null",
+            "description": "An IANA TZ identifier."
+          },
+          {
+            "key": "field_1",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "field_2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "super_field",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "credit",
+            "optional": true,
+            "type": "string | null",
+            "description": "A credit level; the format is set on the Payment Setup screen."
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "3 | 4 | -1",
+            "description": "3 regular, 4 superuser, -1 blocked."
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string | null",
+            "description": "A group id, never the group name."
+          },
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "boolean",
+            "description": "Trigger the account webhooks as part of the write."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ created: true, id: string, location: string } | { id: string, updated: true }"
+      }
+    },
+    {
+      "path": "supersaas.api.users.delete",
+      "shortPath": "users.delete",
+      "description": "Delete a user. Their login stops working and their bookings lose the link, and this cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The user's SuperSaaS id, or your own key in the form 1234fk."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supersaas.api.users.get",
+      "shortPath": "users.get",
+      "description": "Read one user by SuperSaaS id or by your own key in the form 1234fk",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The user's SuperSaaS id, or your own key in the form 1234fk."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "fk",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "Your own key, when you supplied one."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "full_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "field_1",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "field_2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "super_field",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "credit",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "number | null",
+            "description": "3 regular, 4 superuser, -1 blocked."
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_login",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "supersaas.api.users.list",
+      "shortPath": "users.list",
+      "description": "List the users on the account, paging with limit and offset; more than 1000 records needs offset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records to return. SuperSaaS defaults to 100."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip, which is how a caller reads past 1000."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: number | string | null, fk?: number | string | null, name?: string | null, email?: string | null, full_name?: string | null, address?: string | null, mobile?: string | null, phone?: string | null, country?: string | null, timezone?: string | null, field_1?: string | null, field_2?: string | null, super_field?: string | null, credit?: number | string | null, role?: number | null, group?: number | string | null, created_on?: string | null, last_login?: string | null }[]"
+      }
+    },
+    {
+      "path": "supersaas.api.users.update",
+      "shortPath": "users.update",
+      "description": "Update a user. A PUT to an unknown id creates it unless notfound says otherwise, so an update can silently become a create",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The user's SuperSaaS id, or your own key in the form 1234fk."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The login name, max 50 characters. It must be a valid email address when the account uses email as the login name."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "full_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null",
+            "description": "A two-letter ISO 3166-1 code."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string | null",
+            "description": "An IANA TZ identifier."
+          },
+          {
+            "key": "field_1",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "field_2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "super_field",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "credit",
+            "optional": true,
+            "type": "string | null",
+            "description": "A credit level; the format is set on the Payment Setup screen."
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "3 | 4 | -1",
+            "description": "3 regular, 4 superuser, -1 blocked."
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string | null",
+            "description": "A group id, never the group name."
+          },
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "boolean",
+            "description": "Trigger the account webhooks as part of the write."
+          },
+          {
+            "key": "notfound",
+            "optional": true,
+            "type": "error | ignore",
+            "description": "What an update does when the id is unknown: error for a 404, ignore for a silent 200. Defaults to creating the record."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
