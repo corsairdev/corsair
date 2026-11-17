@@ -66,14 +66,19 @@ export const PurchaseLocalTreesInputSchema = z.object({
 	...PurchaseShape,
 });
 
-export const PurchaseCarbonInputSchema = z.object({
-	number: z
-		.number()
-		.positive()
-		.describe('Amount to buy, at least 1 kg (0.001 tonnes).'),
-	units: z.enum(['KG', 'Tonnes']),
-	...PurchaseShape,
-});
+export const PurchaseCarbonInputSchema = z
+	.object({
+		number: z
+			.number()
+			.positive()
+			.describe('Amount to buy, at least 1 kg (0.001 tonnes).'),
+		units: z.enum(['KG', 'Tonnes']),
+		...PurchaseShape,
+	})
+	.refine((value) => value.number >= (value.units === 'KG' ? 1 : 0.001), {
+		message: 'The minimum is 1 kg (0.001 tonnes).',
+		path: ['number'],
+	});
 
 export const PurchaseCarbonRemovalInputSchema = z.object({
 	number: z
@@ -87,6 +92,9 @@ export const PurchaseHabitatInputSchema = z.object({
 	number: z
 		.number()
 		.min(0.1)
+		.refine((value) => Math.abs(value * 10 - Math.round(value * 10)) < 1e-9, {
+			message: 'Use at most one decimal place, e.g. 5.5.',
+		})
 		.describe('Square metres to restore, at least 0.1, one decimal place.'),
 	...PurchaseShape,
 });
