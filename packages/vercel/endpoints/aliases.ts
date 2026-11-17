@@ -1,63 +1,153 @@
-import { logEventFromContext } from 'corsair/core';
-import { makeAuthenticatedVercelRequest } from '../client';
-import type { VercelEndpoints } from '../index';
-import type { VercelEndpointOutputs } from './types';
+import { makeAuthenticatedVercelRequest, seg } from '../client';
+import type { VercelContext } from '../index';
+import {
+	VercelAliasesInputSchemas as In,
+	VercelAliasesOutputSchemas as Out,
+} from './aliases-types';
+import { compactBody, defineEndpoint, pickQuery } from './common';
 
-export const getAliases: VercelEndpoints['aliasesGetAliases'] = async (
-	ctx,
-	input,
-) => {
-	const query: Record<string, string | number | boolean | undefined> = {};
-	if (input.limit) query.limit = input.limit;
-	if (input.until) query.until = input.until;
-	if (input.since) query.since = input.since;
+// Raw Vercel alias: only uid is checked, other fields pass through.
+type AliasRecord = { uid: string; [key: string]: unknown };
 
-	const result = await makeAuthenticatedVercelRequest<
-		VercelEndpointOutputs['aliasesGetAliases']
-	>('/v4/aliases', ctx, { query, teamId: input.teamId });
-
-	if (result && result.aliases && ctx.db.aliases) {
-		for (const alias of result.aliases) {
-			await ctx.db.aliases.upsertByEntityId(alias.uid, {
-				...alias,
-			});
-		}
+async function saveAlias(
+	ctx: VercelContext,
+	// Raw response item, checked below before anything is stored.
+	alias: unknown,
+	deploymentId?: string,
+) {
+	if (!alias || typeof alias !== 'object' || !ctx.db.aliases) return;
+	// protectionBypass is keyed by share-link secrets and invitee emails: it
+	// stays out of the local store. The alias is raw JSON, read field by field.
+	const { protectionBypass: _bypass, ...rest } = alias as Record<
+		string,
+		unknown
+	>;
+	if (typeof rest.uid !== 'string' || !rest.uid) return;
+	// The local entity rejects null in alias, created and createdAt; dropping
+	// null fields lets a sparse alias still store.
+	const record: AliasRecord = { uid: rest.uid };
+	for (const [key, value] of Object.entries(rest)) {
+		if (value !== null) record[key] = value;
 	}
+	if (deploymentId) record.deploymentId = deploymentId;
+	await ctx.db.aliases.upsertByEntityId(rest.uid, record);
+}
 
-	await logEventFromContext(
-		ctx,
-		'vercel.aliases.getAliases',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
-
-export const assignAlias: VercelEndpoints['aliasesAssignAlias'] = async (
-	ctx,
-	input,
-) => {
-	const { deploymentId, teamId, ...body } = input;
-	const result = await makeAuthenticatedVercelRequest<
-		VercelEndpointOutputs['aliasesAssignAlias']
-	>(`/v2/deployments/${encodeURIComponent(deploymentId)}/aliases`, ctx, {
-		method: 'POST',
-		body,
-		teamId,
-	});
-
-	if (result && ctx.db.aliases) {
-		await ctx.db.aliases.upsertByEntityId(result.uid, {
-			...result,
-			deploymentId,
+export const getAliases = defineEndpoint({
+	event: 'vercel.aliases.getAliases',
+	input: In.getAliases,
+	output: Out.getAliases,
+	run: async (ctx, input) => {
+		const result = await makeAuthenticatedVercelRequest<{
+			// Raw items: saveAlias checks each, the output schema parses them.
+			aliases?: unknown[];
+		}>('/v4/aliases', ctx, {
+			teamId: input.teamId,
+			query: pickQuery(input, [
+				'limit',
+				'since',
+				'until',
+				'domain',
+				'projectId',
+				'rollbackDeploymentId',
+			]),
 		});
-	}
+		for (const alias of result?.aliases ?? []) {
+			await saveAlias(ctx, alias);
+		}
+		return result;
+	},
+});
 
-	await logEventFromContext(
-		ctx,
-		'vercel.aliases.assignAlias',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
+export const getAlias = defineEndpoint({
+	event: 'vercel.aliases.getAlias',
+	input: In.getAlias,
+	output: Out.getAlias,
+	run: async (ctx, input) => {
+		const result = await makeAuthenticatedVercelRequest(
+			`/v4/aliases/${seg(input.idOrAlias)}`,
+			ctx,
+			{
+				teamId: input.teamId,
+				query: pickQuery(input, ['projectId', 'since', 'until']),
+			},
+		);
+		await saveAlias(ctx, result);
+		return result;
+	},
+});
+
+export const getDeploymentAliases = defineEndpoint({
+	event: 'vercel.aliases.getDeploymentAliases',
+	input: In.getDeploymentAliases,
+	output: Out.getDeploymentAliases,
+	// Not stored: these entries lack projectId and createdAt, and an upsert
+	// would replace the fuller record getAliases saved.
+	run: async (ctx, input) =>
+		makeAuthenticatedVercelRequest(
+			`/v2/deployments/${seg(input.deploymentId)}/aliases`,
+			ctx,
+			{ teamId: input.teamId },
+		),
+});
+
+export const assignAlias = defineEndpoint({
+	event: 'vercel.aliases.assignAlias',
+	input: In.assignAlias,
+	output: Out.assignAlias,
+	run: async (ctx, input) => {
+		const { teamId, deploymentId, ...body } = input;
+		const result = await makeAuthenticatedVercelRequest(
+			`/v2/deployments/${seg(deploymentId)}/aliases`,
+			ctx,
+			{ method: 'POST', teamId, body: compactBody(body) },
+		);
+		// The path also takes hostnames and alias ids; only a dpl_ id is known to
+		// be the deployment the alias now points at.
+		await saveAlias(
+			ctx,
+			result,
+			deploymentId.startsWith('dpl_') ? deploymentId : undefined,
+		);
+		return result;
+	},
+});
+
+export const deleteAlias = defineEndpoint({
+	event: 'vercel.aliases.deleteAlias',
+	input: In.deleteAlias,
+	output: Out.deleteAlias,
+	run: async (ctx, input) => {
+		// Alias ids carry no dots and hostnames always do. The local record is
+		// keyed by id, so a hostname is looked up first to clear it afterwards.
+		let uid: string | undefined = input.aliasId.includes('.')
+			? undefined
+			: input.aliasId;
+		if (!uid && ctx.db.aliases) {
+			// Raw response; uid is checked with typeof before it is used.
+			const found = await makeAuthenticatedVercelRequest<{ uid?: unknown }>(
+				`/v4/aliases/${seg(input.aliasId)}`,
+				ctx,
+				{ teamId: input.teamId },
+			);
+			uid = typeof found?.uid === 'string' ? found.uid : undefined;
+		}
+		// Raw response; status is checked with typeof before it is returned.
+		// Delete by the resolved uid, so a hostname reassigned between the
+		// lookup and the delete can't remove a different alias.
+		const result = await makeAuthenticatedVercelRequest<{ status?: unknown }>(
+			`/v2/aliases/${seg(uid ?? input.aliasId)}`,
+			ctx,
+			{ method: 'DELETE', teamId: input.teamId },
+		);
+		if (uid && ctx.db.aliases) {
+			await ctx.db.aliases.deleteByEntityId(uid);
+		}
+		// A non-2xx response throws before this, so reaching here means removed.
+		return {
+			deleted: true,
+			aliasId: input.aliasId,
+			status: typeof result?.status === 'string' ? result.status : null,
+		};
+	},
+});
