@@ -1125,7 +1125,7 @@ ${authOrdered
 			'',
 			factoryOptions,
 		);
-		const extraNote = factoryNote ? `\n\n${factoryNote}` : '';
+		const extraNote = factoryNote ? `\n\n${escapeMdxText(factoryNote)}` : '';
 		return `<Tab title="${escapeAttr(label)}">
 
 ${note}${credentialsLink}${extraNote}
@@ -1281,7 +1281,7 @@ description: ${yamlDoubleQuotedScalar(frontmatterDescription)}
 ---
 
 ${intro}
-${overviewNote ? `\n${overviewNote}\n` : ''}
+${overviewNote ? `\n${escapeMdxText(overviewNote)}\n` : ''}
 **What you get:**
 
 ${bullets.map((b) => `- ${b}`).join('\n')}
@@ -1560,7 +1560,7 @@ function formatSchemaShape(
 	kind: 'Input' | 'Output' | 'Payload',
 	note?: string,
 ): string {
-	const noteBlock = note ? `${note.trim()}\n\n` : '';
+	const noteBlock = note ? `${escapeMdxText(note.trim())}\n\n` : '';
 	if (shape.kind === 'inline') {
 		if (!isObjectLikeType(shape.type)) {
 			return `**${kind}:** \`${escapeCell(shape.type)}\`\n\n${noteBlock}`;

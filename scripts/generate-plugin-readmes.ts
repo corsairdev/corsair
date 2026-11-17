@@ -16,7 +16,16 @@
  * Existing READMEs are never overwritten without --force. Existing metadata
  * values are never clobbered. A single changeset is written for touched packages.
  */
-import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import {
+	existsSync,
+	mkdtempSync,
+	readdirSync,
+	readFileSync,
+	rmSync,
+	writeFileSync,
+} from 'node:fs';
+import { tmpdir } from 'node:os';
 import { basename, dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import type { PluginDocsIntrospection } from '../packages/corsair/core/inspect/index.ts';
@@ -414,7 +423,7 @@ async function loadPlugin(
 	}
 }
 
-type PluginProcessResult = {
+export type PluginProcessResult = {
 	dir: string;
 	pluginId: string;
 	npmName: string;
@@ -525,13 +534,68 @@ async function processPlugin(
 	};
 }
 
+// Imported plugins can't be unloaded, so one process holding all of them grows
+// with the plugin count (~6 MB each). Each batch runs in its own child process.
+const PLUGINS_PER_PROCESS = 50;
+
+export function batches<T>(items: T[], size: number): T[][] {
+	const out: T[][] = [];
+	for (let i = 0; i < items.length; i += size) {
+		out.push(items.slice(i, i + size));
+	}
+	return out;
+}
+
+export function runInBatches(
+	dirs: string[],
+	flags: string[],
+	script = fileURLToPath(import.meta.url),
+): PluginProcessResult[] {
+	const tmp = mkdtempSync(join(tmpdir(), 'plugin-readmes-'));
+	try {
+		return batches(dirs, PLUGINS_PER_PROCESS).flatMap((batch, i) => {
+			const out = join(tmp, `${i}.json`);
+			spawnSync(
+				process.execPath,
+				[
+					...process.execArgv,
+					script,
+					...flags,
+					`--only=${batch.join(',')}`,
+					`--results=${out}`,
+				],
+				{ stdio: 'inherit' },
+			);
+			if (!existsSync(out)) {
+				return batch.map((dir) => ({
+					dir,
+					pluginId: dir,
+					npmName: dir,
+					readmeWritten: false,
+					metadataFields: [],
+					skippedNoOps: false,
+					gaps: [],
+					error: 'batch process exited without results',
+				}));
+			}
+			return JSON.parse(readFileSync(out, 'utf8')) as PluginProcessResult[];
+		});
+	} finally {
+		rmSync(tmp, { recursive: true, force: true });
+	}
+}
+
 function parseArgs(argv: string[]): {
 	pluginHint?: string;
 	all: boolean;
 	check: boolean;
 	force: boolean;
+	only?: string[];
+	results?: string;
 } {
 	let pluginHint: string | undefined;
+	let only: string[] | undefined;
+	let results: string | undefined;
 	let all = false;
 	let check = false;
 	let force = false;
@@ -540,16 +604,36 @@ function parseArgs(argv: string[]): {
 		if (a === '--all') all = true;
 		else if (a === '--check') check = true;
 		else if (a === '--force') force = true;
+		else if (a.startsWith('--only='))
+			only = a.slice('--only='.length).split(',');
+		else if (a.startsWith('--results=')) results = a.slice('--results='.length);
 		else if (a.startsWith('--plugin='))
 			pluginHint = a.slice('--plugin='.length);
 		else if (!a.startsWith('-') && a.length > 0) pluginHint ??= a;
 	}
-	return { pluginHint, all, check, force };
+	return { pluginHint, all, check, force, only, results };
 }
 
 async function main() {
-	const { pluginHint, all, check, force } = parseArgs(process.argv.slice(2));
+	const {
+		pluginHint,
+		all,
+		check,
+		force,
+		only,
+		results: resultsPath,
+	} = parseArgs(process.argv.slice(2));
 	const root = repoRoot();
+
+	// A batch child: process its slice, hand the results back, leave the summary to the parent.
+	if (only && resultsPath) {
+		const out: PluginProcessResult[] = [];
+		for (const dir of only) {
+			out.push(await processPlugin(root, dir, { check, force }));
+		}
+		writeFileSync(resultsPath, JSON.stringify(out), 'utf8');
+		process.exit(0);
+	}
 
 	if (!all && !pluginHint) {
 		console.error(
@@ -565,8 +649,15 @@ async function main() {
 	}
 
 	const results: PluginProcessResult[] = [];
-	for (const dir of dirs) {
-		results.push(await processPlugin(root, dir, { check, force }));
+	if (dirs.length > PLUGINS_PER_PROCESS) {
+		const flags = [check && '--check', force && '--force'].filter(
+			(f): f is string => Boolean(f),
+		);
+		results.push(...runInBatches(dirs, flags));
+	} else {
+		for (const dir of dirs) {
+			results.push(await processPlugin(root, dir, { check, force }));
+		}
 	}
 
 	const errored = results.filter((r) => r.error);

@@ -1,0 +1,1029 @@
+---
+title: "Neutrino API API reference"
+sidebarTitle: "API"
+description: "API reference for the Neutrino API plugin in Corsair: every `neutrino.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Commerce
+
+### binLookup
+
+`commerce.binLookup`
+
+Read card facts from a BIN: brand, category, type, issuing country, and whether the calling IP matches that country
+
+**Risk:** `read`
+
+```ts
+await corsair.neutrino.api.commerce.binLookup({ binNumber: '48334884' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `binNumber` | `string` | Yes | The card BIN or first six digits of the card number. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string \| null` | No | — |
+| `ip-city` | `string \| null` | No | — |
+| `ip-matches-bin` | `boolean \| null` | No | — |
+| `card-type` | `string \| null` | No | — |
+| `card-category` | `string \| null` | No | — |
+| `ip-country-code` | `string \| null` | No | — |
+| `ip-country` | `string \| null` | No | — |
+| `issuer` | `string \| null` | No | — |
+| `ip-blocklisted` | `boolean \| null` | No | — |
+| `valid` | `boolean \| null` | No | — |
+| `ip-blocklists` | `string[] \| null` | No | — |
+| `issuer-website` | `string \| null` | No | — |
+| `country-code` | `string \| null` | No | — |
+| `ip-region` | `string \| null` | No | — |
+
+
+
+---
+
+### convert
+
+`commerce.convert`
+
+Convert between currencies, units and number bases using the unit codes Neutrino publishes
+
+**Risk:** `read`
+
+```ts
+await corsair.neutrino.api.commerce.convert({ fromValue: 100, fromType: 'USD', toType: 'EUR' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fromValue` | `number` | Yes | The value to convert. |
+| `fromType` | `string` | Yes | The unit or currency to convert from, e.g. USD, kg, km, c. Neutrino publishes the full list in its docs. |
+| `toType` | `string` | Yes | The unit or currency to convert to. |
+
+result is a string and result-float a number; both are returned.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `valid` | `boolean \| null` | No | — |
+| `result` | `string \| null` | No | — |
+| `from-value` | `string \| null` | No | — |
+| `to-type` | `string \| null` | No | — |
+| `from-type` | `string \| null` | No | — |
+| `result-float` | `number \| null` | No | — |
+| `from-name` | `string \| null` | No | — |
+| `from-symbol` | `string \| null` | No | — |
+| `to-name` | `string \| null` | No | — |
+| `to-symbol` | `string \| null` | No | — |
+| `historical-date` | `string \| null` | No | — |
+
+
+
+---
+
+## Email
+
+### validate
+
+`email.validate`
+
+Validate an address without contacting it: syntax, domain, MX, and flags for disposable, free and personal
+
+**Risk:** `read`
+
+```ts
+await corsair.neutrino.api.email.validate({ email: 'tech@neutrinoapi.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | The email address to check. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `valid` | `boolean \| null` | No | — |
+| `syntax-error` | `boolean \| null` | No | — |
+| `domain` | `string \| null` | No | — |
+| `domain-error` | `boolean \| null` | No | — |
+| `is-freemail` | `boolean \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `is-disposable` | `boolean \| null` | No | — |
+| `typos-fixed` | `boolean \| null` | No | — |
+| `is-personal` | `boolean \| null` | No | — |
+| `provider` | `string \| null` | No | — |
+| `mx-ip` | `string \| null` | No | — |
+| `domain-status` | `string \| null` | No | — |
+
+
+
+---
+
+### verify
+
+`email.verify`
+
+Validate an address and probe its mailbox over SMTP, reporting verified separately from valid
+
+**Risk:** `read`
+
+```ts
+await corsair.neutrino.api.email.verify({ email: 'tech@neutrinoapi.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | The email address to check. |
+
+verified is separate from valid: the domain can be valid and the mailbox check still refused.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `valid` | `boolean \| null` | No | — |
+| `verified` | `boolean \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `typos-fixed` | `boolean \| null` | No | — |
+| `syntax-error` | `boolean \| null` | No | — |
+| `domain-error` | `boolean \| null` | No | — |
+| `domain` | `string \| null` | No | — |
+| `provider` | `string \| null` | No | — |
+| `is-freemail` | `boolean \| null` | No | — |
+| `is-disposable` | `boolean \| null` | No | — |
+| `is-personal` | `boolean \| null` | No | — |
+| `smtp-status` | `string \| null` | No | — |
+| `smtp-response` | `string \| null` | No | — |
+| `is-catch-all` | `boolean \| null` | No | — |
+| `is-deferred` | `boolean \| null` | No | — |
+| `mx-ip` | `string \| null` | No | — |
+| `domain-status` | `string \| null` | No | — |
+
+
+
+---
+
+## Geocode
+
+### address
+
+`geocode.address`
+
+Forward geocode a full address or its parts, returning every location that matched
+
+**Risk:** `read`
+
+```ts
+await corsair.neutrino.api.geocode.address({ address: '48 Greys Avenue, Auckland' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | No | A full street address. |
+| `houseNumber` | `string` | No | — |
+| `street` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `postalCode` | `string` | No | — |
+| `country` | `string` | No | The ISO two-letter country code. |
+| `languageCode` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `found` | `number \| null` | No | — |
+| `locations` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="locations full type">
+
+```ts
+{
+  country?: string | null,
+  address?: string | null,
+  city?: string | null,
+  country-code?: string | null,
+  country-code3?: string | null,
+  latitude?: number | null,
+  postal-code?: string | null,
+  longitude?: number | null,
+  state?: string | null,
+  address-structured?: {
+    name?: string | null,
+    number?: string | null,
+    street?: string | null,
+    area?: string | null,
+    city?: string | null,
+    county?: string | null,
+    state?: string | null,
+    postal-code?: string | null,
+    country?: string | null
+  } | null,
+  address-components?: Record<string, string> | null,
+  currency-code?: string | null,
+  location-type?: string | null,
+  location-tags?: string[] | null,
+  timezone?: {
+    id?: string | null,
+    name?: string | null,
+    abbr?: string | null,
+    date?: string | null,
+    time?: string | null,
+    offset?: string | null
+  } | null,
+  region-code?: string | null,
+  postal-address?: string | null,
+  language-code?: string | null,
+  geohash?: string | null,
+  continent-code?: string | null,
+  building-type?: string | null,
+  location-profile?: Record<string, string> | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reverse
+
+`geocode.reverse`
+
+Reverse geocode a coordinate into a local address and a structured one with the same fields everywhere
+
+**Risk:** `read`
+
+```ts
+await corsair.neutrino.api.geocode.reverse({ latitude: -36.8499, longitude: 174.7611 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `latitude` | `number` | Yes | — |
+| `longitude` | `number` | Yes | — |
+| `languageCode` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string \| null` | No | — |
+| `found` | `boolean \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `country-code` | `string \| null` | No | — |
+| `postal-code` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `address-structured` | `object \| null` | No | — |
+| `address-components` | `Record<string, string> \| null` | No | — |
+| `country-code3` | `string \| null` | No | — |
+| `currency-code` | `string \| null` | No | — |
+| `location-type` | `string \| null` | No | — |
+| `location-tags` | `string[] \| null` | No | — |
+| `latitude` | `number \| null` | No | — |
+| `longitude` | `number \| null` | No | — |
+| `region-code` | `string \| null` | No | — |
+| `language-code` | `string \| null` | No | — |
+| `timezone` | `object \| null` | No | — |
+| `location-profile` | `Record<string, string> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="address-structured full type">
+
+```ts
+{
+  name?: string | null,
+  number?: string | null,
+  street?: string | null,
+  area?: string | null,
+  city?: string | null,
+  county?: string | null,
+  state?: string | null,
+  postal-code?: string | null,
+  country?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="timezone full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  abbr?: string | null,
+  date?: string | null,
+  time?: string | null,
+  offset?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ip
+
+### blocklist
+
+`ip.blocklist`
+
+Check an address against the blocklists Neutrino tracks, with a flag per threat type and the sensors that matched
+
+**Risk:** `read`
+
+```ts
+await corsair.neutrino.api.ip.blocklist({ ip: '1.1.1.1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string` | Yes | The IPv4 or IPv6 address to check. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string \| null` | No | — |
+| `is-bot` | `boolean \| null` | No | — |
+| `is-exploit-bot` | `boolean \| null` | No | — |
+| `is-malware` | `boolean \| null` | No | — |
+| `is-spider` | `boolean \| null` | No | — |
+| `is-dshield` | `boolean \| null` | No | — |
+| `list-count` | `number \| null` | No | — |
+| `is-proxy` | `boolean \| null` | No | — |
+| `is-hijacked` | `boolean \| null` | No | — |
+| `is-tor` | `boolean \| null` | No | — |
+| `is-spyware` | `boolean \| null` | No | — |
+| `is-spam-bot` | `boolean \| null` | No | — |
+| `is-listed` | `boolean \| null` | No | — |
+| `is-vpn` | `boolean \| null` | No | — |
+| `last-seen` | `number \| null` | No | — |
+| `blocklists` | `string[] \| null` | No | — |
+| `sensors` | `object[] \| null` | No | — |
+| `cidr` | `string \| null` | No | — |
+| `first-seen` | `number \| null` | No | — |
+| `last-seen-date` | `string \| null` | No | — |
+| `first-seen-date` | `string \| null` | No | — |
+| `total-hits` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="sensors full type">
+
+```ts
+{
+  id?: number | null,
+  blocklist?: string | null,
+  description?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### info
+
+`ip.info`
+
+Geolocate one IPv4 or IPv6 address: country, city, region, time zone and currency
+
+**Risk:** `read`
+
+```ts
+await corsair.neutrino.api.ip.info({ ip: '1.1.1.1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string` | Yes | The IPv4 or IPv6 address to look up. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `valid` | `boolean \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `hostname` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `country-code` | `string \| null` | No | — |
+| `latitude` | `number \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `longitude` | `number \| null` | No | — |
+| `continent-code` | `string \| null` | No | — |
+| `ip` | `string \| null` | No | — |
+| `country-code3` | `string \| null` | No | — |
+| `currency-code` | `string \| null` | No | — |
+| `host-domain` | `string \| null` | No | — |
+| `timezone` | `object \| null` | No | — |
+| `is-v6` | `boolean \| null` | No | — |
+| `is-v4-mapped` | `boolean \| null` | No | — |
+| `is-bogon` | `boolean \| null` | No | — |
+| `region-code` | `string \| null` | No | — |
+| `language-code` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="timezone full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  abbr?: string | null,
+  date?: string | null,
+  time?: string | null,
+  offset?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### probe
+
+`ip.probe`
+
+Identify the network and hosting provider behind an address and whether it is hosting rather than a consumer line
+
+**Risk:** `read`
+
+```ts
+await corsair.neutrino.api.ip.probe({ ip: '1.1.1.1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string` | Yes | The IPv4 or IPv6 address to probe. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `valid` | `boolean \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `provider-type` | `string \| null` | No | — |
+| `country-code` | `string \| null` | No | — |
+| `hostname` | `string \| null` | No | — |
+| `provider-domain` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `provider-website` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `provider-description` | `string \| null` | No | — |
+| `continent-code` | `string \| null` | No | — |
+| `is-hosting` | `boolean \| null` | No | — |
+| `is-isp` | `boolean \| null` | No | — |
+
+
+
+---
+
+## Messaging
+
+### phoneVerify
+
+`messaging.phoneVerify`
+
+Call a number and read out a generated security code, which reaches a real person and costs credits; check the code with verifySecurityCode
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.neutrino.api.messaging.phoneVerify({ number: '+61412345678', codeLength: 6 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number` | `string` | Yes | The phone number to call. |
+| `codeLength` | `number` | No | How many digits the generated security code has (4 to 12). |
+| `playbackDelay` | `number` | No | Milliseconds between each digit read out. |
+| `countryCode` | `string` | No | — |
+| `languageCode` | `string` | No | — |
+
+Places a real call and spends credits. A 5xx on this route is not retried.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number-valid` | `boolean \| null` | No | — |
+| `calling` | `boolean \| null` | No | — |
+| `security-code` | `string \| null` | No | — |
+
+
+
+---
+
+### smsVerify
+
+`messaging.smsVerify`
+
+Generate a security code and text it to a number, which sends a real SMS and costs a credit; check the code the person types with verifySecurityCode
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.neutrino.api.messaging.smsVerify({ number: '+61412345678', codeLength: 6 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number` | `string` | Yes | The phone number to message. |
+| `codeLength` | `number` | No | How many digits the generated security code has (4 to 12). |
+| `countryCode` | `string` | No | — |
+| `languageCode` | `string` | No | — |
+| `brandName` | `string` | No | — |
+
+Sends a real SMS and spends a credit. A 5xx on this route is not retried.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number-valid` | `boolean \| null` | No | — |
+| `security-code` | `string \| null` | No | — |
+| `sent` | `boolean \| null` | No | — |
+
+
+
+---
+
+### verifySecurityCode
+
+`messaging.verifySecurityCode`
+
+Check a code a person typed against the codes smsVerify and phoneVerify sent, optionally capping failed attempts per user
+
+**Risk:** `write`
+
+```ts
+await corsair.neutrino.api.messaging.verifySecurityCode({ securityCode: '123456', limitBy: 'user-42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `securityCode` | `string` | Yes | The code the person typed in, from smsVerify or phoneVerify. |
+| `limitBy` | `string` | No | Any id for the person (user id, IP) to cap failed attempts per value against brute force. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `verified` | `boolean \| null` | No | — |
+
+
+
+---
+
+## Phone
+
+### hlrLookup
+
+`phone.hlrLookup`
+
+Query the home location register for whether a number is live, which network it is on now and whether it was ported
+
+**Risk:** `read`
+
+```ts
+await corsair.neutrino.api.phone.hlrLookup({ number: '+61412345678' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number` | `string` | Yes | The phone number to check. |
+| `countryCode` | `string` | No | The ISO two-letter country code to assume when the number has no country prefix. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number-valid` | `boolean \| null` | No | — |
+| `international-calling-code` | `string \| null` | No | — |
+| `mnc` | `string \| null` | No | — |
+| `number-type` | `string \| null` | No | — |
+| `hlr-valid` | `boolean \| null` | No | — |
+| `hlr-status` | `string \| null` | No | — |
+| `ported-network` | `string \| null` | No | — |
+| `imsi` | `string \| null` | No | — |
+| `mcc` | `string \| null` | No | — |
+| `international-number` | `string \| null` | No | — |
+| `local-number` | `string \| null` | No | — |
+| `country-code` | `string \| null` | No | — |
+| `is-ported` | `boolean \| null` | No | — |
+| `msin` | `string \| null` | No | — |
+
+
+
+---
+
+### validate
+
+`phone.validate`
+
+Parse a number into international and local forms with its location, carrier prefix and mobile flag
+
+**Risk:** `read`
+
+```ts
+await corsair.neutrino.api.phone.validate({ number: '+61412345678' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number` | `string` | Yes | The phone number to check. |
+| `countryCode` | `string` | No | The ISO two-letter country code to assume when the number has no country prefix. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `valid` | `boolean \| null` | No | — |
+| `international-calling-code` | `string \| null` | No | — |
+| `country-code` | `string \| null` | No | — |
+| `location` | `string \| null` | No | — |
+| `is-mobile` | `boolean \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `international-number` | `string \| null` | No | — |
+| `local-number` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `country-code3` | `string \| null` | No | — |
+| `currency-code` | `string \| null` | No | — |
+| `prefix-network` | `string \| null` | No | — |
+
+
+
+---
+
+## Text
+
+### badWordFilter
+
+`text.badWordFilter`
+
+Scan text or a page for profanity and return the words found and a censored copy
+
+**Risk:** `read`
+
+```ts
+await corsair.neutrino.api.text.badWordFilter({ content: 'Some text to check', censorCharacter: '*' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | Yes | The text to scan, or a URL whose page text Neutrino scans. |
+| `censorCharacter` | `string` | No | Replace each letter of a bad word with this character. |
+| `catalog` | `string` | No | Which word list to use: "strict" (the default) or "obscene". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bad-words-list` | `string[] \| null` | No | — |
+| `bad-words-total` | `number \| null` | No | — |
+| `censored-content` | `string \| null` | No | — |
+| `is-bad` | `boolean \| null` | No | — |
+
+
+
+---
+
+## Web
+
+### browserBot
+
+`web.browserBot`
+
+Load a page in a real browser, optionally run JavaScript on it (click, fill, submit), and return the rendered content and selected elements
+
+**Risk:** `write`
+
+```ts
+await corsair.neutrino.api.web.browserBot({ url: 'https://example.com', selector: 'h1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The page to load in a real browser. |
+| `timeout` | `number` | No | Seconds to wait for the page to load (Neutrino defaults to 30). |
+| `delay` | `number` | No | Seconds to wait after the page loads, for scripts to finish. |
+| `selector` | `string` | No | A CSS selector; the matching elements come back in `elements`. |
+| `exec` | `string[]` | No | JavaScript statements to run on the page in order, e.g. click or fill a field; each one gets its own entry in `exec-results`. |
+| `userAgent` | `string` | No | — |
+| `ignoreCertificateErrors` | `boolean` | No | — |
+
+exec runs JavaScript on the page, so this is write; a 5xx is not retried.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string \| null` | No | — |
+| `content` | `string \| null` | No | — |
+| `mime-type` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `is-error` | `boolean \| null` | No | — |
+| `is-timeout` | `boolean \| null` | No | — |
+| `error-message` | `string \| null` | No | — |
+| `http-status-code` | `number \| null` | No | — |
+| `http-status-message` | `string \| null` | No | — |
+| `is-http-ok` | `boolean \| null` | No | — |
+| `is-http-redirect` | `boolean \| null` | No | — |
+| `http-redirect-url` | `string \| null` | No | — |
+| `server-ip` | `string \| null` | No | — |
+| `load-time` | `number \| null` | No | — |
+| `response-headers` | `Record<string, any> \| null` | No | — |
+| `is-secure` | `boolean \| null` | No | — |
+| `security-details` | `Record<string, any> \| null` | No | — |
+| `elements` | `Record<string, any>[] \| null` | No | — |
+| `exec-results` | `Record<string, any>[] \| null` | No | — |
+| `language-code` | `string \| null` | No | — |
+| `url-valid` | `boolean \| null` | No | — |
+| `content-size` | `number \| null` | No | — |
+| `server-hostname` | `string \| null` | No | — |
+
+
+
+---
+
+### domainLookup
+
+`web.domainLookup`
+
+Read domain facts: subdomain and TLD, rank, and whether the blocklists know it for phishing, malware or spam
+
+**Risk:** `read`
+
+```ts
+await corsair.neutrino.api.web.domainLookup({ host: 'neutrinoapi.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | The host or domain name to look up. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string \| null` | No | — |
+| `is-malicious` | `boolean \| null` | No | — |
+| `blocklists` | `string[] \| null` | No | — |
+| `sensors` | `object[] \| null` | No | — |
+| `valid` | `boolean \| null` | No | — |
+| `fqdn` | `string \| null` | No | — |
+| `is-subdomain` | `boolean \| null` | No | — |
+| `tld` | `string \| null` | No | — |
+| `tld-cc` | `string \| null` | No | — |
+| `rank` | `number \| null` | No | — |
+| `is-gov` | `boolean \| null` | No | — |
+| `is-opennic` | `boolean \| null` | No | — |
+| `is-pending` | `boolean \| null` | No | — |
+| `is-adult` | `boolean \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="sensors full type">
+
+```ts
+{
+  id?: number | null,
+  blocklist?: string | null,
+  description?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### hostReputation
+
+`web.hostReputation`
+
+Check a host or IP against many DNSBLs, with one entry per list showing whether it listed the host
+
+**Risk:** `read`
+
+```ts
+await corsair.neutrino.api.web.hostReputation({ host: 'neutrinoapi.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | The host name or IPv4 address to check against DNSBLs. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `is-listed` | `boolean \| null` | No | — |
+| `lists` | `object[] \| null` | No | — |
+| `list-count` | `number \| null` | No | — |
+| `host` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="lists full type">
+
+```ts
+{
+  is-listed?: boolean | null,
+  list-host?: string | null,
+  list-rating?: number | null,
+  list-name?: string | null,
+  txt-record?: string | null,
+  return-code?: string | null,
+  response-time?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### uaLookup
+
+`web.uaLookup`
+
+Parse a User-Agent string into browser, engine, OS and device fields
+
+**Risk:** `read`
+
+```ts
+await corsair.neutrino.api.web.uaLookup({ ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/130.0 Safari/537.36' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ua` | `string` | Yes | The User-Agent string to parse. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ua` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `version` | `string \| null` | No | — |
+| `version-major` | `string \| number \| null` | No | — |
+| `browser-engine` | `string \| null` | No | — |
+| `browser-release` | `string \| null` | No | — |
+| `os` | `string \| null` | No | — |
+| `os-family` | `string \| null` | No | — |
+| `os-version` | `string \| null` | No | — |
+| `os-version-major` | `string \| number \| null` | No | — |
+| `is-mobile` | `boolean \| null` | No | — |
+| `is-webview` | `boolean \| null` | No | — |
+| `device-brand` | `string \| null` | No | — |
+| `device-model` | `string \| null` | No | — |
+| `browser-name` | `string \| null` | No | — |
+| `browser-version` | `string \| null` | No | — |
+| `is-app` | `boolean \| null` | No | — |
+
+
+
+---
+
+### urlInfo
+
+`web.urlInfo`
+
+Inspect a URL: HTTP status, server location and host, load time, and the page body when asked
+
+**Risk:** `read`
+
+```ts
+await corsair.neutrino.api.web.urlInfo({ url: 'https://neutrinoapi.com', fetchContent: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The URL to inspect. |
+| `fetchContent` | `boolean` | No | Fetch and analyse the page body as well as the headers. |
+
+Neutrino fetches the URL themselves, so a redirect is followed by them and the call costs more than a header read.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `http-status-message` | `string \| null` | No | — |
+| `server-region` | `string \| null` | No | — |
+| `query` | `Record<string, string> \| null` | No | — |
+| `server-name` | `string \| null` | No | — |
+| `url-port` | `number \| null` | No | — |
+| `server-country` | `string \| null` | No | — |
+| `real` | `boolean \| null` | No | — |
+| `server-city` | `string \| null` | No | — |
+| `url-path` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `valid` | `boolean \| null` | No | — |
+| `server-hostname` | `string \| null` | No | — |
+| `load-time` | `number \| null` | No | — |
+| `http-ok` | `boolean \| null` | No | — |
+
+
+
+---
+

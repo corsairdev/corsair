@@ -80,6 +80,7 @@ function toAuthStatusConfig(
 		database: context.database,
 		kek: context.kek,
 		multiTenancy: context.multiTenancy ?? false,
+		multiAccount: false,
 		encryptDataAtRest: false,
 	};
 }
@@ -92,6 +93,7 @@ function toProvisionConfig(
 		database: context.database,
 		kek: context.kek,
 		multiTenancy: context.multiTenancy ?? false,
+		multiAccount: false,
 		encryptDataAtRest: false,
 	};
 }

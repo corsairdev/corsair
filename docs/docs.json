@@ -3156,6 +3156,14 @@
                 ]
               },
               {
+                "group": "JumpCloud",
+                "pages": [
+                  "plugins/jumpcloud/overview",
+                  "plugins/jumpcloud/api",
+                  "plugins/jumpcloud/database"
+                ]
+              },
+              {
                 "group": "Kadoa",
                 "pages": [
                   "plugins/kadoa/overview",
@@ -3520,6 +3528,14 @@
                 ]
               },
               {
+                "group": "Microsoft Clarity",
+                "pages": [
+                  "plugins/microsoftclarity/overview",
+                  "plugins/microsoftclarity/api",
+                  "plugins/microsoftclarity/database"
+                ]
+              },
+              {
                 "group": "Microsoft Teams",
                 "pages": [
                   "plugins/teams/overview",
@@ -3627,6 +3643,46 @@
                 ]
               },
               {
+                "group": "NASA",
+                "pages": [
+                  "plugins/nasa/overview",
+                  "plugins/nasa/api",
+                  "plugins/nasa/database"
+                ]
+              },
+              {
+                "group": "Nasdaq Data Link",
+                "pages": [
+                  "plugins/nasdaq/overview",
+                  "plugins/nasdaq/api",
+                  "plugins/nasdaq/database"
+                ]
+              },
+              {
+                "group": "Needle",
+                "pages": [
+                  "plugins/needle/overview",
+                  "plugins/needle/api",
+                  "plugins/needle/database"
+                ]
+              },
+              {
+                "group": "Neutrino API",
+                "pages": [
+                  "plugins/neutrino/overview",
+                  "plugins/neutrino/api",
+                  "plugins/neutrino/database"
+                ]
+              },
+              {
+                "group": "New Relic",
+                "pages": [
+                  "plugins/newrelic/overview",
+                  "plugins/newrelic/api",
+                  "plugins/newrelic/database"
+                ]
+              },
+              {
                 "group": "ngrok",
                 "pages": [
                   "plugins/ngrok/overview",
@@ -3640,6 +3696,14 @@
                   "plugins/neon/overview",
                   "plugins/neon/api",
                   "plugins/neon/database"
+                ]
+              },
+              {
+                "group": "NetHunt CRM",
+                "pages": [
+                  "plugins/nethunt/overview",
+                  "plugins/nethunt/api",
+                  "plugins/nethunt/database"
                 ]
               },
               {

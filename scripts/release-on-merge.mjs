@@ -419,6 +419,32 @@ export function applyBump(cwd, bump) {
 		path,
 		text.slice(0, range.start) + bump.to + text.slice(range.end),
 	);
+	syncVersionConstant(cwd, bump);
+}
+
+/**
+ * Files that repeat a package's version as a constant, kept equal to
+ * package.json on every bump (packages/corsair/tests/sdk-version.test.ts
+ * fails otherwise).
+ */
+export const VERSION_CONSTANT_FILES = {
+	'packages/corsair': {
+		file: 'hub/sdk-version.ts',
+		name: 'CORSAIR_SDK_VERSION',
+	},
+};
+
+function syncVersionConstant(cwd, bump) {
+	const entry = VERSION_CONSTANT_FILES[bump.dir];
+	if (!entry) return;
+	const path = join(cwd, bump.dir, entry.file);
+	if (!existsSync(path)) return;
+	const text = readFileSync(path, 'utf-8');
+	const pattern = new RegExp(`(export const ${entry.name} = )(['"])[^'"]*\\2`);
+	if (!pattern.test(text)) {
+		throw new Error(`${path}: ${entry.name} not found`);
+	}
+	writeFileSync(path, text.replace(pattern, `$1$2${bump.to}$2`));
 }
 
 /** The npm registry, read with the abbreviated packument (one request per package). */
