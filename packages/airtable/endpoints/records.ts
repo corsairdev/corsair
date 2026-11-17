@@ -140,16 +140,16 @@ export const search: AirtableEndpoints['recordsSearch'] = async (
 	ctx,
 	input,
 ) => {
+	const { fields, sort, ...rest } = input;
 	const response = await makeAirtableRequest<
 		AirtableEndpointOutputs['recordsSearch']
 	>(`${input.baseId}/${input.tableIdOrName}`, ctx.key, {
 		method: 'GET',
 		query: {
-			...input,
-			sort: input.sort
-				?.map((sort) => `${sort.field}:${sort.direction}`)
-				.join(','),
-			fields: input.fields?.join(','),
+			...rest,
+			'fields[]': fields,
+			// Index-keyed so the query serializer emits sort[0][field]=...
+			sort: sort && Object.fromEntries(sort.entries()),
 		},
 	});
 

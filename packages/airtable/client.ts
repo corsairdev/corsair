@@ -20,7 +20,7 @@ export async function makeAirtableRequest<T>(
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
+		query?: Record<string, unknown>;
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
