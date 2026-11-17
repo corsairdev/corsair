@@ -3659,6 +3659,14 @@
                 ]
               },
               {
+                "group": "Needle",
+                "pages": [
+                  "plugins/needle/overview",
+                  "plugins/needle/api",
+                  "plugins/needle/database"
+                ]
+              },
+              {
                 "group": "Neon",
                 "pages": [
                   "plugins/neon/overview",

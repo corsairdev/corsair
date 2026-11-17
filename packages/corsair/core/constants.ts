@@ -440,6 +440,7 @@ export const BaseProviders = [
 	'nanonets',
 	'nasa',
 	'nasdaq',
+	'needle',
 	'neon',
 	'netsuite',
 	'neverbounce',
@@ -1152,6 +1153,7 @@ export const ProviderDisplayNames = {
 	nanonets: 'Nanonets',
 	nasa: 'NASA',
 	nasdaq: 'Nasdaq Data Link',
+	needle: 'Needle',
 	neon: 'Neon',
 	netsuite: 'NetSuite',
 	neverbounce: 'NeverBounce',
@@ -1871,6 +1873,7 @@ export type AllProviders =
 	| 'nanonets'
 	| 'nasa'
 	| 'nasdaq'
+	| 'needle'
 	| 'neon'
 	| 'netsuite'
 	| 'neverbounce'
