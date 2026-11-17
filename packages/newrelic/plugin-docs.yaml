@@ -22,7 +22,7 @@ overviewNote: |
   - **Updates replace the whole object.** `alerts.updatePolicy` needs both `name` and `incident_preference`, and `alerts.updateNrqlCondition` needs the whole condition: New Relic answers 422, 500 or 400 to a partial body. Read the current values first.
   - **Find GUIDs with `entities.search`.** It takes an entity filter such as `type = 'APPLICATION'`, `domain = 'APM'` or `name LIKE 'checkout'`, and pages with `nextCursor`.
   - **`issues.list` is the current incident model** (NerdGraph `aiIssues`). `title`, `description` and a few other fields are lists even when they hold one value.
-  - **A deployment marker cannot be deleted.** `changeTracking.createDeployment` writes it on the entity's charts for good.
+  - **A deployment marker cannot be deleted.** `changeTracking.createDeployment` writes it on the entity's charts for good, so it is `destructive` and asks for approval.
   - **A NRQL query is a NerdGraph call.** `accountId` is required, and the answer carries the time window New Relic actually ran over, which can differ from the `SINCE` clause.
   - **A bad NRQL query answers 200 with an `errors` array.** The plugin turns that into a thrown error rather than returning rows that are silently empty.
   - **Deleting a policy deletes its conditions**, and New Relic has no restore call.

@@ -275,7 +275,9 @@ const newrelicEndpointMeta = {
 			'List alert issues for an account, filtered by state, priority, entity or time window',
 	},
 	'changeTracking.createDeployment': {
-		riskLevel: 'write',
+		// The marker cannot be deleted afterwards (R8: irreversible).
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
 			'Record a deployment marker (version, commit, changelog) on an entity; markers cannot be deleted',
 	},

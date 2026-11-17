@@ -45,7 +45,7 @@ export const accounts: NewrelicEndpoints['accountsList'] = (ctx, input) =>
 			graphql: { query: NEWRELIC_ACCOUNTS_DOCUMENT },
 		}),
 		{
-			shape: (raw) => ({ accounts: dig(raw, ['actor', 'accounts']) ?? [] }),
+			shape: (raw) => ({ accounts: dig(raw, ['actor', 'accounts']) }),
 			log: (_, result) => ({ count: result.accounts.length }),
 		},
 	);
@@ -72,11 +72,15 @@ export const search: NewrelicEndpoints['entitiesSearch'] = (ctx, input) =>
 		}),
 		{
 			shape: (raw) => {
+				// dig throws on a missing step, and the output schema requires an
+				// array, so a malformed answer fails instead of reading as no matches.
 				const found = asRecord(dig(raw, ['actor', 'entitySearch']));
-				const results = asRecord(found?.results);
+				const results = asRecord(
+					dig(raw, ['actor', 'entitySearch', 'results']),
+				);
 				return {
 					count: found?.count,
-					entities: results?.entities ?? [],
+					entities: results?.entities,
 					nextCursor: results?.nextCursor,
 				};
 			},
@@ -104,7 +108,7 @@ export const get: NewrelicEndpoints['entitiesGet'] = (ctx, input) =>
 		{
 			shape: (raw) => ({
 				// An unknown GUID is left out of the list rather than an error.
-				entities: dig(raw, ['actor', 'entities']) ?? [],
+				entities: dig(raw, ['actor', 'entities']),
 			}),
 			log: (_, result) => ({ count: result.entities.length }),
 		},
@@ -155,10 +159,7 @@ export const issues: NewrelicEndpoints['issuesList'] = (ctx, input) =>
 				const page = asRecord(
 					dig(raw, ['actor', 'account', 'aiIssues', 'issues']),
 				);
-				return {
-					issues: page?.issues ?? [],
-					nextCursor: page?.nextCursor,
-				};
+				return { issues: page?.issues, nextCursor: page?.nextCursor };
 			},
 			log: ({ accountId }, result) => ({
 				accountId,

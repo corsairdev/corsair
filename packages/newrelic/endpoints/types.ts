@@ -523,7 +523,14 @@ const TermInputSchema = z
 			.string()
 			.min(1)
 			.describe('Minutes the threshold must hold, e.g. "5".'),
-		operator: z.enum(['above', 'below', 'equal']),
+		operator: z.enum([
+			'above',
+			'above_or_equals',
+			'below',
+			'below_or_equals',
+			'equal',
+			'not_equals',
+		]),
 		priority: z.enum(['critical', 'warning']).optional(),
 		threshold: z.string().min(1).describe('The value to compare, e.g. "1000".'),
 		time_function: z

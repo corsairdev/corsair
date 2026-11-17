@@ -24,7 +24,7 @@ pnpm add @corsair-dev/newrelic
 | `alerts.updatePolicy` | `newrelic.api.alerts.updatePolicy` | `write` | Rename an alert policy or change how its incidents roll up; both fields are sent, since New Relic replaces the policy |
 | `applications.get` | `newrelic.api.applications.get` | `read` | Read one application by id with the same health, reporting and summary block |
 | `applications.list` | `newrelic.api.applications.list` | `read` | List applications with their health colour, whether they are reporting, and the summary metrics the UI shows |
-| `changeTracking.createDeployment` | `newrelic.api.changeTracking.createDeployment` | `write` | Record a deployment marker (version, commit, changelog) on an entity; markers cannot be deleted |
+| `changeTracking.createDeployment` | `newrelic.api.changeTracking.createDeployment` | `destructive` | Record a deployment marker (version, commit, changelog) on an entity; markers cannot be deleted |
 | `entities.get` | `newrelic.api.entities.get` | `read` | Read up to 25 entities by GUID with their type, reporting state, alert severity and tags |
 | `entities.search` | `newrelic.api.entities.search` | `read` | Search monitored entities (services, hosts, browser apps, dashboards, monitors, alert conditions) with a filter such as type = 'APPLICATION' |
 | `issues.list` | `newrelic.api.issues.list` | `read` | List alert issues for an account, filtered by state, priority, entity or time window |

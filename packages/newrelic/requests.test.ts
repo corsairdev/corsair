@@ -540,6 +540,52 @@ describe('NerdGraph reads and the deployment marker', () => {
 		expect(asRecord(result)?.deploymentId).toBe('d-1');
 	});
 
+	it('throws when a search answer has no entities list', async () => {
+		await expect(
+			capture(
+				endpoints.entities.search,
+				{ query: 'x' },
+				{ data: { actor: { entitySearch: { count: 5, results: {} } } } },
+			),
+		).rejects.toThrow();
+	});
+
+	it('throws when an issues answer has no issues list', async () => {
+		await expect(
+			capture(
+				endpoints.issues.list,
+				{ accountId: 1 },
+				{ data: { actor: { account: { aiIssues: { issues: {} } } } } },
+			),
+		).rejects.toThrow();
+	});
+
+	it('accepts the other documented NRQL operators', async () => {
+		const { init } = await capture(
+			endpoints.alerts.createNrqlCondition,
+			{
+				policyId: 1,
+				condition: {
+					name: 'n',
+					terms: [
+						{
+							duration: '5',
+							operator: 'above_or_equals',
+							threshold: '1',
+							time_function: 'all',
+						},
+					],
+					value_function: 'single_value',
+					nrql: { query: 'SELECT count(*) FROM Transaction' },
+				},
+			},
+			nrqlCondition,
+		);
+		expect(JSON.parse(String(init.body)).nrql_condition.terms[0].operator).toBe(
+			'above_or_equals',
+		);
+	});
+
 	it('throws when the answer misses the asked-for path', async () => {
 		await expect(
 			capture(endpoints.entities.search, { query: 'x' }, { data: {} }),
@@ -746,10 +792,14 @@ describe('newrelic plugin definition', () => {
 			'alerts.updatePolicy',
 			'alerts.createNrqlCondition',
 			'alerts.updateNrqlCondition',
-			'changeTracking.createDeployment',
 		] as const) {
 			expect(meta[write]?.riskLevel).toBe('write');
 		}
+		// A deployment marker cannot be deleted.
+		expect(meta['changeTracking.createDeployment']?.riskLevel).toBe(
+			'destructive',
+		);
+		expect(meta['changeTracking.createDeployment']?.irreversible).toBe(true);
 		for (const read of [
 			'accounts.list',
 			'entities.search',
