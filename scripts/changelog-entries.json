@@ -7634,5 +7634,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/toneden",
+    "dir": "packages/toneden",
+    "name": "ToneDen",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
