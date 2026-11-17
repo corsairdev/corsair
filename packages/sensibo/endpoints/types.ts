@@ -20,55 +20,66 @@ const Fields = z
  * `on`), and the valid modes, fan levels and swing values come from the pod's
  * `remoteCapabilities`, so they stay free strings.
  */
-export const AcStateInputSchema = z
-	.object({
-		on: z.boolean().optional().describe('true turns the AC on, false off.'),
-		mode: z
-			.string()
-			.min(1)
-			.optional()
-			.describe(
-				'One of the modes in remoteCapabilities, e.g. cool, heat, fan, auto, dry.',
-			),
-		fanLevel: z
-			.string()
-			.min(1)
-			.optional()
-			.describe(
-				'One of the fan levels in remoteCapabilities, e.g. low, medium, high, auto.',
-			),
-		targetTemperature: z
-			.number()
-			.int()
-			.optional()
-			.describe('Target temperature.'),
-		temperatureUnit: z
-			.enum(['C', 'F'])
-			.optional()
-			.describe('C for Celsius or F for Fahrenheit.'),
-		swing: z
-			.string()
-			.min(1)
-			.optional()
-			.describe(
-				'One of the swing states in remoteCapabilities, e.g. stopped, rangeFull.',
-			),
-		horizontalSwing: z
-			.string()
-			.min(1)
-			.optional()
-			.describe('One of the horizontal swing states in remoteCapabilities.'),
-		light: z
-			.string()
-			.min(1)
-			.optional()
-			.describe(
-				'Display light, e.g. on, off, dim, when the remote supports it.',
-			),
-	})
-	.refine((state) => Object.keys(state).length > 0, {
-		message: 'acState needs at least one property',
-	});
+const AcStateFields = z.object({
+	on: z.boolean().optional().describe('true turns the AC on, false off.'),
+	mode: z
+		.string()
+		.min(1)
+		.optional()
+		.describe(
+			'One of the modes in remoteCapabilities, e.g. cool, heat, fan, auto, dry.',
+		),
+	fanLevel: z
+		.string()
+		.min(1)
+		.optional()
+		.describe(
+			'One of the fan levels in remoteCapabilities, e.g. low, medium, high, auto.',
+		),
+	targetTemperature: z
+		.number()
+		.int()
+		.optional()
+		.describe('Target temperature.'),
+	temperatureUnit: z
+		.enum(['C', 'F'])
+		.optional()
+		.describe('C for Celsius or F for Fahrenheit.'),
+	swing: z
+		.string()
+		.min(1)
+		.optional()
+		.describe(
+			'One of the swing states in remoteCapabilities, e.g. stopped, rangeFull.',
+		),
+	horizontalSwing: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('One of the horizontal swing states in remoteCapabilities.'),
+	light: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('Display light, e.g. on, off, dim, when the remote supports it.'),
+});
+
+export const AcStateInputSchema = AcStateFields.refine(
+	(state) => Object.keys(state).length > 0,
+	{ message: 'acState needs at least one property' },
+);
+
+/**
+ * A complete AC state, for timers and schedules. Their reference object
+ * requires on, mode, fanLevel and targetTemperature; only a direct
+ * acStates.set is documented with a partial state.
+ */
+export const FullAcStateInputSchema = AcStateFields.required({
+	on: true,
+	mode: true,
+	fanLevel: true,
+	targetTemperature: true,
+});
 
 export type AcStateInput = z.infer<typeof AcStateInputSchema>;
 
@@ -350,8 +361,8 @@ export const SetTimerInputSchema = z.object({
 		.int()
 		.min(1)
 		.describe('Minutes from now when the timer fires.'),
-	acState: AcStateInputSchema.describe(
-		'AC state applied when the timer fires.',
+	acState: FullAcStateInputSchema.describe(
+		'AC state applied when the timer fires (on, mode, fanLevel and targetTemperature required).',
 	),
 });
 export const SetTimerResponseSchema = envelope(
@@ -388,7 +399,9 @@ export const CreateScheduleInputSchema = z.object({
 		.string()
 		.min(1)
 		.describe('IANA timezone the time is in, e.g. Europe/Oslo.'),
-	acState: AcStateInputSchema.describe('AC state applied at that time.'),
+	acState: FullAcStateInputSchema.describe(
+		'AC state applied at that time (on, mode, fanLevel and targetTemperature required).',
+	),
 	recurOnDaysOfWeek: z
 		.array(
 			z.enum([

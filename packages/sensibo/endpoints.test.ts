@@ -77,6 +77,12 @@ function lastCall() {
 
 // unknown: fixtures cover every operation's result shape.
 const ok = (result: unknown) => ({ status: 'success', result });
+const OFF = {
+	on: false,
+	mode: 'cool',
+	fanLevel: 'auto',
+	targetTemperature: 24,
+};
 const AC = { on: true, mode: 'cool', fanLevel: 'auto', targetTemperature: 22 };
 
 beforeEach(() => {
@@ -254,12 +260,12 @@ describe('wire format of every operation', () => {
 				setTimer(ctx, {
 					deviceId: 'pod1',
 					minutesFromNow: 30,
-					acState: { on: false },
+					acState: OFF,
 				}),
 			reply: ok({ id: 't1', isEnabled: true, acState: { on: false } }),
 			method: 'PUT',
 			url: '/api/v1/pods/pod1/timer/',
-			body: { minutesFromNow: 30, acState: { on: false } },
+			body: { minutesFromNow: 30, acState: OFF },
 			event: 'sensibo.timer.set',
 		},
 		{
@@ -293,7 +299,7 @@ describe('wire format of every operation', () => {
 					deviceId: 'pod1',
 					targetTimeLocal: '22:15',
 					timezone: 'Europe/Oslo',
-					acState: { on: false },
+					acState: OFF,
 					recurOnDaysOfWeek: ['sunday', 'tuesday'],
 				}),
 			reply: ok({ id: 'sc2', isEnabled: true }),
@@ -302,7 +308,7 @@ describe('wire format of every operation', () => {
 			body: {
 				targetTimeLocal: '22:15',
 				timezone: 'Europe/Oslo',
-				acState: { on: false },
+				acState: OFF,
 				recurOnDaysOfWeek: ['sunday', 'tuesday'],
 			},
 			event: 'sensibo.schedules.create',
@@ -384,6 +390,26 @@ describe('input checks', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
+	it('requires a complete AC state for timers and schedules', async () => {
+		await expect(
+			setTimer(context('k'), {
+				deviceId: 'pod1',
+				minutesFromNow: 10,
+				acState: { on: false } as never,
+			}),
+		).rejects.toThrow();
+		await expect(
+			createSchedule(context('k'), {
+				deviceId: 'pod1',
+				targetTimeLocal: '07:00',
+				timezone: 'UTC',
+				acState: { on: true, mode: 'cool' } as never,
+				recurOnDaysOfWeek: [],
+			}),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
 	it('rejects a limit above 20 and a bad schedule time', async () => {
 		await expect(
 			listAcStates(context('k'), { deviceId: 'pod1', limit: 21 }),
@@ -393,7 +419,7 @@ describe('input checks', () => {
 				deviceId: 'pod1',
 				targetTimeLocal: '25:00',
 				timezone: 'UTC',
-				acState: { on: true },
+				acState: { ...OFF, on: true },
 				recurOnDaysOfWeek: [],
 			}),
 		).rejects.toThrow();

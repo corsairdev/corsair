@@ -759,7 +759,12 @@ await corsair.sensibo.api.schedules.create({
 	deviceId: 'abc123',
 	targetTimeLocal: '22:15',
 	timezone: 'Europe/Oslo',
-	acState: { on: false },
+	acState: {
+		on: false,
+		mode: 'cool',
+		fanLevel: 'auto',
+		targetTemperature: 24,
+	},
 	recurOnDaysOfWeek: ['sunday', 'tuesday'],
 });
 ```
@@ -771,20 +776,20 @@ await corsair.sensibo.api.schedules.create({
 | `deviceId` | `string` | Yes | Pod (device) id from devices.list. |
 | `targetTimeLocal` | `string` | Yes | Local time in 24-hour HH:MM, e.g. 22:15. |
 | `timezone` | `string` | Yes | IANA timezone the time is in, e.g. Europe/Oslo. |
-| `acState` | `object` | Yes | AC state applied at that time. |
+| `acState` | `object` | Yes | AC state applied at that time (on, mode, fanLevel and targetTemperature required). |
 | `recurOnDaysOfWeek` | `(sunday \| monday \| tuesday \| wednesday \| thursday \| friday \| saturday)[]` | Yes | Days the schedule repeats on; an empty list runs it once. |
 
-`recurOnDaysOfWeek` takes lowercase weekday names. An empty list runs the schedule once at the next `targetTimeLocal`.
+`acState` must include `on`, `mode`, `fanLevel` and `targetTemperature`. `recurOnDaysOfWeek` takes lowercase weekday names. An empty list runs the schedule once at the next `targetTimeLocal`.
 
 <AccordionGroup>
 <Accordion title="acState full type">
 
 ```ts
 {
-  on?: boolean,
-  mode?: string,
-  fanLevel?: string,
-  targetTemperature?: number,
+  on: nonoptional,
+  mode: nonoptional,
+  fanLevel: nonoptional,
+  targetTemperature: nonoptional,
   temperatureUnit?: C | F,
   swing?: string,
   horizontalSwing?: string,
@@ -1139,7 +1144,12 @@ Set a timer that applies an AC state a number of minutes from now; replaces any 
 await corsair.sensibo.api.timer.set({
 	deviceId: 'abc123',
 	minutesFromNow: 30,
-	acState: { on: false },
+	acState: {
+		on: false,
+		mode: 'cool',
+		fanLevel: 'auto',
+		targetTemperature: 24,
+	},
 });
 ```
 
@@ -1149,17 +1159,19 @@ await corsair.sensibo.api.timer.set({
 |------|------|----------|-------------|
 | `deviceId` | `string` | Yes | Pod (device) id from devices.list. |
 | `minutesFromNow` | `number` | Yes | Minutes from now when the timer fires. |
-| `acState` | `object` | Yes | AC state applied when the timer fires. |
+| `acState` | `object` | Yes | AC state applied when the timer fires (on, mode, fanLevel and targetTemperature required). |
+
+`acState` must include `on`, `mode`, `fanLevel` and `targetTemperature`.
 
 <AccordionGroup>
 <Accordion title="acState full type">
 
 ```ts
 {
-  on?: boolean,
-  mode?: string,
-  fanLevel?: string,
-  targetTemperature?: number,
+  on: nonoptional,
+  mode: nonoptional,
+  fanLevel: nonoptional,
+  targetTemperature: nonoptional,
   temperatureUnit?: C | F,
   swing?: string,
   horizontalSwing?: string,

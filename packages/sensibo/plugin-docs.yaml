@@ -33,8 +33,10 @@ apiNotes:
     Pass a comma-separated field list for a smaller pod object, or `*` for all fields. Without it Sensibo returns ids only.
   acStates.setProperty: |
     `property` names one field of the AC state. Sensibo fills in the rest from `currentAcState` when you pass it.
+  timer.set: |
+    `acState` must include `on`, `mode`, `fanLevel` and `targetTemperature`.
   schedules.create: |
-    `recurOnDaysOfWeek` takes lowercase weekday names. An empty list runs the schedule once at the next `targetTimeLocal`.
+    `acState` must include `on`, `mode`, `fanLevel` and `targetTemperature`. `recurOnDaysOfWeek` takes lowercase weekday names. An empty list runs the schedule once at the next `targetTimeLocal`.
 apiExamples:
   devices.list:
     fields: id,room
@@ -82,6 +84,9 @@ apiExamples:
     minutesFromNow: 30
     acState:
       'on': false
+      mode: cool
+      fanLevel: auto
+      targetTemperature: 24
   timer.delete:
     deviceId: abc123
   schedules.list:
@@ -95,6 +100,9 @@ apiExamples:
     timezone: Europe/Oslo
     acState:
       'on': false
+      mode: cool
+      fanLevel: auto
+      targetTemperature: 24
     recurOnDaysOfWeek:
       - sunday
       - tuesday
