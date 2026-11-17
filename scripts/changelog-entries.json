@@ -8117,5 +8117,23 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/ip2whois",
+    "dir": "packages/ip2whois",
+    "name": "IP2WHOIS",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/proofly",
+    "dir": "packages/proofly",
+    "name": "Proofly",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
