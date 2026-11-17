@@ -2,7 +2,6 @@ import { logEventFromContext } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
 import type { EmailableContext } from './context';
 import {
-	authorize,
 	createBatch,
 	getAccount,
 	getBatch,
@@ -286,18 +285,47 @@ describe('emailable', () => {
 		});
 	});
 
-	it('builds an authorize URL without calling the API', async () => {
-		const result = await authorize(context(), {
-			clientId: 'abc123',
-			redirectUri: 'https://example.com/callback',
-			state: 'xyz',
+	it('keeps polling while partial results arrive', async () => {
+		mockRequest.mockResolvedValue({
+			emails: [{ email: 'a@example.com', state: 'deliverable' }],
+			id: '6afc45aa',
+			message: 'Batch is verifying.',
+			total_counts: { deliverable: 1, processed: 1, total: 2 },
 		});
-		const url = new URL(result.url);
-		expect(url.origin + url.pathname).toBe(
-			'https://app.emailable.com/oauth/authorize',
-		);
-		expect(url.searchParams.get('client_id')).toBe('abc123');
-		expect(mockRequest).not.toHaveBeenCalled();
+		const result = await getBatch(context(), { id: '6afc45aa', partial: true });
+		expect(result.batch.done).toBe(false);
+		expect(result.batch.processed).toBe(1);
+		expect(result.batch.emails).toHaveLength(1);
+	});
+
+	it('keeps batch rows that have only the requested fields', async () => {
+		mockRequest.mockResolvedValue({
+			emails: [{ state: 'deliverable' }, { state: 'risky' }],
+			id: '6afc45aa',
+			total_counts: { processed: 2, total: 2 },
+		});
+		const result = await getBatch(context(), { id: '6afc45aa' });
+		expect(result.batch.emails).toEqual([
+			{ state: 'deliverable' },
+			{ state: 'risky' },
+		]);
+		expect(result.batch.done).toBe(true);
+	});
+
+	it('always asks for email when responseFields are set', async () => {
+		mockRequest.mockResolvedValue({ id: 'b1', message: 'ok' });
+		await createBatch(context(), {
+			emails: ['a@example.com'],
+			responseFields: ['state'],
+		});
+		expect(call()?.body).toMatchObject({ response_fields: 'email,state' });
+	});
+
+	it('throws on a verify body with neither state nor message', async () => {
+		mockRequest.mockResolvedValue({});
+		await expect(
+			verifyEmail(context(), { email: 'a@example.com' }),
+		).rejects.toThrow('neither a state nor a message');
 	});
 
 	it('lets an HTTP 403 through as an ApiError with its status', async () => {

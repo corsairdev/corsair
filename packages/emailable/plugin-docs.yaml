@@ -31,8 +31,6 @@ apiNotes:
     `POST /v1/batch` with a JSON body. Stores the batch id and message.
   batches.get: |
     `GET /v1/batch`. Results per address for batches up to 1,000, a download link above that.
-  oauth.authorize: |
-    Builds `GET https://app.emailable.com/oauth/authorize`. Nothing is fetched or stored.
 apiExamples:
   account.get:
     call: "{}"
@@ -42,5 +40,3 @@ apiExamples:
     call: "{ emails: ['deliverable@example.com', 'risky@example.com'], url: 'https://example.com/emailable-results' }"
   batches.get:
     call: "{ id: '6afc45aa1b2c3d4e5f607182' }"
-  oauth.authorize:
-    call: "{ clientId: 'abc123', redirectUri: 'https://example.com/callback' }"

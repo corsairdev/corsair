@@ -86,28 +86,6 @@ export const BatchIdInputSchema = z.object({
 });
 export type BatchIdInput = z.infer<typeof BatchIdInputSchema>;
 
-export const AuthorizeInputSchema = z
-	.object({
-		clientId: z.string().regex(/^[A-Za-z0-9_-]+$/),
-		redirectUri: z.string().url(),
-		state: z.string().min(1).max(200).optional(),
-		codeChallenge: z.string().min(1).max(200).optional(),
-		codeChallengeMethod: z
-			.string()
-			.regex(/^(S256|plain)$/)
-			.optional(),
-	})
-	.superRefine((value, ctx) => {
-		if (value.codeChallenge && !value.codeChallengeMethod) {
-			ctx.addIssue({
-				code: 'custom',
-				message: 'codeChallengeMethod is required with codeChallenge',
-				path: ['codeChallengeMethod'],
-			});
-		}
-	});
-export type AuthorizeInput = z.infer<typeof AuthorizeInputSchema>;
-
 export const AccountResponseSchema = z.object({
 	account: EmailableAccountEntity,
 });
@@ -139,6 +117,11 @@ export const VerificationSchema = z
 	})
 	.loose();
 
+/** One result in a batch; with responseFields only the chosen fields come back. */
+export const BatchResultSchema = VerificationSchema.partial().extend({
+	email: z.string().optional(),
+});
+
 export const VerificationResponseSchema = z.object({
 	verification: VerificationSchema.optional(),
 	pending: z
@@ -159,7 +142,7 @@ export const BatchStatusResponseSchema = z.object({
 		processed: z.number().optional(),
 		total: z.number().optional(),
 		done: z.boolean().describe('True once every address is verified.'),
-		emails: z.array(VerificationSchema).optional(),
+		emails: z.array(BatchResultSchema).optional(),
 		downloadFile: z
 			.string()
 			.optional()
@@ -171,15 +154,11 @@ export const BatchStatusResponseSchema = z.object({
 export type BatchStatusResponse = z.infer<typeof BatchStatusResponseSchema>;
 export type BatchResponse = z.infer<typeof BatchResponseSchema>;
 
-export const AuthorizeResponseSchema = z.object({ url: z.string().url() });
-export type AuthorizeResponse = z.infer<typeof AuthorizeResponseSchema>;
-
 export const EndpointInputSchemas = {
 	'account.get': EmptyInputSchema,
 	'verifications.verify': VerifyInputSchema,
 	'batches.create': BatchCreateInputSchema,
 	'batches.get': BatchIdInputSchema,
-	'oauth.authorize': AuthorizeInputSchema,
 };
 
 export const EndpointOutputSchemas = {
@@ -187,5 +166,4 @@ export const EndpointOutputSchemas = {
 	'verifications.verify': VerificationResponseSchema,
 	'batches.create': BatchResponseSchema,
 	'batches.get': BatchStatusResponseSchema,
-	'oauth.authorize': AuthorizeResponseSchema,
 };

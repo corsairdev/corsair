@@ -9,8 +9,6 @@ import {
 } from '../schema/database';
 import type {
 	AccountResponse,
-	AuthorizeInput,
-	AuthorizeResponse,
 	BatchCreateInput,
 	BatchIdInput,
 	BatchResponse,
@@ -20,9 +18,13 @@ import type {
 	VerifyInput,
 } from './types';
 import {
-	AuthorizeInputSchema,
 	BatchCreateInputSchema,
 	BatchIdInputSchema,
+	BatchResponseSchema,
+	BatchResultSchema,
+	BatchStatusResponseSchema,
+	EmptyInputSchema,
+	VerificationResponseSchema,
 	VerificationSchema,
 	VerifyInputSchema,
 } from './types';
@@ -42,6 +44,19 @@ function num(value: unknown): number | undefined {
 		: undefined;
 }
 
+/**
+ * A batch is done when every address is verified. Partial results (partial:
+ * true) arrive before that, so their presence is not the signal.
+ */
+function isDone(
+	processed: number | undefined,
+	total: number | undefined,
+	hasDownload: boolean,
+) {
+	if (processed !== undefined && total !== undefined) return processed >= total;
+	return hasDownload;
+}
+
 // value is a raw JSON object of counts.
 function counts(value: unknown): Record<string, number> | undefined {
 	const row = asRecord(value);
@@ -59,6 +74,7 @@ function text(value: unknown): string | undefined {
 	return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
 
+// Resolves to whatever the table returns; the result is not used.
 async function save<T extends { id: string }>(
 	table:
 		| { upsertByEntityId: (id: string, row: T) => Promise<unknown> }
@@ -89,7 +105,8 @@ export const getAccount: CorsairEndpoint<
 	EmailableContext,
 	EmptyInput,
 	AccountResponse
-> = async (ctx) => {
+> = async (ctx, input) => {
+	EmptyInputSchema.parse(input ?? {});
 	const body = asRecord(await emailableGet<unknown>(ctx.key, '/v1/account'));
 	const account = EmailableAccountEntity.parse({
 		id: 'account',
@@ -124,13 +141,20 @@ export const verifyEmail: CorsairEndpoint<
 	);
 	// HTTP 249: still verifying. The body is only a message, with no state.
 	if (!text(body?.state)) {
+		if (!text(body?.message))
+			throw new Error(
+				'Emailable verify response had neither a state nor a message',
+			);
 		await logEventFromContext(
 			ctx,
 			'emailable.verifications.verify',
 			{ count: 0 },
 			'completed',
 		);
-		return { pending: true, message: text(body?.message) };
+		return VerificationResponseSchema.parse({
+			pending: true,
+			message: text(body?.message),
+		});
 	}
 	const verification = VerificationSchema.parse({
 		...body,
@@ -153,7 +177,7 @@ export const verifyEmail: CorsairEndpoint<
 		{ count: 1 },
 		'completed',
 	);
-	return { verification, pending: false };
+	return VerificationResponseSchema.parse({ verification, pending: false });
 };
 
 export const createBatch: CorsairEndpoint<
@@ -164,8 +188,11 @@ export const createBatch: CorsairEndpoint<
 	const parsed = BatchCreateInputSchema.parse(input);
 	const body: Record<string, unknown> = { emails: parsed.emails };
 	if (parsed.url) body.url = parsed.url;
-	if (parsed.responseFields)
-		body.response_fields = parsed.responseFields.join(',');
+	if (parsed.responseFields) {
+		// Always include email so each result can be matched to its address.
+		const fields = new Set(['email', ...parsed.responseFields]);
+		body.response_fields = [...fields].join(',');
+	}
 	if (parsed.retries !== undefined) body.retries = parsed.retries;
 	const batch = batchOf(
 		await emailablePost<unknown>(ctx.key, '/v1/batch', body),
@@ -177,7 +204,7 @@ export const createBatch: CorsairEndpoint<
 		{ count: 1 },
 		'completed',
 	);
-	return { batch };
+	return BatchResponseSchema.parse({ batch });
 };
 
 export const getBatch: CorsairEndpoint<
@@ -198,18 +225,19 @@ export const getBatch: CorsairEndpoint<
 	const id = text(body.id) ?? parsed.id;
 	const processed = num(body.processed);
 	const total = num(body.total);
+	// With responseFields a row may lack email, so batch rows use their own schema.
 	const emails = Array.isArray(body.emails)
 		? body.emails.flatMap((item) => {
-				const row = VerificationSchema.safeParse(item);
+				const row = BatchResultSchema.safeParse(item);
 				return row.success ? [row.data] : [];
 			})
 		: undefined;
 	const totalCounts = counts(body.total_counts);
-	const done =
-		totalCounts !== undefined ||
-		emails !== undefined ||
-		text(body.download_file) !== undefined ||
-		(processed !== undefined && total !== undefined && processed >= total);
+	const done = isDone(
+		processed ?? totalCounts?.processed,
+		total ?? totalCounts?.total,
+		text(body.download_file) !== undefined,
+	);
 	const batch = {
 		id,
 		message: text(body.message),
@@ -232,32 +260,5 @@ export const getBatch: CorsairEndpoint<
 		{ count: 1 },
 		'completed',
 	);
-	return { batch };
-};
-
-export const authorize: CorsairEndpoint<
-	EmailableContext,
-	AuthorizeInput,
-	AuthorizeResponse
-> = async (ctx, input) => {
-	const parsed = AuthorizeInputSchema.parse(input);
-	const url = new URL('https://app.emailable.com/oauth/authorize');
-	url.searchParams.set('response_type', 'code');
-	url.searchParams.set('client_id', parsed.clientId);
-	url.searchParams.set('redirect_uri', parsed.redirectUri);
-	if (parsed.state) url.searchParams.set('state', parsed.state);
-	if (parsed.codeChallenge) {
-		url.searchParams.set('code_challenge', parsed.codeChallenge);
-		url.searchParams.set(
-			'code_challenge_method',
-			parsed.codeChallengeMethod ?? 'S256',
-		);
-	}
-	await logEventFromContext(
-		ctx,
-		'emailable.oauth.authorize',
-		{ count: 1 },
-		'completed',
-	);
-	return { url: url.toString() };
+	return BatchStatusResponseSchema.parse({ batch });
 };

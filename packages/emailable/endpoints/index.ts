@@ -1,5 +1,4 @@
 export {
-	authorize,
 	createBatch,
 	getAccount,
 	getBatch,

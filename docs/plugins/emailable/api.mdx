@@ -138,7 +138,7 @@ await corsair.emailable.api.batches.get({ id: '6afc45aa1b2c3d4e5f607182' });
   total?: number,
   done: boolean,
   emails?: {
-    email: string,
+    email?: string,
     state?: string | null,
     reason?: string | null,
     score?: number | null,
@@ -163,44 +163,6 @@ await corsair.emailable.api.batches.get({ id: '6afc45aa1b2c3d4e5f607182' });
 ```
 </Accordion>
 </AccordionGroup>
-
-
-
----
-
-## Oauth
-
-### authorize
-
-`oauth.authorize`
-
-Build the OAuth authorize URL. The client id is not stored.
-
-**Risk:** `read`
-
-```ts
-await corsair.emailable.api.oauth.authorize({ clientId: 'abc123', redirectUri: 'https://example.com/callback' });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `clientId` | `string` | Yes | — |
-| `redirectUri` | `string` | Yes | — |
-| `state` | `string` | No | — |
-| `codeChallenge` | `string` | No | — |
-| `codeChallengeMethod` | `string` | No | — |
-
-Builds `GET https://app.emailable.com/oauth/authorize`. Nothing is fetched or stored.
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `url` | `string` | Yes | — |
 
 
 

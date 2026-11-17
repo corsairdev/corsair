@@ -9,12 +9,7 @@ describe('Emailable plugin', () => {
 	it('marks only the bulk batch job destructive', () => {
 		const meta = emailable().endpointMeta as unknown as Meta;
 		expect(meta['batches.create']?.riskLevel).toBe('destructive');
-		for (const op of [
-			'account.get',
-			'verifications.verify',
-			'batches.get',
-			'oauth.authorize',
-		]) {
+		for (const op of ['account.get', 'verifications.verify', 'batches.get']) {
 			expect(meta[op]?.riskLevel).toBe('read');
 		}
 	});

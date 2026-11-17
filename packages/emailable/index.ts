@@ -11,17 +11,9 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import type { EmailableContext } from './context';
-import {
-	authorize,
-	createBatch,
-	getAccount,
-	getBatch,
-	verifyEmail,
-} from './endpoints';
+import { createBatch, getAccount, getBatch, verifyEmail } from './endpoints';
 import {
 	AccountResponseSchema,
-	AuthorizeInputSchema,
-	AuthorizeResponseSchema,
 	BatchCreateInputSchema,
 	BatchIdInputSchema,
 	BatchResponseSchema,
@@ -50,7 +42,6 @@ const emailableEndpointsNested = {
 	account: { get: getAccount },
 	verifications: { verify: verifyEmail },
 	batches: { create: createBatch, get: getBatch },
-	oauth: { authorize },
 } as const;
 
 const emailableWebhooksNested = {} as const;
@@ -68,10 +59,6 @@ export const emailableEndpointSchemas = {
 	'batches.get': {
 		input: BatchIdInputSchema,
 		output: BatchStatusResponseSchema,
-	},
-	'oauth.authorize': {
-		input: AuthorizeInputSchema,
-		output: AuthorizeResponseSchema,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof emailableEndpointsNested
@@ -97,9 +84,6 @@ const emailableEndpointMeta = {
 	),
 	'batches.get': read(
 		"Get a batch: progress, counts per state and reason, and each address's result (up to 1,000 addresses) or a download link (larger batches).",
-	),
-	'oauth.authorize': read(
-		'Build the OAuth authorize URL. The client id is not stored.',
 	),
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof emailableEndpointsNested
