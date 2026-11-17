@@ -8189,5 +8189,23 @@
     "version": "0.1.211",
     "isNew": false,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/mcp",
+    "dir": "packages/mcp",
+    "name": "mcp",
+    "version": "0.1.82",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/ui",
+    "dir": "packages/ui",
+    "name": "ui",
+    "version": "0.1.59",
+    "isNew": false,
+    "changes": []
   }
 ]
