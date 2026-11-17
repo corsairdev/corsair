@@ -23,6 +23,7 @@ jest.mock('corsair/http', () => {
 const mockRequest = jest.mocked(request);
 const mockLog = jest.mocked(logEventFromContext);
 
+// Tables are jest mocks of the db client; their exact type doesn't matter here.
 function context(key?: string, db?: Record<string, unknown>): EmailableContext {
 	// A real database is present whenever tables are passed in.
 	return {
@@ -79,6 +80,8 @@ const VERIFICATION = {
 	user: 'deliverable',
 };
 
+// Rejections are caught as `unknown` (what a promise rejects with) and then
+// checked with instanceof ApiError before any field is read.
 describe('emailable', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
