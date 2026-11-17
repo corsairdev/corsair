@@ -1,5 +1,5 @@
 import type { ErrorHandlerAndMatchFunction } from 'corsair/core';
-import { NinoxAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
 type HandlerName = keyof typeof errorHandlers;
@@ -26,16 +26,29 @@ async function strategy(error: Error) {
 function apiError(
 	status: number,
 	method: 'GET' | 'POST' | 'PATCH' | 'DELETE' = 'GET',
-): NinoxAPIError {
-	return new NinoxAPIError(`Ninox ${status}: failed`, { status, method });
+	retryAfter?: number,
+): ApiError {
+	return new ApiError(
+		{ method, url: '/workspace/w' },
+		{
+			url: 'https://go.ninox.com/api/v1/workspace/w',
+			ok: false,
+			status,
+			statusText: '',
+			body: undefined,
+		},
+		`Ninox ${status}: failed`,
+		{ retryAfter },
+	);
 }
 
 describe('ninox error handlers', () => {
-	it('retries a 429 with backoff', async () => {
-		const error = apiError(429);
+	it('retries a 429 and passes on its Retry-After', async () => {
+		const error = apiError(429, 'GET', 60_000);
 		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
 		expect(await strategy(error)).toEqual({
 			maxRetries: 3,
+			headersRetryAfterMs: 60_000,
 			retryStrategy: 'exponential_backoff',
 		});
 	});

@@ -39,40 +39,53 @@ function readString(
  * not a bad key, and a 409 is the `_expected` conflict or an ambiguous upsert.
  */
 export class NinoxAPIError extends Error {
-	readonly status?: number;
-	/** The provider's own message, from either body shape. */
-	readonly detail?: string;
 	readonly method?: string;
 
 	constructor(
 		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			detail?: string;
-			method?: string;
-		} = {},
+		options: { cause?: Error; method?: string } = {},
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'NinoxAPIError';
-		this.status = options.status;
-		this.detail = options.detail;
 		this.method = options.method;
 	}
+}
 
-	get isRateLimit(): boolean {
-		return this.status === 429;
-	}
-
-	/** A 401 is a missing or invalid workspace key; there is no other 401. */
-	get isAuthError(): boolean {
-		return this.status === 401;
-	}
-
-	/** A 403 is the key lacking the grant the route needs, not a bad key. */
-	get isPermissionError(): boolean {
-		return this.status === 403;
-	}
+/**
+ * Rebuilds Ninox's HTTP error as a core `ApiError` with a readable message, so
+ * status, Retry-After and the rate-limit fields reach core (R8). The body keeps
+ * only the provider's message; the sent body is dropped, because it holds the
+ * caller's record values.
+ */
+function sanitizeApiError(error: ApiError): ApiError {
+	const {
+		body: _body,
+		formData: _formData,
+		query: _query,
+		...request
+	} = error.request;
+	const message =
+		readString(asRecord(asRecord(error.body)?.error), 'message') ??
+		(typeof error.body === 'string' && error.body.length > 0
+			? error.body.slice(0, 200)
+			: undefined);
+	return new ApiError(
+		{ ...request, url: request.url.split('?')[0] ?? request.url },
+		{
+			url: error.url.split('?')[0] ?? error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: message ? { error: { message } } : undefined,
+		},
+		describeNinoxError(error.status, error.body, error.message),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }
 
 // unknown: see NinoxAPIError.
@@ -129,18 +142,7 @@ export async function makeNinoxRequest(
 			rateLimitConfig: NINOX_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) {
-			throw new NinoxAPIError(
-				describeNinoxError(error.status, error.body, error.message),
-				{
-					status: error.status,
-					detail:
-						readString(asRecord(asRecord(error.body)?.error), 'message') ??
-						(typeof error.body === 'string' ? error.body : undefined),
-					method,
-				},
-			);
-		}
+		if (error instanceof ApiError) throw sanitizeApiError(error);
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new NinoxAPIError(error.message, { cause: error, method });
