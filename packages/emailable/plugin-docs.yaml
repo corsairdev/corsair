@@ -1,0 +1,33 @@
+displayName: Emailable
+description: Read an Emailable account, verify addresses, and build an OAuth authorize URL.
+domain: emailable.com
+recommendedAuth: api_key
+overviewNote: |
+  The key is the api_key query parameter, or a JSON field on batch create. Empty-key requests to account, verify, batch status, and batch create each returned HTTP 403. Owner email, names, and batch address lists are not stored. The authorize URL is built and not fetched.
+examples:
+  read:
+    path: account.get
+    title: Read account credits
+    args: {}
+apiNotes:
+  account.get: |
+    GET /v1/account. Stores available credits. The owner email is not stored.
+  verifications.verify: |
+    GET /v1/verify. Stores the address, state, score, and reason.
+  batches.create: |
+    POST /v1/batch. Stores the batch id and message.
+  batches.get: |
+    GET /v1/batch. Stores the batch id and message.
+  oauth.authorize: |
+    Builds GET https://app.emailable.com/oauth/authorize. The client id is not stored.
+apiExamples:
+  account.get:
+    call: "{}"
+  verifications.verify:
+    call: "{ email: 'person@example.com' }"
+  batches.create:
+    call: "{ emails: ['person@example.com'] }"
+  batches.get:
+    call: "{ id: 'abc123' }"
+  oauth.authorize:
+    call: "{ clientId: 'abc123', redirectUri: 'https://example.com/callback' }"

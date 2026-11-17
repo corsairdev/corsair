@@ -1,0 +1,227 @@
+---
+title: "Emailable API reference"
+sidebarTitle: "API"
+description: "API reference for the Emailable plugin in Corsair: every `emailable.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Read remaining credits. The owner email is not stored.
+
+**Risk:** `read`
+
+```ts
+await corsair.emailable.api.account.get({});
+```
+
+**Input:** _empty object_
+
+GET /v1/account. Stores available credits. The owner email is not stored.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="account full type">
+
+```ts
+{
+  id: account,
+  availableCredits?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Batches
+
+### create
+
+`batches.create`
+
+Start a batch verification. This spends credits. Addresses are not stored.
+
+**Risk:** `write`
+
+```ts
+await corsair.emailable.api.batches.create({ emails: ['person@example.com'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emails` | `string[]` | Yes | — |
+
+POST /v1/batch. Stores the batch id and message.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batch` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="batch full type">
+
+```ts
+{
+  id: string,
+  message?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`batches.get`
+
+Read a batch. Addresses are not stored.
+
+**Risk:** `read`
+
+```ts
+await corsair.emailable.api.batches.get({ id: 'abc123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+GET /v1/batch. Stores the batch id and message.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batch` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="batch full type">
+
+```ts
+{
+  id: string,
+  message?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Oauth
+
+### authorize
+
+`oauth.authorize`
+
+Build the OAuth authorize URL. The client id is not stored.
+
+**Risk:** `read`
+
+```ts
+await corsair.emailable.api.oauth.authorize({ clientId: 'abc123', redirectUri: 'https://example.com/callback' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `clientId` | `string` | Yes | — |
+| `redirectUri` | `string` | Yes | — |
+| `state` | `string` | No | — |
+| `codeChallenge` | `string` | No | — |
+| `codeChallengeMethod` | `string` | No | — |
+
+Builds GET https://app.emailable.com/oauth/authorize. The client id is not stored.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+
+
+
+---
+
+## Verifications
+
+### verify
+
+`verifications.verify`
+
+Verify one address. This spends a credit. Names are not stored.
+
+**Risk:** `write`
+
+```ts
+await corsair.emailable.api.verifications.verify({ email: 'person@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+GET /v1/verify. Stores the address, state, score, and reason.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `verification` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="verification full type">
+
+```ts
+{
+  id: string,
+  state?: string,
+  score?: number,
+  reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

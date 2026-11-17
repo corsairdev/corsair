@@ -241,6 +241,7 @@ export const BaseProviders = [
 	'ecologi',
 	'elevenlabs',
 	'elorus',
+	'emailable',
 	'emailoctopus',
 	'emelia',
 	'encodian',
@@ -948,6 +949,7 @@ export const ProviderDisplayNames = {
 	ecologi: 'Ecologi',
 	elevenlabs: 'ElevenLabs',
 	elorus: 'Elorus',
+	emailable: 'Emailable',
 	emailoctopus: 'EmailOctopus',
 	emelia: 'Emelia',
 	encodian: 'Encodian',
@@ -1662,6 +1664,7 @@ export type AllProviders =
 	| 'ecologi'
 	| 'elevenlabs'
 	| 'elorus'
+	| 'emailable'
 	| 'emailoctopus'
 	| 'emelia'
 	| 'encodian'
