@@ -18,9 +18,11 @@ export function pathPart(value: string): string {
 }
 
 /**
- * ParseHub takes the key as `api_key`: in the query string for GET and
- * DELETE, in the form body for POST. Core's `request()` keeps its default
- * 429 retries (it honours Retry-After).
+ * ParseHub takes the key as the `api_key` query parameter on every method
+ * (its reference shows it in the POST form, but the query works too). Core's
+ * ApiError redacts `api_key` in the query; it would not redact a form body,
+ * so the key never goes there. Core's `request()` keeps its default 429
+ * retries (it honours Retry-After).
  */
 export async function makeParsehubRequest<T>(
 	apiKey: string,
@@ -37,24 +39,21 @@ export async function makeParsehubRequest<T>(
 	};
 
 	const method = req.method ?? 'GET';
-	const requestOptions: ApiRequestOptions =
-		method === 'POST'
+	const requestOptions: ApiRequestOptions = {
+		method,
+		url: `/api/v2${req.path}`,
+		query: { api_key: apiKey, ...req.query },
+		...(method === 'POST'
 			? {
-					method,
-					url: `/api/v2${req.path}`,
-					query: req.query,
 					body: new URLSearchParams(
-						Object.entries({ api_key: apiKey, ...req.form }).filter(
+						Object.entries(req.form ?? {}).filter(
 							(entry): entry is [string, string] => entry[1] !== undefined,
 						),
 					).toString(),
 					mediaType: 'application/x-www-form-urlencoded; charset=utf-8',
 				}
-			: {
-					method,
-					url: `/api/v2${req.path}`,
-					query: { api_key: apiKey, ...req.query },
-				};
+			: {}),
+	};
 
 	return await request<T>(config, requestOptions);
 }

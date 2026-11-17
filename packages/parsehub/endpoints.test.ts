@@ -135,7 +135,6 @@ describe('wire format of every operation', () => {
 			method: 'POST',
 			url: '/api/v2/projects/p1/run',
 			form: {
-				api_key: 'test-key',
 				start_url: 'http://www.example.com',
 				start_template: 'main_template',
 				start_value_override: '{"query":"San Francisco"}',
@@ -177,7 +176,7 @@ describe('wire format of every operation', () => {
 			reply: { ...RUN, status: 'cancelled', pages: 52 },
 			method: 'POST',
 			url: '/api/v2/runs/r1/cancel',
-			form: { api_key: 'test-key' },
+			form: {},
 			event: 'parsehub.runs.cancel',
 		},
 		{
@@ -200,14 +199,16 @@ describe('wire format of every operation', () => {
 		expect(options?.method).toBe(c.method);
 		expect(options?.url).toBe(c.url);
 		if (c.form) {
-			// POST takes the key and fields form-encoded, nothing in the query.
+			// POST fields go form-encoded; the key stays in the query, which
+			// core's ApiError redacts, and never in the body, which it doesn't.
 			expect(options?.mediaType).toBe(
 				'application/x-www-form-urlencoded; charset=utf-8',
 			);
 			expect(
 				Object.fromEntries(new URLSearchParams(String(options?.body))),
 			).toEqual(c.form);
-			expect(JSON.stringify(options?.query ?? {})).not.toContain('test-key');
+			expect(String(options?.body)).not.toContain('test-key');
+			expect(options?.query).toEqual({ api_key: 'test-key' });
 		} else {
 			expect(options?.query).toEqual({
 				api_key: 'test-key',
@@ -246,7 +247,7 @@ describe('inputs', () => {
 		await runProject(context('k'), { project_token: 'p1' });
 		expect(
 			Object.fromEntries(new URLSearchParams(String(lastCall().options?.body))),
-		).toEqual({ api_key: 'k' });
+		).toEqual({});
 	});
 
 	it('rejects a limit above 20 and a bad start_url before calling the API', async () => {
@@ -294,6 +295,30 @@ describe('responses', () => {
 		await expect(
 			deleteRun(context('k'), { run_token: 'r1' }),
 		).rejects.toThrow();
+	});
+
+	it('keeps the key out of a failed POST error', async () => {
+		// never: the mock rejects the way core's request() does on a 400.
+		mockRequest.mockImplementation(((_config: unknown, options: never) => {
+			throw new ApiError(
+				options,
+				{
+					url: 'https://www.parsehub.com/api/v2/runs/r1/cancel',
+					ok: false,
+					status: 400,
+					statusText: 'Bad Request',
+					body: 'No such run found.',
+				},
+				'Bad Request',
+			);
+		}) as never);
+		const error = await cancelRun(context('secret-key'), {
+			run_token: 'r1',
+		}).catch((e: unknown) => e);
+		expect(error).toBeInstanceOf(ApiError);
+		expect(JSON.stringify((error as ApiError).request)).not.toContain(
+			'secret-key',
+		);
 	});
 
 	it('lets an HTTP 401 ApiError through unchanged', async () => {

@@ -9,9 +9,9 @@ Use **ParseHub** through Corsair: one client, typed API calls, local DB sync.
 Things to know before you call:
 
 - **Projects are built in the ParseHub desktop app.** The API lists, runs and reads projects; it cannot create or edit them.
-- **A run is asynchronous.** `projects.run` returns the new run straight away. Poll `runs.get` until `data_ready` is true (ParseHub allows 25 polls in a run's first 5 minutes, then one every 3 minutes), then call `runs.getData`. `projects.getLastReadyData` skips the polling and returns the newest finished data.
+- **A run is asynchronous.** `projects.run` returns the new run straight away. Poll `runs.get` until `data_ready` is true or `status` is `cancelled` or `error` (ParseHub allows 25 polls in a run's first 5 minutes, then one every 3 minutes). A cancelled or failed run may have no data; when `data_ready` is true, call `runs.getData`. `projects.getLastReadyData` skips the polling and returns the newest finished data.
 - **Data comes as JSON or CSV.** `format: 'csv'` returns the CSV as a string.
-- **The key is the `api_key` parameter.** The client sends it in the query string for reads and in the form body for POST calls. With no key stored, Corsair raises `AuthMissingError` before any request; a key ParseHub rejects comes back as HTTP 401.
+- **The key is the `api_key` parameter.** The client sends it in the query string on every call, where Corsair redacts it from errors. With no key stored, Corsair raises `AuthMissingError` before any request; a key ParseHub rejects comes back as HTTP 401.
 - **Limits.** 5 requests a second (up to 25 queued); `projects.list` returns at most 20 projects per page.
 
 **What you get:**
