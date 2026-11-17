@@ -4689,6 +4689,14 @@
                 ]
               },
               {
+                "group": "Templated",
+                "pages": [
+                  "plugins/templated/overview",
+                  "plugins/templated/api",
+                  "plugins/templated/database"
+                ]
+              },
+              {
                 "group": "TextCortex",
                 "pages": [
                   "plugins/textcortex/overview",

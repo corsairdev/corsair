@@ -565,6 +565,7 @@ export const BaseProviders = [
 	'thanksio',
 	'tavily',
 	'tavilymcp',
+	'templated',
 	'textcortex',
 	'teamcamp',
 	'teams',
@@ -1213,6 +1214,7 @@ export const ProviderDisplayNames = {
 	thanksio: 'Thanks.io',
 	tavily: 'Tavily',
 	tavilymcp: 'Tavily MCP',
+	templated: 'Templated',
 	textcortex: 'TextCortex',
 	teamcamp: 'Teamcamp',
 	teams: 'Teams',
@@ -1868,6 +1870,7 @@ export type AllProviders =
 	| 'thanksio'
 	| 'tavily'
 	| 'tavilymcp'
+	| 'templated'
 	| 'textcortex'
 	| 'teamcamp'
 	| 'teams'
