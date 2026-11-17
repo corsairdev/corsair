@@ -10,15 +10,17 @@ export type DocparserQuery = Record<
 
 /**
  * Core's ApiError keeps the request's form fields. For imports those are the
- * whole document (base64) or its URL, so they are replaced before the error
+ * whole document (base64), its URL, file name and remote id, so they are replaced before the error
  * leaves the plugin. Status, body and rate-limit fields stay.
  */
 function withoutDocument(error: ApiError): ApiError {
 	const form = error.request.formData;
-	if (!form || !('file_content' in form || 'url' in form)) return error;
+	const fields = ['file_content', 'url', 'file_name', 'remote_id'];
+	if (!form || !fields.some((field) => field in form)) return error;
 	const cleaned = { ...form };
-	if ('file_content' in cleaned) cleaned.file_content = '[REDACTED]';
-	if ('url' in cleaned) cleaned.url = '[REDACTED]';
+	// The document, its URL and caller-chosen names can identify a person.
+	for (const field of fields)
+		if (field in cleaned) cleaned[field] = '[REDACTED]';
 	return new ApiError(
 		{ ...error.request, formData: cleaned },
 		{

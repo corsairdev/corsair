@@ -280,7 +280,11 @@ describe('docparser', () => {
 				{
 					method: 'POST',
 					url: '/v1/document/upload/abc123',
-					formData: { file_content: 'JVBERi0xSECRET', file_name: 'a.pdf' },
+					formData: {
+						file_content: 'JVBERi0xSECRET',
+						file_name: 'alice@example.com.pdf',
+						remote_id: 'alice@example.com',
+					},
 				},
 				{
 					url: 'https://api.docparser.com/v1/document/upload/abc123',
@@ -299,6 +303,7 @@ describe('docparser', () => {
 		expect(error).toBeInstanceOf(ApiError);
 		expect((error as ApiError).status).toBe(403);
 		expect(JSON.stringify((error as ApiError).request)).not.toContain('SECRET');
+		expect(JSON.stringify((error as ApiError).request)).not.toContain('alice');
 	});
 
 	it('schedules a reparse with document_ids[]', async () => {
