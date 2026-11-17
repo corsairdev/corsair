@@ -370,6 +370,7 @@ export const BaseProviders = [
 	'instantly',
 	'intercom',
 	'ip2proxy',
+	'ip2whois',
 	'jigsawstack',
 	'jira',
 	'jobnimbus',
@@ -1075,6 +1076,7 @@ export const ProviderDisplayNames = {
 	instantly: 'Instantly',
 	intercom: 'Intercom',
 	ip2proxy: 'IP2Proxy',
+	ip2whois: 'IP2WHOIS',
 	jigsawstack: 'JigsawStack',
 	jira: 'Jira',
 	jobnimbus: 'JobNimbus',
@@ -1787,6 +1789,7 @@ export type AllProviders =
 	| 'instantly'
 	| 'intercom'
 	| 'ip2proxy'
+	| 'ip2whois'
 	| 'jigsawstack'
 	| 'jira'
 	| 'jobnimbus'
