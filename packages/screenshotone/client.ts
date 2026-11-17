@@ -27,19 +27,23 @@ export async function screenshotoneRequest<T>(
 		VERSION: '1',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		HEADERS: { Accept: 'application/json' },
+		// The key goes in the documented X-Access-Key header, not the access_key query
+		// parameter: core's error redaction doesn't know access_key, so a query key would
+		// end up in ApiError.url and ApiError.request.
+		HEADERS: { Accept: 'application/json', 'X-Access-Key': apiKey ?? '' },
 	};
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url,
-		query: { ...query, access_key: apiKey ?? '' },
-		body,
+		...(query ? { query } : {}),
+		...(body === undefined ? {} : { body, mediaType: 'application/json' }),
 	};
 	return await request<T>(config, requestOptions, {
 		rateLimitConfig: NO_TRANSPORT_RETRIES,
 	});
 }
 
+// Responses arrive as untyped JSON; callers narrow each field before use.
 export function asRecord(value: unknown): Record<string, unknown> | undefined {
 	return value && typeof value === 'object'
 		? (value as Record<string, unknown>)
