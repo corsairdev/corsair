@@ -16,7 +16,7 @@ pnpm add @corsair-dev/searchapi
 | `locations.list` | `searchapi.api.locations.list` | `read` | Look up Google locations by name. |
 | `searches.get` | `searchapi.api.searches.get` | `read` | Read a cached search by id. Result rows are not stored. |
 | `searches.html` | `searchapi.api.searches.html` | `read` | Read cached search HTML by id. The HTML is not stored. |
-| `searches.run` | `searchapi.api.searches.run` | `write` | Run a search. This spends a credit. Results are not stored. |
+| `searches.run` | `searchapi.api.searches.run` | `read` | Run a search on any SearchAPI engine (google, google_news, bing, youtube, amazon_search, ...) with location, language, page and time filters. Returns organic results and every other section (answer box, AI overview, knowledge graph, news, local results). Uses one search credit. Results are not stored. |
 
 ## Auth
 

@@ -18,7 +18,7 @@ const NO_TRANSPORT_RETRIES: RateLimitConfig = {
 export async function searchApiGet<T>(
 	apiKey: string | undefined,
 	url: string,
-	query?: Record<string, string | number | undefined>,
+	query?: Record<string, string | number | boolean | undefined>,
 	accept = 'application/json',
 ): Promise<T> {
 	const config: OpenAPIConfig = {
@@ -38,6 +38,7 @@ export async function searchApiGet<T>(
 	});
 }
 
+// Responses arrive as untyped JSON; callers narrow each field before use.
 export function asRecord(value: unknown): Record<string, unknown> | undefined {
 	return value && typeof value === 'object'
 		? (value as Record<string, unknown>)

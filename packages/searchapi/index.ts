@@ -9,6 +9,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import type { SearchApiContext } from './context';
 import {
 	getAccount,
@@ -70,10 +71,9 @@ const read = (description: string) =>
 const searchapiEndpointMeta = {
 	'account.get': read('Read account usage and the hourly limit.'),
 	'locations.list': read('Look up Google locations by name.'),
-	'searches.run': {
-		riskLevel: 'write',
-		description: 'Run a search. This spends a credit. Results are not stored.',
-	},
+	'searches.run': read(
+		'Run a search on any SearchAPI engine (google, google_news, bing, youtube, amazon_search, ...) with location, language, page and time filters. Returns organic results and every other section (answer box, AI overview, knowledge graph, news, local results). Uses one search credit. Results are not stored.',
+	),
 	'searches.get': read(
 		'Read a cached search by id. Result rows are not stored.',
 	),
@@ -128,7 +128,8 @@ export function searchapi<const T extends SearchApiPluginOptions>(
 			if (source === 'endpoint' && options.key) return options.key;
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const key = await ctx.keys.get_api_key();
-				return key ?? '';
+				if (!key) throw new AuthMissingError('searchapi', 'api_key');
+				return key;
 			}
 			return '';
 		},

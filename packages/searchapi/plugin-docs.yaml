@@ -15,9 +15,9 @@ apiNotes:
   locations.list: |
     GET /api/v1/locations. Stores google_id, name, canonical name, country code, and target type.
   searches.run: |
-    GET /api/v1/search. Stores id, status, and engine. Returns title and link for organic results.
+    GET /api/v1/search. engine picks the source (google, google_news, google_maps, bing, youtube, amazon_search and the others in searchapi.io/docs). location, gl, hl, device, page, safe and time_period are typed; any other parameter the engine documents goes in params (for example { video_id } for youtube_transcripts). results holds organic_results (position, title, link, snippet, date, source, domain); sections holds every other part of the answer under SearchAPI's own key (answer_box, ai_overview, knowledge_graph, related_questions, top_stories, local_results, pagination). Uses one search credit. Stores id, status, and engine; the query and results are not stored.
   searches.get: |
-    GET /api/v1/searches/{id}. This is the json_url. Stores id, status, and engine.
+    GET /api/v1/searches/{id}. This is the json_url. Returns the same results and sections as searches.run. Stores id, status, and engine.
   searches.html: |
     GET /api/v1/searches/{id}.html. Returns the HTML and does not store it.
 apiExamples:
@@ -26,7 +26,7 @@ apiExamples:
   locations.list:
     call: "{ q: 'london' }"
   searches.run:
-    call: "{ engine: 'google', q: 'example' }"
+    call: "{ engine: 'google', q: 'coffee roasters', location: 'Austin,Texas,United States', time_period: 'last_month' }"
   searches.get:
     call: "{ id: 'search_example' }"
   searches.html:

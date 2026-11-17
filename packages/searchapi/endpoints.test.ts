@@ -3,6 +3,7 @@ import { ApiError, request } from 'corsair/http';
 import type { SearchApiContext } from './context';
 import {
 	getAccount,
+	getSearch,
 	getSearchHtml,
 	listLocations,
 	runSearch,
@@ -113,10 +114,153 @@ describe('searchapi', () => {
 			status: 'Success',
 			engine: 'google',
 		});
-		expect(result.results[0]?.link).toBe('https://example.com');
-		expect(JSON.stringify(result.results)).not.toContain('secret-query');
+		expect(result.results[0]).toEqual({
+			position: 1,
+			title: 'Example',
+			link: 'https://example.com',
+			snippet: 'secret-query',
+		});
+		// The caller gets the snippet; the stored row and the event never hold the query or results.
+		expect(JSON.stringify(upsert.mock.calls)).not.toContain('secret-query');
 		expect(upsert.mock.calls[0]?.[1]).toEqual(result.search);
 		expect(mockLog.mock.calls[0]?.[2]).toEqual({ count: 1 });
+	});
+
+	it('sends the common filters and engine params, and returns every other section', async () => {
+		// Shape from searchapi.io/docs/google (trimmed).
+		mockRequest.mockResolvedValue({
+			search_metadata: {
+				id: 'search_xyz',
+				status: 'Success',
+				json_url: 'https://www.searchapi.io/api/v1/searches/search_xyz',
+			},
+			search_parameters: { engine: 'google', q: 'coffee' },
+			search_information: { total_results: 1230000 },
+			answer_box: { type: 'organic_result', answer: 'Brewed drink' },
+			knowledge_graph: { title: 'Coffee' },
+			related_questions: [{ question: 'Is coffee healthy?' }],
+			organic_results: [
+				{
+					position: 1,
+					title: 'Coffee',
+					link: 'https://en.wikipedia.org/wiki/Coffee',
+					displayed_link: 'en.wikipedia.org › wiki › Coffee',
+					snippet: 'Coffee is a beverage.',
+					source: 'Wikipedia',
+					domain: 'en.wikipedia.org',
+					sitelinks: { inline: [] },
+				},
+			],
+			pagination: {
+				current: 2,
+				next: 'https://www.google.com/search?start=20',
+			},
+		});
+		const result = await runSearch(context('k'), {
+			engine: 'google',
+			q: 'coffee',
+			location: 'Austin,Texas,United States',
+			gl: 'us',
+			hl: 'en',
+			device: 'mobile',
+			page: 2,
+			time_period: 'last_week',
+			params: { nfpr: 1, verbatim: true },
+		});
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'GET',
+			url: '/api/v1/search',
+			query: {
+				engine: 'google',
+				q: 'coffee',
+				location: 'Austin,Texas,United States',
+				gl: 'us',
+				hl: 'en',
+				device: 'mobile',
+				page: 2,
+				time_period: 'last_week',
+				nfpr: 1,
+				verbatim: true,
+				api_key: 'k',
+			},
+		});
+		expect(result.results[0]?.snippet).toBe('Coffee is a beverage.');
+		expect(result.results[0]?.domain).toBe('en.wikipedia.org');
+		expect(Object.keys(result.sections).sort()).toEqual([
+			'answer_box',
+			'knowledge_graph',
+			'pagination',
+			'related_questions',
+			'search_information',
+		]);
+	});
+
+	it('runs an engine that takes no q through params', async () => {
+		mockRequest.mockResolvedValue({
+			search_metadata: { id: 'search_t', status: 'Success' },
+			search_parameters: { engine: 'youtube_transcripts' },
+			transcripts: [{ text: 'hello', start: 0 }],
+		});
+		const result = await runSearch(context('k'), {
+			engine: 'youtube_transcripts',
+			params: { video_id: 'dQw4w9WgXcQ' },
+		});
+		expect(mockRequest.mock.calls[0]?.[1]?.query).toMatchObject({
+			engine: 'youtube_transcripts',
+			video_id: 'dQw4w9WgXcQ',
+		});
+		expect(result.results).toEqual([]);
+		expect(result.sections.transcripts).toEqual([{ text: 'hello', start: 0 }]);
+	});
+
+	it('keeps params from overriding the key or the engine', async () => {
+		await expect(
+			runSearch(context('k'), {
+				engine: 'google',
+				q: 'x',
+				params: { api_key: 'other' },
+			}),
+		).rejects.toThrow();
+		await expect(
+			runSearch(context('k'), { engine: 'google', params: { engine: 'bing' } }),
+		).rejects.toThrow();
+		await expect(
+			runSearch(context('k'), { engine: 'google' }),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('reads a cached search by id', async () => {
+		mockRequest.mockResolvedValue({
+			search_metadata: { id: 'search_abc', status: 'Success' },
+			search_parameters: { engine: 'google_news', q: 'x' },
+			organic_results: [
+				{
+					position: 1,
+					title: 'T',
+					link: 'https://n.example/a',
+					date: '2 hours ago',
+				},
+			],
+		});
+		const result = await getSearch(context('k'), { id: 'search_abc' });
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'GET',
+			url: '/api/v1/searches/search_abc',
+		});
+		expect(result.search).toEqual({
+			id: 'search_abc',
+			status: 'Success',
+			engine: 'google_news',
+		});
+		expect(result.results[0]?.date).toBe('2 hours ago');
+	});
+
+	it('rejects a cached search response with no id instead of reusing the requested one', async () => {
+		mockRequest.mockResolvedValue({ organic_results: [] });
+		await expect(getSearch(context('k'), { id: 'search_abc' })).rejects.toThrow(
+			'missing an id',
+		);
 	});
 
 	it('returns cached HTML and does not store it', async () => {
