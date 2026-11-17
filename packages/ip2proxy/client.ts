@@ -22,6 +22,8 @@ export async function makeIp2proxyRequest<T>(
 	query: {
 		ip?: string;
 		package?: string;
+		/** Ask for the remaining credit balance instead of a lookup. */
+		check?: boolean;
 	} = {},
 ): Promise<T> {
 	const config: OpenAPIConfig = {
@@ -37,12 +39,14 @@ export async function makeIp2proxyRequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method: 'GET',
 		url: '/',
-		query: {
-			key: apiKey,
-			format: 'json',
-			ip: query.ip,
-			package: query.package,
-		},
+		query: query.check
+			? { key: apiKey, check: '1' }
+			: {
+					key: apiKey,
+					format: 'json',
+					ip: query.ip,
+					package: query.package,
+				},
 	};
 
 	return await request<T>(config, requestOptions, {

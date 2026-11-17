@@ -11,7 +11,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import type { Ip2proxyContext } from './context';
-import { Proxy } from './endpoints';
+import { Account, Proxy } from './endpoints';
 import {
 	Ip2proxyEndpointInputSchemas,
 	Ip2proxyEndpointOutputSchemas,
@@ -34,6 +34,7 @@ export type Ip2proxyKeyBuilderContext =
 
 const ip2proxyEndpointsNested = {
 	proxy: Proxy,
+	account: Account,
 } as const;
 
 const ip2proxyWebhooksNested = {} as const;
@@ -46,12 +47,19 @@ export type Ip2proxyEndpoints = {
 	proxy: {
 		checkProxy: Ip2proxyBoundEndpoints['proxy']['checkProxy'];
 	};
+	account: {
+		getCredits: Ip2proxyBoundEndpoints['account']['getCredits'];
+	};
 };
 
 export const ip2proxyEndpointSchemas = {
 	'proxy.checkProxy': {
 		input: Ip2proxyEndpointInputSchemas.checkProxy,
 		output: Ip2proxyEndpointOutputSchemas.checkProxy,
+	},
+	'account.getCredits': {
+		input: Ip2proxyEndpointInputSchemas.getCredits,
+		output: Ip2proxyEndpointOutputSchemas.getCredits,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof ip2proxyEndpointsNested
@@ -64,6 +72,11 @@ const ip2proxyEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Check whether an IP address is a proxy, VPN, Tor exit, or data-center address.',
+	},
+	'account.getCredits': {
+		riskLevel: 'read',
+		description:
+			'Get the credits left on the API key. The balance lags by about 10 minutes.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof ip2proxyEndpointsNested>;
 

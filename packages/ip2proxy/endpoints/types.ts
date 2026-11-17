@@ -72,12 +72,31 @@ export const CheckProxyResponseSchema = z
 
 export type CheckProxyResponse = z.infer<typeof CheckProxyResponseSchema>;
 
+export const GetCreditsInputSchema = z.object({});
+
+export type GetCreditsInput = z.infer<typeof GetCreditsInputSchema>;
+
+/**
+ * `?key=…&check=1` returns the remaining credits in `response`. IP2Location's
+ * Go client reads it as a string; a number is accepted too.
+ * https://www.ip2location.com/web-service/ip2proxy
+ */
+export const GetCreditsResponseSchema = z
+	.object({
+		response: NumberOrString,
+	})
+	.passthrough();
+
+export type GetCreditsResponse = z.infer<typeof GetCreditsResponseSchema>;
+
 export const Ip2proxyEndpointInputSchemas = {
 	checkProxy: CheckProxyInputSchema,
+	getCredits: GetCreditsInputSchema,
 } as const;
 
 export const Ip2proxyEndpointOutputSchemas = {
 	checkProxy: CheckProxyResponseSchema,
+	getCredits: GetCreditsResponseSchema,
 } as const;
 
 export type Ip2proxyEndpointInputs = {

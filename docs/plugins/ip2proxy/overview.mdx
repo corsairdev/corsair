@@ -10,7 +10,7 @@ Each lookup spends credits. PX1 spends 1 credit and PX11 spends 11. A successful
 
 **What you get:**
 
-- 1 typed API operations
+- 2 typed API operations
 - 1 synced entity (`checks`) for fast `.search()` / `.list()`
 
 ## Setup
@@ -97,17 +97,17 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**Read**
-
-_No read-style endpoint inferred; pick any operation from the [API](/plugins/ip2proxy/api) reference._
-
-
 **Check whether an IP is a proxy**
 
 ```ts
 const tenant = corsair.withTenant('acme');
 await tenant.ip2proxy.api.proxy.checkProxy({ ip: '8.8.8.8' });
 ```
+
+
+**Write**
+
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/ip2proxy/api) reference._
 
 
 See the full list on the [API](/plugins/ip2proxy/api) page.

@@ -1,5 +1,6 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
+import { getCredits } from './endpoints/account';
 import { checkProxy } from './endpoints/proxy';
 import { CheckProxyResponseSchema } from './endpoints/types';
 import type { Ip2proxyContext } from './index';
@@ -244,5 +245,50 @@ describe('proxy.checkProxy', () => {
 			}),
 		).resolves.toEqual(PX11_SAMPLE);
 		warn.mockRestore();
+	});
+});
+
+describe('account.getCredits', () => {
+	beforeEach(() => {
+		jest.clearAllMocks();
+	});
+
+	it('sends key and check=1 without lookup fields and returns the balance', async () => {
+		mockRequest.mockResolvedValue({ response: '9989' });
+
+		const result = await getCredits(context('test-key'), {});
+
+		expect(result).toEqual({ response: '9989' });
+		const options = mockRequest.mock.calls[0]?.[1];
+		expect(options).toMatchObject({ method: 'GET', url: '/' });
+		expect(options?.query).toEqual({ key: 'test-key', check: '1' });
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'ip2proxy.account.getCredits',
+			{},
+			'completed',
+		);
+	});
+
+	it('accepts a numeric balance', async () => {
+		mockRequest.mockResolvedValue({ response: 9989 });
+		await expect(getCredits(context('test-key'), {})).resolves.toEqual({
+			response: 9989,
+		});
+	});
+
+	it('treats the bare null body an unknown key gets as an auth failure', async () => {
+		mockRequest.mockResolvedValue(null);
+		await expect(getCredits(context('test-key'), {})).rejects.toThrow(
+			/invalid API key/,
+		);
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
+	it('refuses a missing key before any request', async () => {
+		await expect(getCredits(context(''), {})).rejects.toBeInstanceOf(
+			AuthMissingError,
+		);
+		expect(mockRequest).not.toHaveBeenCalled();
 	});
 });

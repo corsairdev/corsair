@@ -8,6 +8,35 @@ description: "API reference for the IP2Proxy plugin in Corsair: every `ip2proxy.
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
 
+## Account
+
+### getCredits
+
+`account.getCredits`
+
+Get the credits left on the API key. The balance lags by about 10 minutes.
+
+**Risk:** `read`
+
+```ts
+await corsair.ip2proxy.api.account.getCredits({});
+```
+
+**Input:** _empty object_
+
+Returns the credits left on the key in `response`. The balance lags by about 10 minutes. It spends no credits.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `response` | `number \| string` | Yes | — |
+
+
+
+---
+
 ## Proxy
 
 ### checkProxy
@@ -16,7 +45,7 @@ description: "API reference for the IP2Proxy plugin in Corsair: every `ip2proxy.
 
 Check whether an IP address is a proxy, VPN, Tor exit, or data-center address.
 
-**Risk:** `destructive`
+**Risk:** `read`
 
 ```ts
 await corsair.ip2proxy.api.proxy.checkProxy({ ip: '8.8.8.8', package: 'PX1' });
@@ -29,7 +58,7 @@ await corsair.ip2proxy.api.proxy.checkProxy({ ip: '8.8.8.8', package: 'PX1' });
 | `ip` | `string` | No | IPv4 or IPv6 address. Omit it and the service looks up the caller address. |
 | `package` | `PX1 \| PX2 \| PX3 \| PX4 \| PX5 \| PX6 \| PX7 \| PX8 \| PX9 \| PX10 \| PX11` | No | PX1 through PX11. Omit it and the service uses PX1. PX1 spends 1 credit and PX11 spends 11. |
 
-Omit `ip` and the service looks up the caller address. Omit `package` and the service uses PX1. Lower packages leave the later response fields out, so only `response` is required.
+Omit `ip` and the service looks up the caller address. Omit `package` and the service uses PX1. Lower packages leave the later response fields out, so only `response` is required. A lookup with an explicit `ip` is saved to the `checks` table under that address, replacing the previous row for it; a lookup without `ip` is returned but not saved, and a failed save does not fail the lookup.
 
 
 
@@ -45,11 +74,11 @@ Omit `ip` and the service looks up the caller address. Omit `package` and the se
 | `isp` | `string` | No | — |
 | `domain` | `string` | No | — |
 | `usageType` | `string` | No | — |
-| `asn` | `string` | No | — |
+| `asn` | `number \| string` | No | — |
 | `as` | `string` | No | — |
-| `lastSeen` | `number` | No | — |
+| `lastSeen` | `number \| string` | No | — |
 | `proxyType` | `string` | No | — |
-| `isProxy` | `YES \| NO` | No | — |
+| `isProxy` | `string` | No | — |
 | `threat` | `string` | No | — |
 | `provider` | `string` | No | — |
 | `creditsConsumed` | `number` | No | — |
