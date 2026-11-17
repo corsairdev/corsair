@@ -36,7 +36,7 @@ describe('screenshotone', () => {
 		jest.clearAllMocks();
 	});
 
-	it('stores plan usage and sends access_key as a query param', async () => {
+	it('stores plan usage and sends the key in the X-Access-Key header, not the query', async () => {
 		const upsert = jest.fn().mockResolvedValue(undefined);
 		mockRequest.mockResolvedValue({
 			total: 10000,
@@ -56,7 +56,12 @@ describe('screenshotone', () => {
 		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
 			method: 'GET',
 			url: '/usage',
-			query: { access_key: 'sekrit' },
+		});
+		expect(JSON.stringify(mockRequest.mock.calls[0]?.[1])).not.toContain(
+			'sekrit',
+		);
+		expect(mockRequest.mock.calls[0]?.[0]?.HEADERS).toMatchObject({
+			'X-Access-Key': 'sekrit',
 		});
 		expect(mockRequest.mock.calls[0]?.[0]?.TOKEN).toBeUndefined();
 	});
@@ -91,18 +96,125 @@ describe('screenshotone', () => {
 		expect(mockLog.mock.calls[0]?.[2]).toEqual({ count: 1 });
 		expect(JSON.stringify(mockLog.mock.calls[0]?.[2])).not.toContain('secret');
 		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
-			method: 'GET',
+			method: 'POST',
 			url: '/take',
-			query: expect.objectContaining({
+			body: { response_type: 'json', url: 'https://secret.example' },
+		});
+	});
+
+	it('sends render options and returns the cache url', async () => {
+		// Live POST /take response with cache=true on 11-17 (hashes shortened).
+		mockRequest.mockResolvedValue({
+			screenshot_url: 'https://files.screenshotonecache.com/888d/1794-dca2.jpg',
+			cache_url: 'https://files.screenshotonecache.com/888d/1794-dca2.jpg',
+		});
+		const result = await takeScreenshot(context('k'), {
+			url: 'https://example.com',
+			format: 'jpg',
+			full_page: true,
+			viewport_width: 1024,
+			block_cookie_banners: true,
+			wait_until: ['networkidle2'],
+			cache: true,
+			cache_ttl: 14400,
+		});
+		expect(result).toEqual({
+			screenshotUrl: 'https://files.screenshotonecache.com/888d/1794-dca2.jpg',
+			cacheUrl: 'https://files.screenshotonecache.com/888d/1794-dca2.jpg',
+		});
+		expect(mockRequest.mock.calls[0]?.[1]?.body).toEqual({
+			url: 'https://example.com',
+			format: 'jpg',
+			full_page: true,
+			viewport_width: 1024,
+			block_cookie_banners: true,
+			wait_until: ['networkidle2'],
+			cache: true,
+			cache_ttl: 14400,
+			response_type: 'json',
+		});
+	});
+
+	it('renders html instead of a url', async () => {
+		mockRequest.mockResolvedValue({
+			screenshot_url: 'https://files.screenshotonecache.com/8b66.png',
+		});
+		await takeScreenshot(context('k'), { html: '<h1>hi</h1>', format: 'png' });
+		expect(mockRequest.mock.calls[0]?.[1]?.body).toEqual({
+			html: '<h1>hi</h1>',
+			format: 'png',
+			response_type: 'json',
+		});
+	});
+
+	it('needs exactly one of url, html or markdown, and rejects unknown options', async () => {
+		await expect(takeScreenshot(context('k'), {})).rejects.toThrow();
+		await expect(
+			takeScreenshot(context('k'), { url: 'https://a.b', html: '<p/>' }),
+		).rejects.toThrow();
+		await expect(
+			takeScreenshot(context('k'), {
+				url: 'https://a.b',
+				colour: 'red',
+			} as never),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('sends animate options as query params', async () => {
+		mockRequest.mockResolvedValue({
+			screenshot_url: 'https://files.screenshotonecache.com/a.mp4',
+		});
+		await takeAnimation(context('k'), {
+			url: 'https://example.com',
+			scenario: 'scroll',
+			duration: 3,
+			format: 'mp4',
+			wait_until: ['load', 'networkidle0'],
+		});
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'GET',
+			url: '/animate',
+			query: {
+				url: 'https://example.com',
+				scenario: 'scroll',
+				duration: 3,
+				format: 'mp4',
+				wait_until: 'load,networkidle0',
 				response_type: 'json',
-				url: 'https://secret.example',
-			}),
+			},
 		});
 	});
 
 	it('rejects an empty url before calling the API', async () => {
 		await expect(takeAnimation(context(), { url: '' })).rejects.toThrow();
 		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('reads the live bulk shape (a bare array) and returns each status when executed', async () => {
+		// Live POST /bulk with execute true on 11-17.
+		mockRequest.mockResolvedValue([
+			{
+				url: 'https://api.screenshotone.com/take?response_type=json&format=jpg&url=https%3A%2F%2Fexample.com&access_key=sekrit',
+				response: { is_successful: true, status: 200, statusText: 'OK' },
+			},
+		]);
+		const result = await takeBulk(context('sekrit'), {
+			urls: ['https://example.com'],
+			execute: true,
+			options: { format: 'jpg' },
+		});
+		expect(result.urls).toEqual([
+			'https://api.screenshotone.com/take?response_type=json&format=jpg&url=https%3A%2F%2Fexample.com',
+		]);
+		expect(result.results).toEqual([
+			{ url: result.urls[0], isSuccessful: true, status: 200 },
+		]);
+		expect(mockRequest.mock.calls[0]?.[1]?.body).toEqual({
+			execute: true,
+			options: { format: 'jpg' },
+			requests: [{ url: 'https://example.com' }],
+		});
 	});
 
 	it('returns bulk urls and strips access_key', async () => {

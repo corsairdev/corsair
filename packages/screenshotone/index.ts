@@ -9,6 +9,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import type { ScreenshotOneContext } from './context';
 import {
 	getUsage,
@@ -18,12 +19,13 @@ import {
 	takeScreenshot,
 } from './endpoints';
 import {
+	AnimateInputSchema,
 	BulkInputSchema,
 	BulkResponseSchema,
 	DeviceListResponseSchema,
 	EmptyInputSchema,
 	ShotResponseSchema,
-	UrlInputSchema,
+	TakeInputSchema,
 	UsageResponseSchema,
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
@@ -56,8 +58,8 @@ export const screenshotoneEndpointSchemas = {
 		input: EmptyInputSchema,
 		output: DeviceListResponseSchema,
 	},
-	'shots.take': { input: UrlInputSchema, output: ShotResponseSchema },
-	'shots.animate': { input: UrlInputSchema, output: ShotResponseSchema },
+	'shots.take': { input: TakeInputSchema, output: ShotResponseSchema },
+	'shots.animate': { input: AnimateInputSchema, output: ShotResponseSchema },
 	'shots.bulk': { input: BulkInputSchema, output: BulkResponseSchema },
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof screenshotoneEndpointsNested
@@ -73,17 +75,18 @@ const screenshotoneEndpointMeta = {
 	),
 	'shots.take': {
 		riskLevel: 'write',
-		description: 'Take a screenshot. This spends a request from the plan.',
+		description:
+			'Screenshot a url, HTML or Markdown as an image or PDF, with viewport, device, full page, selector, blocking and caching options. Returns a link to the file. Spends a request from the plan.',
 	},
 	'shots.animate': {
 		riskLevel: 'write',
 		description:
-			'Take an animated screenshot. This spends a request from the plan.',
+			'Record a page as a video or GIF (default or scroll scenario). Returns a link to the file. Spends a request from the plan.',
 	},
 	'shots.bulk': {
 		riskLevel: 'write',
 		description:
-			'Build bulk screenshot URLs. execute true spends requests immediately.',
+			'Build up to 20 screenshot requests at once; with execute true they run now (one plan request each) and each url gets its status.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof screenshotoneEndpointsNested
@@ -133,7 +136,8 @@ export function screenshotone<const T extends ScreenshotOnePluginOptions>(
 			if (source === 'endpoint' && options.key) return options.key;
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const key = await ctx.keys.get_api_key();
-				return key ?? '';
+				if (!key) throw new AuthMissingError('screenshotone', 'api_key');
+				return key;
 			}
 			return '';
 		},

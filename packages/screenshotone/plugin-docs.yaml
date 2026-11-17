@@ -3,7 +3,7 @@ description: Read ScreenshotOne usage and devices, and take a still, animated, o
 domain: screenshotone.com
 recommendedAuth: api_key
 overviewNote: |
-  The key is the access_key query parameter. Empty-key requests returned HTTP 400. GET /usage and GET /devices returned access_key_required. GET /take and GET /animate returned request_not_valid because an empty access_key is not allowed. POST /bulk with an empty access_key query returned access_key_required. POST /take with an empty access_key in the JSON body returned request_not_valid. The plugin uses GET /take so the response is JSON. Screenshot URLs are returned and not stored. User agent strings are not stored. Take, animate, and bulk spend plan requests.
+  The key is sent in the X-Access-Key header, so it never appears in a URL or in an error. take, animate and bulk with execute true spend plan requests (the free plan has 100 a month). Screenshot links are returned and not stored. User agent strings are not stored.
 examples:
   read:
     path: usage.get
@@ -15,19 +15,19 @@ apiNotes:
   devices.list: |
     GET /devices. Stores id, name, width, and height.
   shots.take: |
-    GET /take with response_type=json. Returns screenshot_url. The target URL is not stored.
+    POST /take with a JSON body and response_type=json, so long html or markdown fits. Pass exactly one of url, html or markdown. Options include format (png, jpg, webp, pdf and more), full_page, selector, viewport_width/height, viewport_device (an id from devices.list), delay, wait_until, the block_* switches, dark_mode and cache/cache_ttl. Returns screenshotUrl, and cacheUrl when cache is true. The target URL is not stored.
   shots.animate: |
-    GET /animate with response_type=json. Returns screenshot_url.
+    GET /animate with response_type=json. scenario is default or scroll, duration 1-30 s, format mp4, mov, avi, webm or gif. Returns screenshotUrl.
   shots.bulk: |
-    POST /bulk. Returns response URLs with access_key removed. execute defaults to false.
+    POST /bulk. options apply to every url. Returns the /take url built for each request with access_key removed; with execute true (default false) the requests run now and results gives each one's status.
 apiExamples:
   usage.get:
     call: "{}"
   devices.list:
     call: "{}"
   shots.take:
-    call: "{ url: 'https://example.com' }"
+    call: "{ url: 'https://example.com', format: 'png', full_page: true, block_cookie_banners: true }"
   shots.animate:
     call: "{ url: 'https://example.com', scenario: 'scroll' }"
   shots.bulk:
-    call: "{ urls: ['https://example.com'] }"
+    call: "{ urls: ['https://example.com'], options: { format: 'png' } }"
