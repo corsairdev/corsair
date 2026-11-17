@@ -1,20 +1,14 @@
 ---
 title: "Nango plugin"
 sidebarTitle: "Overview"
-description: "Manage Nango connections and Connect sessions."
+description: "Nango plugin for Corsair"
 ---
 
 Use **Nango** through Corsair: one client, typed API calls.
 
-The [Nango HTTP API](https://nango.dev/docs/llms.txt) uses an environment API key as a bearer token. The key must have the appropriate connection and Connect session scopes. This plugin covers 11 connection and session operations; Nango's other HTTP API families are not included.
-
-`sessions.get` and `sessions.delete` require a short-lived `session_token`, not the environment key. Nango's server implementation and tests show that session retrieval returns the session settings rather than the token shape described in its generated OpenAPI. Connection retrieval can return sensitive credentials; handle its result accordingly. List connections supports `page`, `limit`, and `tags`.
-
-No inbound webhook processing, webhook signing-key administration, or automatic retries are included. Environment, integration, function, sync, tool, proxy, and provider operations are deferred.
-
 **What you get:**
 
-- 11 typed API operations
+- 35 typed API operations
 
 ## Setup
 
@@ -70,7 +64,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+Store the Nango API key before the first call: `pnpm corsair setup --plugin=nango --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
 
 ```ts
 nango()
@@ -100,21 +94,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`connections.list`**
+**`connections.get`**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.nango.api.connections.list({ page: 2, limit: 10 });
+await tenant.nango.api.connections.get({});
 ```
 
 
-**`sessions.create`**
+**`actions.trigger`**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.nango.api.sessions.create({
-	tags: { end_user_id: 'example' },
-});
+await tenant.nango.api.actions.trigger({});
 ```
 
 

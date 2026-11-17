@@ -171,7 +171,7 @@ const endpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Delete a deployed function (not repo-deployed or catalog ones).',
+			'Delete a deployed function, e.g. a catalog sync enabled in the dashboard; functions deployed from a repo with the nango CLI cannot be deleted here.',
 	},
 	'scripts.getConfig': {
 		riskLevel: 'read',
