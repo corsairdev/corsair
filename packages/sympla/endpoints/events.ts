@@ -57,10 +57,7 @@ export const getEvent: CorsairEndpoint<
 	return result;
 };
 
-/**
- * Saves each event's id and name. A reply without a name leaves a stored
- * event as it is, so a narrow `fields` read cannot undo a newer name.
- */
+/** Saves each event's id and name. Replies without a name are skipped. */
 async function storeEvents(
 	ctx: SymplaContext,
 	events: SymplaEvent[],
@@ -68,14 +65,12 @@ async function storeEvents(
 	if (!ctx.db?.events) return;
 	for (const event of events) {
 		const id = String(event.id);
+		// The row is the id and name only, so a reply without a name has
+		// nothing to store; skipping it means a narrow read never overwrites
+		// a name another request saved.
+		if (event.name == null) continue;
 		try {
-			const existing = await ctx.db.events.findByEntityId(id);
-			if (event.name == null && existing) continue;
-			const row = SymplaEventEntity.safeParse({
-				...existing?.data,
-				id,
-				name: event.name ?? undefined,
-			});
+			const row = SymplaEventEntity.safeParse({ id, name: event.name });
 			if (!row.success) continue;
 			await ctx.db.events.upsertByEntityId(id, row.data);
 		} catch {

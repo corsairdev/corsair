@@ -520,13 +520,13 @@ describe('stored events', () => {
 		});
 	});
 
-	it('leaves a stored event alone when a narrow fields read has no name', async () => {
+	it('skips events without a name, stored or not', async () => {
 		const upsert = jest.fn().mockResolvedValue(undefined);
-		const find = jest
-			.fn()
-			.mockResolvedValue({ data: { id: 'abc123def456', name: 'Old' } });
-		mockRequest.mockResolvedValue({ data: [{ id: 'abc123def456' }], ...PAGE });
-		await listEvents(context('k', { upsert, find }), { fields: 'id' });
+		mockRequest.mockResolvedValue({
+			data: [{ id: 'abc123def456' }, { id: 'new-1', name: null }],
+			...PAGE,
+		});
+		await listEvents(context('k', { upsert }), { fields: 'id' });
 		expect(upsert).not.toHaveBeenCalled();
 	});
 
