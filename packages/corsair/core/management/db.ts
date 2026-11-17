@@ -99,6 +99,10 @@ export async function callPluginDb(
 	client: unknown,
 	route: { plugin: string; entityType: string; method: string },
 	args: unknown[],
+	// A client bound to one account judges each call by that account's own
+	// mode (guardEntityClients); the name in the request may not be the key
+	// a mode was set under, so it can't stand in for the account here.
+	bound = false,
 ): Promise<unknown> {
 	const risk = Object.hasOwn(DB_METHOD_RISK, route.method)
 		? DB_METHOD_RISK[route.method]
@@ -110,11 +114,13 @@ export async function callPluginDb(
 			`Unknown db method "${route.method}" — expected one of ${Object.keys(DB_METHOD_RISK).join(', ')}`,
 		);
 	}
-	// Entity clients carry no permission wrapper, so the mode is checked here.
-	assertModeAllows(
-		`${route.plugin}.db.${route.entityType}.${route.method}`,
-		risk,
-	);
+	if (!bound) {
+		assertModeAllows(
+			`${route.plugin}.db.${route.entityType}.${route.method}`,
+			risk,
+			route.plugin,
+		);
+	}
 	const plugin = (client as Record<string, unknown> | undefined)?.[
 		route.plugin
 	];

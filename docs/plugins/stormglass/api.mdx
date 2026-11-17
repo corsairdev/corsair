@@ -1,0 +1,650 @@
+---
+title: "Stormglass API reference"
+sidebarTitle: "API"
+description: "API reference for the Stormglass plugin in Corsair: every `stormglass.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Astronomy
+
+### get
+
+`astronomy.get`
+
+Get sunrise, sunset, dawn, dusk, moonrise, moonset and moon phase per day for one coordinate.
+
+**Risk:** `read`
+
+```ts
+await corsair.stormglass.api.astronomy.get({ lat: 58.7984, lng: 17.8081, start: '2024-06-21', end: '2024-06-23' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | — |
+| `lng` | `number` | Yes | — |
+| `start` | `string \| number` | No | First hour, UTC. UNIX seconds or ISO (2024-01-01 or 2024-01-01T06). |
+| `end` | `string \| number` | No | Last hour, UTC. UNIX seconds or ISO. At most 10 days after start. |
+
+GET /v2/astronomy/point. One entry per day. Rise and set times are null on days they don't happen.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `days` | `object[]` | Yes | — |
+| `quota` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="days full type">
+
+```ts
+{
+  time: string,
+  sunrise?: string | null,
+  sunset?: string | null,
+  moonrise?: string | null,
+  moonset?: string | null,
+  moonFraction?: number,
+  moonPhase?: {
+    current?: {
+      text?: string,
+      time?: string,
+      value?: number
+    },
+    closest?: {
+      text?: string,
+      time?: string,
+      value?: number
+    }
+  },
+  astronomicalDawn?: string | null,
+  astronomicalDusk?: string | null,
+  civilDawn?: string | null,
+  civilDusk?: string | null,
+  nauticalDawn?: string | null,
+  nauticalDusk?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="quota full type">
+
+```ts
+{
+  id: string,
+  dailyQuota?: number,
+  requestCount?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Bio
+
+### get
+
+`bio.get`
+
+Get hourly bio data (water chemistry, salinity, soil moisture and temperature) for one coordinate.
+
+**Risk:** `read`
+
+```ts
+await corsair.stormglass.api.bio.get({ lat: 58.7984, lng: 17.8081, params: 'salinity,ph' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | — |
+| `lng` | `number` | Yes | — |
+| `params` | `string` | Yes | Comma-separated parameters, e.g. airTemperature,waveHeight. |
+| `start` | `string \| number` | No | First hour, UTC. UNIX seconds or ISO (2024-01-01 or 2024-01-01T06). |
+| `end` | `string \| number` | No | Last hour, UTC. UNIX seconds or ISO. At most 10 days after start. |
+| `source` | `string` | No | Comma-separated sources, e.g. sg or noaa,dwd. The first one fills `values`. |
+
+GET /v2/bio/point. params: chlorophyll, iron, nitrate, oxygen, ph, phosphate, phyto, phytoplankton, salinity, silicate, surfaceTemperature, soilMoisture and soilTemperature (each also at 10cm, 40cm, 100cm). Air and water temperature come from weather.get.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hours` | `object[]` | Yes | — |
+| `quota` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="hours full type">
+
+```ts
+{
+  time: string,
+  values: Record<string, number>,
+  sources: Record<string, Record<string, number>>
+}[]
+```
+</Accordion>
+
+<Accordion title="quota full type">
+
+```ts
+{
+  id: string,
+  dailyQuota?: number,
+  requestCount?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Elevation
+
+### get
+
+`elevation.get`
+
+Get elevation (land) or depth (sea, negative) in meters for one coordinate.
+
+**Risk:** `read`
+
+```ts
+await corsair.stormglass.api.elevation.get({ lat: 58.7984, lng: 17.8081 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | — |
+| `lng` | `number` | Yes | — |
+
+GET /v2/elevation/point. Meters; negative at sea. Stored per coordinate.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `point` | `object` | Yes | — |
+| `quota` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="point full type">
+
+```ts
+{
+  id: string,
+  elevation?: number
+}
+```
+</Accordion>
+
+<Accordion title="quota full type">
+
+```ts
+{
+  id: string,
+  dailyQuota?: number,
+  requestCount?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Solar
+
+### get
+
+`solar.get`
+
+Get hourly solar values (uvIndex, radiation) for one coordinate.
+
+**Risk:** `read`
+
+```ts
+await corsair.stormglass.api.solar.get({ lat: 58.7984, lng: 17.8081, params: 'uvIndex' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | — |
+| `lng` | `number` | Yes | — |
+| `params` | `string` | Yes | Comma-separated parameters, e.g. airTemperature,waveHeight. |
+| `start` | `string \| number` | No | First hour, UTC. UNIX seconds or ISO (2024-01-01 or 2024-01-01T06). |
+| `end` | `string \| number` | No | Last hour, UTC. UNIX seconds or ISO. At most 10 days after start. |
+| `source` | `string` | No | Comma-separated sources, e.g. sg or noaa,dwd. The first one fills `values`. |
+
+GET /v2/solar/point. params: uvIndex, solarDownwardRadiationFlux, surfaceNetShortwaveRadiationDownwardsFlux.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hours` | `object[]` | Yes | — |
+| `quota` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="hours full type">
+
+```ts
+{
+  time: string,
+  values: Record<string, number>,
+  sources: Record<string, Record<string, number>>
+}[]
+```
+</Accordion>
+
+<Accordion title="quota full type">
+
+```ts
+{
+  id: string,
+  dailyQuota?: number,
+  requestCount?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Stations
+
+### area
+
+`stations.area`
+
+List tide stations inside a bounding box (lat,lng:lat,lng).
+
+**Risk:** `read`
+
+```ts
+await corsair.stormglass.api.stations.area({ box: '59.0,18.0:58.0,17.0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `box` | `string` | Yes | Top-right and bottom-left corners as lat,lng:lat,lng. |
+
+GET /v2/tide/stations/area. box is the top-right and bottom-left corners, lat,lng:lat,lng.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="stations full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  lat?: number,
+  lng?: number,
+  source?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`stations.list`
+
+List every tide station Stormglass has data for.
+
+**Risk:** `read`
+
+```ts
+await corsair.stormglass.api.stations.list({});
+```
+
+**Input:** _empty object_
+
+GET /v2/tide/stations. Stores each station with source:name as the id.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="stations full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  lat?: number,
+  lng?: number,
+  source?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tides
+
+### extremes
+
+`tides.extremes`
+
+Get high and low tide times and heights near a coordinate, up to 10 days, from the nearest tide station.
+
+**Risk:** `read`
+
+```ts
+await corsair.stormglass.api.tides.extremes({ lat: 60.936, lng: 5.114, start: '2024-06-01', end: '2024-06-03', datum: 'MLLW' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | — |
+| `lng` | `number` | Yes | — |
+| `start` | `string \| number` | No | First hour, UTC. UNIX seconds or ISO (2024-01-01 or 2024-01-01T06). |
+| `end` | `string \| number` | No | Last hour, UTC. UNIX seconds or ISO. At most 10 days after start. |
+| `datum` | `HAT \| MHHW \| MHW \| MSL \| MLW \| MLLW \| LAT` | No | Reference level the heights are relative to. Stormglass defaults to MSL. |
+
+GET /v2/tide/extremes/point. High and low tides from the nearest station; datum sets the zero level (default MSL). Stored with station, datum, time and type as the id.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `extremes` | `object[]` | Yes | — |
+| `station` | `object` | No | — |
+| `quota` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="extremes full type">
+
+```ts
+{
+  id: string,
+  time?: string,
+  type?: string,
+  height?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="station full type">
+
+```ts
+{
+  name?: string,
+  source?: string,
+  distance?: number,
+  lat?: number,
+  lng?: number
+}
+```
+</Accordion>
+
+<Accordion title="quota full type">
+
+```ts
+{
+  id: string,
+  dailyQuota?: number,
+  requestCount?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### seaLevel
+
+`tides.seaLevel`
+
+Get the hourly astronomical sea level near a coordinate, up to 10 days, from the nearest tide station.
+
+**Risk:** `read`
+
+```ts
+await corsair.stormglass.api.tides.seaLevel({ lat: 60.936, lng: 5.114, start: '2024-06-01', end: '2024-06-02' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | — |
+| `lng` | `number` | Yes | — |
+| `start` | `string \| number` | No | First hour, UTC. UNIX seconds or ISO (2024-01-01 or 2024-01-01T06). |
+| `end` | `string \| number` | No | Last hour, UTC. UNIX seconds or ISO. At most 10 days after start. |
+| `datum` | `HAT \| MHHW \| MHW \| MSL \| MLW \| MLLW \| LAT` | No | Reference level the heights are relative to. Stormglass defaults to MSL. |
+
+GET /v2/tide/sea-level/point. Hourly sea level relative to the datum. Heights are relative levels, not water depth.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `levels` | `object[]` | Yes | — |
+| `station` | `object` | No | — |
+| `quota` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="levels full type">
+
+```ts
+{
+  time: string,
+  height?: number,
+  sources: Record<string, number>
+}[]
+```
+</Accordion>
+
+<Accordion title="station full type">
+
+```ts
+{
+  name?: string,
+  source?: string,
+  distance?: number,
+  lat?: number,
+  lng?: number
+}
+```
+</Accordion>
+
+<Accordion title="quota full type">
+
+```ts
+{
+  id: string,
+  dailyQuota?: number,
+  requestCount?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Weather
+
+### get
+
+`weather.get`
+
+Get hourly weather and marine forecast values (wind, waves, swell, temperature, ...) for one coordinate. Covers the past 14 days and up to 10 days ahead.
+
+**Risk:** `read`
+
+```ts
+await corsair.stormglass.api.weather.get({ lat: 58.7984, lng: 17.8081, params: 'airTemperature,windSpeed,waveHeight', source: 'sg' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | — |
+| `lng` | `number` | Yes | — |
+| `params` | `string` | Yes | Comma-separated parameters, e.g. airTemperature,waveHeight. |
+| `start` | `string \| number` | No | First hour, UTC. UNIX seconds or ISO (2024-01-01 or 2024-01-01T06). |
+| `end` | `string \| number` | No | Last hour, UTC. UNIX seconds or ISO. At most 10 days after start. |
+| `source` | `string` | No | Comma-separated sources, e.g. sg or noaa,dwd. The first one fills `values`. |
+
+GET /v2/weather/point. params such as airTemperature, windSpeed, gust, waveHeight, swellHeight, waterTemperature, precipitation, cloudCover. Forecasts reach 10 days ahead and 14 days back.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hours` | `object[]` | Yes | — |
+| `quota` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="hours full type">
+
+```ts
+{
+  time: string,
+  values: Record<string, number>,
+  sources: Record<string, Record<string, number>>
+}[]
+```
+</Accordion>
+
+<Accordion title="quota full type">
+
+```ts
+{
+  id: string,
+  dailyQuota?: number,
+  requestCount?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### historical
+
+`weather.historical`
+
+Get hourly historical weather for one coordinate from 2014 to about a week ago, up to 10 days per call. Needs start or end.
+
+**Risk:** `read`
+
+```ts
+await corsair.stormglass.api.weather.historical({ lat: 58.7984, lng: 17.8081, params: 'airTemperature', start: '2023-01-01', end: '2023-01-02' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | — |
+| `lng` | `number` | Yes | — |
+| `params` | `string` | Yes | Comma-separated parameters, e.g. airTemperature,waveHeight. |
+| `start` | `string \| number` | No | First hour, UTC. UNIX seconds or ISO (2024-01-01 or 2024-01-01T06). |
+| `end` | `string \| number` | No | Last hour, UTC. UNIX seconds or ISO. At most 10 days after start. |
+| `source` | `string` | No | Comma-separated sources, e.g. sg or noaa,dwd. The first one fills `values`. |
+
+GET /v2/historical/point. ERA5 reanalysis from 2014 until about a week ago. Needs start or end.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hours` | `object[]` | Yes | — |
+| `quota` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="hours full type">
+
+```ts
+{
+  time: string,
+  values: Record<string, number>,
+  sources: Record<string, Record<string, number>>
+}[]
+```
+</Accordion>
+
+<Accordion title="quota full type">
+
+```ts
+{
+  id: string,
+  dailyQuota?: number,
+  requestCount?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
