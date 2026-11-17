@@ -39,6 +39,21 @@ type SchemaMode =
 // A JSON scalar of any type, for V1 response fields whose published type doesn't match the wire.
 const looseScalar = z.union([z.string(), z.number(), z.boolean()]);
 
+// `unknown` is necessary because enum members are provider JSON scalars of any type.
+function openEnumSchema(type: unknown, members: unknown[]): z.ZodType {
+	const kinds = new Set<string>(members.map((member) => typeof member));
+	if (type === 'string') kinds.add('string');
+	if (type === 'integer' || type === 'number') kinds.add('number');
+	if (type === 'boolean') kinds.add('boolean');
+	const options: z.ZodType[] = [];
+	if (kinds.has('string')) options.push(z.string());
+	if (kinds.has('number')) options.push(z.number());
+	if (kinds.has('boolean')) options.push(z.boolean());
+	const [first, ...rest] = options;
+	if (!first) return looseScalar;
+	return rest.length > 0 ? z.union([first, ...rest]) : first;
+}
+
 // `unknown` is necessary because schema conversion starts with untrusted provider JSON.
 function schemaFromOpenApi(
 	value: unknown,
@@ -83,17 +98,12 @@ function schemaFromOpenApi(
 					type === 'boolean')))
 	) {
 		// Open enums and loose V1 scalars: a value Teamwork adds later must not fail a read.
-		// V3 enums stay open but keep their declared type, which the public output types promise.
+		// V3 enums stay open but keep their declared type and their members' types, which the
+		// public output types promise (view.ProjectFileV205.isPrivate is an integer listing "0".."2").
 		schema =
 			looseScalars || !Array.isArray(value.enum)
 				? looseScalar
-				: type === 'string'
-					? z.string()
-					: type === 'integer' || type === 'number'
-						? z.number()
-						: type === 'boolean'
-							? z.boolean()
-							: looseScalar;
+				: openEnumSchema(type, value.enum);
 	} else if (Array.isArray(value.enum)) {
 		// zod enums and literals rather than a custom check, so get_schema and the docs show the allowed values.
 		// The V3 spec lists some integer enums as strings (projectHealths: "0".."3"); take the numbers too.

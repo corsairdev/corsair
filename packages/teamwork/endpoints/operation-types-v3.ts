@@ -1850,7 +1850,7 @@ type TeamworkV3Output_view_ProjectFileV205 = {
 	filenameOnDisk: string;
 	id: number;
 	isLocked: boolean;
-	isPrivate: '0' | '1' | '2';
+	isPrivate: 0 | 1 | 2 | '0' | '1' | '2';
 	latestFileVersionNo: number;
 	lockdown?: TeamworkV3Output_view_Relationship;
 	lockdownId?: number;

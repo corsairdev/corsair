@@ -186,7 +186,15 @@ describe('Teamwork OpenAPI contract schemas', () => {
 		).toBe(true);
 		expect(get?.safeParse({ task: { id: 1, priority: true } }).success).toBe(
 			false,
-		);
+		); // An integer enum whose members the spec lists as strings takes both.
+		for (const isPrivate of ['0', 1]) {
+			expect(
+				teamworkOutputSchemas['comments.get']?.safeParse({
+					comments: {},
+					included: { files: { '42': { id: 42, isPrivate } } },
+				}).success,
+			).toBe(true);
+		}
 	});
 
 	it('keeps the typed operation ID list in sync with the provider manifest', () => {
