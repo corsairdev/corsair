@@ -215,7 +215,7 @@ await corsair.labs64netlicensing.api.licensees.list({ filter: 'page=0;items=20' 
 
 `licensees.transfer`
 
-Move every license of a source licensee (marked for transfer) to this licensee.
+Move every license of a source licensee (marked for transfer) to this licensee; NetLicensing then removes the source licensee.
 
 **Risk:** `destructive`
 
@@ -230,7 +230,7 @@ await corsair.labs64netlicensing.api.licensees.transfer({ licenseeNumber: 'I002'
 | `licenseeNumber` | `string` | Yes | Licensee that receives the licenses |
 | `sourceLicenseeNumber` | `string` | Yes | Licensee whose licenses move; must be markedForTransfer |
 
-The source licensee needs `markedForTransfer` set (licensees.update) and both licensees must belong to the same product. Validating the source clears the flag.
+The source licensee needs `markedForTransfer` set (licensees.update) and both licensees must belong to the same product. Validating the source clears the flag. After the move NetLicensing removes the source licensee.
 
 
 

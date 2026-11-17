@@ -21,7 +21,7 @@ pnpm add @corsair-dev/labs64netlicensing
 | `licensees.delete` | `labs64netlicensing.api.licensees.delete` | `destructive` | Delete a licensee; forceCascade also deletes its licenses. |
 | `licensees.get` | `labs64netlicensing.api.licensees.get` | `read` | Get one licensee by number. |
 | `licensees.list` | `labs64netlicensing.api.licensees.list` | `read` | List licensees (the vendor's customers). |
-| `licensees.transfer` | `labs64netlicensing.api.licensees.transfer` | `destructive` | Move every license of a source licensee (marked for transfer) to this licensee. |
+| `licensees.transfer` | `labs64netlicensing.api.licensees.transfer` | `destructive` | Move every license of a source licensee (marked for transfer) to this licensee; NetLicensing then removes the source licensee. |
 | `licensees.update` | `labs64netlicensing.api.licensees.update` | `write` | Update a licensee. |
 | `licensees.validate` | `labs64netlicensing.api.licensees.validate` | `write` | Check which product modules a licensee may use; floating checkouts and pay-per-use counts change unless dryRun is true. |
 | `licenses.create` | `labs64netlicensing.api.licenses.create` | `write` | Create a license for a licensee from a license template. |

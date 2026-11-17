@@ -89,5 +89,5 @@ apiNotes:
   products.list: GET /product. Returns number, active, name and version, and stores them locally.
   licenseTemplates.create: '`licenseType` must fit the module model: FEATURE or TIMEVOLUME for TryAndBuy and Rental, TIMEVOLUME for Subscription, FLOATING for Floating, QUANTITY for PayPerUse, Quota and NodeLocked. A price above 0 needs `currency`.'
   licensees.validate: Returns one entry per product module with its licensing model and validity, plus `ttl`, the time until which the result can be reused. Pass module parameters (sessionId and action for Floating, usedQuantity for PayPerUse, nodeSecret for NodeLocked) in `parameters`. A product with no active module answers 404.
-  licensees.transfer: The source licensee needs `markedForTransfer` set (licensees.update) and both licensees must belong to the same product. Validating the source clears the flag.
+  licensees.transfer: The source licensee needs `markedForTransfer` set (licensees.update) and both licensees must belong to the same product. Validating the source clears the flag. After the move NetLicensing removes the source licensee.
   transactions.list: Newest first. `filter` takes licenseeNumber=<n> or shopOnly=true.

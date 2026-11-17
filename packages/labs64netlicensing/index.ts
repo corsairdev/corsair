@@ -274,7 +274,7 @@ const netLicensingEndpointMeta = {
 	'licensees.transfer': {
 		riskLevel: 'destructive',
 		description:
-			'Move every license of a source licensee (marked for transfer) to this licensee.',
+			'Move every license of a source licensee (marked for transfer) to this licensee; NetLicensing then removes the source licensee.',
 	},
 	'licenses.list': {
 		riskLevel: 'read',
