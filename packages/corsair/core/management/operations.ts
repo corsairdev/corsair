@@ -1,6 +1,12 @@
 import { createHubConnectSession } from '../../hub/connect';
 import type { HubConnectSessionInput } from '../../hub/types';
 import type { CorsairInternalConfig } from '..';
+import type { AccountConfig } from '../account-lookup';
+import {
+	AccountSelectionError,
+	readIdentity,
+	resolveAccount,
+} from '../account-lookup';
 import { createIntegrationKeyManager } from '../auth/key-manager';
 import {
 	getPluginAuthStatusForTenant,
@@ -162,6 +168,25 @@ export async function getPlugin(
 
 // ── tenants ────────────────────────────────────────────────────────────────
 
+// Identity is sealed, so without a kek the account lists without ref/label.
+async function tenantAccount(
+	internal: CorsairInternalConfig,
+	r: {
+		accountId: string;
+		config: AccountConfig;
+		dek?: string | null;
+		integrationName: string;
+	},
+): Promise<Tenant['accounts'][number]> {
+	const identity = internal.kek ? await readIdentity(r, internal.kek) : {};
+	return {
+		integrationName: r.integrationName,
+		accountId: r.accountId,
+		...identity,
+		hasCredentials: !!r.dek,
+	};
+}
+
 async function listAccountSummariesForTenant(
 	internal: CorsairInternalConfig,
 	tenantId: string,
@@ -171,14 +196,18 @@ async function listAccountSummariesForTenant(
 	const rows = await internal.database.db
 		.selectFrom('corsair_accounts as a')
 		.innerJoin('corsair_integrations as i', 'i.id', 'a.integration_id')
-		.select(['a.id as accountId', 'a.dek as dek', 'i.name as integrationName'])
+		.select([
+			'a.id as accountId',
+			'a.config as config',
+			'a.dek as dek',
+			'i.name as integrationName',
+		])
 		.where('a.tenant_id', '=', tenantId)
+		.orderBy('a.created_at', 'asc')
+		.orderBy('a.id', 'asc')
 		.execute();
 
-	return rows.map((r) => ({
-		integrationName: r.integrationName,
-		hasCredentials: !!r.dek,
-	}));
+	return Promise.all(rows.map((r) => tenantAccount(internal, r)));
 }
 
 export async function describeTenant(
@@ -186,9 +215,11 @@ export async function describeTenant(
 	tenantId: string,
 ): Promise<Tenant> {
 	const accounts = await listAccountSummariesForTenant(internal, tenantId);
-	const connectedPlugins = accounts
-		.filter((a) => a.hasCredentials)
-		.map((a) => a.integrationName);
+	const connectedPlugins = [
+		...new Set(
+			accounts.filter((a) => a.hasCredentials).map((a) => a.integrationName),
+		),
+	];
 	return { id: tenantId, accounts, connectedPlugins };
 }
 
@@ -205,10 +236,21 @@ export async function listTenants(
 		const rows = await internal.database.db
 			.selectFrom('corsair_accounts as a')
 			.innerJoin('corsair_integrations as i', 'i.id', 'a.integration_id')
-			.select(['a.tenant_id', 'a.dek as dek', 'i.name as integrationName'])
+			.select([
+				'a.tenant_id',
+				'a.id as accountId',
+				'a.config as config',
+				'a.dek as dek',
+				'i.name as integrationName',
+			])
+			.orderBy('a.created_at', 'asc')
+			.orderBy('a.id', 'asc')
 			.execute();
+		const summaries = await Promise.all(
+			rows.map((r) => tenantAccount(internal, r)),
+		);
 
-		for (const r of rows) {
+		for (const [i, r] of rows.entries()) {
 			const tenantId = r.tenant_id;
 			if (!tenantId) continue;
 			let t = tenants.get(tenantId);
@@ -217,11 +259,10 @@ export async function listTenants(
 				tenants.set(tenantId, t);
 			}
 			const hasCredentials = !!r.dek;
-			t.accounts.push({
-				integrationName: r.integrationName,
-				hasCredentials,
-			});
-			if (hasCredentials) t.connectedPlugins.push(r.integrationName);
+			t.accounts.push(summaries[i]!);
+			if (hasCredentials && !t.connectedPlugins.includes(r.integrationName)) {
+				t.connectedPlugins.push(r.integrationName);
+			}
 		}
 	}
 
@@ -307,6 +348,14 @@ export async function disconnectConnection(
 		throw badRequest('tenantId must be a string');
 	}
 	const tenantId = rawTenantId?.trim() || 'default';
+	const rawAccount = input?.account;
+	if (
+		rawAccount !== undefined &&
+		(typeof rawAccount !== 'string' || !rawAccount.trim())
+	) {
+		throw badRequest('account must be a non-empty string');
+	}
+	const account = rawAccount?.trim();
 	if (!internal.database) return { ok: true, disconnected: false };
 
 	const db = internal.database.db;
@@ -333,11 +382,32 @@ export async function disconnectConnection(
 				.execute();
 		}
 
+		let accountId: string | undefined;
+		if (account !== undefined) {
+			try {
+				accountId = (
+					await resolveAccount({
+						db: trx,
+						kek: internal.kek,
+						integrationId: integration.id,
+						tenantId,
+						ref: account,
+					})
+				)?.id;
+			} catch (error) {
+				if (!(error instanceof AccountSelectionError)) throw error;
+				// An ambiguous label must not look like "nothing to disconnect".
+				if (error.code === 'account_required') throw badRequest(error.message);
+			}
+			if (!accountId) return;
+		}
+
 		const accountsForPair = trx
 			.selectFrom('corsair_accounts')
 			.select('id')
 			.where('tenant_id', '=', tenantId)
-			.where('integration_id', '=', integration.id);
+			.where('integration_id', '=', integration.id)
+			.$if(!!accountId, (q) => q.where('id', '=', accountId as string));
 		await trx
 			.deleteFrom('corsair_events')
 			.where('account_id', 'in', accountsForPair)
@@ -350,6 +420,7 @@ export async function disconnectConnection(
 			.deleteFrom('corsair_accounts')
 			.where('tenant_id', '=', tenantId)
 			.where('integration_id', '=', integration.id)
+			.$if(!!accountId, (q) => q.where('id', '=', accountId as string))
 			.executeTakeFirst();
 		disconnected = (deleted.numDeletedRows ?? 0n) > 0n;
 	});

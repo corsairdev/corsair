@@ -2,11 +2,13 @@ import type { CorsairInternalConfig, CorsairKeyBuilderBase } from '../core';
 import { createAccountKeyManager } from '../core';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
 import { getPluginAuthType } from '../core/utils/plugin-auth';
+import { setWebhookTenantLink } from '../webhooks/tenant-links';
 import { subscribeAndReport } from './subscribe-report';
 
 export type SubscribableAccountRow = {
 	tenantId: string;
 	integrationName: string;
+	accountId?: string;
 };
 
 /**
@@ -32,13 +34,16 @@ export async function renewAccounts(input: {
 	for (const row of rows) {
 		const plugin = internal.plugins.find((p) => p.id === row.integrationName);
 		if (!plugin?.subscribe) continue;
-		const label = `${plugin.id}/${row.tenantId}`;
+		const label = row.accountId
+			? `${plugin.id}/${row.tenantId}/${row.accountId}`
+			: `${plugin.id}/${row.tenantId}`;
 		try {
 			const authType = getPluginAuthType(plugin) ?? 'oauth_2';
 			const keys = createAccountKeyManager({
 				authType,
 				integrationName: plugin.id,
 				tenantId: row.tenantId,
+				...(row.accountId && { account: { ref: row.accountId } }),
 				kek: internal.kek,
 				database: internal.database,
 				extraAccountFields: [...(plugin.authConfig?.[authType]?.account ?? [])],
@@ -58,7 +63,22 @@ export async function renewAccounts(input: {
 					'endpoint',
 				);
 			}
-			await doSubscribe(corsair, plugin, row.tenantId, keys);
+			const link = await doSubscribe(corsair, plugin, row.tenantId, keys);
+			// Providers mint a new link on renewal; webhooks bind by the stored one.
+			if (link) {
+				await setWebhookTenantLink({
+					database: internal.database,
+					kek: internal.kek,
+					pluginId: plugin.id,
+					tenantId: row.tenantId,
+					link,
+					authType,
+					extraAccountFields: [
+						...(plugin.authConfig?.[authType]?.account ?? []),
+					],
+					...(row.accountId && { accountId: row.accountId }),
+				});
+			}
 			renewed.push(label);
 		} catch (error) {
 			console.warn(
@@ -81,14 +101,22 @@ export async function renewSubscriptions(
 	const rows = await internal.database.db
 		.selectFrom('corsair_accounts as a')
 		.innerJoin('corsair_integrations as i', 'i.id', 'a.integration_id')
-		.select(['a.tenant_id as tenantId', 'i.name as integrationName'])
+		.select([
+			'a.id as accountId',
+			'a.tenant_id as tenantId',
+			'i.name as integrationName',
+		])
 		.where('a.dek', 'is not', null)
+		.orderBy('a.created_at')
+		.orderBy('a.id')
 		.execute();
 
 	return renewAccounts({
 		corsair,
 		internal,
-		rows: rows.filter((r): r is SubscribableAccountRow => !!r.tenantId),
+		rows: rows.filter(
+			(r): r is typeof r & SubscribableAccountRow => !!r.tenantId,
+		),
 	});
 }
 

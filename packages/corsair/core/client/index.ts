@@ -7,7 +7,12 @@ import type {
 	PluginEntityClients,
 } from '../../db/orm';
 import type { HubConfig } from '../../hub';
-import { resolveIntegrationAccountIds } from '../account-lookup';
+import type { AccountSummary } from '../account-lookup';
+import {
+	fanOutAccounts,
+	listAccountSummaries,
+	resolveIntegrationAccountIds,
+} from '../account-lookup';
 import {
 	createAccountKeyManager,
 	createIntegrationKeyManager,
@@ -163,9 +168,10 @@ type InferPluginNamespace<P extends CorsairPlugin> = P extends CorsairPlugin<
 							 */
 							pluginTenantWebhookMatcher?: CorsairWebhookTenantMatcher;
 						}
-					: {}) &
-				// Account-level keys (per-tenant secrets like bot_token, api_key, access_token)
-				(ExtractAuthType<
+					: {}) & {
+					accounts: { list(): Promise<AccountSummary[]> };
+				} & (ExtractAuthType<
+					// Account-level keys (per-tenant secrets like bot_token, api_key, access_token)
 					InferPluginOptions<P>,
 					InferDefaultAuthType<P>
 				> extends AuthTypes
@@ -234,7 +240,10 @@ export type CorsairClient<Plugins extends readonly CorsairPlugin[]> =
  * Also includes integration-level `keys` for managing shared secrets (OAuth2 client credentials, etc.)
  */
 export type CorsairTenantWrapper<Plugins extends readonly CorsairPlugin[]> = {
-	withTenant: (tenantId: string) => CorsairClient<Plugins>;
+	withTenant: (
+		tenantId: string,
+		options?: { accounts?: { [P in Plugins[number]['id']]?: string } },
+	) => CorsairClient<Plugins>;
 	/**
 	 * Integration-level key managers for each plugin.
 	 * Used to manage secrets shared across all tenants (e.g., OAuth2 client_id, client_secret).
@@ -283,21 +292,36 @@ export type CorsairSingleTenantClient<
 
 /**
  * Creates a cached account ID resolver for a specific tenant and integration.
- * The account ID is lazily fetched on first access and cached for subsequent calls.
+ * A bound account's row id is pinned and re-validated on each call.
  */
 function createAccountIdResolver(
 	database: CorsairDatabase | undefined,
 	integrationName: string,
 	tenantId: string,
 	ensureProvisioned?: () => Promise<void>,
+	account?: { ref?: string; kek: string },
 ): () => Promise<string> {
 	let cachedAccountId: string | null = null;
 
 	return async () => {
-		if (cachedAccountId) return cachedAccountId;
-
 		if (!database) {
 			throw new Error('Database not configured');
+		}
+		// A bound ref is pinned by row id, but the row can be disconnected and
+		// reconnected under a new id, so confirm it still exists each call.
+		if (cachedAccountId && !account?.ref) return cachedAccountId;
+		if (cachedAccountId) {
+			const live = await database.db
+				.selectFrom('corsair_accounts')
+				.select('id')
+				.where('id', '=', cachedAccountId)
+				.where('tenant_id', '=', tenantId)
+				.executeTakeFirst();
+			if (live) return cachedAccountId;
+			cachedAccountId = null;
+		}
+		if (account?.ref && !account.kek) {
+			throw new Error('Selecting an account requires a kek');
 		}
 
 		const { accountId } = await resolveIntegrationAccountIds({
@@ -305,8 +329,11 @@ function createAccountIdResolver(
 			integrationName,
 			tenantId,
 			ensureProvisioned,
+			account,
 		});
 
+		// An unbound scope re-resolves each call so a later second account is seen.
+		if (account && !account.ref) return accountId;
 		cachedAccountId = accountId;
 		return cachedAccountId;
 	};
@@ -352,7 +379,11 @@ function guardEntityClients(
 				// async: these methods reject, so a sync throw would slip past a
 				// caller that only attached a .catch().
 				return async (...args: Parameters<typeof call>) => {
-					assertModeAllows(`${pluginId}.db.${entityType}.${method}`, risk);
+					assertModeAllows(
+						`${pluginId}.db.${entityType}.${method}`,
+						risk,
+						pluginId,
+					);
 					return call.apply(target, args);
 				};
 			},
@@ -412,6 +443,13 @@ export type BuildCorsairClientOptions = {
 	hubConfig?: HubConfig;
 	/** Internal config for lazy tenant provisioning on first use. */
 	internalConfig?: CorsairInternalConfig;
+	/** Per-plugin account refs from withTenant. Present (even empty) = strict account selection. */
+	accounts?: WithTenantOptions['accounts'];
+};
+
+/** Options of `withTenant`: per-plugin account refs. */
+export type WithTenantOptions = {
+	accounts?: Record<string, string | undefined>;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -439,6 +477,7 @@ export function buildCorsairClient<
 		manualConfig,
 		hubConfig,
 		internalConfig,
+		accounts,
 	} = options;
 
 	// Canonical tenant scope for this client. Single-tenant clients pass no
@@ -450,6 +489,19 @@ export function buildCorsairClient<
 	const ensureProvisioned =
 		internalConfig && database
 			? () => ensureTenantProvisioned(internalConfig, effectiveTenantId)
+			: undefined;
+
+	for (const id of Object.keys(accounts ?? {})) {
+		if (!plugins.some((p) => p.id === id)) {
+			throw new Error(`withTenant: no plugin "${id}"`);
+		}
+	}
+
+	// Off: one account per plugin, so an unbound plugin just uses the oldest.
+	const multiAccount = internalConfig?.multiAccount === true;
+	const accountScope = (pluginId: string) =>
+		accounts && (multiAccount || accounts[pluginId])
+			? { ref: accounts[pluginId] }
 			: undefined;
 
 	const apiUnsafe: Record<string, Record<string, unknown>> = {};
@@ -469,11 +521,43 @@ export function buildCorsairClient<
 			plugin.id,
 			effectiveTenantId,
 			ensureProvisioned,
+			accountScope(plugin.id) && {
+				ref: accounts?.[plugin.id],
+				kek: kek ?? '',
+			},
 		);
+
+		// api.db reads span every account of an unbound plugin; ctx.db stays strict.
+		const fanOut =
+			multiAccount && database && kek && accounts && !accounts[plugin.id]
+				? () =>
+						fanOutAccounts({
+							db: database.db,
+							kek,
+							integrationName: plugin.id,
+							tenantId: effectiveTenantId,
+						})
+				: undefined;
+
+		apiUnsafe[plugin.id]!.accounts = {
+			list: async () =>
+				database
+					? listAccountSummaries({
+							db: database.db,
+							kek: kek ?? '',
+							integrationName: plugin.id,
+							tenantId: effectiveTenantId,
+						})
+					: [],
+		};
 
 		// Create typed entity clients from plugin schema, nested under `db`
 		if (schema?.entities) {
+			const apiClients: Record<string, EntityClient> = {};
 			const dbClients: Record<string, EntityClient> = {};
+			const atRest = internalConfig?.encryptDataAtRest
+				? { encryptDataAtRest: true as const, kek: kek ?? '' }
+				: undefined;
 			for (const [entityTypeName, dataSchema] of Object.entries(
 				schema.entities,
 			)) {
@@ -484,9 +568,7 @@ export function buildCorsairClient<
 							entityTypeName,
 							schema.version,
 							dataSchema,
-							internalConfig?.encryptDataAtRest
-								? { encryptDataAtRest: true, kek: kek ?? '' }
-								: undefined,
+							atRest,
 						)
 					: createEntityClient(
 							undefined,
@@ -496,11 +578,23 @@ export function buildCorsairClient<
 							dataSchema,
 						);
 				dbClients[entityTypeName] = entityClient;
+				apiClients[entityTypeName] =
+					database && fanOut
+						? createKyselyEntityClient(
+								database.db,
+								getAccountId,
+								entityTypeName,
+								schema.version,
+								dataSchema,
+								atRest,
+								fanOut,
+							)
+						: entityClient;
 			}
 			// ctx.db stays raw: an endpoint body runs once the guard has cleared
 			// it, and re-checking its writes would ask for a second approval.
 			pluginEntitiesUnsafe[plugin.id]!.db = dbClients;
-			apiUnsafe[plugin.id]!.db = guardEntityClients(plugin.id, dbClients);
+			apiUnsafe[plugin.id]!.db = guardEntityClients(plugin.id, apiClients);
 		}
 
 		// Create account-level key manager BEFORE binding endpoints so keyBuilder can access it
@@ -522,6 +616,7 @@ export function buildCorsairClient<
 				database,
 				extraAccountFields,
 				ensureProvisioned,
+				account: accountScope(plugin.id),
 			});
 			apiUnsafe[plugin.id]!.keys = accountKeyManager;
 		}
@@ -568,7 +663,11 @@ export function buildCorsairClient<
 		const pluginPermsConfig = (
 			plugin.options as Record<string, unknown> | undefined
 		)?.permissions as
-			| { mode: PermissionMode; overrides?: Record<string, PermissionPolicy> }
+			| {
+					mode: PermissionMode;
+					overrides?: Record<string, PermissionPolicy>;
+					accounts?: Record<string, PermissionMode>;
+			  }
 			| undefined;
 
 		bindEndpointsRecursively({

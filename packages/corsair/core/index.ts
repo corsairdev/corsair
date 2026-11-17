@@ -7,7 +7,11 @@ import {
 	CORSAIR_TUNNEL_ZONE,
 } from '../hub/tunnel/constants';
 import { createMissingConfigProxy } from './auth/errors';
-import type { CorsairSingleTenantClient, CorsairTenantWrapper } from './client';
+import type {
+	CorsairSingleTenantClient,
+	CorsairTenantWrapper,
+	WithTenantOptions,
+} from './client';
 import { buildCorsairClient, buildIntegrationKeys } from './client';
 import { buildCloudCorsair, hasCloudBaseUrl } from './cloud';
 import { resolveRootPermissionsConfig } from './config/resolve-root-permissions';
@@ -31,6 +35,7 @@ export type CorsairInternalConfig = {
 	database: CorsairDatabase | undefined;
 	kek: string;
 	multiTenancy: boolean;
+	multiAccount: boolean;
 	permissions?: CorsairPermissionsOptions;
 	manual?: CorsairManualConfig;
 	hub?: HubConfig;
@@ -107,9 +112,15 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 		database: resolvedDatabase,
 		kek,
 		multiTenancy: !!config.multiTenancy,
+		multiAccount: config.multiAccount === true,
 		permissions: rootPermissions,
 		manual: config.manual,
-		hub: config.hub ? resolveHubConfigInput(config.hub) : undefined,
+		hub: config.hub
+			? resolveHubConfigInput({
+					...config.hub,
+					multiAccount: config.multiAccount === true,
+				})
+			: undefined,
 		encryptDataAtRest: config.encryptDataAtRest === true,
 	};
 
@@ -119,7 +130,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 	if (config.multiTenancy) {
 		const tenantWrapper = Object.assign(
 			{
-				withTenant: (tenantId: string) => {
+				withTenant: (tenantId: string, options?: WithTenantOptions) => {
 					if (!tenantId) {
 						throw new Error(
 							'corsair.withTenant(tenantId): tenantId must be a non-empty string',
@@ -134,6 +145,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 						manualConfig: config.manual,
 						hubConfig: internalConfig.hub,
 						internalConfig,
+						accounts: options?.accounts ?? {},
 					});
 					return Object.assign(client as object, {
 						[CORSAIR_INTERNAL]: internalConfig,
@@ -297,6 +309,8 @@ function maybeStartTunnel(
 export type { EventLoggingContext } from '../plugins/utils/events';
 // Event logging utilities for plugins
 export { logEvent, logEventFromContext } from '../plugins/utils/events';
+export type { Account } from './account-lookup';
+export { AccountSelectionError } from './account-lookup';
 export type {
 	AccountFieldNames,
 	AccountKeyManagerFor,
@@ -414,9 +428,11 @@ export {
 // failure from a transport failure. CloudApiError extends it.
 export { ManagementApiError } from './management/errors';
 export type {
+	AccountModes,
 	CorsairPermissionsNamespace,
 	EnforcePermissionOptions,
 	EnforcePermissionResult,
+	ModeScope,
 } from './permissions';
 export {
 	activeMode,

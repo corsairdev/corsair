@@ -109,6 +109,8 @@ export async function setWebhookTenantLink(options: {
 	link: WebhookTenantLink;
 	authType?: AuthTypes;
 	extraAccountFields?: readonly string[];
+	// Target a specific account row; absent = the tenant's default account.
+	accountId?: string;
 }): Promise<void> {
 	const {
 		database,
@@ -120,11 +122,9 @@ export async function setWebhookTenantLink(options: {
 		extraAccountFields = [],
 	} = options;
 
-	const { accountId } = await resolveAccountForTenant({
-		database,
-		pluginId,
-		tenantId,
-	});
+	const accountId =
+		options.accountId ??
+		(await resolveAccountForTenant({ database, pluginId, tenantId })).accountId;
 
 	let wroteViaKeyManager = false;
 
@@ -136,6 +136,7 @@ export async function setWebhookTenantLink(options: {
 			kek,
 			database,
 			extraAccountFields,
+			account: options.accountId ? { ref: options.accountId } : undefined,
 		});
 		const setterName = `set_${link.linkType}`;
 		const setter = (accountKeyManager as Record<string, unknown>)[setterName];
@@ -161,6 +162,7 @@ export type ResolveAccountFromWebhookLinkInput = {
 	pluginId: string;
 	linkType: string;
 	externalId: string;
+	tenantId?: string;
 };
 
 /**
@@ -172,9 +174,9 @@ export type ResolveAccountFromWebhookLinkInput = {
 export async function resolveAccountFromWebhookLink(
 	options: ResolveAccountFromWebhookLinkInput,
 ): Promise<CorsairAccount | null> {
-	const { database, kek, pluginId, linkType, externalId } = options;
+	const { database, kek, pluginId, linkType, externalId, tenantId } = options;
 
-	const accounts = await database.db
+	let query = database.db
 		.selectFrom('corsair_accounts as accounts')
 		.innerJoin(
 			'corsair_integrations as integrations',
@@ -182,8 +184,9 @@ export async function resolveAccountFromWebhookLink(
 			'accounts.integration_id',
 		)
 		.selectAll('accounts')
-		.where('integrations.name', '=', pluginId)
-		.execute();
+		.where('integrations.name', '=', pluginId);
+	if (tenantId) query = query.where('accounts.tenant_id', '=', tenantId);
+	const accounts = await query.execute();
 
 	for (const account of accounts) {
 		if (!account.dek) continue;

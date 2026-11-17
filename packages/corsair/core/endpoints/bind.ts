@@ -19,6 +19,7 @@ import {
 	reportManagedJobCall,
 } from '../../hub/managed-pricing-jobs';
 import { reportPluginConnectionStatusFromBinding } from '../../hub/report-connection-status';
+import { readIdentity } from '../account-lookup';
 import { throwAuthMissingEndpointError } from '../auth/auth-missing-message';
 import { AuthMissingError } from '../auth/errors/auth-missing';
 import { CorsairKekMissingError } from '../auth/errors/kek-missing';
@@ -27,11 +28,14 @@ import type { EndpointManualConfig } from '../config/manual-connect';
 import { recordConnectRequestBestEffort } from '../connect-request/store';
 import type { CorsairErrorHandler } from '../errors';
 import { handleCorsairError } from '../errors/handler';
+import type { AccountNames } from '../permissions';
 import {
+	accountMode,
 	activeMode,
 	assertReadonlyAllowed,
 	enforcePermission,
 	evaluatePermission,
+	hasAccountModes,
 	parseDurationMs,
 	resolveAsyncApprovalMessage,
 	stricterMode,
@@ -139,6 +143,7 @@ export function bindEndpointsRecursively({
 	permissionsConfig?: {
 		mode: PermissionMode;
 		overrides?: Record<string, PermissionPolicy>;
+		accounts?: Record<string, PermissionMode>;
 	};
 	/** Risk level metadata per dot-notation endpoint path. Defaults riskLevel to 'write' when missing. */
 	endpointMeta?: Record<string, EndpointMetaEntry>;
@@ -170,6 +175,13 @@ export function bindEndpointsRecursively({
 			const boundFn = async (args: unknown = {}) => {
 				const endpointMetaEntry = endpointMeta?.[operationPath];
 
+				// Who the call is for, looked up only when some mode is set per account.
+				const names =
+					Object.keys(permissionsConfig?.accounts ?? {}).length > 0 ||
+					hasAccountModes(pluginId)
+						? await callAccountNames(ctx, database, kek)
+						: undefined;
+
 				// ── Readonly scope guard ──────────────────────────────────────────────────────────
 				// Enforced ahead of (and independent of) the developer's permission config: when the
 				// call runs inside a runReadonly() scope, any non-read endpoint throws immediately.
@@ -177,6 +189,8 @@ export function bindEndpointsRecursively({
 				assertReadonlyAllowed(
 					operationPath,
 					endpointMetaEntry?.riskLevel ?? 'write',
+					pluginId,
+					names,
 				);
 
 				// With encryptDataAtRest on, every call stores or logs encrypted data
@@ -191,8 +205,11 @@ export function bindEndpointsRecursively({
 				let onPermissionComplete: (() => Promise<void>) | undefined;
 				// A mode only tightens, so a caller naming one cannot relax what the
 				// server configured.
-				const callerMode = activeMode();
-				const configMode = permissionsConfig?.mode;
+				const callerMode = activeMode(pluginId, names);
+				// An account's own mode stands in for the plugin's.
+				const configMode =
+					accountMode(permissionsConfig?.accounts, names) ??
+					permissionsConfig?.mode;
 				const mode = stricterMode(callerMode, configMode);
 				if (mode) {
 					const meta = endpointMetaEntry;
@@ -722,4 +739,23 @@ export function bindEndpointsRecursively({
 			tree[key] = nestedTree;
 		}
 	}
+}
+
+// The names a call's account answers to. Without a kek only its id can match.
+async function callAccountNames(
+	ctx: Record<string, unknown>,
+	database: CorsairDatabase | undefined,
+	kek: string | undefined,
+): Promise<AccountNames | undefined> {
+	const getAccountId = ctx.$getAccountId as (() => Promise<string>) | undefined;
+	if (!getAccountId || !database) return undefined;
+	const id = await getAccountId();
+	const row = kek
+		? await database.db
+				.selectFrom('corsair_accounts')
+				.select(['config', 'dek'])
+				.where('id', '=', id)
+				.executeTakeFirst()
+		: undefined;
+	return { id, ...(row && kek ? await readIdentity(row, kek) : {}) };
 }

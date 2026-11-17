@@ -2,6 +2,7 @@ import type { HubConfigInput } from '../../hub';
 import type {
 	CorsairSingleTenantClient,
 	CorsairTenantWrapper,
+	WithTenantOptions,
 } from '../client';
 import type { CorsairManageNamespace } from '../management';
 import type { ConnectLink } from '../management/types';
@@ -133,13 +134,17 @@ function buildCloudSurface<Plugins extends readonly CorsairPlugin[]>(
 
 	if (opts.multiTenancy) {
 		return {
-			withTenant: (tenantId: string) => {
+			withTenant: (tenantId: string, options?: WithTenantOptions) => {
 				if (!tenantId) {
 					throw new Error(
 						'corsair.withTenant(tenantId): tenantId must be a non-empty string',
 					);
 				}
-				return buildCloudClient(opts.plugins, { transport, tenantId });
+				return buildCloudClient(opts.plugins, {
+					transport,
+					tenantId,
+					accounts: options?.accounts,
+				});
 			},
 			get keys(): never {
 				return deferredCloudError('keys');
@@ -283,11 +288,18 @@ export type CorsairCloudManage = CloudProjectPlane & {
  */
 export type CorsairCloudInstanceHandle<Registry = CorsairCloudRegistry> =
 	CloudInstancePlane & {
-		withTenant(tenantId: string): CloudTenantClient<Registry>;
+		withTenant(
+			tenantId: string,
+			options?: WithTenantOptions,
+		): CloudTenantClient<Registry>;
 		/** @deprecated Use `connections.list({ tenant })`. */
 		connectionStatus: { get(input: { tenantId: string }): Promise<unknown> };
 		/** @deprecated Use `connections.delete(integration, tenant)`. */
-		disconnect(input: { tenantId: string; plugin: string }): Promise<unknown>;
+		disconnect(input: {
+			tenantId: string;
+			plugin: string;
+			account?: string;
+		}): Promise<unknown>;
 		/** @deprecated Use `connect.createSession`. */
 		createConnectLink(input: CreateCloudConnectLinkInput): Promise<ConnectLink>;
 	};
@@ -402,7 +414,7 @@ export function corsairCloud<Registry = CorsairCloudRegistry>(
 			// The runtime's own management routes, kept for the deprecated methods.
 			const runtime = buildCloudManagement(getTransport);
 			const handle = {
-				withTenant(tenantId: string) {
+				withTenant(tenantId: string, options?: WithTenantOptions) {
 					if (!tenantId) {
 						throw new Error(
 							'corsair.withTenant(tenantId): tenantId must be a non-empty string',
@@ -411,6 +423,7 @@ export function corsairCloud<Registry = CorsairCloudRegistry>(
 					return buildCloudClient(undefined, {
 						transport: getTransport,
 						tenantId,
+						accounts: options?.accounts,
 					}) as CloudTenantClient<Registry>;
 				},
 				connectionStatus: runtime.connectionStatus,
