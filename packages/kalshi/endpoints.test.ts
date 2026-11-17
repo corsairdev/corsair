@@ -359,6 +359,7 @@ describe('Kalshi endpoints', () => {
 				mockRequest.mockRejectedValueOnce(new Error('Not found'));
 
 				const error = await Markets.candlesticks(ctx, input).catch(
+					// unknown: a rejected promise can carry any thrown value, so a stricter type is not practical here
 					(e: unknown) => e,
 				);
 
