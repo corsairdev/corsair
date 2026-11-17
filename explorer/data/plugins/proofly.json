@@ -1,0 +1,321 @@
+{
+  "id": "proofly",
+  "displayName": "Proofly",
+  "description": "Read Proofly campaigns, their notifications and stats, the leads a notification collected, the signed-in user and activity logs, and turn campaigns on or off.",
+  "npmPackageName": "@corsair-dev/proofly",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 6,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "proofly.api.activity.list",
+      "shortPath": "activity.list",
+      "description": "Read Proofly activity logs. The logs are not stored.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: string, ip?: string, date?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "proofly.api.campaigns.list",
+      "shortPath": "campaigns.list",
+      "description": "List Proofly campaigns for the connected account.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number | string, name: string, domain?: { domain: string, subdomains: boolean }, enabled?: boolean, created?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "proofly.api.campaigns.setEnabled",
+      "shortPath": "campaigns.setEnabled",
+      "description": "Turn a campaign on or off; sends nothing when it already has that state.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Campaign id from campaigns.list"
+          },
+          {
+            "key": "enabled",
+            "optional": false,
+            "type": "boolean",
+            "description": "true to turn the campaign on, false to turn it off"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "changed",
+            "optional": false,
+            "type": "boolean",
+            "description": "false when the campaign already had that state and nothing was sent"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string",
+            "description": "Proofly's reply, when a change was sent"
+          }
+        ]
+      }
+    },
+    {
+      "path": "proofly.api.notifications.getData",
+      "shortPath": "notifications.getData",
+      "description": "Read the leads and conversions a notification collected. Not stored.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "notification_id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Notification id from notifications.list"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string | null, data?: {} | null, ip?: string | null, url?: string | null, location?: { city?: string | null, country_code?: string | null, country?: string | null } | null, date?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "proofly.api.notifications.list",
+      "shortPath": "notifications.list",
+      "description": "List the notifications in a campaign with their settings and stats.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Campaign id from campaigns.list"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number | string, name?: string | null, type?: string | null, settings?: {} | null, stats?: { impressions?: number | null, hovers?: number | null, clicks?: number | null, leads?: number | null } | null, enabled?: boolean | null, created?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "proofly.api.user.get",
+      "shortPath": "user.get",
+      "description": "Read the signed-in Proofly user. The pixel key is removed from the result.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name?: string, email: string, meta?: { logins?: number, registered?: string }, impressions?: { period?: number, total?: number }, pixel?: { key?: string, debug?: boolean } }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "proofly.db.campaigns.search",
+      "entityName": "campaigns",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subdomains",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "enabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "proofly.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "logins",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "registered",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "impressionsPeriod",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "impressionsTotal",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}

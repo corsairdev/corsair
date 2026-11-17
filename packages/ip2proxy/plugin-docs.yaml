@@ -1,0 +1,24 @@
+displayName: IP2Proxy
+description: Detect whether an IP address is a proxy, VPN, Tor exit, or data-center address, and return the location fields for the selected package.
+domain: ip2location.com
+recommendedAuth: api_key
+overviewNote: |
+  Each lookup spends credits. PX1 spends 1 credit and PX11 spends 11. A successful body has `response` set to `OK`. Any other `response` is a failed lookup.
+
+  IP2Location no longer takes new registrations for the IP2Proxy web service; keys from existing accounts keep working. New users get proxy data from IP2Location.io instead.
+examples:
+  read:
+    path: proxy.checkProxy
+    title: Check whether an IP is a proxy
+    args:
+      ip: 8.8.8.8
+apiNotes:
+  proxy.checkProxy: |
+    Omit `ip` and the service looks up the caller address. Omit `package` and the service uses PX1. Lower packages leave the later response fields out, so only `response` is required. A lookup with an explicit `ip` is saved to the `checks` table under that address, replacing the previous row for it; a lookup without `ip` is returned but not saved, and a failed save does not fail the lookup.
+  account.getCredits: |
+    Returns the credits left on the key in `response`. The balance lags by about 10 minutes. It spends no credits.
+apiExamples:
+  proxy.checkProxy:
+    call: "{ ip: '8.8.8.8', package: 'PX1' }"
+  account.getCredits:
+    call: "{}"

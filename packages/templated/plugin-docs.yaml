@@ -1,0 +1,82 @@
+displayName: Templated
+description: Image, PDF and video generation with Templated - render templates with layer overrides, manage templates and their layers, merge renders into one PDF, upload images, and organise renders into folders.
+domain: templated.io
+recommendedAuth: api_key
+overviewNote: |
+  Create a key in the Templated dashboard under the API Key tab, then send it as `Authorization: Bearer <key>`.
+
+  Things to know before you call:
+
+  - **Rendering spends a credit.** `renders.create`, `renders.duplicate` and `renders.merge` each use API quota, and a deleted render does not refund it.
+  - **A render is synchronous by default.** It comes back complete with its `url` in about two seconds. Pass `async: true` to return while it is still `PENDING` and give `webhook_url` for Templated to call when it finishes; the render then moves to `COMPLETED` or `FAILED`.
+  - **Batch renders answer an array.** Sending `templates` instead of `template` renders each one, so the response is an array of renders rather than one object. Both shapes parse.
+  - **The list routes are paged by number, starting at 0.** `renders.list` documents no query parameters at all, so the plugin rejects a filter on it. `templates.list` takes `query`, `page`, `limit`, `width` and `height`, and defaults to 25 per page; `uploads.list` and `folders.list` default to 15.
+  - **Uploads need real file bytes.** `uploads.create` takes `fileName` and `fileBase64`, rebuilds the bytes as a Blob and sends multipart, because the route accepts an image file up to 2 MB and nothing else. Templated does not accept a hosted URL in its place.
+  - **Deleting uploads takes repeated ids.** `uploads.delete` sends `ids` once per upload, not one comma-joined value.
+  - **Tags are bare arrays.** `templates.addTags` and `templates.removeTags` take a JSON array of strings as the whole body, not an object with a `tags` key.
+  - **A merge needs hosting.** `renders.merge` always asks Templated to host the result, because without that flag the route answers the PDF bytes rather than JSON.
+  - **Deletes are permanent.** A deleted render loses its file and its URL stops working, and a deleted template cannot be restored.
+examples:
+  read:
+    path: templates.list
+    title: List the first page of templates
+    args:
+      page: 0
+  write:
+    path: renders.create
+    title: Render a template with a text override
+    args:
+      template: 306c724a-d138-486a-a601-0b2a9ced52be
+      layers:
+        text-1:
+          text: Hello from Templated
+apiExamples:
+  renders.list: {}
+  renders.get:
+    call: "{ renderId: 'ce424057-6b54-41bb-afec-adc35a2b9175' }"
+  renders.create:
+    call: "{ template: '306c724a-d138-486a-a601-0b2a9ced52be', format: 'pdf', layers: { 'text-1': { text: 'Hello' } } }"
+  renders.duplicate:
+    call: "{ renderId: 'ce424057-6b54-41bb-afec-adc35a2b9175' }"
+  renders.delete:
+    call: "{ renderId: 'ce424057-6b54-41bb-afec-adc35a2b9175' }"
+  renders.merge:
+    call: "{ ids: ['ce424057-6b54-41bb-afec-adc35a2b9175', 'aa112233-4455-6677-8899-aabbccddeeff'], name: 'packet' }"
+  templates.list:
+    call: '{ page: 0, limit: 25 }'
+  templates.get:
+    call: "{ templateId: '306c724a-d138-486a-a601-0b2a9ced52be', includeLayers: true }"
+  templates.layers:
+    call: "{ templateId: '306c724a-d138-486a-a601-0b2a9ced52be' }"
+  templates.create:
+    call: "{ name: 'Square post', width: 1024, height: 1024, layers: [{ layer: 'text-1', type: 'text', text: 'Hello' }] }"
+  templates.delete:
+    call: "{ templateId: '306c724a-d138-486a-a601-0b2a9ced52be' }"
+  templates.addTags:
+    call: "{ templateId: '306c724a-d138-486a-a601-0b2a9ced52be', tags: ['instagram', 'story'] }"
+  templates.removeTags:
+    call: "{ templateId: '306c724a-d138-486a-a601-0b2a9ced52be', tags: ['story'] }"
+  uploads.list:
+    call: "{ query: 'banner', page: 0, limit: 10 }"
+  uploads.create:
+    call: "{ fileName: 'logo.png', fileBase64: 'iVBORw0KGgo=', contentType: 'image/png', tags: ['brand'] }"
+  uploads.delete:
+    call: "{ uploadIds: ['upl_123abc', 'upl_def456'] }"
+  folders.list:
+    call: '{ page: 0 }'
+  folders.create:
+    call: "{ name: 'Campaigns' }"
+  folders.update:
+    call: "{ folderId: 'fld_123abc', name: 'Q4 campaigns' }"
+  folders.delete:
+    call: "{ folderId: 'fld_123abc' }"
+  fonts.list: {}
+  galleryFonts.list: {}
+  account.get: {}
+apiNotes:
+  'renders.create': 'Spends one credit per render; send template, or templates for a batch which answers an array; width and height run from 100 to 5000 and format defaults to jpg.'
+  'templates.addTags': 'The body is a bare JSON array of strings, not an object with a tags key.'
+  'uploads.create': 'The route takes multipart file bytes up to 2 MB; pass fileName and fileBase64, and contentType when the extension is ambiguous.'
+  'uploads.delete': 'ids is sent once per upload as a repeated query value.'
+  'renders.merge': 'Always asked to host the merged PDF, because the direct-download form answers the file rather than JSON.'
+  'templates.list': 'page starts at 0 and limit defaults to 25 here; filters are query, width and height.'

@@ -1,0 +1,447 @@
+{
+  "id": "tomtom",
+  "displayName": "TomTom",
+  "description": "Search places and addresses, geocode both ways, calculate routes, and read live traffic incidents and flow.",
+  "npmPackageName": "@corsair-dev/tomtom",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 7,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "tomtom.api.routing.calculate",
+      "shortPath": "routing.calculate",
+      "description": "Calculate a route between waypoints with travel mode, traffic and avoidance options; makes no booking",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "origins",
+            "optional": false,
+            "type": "{ latitude: number, longitude: number }[]",
+            "description": "Where the route starts"
+          },
+          {
+            "key": "destinations",
+            "optional": false,
+            "type": "{ latitude: number, longitude: number }[]",
+            "description": "Where the route ends"
+          },
+          {
+            "key": "travel_mode",
+            "optional": true,
+            "type": "car | truck | taxi | bus | van | motorcycle | bicycle | pedestrian",
+            "description": "Default car"
+          },
+          {
+            "key": "route_type",
+            "optional": true,
+            "type": "fastest | shortest | eco | thrilling",
+            "description": "Default fastest"
+          },
+          {
+            "key": "traffic",
+            "optional": true,
+            "type": "boolean",
+            "description": "Use live traffic in the calculation"
+          },
+          {
+            "key": "depart_at",
+            "optional": true,
+            "type": "string",
+            "description": "Departure time as an ISO 8601 instant, for future-traffic routing"
+          },
+          {
+            "key": "vehicle_max_speed",
+            "optional": true,
+            "type": "number",
+            "description": "Kilometres per hour for the travel mode"
+          },
+          {
+            "key": "avoid",
+            "optional": true,
+            "type": "(tollRoads | motorways | ferries | unpavedRoads | carpools | alreadyUsedRoads)[]",
+            "description": "Features to route around"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "formatVersion",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "routes",
+            "optional": false,
+            "type": "{ summary?: { lengthInMeters?: number | null, travelTimeInSeconds?: number | null, trafficDelayInSeconds?: number | null, departureTime?: string | null, arrivalTime?: string | null, hasTollRoad?: boolean | null, hasHighway?: boolean | null, hasFerry?: boolean | null } | null, legs?: {}[] | null, guidance?: {} | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tomtom.api.search.fuzzy",
+      "shortPath": "search.fuzzy",
+      "description": "Search for places, addresses, streets and geography, with optional geo bias and country filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "What to search for, e.g. \"pizza\""
+          },
+          {
+            "key": "typeahead",
+            "optional": true,
+            "type": "boolean",
+            "description": "Treat the query as partial input for predictive search"
+          },
+          {
+            "key": "radius",
+            "optional": true,
+            "type": "number",
+            "description": "Metres from the bias point; requires lat and lon"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page; default 10, maximum 100"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Default 0"
+          },
+          {
+            "key": "country_set",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated ISO country codes, e.g. \"US,MX\""
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "BCP-47 language tag, e.g. \"en-GB\""
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number",
+            "description": "Latitude for the geo bias"
+          },
+          {
+            "key": "lon",
+            "optional": true,
+            "type": "number",
+            "description": "Longitude for the geo bias"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "{ query?: string | null, queryType?: string | null, queryTime?: number | null, numResults?: number | null, offset?: number | null, totalResults?: number | null, fuzzyLevel?: number | null } | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ type?: string | null, id?: string | null, score?: number | null, dist?: number | null, name?: string | null, address?: { streetName?: string | null, municipality?: string | null, countrySubdivision?: string | null, postalCode?: string | null, countryCode?: string | null, country?: string | null, freeformAddress?: string | null } | null, position?: { lat: number, lon: number } | null, viewport?: { topLeftPoint?: { lat: number, lon: number } | null, btmRightPoint?: { lat: number, lon: number } | null } | null, poi?: { name?: string | null, categories?: string[] | null, classifications?: {}[] | null, phone?: string | null, url?: string | null } | null, entryPoints?: {}[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tomtom.api.search.geocode",
+      "shortPath": "search.geocode",
+      "description": "Turn an address into coordinates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "An address to turn into coordinates"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page; default 10, maximum 100"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Default 0"
+          },
+          {
+            "key": "country_set",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated ISO country codes, e.g. \"US,MX\""
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "BCP-47 language tag, e.g. \"en-GB\""
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number",
+            "description": "Latitude for the geo bias"
+          },
+          {
+            "key": "lon",
+            "optional": true,
+            "type": "number",
+            "description": "Longitude for the geo bias"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ type?: string | null, id?: string | null, address?: {} | null, position?: { lat: number, lon: number } | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tomtom.api.search.reverseGeocode",
+      "shortPath": "search.reverseGeocode",
+      "description": "Turn coordinates into the nearest address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "latitude",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "longitude",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "radius",
+            "optional": true,
+            "type": "number",
+            "description": "Metres to search around the point, up to 1000"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "addresses",
+            "optional": false,
+            "type": "{ address?: { streetName?: string | null, municipality?: string | null, countrySubdivision?: string | null, postalCode?: string | null, countryCode?: string | null, country?: string | null, freeformAddress?: string | null } | null, position?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tomtom.api.traffic.flow",
+      "shortPath": "traffic.flow",
+      "description": "Read the current speed and free-flow speed on the road at a point",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "latitude",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "longitude",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "zoom",
+            "optional": true,
+            "type": "number",
+            "description": "Detail level; higher is more precise"
+          },
+          {
+            "key": "unit",
+            "optional": true,
+            "type": "kmph | mph",
+            "description": "Speed unit, default kmph"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "flowSegmentData",
+            "optional": true,
+            "type": "{ frc?: string | null, currentSpeed?: number | null, freeFlowSpeed?: number | null, currentTravelTime?: number | null, freeFlowTravelTime?: number | null, confidence?: number | null, roadClosure?: boolean | null, coordinates?: {} | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tomtom.api.traffic.incidents",
+      "shortPath": "traffic.incidents",
+      "description": "List live traffic incidents in a bounding box, with their delay and road numbers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bbox",
+            "optional": false,
+            "type": "string",
+            "description": "Bounding box as \"minLon,minLat,maxLon,maxLat\", at most 10,000 km² in area"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Default en-GB"
+          },
+          {
+            "key": "category_filter",
+            "optional": true,
+            "type": "number[]",
+            "description": "Incident categories to include, such as [1, 6] for Accident and Jam; sent comma-separated"
+          },
+          {
+            "key": "time_validity_filter",
+            "optional": true,
+            "type": "(present | future)[]",
+            "description": "present, future or both; default present"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "incidents",
+            "optional": false,
+            "type": "{ id?: string | null, type?: string | null, geometry?: {} | null, properties?: { id?: string | null, iconCategory?: number | null, magnitudeOfDelay?: number | null, events?: {}[] | null, startTime?: string | null, endTime?: string | null, from?: string | null, to?: string | null, length?: number | null, delay?: number | null, roadNumbers?: string[] | null, aci?: {} | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tomtom.api.traffic.tile",
+      "shortPath": "traffic.tile",
+      "description": "Fetch one traffic flow or incident map tile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "layer",
+            "optional": true,
+            "type": "flow | incidents",
+            "description": "Default flow"
+          },
+          {
+            "key": "style",
+            "optional": true,
+            "type": "absolute | relative | relative-delay | reduced-sensitivity",
+            "description": "Flow layer style, default relative"
+          },
+          {
+            "key": "incident_style",
+            "optional": true,
+            "type": "s0 | s0-dark | s1 | s2 | s3 | night",
+            "description": "Incidents layer style, default s3"
+          },
+          {
+            "key": "zoom",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "x",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "y",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content_type",
+            "optional": false,
+            "type": "string",
+            "description": "Usually image/png"
+          },
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string",
+            "description": "The tile image, base64-encoded"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

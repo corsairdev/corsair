@@ -1,0 +1,78 @@
+{
+  "operations": [
+    {
+      "id": "projects.listTaskPredecessors",
+      "version": "v2",
+      "method": "GET",
+      "path": "/projects/api/v2/projects/{id}/predecessors.json",
+      "summary": "Retrieve all Task Predecessors/Dependencies on a given Project",
+      "tag": "Tasks",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "type": "integer",
+          "required": true
+        },
+        {
+          "name": "includeDependencies",
+          "in": "query",
+          "type": "boolean",
+          "required": false,
+          "default": false
+        },
+        {
+          "name": "onlyDependencies",
+          "in": "query",
+          "type": "boolean",
+          "required": false,
+          "default": false
+        },
+        {
+          "name": "onlyBasicFields",
+          "in": "query",
+          "type": "boolean",
+          "required": false,
+          "default": false
+        },
+        {
+          "name": "onlyActionable",
+          "in": "query",
+          "type": "boolean",
+          "required": false,
+          "default": false
+        },
+        {
+          "name": "dataSet",
+          "in": "query",
+          "type": "string",
+          "required": false,
+          "default": "none"
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "type": "string",
+          "required": false
+        },
+        {
+          "name": "pageSize",
+          "in": "query",
+          "type": "string",
+          "required": false
+        }
+      ],
+      "bodyRequired": false,
+      "response": {
+        "type": "object",
+        "properties": {
+          "STATUS": {
+            "type": "string"
+          }
+        }
+      },
+      "responseCode": "200"
+    }
+  ],
+  "definitions": {}
+}
