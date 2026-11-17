@@ -4340,6 +4340,15 @@
                 ]
               },
               {
+                "group": "Shopify",
+                "pages": [
+                  "plugins/shopify/overview",
+                  "plugins/shopify/api",
+                  "plugins/shopify/database",
+                  "plugins/shopify/webhooks"
+                ]
+              },
+              {
                 "group": "Short.io",
                 "pages": [
                   "plugins/shortio/overview",

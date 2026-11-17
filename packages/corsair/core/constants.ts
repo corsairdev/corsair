@@ -523,6 +523,7 @@ export const BaseProviders = [
 	'sevdesk',
 	'sharepoint',
 	'shippo',
+	'shopify',
 	'shortcut',
 	'shortio',
 	'slack',
@@ -1151,6 +1152,7 @@ export const ProviderDisplayNames = {
 	sevdesk: 'Sevdesk',
 	sharepoint: 'SharePoint',
 	shippo: 'Shippo',
+	shopify: 'Shopify',
 	shortcut: 'Shortcut',
 	shortio: 'Short.io',
 	slack: 'Slack',
@@ -1786,6 +1788,7 @@ export type AllProviders =
 	| 'sevdesk'
 	| 'sharepoint'
 	| 'shippo'
+	| 'shopify'
 	| 'shortcut'
 	| 'shortio'
 	| 'slack'
