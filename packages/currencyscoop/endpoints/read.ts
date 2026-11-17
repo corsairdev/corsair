@@ -221,11 +221,14 @@ export const timeseriesQuotes: CorsairEndpoint<
 		end_date: parsed.end_date,
 	});
 	const response = responseOf(body);
-	const base = optionalString(response.base)?.toUpperCase();
-	const byDate = asRecord(response.rates);
-	if (!base || !byDate) {
-		throw new Error('CurrencyScoop timeseries response was missing rates');
-	}
+	// The live API answers `response: { "YYYY-MM-DD": { CODE: rate } }` with no
+	// base or rates wrapper; keep reading the documented `{ base, rates }` shape too.
+	const base = (
+		optionalString(response.base) ??
+		parsed.base ??
+		'USD'
+	).toUpperCase();
+	const byDate = asRecord(response.rates) ?? response;
 	const quotes = Object.entries(byDate).flatMap(([date, rates]) => {
 		if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return [];
 		try {

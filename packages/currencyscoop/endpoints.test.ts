@@ -128,6 +128,61 @@ describe('currencyscoop reads', () => {
 		expect(result.quotes.map((row) => row.id)).toEqual(['2024-01-01:USD:EUR']);
 	});
 
+	it('reads the live timeseries shape (dates directly under response)', async () => {
+		// Trimmed from a live GET /v1/timeseries on 11-17: no base and no rates wrapper.
+		mockRequest.mockResolvedValue({
+			meta: { code: 200 },
+			response: {
+				'2024-01-01': { EUR: 0.90753227 },
+				'2024-01-02': { EUR: 0.91239926 },
+			},
+			'2024-01-01': { EUR: 0.90753227 },
+			'2024-01-02': { EUR: 0.91239926 },
+		});
+		const result = await timeseriesQuotes(context('sekrit'), {
+			start_date: '2024-01-01',
+			end_date: '2024-01-02',
+			base: 'usd',
+			symbols: 'EUR',
+		});
+		expect(result.quotes).toEqual([
+			{
+				id: '2024-01-01:USD:EUR',
+				date: '2024-01-01',
+				base: 'USD',
+				code: 'EUR',
+				rate: 0.90753227,
+			},
+			{
+				id: '2024-01-02:USD:EUR',
+				date: '2024-01-02',
+				base: 'USD',
+				code: 'EUR',
+				rate: 0.91239926,
+			},
+		]);
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			url: '/timeseries',
+			query: {
+				base: 'USD',
+				symbols: 'EUR',
+				start_date: '2024-01-01',
+				end_date: '2024-01-02',
+			},
+		});
+	});
+
+	it('defaults the timeseries base to USD when neither side names one', async () => {
+		mockRequest.mockResolvedValue({
+			response: { '2024-01-01': { EUR: 0.9 } },
+		});
+		const result = await timeseriesQuotes(context('sekrit'), {
+			start_date: '2024-01-01',
+			end_date: '2024-01-01',
+		});
+		expect(result.quotes.map((row) => row.id)).toEqual(['2024-01-01:USD:EUR']);
+	});
+
 	it('rejects a bad date before calling the API', async () => {
 		await expect(
 			timeseriesQuotes(context('sekrit'), {

@@ -21,7 +21,7 @@ apiNotes:
   quotes.convert: |
     GET /convert. Returns from, to, amount, value, and date. Nothing is stored.
   quotes.timeseries: |
-    GET /timeseries. Stores one quote per date and currency code.
+    GET /timeseries. The API lists rates by date under response with no base, so the stored base is the one you asked for (USD when omitted). Stores one quote per date and currency code.
 apiExamples:
   currencies.list:
     call: "{}"
