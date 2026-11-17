@@ -36,7 +36,7 @@ apiNotes:
   solar.get: |
     GET /v2/solar/point. params: uvIndex, solarDownwardRadiationFlux, surfaceNetShortwaveRadiationDownwardsFlux.
   bio.get: |
-    GET /v2/bio/point. params such as chlorophyll, iron, nitrate, oxygen, ph, salinity, soilMoisture, soilTemperature.
+    GET /v2/bio/point. params: chlorophyll, iron, nitrate, oxygen, ph, phosphate, phyto, phytoplankton, salinity, silicate, surfaceTemperature, soilMoisture and soilTemperature (each also at 10cm, 40cm, 100cm). Air and water temperature come from weather.get.
   weather.get: |
     GET /v2/weather/point. params such as airTemperature, windSpeed, gust, waveHeight, swellHeight, waterTemperature, precipitation, cloudCover. Forecasts reach 10 days ahead and 14 days back.
   weather.historical: |
@@ -57,7 +57,7 @@ apiExamples:
   solar.get:
     call: "{ lat: 58.7984, lng: 17.8081, params: 'uvIndex' }"
   bio.get:
-    call: "{ lat: 58.7984, lng: 17.8081, params: 'salinity,waterTemperature' }"
+    call: "{ lat: 58.7984, lng: 17.8081, params: 'salinity,ph' }"
   weather.get:
     call: "{ lat: 58.7984, lng: 17.8081, params: 'airTemperature,windSpeed,waveHeight', source: 'sg' }"
   weather.historical:

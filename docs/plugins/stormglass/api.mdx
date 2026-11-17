@@ -102,7 +102,7 @@ Get hourly bio data (water chemistry, salinity, soil moisture and temperature) f
 **Risk:** `read`
 
 ```ts
-await corsair.stormglass.api.bio.get({ lat: 58.7984, lng: 17.8081, params: 'salinity,waterTemperature' });
+await corsair.stormglass.api.bio.get({ lat: 58.7984, lng: 17.8081, params: 'salinity,ph' });
 ```
 
 **Input**
@@ -116,7 +116,7 @@ await corsair.stormglass.api.bio.get({ lat: 58.7984, lng: 17.8081, params: 'sali
 | `end` | `string \| number` | No | Last hour, UTC. UNIX seconds or ISO. At most 10 days after start. |
 | `source` | `string` | No | Comma-separated sources, e.g. sg or noaa,dwd. The first one fills `values`. |
 
-GET /v2/bio/point. params such as chlorophyll, iron, nitrate, oxygen, ph, salinity, soilMoisture, soilTemperature.
+GET /v2/bio/point. params: chlorophyll, iron, nitrate, oxygen, ph, phosphate, phyto, phytoplankton, salinity, silicate, surfaceTemperature, soilMoisture and soilTemperature (each also at 10cm, 40cm, 100cm). Air and water temperature come from weather.get.
 
 
 
