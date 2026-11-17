@@ -608,10 +608,20 @@ describe('structure, views and scripts', () => {
 				script: 'x',
 				mode: 'background',
 			},
-			{ data: { runId: 'r1', status: 'queued' } },
+			// Live 11-17: mode=background answered 202 with this body.
+			{ run: { id: 'e2dbc8l4707p', status: 'running' } },
 			{ status: 202 },
 		);
-		expect(asRecord(asRecord(result)?.run)?.runId).toBe('r1');
+		expect(asRecord(asRecord(result)?.run)?.id).toBe('e2dbc8l4707p');
+	});
+
+	it('keeps a script result that happens to hold a runId as the result', async () => {
+		const { result } = await capture(
+			endpoints.scripts.execute,
+			{ workspaceId: WORKSPACE, moduleName: 'my_app', script: 'x' },
+			{ data: { runId: 'mine' } },
+		);
+		expect(result).toEqual({ result: { runId: 'mine' } });
 	});
 });
 

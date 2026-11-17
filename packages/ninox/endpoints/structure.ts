@@ -188,14 +188,13 @@ export const scriptExecute: NinoxEndpoints['scriptExecute'] = (ctx, input) =>
 		}),
 		{
 			shape: (raw) => {
+				// The envelope key tells them apart, never the script's value:
+				// a 200 is { data: <result> } and a 202 is { run: { id, status } }.
 				const envelope = asRecord(raw);
-				if (!envelope || !('data' in envelope)) {
-					throw new Error('Expected a Ninox script answer with data');
-				}
-				const data = envelope.data;
-				// A 202 carries the run (it has a runId) rather than a result.
-				const run = asRecord(data);
-				return run && 'runId' in run ? { run } : { result: data };
+				if (envelope && 'data' in envelope) return { result: envelope.data };
+				const run = asRecord(envelope?.run);
+				if (run) return { run };
+				throw new Error('Expected a Ninox script answer with data or run');
 			},
 			// The script and its result can hold record data, so neither is logged.
 			log: ({ moduleName }, result) => ({

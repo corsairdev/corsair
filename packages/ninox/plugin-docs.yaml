@@ -80,7 +80,7 @@ apiExamples:
   records.changes:
     call: "{ workspaceId: 'abcdefghijkl', moduleName: 'CRM', tableName: 'Contacts', since: '2026-11-16T09:00:00Z' }"
 apiNotes:
-  scripts.execute: 'A script can write and delete, so this is destructive. A long script answers { run } instead of { result }.'
+  scripts.execute: 'A script can write and delete, so this is destructive. A long script, or mode background, answers { run: { id, status } } instead of { result }.'
   fields.create: "Choice and multi options are [{ label }]; Ninox assigns the ids."
 
   records.list: 'filter is a JSON string, and only columns the table marks filterable are accepted.'

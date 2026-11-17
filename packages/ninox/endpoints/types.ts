@@ -567,8 +567,11 @@ export type ScriptExecuteInput = z.input<typeof ScriptExecuteInputSchema>;
 const ScriptExecuteResponseSchema = z.object({
 	// unknown: a Ninox script can evaluate to any JSON value.
 	result: z.unknown().optional(),
-	// unknown: the run object Ninox answers with a 202, passed through.
-	run: z.record(z.string(), z.unknown()).optional(),
+	/** Set instead of `result` when Ninox answered 202 (a background run). */
+	run: z
+		.object({ id: z.string().nullish(), status: z.string().nullish() })
+		.loose()
+		.optional(),
 });
 
 export type ScriptExecuteResponse = z.infer<typeof ScriptExecuteResponseSchema>;
