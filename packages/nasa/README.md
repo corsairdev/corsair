@@ -28,7 +28,7 @@ pnpm add @corsair-dev/nasa
 | `eonet.categories` | `nasa.api.eonet.categories` | `read` | List the EONET categories events can be filed under |
 | `eonet.event` | `nasa.api.eonet.event` | `read` | Read one EONET event with its categories, sources and the geometry of each observation |
 | `eonet.events` | `nasa.api.eonet.events` | `read` | List NASA's curated natural events, such as wildfires and storms, filterable by category, source, date window, magnitude and bounding box |
-| `epic.availableDates` | `nasa.api.epic.availableDates` | `read` | List every day that has EPIC imagery, newest first |
+| `epic.availableDates` | `nasa.api.epic.availableDates` | `read` | List every day that has EPIC imagery, oldest first |
 | `epic.images` | `nasa.api.epic.images` | `read` | Read DSCOVR EPIC's full-disc imagery metadata for the most recent day or one given day, in natural or enhanced colour |
 | `images.asset` | `nasa.api.images.asset` | `read` | List an asset's downloadable file URLs at every size, and the metadata.json entry among them |
 | `images.metadata` | `nasa.api.images.metadata` | `read` | Return the URL of an asset's metadata.json, which holds the raw EXIF and file details |

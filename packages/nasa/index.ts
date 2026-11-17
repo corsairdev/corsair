@@ -298,7 +298,7 @@ const nasaEndpointMeta = {
 	},
 	'epic.availableDates': {
 		riskLevel: 'read',
-		description: 'List every day that has EPIC imagery, newest first',
+		description: 'List every day that has EPIC imagery, oldest first',
 	},
 	'eonet.events': {
 		riskLevel: 'read',
