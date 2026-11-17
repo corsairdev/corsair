@@ -303,6 +303,7 @@ export const BaseProviders = [
 	'gleap',
 	'gmail',
 	'gmicloud',
+	'godial',
 	'gong',
 	'googleaddressvalidation',
 	'googleanalytics',
@@ -935,6 +936,7 @@ export const ProviderDisplayNames = {
 	gleap: 'Gleap',
 	gmail: 'Gmail',
 	gmicloud: 'GMI Cloud',
+	godial: 'GoDial',
 	gong: 'Gong',
 	googleaddressvalidation: 'Google Address Validation',
 	googleanalytics: 'Google Analytics',
@@ -1574,6 +1576,7 @@ export type AllProviders =
 	| 'gleap'
 	| 'gmail'
 	| 'gmicloud'
+	| 'godial'
 	| 'gong'
 	| 'googleaddressvalidation'
 	| 'googleanalytics'
