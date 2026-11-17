@@ -164,7 +164,7 @@ await corsair.gatherup.api.businesses.get({ businessId: 34291 });
 | `communicationMethod` | `string \| null` | No | — |
 | `nps` | `number \| null` | No | — |
 | `ratingsReceived` | `number \| null` | No | — |
-| `customersNotSent` | `string \| null` | No | — |
+| `customersNotSent` | `number \| string \| null` | No | — |
 | `legalBusinessName` | `string \| null` | No | — |
 | `isActive` | `boolean \| null` | No | — |
 | `errorCode` | `number \| null` | No | `0` on success. Any other value is a failure, whatever the status. |
@@ -491,12 +491,12 @@ await corsair.gatherup.api.customers.get({ businessId: 34291, customerId: 807170
 | `email` | `string \| null` | No | — |
 | `jobId` | `string \| null` | No | The caller’s own reference for the job. |
 | `customId` | `string \| null` | No | — |
-| `parentId` | `string \| null` | No | — |
+| `parentId` | `number \| string \| null` | No | — |
 | `rating` | `string \| null` | No | — |
 | `review` | `string \| null` | No | — |
 | `statusInfo` | `string \| null` | No | — |
 | `subscription` | `number \| null` | No | — |
-| `unsubscribed` | `string \| null` | No | — |
+| `unsubscribed` | `number \| string \| null` | No | — |
 | `createdAt` | `string \| null` | No | — |
 | `errorCode` | `number \| null` | No | `0` on success. Any other value is a failure, whatever the status. |
 | `errorMessage` | `string \| null` | No | — |
@@ -553,12 +553,12 @@ await corsair.gatherup.api.customers.list({ businessId: 34291, page: 1 });
   email?: string | null,
   jobId?: string | null,
   customId?: string | null,
-  parentId?: string | null,
+  parentId?: number | string | null,
   rating?: string | null,
   review?: string | null,
   statusInfo?: string | null,
   subscription?: number | null,
-  unsubscribed?: string | null,
+  unsubscribed?: number | string | null,
   createdAt?: string | null
 }[]
 ```
@@ -647,12 +647,12 @@ Spells the phone `customerPhoneNumber`, where create spells it `customerPhone`.
 | `email` | `string \| null` | No | — |
 | `jobId` | `string \| null` | No | The caller’s own reference for the job. |
 | `customId` | `string \| null` | No | — |
-| `parentId` | `string \| null` | No | — |
+| `parentId` | `number \| string \| null` | No | — |
 | `rating` | `string \| null` | No | — |
 | `review` | `string \| null` | No | — |
 | `statusInfo` | `string \| null` | No | — |
 | `subscription` | `number \| null` | No | — |
-| `unsubscribed` | `string \| null` | No | — |
+| `unsubscribed` | `number \| string \| null` | No | — |
 | `createdAt` | `string \| null` | No | — |
 | `errorCode` | `number \| null` | No | `0` on success. Any other value is a failure, whatever the status. |
 | `errorMessage` | `string \| null` | No | — |
