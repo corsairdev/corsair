@@ -35,6 +35,35 @@ test('does not open a code span at an escaped backtick', () => {
 	assert.equal(escapeMdxText('`a\\` <b>'), '`a\\` &lt;b&gt;');
 });
 
+test('shows a bare address that is not a valid URL as code', () => {
+	assert.equal(
+		escapeMdxText('A proxy URL (e.g. http://user:pass@host:port) works.'),
+		'A proxy URL (e.g. `http://user:pass@host:port`) works.',
+	);
+	assert.equal(
+		escapeMdxText('Send to https://x.test:port.'),
+		'Send to `https://x.test:port`.',
+	);
+});
+
+test('leaves valid addresses, code spans and words containing http alone', () => {
+	assert.equal(
+		escapeMdxText(
+			'See https://example.com/a_(b)?q=1, then (https://example.com).',
+		),
+		'See https://example.com/a_(b)?q=1, then (https://example.com).',
+	);
+	assert.equal(
+		escapeMdxText('Use `http://user:pass@host:port`.'),
+		'Use `http://user:pass@host:port`.',
+	);
+	assert.equal(escapeMdxText('xhttp://a:b'), 'xhttp://a:b');
+	assert.equal(
+		escapeMdxText('Full page URL, including https://'),
+		'Full page URL, including https://',
+	);
+});
+
 test('returns an empty string for missing input', () => {
 	assert.equal(escapeMdxText(undefined), '');
 	assert.equal(escapeMdxText(''), '');
