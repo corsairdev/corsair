@@ -3921,6 +3921,14 @@
                 ]
               },
               {
+                "group": "PostOnce",
+                "pages": [
+                  "plugins/postonce/overview",
+                  "plugins/postonce/api",
+                  "plugins/postonce/database"
+                ]
+              },
+              {
                 "group": "Prerender",
                 "pages": [
                   "plugins/prerender/overview",

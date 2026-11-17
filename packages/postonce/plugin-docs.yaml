@@ -1,0 +1,39 @@
+displayName: PostOnce
+description: 'Publish and schedule posts with text and media to LinkedIn, X, Threads, Bluesky, Facebook Pages, Instagram, TikTok, YouTube and Pinterest, then read back per-account delivery status.'
+domain: postonce.to
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key under Developers in the PostOnce dashboard. The plugin sends it as `Authorization: Bearer <key>`. A key needs the `accounts:read`, `posts:read` and `posts:write` scopes for every operation here.
+
+  Things to know:
+
+  - **Accounts are the targets.** `accounts.list` returns each connected account's `id`, `status` and `media_requirements`. Pass the ids as `targets[].account_id` in `posts.create`, and only post to accounts whose `status` is `active`. Instagram, TikTok, YouTube and Pinterest need at least one image or video.
+  - **Now or later.** `posts.create` without `publish_at` publishes right away. With an ISO-8601 `publish_at` it is scheduled, and `posts.cancel` stops it before it runs.
+  - **Media goes in by URL.** `media[].url` must be an absolute HTTP or HTTPS URL that PostOnce can download when it publishes.
+  - **Retries do not double-post.** Pass `idempotencyKey` (sent as the `Idempotency-Key` header): a repeat with the same body returns the original post. The plugin does not replay `posts.create` or `posts.cancel` after a 5xx or network error.
+  - **One post, many destinations.** A post's `status` sums up its `targets`; each target carries its own `status`, `platform_post_url` and `error`.
+  - **Paging.** `posts.list` returns up to `limit` posts (default 20, max 100), newest first. Pass `meta.next_cursor` as `after` for the next page; it is null on the last page.
+
+examples:
+  read:
+    path: accounts.list
+    title: List connected social accounts
+    args: {}
+  write:
+    path: posts.create
+    title: Schedule a post to one account
+    args:
+      content: Launching today
+      targets:
+        - account_id: ACCOUNT_ID
+      publish_at: '2026-12-01T15:00:00Z'
+apiExamples:
+  accounts.list: {}
+  posts.create:
+    call: "{ content: 'Launching today', targets: [{ account_id: 'ACCOUNT_ID' }], media: [{ url: 'https://example.com/launch.png', type: 'image' }], publish_at: '2026-12-01T15:00:00Z' }"
+  posts.get:
+    call: "{ id: 'POST_ID' }"
+  posts.list:
+    call: '{ limit: 20 }'
+  posts.cancel:
+    call: "{ id: 'POST_ID' }"

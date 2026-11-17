@@ -469,6 +469,7 @@ export const BaseProviders = [
 	'postgrid',
 	'postiz',
 	'postmark',
+	'postonce',
 	'prerender',
 	'prismic',
 	'proabono',
@@ -1154,6 +1155,7 @@ export const ProviderDisplayNames = {
 	postgrid: 'PostGrid',
 	postiz: 'Postiz',
 	postmark: 'Postmark',
+	postonce: 'PostOnce',
 	prerender: 'Prerender',
 	prismic: 'Prismic',
 	proabono: 'ProAbono',
@@ -1846,6 +1848,7 @@ export type AllProviders =
 	| 'postgrid'
 	| 'postiz'
 	| 'postmark'
+	| 'postonce'
 	| 'prerender'
 	| 'prismic'
 	| 'proabono'

@@ -1,0 +1,152 @@
+---
+title: "PostOnce plugin"
+sidebarTitle: "Overview"
+description: "Publish and schedule posts with text and media to LinkedIn, X, Threads, Bluesky, Facebook Pages, Instagram, TikTok, YouTube and Pinterest, then read back per-account delivery status."
+---
+
+Use **PostOnce** through Corsair: one client, typed API calls, local DB sync.
+
+Create an API key under Developers in the PostOnce dashboard. The plugin sends it as `Authorization: Bearer <key>`. A key needs the `accounts:read`, `posts:read` and `posts:write` scopes for every operation here.
+
+Things to know:
+
+- **Accounts are the targets.** `accounts.list` returns each connected account's `id`, `status` and `media_requirements`. Pass the ids as `targets[].account_id` in `posts.create`, and only post to accounts whose `status` is `active`. Instagram, TikTok, YouTube and Pinterest need at least one image or video.
+- **Now or later.** `posts.create` without `publish_at` publishes right away. With an ISO-8601 `publish_at` it is scheduled, and `posts.cancel` stops it before it runs.
+- **Media goes in by URL.** `media[].url` must be an absolute HTTP or HTTPS URL that PostOnce can download when it publishes.
+- **Retries do not double-post.** Pass `idempotencyKey` (sent as the `Idempotency-Key` header): a repeat with the same body returns the original post. The plugin does not replay `posts.create` or `posts.cancel` after a 5xx or network error.
+- **One post, many destinations.** A post's `status` sums up its `targets`; each target carries its own `status`, `platform_post_url` and `error`.
+- **Paging.** `posts.list` returns up to `limit` posts (default 20, max 100), newest first. Pass `meta.next_cursor` as `after` for the next page; it is null on the last page.
+
+**What you get:**
+
+- 5 typed API operations
+- 2 synced entities (`accounts`, `posts`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/postonce better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/postonce better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/postonce better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/postonce better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { postonce } from '@corsair-dev/postonce';
+
+export const corsair = createCorsair({
+	plugins: [
+		postonce(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the PostOnce API key before the first call: `pnpm corsair setup --plugin=postonce --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+postonce()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'postonce',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List connected social accounts**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.postonce.api.accounts.list({});
+```
+
+
+**Schedule a post to one account**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.postonce.api.posts.create({
+	content: 'Launching today',
+	targets: [{ account_id: 'ACCOUNT_ID' }],
+	publish_at: '2026-12-01T15:00:00Z',
+});
+```
+
+
+See the full list on the [API](/plugins/postonce/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.postonce.db.<entity>.search()` and `.list()`: `accounts`, `posts`.
+
+See [Database](/plugins/postonce/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/postonce/api">
+    Every `postonce.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/postonce/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

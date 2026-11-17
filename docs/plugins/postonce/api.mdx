@@ -1,0 +1,399 @@
+---
+title: "PostOnce API reference"
+sidebarTitle: "API"
+description: "API reference for the PostOnce plugin in Corsair: every `postonce.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Accounts
+
+### list
+
+`accounts.list`
+
+List connected social accounts (LinkedIn, X, Threads, Bluesky, Facebook Pages, Instagram, TikTok, YouTube, Pinterest) with status, capabilities and media requirements. Their ids are the targets for posts.create.
+
+**Risk:** `read`
+
+```ts
+await corsair.postonce.api.accounts.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  platform?: string | null,
+  username?: string | null,
+  avatar_url?: string | null,
+  status?: string | null,
+  capabilities?: {
+    connection_mode?: string | null,
+    destination?: boolean | null,
+    source?: boolean | null,
+    backfill?: boolean | null,
+    text?: boolean | null,
+    images?: boolean | null,
+    video?: boolean | null,
+    replies?: boolean | null,
+    threads?: boolean | null
+  } | null,
+  media_requirements?: {
+    supported_formats?: string[] | null,
+    convertible_formats?: Record<string, string> | null,
+    max_size_bytes?: {
+      image?: number | null,
+      video?: number | null,
+      gif?: number | null
+    } | null,
+    file_constraints?: Record<string, any> | null,
+    required_media?: Record<string, any> | null,
+    max_hashtags?: number | null,
+    min_video_duration_seconds?: number | null,
+    max_video_duration_seconds?: number | null,
+    aspect_ratio?: Record<string, any> | null,
+    thumbnail?: Record<string, any> | null
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Posts
+
+### cancel
+
+`posts.cancel`
+
+Cancel a scheduled or still-pending post. The post record is kept with status cancelled; content already published on a network stays live.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.postonce.api.posts.cancel({ id: 'POST_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Aggregate post id (UUID) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  content?: string | null,
+  external_id?: string | null,
+  media?: {
+    url: string,
+    type?: string | null,
+    width?: number | null,
+    height?: number | null,
+    size?: number | null,
+    duration?: number | null,
+    thumbnail_url?: string | null
+  }[] | null,
+  origin?: string | null,
+  publish_at?: string | null,
+  status?: string | null,
+  created_at?: string | null,
+  targets?: {
+    target_post_id?: string | null,
+    account_id?: string | null,
+    platform?: string | null,
+    target_variant?: string | null,
+    username?: string | null,
+    status?: string | null,
+    error?: string | null,
+    platform_post_id?: string | null,
+    platform_post_url?: string | null,
+    scheduled_time?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`posts.create`
+
+Create one post for one or more connected accounts, with text and media URLs. Without publish_at it publishes immediately and cannot be recalled once live; with publish_at it is scheduled. An idempotencyKey makes a retry return the original post.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.postonce.api.posts.create({ content: 'Launching today', targets: [{ account_id: 'ACCOUNT_ID' }], media: [{ url: 'https://example.com/launch.png', type: 'image' }], publish_at: '2026-12-01T15:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | No | Post text shared by every target |
+| `targets` | `object[]` | Yes | One entry per connected account to publish to |
+| `media` | `object[]` | No | Images or a video, by URL |
+| `publish_at` | `string \| null` | No | ISO-8601 date-time to schedule the post; omit to publish immediately |
+| `external_id` | `string \| null` | No | Your own reference, returned on the post |
+| `idempotencyKey` | `string` | No | Sent as the Idempotency-Key header. A repeat with the same body returns the original post instead of creating a duplicate. |
+
+<AccordionGroup>
+<Accordion title="targets full type">
+
+```ts
+{
+  account_id: string,
+  content_override?: string | null,
+  platform_options?: Record<string, any> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="media full type">
+
+```ts
+{
+  url: string,
+  type?: image | video,
+  width?: number,
+  height?: number,
+  size?: number,
+  duration?: number,
+  thumbnail_url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  content?: string | null,
+  external_id?: string | null,
+  media?: {
+    url: string,
+    type?: string | null,
+    width?: number | null,
+    height?: number | null,
+    size?: number | null,
+    duration?: number | null,
+    thumbnail_url?: string | null
+  }[] | null,
+  origin?: string | null,
+  publish_at?: string | null,
+  status?: string | null,
+  created_at?: string | null,
+  targets?: {
+    target_post_id?: string | null,
+    account_id?: string | null,
+    platform?: string | null,
+    target_variant?: string | null,
+    username?: string | null,
+    status?: string | null,
+    error?: string | null,
+    platform_post_id?: string | null,
+    platform_post_url?: string | null,
+    scheduled_time?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`posts.get`
+
+Get one post with its per-account delivery state: status, platform post URL and any platform error.
+
+**Risk:** `read`
+
+```ts
+await corsair.postonce.api.posts.get({ id: 'POST_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Aggregate post id (UUID) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  content?: string | null,
+  external_id?: string | null,
+  media?: {
+    url: string,
+    type?: string | null,
+    width?: number | null,
+    height?: number | null,
+    size?: number | null,
+    duration?: number | null,
+    thumbnail_url?: string | null
+  }[] | null,
+  origin?: string | null,
+  publish_at?: string | null,
+  status?: string | null,
+  created_at?: string | null,
+  targets?: {
+    target_post_id?: string | null,
+    account_id?: string | null,
+    platform?: string | null,
+    target_variant?: string | null,
+    username?: string | null,
+    status?: string | null,
+    error?: string | null,
+    platform_post_id?: string | null,
+    platform_post_url?: string | null,
+    scheduled_time?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`posts.list`
+
+List the profile's posts, newest first, including dashboard and workflow posts. Page with after = meta.next_cursor.
+
+**Risk:** `read`
+
+```ts
+await corsair.postonce.api.posts.list({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Maximum number of posts to return (1-100, default 20) |
+| `after` | `string` | No | Cursor from a previous response (meta.next_cursor) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  content?: string | null,
+  external_id?: string | null,
+  media?: {
+    url: string,
+    type?: string | null,
+    width?: number | null,
+    height?: number | null,
+    size?: number | null,
+    duration?: number | null,
+    thumbnail_url?: string | null
+  }[] | null,
+  origin?: string | null,
+  publish_at?: string | null,
+  status?: string | null,
+  created_at?: string | null,
+  targets?: {
+    target_post_id?: string | null,
+    account_id?: string | null,
+    platform?: string | null,
+    target_variant?: string | null,
+    username?: string | null,
+    status?: string | null,
+    error?: string | null,
+    platform_post_id?: string | null,
+    platform_post_url?: string | null,
+    scheduled_time?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  next_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
