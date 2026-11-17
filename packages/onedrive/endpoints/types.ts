@@ -1,3 +1,4 @@
+import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
 
 // ── Shared Sub-Schemas ────────────────────────────────────────────────────────
@@ -814,28 +815,20 @@ export type ItemsGetThumbnailsResponse = z.infer<
 	typeof ItemsGetThumbnailsResponseSchema
 >;
 
-const ItemsDownloadResponseSchema = z.object({
-	content: z.string(),
-});
+const ItemsDownloadResponseSchema = FileOutputSchema;
 export type ItemsDownloadResponse = z.infer<typeof ItemsDownloadResponseSchema>;
 
-const ItemsDownloadByPathResponseSchema = z.object({
-	content: z.string(),
-});
+const ItemsDownloadByPathResponseSchema = FileOutputSchema;
 export type ItemsDownloadByPathResponse = z.infer<
 	typeof ItemsDownloadByPathResponseSchema
 >;
 
-const ItemsDownloadAsFormatResponseSchema = z.object({
-	content: z.string(),
-});
+const ItemsDownloadAsFormatResponseSchema = FileOutputSchema;
 export type ItemsDownloadAsFormatResponse = z.infer<
 	typeof ItemsDownloadAsFormatResponseSchema
 >;
 
-const ItemsDownloadVersionResponseSchema = z.object({
-	content: z.string(),
-});
+const ItemsDownloadVersionResponseSchema = FileOutputSchema;
 export type ItemsDownloadVersionResponse = z.infer<
 	typeof ItemsDownloadVersionResponseSchema
 >;
