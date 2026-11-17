@@ -441,13 +441,15 @@ export async function upsertAccount(i: {
 			return { accountId: requested.row.id, created: false };
 		}
 
-		// An unnamed row predates account names, so it is the first account the
-		// tenant connected. When that is another account, name the row after it
-		// so the account being delivered is added beside it instead of taking it.
+		// An unnamed row holding credentials predates account names, so it is the
+		// first account the tenant connected. When that is another account, name
+		// the row after it so the account being delivered is added beside it.
+		// An empty row (left by setup) holds no account and is simply taken.
 		const unnamed = known.filter((k) => !k.ref);
 		const first = i.hubAccounts?.[0];
 		if (
 			unnamed.length === 1 &&
+			Object.keys(parseConfig(unnamed[0]!.row.config)).length > 0 &&
 			first &&
 			first.id !== identity.id &&
 			!known.some((k) => k.ref === first.id)

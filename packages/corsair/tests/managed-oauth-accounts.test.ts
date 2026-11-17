@@ -174,6 +174,16 @@ describe('managed oauth delivery by account identity', () => {
 		expect(await km('a').get_access_token()).toBe('at-first-again');
 	});
 
+	// Setup leaves an empty row; it holds no account, so the delivery takes it.
+	it('an empty unnamed row from setup is taken by the delivered account, not named after another', async () => {
+		await deliver('at-b', { id: 'b', label: 'b@x.com' }, [
+			{ id: 'a', label: 'a@x.com' },
+			{ id: 'b', label: 'b@x.com' },
+		]);
+		expect(await rows()).toHaveLength(1);
+		expect(await km('b').get_access_token()).toBe('at-b');
+	});
+
 	it('an unnamed row is still adopted when the hub knows only the account being delivered', async () => {
 		await deliver('at-legacy');
 		await deliver('at-new', { id: 'a', label: 'a@x.com' }, [
