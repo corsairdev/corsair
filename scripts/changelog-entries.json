@@ -6983,5 +6983,32 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/simpleanalytics",
+    "dir": "packages/simpleanalytics",
+    "name": "Simple Analytics",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/spotlightr",
+    "dir": "packages/spotlightr",
+    "name": "Spotlightr",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/tomtom",
+    "dir": "packages/tomtom",
+    "name": "TomTom",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
