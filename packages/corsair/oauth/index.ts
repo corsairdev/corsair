@@ -1,3 +1,4 @@
+import { randomBytes } from 'node:crypto';
 import type {
 	CorsairInternalConfig,
 	CorsairPlugin,
@@ -6,16 +7,21 @@ import type {
 import {
 	createAccountKeyManager,
 	createIntegrationKeyManager,
-	encryptDEK,
 	exchangeCodeForTokens,
-	generateDEK,
 } from '../core';
+import {
+	AccountSelectionError,
+	listAccountSummaries,
+	MAX_ACCOUNTS_PER_INTEGRATION,
+	resolveAccount,
+	upsertAccount,
+} from '../core/account-lookup';
+import type { OAuthAccountTarget } from '../core/auth/state';
 import {
 	encodeOAuthState,
 	signState,
 	verifyAndDecodeState,
 } from '../core/auth/state';
-import { generateUUID } from '../core/utils';
 import {
 	getCorsairInternal,
 	requireCorsairPlugin,
@@ -27,7 +33,7 @@ import {
 import { resolveOAuthWebhookTenantLink } from '../webhooks/resolve-oauth-tenant-link';
 import { setWebhookTenantLink } from '../webhooks/tenant-links';
 import { buildOAuthAuthorizeUrl } from './authorize-url';
-import { subscribeAndReport } from './subscribe-report';
+import { subscribeAndStoreLink } from './subscribe-and-store';
 
 // Re-export state utilities for backward compatibility (barrel oauth.ts re-exports these)
 export { decodeOAuthState, encodeOAuthState } from '../core/auth/state';
@@ -51,7 +57,11 @@ export type OAuthCallbackErrorCode =
 	| 'plugin_not_found'
 	| 'plugin_has_no_oauth_config'
 	| 'credentials_not_configured'
-	| 'no_access_token';
+	| 'no_access_token'
+	| 'account_required'
+	| 'account_not_found'
+	| 'account_unnamed'
+	| 'account_limit';
 
 export class OAuthCallbackError extends Error {
 	readonly code: OAuthCallbackErrorCode;
@@ -83,47 +93,138 @@ async function ensureAccount(
 	pluginId: string,
 	tenantId: string,
 	kek: string,
+	allowMany: boolean,
 ): Promise<void> {
-	await database.db.transaction().execute(async (trx) => {
-		// Lock the integration row before the check-then-insert so this
-		// cannot interleave with a concurrent disconnect (or another connect).
-		let integrationQuery = trx
-			.selectFrom('corsair_integrations')
-			.select(['id'])
-			.where('name', '=', pluginId);
-		if (database.isPg === true) integrationQuery = integrationQuery.forUpdate();
-		const integrationRow = await integrationQuery.executeTakeFirst();
+	await upsertAccount({
+		database,
+		kek,
+		integrationName: pluginId,
+		tenantId,
+		allowMany,
+	});
+}
 
-		if (!integrationRow) {
-			throw new Error(
-				`Integration '${pluginId}' not found. Run setupCorsair first.`,
+type AccountPlan =
+	| { kind: 'only' }
+	| { kind: 'row'; id: string; unnamed: boolean }
+	| { kind: 'new' };
+
+const asCallbackError = (err: unknown): unknown =>
+	err instanceof AccountSelectionError
+		? new OAuthCallbackError(err.code, err.message)
+		: err;
+
+/**
+ * Which account a connect is for, decided from the click signed into its
+ * state and written nowhere yet: the code is exchanged only once this holds,
+ * and an account is created only once that exchange worked. Without
+ * multi-account there is one account, as before. With it the provider isn't
+ * asked who signed in, so the caller says whether this is a new account or a
+ * reconnect, and a new one is named "Account N".
+ */
+async function planAccount(
+	database: NonNullable<CorsairInternalConfig['database']>,
+	kek: string,
+	multiAccount: boolean,
+	pluginId: string,
+	tenantId: string,
+	target: OAuthAccountTarget | undefined,
+): Promise<AccountPlan> {
+	if (!multiAccount) return { kind: 'only' };
+	const integration = await database.db
+		.selectFrom('corsair_integrations')
+		.select('id')
+		.where('name', '=', pluginId)
+		.executeTakeFirst();
+	const scope = {
+		db: database.db,
+		kek,
+		tenantId,
+		integrationId: integration?.id ?? '',
+	};
+	const accounts = integration
+		? await listAccountSummaries({
+				db: database.db,
+				kek,
+				integrationName: pluginId,
+				tenantId,
+			})
+		: [];
+	if (target && 'reconnect' in target) {
+		// resolveAccount's own rules: id first, then ref, and a label two
+		// accounts share is refused rather than guessed.
+		const found = await resolveAccount({
+			...scope,
+			ref: target.reconnect,
+		}).catch((err) => {
+			throw asCallbackError(err);
+		});
+		if (!found) {
+			throw new OAuthCallbackError(
+				'account_not_found',
+				`No ${pluginId} account "${target.reconnect}" to reconnect for tenant "${tenantId}"`,
 			);
 		}
+		const summary = accounts.find((a) => a.id === found.id);
+		return { kind: 'row', id: found.id, unnamed: !summary?.ref };
+	}
+	if (!target) {
+		if (accounts.length > 1) {
+			throw new OAuthCallbackError(
+				'account_required',
+				`${pluginId} has ${accounts.length} accounts for tenant "${tenantId}": say which one to reconnect, or add one`,
+			);
+		}
+		const only = accounts[0];
+		return only
+			? { kind: 'row', id: only.id, unnamed: !only.ref }
+			: { kind: 'new' };
+	}
+	// upsertAccount gives a new identity to an unnamed row, so adding beside
+	// one would hand that account's row to the new sign-in.
+	if (accounts.some((a) => !a.ref)) {
+		throw new OAuthCallbackError(
+			'account_unnamed',
+			`Reconnect the existing ${pluginId} account before adding another`,
+		);
+	}
+	if (accounts.length >= MAX_ACCOUNTS_PER_INTEGRATION) {
+		throw new OAuthCallbackError(
+			'account_limit',
+			`${pluginId} already has ${accounts.length} accounts for tenant "${tenantId}"`,
+		);
+	}
+	return { kind: 'new' };
+}
 
-		const existing = await trx
-			.selectFrom('corsair_accounts')
-			.select('id')
-			.where('tenant_id', '=', tenantId)
-			.where('integration_id', '=', integrationRow.id)
-			.executeTakeFirst();
-		if (existing) return;
-
-		const dek = generateDEK();
-		const encryptedDek = await encryptDEK(dek, kek);
-		const now = new Date();
-		await trx
-			.insertInto('corsair_accounts')
-			.values({
-				id: generateUUID(),
-				created_at: now,
-				updated_at: now,
-				tenant_id: tenantId,
-				integration_id: integrationRow.id,
-				config: {},
-				dek: encryptedDek,
-			})
-			.execute();
+/** Writes the planned account, now that the provider has handed over tokens. */
+async function commitAccount(
+	database: NonNullable<CorsairInternalConfig['database']>,
+	kek: string,
+	pluginId: string,
+	tenantId: string,
+	plan: AccountPlan,
+): Promise<string | undefined> {
+	if (plan.kind === 'only') {
+		await ensureAccount(database, pluginId, tenantId, kek, false);
+		return undefined;
+	}
+	if (plan.kind === 'row' && !plan.unnamed) return plan.id;
+	// A new account, or an unnamed one taking a name so Add can follow it.
+	const { accountId } = await upsertAccount({
+		database,
+		kek,
+		integrationName: pluginId,
+		tenantId,
+		allowMany: true,
+		nameNew: true,
+		...(plan.kind === 'row' && { rowId: plan.id }),
+		// Random, not a v7 UUID: two adds in one millisecond share a v7's prefix.
+		identity: { id: `acct_${randomBytes(12).toString('base64url')}` },
+	}).catch((err) => {
+		throw asCallbackError(err);
 	});
+	return accountId;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -135,6 +236,8 @@ export type GenerateOAuthUrlOptions = {
 	redirectUri: string;
 	/** Hub generates OAuth state server-side and injects it into the authorize URL. */
 	hubConnect?: boolean;
+	/** With multiAccount: add an account, or reconnect one by its id, ref or label. */
+	account?: OAuthAccountTarget;
 };
 
 export type GenerateOAuthUrlResult = {
@@ -205,7 +308,10 @@ export async function generateOAuthUrl(
 		return { url: authorizeUrl.toString(), state: '' };
 	}
 
-	const state = signState(encodeOAuthState(pluginId, tenantId), internal.kek);
+	const state = signState(
+		encodeOAuthState(pluginId, tenantId, options.account),
+		internal.kek,
+	);
 
 	return {
 		url: buildOAuthAuthorizeUrl({
@@ -281,6 +387,7 @@ export async function processOAuthCallback(
 	// the presence of plugin/tenant, so no future caller bypasses by accident.
 	let pluginId: string;
 	let tenantId: string;
+	let target: OAuthAccountTarget | undefined;
 	if (options.trusted) {
 		if (!options.plugin || !options.tenantId) {
 			throw new OAuthCallbackError(
@@ -300,6 +407,7 @@ export async function processOAuthCallback(
 		}
 		pluginId = decoded.plugin;
 		tenantId = decoded.tenantId;
+		target = decoded.account;
 	}
 
 	if (!internal.database) {
@@ -332,8 +440,15 @@ export async function processOAuthCallback(
 		);
 	}
 
-	// Ensure tenant account row exists before writing tokens
-	await ensureAccount(internal.database, pluginId, tenantId, internal.kek);
+	// Before the code is spent, so a refused account costs no sign-in.
+	const plan = await planAccount(
+		internal.database,
+		internal.kek,
+		internal.multiAccount,
+		pluginId,
+		tenantId,
+		target,
+	);
 
 	const tokens = await exchangeCodeForTokens(
 		code,
@@ -350,6 +465,14 @@ export async function processOAuthCallback(
 		);
 	}
 
+	const accountId = await commitAccount(
+		internal.database,
+		internal.kek,
+		pluginId,
+		tenantId,
+		plan,
+	);
+
 	const accountKm = createAccountKeyManager({
 		authType: 'oauth_2',
 		integrationName: pluginId,
@@ -360,6 +483,7 @@ export async function processOAuthCallback(
 		// persist them (e.g. Outlook subscription_id) — without this only the
 		// base oauth_2 setters exist and extension setters throw.
 		extraAccountFields: [...(plugin.authConfig?.oauth_2?.account ?? [])],
+		...(accountId && { account: { ref: accountId } }),
 	});
 
 	await accountKm.set_access_token(tokens.access_token);
@@ -398,6 +522,7 @@ export async function processOAuthCallback(
 					link: tenantLink,
 					authType: 'oauth_2',
 					extraAccountFields,
+					...(accountId && { accountId }),
 				});
 			} catch (error) {
 				console.warn(
@@ -433,7 +558,15 @@ export async function processOAuthCallback(
 	// subscribe capability (class-2 webhooks) skip this entirely.
 	if (plugin.subscribe) {
 		try {
-			await subscribeAndReport(corsair, plugin, tenantId, accountKm);
+			await subscribeAndStoreLink({
+				corsair,
+				internal,
+				plugin,
+				tenantId,
+				keys: accountKm,
+				authType: 'oauth_2',
+				accountId,
+			});
 		} catch (error) {
 			console.warn(
 				`[corsair:oauth] BYO subscribe failed for '${pluginId}' tenant '${tenantId}':`,
