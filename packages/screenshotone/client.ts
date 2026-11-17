@@ -23,6 +23,7 @@ export async function screenshotoneRequest<T>(
 	method: 'GET' | 'POST',
 	url: string,
 	query?: Record<string, string | number | boolean | undefined>,
+	// unknown: any JSON-serialisable request body; each endpoint builds it from parsed input.
 	body?: unknown,
 ): Promise<T> {
 	const config: OpenAPIConfig = {

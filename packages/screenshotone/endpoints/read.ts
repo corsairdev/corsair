@@ -20,8 +20,10 @@ import {
 	AnimateInputSchema,
 	BulkInputSchema,
 	BulkResponseSchema,
+	DeviceListResponseSchema,
 	ShotResponseSchema,
 	TakeInputSchema,
+	UsageResponseSchema,
 } from './types';
 
 // unknown: a raw JSON field; this narrows it to a non-empty string.
@@ -83,7 +85,7 @@ export const getUsage: CorsairEndpoint<
 		{ count: 1 },
 		'completed',
 	);
-	return { usage };
+	return UsageResponseSchema.parse({ usage });
 };
 
 export const listDevices: CorsairEndpoint<
@@ -121,7 +123,7 @@ export const listDevices: CorsairEndpoint<
 		{ count: devices.length },
 		'completed',
 	);
-	return { devices };
+	return DeviceListResponseSchema.parse({ devices });
 };
 
 export const takeScreenshot: CorsairEndpoint<
