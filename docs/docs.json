@@ -3052,6 +3052,14 @@
                 ]
               },
               {
+                "group": "Kalshi",
+                "pages": [
+                  "plugins/kalshi/overview",
+                  "plugins/kalshi/api",
+                  "plugins/kalshi/database"
+                ]
+              },
+              {
                 "group": "Kanbanize",
                 "pages": [
                   "plugins/kanbanize/overview",

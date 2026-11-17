@@ -364,6 +364,7 @@ export const BaseProviders = [
 	'jotform',
 	'kadoa',
 	'kaggle',
+	'kalshi',
 	'kanbanize',
 	'keen',
 	'keenable',
@@ -1034,6 +1035,7 @@ export const ProviderDisplayNames = {
 	jotform: 'Jotform',
 	kadoa: 'Kadoa',
 	kaggle: 'Kaggle',
+	kalshi: 'Kalshi',
 	kanbanize: 'Kanbanize',
 	keen: 'Keen',
 	keenable: 'Keenable',
@@ -1711,6 +1713,7 @@ export type AllProviders =
 	| 'jotform'
 	| 'kadoa'
 	| 'kaggle'
+	| 'kalshi'
 	| 'kanbanize'
 	| 'keen'
 	| 'keenable'
