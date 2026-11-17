@@ -65,6 +65,7 @@ export async function serplyRequest<T>(
 			// Search terms can be personal (a name, an email, a health question):
 			// keep them out of the error. The route, status and retry data stay.
 			const req = error.request as {
+				// unknown: only the request fields that can carry search terms are cleared.
 				url?: unknown;
 				query?: unknown;
 				body?: unknown;

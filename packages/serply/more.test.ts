@@ -63,6 +63,7 @@ const LISTING = {
 
 type Row = [
 	string,
+	// unknown: each row holds a different endpoint, input and JSON body, so the table uses the widest types.
 	(c: SerplyContext, i: never) => Promise<unknown>,
 	Record<string, unknown>,
 	string,
@@ -405,6 +406,7 @@ describe('round 2', () => {
 			{
 				key: 'sk-test',
 				db: { images: { upsertByEntityId: upsert } },
+				// unknown: a fake with only what the endpoint reads.
 			} as unknown as SerplyContext,
 			{ q: 'bike' },
 		);

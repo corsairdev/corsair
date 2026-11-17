@@ -49,6 +49,7 @@ function op<I extends z.ZodType, O extends z.ZodType>(spec: {
 		const parsed = spec.input.parse(input ?? {});
 		// unknown: the parsed input may carry the region and device fields.
 		const located = parsed as { proxy_location?: string; device?: string };
+		// unknown: parsed by the operation output schema below.
 		const raw = await serplyRequest<unknown>(ctx.key, spec.path(parsed), {
 			method: spec.method,
 			query: spec.query?.(parsed),
@@ -75,6 +76,7 @@ const searchQuery = ({
 	proxy_location: _p,
 	device: _d,
 	...rest
+	// unknown: a parsed search input; its remaining fields are query values.
 }: Record<string, unknown>): Query => rest as Query;
 
 export const webSearch = op({
@@ -103,6 +105,7 @@ export const newsSearch = op({
 	query: searchQuery,
 	count: (r) =>
 		r.entries?.length ??
+		// unknown: a news feed node from the provider, only its length is read.
 		(r.feed as { entries?: unknown[] } | null | undefined)?.entries?.length,
 });
 

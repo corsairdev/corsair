@@ -20,6 +20,7 @@ live('searches images', async () => {
 const ctx = {
 	key: apiKey,
 	$getAccountId: async () => 'live',
+	// unknown: a fake with only what the endpoints read.
 } as unknown as SerplyContext;
 
 live('searches Google, products and fetches a page', async () => {

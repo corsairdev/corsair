@@ -36,7 +36,8 @@ function optionalNumber(value: unknown): number | undefined {
 // unknown: any response node; returns it as a record when it is an object.
 function record(value: unknown): Record<string, unknown> | undefined {
 	return value && typeof value === 'object'
-		? (value as Record<string, unknown>)
+		? // unknown: an untrusted response node, read field by field.
+			(value as Record<string, unknown>)
 		: undefined;
 }
 

@@ -19,6 +19,7 @@ const mockRequest = jest.mocked(request);
 const mockLog = jest.mocked(logEventFromContext);
 
 function context(key: string, db?: SerplyContext['db']): SerplyContext {
+	// unknown: a fake with only what the endpoint reads.
 	return { key, db } as unknown as SerplyContext;
 }
 
@@ -51,6 +52,7 @@ describe('serply searches', () => {
 		const result = await searchImages(
 			context('sekrit', {
 				images: { upsertByEntityId: upsert },
+				// unknown: a fake table with only the methods the endpoint calls.
 			} as unknown as SerplyContext['db']),
 			{ q: 'secret-query', num: 5 },
 		);
@@ -112,6 +114,7 @@ describe('serply searches', () => {
 		const result = await searchPlaces(
 			context('sekrit', {
 				places: { upsertByEntityId: upsert },
+				// unknown: a fake table with only the methods the endpoint calls.
 			} as unknown as SerplyContext['db']),
 			{ q: 'cafe' },
 		);
@@ -191,6 +194,7 @@ describe('serply searches', () => {
 				images: {
 					upsertByEntityId: jest.fn().mockRejectedValue(new Error('db')),
 				},
+				// unknown: a fake table with only the methods the endpoint calls.
 			} as unknown as SerplyContext['db']),
 			{ q: 'bike' },
 		);
