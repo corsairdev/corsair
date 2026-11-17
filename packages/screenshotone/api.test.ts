@@ -1,14 +1,24 @@
 import type { ScreenshotOneContext } from './context';
-import { getUsage } from './endpoints/read';
+import { getUsage, listDevices } from './endpoints/read';
 
-console.warn('Skipping the live ScreenshotOne usage call in unit tests.');
+const accessKey = process.env.SCREENSHOTONE_ACCESS_KEY;
+if (!accessKey) {
+	console.warn(
+		'SCREENSHOTONE_ACCESS_KEY is not set. Skipping live ScreenshotOne calls.',
+	);
+}
+const live = accessKey ? it : it.skip;
 
-const live = it.skip;
+function context(): ScreenshotOneContext {
+	return { key: accessKey } as ScreenshotOneContext;
+}
 
 live('reads usage', async () => {
-	const result = await getUsage(
-		{ key: process.env.SCREENSHOTONE_ACCESS_KEY } as ScreenshotOneContext,
-		{},
-	);
+	const result = await getUsage(context(), {});
 	expect(result.usage.id).toBe('plan');
+});
+
+live('lists devices', async () => {
+	const result = await listDevices(context(), {});
+	expect(result.devices.length).toBeGreaterThan(0);
 });
