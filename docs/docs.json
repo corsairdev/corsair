@@ -3667,6 +3667,14 @@
                 ]
               },
               {
+                "group": "Neutrino API",
+                "pages": [
+                  "plugins/neutrino/overview",
+                  "plugins/neutrino/api",
+                  "plugins/neutrino/database"
+                ]
+              },
+              {
                 "group": "Neon",
                 "pages": [
                   "plugins/neon/overview",
