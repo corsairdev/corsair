@@ -12,7 +12,11 @@ import type {
 	ListLicensesResponse,
 	ListProductsResponse,
 } from './types';
-import { ListInputSchema } from './types';
+import {
+	ListInputSchema,
+	ListLicensesResponseSchema,
+	ListProductsResponseSchema,
+} from './types';
 
 async function load(
 	ctx: NetLicensingContext,
@@ -57,7 +61,10 @@ export const listLicenses: CorsairEndpoint<
 		{ count: rows.length },
 		'completed',
 	);
-	return { licenses: rows, page: loaded.page };
+	return ListLicensesResponseSchema.parse({
+		licenses: rows,
+		page: loaded.page,
+	});
 };
 
 export const listProducts: CorsairEndpoint<
@@ -90,5 +97,8 @@ export const listProducts: CorsairEndpoint<
 		{ count: rows.length },
 		'completed',
 	);
-	return { products: rows, page: loaded.page };
+	return ListProductsResponseSchema.parse({
+		products: rows,
+		page: loaded.page,
+	});
 };

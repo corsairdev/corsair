@@ -14,7 +14,12 @@ import type {
 	ItemsOutput,
 	ListInput,
 } from './types';
-import { ItemOutputSchema, ItemsOutputSchema, ListInputSchema } from './types';
+import {
+	DeletedOutputSchema,
+	ItemOutputSchema,
+	ItemsOutputSchema,
+	ListInputSchema,
+} from './types';
 
 /** The REST collections this plugin covers. */
 type Resource =
@@ -195,6 +200,6 @@ export function deleteOf<
 		// Reached only when NetLicensing confirmed the delete (an error throws).
 		await unstore(ctx, resource, id);
 		await logEventFromContext(ctx, event, { number: id }, 'completed');
-		return { deleted: true, number: id };
+		return DeletedOutputSchema.parse({ deleted: true, number: id });
 	};
 }

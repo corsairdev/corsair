@@ -6,12 +6,12 @@ import type { NetLicensingContext } from '../context';
 import type {
 	LicenseeTransferInputSchema,
 	LicenseeValidateInputSchema,
-	TransferOutputSchema,
-	ValidateOutputSchema,
 } from './types';
 import {
 	LicenseeTransferInputSchema as TransferInput,
+	TransferOutputSchema,
 	LicenseeValidateInputSchema as ValidateInput,
+	ValidateOutputSchema,
 } from './types';
 
 /**
@@ -39,7 +39,10 @@ export const validate: CorsairEndpoint<
 		{ number: licenseeNumber, modules: items.length },
 		'completed',
 	);
-	return { ...(ttl ? { ttl } : {}), validations: items };
+	return ValidateOutputSchema.parse({
+		...(ttl ? { ttl } : {}),
+		validations: items,
+	});
 };
 
 /**
@@ -64,9 +67,9 @@ export const transfer: CorsairEndpoint<
 		{ number: parsed.licenseeNumber, source: parsed.sourceLicenseeNumber },
 		'completed',
 	);
-	return {
+	return TransferOutputSchema.parse({
 		transferred: true,
 		licenseeNumber: parsed.licenseeNumber,
 		sourceLicenseeNumber: parsed.sourceLicenseeNumber,
-	};
+	});
 };
