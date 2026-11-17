@@ -1,0 +1,3583 @@
+{
+  "id": "signwell",
+  "displayName": "SignWell",
+  "description": "E-signatures through SignWell - send documents and templates for signature, follow each recipient's progress, remind, update or cancel a request, read a completed PDF by download URL, and receive document events on a webhook.",
+  "npmPackageName": "@corsair-dev/signwell",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 28,
+    "webhooks": 10,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "signwell.api.account.get",
+      "shortPath": "account.get",
+      "description": "Read the account name, logo, plan tier and default sending preferences",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "logo_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "plan_tier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "preferences",
+            "optional": false,
+            "type": "{ date_format?: string | null, days_until_links_expire?: number | null, disable_apply_everywhere?: boolean | null, disable_apply_everywhere_effective?: boolean | null, disable_drawn_signatures?: boolean | null, disable_typed_signatures?: boolean | null, disable_uploaded_signatures?: boolean | null, enable_redirect?: boolean | null, hide_document_id_in_audit?: boolean | null, mute_branding?: boolean | null, redirect_url?: string | null, separate_audit_pdf?: boolean | null, separate_completed_file?: boolean | null, enable_nom151_compliance?: boolean | null, time_zone?: string | null, recipient_language?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signwell.api.account.update",
+      "shortPath": "account.update",
+      "description": "Change the account name, logo, time zone, date format or recipient language; only the fields you send are changed",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "string",
+            "description": "A base64 PNG or JPG (a data URI works), or a public URL. The decoded image must be under 300 KB."
+          },
+          {
+            "key": "time_zone",
+            "optional": true,
+            "type": "string",
+            "description": "An IANA name SignWell supports. A few newer aliases are rejected: send Europe/Kiev, not Europe/Kyiv."
+          },
+          {
+            "key": "date_format",
+            "optional": true,
+            "type": "MM/DD/YYYY | DD/MM/YYYY | YYYY/MM/DD | Month DD, YYYY | MM/DD/YYYY hh:mm:ss a"
+          },
+          {
+            "key": "recipient_language",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "logo_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "plan_tier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "preferences",
+            "optional": false,
+            "type": "{ date_format?: string | null, days_until_links_expire?: number | null, disable_apply_everywhere?: boolean | null, disable_apply_everywhere_effective?: boolean | null, disable_drawn_signatures?: boolean | null, disable_typed_signatures?: boolean | null, disable_uploaded_signatures?: boolean | null, enable_redirect?: boolean | null, hide_document_id_in_audit?: boolean | null, mute_branding?: boolean | null, redirect_url?: string | null, separate_audit_pdf?: boolean | null, separate_completed_file?: boolean | null, enable_nom151_compliance?: boolean | null, time_zone?: string | null, recipient_language?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signwell.api.apiApplications.delete",
+      "shortPath": "apiApplications.delete",
+      "description": "Delete an API application; documents and templates that reference it keep their data but lose its branding and settings",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The API application id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signwell.api.apiApplications.get",
+      "shortPath": "apiApplications.get",
+      "description": "Read one API application's name, callback URLs, owner and branding preferences",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The API application id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "callback_urls",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601 timestamp."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601 timestamp."
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ id?: string | null, account_id?: string | null, name: string, email: string } | null"
+          },
+          {
+            "key": "preferences",
+            "optional": true,
+            "type": "{ button_text_color?: string | null, buttons_border_radius?: number | null, custom_logo_file?: string | null, link_text_color?: string | null, primary_color?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signwell.api.bulkSends.create",
+      "shortPath": "bulkSends.create",
+      "description": "Create a bulk send from a CSV of recipient rows against one or more templates; each row becomes a document and is sent",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "bulk_send_csv",
+            "optional": false,
+            "type": "string",
+            "description": "The filled-in CSV, base64 encoded."
+          },
+          {
+            "key": "skip_row_errors",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to false, which fails the whole send on a bad row."
+          },
+          {
+            "key": "api_application_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "apply_signing_order",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "documents_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601 timestamp."
+          }
+        ]
+      }
+    },
+    {
+      "path": "signwell.api.bulkSends.get",
+      "shortPath": "bulkSends.get",
+      "description": "Read one bulk send with its status and counts of completed and outstanding documents",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "api_application_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "documents_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "documents_completed",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "documents_not_completed",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string",
+            "description": "ISO 8601 timestamp."
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "templates",
+            "optional": true,
+            "type": "{ id: string, name: string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signwell.api.bulkSends.getCsvTemplate",
+      "shortPath": "bulkSends.getCsvTemplate",
+      "description": "Get the blank CSV, base64 encoded, whose columns match the given templates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "The templates the CSV columns are built from."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string",
+            "description": "The blank CSV, base64 encoded."
+          }
+        ]
+      }
+    },
+    {
+      "path": "signwell.api.bulkSends.getDocuments",
+      "shortPath": "bulkSends.getDocuments",
+      "description": "List the documents a bulk send created, page by page, with each document's recipients and status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "api_application_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601 timestamp."
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "documents",
+            "optional": false,
+            "type": "{ id: string, test_mode: boolean, cfr_part11?: boolean, cfr_part11_signing_mode?: streamlined | per_signature | null, api_application_id?: string | null, requester_email_address?: string | null, custom_requester_name?: string | null, custom_requester_email?: string | null, name?: string | null, subject?: string | null, message?: string | null, metadata?: Record<string, string> | null, created_at?: string | null, updated_at?: string | null, recipients?: { id: string, name: string, email?: string | null, body?: string | null, message?: string | null, subject?: string | null, send_email?: boolean | null, send_email_delay?: number | null, delivery_method?: email | sms | email_and_sms | null, signing_order?: number | null, signing_url?: string | null, embedded_signing_url?: string | null, bounced?: boolean | null, status?: string | null }[] | null, status?: string | null, reminders?: boolean | null, archived?: boolean | null, embedded?: boolean | { logo_file?: string | null, logo_url?: string | null, primary_color?: string | null, link_text_color?: string | null, button_text_color?: string | null, buttons_border_radius?: number | null } | null, embedded_signing?: boolean | null, embedded_edit_url?: string | null, embedded_preview_url?: string | null, apply_signing_order?: boolean | null, redirect_url?: string | null, decline_redirect_url?: string | null, language?: string | null, expires_in?: number | null, decline_message?: string | null, error_message?: string | null, template_id?: string | null, template_ids?: string[] | null, embedded_signing_notifications?: boolean | null, files?: { name?: string | null }[] | null, copied_contacts?: { name?: string, email: string }[] | null, allow_decline?: boolean | null, allow_reassign?: boolean | null, labels?: { name: string, color?: string }[] | null, conditional_rules?: Record<string, any>[] | null }[]"
+          },
+          {
+            "key": "current_page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "previous_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_pages",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signwell.api.bulkSends.list",
+      "shortPath": "bulkSends.list",
+      "description": "List bulk sends page by page, optionally filtered to one user or API application",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_email",
+            "optional": true,
+            "type": "string",
+            "description": "Only sends created by this user."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size; SignWell applies its own default when omitted."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page number."
+          },
+          {
+            "key": "api_application_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bulk_sends",
+            "optional": false,
+            "type": "{ id: string, name: string, api_application_id?: string | null, documents_count: number, documents_completed: number, documents_not_completed: number, created_at: string, user_id?: string | null, status: string, template_ids?: string[] | null }[]"
+          },
+          {
+            "key": "current_page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "previous_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_pages",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signwell.api.bulkSends.validateCsv",
+      "shortPath": "bulkSends.validateCsv",
+      "description": "Check a bulk send CSV against its templates without creating anything, and report what SignWell would change",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "bulk_send_csv",
+            "optional": false,
+            "type": "string",
+            "description": "The CSV to check, base64 encoded."
+          },
+          {
+            "key": "skip_row_errors",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "api_application_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "apply_signing_order",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bulk_send_csv",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "template_ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "skip_row_errors",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "api_application_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "apply_signing_order",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signwell.api.documents.create",
+      "shortPath": "documents.create",
+      "description": "Create a document from one or more files and send it for signature unless draft is true; this notifies real recipients",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "files",
+            "optional": false,
+            "type": "{ name: string, file_url?: string, file_base64?: string }[]"
+          },
+          {
+            "key": "recipients",
+            "optional": false,
+            "type": "{ id: string, name?: string, email?: string, phone_number?: string, send_sms?: boolean, send_sms_delay?: number, delivery_method?: email | sms | email_and_sms, subject?: string, message?: string, send_email?: boolean, send_email_delay?: number, signing_order?: number, passcode?: string, passcode_delivery?: { enabled?: boolean, methods?: email[], expire_after_access?: boolean } }[]"
+          },
+          {
+            "key": "test_mode",
+            "optional": true,
+            "type": "boolean",
+            "description": "SignWell does not bill a test-mode document and it is not legally binding. Defaults to false."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "The document name shown in the SignWell UI."
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string",
+            "description": "Email subject. Applies to email notifications only."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string",
+            "description": "Email body. Applies to email notifications only."
+          },
+          {
+            "key": "draft",
+            "optional": true,
+            "type": "boolean",
+            "description": "When true the document is not sent. Defaults to false, which sends it immediately."
+          },
+          {
+            "key": "expires_in",
+            "optional": true,
+            "type": "number",
+            "description": "Days before the request expires."
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "boolean",
+            "description": "Send reminders on days 3, 6 and 9 to recipients who have not signed."
+          },
+          {
+            "key": "apply_signing_order",
+            "optional": true,
+            "type": "boolean",
+            "description": "Recipients sign one at a time, in order."
+          },
+          {
+            "key": "redirect_url",
+            "optional": true,
+            "type": "string",
+            "description": "Where recipients land after signing."
+          },
+          {
+            "key": "decline_redirect_url",
+            "optional": true,
+            "type": "string",
+            "description": "Where recipients land after declining."
+          },
+          {
+            "key": "allow_decline",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allow_reassign",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "A supported language code, such as en or fr."
+          },
+          {
+            "key": "text_tags",
+            "optional": true,
+            "type": "boolean",
+            "description": "Place fields with text tags in the document instead of coordinates."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Your own key-value data, returned on every read."
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{ name: string, color?: string }[]"
+          },
+          {
+            "key": "attachment_requests",
+            "optional": true,
+            "type": "{ name: string, recipient_id: string, required?: boolean }[]"
+          },
+          {
+            "key": "conditional_rules",
+            "optional": true,
+            "type": "{ id?: string, deleted?: boolean, target_id?: string, action_type?: show | hide | require, action_field_ids?: string[], conditions?: { condition_type: any_of | all_of | none_of | not_all_of, status: completed | not_completed, field_api_ids: string[], join_operator?: and_operator | or_operator, position?: number }[] }[]"
+          },
+          {
+            "key": "api_application_id",
+            "optional": true,
+            "type": "string",
+            "description": "Use a specific API application's branding and settings."
+          },
+          {
+            "key": "self_sign",
+            "optional": true,
+            "type": "boolean",
+            "description": "The creator signs without any field setup, using embedded_edit_url. Unavailable on 21 CFR Part 11 documents."
+          },
+          {
+            "key": "with_signature_page",
+            "optional": true,
+            "type": "boolean",
+            "description": "Append a signature page and require every signer to sign there."
+          },
+          {
+            "key": "embedded_signing",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "embedded_signing_notifications",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ x: number, y: number, page: number, type: initials | signature | checkbox | date | select | text | dropdown | autofill_company | autofill_email | autofill_first_name | autofill_last_name | autofill_name | autofill_phone | autofill_title | autofill_date_signed, required?: boolean, api_id?: string, value?: string | boolean | number, label?: string, name?: string, width?: number, height?: number, validation?: no_text_validation | numbers | letters | email_address | us_phone_number | us_zip_code | us_ssn | us_age | alphanumeric | us_bank_routing_number | us_bank_account_number | custom, validation_regex?: string, validation_regex_error_message?: string, date_format?: string, fixed_width?: boolean, lock_sign_date?: boolean, options?: (string | { name: string, api_id?: string, is_other?: boolean })[], default_option?: string, allow_other?: boolean, recipient_id: string }[][]",
+            "description": "Fields per file; one inner array for each entry in files. SignWell requires at least one field when draft is false and with_signature_page is not set."
+          },
+          {
+            "key": "copied_contacts",
+            "optional": true,
+            "type": "{ name?: string, email: string }[]"
+          },
+          {
+            "key": "sms_test_email",
+            "optional": true,
+            "type": "boolean",
+            "description": "On a test-mode document, send SMS notifications here instead."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "test_mode",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "cfr_part11",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cfr_part11_signing_mode",
+            "optional": true,
+            "type": "streamlined | per_signature | null"
+          },
+          {
+            "key": "api_application_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "requester_email_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_requester_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_requester_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601 timestamp."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601 timestamp."
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "{ id: string, name: string, email?: string | null, body?: string | null, message?: string | null, subject?: string | null, send_email?: boolean | null, send_email_delay?: number | null, delivery_method?: email | sms | email_and_sms | null, signing_order?: number | null, signing_url?: string | null, embedded_signing_url?: string | null, bounced?: boolean | null, status?: string | null }[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Draft, Created, Sending, Sent, Pending, Viewed, Completed, Manually completed, Declined, Canceled, Bounced, Blocked, Error or Expired."
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "embedded",
+            "optional": true,
+            "type": "boolean | { logo_file?: string | null, logo_url?: string | null, primary_color?: string | null, link_text_color?: string | null, button_text_color?: string | null, buttons_border_radius?: number | null } | null"
+          },
+          {
+            "key": "embedded_signing",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "embedded_edit_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "embedded_preview_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "apply_signing_order",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "redirect_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "decline_redirect_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expires_in",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "decline_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "template_ids",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "embedded_signing_notifications",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ name?: string | null }[] | null"
+          },
+          {
+            "key": "copied_contacts",
+            "optional": true,
+            "type": "{ name?: string, email: string }[] | null"
+          },
+          {
+            "key": "allow_decline",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "allow_reassign",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{ name: string, color?: string }[] | null"
+          },
+          {
+            "key": "conditional_rules",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signwell.api.documents.createFromTemplate",
+      "shortPath": "documents.createFromTemplate",
+      "description": "Create a document from one or several templates, filling each placeholder with a recipient, and send it unless draft is true",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "string",
+            "description": "Use for one template. Supply this or template_ids, not both."
+          },
+          {
+            "key": "template_ids",
+            "optional": true,
+            "type": "string[]",
+            "description": "Use for several templates. Supply this or template_id, not both."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recipients",
+            "optional": false,
+            "type": "{ id: string, placeholder_name?: string, name?: string, email?: string, phone_number?: string, subject?: string, message?: string, passcode?: string, passcode_delivery?: { enabled?: boolean, methods?: email[], expire_after_access?: boolean }, send_email?: boolean, send_email_delay?: number, delivery_method?: email | sms | email_and_sms }[]"
+          },
+          {
+            "key": "test_mode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "draft",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "embedded_signing",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "embedded_signing_notifications",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "api_application_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "copied_contacts",
+            "optional": true,
+            "type": "{ name?: string, email: string }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "expires_in",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "apply_signing_order",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "redirect_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "decline_redirect_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allow_decline",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allow_reassign",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{ name: string, color?: string }[]"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ name: string, file_url?: string, file_base64?: string }[]",
+            "description": "Files appended after the template's own files; each takes file_url or file_base64."
+          },
+          {
+            "key": "template_fields",
+            "optional": true,
+            "type": "{ api_id: string, value: string | boolean | number }[]",
+            "description": "Prefill the template's existing fields by api_id."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "Record<string, any>[][]",
+            "description": "SignWell's fields for appended files; to prefill the template's own fields use template_fields."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "test_mode",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "cfr_part11",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cfr_part11_signing_mode",
+            "optional": true,
+            "type": "streamlined | per_signature | null"
+          },
+          {
+            "key": "api_application_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "requester_email_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_requester_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_requester_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601 timestamp."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601 timestamp."
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "{ id: string, name: string, email?: string | null, body?: string | null, message?: string | null, subject?: string | null, send_email?: boolean | null, send_email_delay?: number | null, delivery_method?: email | sms | email_and_sms | null, signing_order?: number | null, signing_url?: string | null, embedded_signing_url?: string | null, bounced?: boolean | null, status?: string | null }[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Draft, Created, Sending, Sent, Pending, Viewed, Completed, Manually completed, Declined, Canceled, Bounced, Blocked, Error or Expired."
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "embedded",
+            "optional": true,
+            "type": "boolean | { logo_file?: string | null, logo_url?: string | null, primary_color?: string | null, link_text_color?: string | null, button_text_color?: string | null, buttons_border_radius?: number | null } | null"
+          },
+          {
+            "key": "embedded_signing",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "embedded_edit_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "embedded_preview_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "apply_signing_order",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "redirect_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "decline_redirect_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expires_in",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "decline_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "template_ids",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "embedded_signing_notifications",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ name?: string | null }[] | null"
+          },
+          {
+            "key": "copied_contacts",
+            "optional": true,
+            "type": "{ name?: string, email: string }[] | null"
+          },
+          {
+            "key": "allow_decline",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "allow_reassign",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{ name: string, color?: string }[] | null"
+          },
+          {
+            "key": "conditional_rules",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signwell.api.documents.delete",
+      "shortPath": "documents.delete",
+      "description": "Delete a document and cancel any signing in progress; the document, its signatures and its audit trail are gone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The document id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signwell.api.documents.get",
+      "shortPath": "documents.get",
+      "description": "Read one document with its recipients, status, embedded links and metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The document id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "test_mode",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "cfr_part11",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cfr_part11_signing_mode",
+            "optional": true,
+            "type": "streamlined | per_signature | null"
+          },
+          {
+            "key": "api_application_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "requester_email_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_requester_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_requester_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601 timestamp."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601 timestamp."
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "{ id: string, name: string, email?: string | null, body?: string | null, message?: string | null, subject?: string | null, send_email?: boolean | null, send_email_delay?: number | null, delivery_method?: email | sms | email_and_sms | null, signing_order?: number | null, signing_url?: string | null, embedded_signing_url?: string | null, bounced?: boolean | null, status?: string | null }[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Draft, Created, Sending, Sent, Pending, Viewed, Completed, Manually completed, Declined, Canceled, Bounced, Blocked, Error or Expired."
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "embedded",
+            "optional": true,
+            "type": "boolean | { logo_file?: string | null, logo_url?: string | null, primary_color?: string | null, link_text_color?: string | null, button_text_color?: string | null, buttons_border_radius?: number | null } | null"
+          },
+          {
+            "key": "embedded_signing",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "embedded_edit_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "embedded_preview_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "apply_signing_order",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "redirect_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "decline_redirect_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expires_in",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "decline_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "template_ids",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "embedded_signing_notifications",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ name?: string | null }[] | null"
+          },
+          {
+            "key": "copied_contacts",
+            "optional": true,
+            "type": "{ name?: string, email: string }[] | null"
+          },
+          {
+            "key": "allow_decline",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "allow_reassign",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{ name: string, color?: string }[] | null"
+          },
+          {
+            "key": "conditional_rules",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signwell.api.documents.getCompletedPdf",
+      "shortPath": "documents.getCompletedPdf",
+      "description": "Get a temporary download URL for a completed document as a PDF or a ZIP; the file itself is not returned",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "audit_page",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include the audit page in the file SignWell prepares."
+          },
+          {
+            "key": "file_format",
+            "optional": true,
+            "type": "pdf | zip",
+            "description": "zip packages the document and the audit page separately. SignWell defaults to pdf."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_url",
+            "optional": false,
+            "type": "string",
+            "description": "A temporary download URL for the completed document."
+          },
+          {
+            "key": "document_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signwell.api.documents.getNom151Certificate",
+      "shortPath": "documents.getNom151Certificate",
+      "description": "Get a temporary download URL for the NOM-151 certificate of a completed document, where NOM-151 is enabled",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_url",
+            "optional": false,
+            "type": "string",
+            "description": "A temporary download URL for the certificate ZIP."
+          },
+          {
+            "key": "document_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signwell.api.documents.send",
+      "shortPath": "documents.send",
+      "description": "Send a draft document to its recipients, optionally changing its subject, message and reminders first",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "test_mode",
+            "optional": true,
+            "type": "boolean",
+            "description": "Test mode does not carry over from the draft. Set it here too, or the send is billed as live."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expires_in",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "apply_signing_order",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "api_application_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "embedded_signing",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "embedded_signing_notifications",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "redirect_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "decline_redirect_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allow_decline",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allow_reassign",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text_tags",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{ name: string, color?: string }[]"
+          },
+          {
+            "key": "attachment_requests",
+            "optional": true,
+            "type": "{ name: string, recipient_id: string, required?: boolean }[]"
+          },
+          {
+            "key": "copied_contacts",
+            "optional": true,
+            "type": "{ name?: string, email: string }[]"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ x: number, y: number, page: number, type: initials | signature | checkbox | date | select | text | dropdown | autofill_company | autofill_email | autofill_first_name | autofill_last_name | autofill_name | autofill_phone | autofill_title | autofill_date_signed, required?: boolean, api_id?: string, value?: string | boolean | number, label?: string, name?: string, width?: number, height?: number, validation?: no_text_validation | numbers | letters | email_address | us_phone_number | us_zip_code | us_ssn | us_age | alphanumeric | us_bank_routing_number | us_bank_account_number | custom, validation_regex?: string, validation_regex_error_message?: string, date_format?: string, fixed_width?: boolean, lock_sign_date?: boolean, options?: (string | { name: string, api_id?: string, is_other?: boolean })[], default_option?: string, allow_other?: boolean, recipient_id: string }[][]",
+            "description": "Fields per file; one inner array for each entry in files. SignWell requires at least one field when draft is false and with_signature_page is not set."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "test_mode",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "cfr_part11",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cfr_part11_signing_mode",
+            "optional": true,
+            "type": "streamlined | per_signature | null"
+          },
+          {
+            "key": "api_application_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "requester_email_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_requester_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_requester_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601 timestamp."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601 timestamp."
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "{ id: string, name: string, email?: string | null, body?: string | null, message?: string | null, subject?: string | null, send_email?: boolean | null, send_email_delay?: number | null, delivery_method?: email | sms | email_and_sms | null, signing_order?: number | null, signing_url?: string | null, embedded_signing_url?: string | null, bounced?: boolean | null, status?: string | null }[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Draft, Created, Sending, Sent, Pending, Viewed, Completed, Manually completed, Declined, Canceled, Bounced, Blocked, Error or Expired."
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "embedded",
+            "optional": true,
+            "type": "boolean | { logo_file?: string | null, logo_url?: string | null, primary_color?: string | null, link_text_color?: string | null, button_text_color?: string | null, buttons_border_radius?: number | null } | null"
+          },
+          {
+            "key": "embedded_signing",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "embedded_edit_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "embedded_preview_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "apply_signing_order",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "redirect_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "decline_redirect_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expires_in",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "decline_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "template_ids",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "embedded_signing_notifications",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ name?: string | null }[] | null"
+          },
+          {
+            "key": "copied_contacts",
+            "optional": true,
+            "type": "{ name?: string, email: string }[] | null"
+          },
+          {
+            "key": "allow_decline",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "allow_reassign",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{ name: string, color?: string }[] | null"
+          },
+          {
+            "key": "conditional_rules",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signwell.api.documents.sendReminder",
+      "shortPath": "documents.sendReminder",
+      "description": "Remind recipients who have not signed yet, either everyone or a named list, through their own delivery method",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "{ name?: string, email?: string }[]",
+            "description": "Omit to remind everyone who has not signed yet."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, email?: string | null, delivery_method?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signwell.api.documents.updateAuthentication",
+      "shortPath": "documents.updateAuthentication",
+      "description": "Change or add passcodes for recipients on a sent document; only recipients who have not started signing",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recipients",
+            "optional": false,
+            "type": "{ id: string, passcode?: string, passcode_delivery?: { enabled: boolean, methods?: email[], expire_after_access?: boolean } }[]",
+            "description": "Only recipients who have not started signing can be updated."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "test_mode",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "cfr_part11",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cfr_part11_signing_mode",
+            "optional": true,
+            "type": "streamlined | per_signature | null"
+          },
+          {
+            "key": "api_application_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "requester_email_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_requester_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_requester_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601 timestamp."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601 timestamp."
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "{ id: string, name: string, email?: string | null, body?: string | null, message?: string | null, subject?: string | null, send_email?: boolean | null, send_email_delay?: number | null, delivery_method?: email | sms | email_and_sms | null, signing_order?: number | null, signing_url?: string | null, embedded_signing_url?: string | null, bounced?: boolean | null, status?: string | null }[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Draft, Created, Sending, Sent, Pending, Viewed, Completed, Manually completed, Declined, Canceled, Bounced, Blocked, Error or Expired."
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "embedded",
+            "optional": true,
+            "type": "boolean | { logo_file?: string | null, logo_url?: string | null, primary_color?: string | null, link_text_color?: string | null, button_text_color?: string | null, buttons_border_radius?: number | null } | null"
+          },
+          {
+            "key": "embedded_signing",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "embedded_edit_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "embedded_preview_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "apply_signing_order",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "redirect_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "decline_redirect_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expires_in",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "decline_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "template_ids",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "embedded_signing_notifications",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ name?: string | null }[] | null"
+          },
+          {
+            "key": "copied_contacts",
+            "optional": true,
+            "type": "{ name?: string, email: string }[] | null"
+          },
+          {
+            "key": "allow_decline",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "allow_reassign",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{ name: string, color?: string }[] | null"
+          },
+          {
+            "key": "conditional_rules",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signwell.api.documents.updateRecipients",
+      "shortPath": "documents.updateRecipients",
+      "description": "Change the name or email of recipients on a document that has been sent, which emails the updated recipients; only recipients who have not started signing",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recipients",
+            "optional": false,
+            "type": "{ id: string, name: string, email: string, subject?: string, message?: string, passcode?: string, send_email_delay?: number, delivery_method?: email | sms | email_and_sms }[]",
+            "description": "Only on a sent document (sent, viewed, pending or bounced; a draft answers 409), and only recipients who have not started signing."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "test_mode",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "cfr_part11",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cfr_part11_signing_mode",
+            "optional": true,
+            "type": "streamlined | per_signature | null"
+          },
+          {
+            "key": "api_application_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "requester_email_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_requester_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_requester_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601 timestamp."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601 timestamp."
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "{ id: string, name: string, email?: string | null, body?: string | null, message?: string | null, subject?: string | null, send_email?: boolean | null, send_email_delay?: number | null, delivery_method?: email | sms | email_and_sms | null, signing_order?: number | null, signing_url?: string | null, embedded_signing_url?: string | null, bounced?: boolean | null, status?: string | null }[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Draft, Created, Sending, Sent, Pending, Viewed, Completed, Manually completed, Declined, Canceled, Bounced, Blocked, Error or Expired."
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "embedded",
+            "optional": true,
+            "type": "boolean | { logo_file?: string | null, logo_url?: string | null, primary_color?: string | null, link_text_color?: string | null, button_text_color?: string | null, buttons_border_radius?: number | null } | null"
+          },
+          {
+            "key": "embedded_signing",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "embedded_edit_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "embedded_preview_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "apply_signing_order",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "redirect_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "decline_redirect_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expires_in",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "decline_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "template_ids",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "embedded_signing_notifications",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ name?: string | null }[] | null"
+          },
+          {
+            "key": "copied_contacts",
+            "optional": true,
+            "type": "{ name?: string, email: string }[] | null"
+          },
+          {
+            "key": "allow_decline",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "allow_reassign",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{ name: string, color?: string }[] | null"
+          },
+          {
+            "key": "conditional_rules",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signwell.api.me.get",
+      "shortPath": "me.get",
+      "description": "Read the authenticated user, their role and the account and workspace the API token belongs to",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Membership id."
+          },
+          {
+            "key": "role",
+            "optional": false,
+            "type": "string",
+            "description": "owner, admin or member."
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id: string, name: string, email: string, first_name?: string | null, has_google_registration?: boolean | null, preferences?: { sales_document?: boolean | null, time_zone?: string | null, smart_fields?: boolean | null } | null }"
+          },
+          {
+            "key": "account",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null }"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null }"
+          },
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "{ id: string, email: string, name: string, company_name?: string | null, phone_number?: string | null, alt_phone_number?: string | null, website?: string | null, initials?: string | null, archived?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signwell.api.templates.create",
+      "shortPath": "templates.create",
+      "description": "Create a reusable template from files and named placeholders that recipients are filled into later",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "files",
+            "optional": false,
+            "type": "{ name: string, file_url?: string, file_base64?: string }[]"
+          },
+          {
+            "key": "placeholders",
+            "optional": false,
+            "type": "{ id: string, name: string, preassigned_recipient_name?: string, preassigned_recipient_email?: string, passcode_delivery?: { enabled?: boolean, methods?: email[], expire_after_access?: boolean } }[]"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "copied_placeholders",
+            "optional": true,
+            "type": "{ name: string, preassigned_recipient_name?: string, preassigned_recipient_email?: string }[]"
+          },
+          {
+            "key": "draft",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expires_in",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "apply_signing_order",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "api_application_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text_tags",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "redirect_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "decline_redirect_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allow_decline",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allow_reassign",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{ name: string, color?: string }[]"
+          },
+          {
+            "key": "attachment_requests",
+            "optional": true,
+            "type": "{ name: string, placeholder_id: string, required?: boolean }[]"
+          },
+          {
+            "key": "conditional_rules",
+            "optional": true,
+            "type": "{ id?: string, deleted?: boolean, target_id?: string, action_type?: show | hide | require, action_field_ids?: string[], conditions?: { condition_type: any_of | all_of | none_of | not_all_of, status: completed | not_completed, field_api_ids: string[], join_operator?: and_operator | or_operator, position?: number }[] }[]"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ x: number, y: number, page: number, type: initials | signature | checkbox | date | select | text | dropdown | autofill_company | autofill_email | autofill_first_name | autofill_last_name | autofill_name | autofill_phone | autofill_title | autofill_date_signed, required?: boolean, api_id?: string, value?: string | boolean | number, label?: string, name?: string, width?: number, height?: number, validation?: no_text_validation | numbers | letters | email_address | us_phone_number | us_zip_code | us_ssn | us_age | alphanumeric | us_bank_routing_number | us_bank_account_number | custom, validation_regex?: string, validation_regex_error_message?: string, date_format?: string, fixed_width?: boolean, lock_sign_date?: boolean, options?: (string | { name: string, api_id?: string, is_other?: boolean })[], default_option?: string, allow_other?: boolean, placeholder_id: string }[][]",
+            "description": "Fields per file; one inner array for each entry in files."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api_application_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "requester_email_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_requester_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_requester_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601 timestamp."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601 timestamp."
+          },
+          {
+            "key": "placeholders",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "copied_placeholders",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "embedded_edit_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "template_link",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "apply_signing_order",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "redirect_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "decline_redirect_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expires_in",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ name?: string | null }[] | null"
+          },
+          {
+            "key": "allow_decline",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "allow_reassign",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{ name: string, color?: string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signwell.api.templates.delete",
+      "shortPath": "templates.delete",
+      "description": "Delete a template; documents already created from it are unaffected, but it cannot be used again",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The template id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signwell.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Read one template with its placeholders, files and settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The template id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api_application_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "requester_email_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_requester_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_requester_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601 timestamp."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601 timestamp."
+          },
+          {
+            "key": "placeholders",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "copied_placeholders",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "embedded_edit_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "template_link",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "apply_signing_order",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "redirect_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "decline_redirect_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expires_in",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ name?: string | null }[] | null"
+          },
+          {
+            "key": "allow_decline",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "allow_reassign",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{ name: string, color?: string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signwell.api.templates.update",
+      "shortPath": "templates.update",
+      "description": "Change a template's name, message, placeholders, labels or sending settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "draft",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expires_in",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "apply_signing_order",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "api_application_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "decline_redirect_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allow_decline",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allow_reassign",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{ name: string, color?: string }[]"
+          },
+          {
+            "key": "placeholders",
+            "optional": true,
+            "type": "{ id: string, name: string, preassigned_recipient_name?: string, preassigned_recipient_email?: string, passcode_delivery?: { enabled?: boolean, methods?: email[], expire_after_access?: boolean } }[]"
+          },
+          {
+            "key": "copied_placeholders",
+            "optional": true,
+            "type": "{ name: string, preassigned_recipient_name?: string, preassigned_recipient_email?: string }[]"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ x: number, y: number, page: number, type: initials | signature | checkbox | date | select | text | dropdown | autofill_company | autofill_email | autofill_first_name | autofill_last_name | autofill_name | autofill_phone | autofill_title | autofill_date_signed, required?: boolean, api_id?: string, value?: string | boolean | number, label?: string, name?: string, width?: number, height?: number, validation?: no_text_validation | numbers | letters | email_address | us_phone_number | us_zip_code | us_ssn | us_age | alphanumeric | us_bank_routing_number | us_bank_account_number | custom, validation_regex?: string, validation_regex_error_message?: string, date_format?: string, fixed_width?: boolean, lock_sign_date?: boolean, options?: (string | { name: string, api_id?: string, is_other?: boolean })[], default_option?: string, allow_other?: boolean, placeholder_id: string }[][]",
+            "description": "Fields per file; one inner array for each entry in files."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api_application_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "requester_email_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_requester_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_requester_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601 timestamp."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601 timestamp."
+          },
+          {
+            "key": "placeholders",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "copied_placeholders",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "embedded_edit_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "template_link",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "apply_signing_order",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "redirect_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "decline_redirect_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expires_in",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ name?: string | null }[] | null"
+          },
+          {
+            "key": "allow_decline",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "allow_reassign",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{ name: string, color?: string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signwell.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Register a callback URL that SignWell posts document events to; the returned id is the HMAC key for verifying deliveries",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "callback_url",
+            "optional": false,
+            "type": "string",
+            "description": "The HTTPS endpoint SignWell posts document and template events to."
+          },
+          {
+            "key": "api_application_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "callback_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api_application_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signwell.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a registered webhook; SignWell stops posting to its URL immediately",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The document id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signwell.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List the webhooks registered on the account with their ids and callback URLs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhooks",
+            "optional": false,
+            "type": "{ id: string, callback_url: string, api_application_id?: string | null }[]",
+            "description": "Every webhook registered on the account; this route does not page."
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "signwell.webhooks.document.canceled",
+      "shortPath": "document.canceled",
+      "description": "The sender canceled the document.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "{ hash: string, time: number, type: string, related_signer?: { email?: string | null, name?: string | null } | null }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object: Record<string, any> }"
+          }
+        ]
+      },
+      "responseType": "{ event: { hash: string, time: number, type: string, related_signer?: { email?: string | null, name?: string | null } | null }, data: { object: Record<string, any> } }",
+      "usageExample": "signwell({\n    webhookHooks: {\n        document: {\n            canceled: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "signwell.webhooks.document.completed",
+      "shortPath": "document.completed",
+      "description": "Every recipient signed and the document is complete.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "{ hash: string, time: number, type: string, related_signer?: { email?: string | null, name?: string | null } | null }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object: Record<string, any> }"
+          }
+        ]
+      },
+      "responseType": "{ event: { hash: string, time: number, type: string, related_signer?: { email?: string | null, name?: string | null } | null }, data: { object: Record<string, any> } }",
+      "usageExample": "signwell({\n    webhookHooks: {\n        document: {\n            completed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "signwell.webhooks.document.created",
+      "shortPath": "document.created",
+      "description": "A document was created.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "{ hash: string, time: number, type: string, related_signer?: { email?: string | null, name?: string | null } | null }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object: Record<string, any> }"
+          }
+        ]
+      },
+      "responseType": "{ event: { hash: string, time: number, type: string, related_signer?: { email?: string | null, name?: string | null } | null }, data: { object: Record<string, any> } }",
+      "usageExample": "signwell({\n    webhookHooks: {\n        document: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "signwell.webhooks.document.declined",
+      "shortPath": "document.declined",
+      "description": "A recipient declined to sign.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "{ hash: string, time: number, type: string, related_signer?: { email?: string | null, name?: string | null } | null }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object: Record<string, any> }"
+          }
+        ]
+      },
+      "responseType": "{ event: { hash: string, time: number, type: string, related_signer?: { email?: string | null, name?: string | null } | null }, data: { object: Record<string, any> } }",
+      "usageExample": "signwell({\n    webhookHooks: {\n        document: {\n            declined: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "signwell.webhooks.document.expired",
+      "shortPath": "document.expired",
+      "description": "The document passed its expiry date without being completed.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "{ hash: string, time: number, type: string, related_signer?: { email?: string | null, name?: string | null } | null }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object: Record<string, any> }"
+          }
+        ]
+      },
+      "responseType": "{ event: { hash: string, time: number, type: string, related_signer?: { email?: string | null, name?: string | null } | null }, data: { object: Record<string, any> } }",
+      "usageExample": "signwell({\n    webhookHooks: {\n        document: {\n            expired: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "signwell.webhooks.document.inProgress",
+      "shortPath": "document.inProgress",
+      "description": "The first signer started filling the document; SignWell sends this once.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "{ hash: string, time: number, type: string, related_signer?: { email?: string | null, name?: string | null } | null }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object: Record<string, any> }"
+          }
+        ]
+      },
+      "responseType": "{ event: { hash: string, time: number, type: string, related_signer?: { email?: string | null, name?: string | null } | null }, data: { object: Record<string, any> } }",
+      "usageExample": "signwell({\n    webhookHooks: {\n        document: {\n            inProgress: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "signwell.webhooks.document.recipientsUpdated",
+      "shortPath": "document.recipientsUpdated",
+      "description": "A sent document's recipients were changed.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "{ hash: string, time: number, type: string, related_signer?: { email?: string | null, name?: string | null } | null }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object: Record<string, any> }"
+          }
+        ]
+      },
+      "responseType": "{ event: { hash: string, time: number, type: string, related_signer?: { email?: string | null, name?: string | null } | null }, data: { object: Record<string, any> } }",
+      "usageExample": "signwell({\n    webhookHooks: {\n        document: {\n            recipientsUpdated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "signwell.webhooks.document.sent",
+      "shortPath": "document.sent",
+      "description": "A document was sent to its recipients.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "{ hash: string, time: number, type: string, related_signer?: { email?: string | null, name?: string | null } | null }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object: Record<string, any> }"
+          }
+        ]
+      },
+      "responseType": "{ event: { hash: string, time: number, type: string, related_signer?: { email?: string | null, name?: string | null } | null }, data: { object: Record<string, any> } }",
+      "usageExample": "signwell({\n    webhookHooks: {\n        document: {\n            sent: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "signwell.webhooks.document.signed",
+      "shortPath": "document.signed",
+      "description": "One recipient signed. A document with several signers sends this once per signer.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "{ hash: string, time: number, type: string, related_signer?: { email?: string | null, name?: string | null } | null }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object: Record<string, any> }"
+          }
+        ]
+      },
+      "responseType": "{ event: { hash: string, time: number, type: string, related_signer?: { email?: string | null, name?: string | null } | null }, data: { object: Record<string, any> } }",
+      "usageExample": "signwell({\n    webhookHooks: {\n        document: {\n            signed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "signwell.webhooks.document.viewed",
+      "shortPath": "document.viewed",
+      "description": "A signer opened the document. SignWell sends this once per view.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "{ hash: string, time: number, type: string, related_signer?: { email?: string | null, name?: string | null } | null }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object: Record<string, any> }"
+          }
+        ]
+      },
+      "responseType": "{ event: { hash: string, time: number, type: string, related_signer?: { email?: string | null, name?: string | null } | null }, data: { object: Record<string, any> } }",
+      "usageExample": "signwell({\n    webhookHooks: {\n        document: {\n            viewed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}

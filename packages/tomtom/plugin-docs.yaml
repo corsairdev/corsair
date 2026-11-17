@@ -1,0 +1,57 @@
+displayName: TomTom
+description: 'Search places and addresses, geocode both ways, calculate routes, and read live traffic incidents and flow.'
+domain: tomtom.com
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key in the TomTom developer portal at my.tomtom.com. The key travels as the `key` query parameter on every request, and it must have the Search, Routing or Traffic product enabled for the endpoints you call.
+
+  Things to know:
+
+  - **Paging is offset based.** `limit` caps at 100 and `offset` skips within the result set; `summary.totalResults` is the total available; `summary.numResults` is the size of this page.
+  - **A search with no matches is a success.** TomTom answers 200 with an empty `results` array, so check the array rather than the status.
+  - **`radius` needs a point.** A radius without `lat` and `lon` is rejected before the request, because the API ignores it otherwise.
+  - **Routes take coordinates, not addresses.** Geocode first, then pass the resulting positions. `origins` and `destinations` each accept several waypoints, joined with colons in the path.
+  - **Traffic needs a bounding box.** `traffic.incidents` takes `minLon,minLat,maxLon,maxLat` covering at most 10,000 km², such as `4.88,52.36,4.92,52.39` for central Amsterdam. An inverted box is rejected here rather than at the provider.
+  - **Tiles are images, not JSON.** `traffic.tile` returns `{ content_type, base64 }`: the PNG bytes base64-encoded. Both layers take a style in the path (`style` for flow, `incident_style` for incidents).
+  - **A 403 is a plan limit.** The key is valid but does not cover the product or the region, so the plugin does not retry it.
+examples:
+  read:
+    path: search.fuzzy
+    title: Search for a place with a geo bias
+    args:
+      query: pizza
+      lat: 52.37
+      lon: 4.89
+      limit: 5
+  write:
+    path: routing.calculate
+    title: Calculate a route between two points
+    args:
+      origins:
+        - latitude: 52.37
+          longitude: 4.89
+      destinations:
+        - latitude: 52.09
+          longitude: 5.12
+      traffic: true
+apiExamples:
+  search.fuzzy:
+    call: "{ query: 'pizza', lat: 52.37, lon: 4.89, radius: 5000, limit: 5 }"
+  search.geocode:
+    call: "{ query: 'Damrak 1 Amsterdam', country_set: 'NL' }"
+  search.reverseGeocode:
+    call: "{ latitude: 52.378, longitude: 4.9, radius: 100 }"
+  routing.calculate:
+    call: "{ origins: [{ latitude: 52.37, longitude: 4.89 }], destinations: [{ latitude: 52.09, longitude: 5.12 }], travel_mode: 'car', traffic: true }"
+  traffic.incidents:
+    call: "{ bbox: '4.88,52.36,4.92,52.39' }"
+  traffic.flow:
+    call: "{ latitude: 52.37, longitude: 4.89, zoom: 12 }"
+  traffic.tile:
+    call: "{ layer: 'flow', style: 'relative-delay', zoom: 12, x: 2100, y: 1350 }"
+apiNotes:
+  search.fuzzy: '`radius` needs both `lat` and `lon`. `limit` caps at 100. `summary.totalResults` is the total match count and `summary.numResults` the size of this page.'
+  search.geocode: 'The query goes in the path. Pass the address as plain text; the plugin encodes it.'
+  routing.calculate: 'Waypoints are joined in the path, origins then destinations. `depart_at` uses future traffic when `traffic` is on.'
+  traffic.incidents: 'The bounding box is minLon,minLat,maxLon,maxLat. The box may cover at most 10,000 km². `category_filter` is a list of category numbers, such as [1, 6] for Accident and Jam, and `time_validity_filter` takes present, future or both.'
+  traffic.tile: 'Returns the PNG as base64. The flow layer defaults to the relative style and the incidents layer to s3.'

@@ -1,0 +1,154 @@
+---
+title: "ToneDen plugin"
+sidebarTitle: "Overview"
+description: "Manage smart links, contests and social unlocks, ad campaigns and playbook campaigns, and read their performance data."
+---
+
+Use **ToneDen** through Corsair: one client, typed API calls.
+
+ToneDen issues a user access token through an OAuth 2.0 authorization-code flow only, so this plugin uses `oauth_2` as its auth type. Register an app in Developer Settings at https://www.toneden.io/settings/developer to get a client ID and secret; ToneDen reviews the app before the API works. The token is a user token, so every call acts as that user.
+
+Things to know:
+
+- **Every route is scoped to a user.** Campaigns and user lists take `user_id` in the path, and links and attachments are listed per user (`links.listForUser`, `attachments.listForUser` with a `type` of `unlock` or `contest`). Call `users.get` with `user_id: 'me'` to read the connected user and its ID.
+- **A taken path is a successful call.** `links.validPath` answers 200 with `valid: false` and a reason, so check the flag rather than catching an error.
+- **Writes send only what you pass.** ToneDen documents no required body field, so an update with no field is rejected here rather than sending an empty body that changes nothing.
+- **Campaign writes can spend money.** `campaigns.create` creates a real campaign on Facebook or Google, and a campaign or playbook update can change its budget or status, so `campaigns.create`, `campaigns.update`, `playbooks.create` and `playbooks.update` are `destructive`. Review the body before calling them.
+- **Link insights need a metric.** `links.insights` takes `metric` (`clicks`, `clickthroughs` or `rsvps`) and the window as `start_date` and `end_date`.
+- **Errors.** HTTP failures are core's `ApiError`; `describeToneDenError` reads the message out of its body.
+- **Ad campaigns need a linked ad account.** A campaign write also needs the ad account, creative and targeting fields ToneDen documents; the plugin forwards whatever you send without inventing defaults.
+- **User lists need ToneDen approval.** The custom-audience endpoints say to contact support for access.
+- **No webhooks.** ToneDen posts no events, so performance is read through the insights routes.
+
+**What you get:**
+
+- 36 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/toneden better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/toneden better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/toneden better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/toneden better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { toneden } from '@corsair-dev/toneden';
+
+export const corsair = createCorsair({
+	plugins: [
+		toneden(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your ToneDen OAuth app.
+
+```ts
+toneden()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+<Tab title="API Key">
+
+Store the ToneDen API key before the first call: `pnpm corsair setup --plugin=toneden --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+toneden({
+	authType: 'api_key',
+})
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'toneden',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List your links**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.toneden.api.links.listForUser({ user_id: 1, limit: 25 });
+```
+
+
+**Create a link**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.toneden.api.links.create({ title: 'New single', target_type: 'music', target_url: 'https://open.spotify.com/album/abc' });
+```
+
+
+See the full list on the [API](/plugins/toneden/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/toneden/api">
+    Every `toneden.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

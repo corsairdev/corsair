@@ -1,3 +1,4 @@
+import type { RawWebhookRequest } from 'corsair/core';
 import crypto from 'crypto';
 import { z } from 'zod';
 
@@ -87,11 +88,13 @@ export type VercelWebhookOutputs = {
 };
 
 export function createVercelMatch(eventType: string) {
-	return (request: any) => {
+	return (request: RawWebhookRequest) => {
 		try {
-			const parsed = VercelWebhookPayloadSchema.parse(
-				request.body || request.payload || request,
-			);
+			const body =
+				typeof request.body === 'string'
+					? JSON.parse(request.body)
+					: request.body;
+			const parsed = VercelWebhookPayloadSchema.parse(body);
 			return parsed.type === eventType;
 		} catch {
 			return false;
@@ -101,14 +104,20 @@ export function createVercelMatch(eventType: string) {
 
 export function verifyVercelWebhookSignature(
 	request: {
-		rawBody: string | Buffer;
+		/** Set by core when Hub already verified the delivery's signature. */
+		hubVerified?: boolean;
+		rawBody?: string | Buffer;
 		headers: Record<string, string | string[] | undefined>;
 	},
 	secret: string,
 ): boolean {
+	// Hub checked the provider signature before forwarding, and core then
+	// builds no webhook key, so there is nothing to compare here.
+	if (request.hubVerified === true) return true;
 	const signature = request.headers['x-vercel-signature'];
 	if (!signature || typeof signature !== 'string') return false;
 	if (!secret?.trim()) return false;
+	if (request.rawBody === undefined) return false;
 
 	try {
 		const hmac = crypto.createHmac('sha1', secret);

@@ -1,0 +1,98 @@
+displayName: Tave
+description: Studio management with Tave, the VSCO Workspace API - manage jobs and their stages, the product price list, payments against a job, tasks and notes, and read the job types, lead sources and brands they reference.
+domain: workspace.vsco.co
+recommendedAuth: api_key
+overviewNote: |
+  Tave is VSCO Workspace. Create a key at workspace.vsco.co/settings/api and send it as `X-API-KEY`. A key is scoped to one studio.
+
+  Things to know before you call:
+
+  - **Amounts are integers, not decimals.** Every money field (`price`, `amount`, balances and totals) is a whole number in the studio currency, so 25000 for a 250.00 price. The schemas reject a decimal, which the API would otherwise round or refuse.
+  - **A job is a lead or a job.** `jobs.list` returns both, separated by `stage` (lead, booked, fulfillment, completed). Pass `includeClosed: true` to see closed ones, which are hidden by default.
+  - **Paging is on the query.** List routes other than `products.list` (which has no paging and returns the whole price list) take `page` and `pageSize` and answer `{ type, items, meta }`, where `meta` holds `currentPage`, `totalPages` and `totalItems`. `pageSize` runs from 10 to 100 and defaults to 100.
+  - **A wrong path answers 200 with a web page.** A route that does not exist returns the documentation HTML instead of a JSON 404, so the plugin checks the content type and reports `isHtmlResponse` on `TaveAPIError` rather than handing back a page. This is the first thing to check when a call looks like it succeeded but has no data.
+  - **Update needs at least one field.** `jobs.update`, `products.update`, `payments.update` and `tasks.update` reject a body that changes nothing before sending it.
+  - **Tasks need a list.** `tasks.create` requires `name` and `taskListId`. Get the list ID from `taskLists.list`.
+  - **Notes are HTML.** `notes.create` takes `contentHtml`, not plain text.
+  - **Payment status is an enum.** `payments.create` accepts future, confirmed-future, posted, failed or pending, and the API defaults it to posted.
+  - **Deletes cannot be undone.** A job delete removes its orders, invoices and notes with it, and a payment delete changes the job balance.
+  - **The 5xx replay rule.** The plugin retries a 5xx only on a GET. A repeated POST makes a second job, payment or note, and a repeated PUT can overwrite a newer edit.
+examples:
+  read:
+    path: jobs.list
+    title: List the first page of jobs
+    args:
+      page: 1
+  write:
+    path: payments.create
+    title: Record a deposit against a job
+    args:
+      jobId: 01h35ccwymj5ctckp8px1azhg6
+      amount: 75000
+      memo: Deposit
+apiExamples:
+  jobs.list:
+    call: "{ page: 1, pageSize: 50, includeClosed: false }"
+  jobs.get:
+    call: "{ jobId: '01h35ccwymj5ctckp8px1azhg6' }"
+  jobs.create:
+    call: "{ name: 'Smith wedding', stage: 'lead', eventDate: '2026-06-15', guestCount: 120 }"
+  jobs.update:
+    call: "{ jobId: '01h35ccwymj5ctckp8px1azhg6', stage: 'booked', closed: false }"
+  jobs.delete:
+    call: "{ jobId: '01h35ccwymj5ctckp8px1azhg6' }"
+  jobs.payments:
+    call: "{ jobId: '01h35ccwymj5ctckp8px1azhg6' }"
+  products.list:
+    call: "{ sortBy: 'name asc' }"
+  products.get:
+    call: "{ productId: '01h35ccwymj5ctckp8px1azhga' }"
+  products.create:
+    call: "{ name: 'Wedding album', price: 25000, taxable: true }"
+  products.update:
+    call: "{ productId: '01h35ccwymj5ctckp8px1azhga', price: 30000 }"
+  products.delete:
+    call: "{ productId: '01h35ccwymj5ctckp8px1azhga' }"
+  payments.list:
+    call: '{ page: 1 }'
+  payments.get:
+    call: "{ paymentId: '01h35ccwymj5ctckp8px1azhgc' }"
+  payments.create:
+    call: "{ jobId: '01h35ccwymj5ctckp8px1azhg6', amount: 75000, memo: 'Deposit' }"
+  payments.update:
+    call: "{ paymentId: '01h35ccwymj5ctckp8px1azhgc', memo: 'Second deposit' }"
+  payments.delete:
+    call: "{ paymentId: '01h35ccwymj5ctckp8px1azhgc' }"
+  tasks.list:
+    call: '{ page: 1 }'
+  tasks.create:
+    call: "{ name: 'Send the contract', taskListId: '01h35ccwymj5ctckp8px1azhgf' }"
+  tasks.update:
+    call: "{ taskId: '01h35ccwymj5ctckp8px1azhge', completed: true }"
+  tasks.delete:
+    call: "{ taskId: '01h35ccwymj5ctckp8px1azhge' }"
+  taskLists.list:
+    call: '{ page: 1 }'
+  notes.list:
+    call: "{ page: 1, jobId: '01h35ccwymj5ctckp8px1azhg6' }"
+  notes.create:
+    call: "{ contentHtml: '<p>Called about the timeline.</p>', jobId: '01h35ccwymj5ctckp8px1azhg6' }"
+  notes.delete:
+    call: "{ noteId: '01h35ccwymj5ctckp8px1azhgh' }"
+  jobTypes.list:
+    call: '{ page: 1 }'
+  leadSources.list:
+    call: '{ page: 1 }'
+  leadStatuses.list:
+    call: '{ page: 1 }'
+  brands.list:
+    call: '{ page: 1 }'
+  studio.get: {}
+apiNotes:
+  'jobs.list': 'Returns leads and jobs together; stage accepts lead, booked, fulfillment and completed, and closed jobs need includeClosed.'
+  'jobs.create': 'stage defaults to the studio pipeline start; jobTypeId and leadSourceId come from their list routes.'
+  'payments.create': 'amount is an integer in the studio currency; status accepts future, confirmed-future, posted, failed or pending and defaults to posted.'
+  'products.create': 'price is an integer in the studio currency, so 25000 is 250.00; a decimal is rejected.'
+  'tasks.create': 'name and taskListId are both required; get the list ID from taskLists.list.'
+  'notes.create': 'contentHtml takes HTML, not plain text.'
+  'jobs.delete': 'Removes the job with its orders, invoices and notes; it cannot be undone.'

@@ -1,0 +1,2003 @@
+---
+title: "SignPath API reference"
+sidebarTitle: "API"
+description: "API reference for the SignPath plugin in Corsair: every `signpath.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Artifact Configurations
+
+### activate
+
+`artifactConfigurations.activate`
+
+Activate an artifact configuration; safe to repeat
+
+**Risk:** `write`
+
+```ts
+await corsair.signpath.api.artifactConfigurations.activate({ projectSlug: 'my-app', artifactConfigurationSlug: 'default' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `artifactConfigurationSlug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `artifactConfigurationSlug` | `string` | Yes | — |
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### deactivate
+
+`artifactConfigurations.deactivate`
+
+Deactivate an artifact configuration; safe to repeat
+
+**Risk:** `write`
+
+```ts
+await corsair.signpath.api.artifactConfigurations.deactivate({ projectSlug: 'my-app', artifactConfigurationSlug: 'default' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `artifactConfigurationSlug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `artifactConfigurationSlug` | `string` | Yes | — |
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### getXml
+
+`artifactConfigurations.getXml`
+
+Read an artifact configuration as XML, which is how SignPath stores and version-controls it
+
+**Risk:** `read`
+
+```ts
+await corsair.signpath.api.artifactConfigurations.getXml({ projectSlug: 'my-app', artifactConfigurationSlug: 'default' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `artifactConfigurationSlug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `artifactConfigurationSlug` | `string` | Yes | — |
+| `xml` | `string` | Yes | — |
+
+
+
+---
+
+### updateXml
+
+`artifactConfigurations.updateXml`
+
+Replace an artifact configuration's XML; SignPath does not merge it, and existing signing requests keep the version they captured
+
+**Risk:** `write`
+
+```ts
+await corsair.signpath.api.artifactConfigurations.updateXml({ projectSlug: 'my-app', artifactConfigurationSlug: 'default', artifactConfigurationXml: '<artifact-configuration xmlns="http://signpath.io/artifact-configuration"><pe-file><file-path>app.exe</file-path></pe-file></artifact-configuration>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `artifactConfigurationSlug` | `string` | Yes | — |
+| `artifactConfigurationXml` | `string` | Yes | The complete replacement document. SignPath does not merge it. |
+
+The whole document is replaced. Existing signing requests keep the configuration they captured when they were submitted.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `artifactConfigurationSlug` | `string` | Yes | — |
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+## Audit Log
+
+### listEvents
+
+`auditLog.listEvents`
+
+Read organization audit log events from a cursor or a start time; this route is under the v1-pre preview path
+
+**Risk:** `read`
+
+```ts
+await corsair.signpath.api.auditLog.listEvents({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | Pass `pagination.nextCursor` from the previous page. |
+| `startTime` | `string` | No | ISO 8601 timestamp to read from, when you have no cursor. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `auditLogEvents` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="auditLogEvents full type">
+
+```ts
+{
+  metadata: {
+    eventName: string,
+    eventVersion: number,
+    organizationId: string,
+    entityId: string,
+    timestamp: string,
+    actor: {
+      id?: string | null,
+      type: string,
+      identity?: string | null,
+      name?: string | null
+    }
+  },
+  entityMetadata: Record<string, any>,
+  data: Record<string, any>
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  nextCursor?: string | null,
+  nextLink?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSigningRequestEvents
+
+`auditLog.listSigningRequestEvents`
+
+Read only the signing request audit log events from a cursor or a start time; this route is under the v1-pre preview path
+
+**Risk:** `read`
+
+```ts
+await corsair.signpath.api.auditLog.listSigningRequestEvents({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | Pass `pagination.nextCursor` from the previous page. |
+| `startTime` | `string` | No | ISO 8601 timestamp to read from, when you have no cursor. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `auditLogEvents` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="auditLogEvents full type">
+
+```ts
+{
+  metadata: {
+    eventName: string,
+    eventVersion: number,
+    organizationId: string,
+    entityId: string,
+    timestamp: string,
+    actor: {
+      id?: string | null,
+      type: string,
+      identity?: string | null,
+      name?: string | null
+    }
+  },
+  entityMetadata: Record<string, any>,
+  data: Record<string, any>
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  nextCursor?: string | null,
+  nextLink?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Certificates
+
+### get
+
+`certificates.get`
+
+Read one certificate: its status, key algorithm, subject and X509 validity or GPG fingerprint
+
+**Risk:** `read`
+
+```ts
+await corsair.signpath.api.certificates.get({ certificateSlug: 'codesign' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `certificateSlug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `certificateId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `status` | `Valid \| CsrPending \| Inactive \| Expired \| PrivateKeyDeleted` | Yes | — |
+| `type` | `X509 \| GpgKey` | Yes | — |
+| `purpose` | `TestSigning \| ReleaseSigning \| null` | No | — |
+| `keyStoreId` | `string` | Yes | — |
+| `keyStoreKeyId` | `string \| null` | No | — |
+| `keyAlgorithm` | `Rsa2048 \| Rsa3072 \| Rsa4096 \| Rsa8192 \| EcdsaNist256 \| EcdsaNist384 \| EcdsaNist521 \| EcdsaBrainpoolP256r1 \| EcdsaBrainpoolP384r1 \| EcdsaBrainpoolP512r1 \| Mldsa44 \| Mldsa65 \| Mldsa87 \| null` | No | — |
+| `keyAlgorithmGroup` | `Rsa \| Ecdsa \| Mldsa` | Yes | — |
+| `x509CertificateData` | `object \| null` | No | — |
+| `gpgKeyData` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="x509CertificateData full type">
+
+```ts
+{
+  creationMethod: SelfSigned | Csr | PfxImport | ImportedWithExistingKeyPair,
+  subjectName: string,
+  validFrom?: string | null,
+  validTo?: string | null,
+  subjectNameParts: {
+    commonName: string,
+    organization?: string | null,
+    organizationalUnit?: string | null,
+    countryCode?: string | null,
+    stateOrProvince?: string | null,
+    locality?: string | null,
+    email?: string | null
+  },
+  x509CertificateLink: string,
+  x509CertificateChainLink?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="gpgKeyData full type">
+
+```ts
+{
+  userId: string,
+  creationTime: string,
+  expirationTime?: string | null,
+  fingerprint: string,
+  keyId: string,
+  keyVersion: number,
+  gpgPublicKeyLink: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`certificates.list`
+
+List the organization's X509 and GPG certificates with status, algorithm and validity; this route does not page
+
+**Risk:** `read`
+
+```ts
+await corsair.signpath.api.certificates.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `certificates` | `object[]` | Yes | Every certificate in the organization; this route does not page. |
+
+<AccordionGroup>
+<Accordion title="certificates full type">
+
+```ts
+{
+  certificateId: string,
+  name: string,
+  slug: string,
+  description?: string | null,
+  status: Valid | CsrPending | Inactive | Expired | PrivateKeyDeleted,
+  type: X509 | GpgKey,
+  purpose?: TestSigning | ReleaseSigning | null,
+  keyStoreId: string,
+  keyStoreKeyId?: string | null,
+  keyAlgorithm?: Rsa2048 | Rsa3072 | Rsa4096 | Rsa8192 | EcdsaNist256 | EcdsaNist384 | EcdsaNist521 | EcdsaBrainpoolP256r1 | EcdsaBrainpoolP384r1 | EcdsaBrainpoolP512r1 | Mldsa44 | Mldsa65 | Mldsa87 | null,
+  keyAlgorithmGroup: Rsa | Ecdsa | Mldsa,
+  x509CertificateData?: {
+    creationMethod: SelfSigned | Csr | PfxImport | ImportedWithExistingKeyPair,
+    subjectName: string,
+    validFrom?: string | null,
+    validTo?: string | null,
+    subjectNameParts: {
+      commonName: string,
+      organization?: string | null,
+      organizationalUnit?: string | null,
+      countryCode?: string | null,
+      stateOrProvince?: string | null,
+      locality?: string | null,
+      email?: string | null
+    },
+    x509CertificateLink: string,
+    x509CertificateChainLink?: string | null
+  } | null,
+  gpgKeyData?: {
+    userId: string,
+    creationTime: string,
+    expirationTime?: string | null,
+    fingerprint: string,
+    keyId: string,
+    keyVersion: number,
+    gpgPublicKeyLink: string
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Organization
+
+### get
+
+`organization.get`
+
+Read the organization name, subscription type and quota usage: active users, active projects, certificates, yearly signatures and artifact bytes
+
+**Risk:** `read`
+
+```ts
+await corsair.signpath.api.organization.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `subscriptionType` | `string` | Yes | — |
+| `quotas` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="quotas full type">
+
+```ts
+{
+  maxNumberOfActiveInteractiveUsers: {
+    currentlyUsed: number,
+    quota?: number | null
+  },
+  maxNumberOfActiveProjects: {
+    currentlyUsed: number,
+    quota?: number | null
+  },
+  maxNumberOfCertificates: Record<string, {
+    currentlyUsed: number,
+    quota?: number | null
+  }>,
+  yearlyMaxSizeOfArtifactsInBytes: {
+    currentlyUsed: number,
+    quota?: number | null
+  },
+  yearlyMaxNumberOfIndividualSignatures: {
+    currentlyUsed: number,
+    quota?: number | null
+  },
+  releaseArtifactRetentionTime?: string | null,
+  testArtifactRetentionTime?: string | null,
+  quotaPeriodStart: string,
+  quotaPeriodEnd: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### activate
+
+`projects.activate`
+
+Activate a project so it accepts signing requests; safe to repeat
+
+**Risk:** `write`
+
+```ts
+await corsair.signpath.api.projects.activate({ projectSlug: 'my-app' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | The project to read. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### create
+
+`projects.create`
+
+Create a project with an artifact configuration; the project starts inactive, so activate it before submitting signing requests
+
+**Risk:** `write`
+
+```ts
+await corsair.signpath.api.projects.create({ name: 'My App', slug: 'my-app', artifactConfigurationXml: '<artifact-configuration xmlns="http://signpath.io/artifact-configuration"><pe-file id="app"><file-path>app.exe</file-path></pe-file></artifact-configuration>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `slug` | `string` | Yes | Unique within the organization; used in every project path. |
+| `description` | `string` | No | — |
+| `readerIds` | `string[]` | No | Interactive users, CI users or groups allowed to read the project. |
+| `configuratorIds` | `string[]` | No | Participants allowed to change the project. |
+| `repositoryUrls` | `string[]` | No | — |
+| `artifactConfigurationXml` | `string` | Yes | The artifact configuration itself, as XML. A project needs one. |
+
+artifactConfigurationXml is required. SignPath rejects a project without one, so send the configuration you want on day one.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | — |
+| `created` | `true` | Yes | — |
+| `artifactConfigurationXml` | `string` | Yes | Echoed back from the input. |
+
+
+
+---
+
+### deactivate
+
+`projects.deactivate`
+
+Deactivate a project, which blocks new signing requests until it is activated again; safe to repeat
+
+**Risk:** `write`
+
+```ts
+await corsair.signpath.api.projects.deactivate({ projectSlug: 'my-app' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | The project to read. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Read one project with its artifact configurations, signing policies, trusted build system links, readers and configurators
+
+**Risk:** `read`
+
+```ts
+await corsair.signpath.api.projects.get({ projectSlug: 'my-app' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | The project to read. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `status` | `Valid \| Inactive \| Invalid` | Yes | — |
+| `repositoryUrls` | `string[] \| null` | No | — |
+| `artifactConfigurations` | `object[]` | Yes | — |
+| `signingPolicies` | `object[]` | Yes | — |
+| `trustedBuildSystemLinks` | `object[]` | Yes | — |
+| `readers` | `object[]` | Yes | — |
+| `configurators` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="artifactConfigurations full type">
+
+```ts
+{
+  name: string,
+  slug: string,
+  description?: string | null,
+  status: Valid | Pending | Invalid | Inactive,
+  isDefault: boolean,
+  artifactConfigurationXmlLink: string
+}[]
+```
+</Accordion>
+
+<Accordion title="signingPolicies full type">
+
+```ts
+{
+  name: string,
+  slug: string,
+  description?: string | null,
+  status: Valid | Inactive | Invalid,
+  submitters: {
+    id: string,
+    name: string,
+    identity?: string | null,
+    type: InteractiveUser | CIUser | Group,
+    isDirectorySynchronized: boolean,
+    link: string
+  }[],
+  approvers: {
+    id: string,
+    name: string,
+    identity?: string | null,
+    type: InteractiveUser | CIUser | Group,
+    isDirectorySynchronized: boolean,
+    link: string
+  }[],
+  numberOfRequiredApprovals: number,
+  purpose?: TestSigning | ReleaseSigning | null,
+  certificateLink: string,
+  disableMalwareScanning: boolean,
+  verifiesTrustedBuildSystem: boolean,
+  verifiesOriginPolicy: boolean,
+  trustedBuildSystemVerification?: {
+    requireTrustedBuildSystem?: boolean | null,
+    originPolicyVerification?: {
+      verifyOriginPolicy: boolean,
+      allowedBranchNames?: string[] | null,
+      allowedBuildDefinitions?: string[] | null
+    } | null
+  } | null,
+  pipelinePolicies: {
+    id: string,
+    slug: string,
+    name: string,
+    type: string,
+    status: string,
+    level: string,
+    link: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="trustedBuildSystemLinks full type">
+
+```ts
+{
+  name: string,
+  slug: string,
+  type: Custom | Predefined,
+  status: Active | Inactive,
+  link: string
+}[]
+```
+</Accordion>
+
+<Accordion title="readers full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  identity?: string | null,
+  type: InteractiveUser | CIUser | Group,
+  isDirectorySynchronized: boolean,
+  link: string
+}[]
+```
+</Accordion>
+
+<Accordion title="configurators full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  identity?: string | null,
+  type: InteractiveUser | CIUser | Group,
+  isDirectorySynchronized: boolean,
+  link: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List every project in the organization with its status and signing policies; this route does not page
+
+**Risk:** `read`
+
+```ts
+await corsair.signpath.api.projects.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projects` | `object[]` | Yes | Every project in the organization; this route does not page. |
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  name: string,
+  slug: string,
+  description?: string | null,
+  status: Valid | Inactive | Invalid,
+  signingPolicies: {
+    name: string,
+    slug: string,
+    description?: string | null,
+    status: Valid | Inactive | Invalid
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setDefaultArtifactConfiguration
+
+`projects.setDefaultArtifactConfiguration`
+
+Choose which artifact configuration a signing request uses when it names none
+
+**Risk:** `write`
+
+```ts
+await corsair.signpath.api.projects.setDefaultArtifactConfiguration({ projectSlug: 'my-app', artifactConfigurationSlug: 'v2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `artifactConfigurationSlug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `artifactConfigurationSlug` | `string` | Yes | — |
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### update
+
+`projects.update`
+
+Change a project name, description, repository URLs, readers or configurators; the body requires the slug, so pass the project's own slug to keep it
+
+**Risk:** `write`
+
+```ts
+await corsair.signpath.api.projects.update({ projectSlug: 'my-app', name: 'My App', slug: 'my-app', description: 'Windows client' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | The project to change. |
+| `name` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `readerIds` | `string[] \| null` | No | — |
+| `configuratorIds` | `string[] \| null` | No | — |
+| `repositoryUrls` | `string[] \| null` | No | — |
+
+The body requires both name and slug. Pass the project's own slug to leave the URL unchanged.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+## Signing Policies
+
+### activate
+
+`signingPolicies.activate`
+
+Activate a signing policy so it accepts submissions; safe to repeat
+
+**Risk:** `write`
+
+```ts
+await corsair.signpath.api.signingPolicies.activate({ projectSlug: 'my-app', signingPolicySlug: 'release' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `signingPolicySlug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `signingPolicySlug` | `string` | Yes | — |
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### create
+
+`signingPolicies.create`
+
+Add a signing policy to a project; it is created inactive, so activate it before it accepts submissions
+
+**Risk:** `write`
+
+```ts
+await corsair.signpath.api.signingPolicies.create({ projectSlug: 'my-app', name: 'Release', slug: 'release', certificateSlug: 'codesign', submitterIds: ['3fa85f64-5717-4562-b3fc-2c963f66afa6'], disableMalwareScanning: false, purpose: 'ReleaseSigning' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `certificateSlug` | `string` | Yes | The certificate this policy signs with. |
+| `submitterIds` | `string[]` | Yes | Participants who may submit signing requests under this policy. |
+| `disableMalwareScanning` | `boolean` | Yes | SignPath requires this field, so pass false to keep scanning on. |
+| `purpose` | `TestSigning \| ReleaseSigning` | No | Whether the resulting signatures are test or release signatures. SignPath defaults it when omitted. |
+| `approval` | `object` | No | — |
+| `trustedBuildSystemVerification` | `object` | No | — |
+
+The policy is created inactive. Call signingPolicies.activate before it accepts submissions.
+
+<AccordionGroup>
+<Accordion title="approval full type">
+
+```ts
+{
+  approverIds: string[],
+  numberOfRequiredApprovals: number
+}
+```
+</Accordion>
+
+<Accordion title="trustedBuildSystemVerification full type">
+
+```ts
+{
+  requireTrustedBuildSystem: boolean,
+  originPolicyVerification?: {
+    verifyOriginPolicy: boolean,
+    allowedBranchNames?: string[] | null,
+    allowedBuildDefinitions?: string[] | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `signingPolicySlug` | `string` | Yes | — |
+| `created` | `true` | Yes | — |
+
+
+
+---
+
+### deactivate
+
+`signingPolicies.deactivate`
+
+Deactivate a signing policy, which blocks new submissions under it; safe to repeat
+
+**Risk:** `write`
+
+```ts
+await corsair.signpath.api.signingPolicies.deactivate({ projectSlug: 'my-app', signingPolicySlug: 'release' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `signingPolicySlug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `signingPolicySlug` | `string` | Yes | — |
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`signingPolicies.get`
+
+Read one signing policy: its certificate, submitters, approvers, required approval count and build system verification
+
+**Risk:** `read`
+
+```ts
+await corsair.signpath.api.signingPolicies.get({ projectSlug: 'my-app', signingPolicySlug: 'release' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `signingPolicySlug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `status` | `Valid \| Inactive \| Invalid` | Yes | — |
+| `purpose` | `TestSigning \| ReleaseSigning \| null` | No | — |
+| `submitters` | `object[]` | Yes | — |
+| `approvers` | `object[]` | Yes | — |
+| `numberOfRequiredApprovals` | `number` | Yes | — |
+| `certificateLink` | `string` | Yes | — |
+| `disableMalwareScanning` | `boolean` | Yes | — |
+| `verifiesTrustedBuildSystem` | `boolean` | No | — |
+| `verifiesOriginPolicy` | `boolean` | No | — |
+| `trustedBuildSystemVerification` | `object \| null` | No | — |
+| `pipelinePolicies` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="submitters full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  identity?: string | null,
+  type: InteractiveUser | CIUser | Group,
+  isDirectorySynchronized: boolean,
+  link: string
+}[]
+```
+</Accordion>
+
+<Accordion title="approvers full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  identity?: string | null,
+  type: InteractiveUser | CIUser | Group,
+  isDirectorySynchronized: boolean,
+  link: string
+}[]
+```
+</Accordion>
+
+<Accordion title="trustedBuildSystemVerification full type">
+
+```ts
+{
+  requireTrustedBuildSystem?: boolean | null,
+  originPolicyVerification?: {
+    verifyOriginPolicy: boolean,
+    allowedBranchNames?: string[] | null,
+    allowedBuildDefinitions?: string[] | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="pipelinePolicies full type">
+
+```ts
+{
+  id: string,
+  slug: string,
+  name: string,
+  type: string,
+  status: string,
+  level: string,
+  link: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`signingPolicies.update`
+
+Replace a signing policy's certificate, submitters, approvals and verification settings; the body requires the slug, so pass the policy's own slug to keep it
+
+**Risk:** `write`
+
+```ts
+await corsair.signpath.api.signingPolicies.update({ projectSlug: 'my-app', signingPolicySlug: 'release', name: 'Release', slug: 'release', certificateSlug: 'codesign', submitterIds: ['3fa85f64-5717-4562-b3fc-2c963f66afa6'], disableMalwareScanning: false, purpose: 'ReleaseSigning' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `signingPolicySlug` | `string` | Yes | The policy to change. |
+| `name` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `certificateSlug` | `string` | Yes | The certificate this policy signs with. |
+| `submitterIds` | `string[]` | Yes | Participants who may submit signing requests under this policy. |
+| `disableMalwareScanning` | `boolean` | Yes | SignPath requires this field, so pass false to keep scanning on. |
+| `purpose` | `TestSigning \| ReleaseSigning` | No | Whether the resulting signatures are test or release signatures. SignPath defaults it when omitted. |
+| `approval` | `object` | No | — |
+| `trustedBuildSystemVerification` | `object` | No | — |
+
+The body requires the full policy, not just the fields you are changing. Read it first with signingPolicies.get.
+
+<AccordionGroup>
+<Accordion title="approval full type">
+
+```ts
+{
+  approverIds: string[],
+  numberOfRequiredApprovals: number
+}
+```
+</Accordion>
+
+<Accordion title="trustedBuildSystemVerification full type">
+
+```ts
+{
+  requireTrustedBuildSystem: boolean,
+  originPolicyVerification?: {
+    verifyOriginPolicy: boolean,
+    allowedBranchNames?: string[] | null,
+    allowedBuildDefinitions?: string[] | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `signingPolicySlug` | `string` | Yes | — |
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+## Signing Requests
+
+### approve
+
+`signingRequests.approve`
+
+Approve a signing request waiting for approval; SignPath accepts it once the policy's required approval count is reached
+
+**Risk:** `destructive`
+
+```ts
+await corsair.signpath.api.signingRequests.approve({ signingRequestId: '3fa85f64-5717-4562-b3fc-2c963f66afa6' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signingRequestId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signingRequestId` | `string` | Yes | — |
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### cancel
+
+`signingRequests.cancel`
+
+Cancel a signing request that has not finished; a cancelled request cannot be resumed, so a new one has to be submitted
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.signpath.api.signingRequests.cancel({ signingRequestId: '3fa85f64-5717-4562-b3fc-2c963f66afa6' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signingRequestId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signingRequestId` | `string` | Yes | — |
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### deny
+
+`signingRequests.deny`
+
+Deny a signing request, which immediately marks it rejected; a denied request cannot be approved afterwards
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.signpath.api.signingRequests.deny({ signingRequestId: '3fa85f64-5717-4562-b3fc-2c963f66afa6', denyReason: 'Artifact was built from the wrong commit.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signingRequestId` | `string` | Yes | — |
+| `denyReason` | `string` | No | — |
+
+Deny is permanent. A denied request cannot be approved later; submit a new one instead.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signingRequestId` | `string` | Yes | — |
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`signingRequests.get`
+
+Read one signing request with its status, workflow status, artifact links and verified origin when the build system provided one
+
+**Risk:** `read`
+
+```ts
+await corsair.signpath.api.signingRequests.get({ signingRequestId: '3fa85f64-5717-4562-b3fc-2c963f66afa6' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signingRequestId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signingRequestId` | `string` | Yes | — |
+| `status` | `WaitingForArtifactUpload \| InProgress \| WaitingForApproval \| Completed \| Failed \| Denied \| Canceled` | Yes | — |
+| `workflowStatus` | `Submitted \| RetrievingArtifact \| WaitingForArtifactUpload \| WaitingForApproval \| QueuedForMalwareScanning \| ScanningForMalware \| QueuedForProcessing \| Processing \| Completed \| ProcessingFailed \| MalwareScanFailed \| MalwareDetected \| ArtifactRetrievalFailed \| Denied \| Canceled` | Yes | — |
+| `malwareScanningStatus` | `Pending \| Completed \| Failed \| DetectedMalware \| NoMalwareScannerConfigured \| DisabledBySigningPolicy \| NotApplicableForFastSigningRequest \| NotApplicableDueToCancellation \| NotApplicableDueToArtifactRetrievalFailure \| NotApplicableDueToDenial` | No | — |
+| `isFinalStatus` | `boolean` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `projectId` | `string` | Yes | — |
+| `projectSlug` | `string` | Yes | — |
+| `projectName` | `string` | Yes | — |
+| `artifactConfigurationId` | `string` | Yes | — |
+| `artifactConfigurationSlug` | `string` | Yes | — |
+| `artifactConfigurationName` | `string` | Yes | — |
+| `signingPolicyId` | `string` | Yes | — |
+| `signingPolicySlug` | `string` | Yes | — |
+| `signingPolicyName` | `string` | Yes | — |
+| `unsignedArtifactLink` | `string \| null` | No | — |
+| `signedArtifactLink` | `string \| null` | No | — |
+| `origin` | `object \| null` | No | — |
+| `parameters` | `Record<string, string> \| null` | No | — |
+| `originalSigningRequestLink` | `string \| null` | No | — |
+| `artifactDescriptionXmlLink` | `string \| null` | No | — |
+| `cancellationTimeoutInSeconds` | `number \| null` | No | — |
+| `cancellationReason` | `ManualRequest \| GarbageCollection \| Timeout \| null` | No | — |
+| `webLink` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="origin full type">
+
+```ts
+{
+  repositoryData?: {
+    sourceControlManagementType: string,
+    url: string,
+    isPublicRepository?: boolean | null,
+    branchName: string,
+    commitId: string,
+    webUrl?: string | null,
+    commitWebUrl?: string | null
+  } | null,
+  buildData?: {
+    url?: string | null,
+    buildSettingsFile?: {
+      fileName: string,
+      downloadLink: string
+    } | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStatus
+
+`signingRequests.getStatus`
+
+Read only a signing request's status and workflow status, which is the cheap poll while it waits for approval or processing
+
+**Risk:** `read`
+
+```ts
+await corsair.signpath.api.signingRequests.getStatus({ signingRequestId: '3fa85f64-5717-4562-b3fc-2c963f66afa6' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signingRequestId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signingRequestId` | `string` | Yes | — |
+| `status` | `WaitingForArtifactUpload \| InProgress \| WaitingForApproval \| Completed \| Failed \| Denied \| Canceled` | Yes | — |
+| `workflowStatus` | `Submitted \| RetrievingArtifact \| WaitingForArtifactUpload \| WaitingForApproval \| QueuedForMalwareScanning \| ScanningForMalware \| QueuedForProcessing \| Processing \| Completed \| ProcessingFailed \| MalwareScanFailed \| MalwareDetected \| ArtifactRetrievalFailed \| Denied \| Canceled` | Yes | — |
+| `isFinalStatus` | `boolean` | Yes | True once the request reached a status it cannot leave. |
+
+
+
+---
+
+### list
+
+`signingRequests.list`
+
+List signing requests with filters for project, policy, configuration, certificate, status and submission time; follow pagination.nextLink for the next page
+
+**Risk:** `read`
+
+```ts
+await corsair.signpath.api.signingRequests.list({ projectSlug: 'my-app', signingRequestStatus: ['Completed'], submittedAfter: '2026-01-01T00:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `submittedAfter` | `string` | No | ISO 8601 timestamp; only requests submitted at or after it. |
+| `submittedBefore` | `string` | No | ISO 8601 timestamp; only requests submitted before it. |
+| `projectSlug` | `string` | No | — |
+| `artifactConfigurationSlug` | `string` | No | — |
+| `signingPolicySlug` | `string` | No | — |
+| `certificateSlug` | `string` | No | — |
+| `signingRequestStatus` | `(WaitingForArtifactUpload \| InProgress \| WaitingForApproval \| Completed \| Failed \| Denied \| Canceled)[]` | No | — |
+| `nextLink` | `string` | No | Pass `pagination.nextLink` from the previous page to read the next one. The other filters are already encoded in it. |
+
+nextLink replaces your filters rather than adding to them, because SignPath already encoded them into the URL.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signingRequests` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="signingRequests full type">
+
+```ts
+{
+  signingRequestId: string,
+  status: WaitingForArtifactUpload | InProgress | WaitingForApproval | Completed | Failed | Denied | Canceled,
+  projectId: string,
+  projectSlug: string,
+  projectName: string,
+  artifactConfigurationId: string,
+  artifactConfigurationSlug: string,
+  artifactConfigurationName: string,
+  signingPolicyId: string,
+  signingPolicySlug: string,
+  signingPolicyName: string,
+  certificateId: string,
+  certificateSlug: string,
+  certificateName: string,
+  submittedAt: string,
+  submittedById: string,
+  submittedByIdentity?: string | null,
+  submittedByName: string,
+  signingRequestDetailsLink: string,
+  cancellationTimeoutInSeconds?: number | null,
+  cancellationReason?: ManualRequest | GarbageCollection | Timeout | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  nextLink?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### resubmit
+
+`signingRequests.resubmit`
+
+Resubmit a completed signing request under another policy, which is how a test-signed artifact is promoted to release signing; returns the new request id from the Location header
+
+**Risk:** `destructive`
+
+```ts
+await corsair.signpath.api.signingRequests.resubmit({ originalSigningRequestId: '3fa85f64-5717-4562-b3fc-2c963f66afa6', signingPolicySlug: 'release-signed' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `originalSigningRequestId` | `string` | Yes | — |
+| `signingPolicySlug` | `string` | Yes | Usually a different policy, for example a release policy after test signing. |
+| `description` | `string` | No | — |
+| `keepSnapshottedArtifactConfiguration` | `boolean` | No | Use the artifact configuration captured when the original request was submitted, not the current one. |
+| `cancellationTimeoutInSeconds` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signingRequestId` | `string \| null` | Yes | The new signing request, from the Location header. Poll it with signingRequests.getStatus. |
+| `originalSigningRequestId` | `string` | Yes | — |
+| `signingPolicySlug` | `string` | Yes | — |
+| `resubmitted` | `true` | Yes | — |
+
+
+
+---
+
+### signHash
+
+`signingRequests.signHash`
+
+Sign a hash with the policy's key and return the signature in the response, without an artifact or a waiting period
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.signpath.api.signingRequests.signHash({ projectSlug: 'my-app', signingPolicySlug: 'release', hash: 'q83vASNFZ4mrze8BI0VniavN7wEjRWeJq83vASNFZ4k=', signatureAlgorithm: 'Rsa', rsaOptions: { paddingMode: 'Pkcs1', hashAlgorithmName: 'Sha256' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `artifactConfigurationSlug` | `string` | No | Defaults to the project's default artifact configuration. |
+| `signingPolicySlug` | `string` | Yes | The policy whose certificate and approval rules apply. |
+| `description` | `string` | No | — |
+| `cancellationTimeoutInSeconds` | `number` | No | How long the request may wait before SignPath cancels it. |
+| `hash` | `string` | Yes | The hash to sign, base64 encoded. |
+| `signatureAlgorithm` | `Rsa \| Ecdsa \| HashMldsa` | Yes | — |
+| `rsaOptions` | `object` | No | — |
+| `ecdsaOptions` | `object` | No | — |
+| `mldsaOptions` | `object` | No | — |
+| `metadata` | `object` | No | — |
+
+rsaOptions, ecdsaOptions and mldsaOptions are required to match signatureAlgorithm. The schema rejects a call that omits the one it needs.
+
+<AccordionGroup>
+<Accordion title="rsaOptions full type">
+
+```ts
+{
+  paddingMode: Pkcs1 | Pss,
+  hashAlgorithmOid?: string | null,
+  hashAlgorithmName?: Sha1 | Sha256 | Sha384 | Sha512 | null
+}
+```
+</Accordion>
+
+<Accordion title="ecdsaOptions full type">
+
+```ts
+{
+  signatureFormat: Ieee | Asn1
+}
+```
+</Accordion>
+
+<Accordion title="mldsaOptions full type">
+
+```ts
+{
+  preHashAlgorithmOid?: string | null,
+  preHashAlgorithmName?: Sha256 | Sha384 | Sha512 | null
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  sourceProcess?: {
+    commandLine?: string | null,
+    user?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signingRequestId` | `string` | Yes | — |
+| `hashSigningData` | `object` | Yes | The hash SignPath signed, base64 encoded. |
+| `hashSigningResult` | `object` | Yes | — |
+| `webLink` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="hashSigningData full type">
+
+```ts
+{
+  hash: string
+}
+```
+</Accordion>
+
+<Accordion title="hashSigningResult full type">
+
+```ts
+{
+  signature: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### signMessage
+
+`signingRequests.signMessage`
+
+Sign a message with ML-DSA and return the signature in the response; PureMldsa is the only algorithm SignPath offers here
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.signpath.api.signingRequests.signMessage({ projectSlug: 'my-app', signingPolicySlug: 'release', message: 'aGVsbG8gd29ybGQ=', signatureAlgorithm: 'PureMldsa' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `artifactConfigurationSlug` | `string` | No | Defaults to the project's default artifact configuration. |
+| `signingPolicySlug` | `string` | Yes | The policy whose certificate and approval rules apply. |
+| `description` | `string` | No | — |
+| `cancellationTimeoutInSeconds` | `number` | No | How long the request may wait before SignPath cancels it. |
+| `message` | `string` | Yes | The message to sign, base64 encoded. |
+| `signatureAlgorithm` | `PureMldsa` | Yes | The only message signing algorithm SignPath supports. |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+  sourceProcess?: {
+    commandLine?: string | null,
+    user?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signingRequestId` | `string` | Yes | — |
+| `signingData` | `object` | Yes | The message SignPath signed, base64 encoded. |
+| `signingResult` | `object` | Yes | — |
+| `webLink` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="signingData full type">
+
+```ts
+{
+  message: string
+}
+```
+</Accordion>
+
+<Accordion title="signingResult full type">
+
+```ts
+{
+  signature: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### submitWithArtifact
+
+`signingRequests.submitWithArtifact`
+
+Submit an artifact for signing, uploading the bytes in the same call; the request then waits for approval and processing
+
+**Risk:** `destructive`
+
+```ts
+await corsair.signpath.api.signingRequests.submitWithArtifact({ projectSlug: 'my-app', signingPolicySlug: 'release', artifactBase64: 'TVqQAAMAAAAEAAAA', artifactFileName: 'app.exe', description: 'v1.2.0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `artifactConfigurationSlug` | `string` | No | Defaults to the project's default artifact configuration. |
+| `signingPolicySlug` | `string` | Yes | The policy whose certificate and approval rules apply. |
+| `description` | `string` | No | — |
+| `cancellationTimeoutInSeconds` | `number` | No | How long the request may wait before SignPath cancels it. |
+| `artifactBase64` | `string` | Yes | The unsigned artifact, base64 encoded. |
+| `artifactFileName` | `string` | Yes | SignPath uses the extension to pick the signing tool, so keep it accurate. |
+| `artifactContentType` | `string` | No | Defaults to `application/octet-stream`. |
+| `parameters` | `Record<string, string>` | No | Values for the artifact configuration's user-defined parameters, sent as `parameters.<name>` form fields. |
+
+artifactBase64 is decoded before the request, so a 10 MB artifact is about 13.3 MB of input. Use submitWithArtifactRetrievalLink for anything large.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signingRequestId` | `string` | Yes | — |
+| `status` | `WaitingForArtifactUpload \| InProgress \| WaitingForApproval \| Completed \| Failed \| Denied \| Canceled` | Yes | — |
+| `workflowStatus` | `Submitted \| RetrievingArtifact \| WaitingForArtifactUpload \| WaitingForApproval \| QueuedForMalwareScanning \| ScanningForMalware \| QueuedForProcessing \| Processing \| Completed \| ProcessingFailed \| MalwareScanFailed \| MalwareDetected \| ArtifactRetrievalFailed \| Denied \| Canceled` | Yes | — |
+| `malwareScanningStatus` | `Pending \| Completed \| Failed \| DetectedMalware \| NoMalwareScannerConfigured \| DisabledBySigningPolicy \| NotApplicableForFastSigningRequest \| NotApplicableDueToCancellation \| NotApplicableDueToArtifactRetrievalFailure \| NotApplicableDueToDenial` | No | — |
+| `isFinalStatus` | `boolean` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `projectId` | `string` | Yes | — |
+| `projectSlug` | `string` | Yes | — |
+| `projectName` | `string` | Yes | — |
+| `artifactConfigurationId` | `string` | Yes | — |
+| `artifactConfigurationSlug` | `string` | Yes | — |
+| `artifactConfigurationName` | `string` | Yes | — |
+| `signingPolicyId` | `string` | Yes | — |
+| `signingPolicySlug` | `string` | Yes | — |
+| `signingPolicyName` | `string` | Yes | — |
+| `unsignedArtifactLink` | `string \| null` | No | — |
+| `signedArtifactLink` | `string \| null` | No | — |
+| `origin` | `object \| null` | No | — |
+| `parameters` | `Record<string, string> \| null` | No | — |
+| `originalSigningRequestLink` | `string \| null` | No | — |
+| `artifactDescriptionXmlLink` | `string \| null` | No | — |
+| `cancellationTimeoutInSeconds` | `number \| null` | No | — |
+| `cancellationReason` | `ManualRequest \| GarbageCollection \| Timeout \| null` | No | — |
+| `webLink` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="origin full type">
+
+```ts
+{
+  repositoryData?: {
+    sourceControlManagementType: string,
+    url: string,
+    isPublicRepository?: boolean | null,
+    branchName: string,
+    commitId: string,
+    webUrl?: string | null,
+    commitWebUrl?: string | null
+  } | null,
+  buildData?: {
+    url?: string | null,
+    buildSettingsFile?: {
+      fileName: string,
+      downloadLink: string
+    } | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### submitWithArtifactRetrievalLink
+
+`signingRequests.submitWithArtifactRetrievalLink`
+
+Submit a signing request that points at an artifact SignPath downloads itself, which is the route for artifacts too large to upload
+
+**Risk:** `destructive`
+
+```ts
+await corsair.signpath.api.signingRequests.submitWithArtifactRetrievalLink({ projectSlug: 'my-app', signingPolicySlug: 'release', artifactUrl: 'https://builds.example.com/app.exe', artifactFileName: 'app.exe', artifactSha256: '0000000000000000000000000000000000000000000000000000000000000000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `artifactConfigurationSlug` | `string` | No | Defaults to the project's default artifact configuration. |
+| `signingPolicySlug` | `string` | Yes | The policy whose certificate and approval rules apply. |
+| `description` | `string` | No | — |
+| `cancellationTimeoutInSeconds` | `number` | No | How long the request may wait before SignPath cancels it. |
+| `artifactUrl` | `string` | Yes | An HTTPS URL SignPath downloads the artifact from. |
+| `artifactFileName` | `string` | Yes | — |
+| `artifactSha256` | `string` | No | Verified after the download; lowercase hex. |
+| `httpHeaders` | `Record<string, string>` | No | Extra headers for the download, sent as `artifactRetrievalLink.httpHeaders.<name>` form fields. Values are visible in the SignPath UI. |
+| `parameters` | `Record<string, string>` | No | Values for the artifact configuration's user-defined parameters, sent as `parameters.<name>` form fields. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signingRequestId` | `string` | Yes | — |
+| `status` | `WaitingForArtifactUpload \| InProgress \| WaitingForApproval \| Completed \| Failed \| Denied \| Canceled` | Yes | — |
+| `workflowStatus` | `Submitted \| RetrievingArtifact \| WaitingForArtifactUpload \| WaitingForApproval \| QueuedForMalwareScanning \| ScanningForMalware \| QueuedForProcessing \| Processing \| Completed \| ProcessingFailed \| MalwareScanFailed \| MalwareDetected \| ArtifactRetrievalFailed \| Denied \| Canceled` | Yes | — |
+| `malwareScanningStatus` | `Pending \| Completed \| Failed \| DetectedMalware \| NoMalwareScannerConfigured \| DisabledBySigningPolicy \| NotApplicableForFastSigningRequest \| NotApplicableDueToCancellation \| NotApplicableDueToArtifactRetrievalFailure \| NotApplicableDueToDenial` | No | — |
+| `isFinalStatus` | `boolean` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `projectId` | `string` | Yes | — |
+| `projectSlug` | `string` | Yes | — |
+| `projectName` | `string` | Yes | — |
+| `artifactConfigurationId` | `string` | Yes | — |
+| `artifactConfigurationSlug` | `string` | Yes | — |
+| `artifactConfigurationName` | `string` | Yes | — |
+| `signingPolicyId` | `string` | Yes | — |
+| `signingPolicySlug` | `string` | Yes | — |
+| `signingPolicyName` | `string` | Yes | — |
+| `unsignedArtifactLink` | `string \| null` | No | — |
+| `signedArtifactLink` | `string \| null` | No | — |
+| `origin` | `object \| null` | No | — |
+| `parameters` | `Record<string, string> \| null` | No | — |
+| `originalSigningRequestLink` | `string \| null` | No | — |
+| `artifactDescriptionXmlLink` | `string \| null` | No | — |
+| `cancellationTimeoutInSeconds` | `number \| null` | No | — |
+| `cancellationReason` | `ManualRequest \| GarbageCollection \| Timeout \| null` | No | — |
+| `webLink` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="origin full type">
+
+```ts
+{
+  repositoryData?: {
+    sourceControlManagementType: string,
+    url: string,
+    isPublicRepository?: boolean | null,
+    branchName: string,
+    commitId: string,
+    webUrl?: string | null,
+    commitWebUrl?: string | null
+  } | null,
+  buildData?: {
+    url?: string | null,
+    buildSettingsFile?: {
+      fileName: string,
+      downloadLink: string
+    } | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### submitWithoutArtifact
+
+`signingRequests.submitWithoutArtifact`
+
+Submit a signing request before the artifact exists, returning the upload link the artifact must be delivered to
+
+**Risk:** `destructive`
+
+```ts
+await corsair.signpath.api.signingRequests.submitWithoutArtifact({ projectSlug: 'my-app', signingPolicySlug: 'release', artifactId: 'app.exe', artifactSha256: '0000000000000000000000000000000000000000000000000000000000000000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `artifactConfigurationSlug` | `string` | No | Defaults to the project's default artifact configuration. |
+| `signingPolicySlug` | `string` | Yes | The policy whose certificate and approval rules apply. |
+| `description` | `string` | No | — |
+| `cancellationTimeoutInSeconds` | `number` | No | How long the request may wait before SignPath cancels it. |
+| `artifactId` | `string` | Yes | A name for the artifact SignPath will receive later. Upload the file to the `uploadLink` in the response; this plugin does not upload it. |
+| `artifactSha256` | `string` | Yes | Lowercase hex SHA-256 of the artifact that will be uploaded. |
+| `parameters` | `Record<string, string>` | No | Values for the artifact configuration's user-defined parameters, sent as `parameters.<name>` form fields. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signingRequestId` | `string` | Yes | — |
+| `status` | `WaitingForArtifactUpload \| InProgress \| WaitingForApproval \| Completed \| Failed \| Denied \| Canceled` | Yes | — |
+| `workflowStatus` | `Submitted \| RetrievingArtifact \| WaitingForArtifactUpload \| WaitingForApproval \| QueuedForMalwareScanning \| ScanningForMalware \| QueuedForProcessing \| Processing \| Completed \| ProcessingFailed \| MalwareScanFailed \| MalwareDetected \| ArtifactRetrievalFailed \| Denied \| Canceled` | Yes | — |
+| `malwareScanningStatus` | `Pending \| Completed \| Failed \| DetectedMalware \| NoMalwareScannerConfigured \| DisabledBySigningPolicy \| NotApplicableForFastSigningRequest \| NotApplicableDueToCancellation \| NotApplicableDueToArtifactRetrievalFailure \| NotApplicableDueToDenial` | No | — |
+| `isFinalStatus` | `boolean` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `projectId` | `string` | Yes | — |
+| `projectSlug` | `string` | Yes | — |
+| `projectName` | `string` | Yes | — |
+| `artifactConfigurationId` | `string` | Yes | — |
+| `artifactConfigurationSlug` | `string` | Yes | — |
+| `artifactConfigurationName` | `string` | Yes | — |
+| `signingPolicyId` | `string` | Yes | — |
+| `signingPolicySlug` | `string` | Yes | — |
+| `signingPolicyName` | `string` | Yes | — |
+| `unsignedArtifactLink` | `string \| null` | No | — |
+| `signedArtifactLink` | `string \| null` | No | — |
+| `origin` | `object \| null` | No | — |
+| `parameters` | `Record<string, string> \| null` | No | — |
+| `originalSigningRequestLink` | `string \| null` | No | — |
+| `artifactDescriptionXmlLink` | `string \| null` | No | — |
+| `cancellationTimeoutInSeconds` | `number \| null` | No | — |
+| `cancellationReason` | `ManualRequest \| GarbageCollection \| Timeout \| null` | No | — |
+| `webLink` | `string` | Yes | — |
+| `uploadLink` | `string` | Yes | The URL the artifact must be uploaded to. SignPath returns it only here. |
+
+<AccordionGroup>
+<Accordion title="origin full type">
+
+```ts
+{
+  repositoryData?: {
+    sourceControlManagementType: string,
+    url: string,
+    isPublicRepository?: boolean | null,
+    branchName: string,
+    commitId: string,
+    webUrl?: string | null,
+    commitWebUrl?: string | null
+  } | null,
+  buildData?: {
+    url?: string | null,
+    buildSettingsFile?: {
+      fileName: string,
+      downloadLink: string
+    } | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### me
+
+`users.me`
+
+Read the authenticated user: their id, role, status and whether they are a CI user or an interactive user
+
+**Risk:** `read`
+
+```ts
+await corsair.signpath.api.users.me({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `identity` | `string \| null` | No | — |
+| `accountEmailAddress` | `string \| null` | No | — |
+| `role` | `RegularUser \| GlobalReader \| UserAdministrator \| ProjectAdministrator \| CertificateAdministrator \| GlobalAdministrator \| Support \| DirectorySynchronizer` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `notificationEmailAddress` | `object` | Yes | — |
+| `status` | `Active \| Inactive` | Yes | — |
+| `isInvitationPending` | `boolean \| null` | No | — |
+| `isDirectorySynchronized` | `boolean` | Yes | — |
+| `userType` | `InteractiveUser \| CIUser` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="notificationEmailAddress full type">
+
+```ts
+{
+  unconfirmedEmail?: string | null,
+  confirmedEmail?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

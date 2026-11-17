@@ -201,3 +201,28 @@ export const notFound = {
 	errorCode: 7,
 	errorMessage: 'Business not found',
 };
+
+// Live answers (11-14, trimmed): the counters and flags the reference shows
+// as strings come back as numbers.
+export const liveBusiness = {
+	...business,
+	package: null,
+	communicationMethod: 'Automatic',
+	communicationSendEmail: 1,
+	customersNotSent: 0,
+};
+
+export const liveCustomer = {
+	...customer,
+	customId: null,
+	rating: null,
+	unsubscribed: 0,
+};
+
+export const liveCustomers = {
+	...customers,
+	count: 1,
+	data: [
+		{ ...customers.data[0], id: 187597535, businessId: 177974, parentId: 0 },
+	],
+};
