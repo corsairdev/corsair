@@ -401,6 +401,27 @@ describe('ForceManager response parsing', () => {
 		expect(error.message).not.toContain('5555550123');
 	});
 
+	it('scrubs a path value before cutting the message, so no part of it survives the cut', async () => {
+		// The phone number starts at character 290, so a 300-character cut made before
+		// scrubbing would split it and leave its first digits in the message.
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValueOnce(
+				json({ error: `${'x'.repeat(290)}+15555550123 not found` }, 404),
+			);
+
+		// `unknown` because a rejected promise has no reliable runtime error type until narrowed.
+		const error = await executeForceManagerOperation(
+			'getResourcesByPhoneNumber',
+			{ path: { value: '+15555550123' } },
+			'session-token',
+		).catch((caught: unknown) => caught);
+
+		if (!(error instanceof ApiError)) throw new Error('Expected an ApiError');
+		expect(error.message).not.toContain('+155555');
+		expect(error.message).toContain('[REDACTED');
+	});
+
 	it('removes the key pair when the login error echoes it', async () => {
 		jest
 			.spyOn(globalThis, 'fetch')

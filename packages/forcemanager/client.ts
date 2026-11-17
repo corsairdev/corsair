@@ -6,7 +6,11 @@ import type {
 } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
-export type ForceManagerRequestInput = Omit<ApiRequestOptions, 'url'>;
+export type ForceManagerRequestInput = Omit<ApiRequestOptions, 'url'> & {
+	/** Values the caller put into the path; removed from provider error text before it is cut. */
+	// unknown because path values are numbers or strings from the validated input.
+	pathValues?: unknown[];
+};
 
 export type ForceManagerEnvironment = 'production' | 'sandbox';
 
@@ -299,8 +303,9 @@ async function send<T>(
 	input: ForceManagerRequestInput,
 	environment: ForceManagerEnvironment,
 ): Promise<T> {
+	const { pathValues, ...requestInput } = input;
 	const options: ApiRequestOptions = {
-		...input,
+		...requestInput,
 		url: path,
 		mediaType: 'application/json; charset=utf-8',
 	};
@@ -314,7 +319,10 @@ async function send<T>(
 		throw toForceManagerError(
 			error,
 			'ForceManager request',
-			collectSent([input.body, input.query, sessionKey], new Set()),
+			collectSent(
+				[requestInput.body, requestInput.query, sessionKey, pathValues],
+				new Set(),
+			),
 		);
 	}
 }

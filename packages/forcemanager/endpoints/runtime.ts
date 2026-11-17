@@ -156,6 +156,7 @@ export async function executeForceManagerOperation<K extends OperationKey>(
 				body: parsedInput.body,
 				query: requestQuery,
 				headers,
+				pathValues: Object.values(parsedInput.path ?? {}),
 			},
 			environment,
 		);
