@@ -484,6 +484,35 @@ describe('safety', () => {
 		expect(mockLog).not.toHaveBeenCalled();
 	});
 
+	it('drops contact filters from a failed list call', async () => {
+		const error = new ApiError(
+			{ method: 'GET', url: '/contacts', query: { last_name: 'Mustermann' } },
+			{
+				url: 'https://api.echtpost.de/v2/contacts?last_name=Mustermann',
+				ok: false,
+				status: 503,
+				statusText: 'Service Unavailable',
+				body: {},
+			},
+			'Service Unavailable',
+		);
+		mockRequest.mockRejectedValueOnce(error);
+		const caught = await Ops.contactsList(ctx(), {
+			last_name: 'Mustermann',
+		}).catch(
+			// unknown: a promise can reject with any value; checked below.
+			(e: unknown) => e,
+		);
+		expect(caught).toBe(error);
+		expect((caught as ApiError).status).toBe(503);
+		expect(
+			JSON.stringify({
+				url: (caught as ApiError).url,
+				request: (caught as ApiError).request,
+			}),
+		).not.toContain('Mustermann');
+	});
+
 	it('logs ids only, not names or addresses', async () => {
 		mockRequest.mockResolvedValueOnce(CONTACT);
 		await Ops.contactsGet(ctx(), { id: 101 });
