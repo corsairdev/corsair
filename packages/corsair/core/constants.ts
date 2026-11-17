@@ -541,6 +541,7 @@ export const BaseProviders = [
 	'scrapingant',
 	'screenshotone',
 	'search1api',
+	'searchapi',
 	'securitytrails',
 	'semanticscholar',
 	'sendbird',
@@ -1236,6 +1237,7 @@ export const ProviderDisplayNames = {
 	scrapingant: 'ScrapingAnt',
 	screenshotone: 'ScreenshotOne',
 	search1api: 'Search1API',
+	searchapi: 'SearchAPI',
 	securitytrails: 'SecurityTrails',
 	semanticscholar: 'Semantic Scholar',
 	sendbird: 'Sendbird',
@@ -1938,6 +1940,7 @@ export type AllProviders =
 	| 'scrapingant'
 	| 'screenshotone'
 	| 'search1api'
+	| 'searchapi'
 	| 'securitytrails'
 	| 'semanticscholar'
 	| 'sendbird'

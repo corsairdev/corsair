@@ -4480,6 +4480,14 @@
                 ]
               },
               {
+                "group": "SearchAPI",
+                "pages": [
+                  "plugins/searchapi/overview",
+                  "plugins/searchapi/api",
+                  "plugins/searchapi/database"
+                ]
+              },
+              {
                 "group": "SecurityTrails",
                 "pages": [
                   "plugins/securitytrails/overview",
