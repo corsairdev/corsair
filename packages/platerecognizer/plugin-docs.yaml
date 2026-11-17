@@ -1,21 +1,34 @@
 displayName: Plate Recognizer
-description: Read Snapshot usage and recognize a license plate from a base64 image. Requests send Authorization Token.
+description: Read license plates (with optional make, model and color) and text identifiers such as VINs, trailer ids and odometers from images, and check usage. Requests send Authorization Token.
 domain: platerecognizer.com
 recommendedAuth: api_key
 overviewNote: |
-  Auth is Authorization Token, not Bearer. An empty token on GET /v1/statistics/ returned HTTP 403. Plate reads spend a Snapshot lookup and are not stored, because a plate is not a stable id. Usage is stored for the documented year and month.
+  Auth is `Authorization: Token <key>`, not Bearer; the key is on the Snapshot Cloud dashboard. A missing or wrong token returns HTTP 403. Each `plates.read` uses one Snapshot lookup and each `ocr.read` one OCR call from the plan's monthly allowance. Plate text is not stored, because a plate is not a stable id. Snapshot usage is stored per year and month.
+
+  OCR is a separate Plate Recognizer product: an account without it gets `403` from `ocr.read`.
 examples:
   read:
-    path: usage.get
-    title: Read usage
-    args: {}
+    path: plates.read
+    title: Read the plates in an image by URL
+    args:
+      uploadUrl: https://app.platerecognizer.com/static/demo.jpg
+      regions:
+        - us-ca
 apiNotes:
   usage.get: |
-    GET /v1/statistics/. Official fields are usage.month, usage.calls, usage.year, usage.resets_on, and total_calls.
+    GET /v1/statistics/. Fields: usage.month, usage.calls, usage.year, usage.resets_on, and total_calls (the period's limit).
   plates.read: |
-    POST /v1/plate-reader/ with form field upload set to the base64 image. Optional regions repeat, camera_id, and mmc. The response requires a results array. Each result may include plate, score, dscore, and region.
+    POST /v1/plate-reader/. Send the image as base64 in `upload` or as a public `uploadUrl`, not both. `regions` takes country or state codes. `mmc` adds make, model, color and orientation (a paid add-on); `direction` needs `mmc`. `config` takes engine settings such as `{ detection_mode: 'vehicle' }`, which also returns vehicles without a plate; in that mode each result's `plate` is an object or null instead of a string.
+  ocr.read: |
+    POST /v1/ocr/reader/ with a `type` (vin, trailer_id, odometer, shipping_container, boat_reg_number, seal_ctpat) and the image as `upload` or `uploadUrl`. Results differ by type. Takes 20 to 30 seconds per image.
+  ocr.getUsage: |
+    GET /v1/ocr/statistics/. Same fields as usage.get, for OCR calls.
 apiExamples:
   usage.get:
     call: "{}"
   plates.read:
-    call: "{ upload: 'base64', regions: ['us-ca'] }"
+    call: "{ uploadUrl: 'https://app.platerecognizer.com/static/demo.jpg', regions: ['us-ca'] }"
+  ocr.read:
+    call: "{ type: 'vin', uploadUrl: 'https://example.com/vin.jpg' }"
+  ocr.getUsage:
+    call: "{}"

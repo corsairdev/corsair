@@ -15,6 +15,7 @@ export const getStatistics: CorsairEndpoint<
 		throw new AuthMissingError('platerecognizer', 'api_key');
 	}
 	GetStatisticsInputSchema.parse(input ?? {});
+	// `unknown` until GetStatisticsResponseSchema parses it: untrusted provider JSON.
 	const body = await plateGet<unknown>(ctx.key, '/v1/statistics/');
 	const result = GetStatisticsResponseSchema.parse(body);
 	await storeUsage(ctx, result);

@@ -12,8 +12,10 @@ pnpm add @corsair-dev/platerecognizer
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `plates.read` | `platerecognizer.api.plates.read` | `destructive` | Read plates from a base64 image. Snapshot charges a lookup. Plate text is not stored. |
 | `usage.get` | `platerecognizer.api.usage.get` | `read` | Read the current Snapshot usage period. |
+| `plates.read` | `platerecognizer.api.plates.read` | `read` | Read license plates from an image (base64 or URL). Uses one Snapshot lookup. |
+| `ocr.read` | `platerecognizer.api.ocr.read` | `read` | Read a VIN, trailer id, odometer, container, boat number or C-TPAT seal from an image. |
+| `ocr.getUsage` | `platerecognizer.api.ocr.getUsage` | `read` | Read the OCR calls used this period and the plan limit. |
 
 ## Auth
 

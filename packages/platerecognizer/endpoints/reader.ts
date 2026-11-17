@@ -14,11 +14,18 @@ export const readPlate: CorsairEndpoint<
 		throw new AuthMissingError('platerecognizer', 'api_key');
 	}
 	const parsed = ReadPlateInputSchema.parse(input);
+	// `unknown` until ReadPlateResponseSchema parses it: untrusted provider JSON.
 	const body = await platePostForm<unknown>(ctx.key, '/v1/plate-reader/', {
 		upload: parsed.upload,
+		upload_url: parsed.uploadUrl,
 		regions: parsed.regions,
 		camera_id: parsed.cameraId,
+		timestamp: parsed.timestamp,
 		mmc: parsed.mmc === undefined ? undefined : String(parsed.mmc),
+		direction:
+			parsed.direction === undefined ? undefined : String(parsed.direction),
+		config:
+			parsed.config === undefined ? undefined : JSON.stringify(parsed.config),
 	});
 	const result = ReadPlateResponseSchema.parse(body);
 	await logEventFromContext(

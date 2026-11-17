@@ -17,9 +17,10 @@ const NO_TRANSPORT_RETRIES: RateLimitConfig = {
 	},
 };
 
-function config(apiKey: string): OpenAPIConfig {
+function config(apiKey: string, timeoutMs?: number): OpenAPIConfig {
 	return {
 		BASE: PLATE_API_BASE,
+		...(timeoutMs ? { TIMEOUT: timeoutMs } : {}),
 		VERSION: '1',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
@@ -41,13 +42,15 @@ export async function platePostForm<T>(
 	apiKey: string,
 	url: string,
 	formData: Record<string, string | string[] | undefined>,
+	/** Override core's 20 s default; the OCR reader takes 20 to 30 s per image. */
+	timeoutMs?: number,
 ): Promise<T> {
 	const requestOptions: ApiRequestOptions = {
 		method: 'POST',
 		url,
 		formData,
 	};
-	return await request<T>(config(apiKey), requestOptions, {
+	return await request<T>(config(apiKey, timeoutMs), requestOptions, {
 		rateLimitConfig: NO_TRANSPORT_RETRIES,
 	});
 }

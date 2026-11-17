@@ -1,6 +1,7 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
 import type { PlateRecognizerContext } from './context';
+import { getOcrUsage, readOcr } from './endpoints/ocr';
 import { readPlate } from './endpoints/reader';
 import { getStatistics } from './endpoints/statistics';
 
@@ -143,6 +144,63 @@ describe('plates.read', () => {
 		expect(payload).not.toContain('aW1hZ2U=');
 	});
 
+	it('sends upload_url, timestamp, direction and config as form fields', async () => {
+		mockRequest.mockResolvedValue({ results: [] });
+		await readPlate(context('tok_test'), {
+			uploadUrl: 'https://app.platerecognizer.com/static/demo.jpg',
+			timestamp: '2019-08-19T13:11:25',
+			mmc: true,
+			direction: true,
+			config: { detection_mode: 'vehicle' },
+		});
+		const options = mockRequest.mock.calls[0]?.[1];
+		expect(options?.formData).toMatchObject({
+			upload_url: 'https://app.platerecognizer.com/static/demo.jpg',
+			timestamp: '2019-08-19T13:11:25',
+			mmc: 'true',
+			direction: 'true',
+			config: '{"detection_mode":"vehicle"}',
+		});
+		expect(options?.formData?.upload).toBeUndefined();
+	});
+
+	it('parses the vehicle-mode result, where plate is an object or null', async () => {
+		mockRequest.mockResolvedValue({
+			results: [
+				{
+					plate: {
+						type: 'Plate',
+						score: 0.925,
+						props: { plate: [{ value: 'nhk552', score: 0.838 }] },
+					},
+					vehicle: { type: 'Sedan', score: 0.834 },
+				},
+				{ plate: null, vehicle: { type: 'SUV', score: 0.7 } },
+			],
+			image_width: 1080,
+			image_height: 720,
+		});
+		const result = await readPlate(context('tok_test'), {
+			upload: 'aW1hZ2U=',
+			config: { detection_mode: 'vehicle' },
+		});
+		expect(result.results).toHaveLength(2);
+		expect(result.results[1]?.plate).toBeNull();
+	});
+
+	it('refuses both or neither of upload and uploadUrl before any request', async () => {
+		await expect(readPlate(context('tok_test'), {})).rejects.toThrow(
+			/exactly one/,
+		);
+		await expect(
+			readPlate(context('tok_test'), {
+				upload: 'aW1hZ2U=',
+				uploadUrl: 'https://example.com/car.jpg',
+			}),
+		).rejects.toThrow(/exactly one/);
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
 	it('rejects an empty upload before calling the API', async () => {
 		await expect(
 			readPlate(context('tok_test'), { upload: '' }),
@@ -156,5 +214,79 @@ describe('plates.read', () => {
 			readPlate(context('tok_test'), { upload: 'aW1hZ2U=' }),
 		).rejects.toThrow();
 		expect(mockLog).not.toHaveBeenCalled();
+	});
+});
+
+describe('ocr', () => {
+	beforeEach(() => {
+		jest.clearAllMocks();
+	});
+
+	it('posts the type and image to the OCR reader with a long timeout', async () => {
+		mockRequest.mockResolvedValue({
+			processing_time: 128.758,
+			results: [
+				{
+					identifier: {
+						type: 'text',
+						props: { code: [{ value: '12345' }], confidence: 0.8 },
+					},
+				},
+			],
+			filename: 'image.jpg',
+			version: 1,
+			camera_id: null,
+			timestamp: '2025-03-22T13:26:01.683008Z',
+		});
+		const result = await readOcr(context('tok_test'), {
+			type: 'trailer_id',
+			uploadUrl: 'https://example.com/trailer.jpg',
+		});
+		expect(result.results).toHaveLength(1);
+		const [config, options] = mockRequest.mock.calls[0] ?? [];
+		expect(config?.TIMEOUT).toBe(120_000);
+		expect(config?.HEADERS).toMatchObject({ Authorization: 'Token tok_test' });
+		expect(options).toMatchObject({
+			method: 'POST',
+			url: '/v1/ocr/reader/',
+			formData: {
+				type: 'trailer_id',
+				upload_url: 'https://example.com/trailer.jpg',
+			},
+		});
+		expect(mockLog.mock.calls[0]?.[2]).toEqual({
+			type: 'trailer_id',
+			count: 1,
+		});
+	});
+
+	it('rejects an unknown OCR type before any request', async () => {
+		await expect(
+			readOcr(context('tok_test'), {
+				type: 'passport',
+				upload: 'aW1hZ2U=',
+			} as never),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('reads OCR usage from /v1/ocr/statistics/', async () => {
+		mockRequest.mockResolvedValue({
+			usage: { month: 11, calls: 3, year: 2026, resets_on: '2026-12-01' },
+			total_calls: 100,
+		});
+		const result = await getOcrUsage(context('tok_test'), {});
+		expect(result.total_calls).toBe(100);
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'GET',
+			url: '/v1/ocr/statistics/',
+		});
+	});
+
+	it('throws when the key is missing and does not call the API', async () => {
+		await expect(
+			readOcr(context(''), { type: 'vin', upload: 'aW1hZ2U=' }),
+		).rejects.toBeInstanceOf(AuthMissingError);
+		expect(mockRequest).not.toHaveBeenCalled();
 	});
 });

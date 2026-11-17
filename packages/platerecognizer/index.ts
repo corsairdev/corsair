@@ -10,10 +10,12 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import type { PlateRecognizerContext } from './context';
-import { getStatistics, readPlate } from './endpoints';
+import { getOcrUsage, getStatistics, readOcr, readPlate } from './endpoints';
 import {
 	GetStatisticsInputSchema,
 	GetStatisticsResponseSchema,
+	ReadOcrInputSchema,
+	ReadOcrResponseSchema,
 	ReadPlateInputSchema,
 	ReadPlateResponseSchema,
 } from './endpoints/types';
@@ -36,6 +38,7 @@ export type PlateRecognizerKeyBuilderContext =
 const plateEndpointsNested = {
 	usage: { get: getStatistics },
 	plates: { read: readPlate },
+	ocr: { read: readOcr, getUsage: getOcrUsage },
 } as const;
 
 const plateWebhooksNested = {} as const;
@@ -49,6 +52,14 @@ export const plateEndpointSchemas = {
 		input: ReadPlateInputSchema,
 		output: ReadPlateResponseSchema,
 	},
+	'ocr.read': {
+		input: ReadOcrInputSchema,
+		output: ReadOcrResponseSchema,
+	},
+	'ocr.getUsage': {
+		input: GetStatisticsInputSchema,
+		output: GetStatisticsResponseSchema,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof plateEndpointsNested>;
 
 const plateEndpointMeta = {
@@ -56,10 +67,21 @@ const plateEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Read the current Snapshot usage period.',
 	},
+	// Recognition counts against the plan's monthly lookups but only returns
+	// data, so it stays `read`, like the Ahrefs plugin's metered reads.
 	'plates.read': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
-			'Read plates from a base64 image. Snapshot charges a lookup. Plate text is not stored.',
+			'Read license plates (and optionally make, model and color) from an image. Uses one Snapshot lookup. Plate text is not stored.',
+	},
+	'ocr.read': {
+		riskLevel: 'read',
+		description:
+			'Read a VIN, trailer id, odometer, shipping container, boat registration or C-TPAT seal from an image. Uses one OCR call; takes 20 to 30 s.',
+	},
+	'ocr.getUsage': {
+		riskLevel: 'read',
+		description: 'Read the OCR calls used this period and the plan limit.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof plateEndpointsNested>;
 
