@@ -1,0 +1,143 @@
+---
+title: "TelTEL plugin"
+sidebarTitle: "Overview"
+description: "SMS and voice with TelTEL - send SMS one at a time or in bulk, read outbound and inbound message reports, run SMS campaigns, manage contacts and groups, place click-to-call calls, and read the DID numbers and countries on the account."
+---
+
+Use **TelTEL** through Corsair: one client, typed API calls.
+
+Create a key in the TelTEL portal under API settings. The plugin sends it as `X-API-KEY`, which keeps it out of URLs and logs; TelTEL also accepts the same key as an `apikey` query value.
+
+Things to know before you call:
+
+- **Sending charges the account.** `sms.send`, `sms.sendBulk` and `calls.create` bill per message part or per minute. There is no test mode.
+- **The sender must be verified.** A numeric sender must be a DID on the account, and an alphanumeric sender ID must be 3 to 11 characters. Dynamic sender IDs need to be enabled on the account first.
+- **Every body is wrapped in `data`.** TelTEL refuses an unwrapped request body, so each endpoint builds the wrapper for you. The bulk routes take an array as the `data` value rather than an object.
+- **Bulk sends can partly fail.** `sms.sendBulk` answers 200 with the created IDs, or 207 with a `success` array and an `errors` array. Both parse, so a partial result does not throw. Check `data` for the split on a 207.
+- **401 and 403 mean different things.** A 401 means no credential reached the API. A 403 means one was sent and refused, or the account cannot use that section yet (a new account without credit gets 403 on SMS, campaigns and contacts). Errors are core's `ApiError`; `teltelErrorDetails(error)` reads TelTEL's `errors` entries.
+- **Filters go in one `filter` value.** The list inputs (`state`, `from`, `to`, `direction`, the time ranges and so on) become a comma-separated `filter` query value such as `state=DONE,created_at>2024-03-01T00:00:00`. TelTEL ignores filters sent as separate query keys.
+- **Users come without their API keys.** TelTEL's user list includes each user's key; `users.list` drops that field before returning.
+- **Paging is by offset.** `limit` runs from 1 to 5000 and defaults to 500; `offset` skips. A list answer is `{ data: [...] }` with no total count, so keep requesting until a page comes back short.
+- **Deletes and most updates answer `meta`.** A delete is `{ meta: { deleted: true } }` and a campaign, contact or group update is `{ meta: { updated: true } }`. The plugin returns that envelope rather than inventing a `success` flag, and fails a call whose body has no `meta`. `numbers.update` is the exception: it answers with the updated number under `data`.
+- **A campaign does not send until it starts.** `campaigns.create` only records the campaign. `campaigns.action` with `start` sends to every contact in the campaign groups, `pause` stops it temporarily and `stop` ends it.
+- **A click-to-call needs both display names.** `calls.create` requires `destination_displayname` alongside the two numbers.
+
+**What you get:**
+
+- 34 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/teltel better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/teltel better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/teltel better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/teltel better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { teltel } from '@corsair-dev/teltel';
+
+export const corsair = createCorsair({
+	plugins: [
+		teltel(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the TelTEL API key before the first call: `pnpm corsair setup --plugin=teltel --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+teltel()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'teltel',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read the account balance**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.teltel.api.account.balance({});
+```
+
+
+**Send one SMS**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.teltel.api.sms.send({ from: '37126118199', to: '37126118198', message: 'Hello from TelTEL' });
+```
+
+
+See the full list on the [API](/plugins/teltel/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/teltel/api">
+    Every `teltel.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

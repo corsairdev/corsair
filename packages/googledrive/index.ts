@@ -299,7 +299,8 @@ const googleDriveEndpointMeta = {
 	},
 	'files.download': {
 		riskLevel: 'read',
-		description: 'Download the content of a file',
+		description:
+			'Download a file. A text file comes back as text, any other file as base64, up to about 700 KB; size and type are always returned. Google Docs, Sheets and Slides cannot be downloaded this way.',
 	},
 	'files.share': {
 		riskLevel: 'write',
