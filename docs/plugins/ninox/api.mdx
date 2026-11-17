@@ -625,7 +625,7 @@ await corsair.ninox.api.scripts.execute({ workspaceId: 'abcdefghijkl', moduleNam
 | `rowId` | `number` | No | A record the script runs against (as `this`). |
 | `mode` | `wait \| background` | No | wait (default) answers the result when the script ends in time; background answers the run at once. |
 
-A script can write and delete, so this is destructive. A long script answers &#123; run &#125; instead of &#123; result &#125;.
+A script can write and delete, so this is destructive. A long script, or mode background, answers &#123; run: &#123; id, status &#125; &#125; instead of &#123; result &#125;.
 
 
 
@@ -634,7 +634,19 @@ A script can write and delete, so this is destructive. A long script answers &#1
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `result` | `any` | No | — |
-| `run` | `Record<string, any>` | No | — |
+| `run` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="run full type">
+
+```ts
+{
+  id?: string | null,
+  status?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
