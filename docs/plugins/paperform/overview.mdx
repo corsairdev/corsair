@@ -1,17 +1,20 @@
 ---
 title: "Paperform plugin"
 sidebarTitle: "Overview"
-description: "List Paperform forms, spaces, and translations, and read one space."
+description: "Read Paperform forms, fields and submissions, and manage a form's products, coupons and webhooks."
 ---
 
 Use **Paperform** through Corsair: one client, typed API calls, local DB sync.
 
-The key is a Bearer token. Empty Bearer requests to forms, spaces, one space, space forms, and translations each returned HTTP 401. Translation mappings are not stored. Submission answers are not read.
+Create an access token under Account settings > Access tokens in Paperform; it is sent as a Bearer token. The API comes with Paperform's paid plans and its free trial. Two tiers matter: the Standard API covers reads, submissions, partial submissions, coupons and file links; `products.update`, `webhooks.create` and `webhooks.delete` need the Business API and answer 402 on other plans.
+Forms are addressed by slug, custom slug or id (`form`). Submission answers (`data`) are keyed by field key; `fields.list` maps each key to its question title and type. Lists return 20 rows by default; page with `limit` (up to 100) and `skip`, or filter with `afterDate`, `beforeDate`, `afterId` and `beforeId`.
+Only form, space, translation and submission metadata is stored locally. Submission answers, device details and IP addresses are returned to the caller but not stored, and are kept out of events.
+Paperform sends space ids as numbers and product prices as strings; the plugin returns ids as strings and prices as sent.
 
 **What you get:**
 
-- 5 typed API operations
-- 3 synced entities (`forms`, `spaces`, `translations`) for fast `.search()` / `.list()`
+- 24 typed API operations
+- 4 synced entities (`forms`, `spaces`, `submissions`, `translations`) for fast `.search()` / `.list()`
 
 ## Setup
 
@@ -97,24 +100,32 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**List forms**
+**List this week's submissions**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.paperform.api.forms.list({});
+await tenant.paperform.api.submissions.list({ form: 'eqadkzns', afterDate: '2026-11-10', limit: 50 });
 ```
 
 
-**Write**
+**Create a 10% coupon**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/paperform/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.paperform.api.coupons.create({
+	form: 'eqadkzns',
+	code: 'WELCOME10',
+	enabled: true,
+	discountPercentage: 10,
+});
+```
 
 
 See the full list on the [API](/plugins/paperform/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.paperform.db.<entity>.search()` and `.list()`: `forms`, `spaces`, `translations`.
+Synced entities support `tenant.paperform.db.<entity>.search()` and `.list()`: `forms`, `spaces`, `submissions`, `translations`.
 
 See [Database](/plugins/paperform/database) for filters and operators.
 

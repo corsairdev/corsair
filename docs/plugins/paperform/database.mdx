@@ -30,6 +30,9 @@ const rows = await corsair.paperform.db.forms.search({
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `title` | `string` | equals, contains, startsWith, endsWith, in |
 | `slug` | `string` | equals, contains, startsWith, endsWith, in |
+| `spaceId` | `string` | equals, contains, startsWith, endsWith, in |
+| `live` | `boolean` | equals |
+| `submissionCount` | `number` | equals, gt, gte, lt, lte, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
@@ -59,6 +62,31 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 
 ---
 
+## Submissions
+
+Path: `paperform.db.submissions.search`
+
+```ts
+const rows = await corsair.paperform.db.submissions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `formId` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
 ## Translations
 
 Path: `paperform.db.translations.search`
@@ -77,7 +105,8 @@ const rows = await corsair.paperform.db.translations.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
-| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `language` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
