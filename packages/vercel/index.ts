@@ -1,8 +1,6 @@
 import type {
-	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
-	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
@@ -12,25 +10,35 @@ import type {
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
-import {
-	aliases,
-	deployments,
-	domains,
-	envs,
-	projects,
-	teams,
-	webhooks,
-} from './endpoints';
-import type {
-	VercelEndpointInputs,
-	VercelEndpointOutputs,
-} from './endpoints/types';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
+import * as aliasesEndpoints from './endpoints/aliases';
+import { vercelAliasesMeta } from './endpoints/aliases-meta';
+import type { EndpointMeta } from './endpoints/common';
+import * as deploymentsEndpoints from './endpoints/deployments';
+import { vercelDeploymentsMeta } from './endpoints/deployments-meta';
+import * as dnsEndpoints from './endpoints/dns';
+import { vercelDnsMeta } from './endpoints/dns-meta';
+import * as domainsEndpoints from './endpoints/domains';
+import { vercelDomainsMeta } from './endpoints/domains-meta';
+import * as edgeConfigEndpoints from './endpoints/edge-config';
+import { vercelEdgeConfigMeta } from './endpoints/edge-config-meta';
+import * as envsEndpoints from './endpoints/envs';
+import { vercelEnvsMeta } from './endpoints/envs-meta';
+import * as projectsEndpoints from './endpoints/projects';
+import { vercelProjectsMeta } from './endpoints/projects-meta';
+import * as teamsEndpoints from './endpoints/teams';
+import { vercelTeamsMeta } from './endpoints/teams-meta';
 import {
 	VercelEndpointInputSchemas,
 	VercelEndpointOutputSchemas,
 } from './endpoints/types';
+import * as userEndpoints from './endpoints/user';
+import { vercelUserMeta } from './endpoints/user-meta';
+import * as webhooksEndpoints from './endpoints/webhooks';
+import { vercelWebhooksMeta } from './endpoints/webhooks-meta';
 import { errorHandlers } from './error-handlers';
 import { VercelSchema } from './schema';
 import type { VercelWebhookOutputs } from './webhooks';
@@ -41,13 +49,28 @@ import {
 	ProjectCreatedEventSchema,
 	WebhookHandlers,
 } from './webhooks';
+import { resolveVercelOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 import { matchVercelTenantWebhook } from './webhooks/tenant-matcher';
 
-const defaultAuthType: AuthTypes = 'api_key';
+const defaultAuthType = 'api_key' as const;
+
+/**
+ * Token endpoint for refreshing an OAuth token. Integration tokens (the
+ * install flow) don't expire and carry no refresh token; Sign in with Vercel
+ * tokens last an hour and refresh here.
+ */
+export const VERCEL_OAUTH_TOKEN_URL =
+	'https://api.vercel.com/login/oauth/token';
 
 export type VercelPluginOptions = {
-	authType?: PickAuth<'api_key'>;
+	authType?: PickAuth<'api_key' | 'oauth_2' | 'managed'>;
+	/** A Vercel access token (Account Settings → Tokens), or an OAuth token you obtained. */
 	key?: string;
+	/**
+	 * Default team (id `team_…` or slug) for calls that don't pass `teamId`.
+	 * A team saved on the connection (an OAuth install, or the `team_id` field)
+	 * comes first.
+	 */
 	teamId?: string;
 	webhookSecret?: string;
 	hooks?: InternalVercelPlugin['hooks'];
@@ -63,120 +86,65 @@ export type VercelContext = CorsairPluginContext<
 
 export type VercelKeyBuilderContext = KeyBuilderContext<VercelPluginOptions>;
 
-type VercelEndpoint<K extends keyof VercelEndpointOutputs> = CorsairEndpoint<
-	VercelContext,
-	VercelEndpointInputs[K],
-	VercelEndpointOutputs[K]
->;
-
-export type VercelEndpoints = {
-	projectsGetProjects: VercelEndpoint<'projectsGetProjects'>;
-	projectsGetProject: VercelEndpoint<'projectsGetProject'>;
-	deploymentsGetDeployments: VercelEndpoint<'deploymentsGetDeployments'>;
-	deploymentsGetDeployment: VercelEndpoint<'deploymentsGetDeployment'>;
-	deploymentsCreateDeployment: VercelEndpoint<'deploymentsCreateDeployment'>;
-	domainsGetDomains: VercelEndpoint<'domainsGetDomains'>;
-	domainsGetProjectDomains: VercelEndpoint<'domainsGetProjectDomains'>;
-	envsGetEnvVariables: VercelEndpoint<'envsGetEnvVariables'>;
-	envsCreateEnvVariable: VercelEndpoint<'envsCreateEnvVariable'>;
-	aliasesGetAliases: VercelEndpoint<'aliasesGetAliases'>;
-	aliasesAssignAlias: VercelEndpoint<'aliasesAssignAlias'>;
-	webhooksGetWebhooks: VercelEndpoint<'webhooksGetWebhooks'>;
-	webhooksCreateWebhook: VercelEndpoint<'webhooksCreateWebhook'>;
-	teamsGetTeams: VercelEndpoint<'teamsGetTeams'>;
-};
-
 const vercelEndpointsNested = {
-	projects: {
-		getProjects: projects.getProjects,
-		getProject: projects.getProject,
-	},
-	deployments: {
-		getDeployments: deployments.getDeployments,
-		getDeployment: deployments.getDeployment,
-		createDeployment: deployments.createDeployment,
-	},
-	domains: {
-		getDomains: domains.getDomains,
-		getProjectDomains: domains.getProjectDomains,
-	},
-	envs: {
-		getEnvVariables: envs.getEnvVariables,
-		createEnvVariable: envs.createEnvVariable,
-	},
-	aliases: {
-		getAliases: aliases.getAliases,
-		assignAlias: aliases.assignAlias,
-	},
-	webhooks: {
-		getWebhooks: webhooks.getWebhooks,
-		createWebhook: webhooks.createWebhook,
-	},
-	teams: {
-		getTeams: teams.getTeams,
-	},
+	projects: { ...projectsEndpoints },
+	deployments: { ...deploymentsEndpoints },
+	envs: { ...envsEndpoints },
+	domains: { ...domainsEndpoints },
+	dns: { ...dnsEndpoints },
+	aliases: { ...aliasesEndpoints },
+	teams: { ...teamsEndpoints },
+	user: { ...userEndpoints },
+	webhooks: { ...webhooksEndpoints },
+	edgeConfig: { ...edgeConfigEndpoints },
 } as const;
 
 export type VercelBoundEndpoints = BindEndpoints<typeof vercelEndpointsNested>;
 
-export const vercelEndpointSchemas = {
-	'projects.getProjects': {
-		input: VercelEndpointInputSchemas.projectsGetProjects,
-		output: VercelEndpointOutputSchemas.projectsGetProjects,
-	},
-	'projects.getProject': {
-		input: VercelEndpointInputSchemas.projectsGetProject,
-		output: VercelEndpointOutputSchemas.projectsGetProject,
-	},
-	'deployments.getDeployments': {
-		input: VercelEndpointInputSchemas.deploymentsGetDeployments,
-		output: VercelEndpointOutputSchemas.deploymentsGetDeployments,
-	},
-	'deployments.getDeployment': {
-		input: VercelEndpointInputSchemas.deploymentsGetDeployment,
-		output: VercelEndpointOutputSchemas.deploymentsGetDeployment,
-	},
-	'deployments.createDeployment': {
-		input: VercelEndpointInputSchemas.deploymentsCreateDeployment,
-		output: VercelEndpointOutputSchemas.deploymentsCreateDeployment,
-	},
-	'domains.getDomains': {
-		input: VercelEndpointInputSchemas.domainsGetDomains,
-		output: VercelEndpointOutputSchemas.domainsGetDomains,
-	},
-	'domains.getProjectDomains': {
-		input: VercelEndpointInputSchemas.domainsGetProjectDomains,
-		output: VercelEndpointOutputSchemas.domainsGetProjectDomains,
-	},
-	'envs.getEnvVariables': {
-		input: VercelEndpointInputSchemas.envsGetEnvVariables,
-		output: VercelEndpointOutputSchemas.envsGetEnvVariables,
-	},
-	'envs.createEnvVariable': {
-		input: VercelEndpointInputSchemas.envsCreateEnvVariable,
-		output: VercelEndpointOutputSchemas.envsCreateEnvVariable,
-	},
-	'aliases.getAliases': {
-		input: VercelEndpointInputSchemas.aliasesGetAliases,
-		output: VercelEndpointOutputSchemas.aliasesGetAliases,
-	},
-	'aliases.assignAlias': {
-		input: VercelEndpointInputSchemas.aliasesAssignAlias,
-		output: VercelEndpointOutputSchemas.aliasesAssignAlias,
-	},
-	'webhooks.getWebhooks': {
-		input: VercelEndpointInputSchemas.webhooksGetWebhooks,
-		output: VercelEndpointOutputSchemas.webhooksGetWebhooks,
-	},
-	'webhooks.createWebhook': {
-		input: VercelEndpointInputSchemas.webhooksCreateWebhook,
-		output: VercelEndpointOutputSchemas.webhooksCreateWebhook,
-	},
-	'teams.getTeams': {
-		input: VercelEndpointInputSchemas.teamsGetTeams,
-		output: VercelEndpointOutputSchemas.teamsGetTeams,
-	},
-} as const;
+type Prefixed<G extends string, T> = {
+	[K in keyof T & string as `${G}.${K}`]: T[K];
+};
+
+function groupMeta<G extends string, M extends Record<string, EndpointMeta>>(
+	group: G,
+	meta: M,
+) {
+	const entries = Object.entries(meta).map(([name, entry]) => [
+		`${group}.${name}`,
+		entry,
+	]);
+	return Object.fromEntries(entries) as Prefixed<G, M>;
+}
+
+type EndpointPath = keyof typeof VercelEndpointInputSchemas;
+
+export const vercelEndpointSchemas = Object.fromEntries(
+	(Object.keys(VercelEndpointInputSchemas) as EndpointPath[]).map((path) => [
+		path,
+		{
+			input: VercelEndpointInputSchemas[path],
+			output: VercelEndpointOutputSchemas[path],
+		},
+	]),
+) as {
+	[P in EndpointPath]: {
+		input: (typeof VercelEndpointInputSchemas)[P];
+		output: (typeof VercelEndpointOutputSchemas)[P];
+	};
+} satisfies RequiredPluginEndpointSchemas<typeof vercelEndpointsNested>;
+
+const vercelEndpointMeta = {
+	...groupMeta('projects', vercelProjectsMeta),
+	...groupMeta('deployments', vercelDeploymentsMeta),
+	...groupMeta('envs', vercelEnvsMeta),
+	...groupMeta('domains', vercelDomainsMeta),
+	...groupMeta('dns', vercelDnsMeta),
+	...groupMeta('aliases', vercelAliasesMeta),
+	...groupMeta('teams', vercelTeamsMeta),
+	...groupMeta('user', vercelUserMeta),
+	...groupMeta('webhooks', vercelWebhooksMeta),
+	...groupMeta('edgeConfig', vercelEdgeConfigMeta),
+} satisfies RequiredPluginEndpointMeta<typeof vercelEndpointsNested>;
 
 const vercelWebhooksNested = {
 	deploymentCreated: WebhookHandlers.deploymentCreated,
@@ -212,59 +180,15 @@ export type VercelWebhooks = {
 };
 export type VercelBoundWebhooks = BindWebhooks<typeof vercelWebhooksNested>;
 
-const vercelEndpointMeta = {
-	'projects.getProjects': {
-		riskLevel: 'read',
-		description: 'Get all projects',
-	},
-	'projects.getProject': {
-		riskLevel: 'read',
-		description: 'Get project details',
-	},
-	'deployments.getDeployments': {
-		riskLevel: 'read',
-		description: 'Get all deployments',
-	},
-	'deployments.getDeployment': {
-		riskLevel: 'read',
-		description: 'Get deployment details',
-	},
-	'deployments.createDeployment': {
-		riskLevel: 'write',
-		description: 'Create a deployment',
-	},
-	'domains.getDomains': { riskLevel: 'read', description: 'Get all domains' },
-	'domains.getProjectDomains': {
-		riskLevel: 'read',
-		description: 'Get project domains',
-	},
-	'envs.getEnvVariables': {
-		riskLevel: 'read',
-		description:
-			'Get environment variables for a project (may include secret/sensitive values)',
-	},
-	'envs.createEnvVariable': {
-		riskLevel: 'write',
-		description:
-			'Create an environment variable for a project (supports plain, secret, encrypted, and sensitive types)',
-	},
-	'aliases.getAliases': { riskLevel: 'read', description: 'Get all aliases' },
-	'aliases.assignAlias': { riskLevel: 'write', description: 'Assign an alias' },
-	'webhooks.getWebhooks': {
-		riskLevel: 'read',
-		description: 'Get all webhooks',
-	},
-	'webhooks.createWebhook': {
-		riskLevel: 'write',
-		description: 'Create a webhook',
-	},
-	'teams.getTeams': { riskLevel: 'read', description: 'Get all teams' },
-} satisfies RequiredPluginEndpointMeta<typeof vercelEndpointsNested>;
-
+/**
+ * `team_id` is the team calls run against when they don't name one: set by an
+ * OAuth install (the team it was made for), or typed beside an access token
+ * (team id or slug). Left empty, calls use the token's own scope.
+ */
 export const vercelAuthConfig = {
-	api_key: {
-		account: ['team_id'] as const,
-	},
+	api_key: { account: ['team_id'] as const },
+	oauth_2: { account: ['team_id'] as const },
+	managed: { account: ['team_id'] as const },
 } as const satisfies PluginAuthConfig;
 
 export type BaseVercelPlugin<T extends VercelPluginOptions> = CorsairPlugin<
@@ -305,6 +229,7 @@ export function vercel<const T extends VercelPluginOptions>(
 			return 'x-vercel-signature' in headers;
 		},
 		pluginTenantWebhookMatcher: matchVercelTenantWebhook,
+		oauthWebhookTenantLinkResolver: resolveVercelOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -324,11 +249,11 @@ export function vercel<const T extends VercelPluginOptions>(
 				return res;
 			}
 
-			if (source === 'endpoint' && options.key) {
+			if (options.key) {
 				return options.key;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
+			if (ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
 					throw new AuthMissingError('vercel', 'api_key');
@@ -336,21 +261,101 @@ export function vercel<const T extends VercelPluginOptions>(
 				return res;
 			}
 
-			throw new AuthMissingError('vercel', 'api_key');
+			if (ctx.authType === 'oauth_2') {
+				const [accessToken, expiresAt, refreshToken] = await Promise.all([
+					ctx.keys.get_access_token(),
+					ctx.keys.get_expires_at(),
+					ctx.keys.get_refresh_token(),
+				]);
+				// With a refresh token, core refreshes before expiry and re-mints
+				// after a 401.
+				if (refreshToken) {
+					return getOAuthAccessToken(ctx, {
+						plugin: 'vercel',
+						tokenUrl: VERCEL_OAUTH_TOKEN_URL,
+					});
+				}
+				// Without one (integration tokens never expire), use the token
+				// until it expires, then ask for a new connection.
+				const expired =
+					Boolean(expiresAt) &&
+					!(Number(expiresAt) > Math.floor(Date.now() / 1000) + 60);
+				if (accessToken && !expired) return accessToken;
+				throw new AuthMissingError('vercel', 'oauth_2');
+			}
+
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:vercel:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'vercel',
+					tenantId: ctx.tenantId,
+				};
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
+				return result.accessToken;
+			}
+
+			throw new AuthMissingError('vercel', defaultAuthType);
 		},
 	} satisfies InternalVercelPlugin;
 }
 
-export * from './client';
 export type {
-	Alias,
-	Deployment,
-	Domain,
-	EnvVariable,
-	Project,
-	ProjectDomain,
-	Team,
+	VercelQuery,
+	VercelRequestContext,
+	VercelRequestOptions,
+} from './client';
+export {
+	makeAuthenticatedVercelRequest,
+	makeVercelRequest,
+	resolveTeam,
+	teamScopeQuery,
+	VERCEL_API_BASE,
+} from './client';
+export type {
+	VercelAliasesInputs,
+	VercelAliasesOutputs,
+} from './endpoints/aliases-types';
+export type {
+	VercelDeploymentsInputs,
+	VercelDeploymentsOutputs,
+} from './endpoints/deployments-types';
+export type { VercelDnsInputs, VercelDnsOutputs } from './endpoints/dns-types';
+export type {
+	VercelDomainsInputs,
+	VercelDomainsOutputs,
+} from './endpoints/domains-types';
+export type {
+	VercelEdgeConfigInputs,
+	VercelEdgeConfigOutputs,
+} from './endpoints/edge-config-types';
+export type {
+	VercelEnvsInputs,
+	VercelEnvsOutputs,
+} from './endpoints/envs-types';
+export type {
+	VercelProjectsInputs,
+	VercelProjectsOutputs,
+} from './endpoints/projects-types';
+export type {
+	VercelTeamsInputs,
+	VercelTeamsOutputs,
+} from './endpoints/teams-types';
+export type {
 	VercelEndpointInputs,
 	VercelEndpointOutputs,
-	Webhook,
 } from './endpoints/types';
+export type {
+	VercelUserInputs,
+	VercelUserOutputs,
+} from './endpoints/user-types';
+export type {
+	VercelWebhooksInputs,
+	VercelWebhooksOutputs,
+} from './endpoints/webhooks-types';

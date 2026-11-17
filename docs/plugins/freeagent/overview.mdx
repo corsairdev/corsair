@@ -1,0 +1,131 @@
+---
+title: "FreeAgent plugin"
+sidebarTitle: "Overview"
+description: "Manage FreeAgent company records, verified sender addresses, contacts, projects, invoices, and tracking groups through its OAuth 2.0 REST API."
+---
+
+Use **FreeAgent** through Corsair: one client, typed API calls.
+
+Connect a FreeAgent OAuth 2.0 app (client ID and secret from dev.freeagent.com). Access tokens last an hour and refresh automatically. Pass sandbox: true to use api.sandbox.freeagent.com for both OAuth and the API. This plugin exposes company profile, verified sender addresses, contacts, projects, selected invoice and recurring invoice operations, and tracking groups. Many other official company API routes remain unimplemented; see the linked route inventory in the package README. The Accountancy Practice API requires practice-enabled OAuth and X-Subdomain client scoping and is excluded.
+
+**What you get:**
+
+- 36 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/freeagent better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/freeagent better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/freeagent better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/freeagent better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { freeagent } from '@corsair-dev/freeagent';
+
+export const corsair = createCorsair({
+	plugins: [
+		freeagent(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your FreeAgent OAuth app.
+
+```ts
+freeagent()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'freeagent',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List contacts**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.freeagent.api.contacts.list({});
+```
+
+
+**Create a contact**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.freeagent.api.contacts.create({
+	contact: { organisation_name: 'Example Ltd' },
+});
+```
+
+
+See the full list on the [API](/plugins/freeagent/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/freeagent/api">
+    Every `freeagent.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

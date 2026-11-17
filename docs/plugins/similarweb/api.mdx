@@ -1,0 +1,424 @@
+---
+title: "Similarweb API reference"
+sidebarTitle: "API"
+description: "API reference for the Similarweb plugin in Corsair: every `similarweb.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Apps
+
+### describe
+
+`apps.describe`
+
+Read the countries, stores, modes and devices the app rank operation accepts, which is the only way to know a valid mode
+
+**Risk:** `read`
+
+```ts
+await corsair.similarweb.api.apps.describe({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_rank` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="app_rank full type">
+
+```ts
+{
+  countries: string[],
+  stores: {
+    store: string,
+    mode: string,
+    device: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### rank
+
+`apps.rank`
+
+Read an app's store rank day by day for one country and chart, from the App Store or Google Play
+
+**Risk:** `read`
+
+```ts
+await corsair.similarweb.api.apps.rank({ store: 'Google', app_id: 'com.whatsapp', country: 'us', mode: 'free', device: 'androidphone', duration: 30 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `store` | `Google \| Apple` | Yes | Google for Android, Apple for iOS. |
+| `app_id` | `string` | Yes | The store id, such as com.whatsapp or 310633997. |
+| `country` | `string` | Yes | A two-letter ISO code, or world. |
+| `category` | `string` | No | An app category, or all. Sent as all when omitted. |
+| `mode` | `string` | No | The chart to read, such as free, paid, topselling_free or topgrossing. apps.describe lists every accepted value per store. Sent as topselling_free when omitted, which both stores accept. |
+| `device` | `androidphone \| iphone \| ipad` | No | androidphone, iphone or ipad. Sent as the store's phone (androidphone or iphone) when omitted. |
+| `duration` | `number` | No | Days back from today. Sent as 90 when omitted. |
+
+device must match store: androidphone for Google, iphone or ipad for Apple. Call apps.describe for the valid mode values.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | Yes | — |
+| `ranks` | `object[]` | Yes | One entry per day, oldest first. |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  request?: Record<string, any> | null,
+  status?: string | null,
+  last_updated?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="ranks full type">
+
+```ts
+{
+  date: string,
+  value?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Capabilities
+
+### get
+
+`capabilities.get`
+
+Read what the subscription entitles this account to, keyed by capability name
+
+**Risk:** `read`
+
+```ts
+await corsair.similarweb.api.capabilities.get({});
+```
+
+**Input:** _empty object_
+
+Check this before concluding a 403 means the key is wrong: 403 also means the account is out of data credits.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `capabilities` | `Record<string, any>` | Yes | What the account is entitled to, keyed by capability name. The keys depend on the subscription. |
+
+
+
+---
+
+## Categories
+
+### list
+
+`categories.list`
+
+Read the website category tree, with each child mapping to the Parent~Child slug the rank routes accept
+
+**Risk:** `read`
+
+```ts
+await corsair.similarweb.api.categories.list({});
+```
+
+**Input:** _empty object_
+
+Each child maps to the Parent~Child slug the rank routes accept. Some top-level categories have no children.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `categories` | `Record<string, Record<string, string>>` | Yes | Top-level category to its children, each child mapping to the Parent~Child slug. A top level with no children is an empty object. |
+
+
+
+---
+
+## Usage
+
+### get
+
+`usage.get`
+
+Read the data credit allowance and how many this user has left; costs no credits
+
+**Risk:** `read`
+
+```ts
+await corsair.similarweb.api.usage.get({});
+```
+
+**Input:** _empty object_
+
+Costs no credits. Returns allowance and user_remaining; used is derived from the two.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `allowance` | `number \| null` | No | Credits allocated to this user for the period. |
+| `user_remaining` | `number \| null` | No | Credits this user has left. |
+| `used` | `number \| null` | No | allowance minus user_remaining, when both are present. |
+
+
+
+---
+
+## Websites
+
+### countryRank
+
+`websites.countryRank`
+
+Read a domain's rank within one country month by month, for a country code the subscription includes
+
+**Risk:** `read`
+
+```ts
+await corsair.similarweb.api.websites.countryRank({ domain: 'cnn.com', country: 'us', start_date: '2023-01', end_date: '2023-03' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | The domain without 'www.' or brackets, lower case, such as cnn.com. A path or capital letters make Similarweb answer 401. |
+| `start_date` | `string` | No | The first month. Omit both dates for the last 28 days. |
+| `end_date` | `string` | No | The last month. |
+| `main_domain_only` | `boolean` | No | True for the main domain only, false to include subdomains. Defaults to false. |
+| `country` | `string` | Yes | A two-letter ISO country code. Which countries are available depends on the subscription; capabilities.get lists them. Worldwide is not supported here; use websites.globalRank. |
+
+The country must be one the subscription includes; capabilities.get lists them. Worldwide is not supported here; use websites.globalRank.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | Yes | — |
+| `country_rank` | `object[]` | Yes | One entry per month, oldest first. |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  request?: Record<string, any> | null,
+  status?: string | null,
+  last_updated?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="country_rank full type">
+
+```ts
+{
+  date: string,
+  country_rank?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### globalRank
+
+`websites.globalRank`
+
+Read a domain's global rank month by month, based on estimated unique visitors and page views across desktop and mobile
+
+**Risk:** `read`
+
+```ts
+await corsair.similarweb.api.websites.globalRank({ domain: 'cnn.com', start_date: '2023-01', end_date: '2023-03' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | The domain without 'www.' or brackets, lower case, such as cnn.com. A path or capital letters make Similarweb answer 401. |
+| `start_date` | `string` | No | The first month. Omit both dates for the last 28 days. |
+| `end_date` | `string` | No | The last month. |
+| `main_domain_only` | `boolean` | No | True for the main domain only, false to include subdomains. Defaults to false. |
+
+Send both start_date and end_date, or neither for the last 28 days. One without the other is answered with the default window.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | Yes | — |
+| `global_rank` | `object[]` | Yes | One entry per month, oldest first. |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  request?: Record<string, any> | null,
+  status?: string | null,
+  last_updated?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="global_rank full type">
+
+```ts
+{
+  date: string,
+  global_rank?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### industryRank
+
+`websites.industryRank`
+
+Read a domain's industry and its rank within that industry worldwide, as the current reading rather than a series
+
+**Risk:** `read`
+
+```ts
+await corsair.similarweb.api.websites.industryRank({ domain: 'amazon.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | The domain without 'www.' or brackets, lower case, such as cnn.com. A path or capital letters make Similarweb answer 401. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | Yes | — |
+| `category` | `string \| null` | No | The industry path, such as E-commerce_and_Shopping/Marketplace. |
+| `rank` | `number \| null` | No | The rank within that industry, worldwide. |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  request?: Record<string, any> | null,
+  status?: string | null,
+  last_updated?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### topSites
+
+`websites.topSites`
+
+Read the highest-ranked domains worldwide across desktop and mobile, up to 5000 of them
+
+**Risk:** `read`
+
+```ts
+await corsair.similarweb.api.websites.topSites({ limit: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | How many sites to return, up to 5000. Defaults to 10. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | Yes | — |
+| `top_sites` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  request?: Record<string, any> | null,
+  status?: string | null,
+  last_updated?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="top_sites full type">
+
+```ts
+{
+  domain: string,
+  rank?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

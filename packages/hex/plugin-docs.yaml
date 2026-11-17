@@ -1,0 +1,194 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: Hex
+description: Collaborative analytics and data workspace platform — manage projects, trigger and monitor project runs, configure notebook cells, collections, data connections, user groups, and interact with AI agent threads.
+overviewNote: |
+  Semantic ZIP ingestion is not exposed by this plugin. The public OpenAPI describes the ingest route as importing a ZIP but only defines JSON flags and no archive upload field or upload contract, so Corsair cannot safely send the required project contents.
+examples:
+  read:
+    path: users.me
+    title: Get the current authenticated user
+    args: {}
+  write:
+    path: projects.create
+    title: Create a new analytics project
+    args:
+      title: Customer Churn Analysis
+      description: Quarterly churn analysis and customer retention metrics
+apiExamples:
+  admin.listAgentUsage:
+    limit: 10
+  admin.listCreditGrants:
+    limit: 10
+  admin.listTopics:
+    limit: 10
+  cells.create:
+    call: >-
+      { projectId: '00000000-0000-4000-8000-000000000001', cellType: 'CODE', contents: { codeCell: { source: "print('hello from Hex')" } } }
+  cells.delete:
+    cellId: 00000000-0000-4000-8000-000000000002
+  cells.get:
+    cellId: 00000000-0000-4000-8000-000000000002
+  cells.getChartImage:
+    cellId: 00000000-0000-4000-8000-000000000002
+    width: 800
+    height: 600
+    includeTitle: true
+  cells.getOutput:
+    cellId: 00000000-0000-4000-8000-000000000002
+  cells.list:
+    projectId: 00000000-0000-4000-8000-000000000001
+    limit: 10
+  cells.update:
+    cellId: 00000000-0000-4000-8000-000000000002
+  collections.create:
+    name: Marketing Analytics
+    description: Dashboards and models for marketing performance
+  collections.get:
+    collectionId: 00000000-0000-4000-8000-000000000003
+  collections.list:
+    limit: 10
+  collections.update:
+    collectionId: 00000000-0000-4000-8000-000000000003
+    name: Growth Analytics
+  dataConnections.create:
+    call: >-
+      { name: 'Analytics warehouse', type: 'postgres', connectionDetails: { postgres: { hostname: 'warehouse.example.com', port: 5432, database: 'analytics', username: 'hex_service', password: 'your-password' } } }
+  dataConnections.get:
+    dataConnectionId: 00000000-0000-4000-8000-000000000004
+  dataConnections.list:
+    limit: 10
+  dataConnections.update:
+    dataConnectionId: 00000000-0000-4000-8000-000000000004
+    description: Updated database connection for production analytics
+  dataConnections.updateSchema:
+    dataConnectionId: 00000000-0000-4000-8000-000000000004
+    updates:
+      - type: TABLE
+        name: analytics.public.orders
+        status: Endorsed
+  embedding.createPresignedUrl:
+    projectId: 00000000-0000-4000-8000-000000000001
+  groups.create:
+    name: Data Science Team
+  groups.delete:
+    groupId: 00000000-0000-4000-8000-000000000005
+  groups.get:
+    groupId: 00000000-0000-4000-8000-000000000005
+  groups.list:
+    limit: 10
+  groups.update:
+    groupId: 00000000-0000-4000-8000-000000000005
+    name: Core Data Science
+  guides.deleteDraft:
+    orgGuideFileId: 00000000-0000-4000-8000-000000000006
+  guides.listDrafts:
+    limit: 10
+  guides.publish:
+    publishAllDraftGuides: true
+  guides.upsertDraft:
+    files:
+      - filePath: metrics/revenue.md
+        contents: "# Revenue Metrics Guide"
+  projectRuns.cancel:
+    projectId: 00000000-0000-4000-8000-000000000001
+    runId: 00000000-0000-4000-8000-000000000007
+  projectRuns.getChartImage:
+    projectId: 00000000-0000-4000-8000-000000000001
+    runId: 00000000-0000-4000-8000-000000000007
+    staticId: chart-cell-1
+    width: 800
+    height: 600
+    includeTitle: true
+  projectRuns.getStatus:
+    projectId: 00000000-0000-4000-8000-000000000001
+    runId: 00000000-0000-4000-8000-000000000007
+  projectRuns.list:
+    projectId: 00000000-0000-4000-8000-000000000001
+    limit: 10
+  projectRuns.run:
+    projectId: 00000000-0000-4000-8000-000000000001
+    dryRun: false
+    updatePublishedResults: true
+  projects.batchUpdateComputeProfile:
+    call: >-
+      { projectIds: ['00000000-0000-4000-8000-000000000001'], kernelSize: 'medium' }
+  projects.create:
+    title: Customer Lifetime Value Model
+    description: Probabilistic customer CLV projections
+  projects.editSharingCollections:
+    projectId: 00000000-0000-4000-8000-000000000001
+    sharing:
+      upsert:
+        collections:
+          - access: CAN_VIEW
+            collection:
+              id: 00000000-0000-4000-8000-000000000003
+  projects.editSharingGroups:
+    projectId: 00000000-0000-4000-8000-000000000001
+    sharing:
+      upsert:
+        groups:
+          - access: CAN_VIEW
+            group:
+              id: 00000000-0000-4000-8000-000000000005
+  projects.editSharingOrgAndPublic:
+    projectId: 00000000-0000-4000-8000-000000000001
+    sharing:
+      workspace: CAN_VIEW
+      publicWeb: NONE
+  projects.editSharingUsers:
+    projectId: 00000000-0000-4000-8000-000000000001
+    sharing:
+      upsert:
+        users:
+          - access: CAN_VIEW
+            user:
+              id: 00000000-0000-4000-8000-000000000008
+  projects.export:
+    projectId: 00000000-0000-4000-8000-000000000001
+  projects.get:
+    projectId: 00000000-0000-4000-8000-000000000001
+  projects.getQueriedTables:
+    projectId: 00000000-0000-4000-8000-000000000001
+    limit: 10
+  projects.list:
+    limit: 10
+  projects.update:
+    projectId: 00000000-0000-4000-8000-000000000001
+  semantic.update:
+    semanticProjectId: 00000000-0000-4000-8000-000000000009
+    updates:
+      - type: DATASET
+        name: orders
+        status: Endorsed
+  suggestions.get:
+    suggestionId: 00000000-0000-4000-8000-000000000010
+  suggestions.getV2:
+    suggestionId: 00000000-0000-4000-8000-000000000010
+  suggestions.list:
+    limit: 10
+  suggestions.triggerReview:
+    suggestionId: 00000000-0000-4000-8000-000000000010
+  suggestions.update:
+    call: >-
+      { suggestionId: '00000000-0000-4000-8000-000000000010', status: 'DISMISSED', rejectionReason: 'Already covered by the revenue guide' }
+  suggestions.updateChange:
+    call: >-
+      { suggestionId: '00000000-0000-4000-8000-000000000010', changeId: '00000000-0000-4000-8000-000000000011', updateTarget: 'FILE_UPDATE', status: 'COMPLETED' }
+  threads.continue:
+    id: 00000000-0000-4000-8000-000000000012
+    prompt: Can you break down customer churn by region?
+  threads.create:
+    prompt: Analyze Q3 customer retention by cohort
+  threads.get:
+    id: 00000000-0000-4000-8000-000000000012
+  threads.getMessages:
+    threadId: 00000000-0000-4000-8000-000000000012
+    limit: 20
+  threads.list:
+    limit: 10
+  users.deactivate:
+    userId: 00000000-0000-4000-8000-000000000008
+  users.list:
+    limit: 10
+  users.me: {}

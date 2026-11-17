@@ -201,7 +201,7 @@ await corsair.box.api.files.delete({});
 
 `files.download`
 
-Download the content of a Box file
+Download a file. A text file comes back as text, any other file as base64, up to about 700 KB; size and type are always returned.
 
 **Risk:** `read`
 
@@ -218,7 +218,17 @@ await corsair.box.api.files.download({});
 
 
 
-**Output:** `string`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | No | The file, base64-encoded. Missing when the file came back as text or contentOmitted is set. |
+| `text` | `string` | No | The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8. |
+| `contentType` | `string` | Yes | Media type of the file, for example application/pdf. |
+| `byteLength` | `number` | Yes | Size of the file in bytes. |
+| `filename` | `string` | No | The file name, when known. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
+
 
 
 ---
