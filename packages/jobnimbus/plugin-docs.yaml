@@ -1,0 +1,181 @@
+displayName: JobNimbus
+description: Cloud-based CRM and job management software for contractors — manage contacts, jobs, work orders, estimates, invoices, material orders, payments, tasks, and files.
+overviewNote: Generate a JobNimbus API key from your JobNimbus account under Settings > API > New API key. Select the desired Access Profile and save. Pass the token as the API key to authenticate requests.
+examples:
+  read:
+    path: contacts.list
+    title: List contacts
+    args:
+      size: 10
+  write:
+    path: contacts.create
+    title: Create a new contact
+    args:
+      first_name: John
+      last_name: Doe
+      record_type_name: Customer
+      status_name: Lead
+apiExamples:
+  contacts.create:
+    first_name: John
+    last_name: Doe
+    record_type_name: Customer
+    status_name: Lead
+  contacts.update:
+    jnid: jnid_example
+    first_name: Johnny
+  contacts.delete:
+    jnid: jnid_example
+  contacts.get:
+    jnid: jnid_example
+  contacts.list:
+    size: 50
+    from: 0
+  jobs.create:
+    name: Roof Inspection
+    record_type_name: Job
+    status_name: Lead
+  jobs.update:
+    jnid: jnid_example
+    name: Roof Repair Phase 1
+  jobs.delete:
+    jnid: jnid_example
+  jobs.get:
+    jnid: jnid_example
+  jobs.list:
+    size: 50
+  tasks.create:
+    title: Initial client consultation
+    date_start: 1700000000
+  tasks.update:
+    jnid: jnid_example
+    is_completed: true
+  tasks.delete:
+    jnid: jnid_example
+  tasks.get:
+    jnid: jnid_example
+  tasks.list:
+    size: 25
+  activities.create:
+    note: Spoke with homeowner regarding quote
+  activities.get:
+    jnid: jnid_example
+  activities.list:
+    size: 25
+  files.create:
+    data: VGhpcyBpcyBhIHRlc3QgZG9jdW1lbnQ=
+    filename: contract.txt
+  files.createFromUrl:
+    url: https://example.com/inspection.jpg
+  files.requestSinglePartUpload:
+    filename: estimate.pdf
+    type: 1
+    related:
+      - jnid_example
+  files.completeSinglePartUpload:
+    jnid: jnid_example
+  files.requestMultipartUpload:
+    filename: site_video.mp4
+    partCount: 2
+    fileSize: 20000000
+    isPrivate: false
+    related:
+      - jnid_example
+    type: 1
+  files.completeMultipartUpload:
+    jnid: jnid_example
+    uploadId: upload_id_example
+    parts:
+      - partNumber: 1
+        etag: etag_example
+  files.abortMultipartUpload:
+    key: key_example
+    uploadId: upload_id_example
+  files.list:
+    size: 50
+  files.get:
+    jnid: jnid_example
+  products.create:
+    name: Asphalt Shingle Bundle
+  products.update:
+    jnid: jnid_example
+    name: Premium Architectural Shingles
+  products.delete:
+    jnid: jnid_example
+  products.get:
+    jnid: jnid_example
+  products.list:
+    size: 50
+  materialOrders.create:
+    customer_note: Leave materials on driveway
+  materialOrders.update:
+    jnid: jnid_example
+    customer_note: Deliver before noon
+  materialOrders.delete:
+    jnid: jnid_example
+  materialOrders.get:
+    jnid: jnid_example
+  materialOrders.list:
+    size: 25
+  workOrders.create:
+    customer: jnid_example
+  workOrders.update:
+    id: jnid_example
+    internal_note: Crews arriving at 8 AM
+  workOrders.delete:
+    id: jnid_example
+  workOrders.get:
+    jnid: jnid_example
+  workOrders.list:
+    size: 25
+  estimates.create:
+    number: EST-1001
+  estimates.update:
+    jnid: jnid_example
+    number: EST-1001-REV1
+  estimates.delete:
+    jnid: jnid_example
+  estimates.get:
+    jnid: jnid_example
+  estimates.list:
+    size: 25
+  invoices.create:
+    number: INV-1001
+  invoices.update:
+    jnid: jnid_example
+    number: INV-1001-A
+  invoices.delete:
+    jnid: jnid_example
+  invoices.get:
+    jnid: jnid_example
+  invoices.list:
+    size: 25
+  payments.list:
+    size: 50
+  payments.create:
+    customer: jnid_example
+    date_payment: 1700000000
+    total: 1500
+  budgets.list:
+    size: 25
+  account.getSettings: {}
+  account.getGroups: {}
+  account.getUsers: {}
+  account.getUoms: {}
+  account.createWorkflow:
+    call: "{ name: 'Commercial Workflow', object_type: 'job' }"
+  account.createWorkflowStatus:
+    workflowid: wf_example
+    name: Under Review
+  account.createLeadSource:
+    SourceName: Local Referral
+  account.createCustomField:
+    call: "{ title: 'Insurance Claim Number', object_type: 'job', type: 'string' }"
+  account.createFileType:
+    TypeName: Permit
+  account.createTaskType:
+    TypeName: Site Survey
+  account.createActivityType:
+    TypeName: Inspection Call
+  account.createLocation:
+    name: Northwest Branch
