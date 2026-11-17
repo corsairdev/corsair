@@ -10,6 +10,7 @@ import {
 import type { PostOnceEndpoints } from '../index';
 import { PostOnceAccount, PostOncePost } from '../schema/database';
 import type { PostOnceEndpointOutputs } from './types';
+import { PostOnceEndpointOutputSchemas } from './types';
 
 type CallCtx = {
 	key: string;
@@ -203,3 +204,302 @@ export const cancelPost: PostOnceEndpoints['cancelPost'] = async (
 	);
 	return result;
 };
+
+/**
+ * Calls PostOnce, checks the reply against the operation's output schema,
+ * and logs the event with identifiers only (no post text, URLs or secrets).
+ */
+async function run<K extends keyof PostOnceEndpointOutputs>(
+	ctx: Parameters<PostOnceEndpoints[K]>[0],
+	operation: K,
+	event: string,
+	endpoint: string,
+	options: PostOnceRequestOptions,
+	payload: Record<string, unknown>,
+): Promise<PostOnceEndpointOutputs[K]> {
+	const raw = await postonceCall<unknown>(ctx, endpoint, options);
+	const result = PostOnceEndpointOutputSchemas[operation].parse(
+		raw,
+	) as PostOnceEndpointOutputs[K];
+	await logEventFromContext(ctx, event, payload, 'completed');
+	return result;
+}
+
+/** PATCH /v1/posts/{id} */
+export const updatePost: PostOnceEndpoints['updatePost'] = async (
+	ctx,
+	input,
+) => {
+	const { id, ...fields } = input;
+	const result = await run(
+		ctx,
+		'updatePost',
+		'postonce.posts.update',
+		`posts/${segment(id)}`,
+		{ method: 'PATCH', body: compactBody(fields) },
+		auditPayload(input, ['id', 'publish_at']),
+	);
+	await cacheEntity(ctx.db.posts, PostOncePost, result.data, 'post');
+	return result;
+};
+
+/** POST /v1/posts/{id}/publish */
+export const publishPost: PostOnceEndpoints['publishPost'] = async (
+	ctx,
+	input,
+) => {
+	const result = await run(
+		ctx,
+		'publishPost',
+		'postonce.posts.publish',
+		`posts/${segment(input.id)}/publish`,
+		{ method: 'POST' },
+		auditPayload(input, ['id']),
+	);
+	await cacheEntity(ctx.db.posts, PostOncePost, result.data, 'post');
+	return result;
+};
+
+/** POST /v1/posts/{id}/targets/{targetId}/retry */
+export const retryPostTarget: PostOnceEndpoints['retryPostTarget'] = async (
+	ctx,
+	input,
+) => {
+	const result = await run(
+		ctx,
+		'retryPostTarget',
+		'postonce.posts.retryTarget',
+		`posts/${segment(input.id)}/targets/${segment(input.targetId)}/retry`,
+		{ method: 'POST' },
+		auditPayload(input, ['id', 'targetId']),
+	);
+	await cacheEntity(ctx.db.posts, PostOncePost, result.data, 'post');
+	return result;
+};
+
+/** GET /v1/posts/{id}/analytics */
+export const getPostAnalytics: PostOnceEndpoints['getPostAnalytics'] = async (
+	ctx,
+	input,
+) =>
+	run(
+		ctx,
+		'getPostAnalytics',
+		'postonce.posts.getAnalytics',
+		`posts/${segment(input.id)}/analytics`,
+		{},
+		auditPayload(input, ['id']),
+	);
+
+/** GET /v1/analytics */
+export const getAnalytics: PostOnceEndpoints['getAnalytics'] = async (
+	ctx,
+	input,
+) =>
+	run(
+		ctx,
+		'getAnalytics',
+		'postonce.analytics.get',
+		'analytics',
+		{
+			query: compactQuery({
+				days: input.days,
+				account_id: input.account_id,
+				external_user_id: input.external_user_id,
+			}),
+		},
+		auditPayload(input, ['days']),
+	);
+
+/** GET /v1/drafts */
+export const listDrafts: PostOnceEndpoints['listDrafts'] = async (ctx, input) =>
+	run(
+		ctx,
+		'listDrafts',
+		'postonce.drafts.list',
+		'drafts',
+		{
+			query: compactQuery({
+				limit: input.limit,
+				after: input.after,
+				after_id: input.after_id,
+				status: input.status,
+			}),
+		},
+		auditPayload(input, ['limit', 'status']),
+	);
+
+/** POST /v1/drafts */
+export const createDraft: PostOnceEndpoints['createDraft'] = async (
+	ctx,
+	input,
+) => {
+	const { idempotencyKey, ...fields } = input;
+	return run(
+		ctx,
+		'createDraft',
+		'postonce.drafts.create',
+		'drafts',
+		{ method: 'POST', idempotencyKey, body: compactBody(fields) },
+		auditPayload(fields, []),
+	);
+};
+
+/** GET /v1/drafts/{id} */
+export const getDraft: PostOnceEndpoints['getDraft'] = async (ctx, input) =>
+	run(
+		ctx,
+		'getDraft',
+		'postonce.drafts.get',
+		`drafts/${segment(input.id)}`,
+		{},
+		auditPayload(input, ['id']),
+	);
+
+/** PATCH /v1/drafts/{id} */
+export const updateDraft: PostOnceEndpoints['updateDraft'] = async (
+	ctx,
+	input,
+) => {
+	const { id, ...fields } = input;
+	return run(
+		ctx,
+		'updateDraft',
+		'postonce.drafts.update',
+		`drafts/${segment(id)}`,
+		{ method: 'PATCH', body: compactBody(fields) },
+		auditPayload(input, ['id', 'status']),
+	);
+};
+
+/** POST /v1/media/uploads */
+export const createMediaUpload: PostOnceEndpoints['createMediaUpload'] = async (
+	ctx,
+	input,
+) =>
+	run(
+		ctx,
+		'createMediaUpload',
+		'postonce.media.createUpload',
+		'media/uploads',
+		{ method: 'POST', body: { ...input } },
+		auditPayload(input, ['content_type']),
+	);
+
+/** GET /v1/media/{id} */
+export const getMedia: PostOnceEndpoints['getMedia'] = async (ctx, input) =>
+	run(
+		ctx,
+		'getMedia',
+		'postonce.media.get',
+		`media/${segment(input.id)}`,
+		{},
+		{},
+	);
+
+/** GET /v1/workflows */
+export const listWorkflows: PostOnceEndpoints['listWorkflows'] = async (ctx) =>
+	run(ctx, 'listWorkflows', 'postonce.workflows.list', 'workflows', {}, {});
+
+/** GET /v1/workflows/{id} */
+export const getWorkflow: PostOnceEndpoints['getWorkflow'] = async (
+	ctx,
+	input,
+) =>
+	run(
+		ctx,
+		'getWorkflow',
+		'postonce.workflows.get',
+		`workflows/${segment(input.id)}`,
+		{},
+		auditPayload(input, ['id']),
+	);
+
+/** POST /v1/workflows */
+export const createWorkflow: PostOnceEndpoints['createWorkflow'] = async (
+	ctx,
+	input,
+) => {
+	const { idempotencyKey, ...fields } = input;
+	return run(
+		ctx,
+		'createWorkflow',
+		'postonce.workflows.create',
+		'workflows',
+		{ method: 'POST', idempotencyKey, body: compactBody(fields) },
+		auditPayload(fields, ['is_active']),
+	);
+};
+
+/** PUT /v1/workflows/{id} */
+export const updateWorkflow: PostOnceEndpoints['updateWorkflow'] = async (
+	ctx,
+	input,
+) => {
+	const { id, ...fields } = input;
+	return run(
+		ctx,
+		'updateWorkflow',
+		'postonce.workflows.update',
+		`workflows/${segment(id)}`,
+		{ method: 'PUT', body: compactBody(fields) },
+		auditPayload(input, ['id', 'is_active']),
+	);
+};
+
+/** DELETE /v1/workflows/{id} */
+export const deleteWorkflow: PostOnceEndpoints['deleteWorkflow'] = async (
+	ctx,
+	input,
+) =>
+	run(
+		ctx,
+		'deleteWorkflow',
+		'postonce.workflows.delete',
+		`workflows/${segment(input.id)}`,
+		{ method: 'DELETE' },
+		auditPayload(input, ['id']),
+	);
+
+/** GET /v1/webhooks */
+export const listWebhooks: PostOnceEndpoints['listWebhooks'] = async (ctx) =>
+	run(ctx, 'listWebhooks', 'postonce.webhooks.list', 'webhooks', {}, {});
+
+/** GET /v1/webhooks/{id} */
+export const getWebhook: PostOnceEndpoints['getWebhook'] = async (ctx, input) =>
+	run(
+		ctx,
+		'getWebhook',
+		'postonce.webhooks.get',
+		`webhooks/${segment(input.id)}`,
+		{},
+		auditPayload(input, ['id']),
+	);
+
+/** POST /v1/webhooks: the reply carries the signing secret, the event does not. */
+export const createWebhook: PostOnceEndpoints['createWebhook'] = async (
+	ctx,
+	input,
+) =>
+	run(
+		ctx,
+		'createWebhook',
+		'postonce.webhooks.create',
+		'webhooks',
+		{ method: 'POST', body: compactBody(input) },
+		auditPayload(input, []),
+	);
+
+/** DELETE /v1/webhooks/{id} */
+export const deleteWebhook: PostOnceEndpoints['deleteWebhook'] = async (
+	ctx,
+	input,
+) =>
+	run(
+		ctx,
+		'deleteWebhook',
+		'postonce.webhooks.delete',
+		`webhooks/${segment(input.id)}`,
+		{ method: 'DELETE' },
+		auditPayload(input, ['id']),
+	);

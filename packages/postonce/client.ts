@@ -38,7 +38,7 @@ export type PostOnceQuery = Record<
 >;
 
 export type PostOnceRequestOptions = {
-	method?: 'GET' | 'POST';
+	method?: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
 	body?: Record<string, unknown>;
 	query?: PostOnceQuery;
 	/** Sent as `Idempotency-Key`; a repeat with the same body returns the original post. */
@@ -91,7 +91,7 @@ export async function makePostOnceRequest<T>(
 	}
 
 	const { method = 'GET', body, query, idempotencyKey } = options;
-	const hasBody = method === 'POST' && body !== undefined;
+	const hasBody = method !== 'GET' && method !== 'DELETE' && body !== undefined;
 
 	const headers: Record<string, string> = {
 		Accept: 'application/json',

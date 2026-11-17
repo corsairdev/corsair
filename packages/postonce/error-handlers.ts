@@ -24,8 +24,19 @@ export function postonceErrorCode(error: Error): string | undefined {
  * network failure after PostOnce already accepted the write is unsafe to
  * replay. Reads are safe.
  */
+const NON_IDEMPOTENT = new Set([
+	'posts.create',
+	'posts.cancel',
+	'posts.publish',
+	'posts.retryTarget',
+	'drafts.create',
+	'media.createUpload',
+	'workflows.create',
+	'webhooks.create',
+]);
+
 export const isNonIdempotent = (operation: string): boolean =>
-	operation === 'posts.create' || operation === 'posts.cancel';
+	NON_IDEMPOTENT.has(operation);
 
 /**
  * PostOnce reports failures with ordinary HTTP status codes plus a string
