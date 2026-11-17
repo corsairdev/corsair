@@ -36,7 +36,7 @@ export const validate: CorsairEndpoint<
 	await logEventFromContext(
 		ctx,
 		'labs64netlicensing.licensees.validate',
-		{ number: licenseeNumber, modules: items.length },
+		{ modules: items.length },
 		'completed',
 	);
 	return ValidateOutputSchema.parse({
@@ -64,7 +64,7 @@ export const transfer: CorsairEndpoint<
 	await logEventFromContext(
 		ctx,
 		'labs64netlicensing.licensees.transfer',
-		{ number: parsed.licenseeNumber, source: parsed.sourceLicenseeNumber },
+		{},
 		'completed',
 	);
 	return TransferOutputSchema.parse({

@@ -267,7 +267,7 @@ const netLicensingEndpointMeta = {
 		description: 'Delete a licensee; forceCascade also deletes its licenses.',
 	},
 	'licensees.validate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Check which product modules a licensee may use; floating checkouts and pay-per-use counts change unless dryRun is true.',
 	},

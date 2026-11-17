@@ -23,7 +23,7 @@ pnpm add @corsair-dev/labs64netlicensing
 | `licensees.list` | `labs64netlicensing.api.licensees.list` | `read` | List licensees (the vendor's customers). |
 | `licensees.transfer` | `labs64netlicensing.api.licensees.transfer` | `destructive` | Move every license of a source licensee (marked for transfer) to this licensee; NetLicensing then removes the source licensee. |
 | `licensees.update` | `labs64netlicensing.api.licensees.update` | `write` | Update a licensee. |
-| `licensees.validate` | `labs64netlicensing.api.licensees.validate` | `write` | Check which product modules a licensee may use; floating checkouts and pay-per-use counts change unless dryRun is true. |
+| `licensees.validate` | `labs64netlicensing.api.licensees.validate` | `destructive` | Check which product modules a licensee may use; floating checkouts and pay-per-use counts change unless dryRun is true. |
 | `licenses.create` | `labs64netlicensing.api.licenses.create` | `write` | Create a license for a licensee from a license template. |
 | `licenses.delete` | `labs64netlicensing.api.licenses.delete` | `destructive` | Delete a license. |
 | `licenses.get` | `labs64netlicensing.api.licenses.get` | `read` | Get one license by number. |

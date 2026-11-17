@@ -30,7 +30,10 @@ async function load(
 	const body = await netlicensingGet<unknown>(ctx.key, path, {
 		filter: parsed.filter,
 	});
-	return { rows: listedItems(body), page: itemsOf(body).page };
+	return {
+		rows: listedItems(body, path === '/license' ? 'License' : 'Product'),
+		page: itemsOf(body).page,
+	};
 }
 
 export const listLicenses: CorsairEndpoint<

@@ -6,7 +6,7 @@ description: "Manage NetLicensing products, product modules, license templates, 
 
 Use **Labs64 NetLicensing** through Corsair: one client, typed API calls, local DB sync.
 
-Create an API key in the NetLicensing console under Settings > API Access. Its role decides what the plugin can do: Licensee and Analytics keys read, Operation adds licensees and licenses, Maintenance adds products, modules and templates. The key is sent as HTTP Basic with the username `apiKey`.
+Create an API key in the NetLicensing console under Settings > API Access. Its role decides what the plugin can do: a Licensee key only validates and transfers its own licensee, Analytics reads everything, Operation also writes licensees and licenses, and Maintenance also writes products, modules and templates. The key is sent as HTTP Basic with the username `apiKey`.
 
 Things to know:
 
@@ -14,7 +14,7 @@ Things to know:
 - **Every value is a string.** NetLicensing returns each entity as a list of properties. `get`, `create` and `update` return `item` with `number`, `active` and `name` lifted out and every property, custom ones included, in `properties`; nested lists such as product discounts are in `lists`.
 - **Custom properties.** Any field NetLicensing does not know is stored as a custom property: pass them in `customProperties`.
 - **Paging.** List calls take `filter`, `;`-separated `key=value` pairs such as `page=0;items=50`, and return `page` (pageNumber, totalPages, totalItems, hasNext).
-- **Validation changes state.** `licensees.validate` checks out floating sessions and records pay-per-use quantities unless `dryRun` is true, and it clears the licensee's `markedForTransfer` flag.
+- **Validation changes state.** `licensees.validate` checks out floating sessions and uses up pay-per-use and quota amounts unless `dryRun` is true, so it is `destructive`; it also clears the licensee's `markedForTransfer` flag.
 - **Deletes.** `forceCascade: true` also deletes what depends on the entity (a product's modules, templates, licensees and licenses). Deletes can't be undone.
 
 **What you get:**

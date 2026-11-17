@@ -476,6 +476,78 @@ describe('licensees.validate and transfer', () => {
 	});
 });
 
+describe('malformed replies and privacy', () => {
+	it.each([
+		['a scalar items container', { items: false }],
+		['a non-object item', { items: { item: [false] } }],
+	])('rejects %s', async (_n, body) => {
+		mockRequest.mockResolvedValueOnce(body);
+		await expect(Licensees.list(ctx(), {})).rejects.toThrow(
+			'unexpected response',
+		);
+	});
+
+	it('keeps only Product items when products.list exports settings too', async () => {
+		mockRequest.mockResolvedValueOnce({
+			items: {
+				item: [
+					{ type: 'Product', property: [{ name: 'number', value: 'P1' }] },
+					{
+						type: 'ProductModule',
+						property: [{ name: 'number', value: 'M1' }],
+					},
+					{
+						type: 'LicenseTemplate',
+						property: [{ name: 'number', value: 'E1' }],
+					},
+				],
+			},
+		});
+		const result = await Products.list(ctx(), {
+			filter: 'exportSettings=true',
+		});
+		expect(result.products.map((p) => p.number)).toEqual(['P1']);
+	});
+
+	it('removes a licensee alias from the error URL', async () => {
+		const error = new ApiError(
+			{ method: 'POST', url: '/licensee/jane%40example.com/validate' },
+			{
+				url: 'https://go.netlicensing.io/core/v2/rest/licensee/jane%40example.com/validate',
+				ok: false,
+				status: 401,
+				statusText: 'Unauthorized',
+				body: {},
+			},
+			'Unauthorized',
+		);
+		mockRequest.mockRejectedValueOnce(error);
+		const caught = await Licensees.validate(ctx(), {
+			licenseeNumber: 'jane@example.com',
+		}).catch(
+			// unknown: a promise can reject with any value; checked below.
+			(e: unknown) => e,
+		);
+		expect(caught).toBe(error);
+		const dump = JSON.stringify({
+			url: (caught as ApiError).url,
+			request: (caught as ApiError).request,
+		});
+		expect(dump).not.toContain('jane');
+		expect((caught as ApiError).url).toBe(
+			'https://go.netlicensing.io/core/v2/rest/licensee/[id]/validate',
+		);
+	});
+
+	it('does not log the licensee number or alias on validate', async () => {
+		mockRequest.mockResolvedValueOnce({ items: { item: [] }, ttl: 'x' });
+		await Licensees.validate(ctx(), { licenseeNumber: 'jane@example.com' });
+		expect(
+			JSON.stringify(jest.mocked(logEventFromContext).mock.calls),
+		).not.toContain('jane');
+	});
+});
+
 describe('errors', () => {
 	it('drops the form body from a failed write and keeps the ApiError', async () => {
 		const error = new ApiError(

@@ -33,6 +33,14 @@ export async function netlicensingGet<T>(
 	}
 }
 
+const ENTITY_PATH =
+	/\/(product|productmodule|licensetemplate|licensee|license|transaction)\/[^/?#]+/g;
+
+/** Replaces entity numbers in a path and drops the query string. */
+export function withoutIds(url: string): string {
+	return (url.split('?')[0] ?? url).replace(ENTITY_PATH, '/$1/[id]');
+}
+
 /**
  * Core's message for a NetLicensing error is only the HTTP status text; the
  * reason is in `infos.info[].value` (e.g. "Requested product does not
@@ -44,7 +52,12 @@ function explain(error: unknown): void {
 	if (!(error instanceof ApiError)) return;
 	if (error.request) {
 		(error.request as { body?: unknown }).body = undefined;
+		const req = error.request as { url?: unknown; query?: unknown };
+		if (typeof req.url === 'string') req.url = withoutIds(req.url);
+		req.query = undefined;
 	}
+	// The id in the path can be a licensee alias such as an email address.
+	(error as { url: string }).url = withoutIds(error.url);
 	// unknown: the error body is provider JSON, checked field by field.
 	const infos = (error.body as { infos?: { info?: unknown } } | undefined)
 		?.infos?.info;
@@ -182,7 +195,10 @@ function propertiesOf(node: unknown): Record<string, string> {
 
 // unknown: an `item` node from the response, checked field by field.
 export function toItem(node: unknown): NetLicensingItem {
-	const record = (node ?? {}) as Record<string, unknown>;
+	if (!node || typeof node !== 'object' || Array.isArray(node)) {
+		throw new Error('NetLicensing returned an unexpected response');
+	}
+	const record = node as Record<string, unknown>;
 	const properties = propertiesOf(node);
 	const lists = asList(record.list).map(toList);
 	return {
@@ -218,6 +234,13 @@ export function itemsOf(body: unknown): {
 		throw new Error('NetLicensing returned an unexpected response');
 	}
 	const record = body as Record<string, unknown>;
+	// `items: null` means nothing to return; any other non-object is malformed.
+	if (
+		record.items !== null &&
+		(typeof record.items !== 'object' || Array.isArray(record.items))
+	) {
+		throw new Error('NetLicensing returned an unexpected response');
+	}
 	const items = (record.items ?? {}) as Record<string, unknown>;
 	const num = (v: unknown) =>
 		v == null || v === '' || Number.isNaN(Number(v)) ? undefined : Number(v);
@@ -240,13 +263,16 @@ export function itemsOf(body: unknown): {
 }
 
 // unknown: the response body, checked field by field.
-export function listedItems(body: unknown): Record<string, string>[] {
-	if (!body || typeof body !== 'object' || !('items' in body)) {
-		throw new Error('NetLicensing returned an unexpected response');
-	}
-	const items = (body as { items?: unknown }).items;
-	if (!items || typeof items !== 'object') return [];
-	return asList((items as { item?: unknown }).item).map(propertyMap);
+export function listedItems(
+	// unknown: the response body, checked by itemsOf.
+	body: unknown,
+	type: string,
+): Record<string, string>[] {
+	// `filter=exportSettings=true` and `exportAssets=true` add other entity
+	// types to a list, so only items of the asked-for type are kept.
+	return itemsOf(body)
+		.items.filter((item) => item.type === undefined || item.type === type)
+		.map((item) => item.properties);
 }
 
 export function optionalFlag(value: string | undefined): boolean | undefined {

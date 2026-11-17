@@ -308,7 +308,7 @@ await corsair.labs64netlicensing.api.licensees.update({ licenseeNumber: 'I001', 
 
 Check which product modules a licensee may use; floating checkouts and pay-per-use counts change unless dryRun is true.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.labs64netlicensing.api.licensees.validate({ licenseeNumber: 'I001', dryRun: true });
