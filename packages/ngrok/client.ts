@@ -81,15 +81,23 @@ export function describeNgrokError(
  * status, Retry-After and the rate-limit fields reach core (R8). The body keeps
  * only ngrok's `error_code`, `msg` and operation id; the sent body is dropped,
  * because a create can carry a traffic policy or metadata.
+ *
+ * ngrok echoes a credential it refuses: send an authtoken where an API key
+ * belongs and `ERR_NGROK_207` quotes it in `msg`. Whatever was sent as the key
+ * is cut from every message before it leaves the plugin.
  */
-function sanitizeApiError(error: ApiError): ApiError {
+function sanitizeApiError(error: ApiError, apiKey: string): ApiError {
+	const redact = (text: string | undefined): string | undefined =>
+		text && apiKey.length > 0 ? text.split(apiKey).join('[REDACTED]') : text;
 	const {
 		body: _body,
 		formData: _formData,
 		query: _query,
 		...request
 	} = error.request;
-	const { code, message, operationId } = readNgrokError(error.body);
+	const parsed = readNgrokError(error.body);
+	const { code, operationId } = parsed;
+	const message = redact(parsed.message);
 	const envelope =
 		code === undefined && message === undefined
 			? undefined
@@ -107,7 +115,7 @@ function sanitizeApiError(error: ApiError): ApiError {
 			statusText: error.statusText,
 			body: envelope,
 		},
-		describeNgrokError(error.status, error.body, error.message),
+		redact(describeNgrokError(error.status, error.body, error.message)) ?? '',
 		{
 			retryAfter: error.retryAfter,
 			rateLimitReset: error.rateLimitReset,
@@ -176,7 +184,7 @@ export async function makeNgrokRequest(
 			rateLimitConfig: NGROK_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) throw sanitizeApiError(error);
+		if (error instanceof ApiError) throw sanitizeApiError(error, apiKey);
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new NgrokAPIError(error.message, { cause: error, method });

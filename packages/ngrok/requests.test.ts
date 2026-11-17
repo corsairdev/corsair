@@ -125,14 +125,14 @@ describe('endpoints', () => {
 	it('passes before_id, limit and filter', async () => {
 		const { url } = await capture(
 			endpointsNested.endpoints.list,
-			{ before_id: 'ep_next', limit: 10, filter: 'proto="https"' },
+			{ before_id: 'ep_next', limit: 10, filter: 'obj.proto == "https"' },
 			endpoints,
 		);
 
 		const parsed = new URL(url);
 		expect(parsed.searchParams.get('before_id')).toBe('ep_next');
 		expect(parsed.searchParams.get('limit')).toBe('10');
-		expect(parsed.searchParams.get('filter')).toBe('proto="https"');
+		expect(parsed.searchParams.get('filter')).toBe('obj.proto == "https"');
 	});
 
 	it('takes the whole next_page_uri and sends only its before_id', async () => {
@@ -443,6 +443,25 @@ describe('events', () => {
 });
 
 describe('ngrok error reporting', () => {
+	it('cuts an echoed credential out of ERR_NGROK_207', async () => {
+		const error = await capture(
+			endpointsNested.endpoints.list,
+			{},
+			{
+				error_code: 'ERR_NGROK_207',
+				status_code: 403,
+				msg: `The API key you specified ${API_KEY} looks like an authtoken.`,
+				details: { operation_id: 'op_1' },
+			},
+			{ status: 403 },
+		).catch((caught: unknown) => caught); // unknown: a rejection has no type
+		expect(String(error)).toContain('ERR_NGROK_207');
+		expect(String(error)).not.toContain(API_KEY);
+		expect(JSON.stringify((error as { body?: unknown }).body)).not.toContain(
+			API_KEY,
+		);
+	});
+
 	it('reports a missing Authorization header by its own code', async () => {
 		const error = await capture(
 			endpointsNested.endpoints.list,

@@ -44,7 +44,7 @@ const EndpointsListInputSchema = z.object({
 		.min(1)
 		.optional()
 		.describe(
-			'ngrok filter syntax, e.g. description="my app" or proto="https".',
+			'A CEL expression over each item as `obj`, e.g. obj.description == "my app" or obj.proto == "https".',
 		),
 });
 
