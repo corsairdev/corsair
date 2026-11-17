@@ -3774,6 +3774,14 @@
                 ]
               },
               {
+                "group": "Paperform",
+                "pages": [
+                  "plugins/paperform/overview",
+                  "plugins/paperform/api",
+                  "plugins/paperform/database"
+                ]
+              },
+              {
                 "group": "Parallel",
                 "pages": [
                   "plugins/parallel/overview",

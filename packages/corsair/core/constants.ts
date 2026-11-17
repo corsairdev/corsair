@@ -454,6 +454,7 @@ export const BaseProviders = [
 	'oura',
 	'outlook',
 	'pagerduty',
+	'paperform',
 	'parallel',
 	'parma',
 	'parseur',
@@ -1149,6 +1150,7 @@ export const ProviderDisplayNames = {
 	oura: 'Oura',
 	outlook: 'Outlook',
 	pagerduty: 'PagerDuty',
+	paperform: 'Paperform',
 	parallel: 'Parallel',
 	parma: 'Parma',
 	parseur: 'Parseur',
@@ -1851,6 +1853,7 @@ export type AllProviders =
 	| 'oura'
 	| 'outlook'
 	| 'pagerduty'
+	| 'paperform'
 	| 'parallel'
 	| 'parma'
 	| 'parseur'

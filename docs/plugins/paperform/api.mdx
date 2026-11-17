@@ -1,0 +1,223 @@
+---
+title: "Paperform API reference"
+sidebarTitle: "API"
+description: "API reference for the Paperform plugin in Corsair: every `paperform.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Forms
+
+### list
+
+`forms.list`
+
+List forms. Submission answers are not read.
+
+**Risk:** `read`
+
+```ts
+await corsair.paperform.api.forms.list({});
+```
+
+**Input:** _empty object_
+
+GET /v1/forms. Stores id, title, and slug.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `forms` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="forms full type">
+
+```ts
+{
+  id: string,
+  title?: string,
+  slug?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Spaces
+
+### forms
+
+`spaces.forms`
+
+List forms in one space.
+
+**Risk:** `read`
+
+```ts
+await corsair.paperform.api.spaces.forms({ id: 'abc123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+GET /v1/spaces/{id}/forms.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `forms` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="forms full type">
+
+```ts
+{
+  id: string,
+  title?: string,
+  slug?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`spaces.get`
+
+Read one space.
+
+**Risk:** `read`
+
+```ts
+await corsair.paperform.api.spaces.get({ id: 'abc123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+GET /v1/spaces/{id}.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `space` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="space full type">
+
+```ts
+{
+  id: string,
+  name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`spaces.list`
+
+List spaces.
+
+**Risk:** `read`
+
+```ts
+await corsair.paperform.api.spaces.list({});
+```
+
+**Input:** _empty object_
+
+GET /v1/spaces. Stores id and name.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spaces` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="spaces full type">
+
+```ts
+{
+  id: string,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Translations
+
+### list
+
+`translations.list`
+
+List translations. The mapping text is not stored.
+
+**Risk:** `read`
+
+```ts
+await corsair.paperform.api.translations.list({});
+```
+
+**Input:** _empty object_
+
+GET /v1/translations. Stores id and name.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `translations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="translations full type">
+
+```ts
+{
+  id: string,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

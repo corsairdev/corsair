@@ -1,0 +1,33 @@
+displayName: Paperform
+description: List Paperform forms, spaces, and translations, and read one space.
+domain: paperform.co
+recommendedAuth: api_key
+overviewNote: |
+  The key is a Bearer token. Empty Bearer requests to forms, spaces, one space, space forms, and translations each returned HTTP 401. Translation mappings are not stored. Submission answers are not read.
+examples:
+  read:
+    path: forms.list
+    title: List forms
+    args: {}
+apiNotes:
+  forms.list: |
+    GET /v1/forms. Stores id, title, and slug.
+  spaces.list: |
+    GET /v1/spaces. Stores id and name.
+  spaces.get: |
+    GET /v1/spaces/{id}.
+  spaces.forms: |
+    GET /v1/spaces/{id}/forms.
+  translations.list: |
+    GET /v1/translations. Stores id and name.
+apiExamples:
+  forms.list:
+    call: "{}"
+  spaces.list:
+    call: "{}"
+  spaces.get:
+    call: "{ id: 'abc123' }"
+  spaces.forms:
+    call: "{ id: 'abc123' }"
+  translations.list:
+    call: "{}"
