@@ -4830,6 +4830,14 @@
                 ]
               },
               {
+                "group": "Tomba",
+                "pages": [
+                  "plugins/tomba/overview",
+                  "plugins/tomba/api",
+                  "plugins/tomba/database"
+                ]
+              },
+              {
                 "group": "TomTom",
                 "pages": [
                   "plugins/tomtom/overview",
