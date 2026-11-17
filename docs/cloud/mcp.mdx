@@ -169,6 +169,27 @@ How a file gets in depends on where you're chatting:
 
 See, share and delete your files on your link's **Files** page: open the link at [hub.corsair.dev/me](https://hub.corsair.dev/me).
 
+## Corsair's own apps
+
+Besides the apps you connect, the agent can use apps that Corsair runs itself. They need no other account.
+
+- **PM**: issues and projects, with a status, priority, assignee, labels and a due date.
+- **CRM**: people, companies and deals, with notes and tasks.
+- **pg**: your own Postgres databases, queried by name. See [Postgres databases](#postgres-databases).
+- **Files**: files your apps can use. See [Files](#files).
+- **Mate**: the chat assistant in Corsair. The agent can find and read your Mate chats, including ones in Shared.
+
+Each one has a page on your link at [hub.corsair.dev/me](https://hub.corsair.dev/me).
+
+### Postgres databases
+
+pg lets the agent run SQL on your own Postgres databases without ever seeing their connection URLs.
+
+- **Adding a database.** Ask the agent to add one, and it gives you a setup link. The workspace owner opens it within 30 minutes and pastes the connection URL there. Corsair stores the URL encrypted; it never passes through the chat.
+- **Reading and writing.** The agent runs one statement at a time. A read runs in a transaction that is always rolled back, so nothing it does persists, and returns up to 1,000 rows. A write commits, and needs write access. A database marked read-only takes reads only, for everyone.
+- **Access.** The owner chooses which teammates can read or write each database on the link's **pg** page, and its **Audit** tab lists every query.
+- **Limits.** Per database: 10 queries per 10 seconds and 60 per minute for each person, and 120 per minute for everyone together.
+
 ## Skills
 
 A skill is a set of instructions an agent loads when a task calls for it: a `SKILL.md`, sometimes with files it refers to. Save a skill to Corsair once and every agent on the same link can use it, in whichever client it runs. Corsair keeps your skills in your own Corsair instance.
