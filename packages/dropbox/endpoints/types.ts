@@ -1,3 +1,4 @@
+import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
 
 // ── Shared Sub-Schemas ────────────────────────────────────────────────────────
@@ -137,12 +138,7 @@ const FilesDeleteOutputSchema = z
 	})
 	.loose();
 
-const FilesDownloadOutputSchema = z.object({
-	content: z.string(),
-	name: z.string().optional(),
-	size: z.number().optional(),
-	path_lower: z.string().optional(),
-});
+const FilesDownloadOutputSchema = FileOutputSchema;
 
 const FilesMoveOutputSchema = z
 	.object({

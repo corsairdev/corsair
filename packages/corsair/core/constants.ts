@@ -273,6 +273,7 @@ export const BaseProviders = [
 	'flexisign',
 	'flutterwave',
 	'fluxguard',
+	'fly',
 	'folk',
 	'followupboss',
 	'fomo',
@@ -523,6 +524,7 @@ export const BaseProviders = [
 	'sharepoint',
 	'shipengine',
 	'shippo',
+	'shopify',
 	'shortcut',
 	'shortio',
 	'slack',
@@ -901,6 +903,7 @@ export const ProviderDisplayNames = {
 	flexisign: 'Flexisign',
 	flutterwave: 'Flutterwave',
 	fluxguard: 'Fluxguard',
+	fly: 'Fly',
 	folk: 'Folk',
 	followupboss: 'Follow Up Boss',
 	fomo: 'Fomo',
@@ -1151,6 +1154,7 @@ export const ProviderDisplayNames = {
 	sharepoint: 'SharePoint',
 	shipengine: 'ShipStation API (formerly ShipEngine)',
 	shippo: 'Shippo',
+	shopify: 'Shopify',
 	shortcut: 'Shortcut',
 	shortio: 'Short.io',
 	slack: 'Slack',
@@ -1536,6 +1540,7 @@ export type AllProviders =
 	| 'flexisign'
 	| 'flutterwave'
 	| 'fluxguard'
+	| 'fly'
 	| 'folk'
 	| 'followupboss'
 	| 'fomo'
@@ -1786,6 +1791,7 @@ export type AllProviders =
 	| 'sharepoint'
 	| 'shipengine'
 	| 'shippo'
+	| 'shopify'
 	| 'shortcut'
 	| 'shortio'
 	| 'slack'

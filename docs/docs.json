@@ -2292,6 +2292,14 @@
                 ]
               },
               {
+                "group": "Fly.io",
+                "pages": [
+                  "plugins/fly/overview",
+                  "plugins/fly/api",
+                  "plugins/fly/database"
+                ]
+              },
+              {
                 "group": "Folk",
                 "pages": [
                   "plugins/folk/overview",
@@ -4337,6 +4345,15 @@
                   "plugins/shipengine/overview",
                   "plugins/shipengine/api",
                   "plugins/shipengine/database"
+                ]
+              },
+              {
+                "group": "Shopify",
+                "pages": [
+                  "plugins/shopify/overview",
+                  "plugins/shopify/api",
+                  "plugins/shopify/database",
+                  "plugins/shopify/webhooks"
                 ]
               },
               {
