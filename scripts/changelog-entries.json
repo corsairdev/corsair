@@ -7127,5 +7127,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/simplesat",
+    "dir": "packages/simplesat",
+    "name": "Simplesat",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
