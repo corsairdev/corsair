@@ -1992,6 +1992,14 @@
                 ]
               },
               {
+                "group": "Echtpost",
+                "pages": [
+                  "plugins/echtpost/overview",
+                  "plugins/echtpost/api",
+                  "plugins/echtpost/database"
+                ]
+              },
+              {
                 "group": "Ecologi",
                 "pages": [
                   "plugins/ecologi/overview",
