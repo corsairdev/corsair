@@ -1,5 +1,6 @@
 import type { ExpressionBuilder, Insertable, Updateable } from 'kysely';
 import type { ZodTypeAny, z } from 'zod';
+import { findAccountRow } from '../core/account-lookup';
 import { generateUUID } from '../core/utils';
 import type {
 	CorsairAccount,
@@ -502,10 +503,17 @@ function createAccountsClient(
 				.where('name', '=', integrationName)
 				.executeTakeFirst();
 			if (!integration) return null;
-			return base.findOne({
-				tenant_id: tenantId,
-				integration_id: integration.id,
+			const row = await findAccountRow(database.db, {
+				tenantId,
+				integrationId: integration.id,
 			});
+			return row
+				? base.findOne({
+						id: row.id,
+						tenant_id: tenantId,
+						integration_id: integration.id,
+					})
+				: null;
 		},
 		listByTenant: (tenantId, options) =>
 			base.findMany({
@@ -514,9 +522,10 @@ function createAccountsClient(
 				offset: options?.offset,
 			}),
 		upsertByTenantAndIntegration: async (tenantId, integrationId, data) => {
-			const existing = await base.findOne({
-				tenant_id: tenantId,
-				integration_id: integrationId,
+			assertDatabaseConfigured(database);
+			const existing = await findAccountRow(database.db, {
+				tenantId,
+				integrationId,
 			});
 			if (existing) {
 				return (await base.update(existing.id, data))!;
@@ -682,6 +691,8 @@ export type TypedEntity<DataSchema extends ZodTypeAny> = Omit<
 	'data'
 > & {
 	data: z.infer<DataSchema>;
+	/** Set when a read spans a tenant's accounts: the owning account's label. */
+	account?: string;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1328,12 +1339,10 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 			);
 		}
 
-		const account = await database.db
-			.selectFrom('corsair_accounts')
-			.selectAll()
-			.where('tenant_id', '=', context.tenantId)
-			.where('integration_id', '=', integration.id)
-			.executeTakeFirst();
+		const account = await findAccountRow(database.db, {
+			tenantId: context.tenantId,
+			integrationId: integration.id,
+		});
 
 		if (!account) {
 			throw new Error(
@@ -1427,12 +1436,10 @@ export function createPluginOrm<
 			);
 		}
 
-		const account = await database.db
-			.selectFrom('corsair_accounts')
-			.selectAll()
-			.where('tenant_id', '=', tenantId)
-			.where('integration_id', '=', integration.id)
-			.executeTakeFirst();
+		const account = await findAccountRow(database.db, {
+			tenantId,
+			integrationId: integration.id,
+		});
 
 		if (!account) {
 			throw new Error(

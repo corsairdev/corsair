@@ -221,6 +221,7 @@ export const BaseProviders = [
 	'dnsfilter',
 	'dockerhub',
 	'docmosis',
+	'docparser',
 	'docsbotai',
 	'docsumo',
 	'documenso',
@@ -242,6 +243,7 @@ export const BaseProviders = [
 	'ecologi',
 	'elevenlabs',
 	'elorus',
+	'emailable',
 	'emailoctopus',
 	'emelia',
 	'encodian',
@@ -359,6 +361,7 @@ export const BaseProviders = [
 	'humanitix',
 	'hunterio',
 	'hyperbrowser',
+	'identitycheck',
 	'ignisign',
 	'imagekit',
 	'imagior',
@@ -376,6 +379,7 @@ export const BaseProviders = [
 	'jira',
 	'jobnimbus',
 	'jotform',
+	'jumpcloud',
 	'junglescout',
 	'kadoa',
 	'kaggle',
@@ -405,6 +409,7 @@ export const BaseProviders = [
 	'linear',
 	'linguapop',
 	'linkedin',
+	'linkup',
 	'litescrape',
 	'livesession',
 	'logodev',
@@ -423,6 +428,7 @@ export const BaseProviders = [
 	'memberstack',
 	'memberspot',
 	'merriamwebsterdict',
+	'microsoftclarity',
 	'minerstat',
 	'minimax',
 	'miro',
@@ -436,9 +442,18 @@ export const BaseProviders = [
 	'motion',
 	'mrscraper',
 	'nanonets',
+	'nasa',
+	'nasdaq',
+	'needle',
 	'neon',
+	'nethunt',
+	'neuronwriter',
 	'netsuite',
+	'neutrino',
+	'newrelic',
+	'ngrok',
 	'niftyimages',
+	'ninox',
 	'neverbounce',
 	'newsapi',
 	'nextdns',
@@ -461,6 +476,7 @@ export const BaseProviders = [
 	'oura',
 	'outlook',
 	'pagerduty',
+	'paperform',
 	'parallel',
 	'parma',
 	'parsehub',
@@ -590,6 +606,7 @@ export const BaseProviders = [
 	'stackai',
 	'stackexchange',
 	'starton',
+	'stormglass',
 	'strava',
 	'streamtime',
 	'stripe',
@@ -930,6 +947,7 @@ export const ProviderDisplayNames = {
 	dnsfilter: 'DNSFilter',
 	dockerhub: 'Docker Hub',
 	docmosis: 'Docmosis',
+	docparser: 'Docparser',
 	docsbotai: 'DocsBot AI',
 	docsumo: 'Docsumo',
 	documenso: 'Documenso',
@@ -951,6 +969,7 @@ export const ProviderDisplayNames = {
 	ecologi: 'Ecologi',
 	elevenlabs: 'ElevenLabs',
 	elorus: 'Elorus',
+	emailable: 'Emailable',
 	emailoctopus: 'EmailOctopus',
 	emelia: 'Emelia',
 	encodian: 'Encodian',
@@ -1068,6 +1087,7 @@ export const ProviderDisplayNames = {
 	humanitix: 'Humanitix',
 	hunterio: 'Hunter.io',
 	hyperbrowser: 'Hyperbrowser',
+	identitycheck: 'IdentityCheck',
 	ignisign: 'Ignisign',
 	imagekit: 'ImageKit',
 	imagior: 'Imagior',
@@ -1085,6 +1105,7 @@ export const ProviderDisplayNames = {
 	jira: 'Jira',
 	jobnimbus: 'JobNimbus',
 	jotform: 'Jotform',
+	jumpcloud: 'JumpCloud',
 	junglescout: 'Jungle Scout',
 	kadoa: 'Kadoa',
 	kaggle: 'Kaggle',
@@ -1114,6 +1135,7 @@ export const ProviderDisplayNames = {
 	linear: 'Linear',
 	linguapop: 'Linguapop',
 	linkedin: 'LinkedIn',
+	linkup: 'Linkup',
 	litescrape: 'LiteScrape',
 	livesession: 'LiveSession',
 	logodev: 'Logo.dev',
@@ -1132,6 +1154,7 @@ export const ProviderDisplayNames = {
 	memberstack: 'Memberstack',
 	memberspot: 'MemberSpot',
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
+	microsoftclarity: 'Microsoft Clarity',
 	minerstat: 'Minerstat',
 	minimax: 'MiniMax',
 	miro: 'Miro',
@@ -1145,9 +1168,18 @@ export const ProviderDisplayNames = {
 	motion: 'Motion',
 	mrscraper: 'MrScraper',
 	nanonets: 'Nanonets',
+	nasa: 'NASA',
+	nasdaq: 'Nasdaq Data Link',
+	needle: 'Needle',
 	neon: 'Neon',
+	nethunt: 'NetHunt CRM',
+	neuronwriter: 'NEURONwriter',
 	netsuite: 'NetSuite',
+	neutrino: 'Neutrino API',
+	newrelic: 'New Relic',
+	ngrok: 'ngrok',
 	niftyimages: 'NiftyImages',
+	ninox: 'Ninox',
 	neverbounce: 'NeverBounce',
 	newsapi: 'NewsAPI',
 	nextdns: 'NextDNS',
@@ -1170,6 +1202,7 @@ export const ProviderDisplayNames = {
 	oura: 'Oura',
 	outlook: 'Outlook',
 	pagerduty: 'PagerDuty',
+	paperform: 'Paperform',
 	parallel: 'Parallel',
 	parma: 'Parma',
 	parsehub: 'ParseHub',
@@ -1299,6 +1332,7 @@ export const ProviderDisplayNames = {
 	stackai: 'StackAI',
 	stackexchange: 'Stack Exchange',
 	starton: 'Starton',
+	stormglass: 'Stormglass',
 	strava: 'Strava',
 	streamtime: 'Streamtime',
 	stripe: 'Stripe',
@@ -1646,6 +1680,7 @@ export type AllProviders =
 	| 'dnsfilter'
 	| 'dockerhub'
 	| 'docmosis'
+	| 'docparser'
 	| 'docsbotai'
 	| 'docsumo'
 	| 'documenso'
@@ -1667,6 +1702,7 @@ export type AllProviders =
 	| 'ecologi'
 	| 'elevenlabs'
 	| 'elorus'
+	| 'emailable'
 	| 'emailoctopus'
 	| 'emelia'
 	| 'encodian'
@@ -1784,6 +1820,7 @@ export type AllProviders =
 	| 'humanitix'
 	| 'hunterio'
 	| 'hyperbrowser'
+	| 'identitycheck'
 	| 'ignisign'
 	| 'imagekit'
 	| 'imagior'
@@ -1801,6 +1838,7 @@ export type AllProviders =
 	| 'jira'
 	| 'jobnimbus'
 	| 'jotform'
+	| 'jumpcloud'
 	| 'junglescout'
 	| 'kadoa'
 	| 'kaggle'
@@ -1830,6 +1868,7 @@ export type AllProviders =
 	| 'linear'
 	| 'linguapop'
 	| 'linkedin'
+	| 'linkup'
 	| 'litescrape'
 	| 'livesession'
 	| 'logodev'
@@ -1848,6 +1887,7 @@ export type AllProviders =
 	| 'memberstack'
 	| 'memberspot'
 	| 'merriamwebsterdict'
+	| 'microsoftclarity'
 	| 'minerstat'
 	| 'minimax'
 	| 'miro'
@@ -1861,9 +1901,18 @@ export type AllProviders =
 	| 'motion'
 	| 'mrscraper'
 	| 'nanonets'
+	| 'nasa'
+	| 'nasdaq'
+	| 'needle'
 	| 'neon'
+	| 'nethunt'
+	| 'neuronwriter'
 	| 'netsuite'
+	| 'neutrino'
+	| 'newrelic'
+	| 'ngrok'
 	| 'niftyimages'
+	| 'ninox'
 	| 'neverbounce'
 	| 'newsapi'
 	| 'nextdns'
@@ -1886,6 +1935,7 @@ export type AllProviders =
 	| 'oura'
 	| 'outlook'
 	| 'pagerduty'
+	| 'paperform'
 	| 'parallel'
 	| 'parma'
 	| 'parsehub'
@@ -2015,6 +2065,7 @@ export type AllProviders =
 	| 'stackai'
 	| 'stackexchange'
 	| 'starton'
+	| 'stormglass'
 	| 'strava'
 	| 'streamtime'
 	| 'stripe'

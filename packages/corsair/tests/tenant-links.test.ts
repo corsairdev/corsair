@@ -158,4 +158,33 @@ describe('webhook tenant links', () => {
 			await destroy();
 		}
 	});
+	it('scopes the lookup to an explicit tenant when the externalId is linked in two', async () => {
+		const { database, destroy } = createTestDatabase();
+		try {
+			const { integrationId, dek } = await seedSlackIntegration(database);
+			await seedSlackAccount(database, 'tenant_a', integrationId, dek);
+			await seedSlackAccount(database, 'tenant_b', integrationId, dek);
+			for (const tenantId of ['tenant_a', 'tenant_b']) {
+				await setWebhookTenantLink({
+					database,
+					kek: KEK,
+					pluginId: 'slack',
+					tenantId,
+					link: { linkType: 'team_id', externalId: 'T111' },
+				});
+			}
+
+			const account = await resolveAccountFromWebhookLink({
+				database,
+				kek: KEK,
+				pluginId: 'slack',
+				linkType: 'team_id',
+				externalId: 'T111',
+				tenantId: 'tenant_b',
+			});
+			expect(account?.id).toBe('account-tenant_b');
+		} finally {
+			await destroy();
+		}
+	});
 });

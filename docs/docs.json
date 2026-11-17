@@ -1861,6 +1861,14 @@
                 ]
               },
               {
+                "group": "Docparser",
+                "pages": [
+                  "plugins/docparser/overview",
+                  "plugins/docparser/api",
+                  "plugins/docparser/database"
+                ]
+              },
+              {
                 "group": "DocsBot AI",
                 "pages": [
                   "plugins/docsbotai/overview",
@@ -2030,6 +2038,14 @@
                   "plugins/elorus/overview",
                   "plugins/elorus/api",
                   "plugins/elorus/database"
+                ]
+              },
+              {
+                "group": "Emailable",
+                "pages": [
+                  "plugins/emailable/overview",
+                  "plugins/emailable/api",
+                  "plugins/emailable/database"
                 ]
               },
               {
@@ -3005,6 +3021,15 @@
                 ]
               },
               {
+                "group": "IdentityCheck",
+                "pages": [
+                  "plugins/identitycheck/overview",
+                  "plugins/identitycheck/api",
+                  "plugins/identitycheck/database",
+                  "plugins/identitycheck/webhooks"
+                ]
+              },
+              {
                 "group": "Ignisign",
                 "pages": [
                   "plugins/ignisign/overview",
@@ -3153,6 +3178,14 @@
                   "plugins/junglescout/overview",
                   "plugins/junglescout/api",
                   "plugins/junglescout/database"
+                ]
+              },
+              {
+                "group": "JumpCloud",
+                "pages": [
+                  "plugins/jumpcloud/overview",
+                  "plugins/jumpcloud/api",
+                  "plugins/jumpcloud/database"
                 ]
               },
               {
@@ -3375,6 +3408,14 @@
                 ]
               },
               {
+                "group": "Linkup",
+                "pages": [
+                  "plugins/linkup/overview",
+                  "plugins/linkup/api",
+                  "plugins/linkup/database"
+                ]
+              },
+              {
                 "group": "LiteScrape",
                 "pages": [
                   "plugins/litescrape/overview",
@@ -3520,6 +3561,14 @@
                 ]
               },
               {
+                "group": "Microsoft Clarity",
+                "pages": [
+                  "plugins/microsoftclarity/overview",
+                  "plugins/microsoftclarity/api",
+                  "plugins/microsoftclarity/database"
+                ]
+              },
+              {
                 "group": "Microsoft Teams",
                 "pages": [
                   "plugins/teams/overview",
@@ -3627,6 +3676,62 @@
                 ]
               },
               {
+                "group": "NASA",
+                "pages": [
+                  "plugins/nasa/overview",
+                  "plugins/nasa/api",
+                  "plugins/nasa/database"
+                ]
+              },
+              {
+                "group": "Nasdaq Data Link",
+                "pages": [
+                  "plugins/nasdaq/overview",
+                  "plugins/nasdaq/api",
+                  "plugins/nasdaq/database"
+                ]
+              },
+              {
+                "group": "Needle",
+                "pages": [
+                  "plugins/needle/overview",
+                  "plugins/needle/api",
+                  "plugins/needle/database"
+                ]
+              },
+              {
+                "group": "Neutrino API",
+                "pages": [
+                  "plugins/neutrino/overview",
+                  "plugins/neutrino/api",
+                  "plugins/neutrino/database"
+                ]
+              },
+              {
+                "group": "New Relic",
+                "pages": [
+                  "plugins/newrelic/overview",
+                  "plugins/newrelic/api",
+                  "plugins/newrelic/database"
+                ]
+              },
+              {
+                "group": "ngrok",
+                "pages": [
+                  "plugins/ngrok/overview",
+                  "plugins/ngrok/api",
+                  "plugins/ngrok/database"
+                ]
+              },
+              {
+                "group": "Ninox",
+                "pages": [
+                  "plugins/ninox/overview",
+                  "plugins/ninox/api",
+                  "plugins/ninox/database"
+                ]
+              },
+              {
                 "group": "NiftyImages",
                 "pages": [
                   "plugins/niftyimages/overview",
@@ -3643,11 +3748,27 @@
                 ]
               },
               {
+                "group": "NetHunt CRM",
+                "pages": [
+                  "plugins/nethunt/overview",
+                  "plugins/nethunt/api",
+                  "plugins/nethunt/database"
+                ]
+              },
+              {
                 "group": "NetSuite",
                 "pages": [
                   "plugins/netsuite/overview",
                   "plugins/netsuite/api",
                   "plugins/netsuite/database"
+                ]
+              },
+              {
+                "group": "NEURONwriter",
+                "pages": [
+                  "plugins/neuronwriter/overview",
+                  "plugins/neuronwriter/api",
+                  "plugins/neuronwriter/database"
                 ]
               },
               {
@@ -3827,6 +3948,14 @@
                   "plugins/pagerduty/api",
                   "plugins/pagerduty/database",
                   "plugins/pagerduty/webhooks"
+                ]
+              },
+              {
+                "group": "Paperform",
+                "pages": [
+                  "plugins/paperform/overview",
+                  "plugins/paperform/api",
+                  "plugins/paperform/database"
                 ]
               },
               {
@@ -4879,6 +5008,14 @@
                   "plugins/starton/overview",
                   "plugins/starton/api",
                   "plugins/starton/database"
+                ]
+              },
+              {
+                "group": "Stormglass",
+                "pages": [
+                  "plugins/stormglass/overview",
+                  "plugins/stormglass/api",
+                  "plugins/stormglass/database"
                 ]
               },
               {

@@ -1,6 +1,6 @@
 # Corsair
 
-> Corsair is the open-source integration layer for AI agents. It handles OAuth, API keys, permissions, webhooks and tool calls for 500+ apps, for developers who let their own users connect apps, for people and teams who want their agents to use their apps, and for companies that need both done safely.
+> Corsair is the open-source integration layer for AI agents. It handles OAuth, API keys, permissions, webhooks and tool calls for 700+ apps, for developers who let their own users connect apps, for people and teams who want their agents to use their apps, and for companies that need both done safely.
 
 ## Who it's for
 
@@ -28,7 +28,7 @@
 ## Product
 
 - [Home](https://corsair.dev): Overview, integrations, use cases and pricing.
-- [Integrations](https://corsair.dev/integrations): The catalog of 500+ apps, with every operation, webhook and auth type for each.
+- [Integrations](https://corsair.dev/integrations): The catalog of 700+ apps, with every operation, webhook and auth type for each.
 - [Corsair MCP](https://docs.corsair.dev/cloud/mcp): Add https://mcp.corsair.dev/mcp to Claude, ChatGPT, Cursor and other clients; links, modes, approvals and credits.
 - [Lug](https://lug.dev): Claim yourname.lug.dev, connect your apps once and paste the one address into Claude, Cursor, ChatGPT, Codex or OpenCode. Paths on the address, such as /work and /personal, limit which apps each agent can reach.
 - [Hub](https://docs.corsair.dev/hub/overview): The hosted relay for connect flows and approvals, and why it stores none of your users' tokens.
@@ -99,6 +99,6 @@ The full agent index lives at [docs.corsair.dev/llms.txt](https://docs.corsair.d
 - [MCP adapters](https://docs.corsair.dev/mcp-adapters/mcp-adapters): Anthropic, OpenAI, Vercel AI SDK, Mastra, and coding agents over MCP.
 
 ### Plugins & integrations
-- [Plugins](https://docs.corsair.dev/guides/plugins): How plugins work, with GitHub, Slack, HubSpot, Zendesk, Calendly, Zoom and 500+ more.
+- [Plugins](https://docs.corsair.dev/guides/plugins): How plugins work, with GitHub, Slack, HubSpot, Zendesk, Calendly, Zoom and 700+ more.
 - [Create your own plugin](https://docs.corsair.dev/guides/create-your-own-plugin): Scaffold and write a new integration plugin.
 - [Changelog](https://docs.corsair.dev/changelog): What each release of the SDK and plugins changed, week by week.
