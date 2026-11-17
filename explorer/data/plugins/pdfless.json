@@ -1,0 +1,280 @@
+{
+  "id": "pdfless",
+  "displayName": "PDFLess",
+  "description": "Generate PDFs from PDFLess document templates, list the templates and read the workspace quota. Requests send the API key in the apikey header.",
+  "npmPackageName": "@corsair-dev/pdfless",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 3,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "pdfless.api.pdfs.generate",
+      "shortPath": "pdfs.generate",
+      "description": "Render a PDF from a document template and return its download link. Uses one document from the workspace quota.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string",
+            "description": "Template id from templates.list."
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "Values for the template variables, e.g. { \"customer\": { \"name\": \"Ada\" } }."
+          },
+          {
+            "key": "reference_id",
+            "optional": true,
+            "type": "string",
+            "description": "Your own reference for the document, returned with it."
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "number",
+            "description": "Workspace id. The API key already selects a workspace, so this is rarely needed."
+          },
+          {
+            "key": "encryption_user_password",
+            "optional": true,
+            "type": "string",
+            "description": "Password needed to open the PDF."
+          },
+          {
+            "key": "encryption_owner_password",
+            "optional": true,
+            "type": "string",
+            "description": "Owner password that controls the permissions below."
+          },
+          {
+            "key": "encryption_allow_printing",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "encryption_allow_modifying",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "encryption_allow_modify_annotations",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "encryption_allow_content_copying",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "encryption_allow_screenreaders",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "encryption_allow_form_filling",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "encryption_allow_document_assembly",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ reference_id?: string | null, template_id?: string | null, download_url: string | null, expires?: string | null, created_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfless.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List document templates in the PDFLess workspace.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templates",
+            "optional": false,
+            "type": "{ id?: string, name?: string | null, imagePreviewUrl?: string | null, pdfPreviewUrl?: string | null, created?: string | null, modified?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfless.api.workspace.get",
+      "shortPath": "workspace.get",
+      "description": "Read the PDFLess workspace for the connected API key.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "quota",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "remainingQuota",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "pdfless.db.templates.search",
+      "entityName": "templates",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "imagePreviewUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pdfPreviewUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "modified",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "pdfless.db.workspaces.search",
+      "entityName": "workspaces",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "modified",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "quota",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "remainingQuota",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}

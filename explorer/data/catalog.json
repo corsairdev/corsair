@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-17T03:59:58.898Z",
-  "corsairVersion": "0.1.209",
+  "generatedAt": "2026-11-17T08:48:37.793Z",
+  "corsairVersion": "0.1.210",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -2698,6 +2698,21 @@
       }
     },
     {
+      "id": "currencyscoop",
+      "displayName": "CurrencyScoop",
+      "description": "Read CurrencyScoop rates, conversions, and supported currencies. The live host is CurrencyBeacon.",
+      "npmPackageName": "@corsair-dev/currencyscoop",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 5,
+        "webhooks": 0,
+        "db": 2
+      }
+    },
+    {
       "id": "currentsapi",
       "displayName": "Currents API",
       "description": "News API that returns latest news, searches articles, and lists the available categories, languages, and regions.",
@@ -3236,6 +3251,21 @@
       }
     },
     {
+      "id": "draftable",
+      "displayName": "Draftable",
+      "description": "Compare PDF, Word and PowerPoint documents with Draftable, view the differences and export them as PDF.",
+      "npmPackageName": "@corsair-dev/draftable",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 7,
+        "webhooks": 0,
+        "db": 1
+      }
+    },
+    {
       "id": "dreamstudio",
       "displayName": "DreamStudio",
       "description": "Stability AI image generation service for creating artwork from text prompts.",
@@ -3339,6 +3369,36 @@
         "api": 62,
         "webhooks": 0,
         "db": 0
+      }
+    },
+    {
+      "id": "echtpost",
+      "displayName": "Echtpost",
+      "description": "Send real printed postcards with EchtPost. Manage contacts and groups, pick motives and templates, create, list and cancel cards, and check the credit balance.",
+      "npmPackageName": "@corsair-dev/echtpost",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 22,
+        "webhooks": 0,
+        "db": 1
+      }
+    },
+    {
+      "id": "ecologi",
+      "displayName": "Ecologi",
+      "description": "Fund tree planting, carbon avoidance, carbon removal and habitat restoration through Ecologi's Impact API, and read any profile's impact totals.",
+      "npmPackageName": "@corsair-dev/ecologi",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 10,
+        "webhooks": 0,
+        "db": 5
       }
     },
     {
@@ -4425,6 +4485,21 @@
       }
     },
     {
+      "id": "globalping",
+      "displayName": "Globalping",
+      "description": "List Globalping probes, limits, and health, and create or read a measurement.",
+      "npmPackageName": "@corsair-dev/globalping",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 5,
+        "webhooks": 0,
+        "db": 3
+      }
+    },
+    {
       "id": "gmail",
       "displayName": "Gmail",
       "description": "Google email service for sending, reading, organizing messages, labels, and inbox automation.",
@@ -4878,6 +4953,22 @@
       }
     },
     {
+      "id": "helpscout",
+      "displayName": "Help Scout",
+      "description": "Manage mailboxes, conversations, customer profiles, threads, tags, saved replies, and reports with Help Scout Mailbox API 2.0.",
+      "npmPackageName": "@corsair-dev/helpscout",
+      "authTypes": [
+        "oauth_2",
+        "api_key"
+      ],
+      "defaultAuthType": "oauth_2",
+      "counts": {
+        "api": 55,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "helpwise",
       "displayName": "Helpwise",
       "description": "Shared team inboxes, conversations, messages, contacts, tags, and analytics for Helpwise.",
@@ -5271,6 +5362,36 @@
       }
     },
     {
+      "id": "ip2proxy",
+      "displayName": "IP2Proxy",
+      "description": "Detect whether an IP address is a proxy, VPN, Tor exit, or data-center address, and return the location fields for the selected package.",
+      "npmPackageName": "@corsair-dev/ip2proxy",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 2,
+        "webhooks": 0,
+        "db": 1
+      }
+    },
+    {
+      "id": "ip2whois",
+      "displayName": "IP2WHOIS",
+      "description": "Look up WHOIS registration for a domain, and list the domains hosted on an IP address.",
+      "npmPackageName": "@corsair-dev/ip2whois",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 2,
+        "webhooks": 0,
+        "db": 2
+      }
+    },
+    {
       "id": "jigsawstack",
       "displayName": "JigsawStack",
       "description": "AI utility API collection for OCR, translation, sentiment, and common ML microservices.",
@@ -5631,6 +5752,21 @@
       }
     },
     {
+      "id": "labs64netlicensing",
+      "displayName": "Labs64 NetLicensing",
+      "description": "Manage NetLicensing products, product modules, license templates, licensees and licenses, validate a licensee at run time, and read transactions.",
+      "npmPackageName": "@corsair-dev/labs64netlicensing",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 29,
+        "webhooks": 0,
+        "db": 2
+      }
+    },
+    {
       "id": "launchdarkly",
       "displayName": "LaunchDarkly",
       "description": "Manage LaunchDarkly feature flags, environments, projects, user segments, audit logs, account members, teams, custom roles, and contexts via the LaunchDarkly REST API.",
@@ -5780,6 +5916,21 @@
         "api": 10,
         "webhooks": 0,
         "db": 0
+      }
+    },
+    {
+      "id": "logodev",
+      "displayName": "Logo.dev",
+      "description": "Look up company logos and brand profiles (name, colors, socials, logo files) by domain, ticker, ISIN, crypto symbol or name, search brands by name, and manage brand update webhooks.",
+      "npmPackageName": "@corsair-dev/logodev",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 14,
+        "webhooks": 0,
+        "db": 2
       }
     },
     {
@@ -6245,6 +6396,21 @@
       }
     },
     {
+      "id": "newsapi",
+      "displayName": "NewsAPI",
+      "description": "Search NewsAPI articles, headlines, sources, and the legacy v1 source feed.",
+      "npmPackageName": "@corsair-dev/newsapi",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 4,
+        "webhooks": 0,
+        "db": 2
+      }
+    },
+    {
       "id": "nextdns",
       "displayName": "NextDNS",
       "description": "DNS security service for blocking ads, trackers, and malware at the network level.",
@@ -6578,6 +6744,21 @@
       }
     },
     {
+      "id": "parsehub",
+      "displayName": "ParseHub",
+      "description": "Run ParseHub scraping projects and get the data they extract.",
+      "npmPackageName": "@corsair-dev/parsehub",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 8,
+        "webhooks": 0,
+        "db": 1
+      }
+    },
+    {
       "id": "parseur",
       "displayName": "Parseur",
       "description": "Document parsing service that extracts structured data from emails and PDF attachments.",
@@ -6620,6 +6801,21 @@
         "api": 34,
         "webhooks": 0,
         "db": 0
+      }
+    },
+    {
+      "id": "pdfless",
+      "displayName": "PDFLess",
+      "description": "Generate PDFs from PDFLess document templates, list the templates and read the workspace quota. Requests send the API key in the apikey header.",
+      "npmPackageName": "@corsair-dev/pdfless",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 3,
+        "webhooks": 0,
+        "db": 2
       }
     },
     {
@@ -6741,6 +6937,21 @@
         "api": 23,
         "webhooks": 0,
         "db": 5
+      }
+    },
+    {
+      "id": "platerecognizer",
+      "displayName": "Plate Recognizer",
+      "description": "Read license plates (with optional make, model and color) and text identifiers such as VINs, trailer ids and odometers from images, and check usage. Requests send Authorization Token.",
+      "npmPackageName": "@corsair-dev/platerecognizer",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 4,
+        "webhooks": 0,
+        "db": 1
       }
     },
     {
@@ -6952,6 +7163,21 @@
         "api": 27,
         "webhooks": 0,
         "db": 0
+      }
+    },
+    {
+      "id": "proofly",
+      "displayName": "Proofly",
+      "description": "Read Proofly campaigns, their notifications and stats, the leads a notification collected, the signed-in user and activity logs, and turn campaigns on or off.",
+      "npmPackageName": "@corsair-dev/proofly",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 6,
+        "webhooks": 0,
+        "db": 2
       }
     },
     {
@@ -7801,6 +8027,21 @@
       }
     },
     {
+      "id": "screenshotone",
+      "displayName": "ScreenshotOne",
+      "description": "Read ScreenshotOne usage and devices, and take a still, animated, or bulk screenshot.",
+      "npmPackageName": "@corsair-dev/screenshotone",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 5,
+        "webhooks": 0,
+        "db": 2
+      }
+    },
+    {
       "id": "search1api",
       "displayName": "Search1API",
       "description": "Live web search, crawl, extraction, and site-wide data in one API for AI agents.",
@@ -7813,6 +8054,21 @@
         "api": 16,
         "webhooks": 0,
         "db": 1
+      }
+    },
+    {
+      "id": "searchapi",
+      "displayName": "SearchAPI",
+      "description": "Read SearchAPI account usage and locations, run a search, and read a cached search.",
+      "npmPackageName": "@corsair-dev/searchapi",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 5,
+        "webhooks": 0,
+        "db": 3
       }
     },
     {
@@ -7876,6 +8132,21 @@
       }
     },
     {
+      "id": "sensibo",
+      "displayName": "Sensibo",
+      "description": "Read and control Sensibo smart AC controllers (pods), their schedules, timers, Climate React and sensor history.",
+      "npmPackageName": "@corsair-dev/sensibo",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 19,
+        "webhooks": 0,
+        "db": 1
+      }
+    },
+    {
       "id": "sentry",
       "displayName": "Sentry",
       "description": "Application monitoring for error tracking, performance tracing, and release health insights.",
@@ -7903,6 +8174,21 @@
         "api": 48,
         "webhooks": 0,
         "db": 0
+      }
+    },
+    {
+      "id": "serply",
+      "displayName": "Serply",
+      "description": "Search Google (web, news, images, videos, maps, jobs, Scholar), Bing, products and eBay, read Reddit, and fetch web pages as markdown through Serply. The key is sent in X-Api-Key.",
+      "npmPackageName": "@corsair-dev/serply",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 16,
+        "webhooks": 0,
+        "db": 3
       }
     },
     {
@@ -8617,6 +8903,21 @@
       }
     },
     {
+      "id": "sympla",
+      "displayName": "Sympla",
+      "description": "Read a Sympla organizer's events, presentations, orders and participants, and check participants in.",
+      "npmPackageName": "@corsair-dev/sympla",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 15,
+        "webhooks": 0,
+        "db": 1
+      }
+    },
+    {
       "id": "synthflowai",
       "displayName": "Synthflow AI",
       "description": "Voice AI platform for building phone agents, call automation, and conversational IVR flows.",
@@ -8779,6 +9080,21 @@
         "api": 25,
         "webhooks": 4,
         "db": 5
+      }
+    },
+    {
+      "id": "teamwork",
+      "displayName": "Teamwork",
+      "description": "Teamwork.com projects, tasks, task lists, milestones, comments, time tracking, timers, people and companies.",
+      "npmPackageName": "@corsair-dev/teamwork",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 220,
+        "webhooks": 0,
+        "db": 0
       }
     },
     {
@@ -9367,6 +9683,21 @@
         "api": 47,
         "webhooks": 2,
         "db": 6
+      }
+    },
+    {
+      "id": "twocaptcha",
+      "displayName": "2Captcha",
+      "description": "Create captcha-solving tasks, read their results, check the account balance, and report tasks as correct or incorrect.",
+      "npmPackageName": "@corsair-dev/twocaptcha",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 5,
+        "webhooks": 0,
+        "db": 0
       }
     },
     {
@@ -50883,6 +51214,36 @@
       "haystack": "validation.blocked crowterminal.webhooks.validation.blocked a proposed memory change was blocked"
     },
     {
+      "pluginId": "currencyscoop",
+      "kind": "api",
+      "shortPath": "currencies.list",
+      "haystack": "currencies.list currencyscoop.api.currencies.list list supported currencybeacon currency codes. read"
+    },
+    {
+      "pluginId": "currencyscoop",
+      "kind": "api",
+      "shortPath": "quotes.convert",
+      "haystack": "quotes.convert currencyscoop.api.quotes.convert convert an amount between two currencies. read"
+    },
+    {
+      "pluginId": "currencyscoop",
+      "kind": "api",
+      "shortPath": "quotes.historical",
+      "haystack": "quotes.historical currencyscoop.api.quotes.historical read mid-market rates for one date. read"
+    },
+    {
+      "pluginId": "currencyscoop",
+      "kind": "api",
+      "shortPath": "quotes.latest",
+      "haystack": "quotes.latest currencyscoop.api.quotes.latest read the latest mid-market rates. read"
+    },
+    {
+      "pluginId": "currencyscoop",
+      "kind": "api",
+      "shortPath": "quotes.timeseries",
+      "haystack": "quotes.timeseries currencyscoop.api.quotes.timeseries read daily rates between two dates. read"
+    },
+    {
       "pluginId": "currentsapi",
       "kind": "api",
       "shortPath": "categories.get",
@@ -68019,6 +68380,48 @@
       "haystack": "token.getinfo dovetail.api.token.getinfo retrieves information about the current api token, including its unique identifier and the associated workspace subdomain. use this to verify which workspace the token belongs to. read"
     },
     {
+      "pluginId": "draftable",
+      "kind": "api",
+      "shortPath": "comparisons.create",
+      "haystack": "comparisons.create draftable.api.comparisons.create compare two documents given by url (pdf, word, powerpoint, rtf or text). uses one comparison from the plan quota. destructive"
+    },
+    {
+      "pluginId": "draftable",
+      "kind": "api",
+      "shortPath": "comparisons.delete",
+      "haystack": "comparisons.delete draftable.api.comparisons.delete delete a comparison and its documents from draftable. destructive"
+    },
+    {
+      "pluginId": "draftable",
+      "kind": "api",
+      "shortPath": "comparisons.get",
+      "haystack": "comparisons.get draftable.api.comparisons.get get one comparison: both documents, page counts, and whether it is ready or failed. read"
+    },
+    {
+      "pluginId": "draftable",
+      "kind": "api",
+      "shortPath": "comparisons.getViewerUrl",
+      "haystack": "comparisons.getviewerurl draftable.api.comparisons.getviewerurl get a link to view a comparison in the draftable viewer, signed for a limited time unless the comparison is public. read"
+    },
+    {
+      "pluginId": "draftable",
+      "kind": "api",
+      "shortPath": "comparisons.list",
+      "haystack": "comparisons.list draftable.api.comparisons.list list the comparisons on the draftable account. read"
+    },
+    {
+      "pluginId": "draftable",
+      "kind": "api",
+      "shortPath": "exports.create",
+      "haystack": "exports.create draftable.api.exports.create start a pdf export of a comparison. poll exports.get until ready, then download its url. write"
+    },
+    {
+      "pluginId": "draftable",
+      "kind": "api",
+      "shortPath": "exports.get",
+      "haystack": "exports.get draftable.api.exports.get get an export: whether it is ready and the url to download the pdf. read"
+    },
+    {
       "pluginId": "dreamstudio",
       "kind": "api",
       "shortPath": "engines.list",
@@ -69013,6 +69416,198 @@
       "kind": "api",
       "shortPath": "volumes.list",
       "haystack": "volumes.list e2b.api.volumes.list list team volumes read"
+    },
+    {
+      "pluginId": "echtpost",
+      "kind": "api",
+      "shortPath": "account.credits",
+      "haystack": "account.credits echtpost.api.account.credits get the credit balance, cards left and price per card. read"
+    },
+    {
+      "pluginId": "echtpost",
+      "kind": "api",
+      "shortPath": "account.get",
+      "haystack": "account.get echtpost.api.account.get get the account, user, api key metadata and balance. read"
+    },
+    {
+      "pluginId": "echtpost",
+      "kind": "api",
+      "shortPath": "cards.cancel",
+      "haystack": "cards.cancel echtpost.api.cards.cancel cancel a card that has not been printed yet; it cannot be restored. destructive"
+    },
+    {
+      "pluginId": "echtpost",
+      "kind": "api",
+      "shortPath": "cards.create",
+      "haystack": "cards.create echtpost.api.cards.create print and post a real postcard to each recipient; the account is billed per card. destructive"
+    },
+    {
+      "pluginId": "echtpost",
+      "kind": "api",
+      "shortPath": "cards.createFromTemplate",
+      "haystack": "cards.createfromtemplate echtpost.api.cards.createfromtemplate print and post a real postcard from a saved template; the account is billed per card. destructive"
+    },
+    {
+      "pluginId": "echtpost",
+      "kind": "api",
+      "shortPath": "cards.get",
+      "haystack": "cards.get echtpost.api.cards.get get one card and its status. read"
+    },
+    {
+      "pluginId": "echtpost",
+      "kind": "api",
+      "shortPath": "cards.list",
+      "haystack": "cards.list echtpost.api.cards.list list cards, filtered by status, delivery date or motive. read"
+    },
+    {
+      "pluginId": "echtpost",
+      "kind": "api",
+      "shortPath": "cards.previewFit",
+      "haystack": "cards.previewfit echtpost.api.cards.previewfit check whether card text fits at a font and size, without creating a card. read"
+    },
+    {
+      "pluginId": "echtpost",
+      "kind": "api",
+      "shortPath": "contacts.create",
+      "haystack": "contacts.create echtpost.api.contacts.create create a contact with a postal address. write"
+    },
+    {
+      "pluginId": "echtpost",
+      "kind": "api",
+      "shortPath": "contacts.delete",
+      "haystack": "contacts.delete echtpost.api.contacts.delete delete a contact. destructive"
+    },
+    {
+      "pluginId": "echtpost",
+      "kind": "api",
+      "shortPath": "contacts.get",
+      "haystack": "contacts.get echtpost.api.contacts.get get one contact by id. read"
+    },
+    {
+      "pluginId": "echtpost",
+      "kind": "api",
+      "shortPath": "contacts.list",
+      "haystack": "contacts.list echtpost.api.contacts.list list contacts (postcard recipients), with filters and paging. read"
+    },
+    {
+      "pluginId": "echtpost",
+      "kind": "api",
+      "shortPath": "contacts.update",
+      "haystack": "contacts.update echtpost.api.contacts.update update a contact; fields left out stay as they are. write"
+    },
+    {
+      "pluginId": "echtpost",
+      "kind": "api",
+      "shortPath": "groups.create",
+      "haystack": "groups.create echtpost.api.groups.create create a contact group. write"
+    },
+    {
+      "pluginId": "echtpost",
+      "kind": "api",
+      "shortPath": "groups.delete",
+      "haystack": "groups.delete echtpost.api.groups.delete delete a group. destructive"
+    },
+    {
+      "pluginId": "echtpost",
+      "kind": "api",
+      "shortPath": "groups.get",
+      "haystack": "groups.get echtpost.api.groups.get get one group by id. read"
+    },
+    {
+      "pluginId": "echtpost",
+      "kind": "api",
+      "shortPath": "groups.list",
+      "haystack": "groups.list echtpost.api.groups.list list contact groups. read"
+    },
+    {
+      "pluginId": "echtpost",
+      "kind": "api",
+      "shortPath": "groups.update",
+      "haystack": "groups.update echtpost.api.groups.update rename a group or change its external id. write"
+    },
+    {
+      "pluginId": "echtpost",
+      "kind": "api",
+      "shortPath": "motives.get",
+      "haystack": "motives.get echtpost.api.motives.get get one motive and what text fields it allows. read"
+    },
+    {
+      "pluginId": "echtpost",
+      "kind": "api",
+      "shortPath": "motives.list",
+      "haystack": "motives.list echtpost.api.motives.list list the postcard motives (front designs) the account can use. read"
+    },
+    {
+      "pluginId": "echtpost",
+      "kind": "api",
+      "shortPath": "templates.get",
+      "haystack": "templates.get echtpost.api.templates.get get one saved template by id. read"
+    },
+    {
+      "pluginId": "echtpost",
+      "kind": "api",
+      "shortPath": "templates.list",
+      "haystack": "templates.list echtpost.api.templates.list list saved echtpost postcard templates. read"
+    },
+    {
+      "pluginId": "ecologi",
+      "kind": "api",
+      "shortPath": "carbonOffsets.get",
+      "haystack": "carbonoffsets.get ecologi.api.carbonoffsets.get read the co2e avoided by an ecologi username. read"
+    },
+    {
+      "pluginId": "ecologi",
+      "kind": "api",
+      "shortPath": "carbonOffsets.purchase",
+      "haystack": "carbonoffsets.purchase ecologi.api.carbonoffsets.purchase buy carbon avoidance by the kg or tonne (gbp 9.45 a tonne). billed monthly; test: true charges nothing. destructive"
+    },
+    {
+      "pluginId": "ecologi",
+      "kind": "api",
+      "shortPath": "carbonRemovals.get",
+      "haystack": "carbonremovals.get ecologi.api.carbonremovals.get read the co2e removed by an ecologi username. read"
+    },
+    {
+      "pluginId": "ecologi",
+      "kind": "api",
+      "shortPath": "carbonRemovals.purchase",
+      "haystack": "carbonremovals.purchase ecologi.api.carbonremovals.purchase buy permanent carbon removal by the kg (gbp 150 a tonne). billed monthly; test: true charges nothing. destructive"
+    },
+    {
+      "pluginId": "ecologi",
+      "kind": "api",
+      "shortPath": "habitats.get",
+      "haystack": "habitats.get ecologi.api.habitats.get read the habitat restored by an ecologi username. read"
+    },
+    {
+      "pluginId": "ecologi",
+      "kind": "api",
+      "shortPath": "habitats.purchase",
+      "haystack": "habitats.purchase ecologi.api.habitats.purchase buy habitat restoration by the square metre (gbp 5.55 each). billed monthly; test: true charges nothing. destructive"
+    },
+    {
+      "pluginId": "ecologi",
+      "kind": "api",
+      "shortPath": "impacts.get",
+      "haystack": "impacts.get ecologi.api.impacts.get read the combined impact for an ecologi username. read"
+    },
+    {
+      "pluginId": "ecologi",
+      "kind": "api",
+      "shortPath": "trees.get",
+      "haystack": "trees.get ecologi.api.trees.get read the trees funded by an ecologi username. read"
+    },
+    {
+      "pluginId": "ecologi",
+      "kind": "api",
+      "shortPath": "trees.purchase",
+      "haystack": "trees.purchase ecologi.api.trees.purchase buy trees (gbp 0.60 each) for the ecologi forest. billed monthly; test: true charges nothing. destructive"
+    },
+    {
+      "pluginId": "ecologi",
+      "kind": "api",
+      "shortPath": "trees.purchaseLocal",
+      "haystack": "trees.purchaselocal ecologi.api.trees.purchaselocal buy trees planted in the uk, us, australia or brazil. billed monthly; test: true charges nothing. destructive"
     },
     {
       "pluginId": "elevenlabs",
@@ -91377,6 +91972,36 @@
       "haystack": "users.update gleap.api.users.update update the api key owner's own profile (name, job title, availability); gleap ignores the user id write"
     },
     {
+      "pluginId": "globalping",
+      "kind": "api",
+      "shortPath": "health.get",
+      "haystack": "health.get globalping.api.health.get read the globalping health check. read"
+    },
+    {
+      "pluginId": "globalping",
+      "kind": "api",
+      "shortPath": "limits.get",
+      "haystack": "limits.get globalping.api.limits.get read the current measurement rate limit. read"
+    },
+    {
+      "pluginId": "globalping",
+      "kind": "api",
+      "shortPath": "measurements.create",
+      "haystack": "measurements.create globalping.api.measurements.create start a ping, traceroute, dns, mtr or http test from globalping probes, picked by location. uses the hourly measurement allowance, then account credits. write"
+    },
+    {
+      "pluginId": "globalping",
+      "kind": "api",
+      "shortPath": "measurements.get",
+      "haystack": "measurements.get globalping.api.measurements.get read a measurement by id with each probe's result. poll until status is finished. results are not stored. read"
+    },
+    {
+      "pluginId": "globalping",
+      "kind": "api",
+      "shortPath": "probes.list",
+      "haystack": "probes.list globalping.api.probes.list list online globalping probes. probe rows are not stored. read"
+    },
+    {
       "pluginId": "gmail",
       "kind": "api",
       "shortPath": "drafts.create",
@@ -99343,6 +99968,336 @@
       "kind": "api",
       "shortPath": "users.get",
       "haystack": "users.get hashnode.api.users.get get a user by username read"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "conversations.create",
+      "haystack": "conversations.create helpscout.api.conversations.create create a new conversation with initial thread destructive"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "conversations.delete",
+      "haystack": "conversations.delete helpscout.api.conversations.delete delete a conversation permanently destructive"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "conversations.get",
+      "haystack": "conversations.get helpscout.api.conversations.get get a specific help scout conversation by id read"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "conversations.list",
+      "haystack": "conversations.list helpscout.api.conversations.list list and filter conversations in help scout read"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "conversations.update",
+      "haystack": "conversations.update helpscout.api.conversations.update update fields of a conversation via json patch write"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "conversations.updateFields",
+      "haystack": "conversations.updatefields helpscout.api.conversations.updatefields update custom field values on a conversation destructive"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "conversations.updateTags",
+      "haystack": "conversations.updatetags helpscout.api.conversations.updatetags update tags assigned to a conversation destructive"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "customers.create",
+      "haystack": "customers.create helpscout.api.customers.create create a new customer profile write"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "customers.createAddress",
+      "haystack": "customers.createaddress helpscout.api.customers.createaddress create customer physical address write"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "customers.createChat",
+      "haystack": "customers.createchat helpscout.api.customers.createchat add a chat handle to a customer write"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "customers.createEmail",
+      "haystack": "customers.createemail helpscout.api.customers.createemail add an email address to a customer write"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "customers.createPhone",
+      "haystack": "customers.createphone helpscout.api.customers.createphone add a phone number to a customer write"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "customers.createSocialProfile",
+      "haystack": "customers.createsocialprofile helpscout.api.customers.createsocialprofile add a social profile to a customer write"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "customers.createWebsite",
+      "haystack": "customers.createwebsite helpscout.api.customers.createwebsite add a website url to a customer write"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "customers.delete",
+      "haystack": "customers.delete helpscout.api.customers.delete delete a customer with their conversations and survey responses (cannot be undone) destructive"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "customers.deleteAddress",
+      "haystack": "customers.deleteaddress helpscout.api.customers.deleteaddress delete customer physical address destructive"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "customers.deleteChat",
+      "haystack": "customers.deletechat helpscout.api.customers.deletechat delete a chat handle from a customer destructive"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "customers.deleteEmail",
+      "haystack": "customers.deleteemail helpscout.api.customers.deleteemail delete an email address from a customer destructive"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "customers.deletePhone",
+      "haystack": "customers.deletephone helpscout.api.customers.deletephone delete a phone number from a customer destructive"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "customers.deleteSocialProfile",
+      "haystack": "customers.deletesocialprofile helpscout.api.customers.deletesocialprofile delete a social profile from a customer destructive"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "customers.deleteWebsite",
+      "haystack": "customers.deletewebsite helpscout.api.customers.deletewebsite delete a website url from a customer destructive"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "customers.get",
+      "haystack": "customers.get helpscout.api.customers.get get details of a specific customer by id read"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "customers.list",
+      "haystack": "customers.list helpscout.api.customers.list list and search customers in help scout read"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "customers.patch",
+      "haystack": "customers.patch helpscout.api.customers.patch partially update customer profile fields write"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "customers.update",
+      "haystack": "customers.update helpscout.api.customers.update overwrite an existing customer profile destructive"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "customers.updateAddress",
+      "haystack": "customers.updateaddress helpscout.api.customers.updateaddress update customer physical address write"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "customers.updateChat",
+      "haystack": "customers.updatechat helpscout.api.customers.updatechat update an existing customer chat handle write"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "customers.updateEmail",
+      "haystack": "customers.updateemail helpscout.api.customers.updateemail update an existing customer email address write"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "customers.updatePhone",
+      "haystack": "customers.updatephone helpscout.api.customers.updatephone update an existing customer phone number write"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "customers.updateSocialProfile",
+      "haystack": "customers.updatesocialprofile helpscout.api.customers.updatesocialprofile update an existing customer social profile write"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "customers.updateWebsite",
+      "haystack": "customers.updatewebsite helpscout.api.customers.updatewebsite update an existing customer website url write"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "customFields.list",
+      "haystack": "customfields.list helpscout.api.customfields.list list custom fields configured on a mailbox read"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "folders.list",
+      "haystack": "folders.list helpscout.api.folders.list list folders belonging to a mailbox read"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "mailboxes.get",
+      "haystack": "mailboxes.get helpscout.api.mailboxes.get get details of a specific help scout mailbox read"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "mailboxes.list",
+      "haystack": "mailboxes.list helpscout.api.mailboxes.list list mailboxes in help scout read"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "reports.getChat",
+      "haystack": "reports.getchat helpscout.api.reports.getchat get live chat channel report metrics read"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "reports.getCompany",
+      "haystack": "reports.getcompany helpscout.api.reports.getcompany get overall company performance report metrics read"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "reports.getConversations",
+      "haystack": "reports.getconversations helpscout.api.reports.getconversations get aggregate conversations report metrics read"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "reports.getDocs",
+      "haystack": "reports.getdocs helpscout.api.reports.getdocs get help scout docs knowledge base report metrics read"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "reports.getEmail",
+      "haystack": "reports.getemail helpscout.api.reports.getemail get email channel performance report metrics read"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "savedReplies.create",
+      "haystack": "savedreplies.create helpscout.api.savedreplies.create create a saved reply in a mailbox write"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "savedReplies.delete",
+      "haystack": "savedreplies.delete helpscout.api.savedreplies.delete delete a saved reply from a mailbox destructive"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "savedReplies.get",
+      "haystack": "savedreplies.get helpscout.api.savedreplies.get get a saved reply by id read"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "savedReplies.list",
+      "haystack": "savedreplies.list helpscout.api.savedreplies.list list saved replies for a mailbox read"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "savedReplies.update",
+      "haystack": "savedreplies.update helpscout.api.savedreplies.update update an existing saved reply write"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "tags.get",
+      "haystack": "tags.get helpscout.api.tags.get get details of a tag by id read"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "tags.list",
+      "haystack": "tags.list helpscout.api.tags.list list all tags used across mailboxes read"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "threads.createChat",
+      "haystack": "threads.createchat helpscout.api.threads.createchat create a chat thread on a conversation write"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "threads.createCustomer",
+      "haystack": "threads.createcustomer helpscout.api.threads.createcustomer create a customer message thread on a conversation write"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "threads.createNote",
+      "haystack": "threads.createnote helpscout.api.threads.createnote create an internal note thread on a conversation write"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "threads.createPhone",
+      "haystack": "threads.createphone helpscout.api.threads.createphone create a phone call log thread on a conversation write"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "threads.createReply",
+      "haystack": "threads.createreply helpscout.api.threads.createreply create a reply thread sent to the customer destructive"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "threads.getOriginalSource",
+      "haystack": "threads.getoriginalsource helpscout.api.threads.getoriginalsource get original email source of a thread read"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "threads.list",
+      "haystack": "threads.list helpscout.api.threads.list list all threads in a conversation read"
+    },
+    {
+      "pluginId": "helpscout",
+      "kind": "api",
+      "shortPath": "threads.update",
+      "haystack": "threads.update helpscout.api.threads.update update thread text or visibility write"
     },
     {
       "pluginId": "helpwise",
@@ -107865,6 +108820,30 @@
       "haystack": "ping intercom.webhooks.ping initial ping sent by intercom when a webhook url is first registered"
     },
     {
+      "pluginId": "ip2proxy",
+      "kind": "api",
+      "shortPath": "account.getCredits",
+      "haystack": "account.getcredits ip2proxy.api.account.getcredits get the credits left on the api key. the balance lags by about 10 minutes. read"
+    },
+    {
+      "pluginId": "ip2proxy",
+      "kind": "api",
+      "shortPath": "proxy.checkProxy",
+      "haystack": "proxy.checkproxy ip2proxy.api.proxy.checkproxy check whether an ip address is a proxy, vpn, tor exit, or data-center address. read"
+    },
+    {
+      "pluginId": "ip2whois",
+      "kind": "api",
+      "shortPath": "domain.lookup",
+      "haystack": "domain.lookup ip2whois.api.domain.lookup look up whois registration data for a domain. read"
+    },
+    {
+      "pluginId": "ip2whois",
+      "kind": "api",
+      "shortPath": "hosted.lookup",
+      "haystack": "hosted.lookup ip2whois.api.hosted.lookup list domains hosted on an ip address. read"
+    },
+    {
       "pluginId": "jigsawstack",
       "kind": "api",
       "shortPath": "ai.imageGeneration",
@@ -111759,6 +112738,180 @@
       "haystack": "url.optimize krakenio.api.url.optimize fetch an image or pdf from a url and optimize it, optionally resizing, converting, keeping metadata or setting the quality. spends quota destructive"
     },
     {
+      "pluginId": "labs64netlicensing",
+      "kind": "api",
+      "shortPath": "licensees.create",
+      "haystack": "licensees.create labs64netlicensing.api.licensees.create create a licensee for a product. write"
+    },
+    {
+      "pluginId": "labs64netlicensing",
+      "kind": "api",
+      "shortPath": "licensees.delete",
+      "haystack": "licensees.delete labs64netlicensing.api.licensees.delete delete a licensee; forcecascade also deletes its licenses. destructive"
+    },
+    {
+      "pluginId": "labs64netlicensing",
+      "kind": "api",
+      "shortPath": "licensees.get",
+      "haystack": "licensees.get labs64netlicensing.api.licensees.get get one licensee by number. read"
+    },
+    {
+      "pluginId": "labs64netlicensing",
+      "kind": "api",
+      "shortPath": "licensees.list",
+      "haystack": "licensees.list labs64netlicensing.api.licensees.list list licensees (the vendor's customers). read"
+    },
+    {
+      "pluginId": "labs64netlicensing",
+      "kind": "api",
+      "shortPath": "licensees.transfer",
+      "haystack": "licensees.transfer labs64netlicensing.api.licensees.transfer move every license of a source licensee (marked for transfer) to this licensee; netlicensing then removes the source licensee. destructive"
+    },
+    {
+      "pluginId": "labs64netlicensing",
+      "kind": "api",
+      "shortPath": "licensees.update",
+      "haystack": "licensees.update labs64netlicensing.api.licensees.update update a licensee. write"
+    },
+    {
+      "pluginId": "labs64netlicensing",
+      "kind": "api",
+      "shortPath": "licensees.validate",
+      "haystack": "licensees.validate labs64netlicensing.api.licensees.validate check which product modules a licensee may use; floating checkouts and pay-per-use counts change unless dryrun is true. destructive"
+    },
+    {
+      "pluginId": "labs64netlicensing",
+      "kind": "api",
+      "shortPath": "licenses.create",
+      "haystack": "licenses.create labs64netlicensing.api.licenses.create create a license for a licensee from a license template. write"
+    },
+    {
+      "pluginId": "labs64netlicensing",
+      "kind": "api",
+      "shortPath": "licenses.delete",
+      "haystack": "licenses.delete labs64netlicensing.api.licenses.delete delete a license. destructive"
+    },
+    {
+      "pluginId": "labs64netlicensing",
+      "kind": "api",
+      "shortPath": "licenses.get",
+      "haystack": "licenses.get labs64netlicensing.api.licenses.get get one license by number. read"
+    },
+    {
+      "pluginId": "labs64netlicensing",
+      "kind": "api",
+      "shortPath": "licenses.list",
+      "haystack": "licenses.list labs64netlicensing.api.licenses.list list the vendor's licenses. read"
+    },
+    {
+      "pluginId": "labs64netlicensing",
+      "kind": "api",
+      "shortPath": "licenses.update",
+      "haystack": "licenses.update labs64netlicensing.api.licenses.update update a license, for example to deactivate it. write"
+    },
+    {
+      "pluginId": "labs64netlicensing",
+      "kind": "api",
+      "shortPath": "licenseTemplates.create",
+      "haystack": "licensetemplates.create labs64netlicensing.api.licensetemplates.create create a license template in a product module. write"
+    },
+    {
+      "pluginId": "labs64netlicensing",
+      "kind": "api",
+      "shortPath": "licenseTemplates.delete",
+      "haystack": "licensetemplates.delete labs64netlicensing.api.licensetemplates.delete delete a license template; forcecascade also deletes its licenses. destructive"
+    },
+    {
+      "pluginId": "labs64netlicensing",
+      "kind": "api",
+      "shortPath": "licenseTemplates.get",
+      "haystack": "licensetemplates.get labs64netlicensing.api.licensetemplates.get get one license template by number. read"
+    },
+    {
+      "pluginId": "labs64netlicensing",
+      "kind": "api",
+      "shortPath": "licenseTemplates.list",
+      "haystack": "licensetemplates.list labs64netlicensing.api.licensetemplates.list list license templates. read"
+    },
+    {
+      "pluginId": "labs64netlicensing",
+      "kind": "api",
+      "shortPath": "licenseTemplates.update",
+      "haystack": "licensetemplates.update labs64netlicensing.api.licensetemplates.update update a license template. write"
+    },
+    {
+      "pluginId": "labs64netlicensing",
+      "kind": "api",
+      "shortPath": "productModules.create",
+      "haystack": "productmodules.create labs64netlicensing.api.productmodules.create create a product module with a licensing model. write"
+    },
+    {
+      "pluginId": "labs64netlicensing",
+      "kind": "api",
+      "shortPath": "productModules.delete",
+      "haystack": "productmodules.delete labs64netlicensing.api.productmodules.delete delete a product module; forcecascade also deletes what depends on it. destructive"
+    },
+    {
+      "pluginId": "labs64netlicensing",
+      "kind": "api",
+      "shortPath": "productModules.get",
+      "haystack": "productmodules.get labs64netlicensing.api.productmodules.get get one product module by number. read"
+    },
+    {
+      "pluginId": "labs64netlicensing",
+      "kind": "api",
+      "shortPath": "productModules.list",
+      "haystack": "productmodules.list labs64netlicensing.api.productmodules.list list product modules. read"
+    },
+    {
+      "pluginId": "labs64netlicensing",
+      "kind": "api",
+      "shortPath": "productModules.update",
+      "haystack": "productmodules.update labs64netlicensing.api.productmodules.update update a product module. write"
+    },
+    {
+      "pluginId": "labs64netlicensing",
+      "kind": "api",
+      "shortPath": "products.create",
+      "haystack": "products.create labs64netlicensing.api.products.create create a product. write"
+    },
+    {
+      "pluginId": "labs64netlicensing",
+      "kind": "api",
+      "shortPath": "products.delete",
+      "haystack": "products.delete labs64netlicensing.api.products.delete delete a product; forcecascade also deletes its modules, templates, licensees and licenses. destructive"
+    },
+    {
+      "pluginId": "labs64netlicensing",
+      "kind": "api",
+      "shortPath": "products.get",
+      "haystack": "products.get labs64netlicensing.api.products.get get one product by number. read"
+    },
+    {
+      "pluginId": "labs64netlicensing",
+      "kind": "api",
+      "shortPath": "products.list",
+      "haystack": "products.list labs64netlicensing.api.products.list list the vendor's products. read"
+    },
+    {
+      "pluginId": "labs64netlicensing",
+      "kind": "api",
+      "shortPath": "products.update",
+      "haystack": "products.update labs64netlicensing.api.products.update update a product; fields left out stay as they are. write"
+    },
+    {
+      "pluginId": "labs64netlicensing",
+      "kind": "api",
+      "shortPath": "transactions.get",
+      "haystack": "transactions.get labs64netlicensing.api.transactions.get get one transaction by number. read"
+    },
+    {
+      "pluginId": "labs64netlicensing",
+      "kind": "api",
+      "shortPath": "transactions.list",
+      "haystack": "transactions.list labs64netlicensing.api.transactions.list list transactions, newest first. read"
+    },
+    {
       "pluginId": "launchdarkly",
       "kind": "api",
       "shortPath": "accessTokens.create",
@@ -113767,6 +114920,90 @@
       "kind": "api",
       "shortPath": "websites.list",
       "haystack": "websites.list livesession.api.websites.list list all websites available to the token read"
+    },
+    {
+      "pluginId": "logodev",
+      "kind": "api",
+      "shortPath": "account.get",
+      "haystack": "account.get logodev.api.account.get get the plan and api credit balance. not billed. read"
+    },
+    {
+      "pluginId": "logodev",
+      "kind": "api",
+      "shortPath": "brands.get",
+      "haystack": "brands.get logodev.api.brands.get get a brand profile by its logo.dev brand id. 5 api credits. read"
+    },
+    {
+      "pluginId": "logodev",
+      "kind": "api",
+      "shortPath": "brands.lookup",
+      "haystack": "brands.lookup logodev.api.brands.lookup look up a brand profile (name, description, colors, socials, logo) by domain, ticker, isin, crypto symbol or name. 5 api credits. read"
+    },
+    {
+      "pluginId": "logodev",
+      "kind": "api",
+      "shortPath": "brands.search",
+      "haystack": "brands.search logodev.api.brands.search search brands by name and get each match with its domain and logo url. billed at 1 api credit per 1,000 searches. read"
+    },
+    {
+      "pluginId": "logodev",
+      "kind": "api",
+      "shortPath": "logos.fetch",
+      "haystack": "logos.fetch logodev.api.logos.fetch get a brand's logo as a temporary download url with its size, format and blurhash. 2 api credits. read"
+    },
+    {
+      "pluginId": "logodev",
+      "kind": "api",
+      "shortPath": "logos.getBrandmark",
+      "haystack": "logos.getbrandmark logodev.api.logos.getbrandmark get a brand's brandmark (the symbol without the name) as a temporary download url. 3 api credits. read"
+    },
+    {
+      "pluginId": "logodev",
+      "kind": "api",
+      "shortPath": "subscriptions.get",
+      "haystack": "subscriptions.get logodev.api.subscriptions.get check whether the account follows a brand's update events (paid plans). read"
+    },
+    {
+      "pluginId": "logodev",
+      "kind": "api",
+      "shortPath": "subscriptions.subscribe",
+      "haystack": "subscriptions.subscribe logodev.api.subscriptions.subscribe follow a brand's update events (paid plans with webhooks). write"
+    },
+    {
+      "pluginId": "logodev",
+      "kind": "api",
+      "shortPath": "subscriptions.unsubscribe",
+      "haystack": "subscriptions.unsubscribe logodev.api.subscriptions.unsubscribe stop following a brand's update events. write"
+    },
+    {
+      "pluginId": "logodev",
+      "kind": "api",
+      "shortPath": "webhookEndpoints.create",
+      "haystack": "webhookendpoints.create logodev.api.webhookendpoints.create register a url to receive brand.updated and brand.indexed events (paid plans). write"
+    },
+    {
+      "pluginId": "logodev",
+      "kind": "api",
+      "shortPath": "webhookEndpoints.delete",
+      "haystack": "webhookendpoints.delete logodev.api.webhookendpoints.delete delete a webhook endpoint. this cannot be undone. destructive"
+    },
+    {
+      "pluginId": "logodev",
+      "kind": "api",
+      "shortPath": "webhookEndpoints.get",
+      "haystack": "webhookendpoints.get logodev.api.webhookendpoints.get get one webhook endpoint. read"
+    },
+    {
+      "pluginId": "logodev",
+      "kind": "api",
+      "shortPath": "webhookEndpoints.list",
+      "haystack": "webhookendpoints.list logodev.api.webhookendpoints.list list the team's webhook endpoints. read"
+    },
+    {
+      "pluginId": "logodev",
+      "kind": "api",
+      "shortPath": "webhookEndpoints.update",
+      "haystack": "webhookendpoints.update logodev.api.webhookendpoints.update change a webhook endpoint's url, description, event types or disabled state. write"
     },
     {
       "pluginId": "loyverse",
@@ -119865,6 +121102,30 @@
       "haystack": "single.check neverbounce.api.single.check verify one email address as it comes in, such as a form signup (valid, invalid, disposable, catchall or unknown); uses one verification credit. neverbounce may lock the account if this is looped over an existing list; lists belong in its bulk jobs read"
     },
     {
+      "pluginId": "newsapi",
+      "kind": "api",
+      "shortPath": "articles.everything",
+      "haystack": "articles.everything newsapi.api.articles.everything search articles across newsapi sources. read"
+    },
+    {
+      "pluginId": "newsapi",
+      "kind": "api",
+      "shortPath": "articles.headlines",
+      "haystack": "articles.headlines newsapi.api.articles.headlines read current top headlines. read"
+    },
+    {
+      "pluginId": "newsapi",
+      "kind": "api",
+      "shortPath": "articles.legacy",
+      "haystack": "articles.legacy newsapi.api.articles.legacy read articles from the legacy v1 source endpoint. read"
+    },
+    {
+      "pluginId": "newsapi",
+      "kind": "api",
+      "shortPath": "sources.list",
+      "haystack": "sources.list newsapi.api.sources.list list newsapi publishers. read"
+    },
+    {
       "pluginId": "nextdns",
       "kind": "api",
       "shortPath": "allowlist.add",
@@ -124311,6 +125572,54 @@
       "haystack": "users.me parma.api.users.me get the current user and account read"
     },
     {
+      "pluginId": "parsehub",
+      "kind": "api",
+      "shortPath": "projects.get",
+      "haystack": "projects.get parsehub.api.projects.get get one project with its last run, last ready run and the 20 most recent runs. read"
+    },
+    {
+      "pluginId": "parsehub",
+      "kind": "api",
+      "shortPath": "projects.getLastReadyData",
+      "haystack": "projects.getlastreadydata parsehub.api.projects.getlastreadydata get the extracted data of the most recent run of a project that has data ready. read"
+    },
+    {
+      "pluginId": "parsehub",
+      "kind": "api",
+      "shortPath": "projects.list",
+      "haystack": "projects.list parsehub.api.projects.list list the scraping projects on the parsehub account, 20 at a time. read"
+    },
+    {
+      "pluginId": "parsehub",
+      "kind": "api",
+      "shortPath": "projects.run",
+      "haystack": "projects.run parsehub.api.projects.run start a run of a project on the parsehub cloud. returns the new run; poll runs.get until data_ready. destructive"
+    },
+    {
+      "pluginId": "parsehub",
+      "kind": "api",
+      "shortPath": "runs.cancel",
+      "haystack": "runs.cancel parsehub.api.runs.cancel cancel a running run. data extracted so far stays available. destructive"
+    },
+    {
+      "pluginId": "parsehub",
+      "kind": "api",
+      "shortPath": "runs.delete",
+      "haystack": "runs.delete parsehub.api.runs.delete delete a run and its data, cancelling it first if it is running. destructive"
+    },
+    {
+      "pluginId": "parsehub",
+      "kind": "api",
+      "shortPath": "runs.get",
+      "haystack": "runs.get parsehub.api.runs.get get one run: status, data_ready, page count and timing. read"
+    },
+    {
+      "pluginId": "parsehub",
+      "kind": "api",
+      "shortPath": "runs.getData",
+      "haystack": "runs.getdata parsehub.api.runs.getdata get the data a run extracted, as json or csv. read"
+    },
+    {
       "pluginId": "parseur",
       "kind": "api",
       "shortPath": "bootstrap.getBootstrap",
@@ -124717,6 +126026,24 @@
       "kind": "api",
       "shortPath": "pdfToXml",
       "haystack": "pdftoxml pdfco.api.pdftoxml convert pdf to xml read"
+    },
+    {
+      "pluginId": "pdfless",
+      "kind": "api",
+      "shortPath": "pdfs.generate",
+      "haystack": "pdfs.generate pdfless.api.pdfs.generate render a pdf from a document template and return its download link. uses one document from the workspace quota. destructive"
+    },
+    {
+      "pluginId": "pdfless",
+      "kind": "api",
+      "shortPath": "templates.list",
+      "haystack": "templates.list pdfless.api.templates.list list document templates in the pdfless workspace. read"
+    },
+    {
+      "pluginId": "pdfless",
+      "kind": "api",
+      "shortPath": "workspace.get",
+      "haystack": "workspace.get pdfless.api.workspace.get read the pdfless workspace for the connected api key. read"
     },
     {
       "pluginId": "pdfmonkey",
@@ -126061,6 +127388,30 @@
       "kind": "api",
       "shortPath": "users.getById",
       "haystack": "users.getbyid plain.api.users.getbyid fetch a workspace user by id. read"
+    },
+    {
+      "pluginId": "platerecognizer",
+      "kind": "api",
+      "shortPath": "ocr.getUsage",
+      "haystack": "ocr.getusage platerecognizer.api.ocr.getusage read the ocr calls used this period and the plan limit. read"
+    },
+    {
+      "pluginId": "platerecognizer",
+      "kind": "api",
+      "shortPath": "ocr.read",
+      "haystack": "ocr.read platerecognizer.api.ocr.read read a vin, trailer id, odometer, shipping container, boat registration or c-tpat seal from an image. uses one ocr call; takes 20 to 30 s. read"
+    },
+    {
+      "pluginId": "platerecognizer",
+      "kind": "api",
+      "shortPath": "plates.read",
+      "haystack": "plates.read platerecognizer.api.plates.read read license plates (and optionally make, model and color) from an image. uses one snapshot lookup. plate text is not stored. read"
+    },
+    {
+      "pluginId": "platerecognizer",
+      "kind": "api",
+      "shortPath": "usage.get",
+      "haystack": "usage.get platerecognizer.api.usage.get read the current snapshot usage period. read"
     },
     {
       "pluginId": "ploid",
@@ -128659,6 +130010,42 @@
       "kind": "api",
       "shortPath": "usages.update",
       "haystack": "usages.update proabono.api.usages.update update up to 50 usages in one call, each by increment, current quantity or on/off destructive"
+    },
+    {
+      "pluginId": "proofly",
+      "kind": "api",
+      "shortPath": "activity.list",
+      "haystack": "activity.list proofly.api.activity.list read proofly activity logs. the logs are not stored. read"
+    },
+    {
+      "pluginId": "proofly",
+      "kind": "api",
+      "shortPath": "campaigns.list",
+      "haystack": "campaigns.list proofly.api.campaigns.list list proofly campaigns for the connected account. read"
+    },
+    {
+      "pluginId": "proofly",
+      "kind": "api",
+      "shortPath": "campaigns.setEnabled",
+      "haystack": "campaigns.setenabled proofly.api.campaigns.setenabled turn a campaign on or off; sends nothing when it already has that state. write"
+    },
+    {
+      "pluginId": "proofly",
+      "kind": "api",
+      "shortPath": "notifications.getData",
+      "haystack": "notifications.getdata proofly.api.notifications.getdata read the leads and conversions a notification collected. not stored. read"
+    },
+    {
+      "pluginId": "proofly",
+      "kind": "api",
+      "shortPath": "notifications.list",
+      "haystack": "notifications.list proofly.api.notifications.list list the notifications in a campaign with their settings and stats. read"
+    },
+    {
+      "pluginId": "proofly",
+      "kind": "api",
+      "shortPath": "user.get",
+      "haystack": "user.get proofly.api.user.get read the signed-in proofly user. the pixel key is removed from the result. read"
     },
     {
       "pluginId": "pushbullet",
@@ -138303,6 +139690,36 @@
       "haystack": "scrape.markdown scrapingant.api.scrape.markdown fetch a page and return the whole thing as markdown, ready for an llm; spends 1 to 125 credits read"
     },
     {
+      "pluginId": "screenshotone",
+      "kind": "api",
+      "shortPath": "devices.list",
+      "haystack": "devices.list screenshotone.api.devices.list list device presets. user agent strings are not stored. read"
+    },
+    {
+      "pluginId": "screenshotone",
+      "kind": "api",
+      "shortPath": "shots.animate",
+      "haystack": "shots.animate screenshotone.api.shots.animate record a page as a video or gif (default or scroll scenario). returns a link to the file. spends a request from the plan. write"
+    },
+    {
+      "pluginId": "screenshotone",
+      "kind": "api",
+      "shortPath": "shots.bulk",
+      "haystack": "shots.bulk screenshotone.api.shots.bulk build up to 20 screenshot requests at once; with execute true they run now (one plan request each) and each url gets its status. write"
+    },
+    {
+      "pluginId": "screenshotone",
+      "kind": "api",
+      "shortPath": "shots.take",
+      "haystack": "shots.take screenshotone.api.shots.take screenshot a url, html or markdown as an image or pdf, with viewport, device, full page, selector, blocking and caching options. returns a link to the file. spends a request from the plan. write"
+    },
+    {
+      "pluginId": "screenshotone",
+      "kind": "api",
+      "shortPath": "usage.get",
+      "haystack": "usage.get screenshotone.api.usage.get read the current plan usage and request bucket. read"
+    },
+    {
       "pluginId": "search1api",
       "kind": "api",
       "shortPath": "account.health",
@@ -138397,6 +139814,36 @@
       "kind": "api",
       "shortPath": "web.trending",
       "haystack": "web.trending search1api.api.web.trending get trending topics from github or hacker news read"
+    },
+    {
+      "pluginId": "searchapi",
+      "kind": "api",
+      "shortPath": "account.get",
+      "haystack": "account.get searchapi.api.account.get read account usage and the hourly limit. read"
+    },
+    {
+      "pluginId": "searchapi",
+      "kind": "api",
+      "shortPath": "locations.list",
+      "haystack": "locations.list searchapi.api.locations.list look up google locations by name. read"
+    },
+    {
+      "pluginId": "searchapi",
+      "kind": "api",
+      "shortPath": "searches.get",
+      "haystack": "searches.get searchapi.api.searches.get read a cached search by id. result rows are not stored. read"
+    },
+    {
+      "pluginId": "searchapi",
+      "kind": "api",
+      "shortPath": "searches.html",
+      "haystack": "searches.html searchapi.api.searches.html read cached search html by id. the html is not stored. read"
+    },
+    {
+      "pluginId": "searchapi",
+      "kind": "api",
+      "shortPath": "searches.run",
+      "haystack": "searches.run searchapi.api.searches.run run a search on any searchapi engine (google, google_news, bing, youtube, amazon_search, ...) with location, language, page and time filters. returns organic results and every other section (answer box, ai overview, knowledge graph, news, local results). uses one search credit. results are not stored. read"
     },
     {
       "pluginId": "securitytrails",
@@ -139287,6 +140734,120 @@
       "haystack": "user.getusername sendgrid.api.user.getusername retrieve the account username read"
     },
     {
+      "pluginId": "sensibo",
+      "kind": "api",
+      "shortPath": "acStates.list",
+      "haystack": "acstates.list sensibo.api.acstates.list list the current and recent ac states of a pod, newest first. read"
+    },
+    {
+      "pluginId": "sensibo",
+      "kind": "api",
+      "shortPath": "acStates.set",
+      "haystack": "acstates.set sensibo.api.acstates.set set the ac state of a pod (on/off, mode, fan level, target temperature, swing). write"
+    },
+    {
+      "pluginId": "sensibo",
+      "kind": "api",
+      "shortPath": "acStates.setProperty",
+      "haystack": "acstates.setproperty sensibo.api.acstates.setproperty change one property of the ac state of a pod, such as on or targettemperature. write"
+    },
+    {
+      "pluginId": "sensibo",
+      "kind": "api",
+      "shortPath": "climateReact.configure",
+      "haystack": "climatereact.configure sensibo.api.climatereact.configure set the climate react thresholds and the ac states it applies; replaces the current climate react settings. write"
+    },
+    {
+      "pluginId": "sensibo",
+      "kind": "api",
+      "shortPath": "climateReact.get",
+      "haystack": "climatereact.get sensibo.api.climatereact.get get the climate react (smart mode) settings of a pod. read"
+    },
+    {
+      "pluginId": "sensibo",
+      "kind": "api",
+      "shortPath": "climateReact.setEnabled",
+      "haystack": "climatereact.setenabled sensibo.api.climatereact.setenabled turn climate react on or off for a pod. write"
+    },
+    {
+      "pluginId": "sensibo",
+      "kind": "api",
+      "shortPath": "devices.get",
+      "haystack": "devices.get sensibo.api.devices.get get one pod: room, ac state, measurements and remote capabilities. read"
+    },
+    {
+      "pluginId": "sensibo",
+      "kind": "api",
+      "shortPath": "devices.list",
+      "haystack": "devices.list sensibo.api.devices.list list the sensibo pods (ac controllers) on the account. pass fields=\"*\" for full pod details. read"
+    },
+    {
+      "pluginId": "sensibo",
+      "kind": "api",
+      "shortPath": "doorSensors.listEvents",
+      "haystack": "doorsensors.listevents sensibo.api.doorsensors.listevents list the open and close events of a door sensor. read"
+    },
+    {
+      "pluginId": "sensibo",
+      "kind": "api",
+      "shortPath": "events.list",
+      "haystack": "events.list sensibo.api.events.list list the events of a pod: ac state changes, schedule and climate react changes, motion and geofence events. read"
+    },
+    {
+      "pluginId": "sensibo",
+      "kind": "api",
+      "shortPath": "measurements.history",
+      "haystack": "measurements.history sensibo.api.measurements.history get the temperature and humidity readings of a pod for the last few days. read"
+    },
+    {
+      "pluginId": "sensibo",
+      "kind": "api",
+      "shortPath": "schedules.create",
+      "haystack": "schedules.create sensibo.api.schedules.create create a schedule that applies an ac state at a local time, once or on chosen weekdays. write"
+    },
+    {
+      "pluginId": "sensibo",
+      "kind": "api",
+      "shortPath": "schedules.delete",
+      "haystack": "schedules.delete sensibo.api.schedules.delete delete one schedule of a pod. destructive"
+    },
+    {
+      "pluginId": "sensibo",
+      "kind": "api",
+      "shortPath": "schedules.get",
+      "haystack": "schedules.get sensibo.api.schedules.get get one schedule of a pod. read"
+    },
+    {
+      "pluginId": "sensibo",
+      "kind": "api",
+      "shortPath": "schedules.list",
+      "haystack": "schedules.list sensibo.api.schedules.list list the schedules of a pod. read"
+    },
+    {
+      "pluginId": "sensibo",
+      "kind": "api",
+      "shortPath": "schedules.setEnabled",
+      "haystack": "schedules.setenabled sensibo.api.schedules.setenabled enable or pause one schedule of a pod. write"
+    },
+    {
+      "pluginId": "sensibo",
+      "kind": "api",
+      "shortPath": "timer.delete",
+      "haystack": "timer.delete sensibo.api.timer.delete delete the timer on a pod. destructive"
+    },
+    {
+      "pluginId": "sensibo",
+      "kind": "api",
+      "shortPath": "timer.get",
+      "haystack": "timer.get sensibo.api.timer.get get the timer set on a pod, if any. read"
+    },
+    {
+      "pluginId": "sensibo",
+      "kind": "api",
+      "shortPath": "timer.set",
+      "haystack": "timer.set sensibo.api.timer.set set a timer that applies an ac state a number of minutes from now; replaces any current timer. write"
+    },
+    {
       "pluginId": "sentry",
       "kind": "api",
       "shortPath": "events.get",
@@ -139777,6 +141338,102 @@
       "kind": "api",
       "shortPath": "utilities.searchArchive",
       "haystack": "utilities.searcharchive serpapi.api.utilities.searcharchive results from a previously run async search, by search id read"
+    },
+    {
+      "pluginId": "serply",
+      "kind": "api",
+      "shortPath": "articles.search",
+      "haystack": "articles.search serply.api.articles.search search google scholar articles and store them. each uncached call spends serply credits. read"
+    },
+    {
+      "pluginId": "serply",
+      "kind": "api",
+      "shortPath": "bing.search",
+      "haystack": "bing.search serply.api.bing.search search bing. each uncached call spends serply credits. read"
+    },
+    {
+      "pluginId": "serply",
+      "kind": "api",
+      "shortPath": "ebay.search",
+      "haystack": "ebay.search serply.api.ebay.search search ebay listings with price, condition and seller. each uncached call spends serply credits. read"
+    },
+    {
+      "pluginId": "serply",
+      "kind": "api",
+      "shortPath": "images.search",
+      "haystack": "images.search serply.api.images.search search google images (up to 20 per call) and store the results. each uncached call spends serply credits. read"
+    },
+    {
+      "pluginId": "serply",
+      "kind": "api",
+      "shortPath": "jobs.search",
+      "haystack": "jobs.search serply.api.jobs.search search google jobs by title and location. each uncached call spends serply credits. read"
+    },
+    {
+      "pluginId": "serply",
+      "kind": "api",
+      "shortPath": "news.search",
+      "haystack": "news.search serply.api.news.search search google news, optionally resolving links to the publisher url. each uncached call spends serply credits. read"
+    },
+    {
+      "pluginId": "serply",
+      "kind": "api",
+      "shortPath": "pages.fetch",
+      "haystack": "pages.fetch serply.api.pages.fetch fetch a web page through serply as markdown or html. each uncached call spends serply credits. read"
+    },
+    {
+      "pluginId": "serply",
+      "kind": "api",
+      "shortPath": "places.search",
+      "haystack": "places.search serply.api.places.search search google maps places and store them. each uncached call spends serply credits. read"
+    },
+    {
+      "pluginId": "serply",
+      "kind": "api",
+      "shortPath": "products.search",
+      "haystack": "products.search serply.api.products.search search products with prices, ratings and links. each uncached call spends serply credits. read"
+    },
+    {
+      "pluginId": "serply",
+      "kind": "api",
+      "shortPath": "reddit.comments",
+      "haystack": "reddit.comments serply.api.reddit.comments get the comment thread of a reddit post. each uncached call spends serply credits. read"
+    },
+    {
+      "pluginId": "serply",
+      "kind": "api",
+      "shortPath": "reddit.post",
+      "haystack": "reddit.post serply.api.reddit.post get one reddit post, optionally with its comments. each uncached call spends serply credits. read"
+    },
+    {
+      "pluginId": "serply",
+      "kind": "api",
+      "shortPath": "reddit.subredditAbout",
+      "haystack": "reddit.subredditabout serply.api.reddit.subredditabout get a subreddit description and subscriber count. each uncached call spends serply credits. read"
+    },
+    {
+      "pluginId": "serply",
+      "kind": "api",
+      "shortPath": "reddit.subredditPosts",
+      "haystack": "reddit.subredditposts serply.api.reddit.subredditposts list posts in a subreddit, sorted and paged. each uncached call spends serply credits. read"
+    },
+    {
+      "pluginId": "serply",
+      "kind": "api",
+      "shortPath": "reddit.userPosts",
+      "haystack": "reddit.userposts serply.api.reddit.userposts list a reddit user public posts and comments. each uncached call spends serply credits. read"
+    },
+    {
+      "pluginId": "serply",
+      "kind": "api",
+      "shortPath": "videos.search",
+      "haystack": "videos.search serply.api.videos.search search google videos. each uncached call spends serply credits. read"
+    },
+    {
+      "pluginId": "serply",
+      "kind": "api",
+      "shortPath": "web.search",
+      "haystack": "web.search serply.api.web.search search google: organic results, ads, ai overview and related questions. each uncached call spends serply credits. read"
     },
     {
       "pluginId": "servicem8",
@@ -153333,6 +154990,96 @@
       "haystack": "templates.save swaggerhub.api.templates.save create or update a template and its version write"
     },
     {
+      "pluginId": "sympla",
+      "kind": "api",
+      "shortPath": "events.get",
+      "haystack": "events.get sympla.api.events.get get one event: dates, address, host, category and publication status. read"
+    },
+    {
+      "pluginId": "sympla",
+      "kind": "api",
+      "shortPath": "events.list",
+      "haystack": "events.list sympla.api.events.list list the events of the sympla organizer, with cursor pagination. read"
+    },
+    {
+      "pluginId": "sympla",
+      "kind": "api",
+      "shortPath": "orders.get",
+      "haystack": "orders.get sympla.api.orders.get get one order of an event. read"
+    },
+    {
+      "pluginId": "sympla",
+      "kind": "api",
+      "shortPath": "orders.list",
+      "haystack": "orders.list sympla.api.orders.list list the orders of an event, filterable by date, buyer email and cancelled status. read"
+    },
+    {
+      "pluginId": "sympla",
+      "kind": "api",
+      "shortPath": "orders.listByPresentation",
+      "haystack": "orders.listbypresentation sympla.api.orders.listbypresentation list the orders of one presentation of an event. read"
+    },
+    {
+      "pluginId": "sympla",
+      "kind": "api",
+      "shortPath": "participants.checkIn",
+      "haystack": "participants.checkin sympla.api.participants.checkin check a participant in by participant id. the api has no way to undo a check-in. destructive"
+    },
+    {
+      "pluginId": "sympla",
+      "kind": "api",
+      "shortPath": "participants.checkInByQrCode",
+      "haystack": "participants.checkinbyqrcode sympla.api.participants.checkinbyqrcode check a participant in with the fields of a scanned ticket qr code. the api has no way to undo a check-in. destructive"
+    },
+    {
+      "pluginId": "sympla",
+      "kind": "api",
+      "shortPath": "participants.checkInByTicketNumber",
+      "haystack": "participants.checkinbyticketnumber sympla.api.participants.checkinbyticketnumber check a participant in by ticket number. the api has no way to undo a check-in. destructive"
+    },
+    {
+      "pluginId": "sympla",
+      "kind": "api",
+      "shortPath": "participants.get",
+      "haystack": "participants.get sympla.api.participants.get get one participant of an event by participant id. read"
+    },
+    {
+      "pluginId": "sympla",
+      "kind": "api",
+      "shortPath": "participants.getByTicketNumber",
+      "haystack": "participants.getbyticketnumber sympla.api.participants.getbyticketnumber get one participant of an event by ticket number. read"
+    },
+    {
+      "pluginId": "sympla",
+      "kind": "api",
+      "shortPath": "participants.list",
+      "haystack": "participants.list sympla.api.participants.list list the participants (tickets) of an event, with check-in status. read"
+    },
+    {
+      "pluginId": "sympla",
+      "kind": "api",
+      "shortPath": "participants.listByOrder",
+      "haystack": "participants.listbyorder sympla.api.participants.listbyorder list the participants (tickets) in one order. read"
+    },
+    {
+      "pluginId": "sympla",
+      "kind": "api",
+      "shortPath": "participants.listByPresentation",
+      "haystack": "participants.listbypresentation sympla.api.participants.listbypresentation list the participants (tickets) of one presentation. read"
+    },
+    {
+      "pluginId": "sympla",
+      "kind": "api",
+      "shortPath": "presentations.get",
+      "haystack": "presentations.get sympla.api.presentations.get get one presentation of an event, with its sectors. read"
+    },
+    {
+      "pluginId": "sympla",
+      "kind": "api",
+      "shortPath": "presentations.list",
+      "haystack": "presentations.list sympla.api.presentations.list list the presentations (sessions or dates) of an event. read"
+    },
+    {
       "pluginId": "synthflowai",
       "kind": "api",
       "shortPath": "actions.attach",
@@ -154801,6 +156548,1326 @@
       "kind": "webhook",
       "shortPath": "members.changed",
       "haystack": "members.changed teams.webhooks.members.changed a team membership was added, updated, or removed"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "boardCards.delete",
+      "haystack": "boardcards.delete teamwork.api.boardcards.delete remove a card from the board. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "boardCards.get",
+      "haystack": "boardcards.get teamwork.api.boardcards.get get one board card. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "boardCards.list",
+      "haystack": "boardcards.list teamwork.api.boardcards.list list the cards in a board column. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "boardCards.move",
+      "haystack": "boardcards.move teamwork.api.boardcards.move move a card to another column. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "boardCards.update",
+      "haystack": "boardcards.update teamwork.api.boardcards.update update a board card. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "boardColumns.create",
+      "haystack": "boardcolumns.create teamwork.api.boardcolumns.create create a board column. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "boardColumns.delete",
+      "haystack": "boardcolumns.delete teamwork.api.boardcolumns.delete delete a board column. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "boardColumns.get",
+      "haystack": "boardcolumns.get teamwork.api.boardcolumns.get get one board column. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "boardColumns.list",
+      "haystack": "boardcolumns.list teamwork.api.boardcolumns.list list the board columns of a project (needs boards on for the project). read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "boardColumns.update",
+      "haystack": "boardcolumns.update teamwork.api.boardcolumns.update update a board column. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "comments.create",
+      "haystack": "comments.create teamwork.api.comments.create comment on a task, milestone, file, notebook or link. teamwork notifies the people in notify. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "comments.delete",
+      "haystack": "comments.delete teamwork.api.comments.delete delete a comment. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "comments.get",
+      "haystack": "comments.get teamwork.api.comments.get get one comment. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "comments.list",
+      "haystack": "comments.list teamwork.api.comments.list list comments across tasks, milestones, files, notebooks and links. filter with objectids, projectids, userids. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "comments.listNotified",
+      "haystack": "comments.listnotified teamwork.api.comments.listnotified list the users notified about a comment. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "comments.markRead",
+      "haystack": "comments.markread teamwork.api.comments.markread mark a comment as read. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "comments.update",
+      "haystack": "comments.update teamwork.api.comments.update edit a comment. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "companies.addDomains",
+      "haystack": "companies.adddomains teamwork.api.companies.adddomains add email domains to a company. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "companies.convertCurrency",
+      "haystack": "companies.convertcurrency teamwork.api.companies.convertcurrency convert a company's currency, rewriting its rates and budgets. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "companies.create",
+      "haystack": "companies.create teamwork.api.companies.create create a company. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "companies.delete",
+      "haystack": "companies.delete teamwork.api.companies.delete delete a company. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "companies.deleteDomain",
+      "haystack": "companies.deletedomain teamwork.api.companies.deletedomain delete a company email domain. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "companies.get",
+      "haystack": "companies.get teamwork.api.companies.get get one company. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "companies.list",
+      "haystack": "companies.list teamwork.api.companies.list list companies. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "companies.listForProject",
+      "haystack": "companies.listforproject teamwork.api.companies.listforproject list the companies on a project. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "companies.setRates",
+      "haystack": "companies.setrates teamwork.api.companies.setrates set a company's client rates per role. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "companies.update",
+      "haystack": "companies.update teamwork.api.companies.update update a company. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "companies.updateDomain",
+      "haystack": "companies.updatedomain teamwork.api.companies.updatedomain update a company email domain. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "fileCategories.create",
+      "haystack": "filecategories.create teamwork.api.filecategories.create create a file category. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "fileCategories.delete",
+      "haystack": "filecategories.delete teamwork.api.filecategories.delete delete a file category. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "fileCategories.get",
+      "haystack": "filecategories.get teamwork.api.filecategories.get get one file category. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "fileCategories.list",
+      "haystack": "filecategories.list teamwork.api.filecategories.list list a project's file categories. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "fileCategories.update",
+      "haystack": "filecategories.update teamwork.api.filecategories.update update a file category. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "files.addToProject",
+      "haystack": "files.addtoproject teamwork.api.files.addtoproject attach an uploaded file (pendingfileref) to a project. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "files.addToTask",
+      "haystack": "files.addtotask teamwork.api.files.addtotask attach an uploaded file (pendingfileref) to a task. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "files.addVersion",
+      "haystack": "files.addversion teamwork.api.files.addversion add a new version to a file. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "files.copy",
+      "haystack": "files.copy teamwork.api.files.copy copy a file to another project. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "files.delete",
+      "haystack": "files.delete teamwork.api.files.delete delete a file. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "files.getShareLink",
+      "haystack": "files.getsharelink teamwork.api.files.getsharelink get a short share link for a file. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "files.listForProject",
+      "haystack": "files.listforproject teamwork.api.files.listforproject list the files on a project. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "files.listForTask",
+      "haystack": "files.listfortask teamwork.api.files.listfortask list the files on a task. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "linkCategories.create",
+      "haystack": "linkcategories.create teamwork.api.linkcategories.create create a link category. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "linkCategories.delete",
+      "haystack": "linkcategories.delete teamwork.api.linkcategories.delete delete a link category. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "linkCategories.get",
+      "haystack": "linkcategories.get teamwork.api.linkcategories.get get one link category. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "linkCategories.list",
+      "haystack": "linkcategories.list teamwork.api.linkcategories.list list a project's link categories. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "links.create",
+      "haystack": "links.create teamwork.api.links.create add a link to a project. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "links.delete",
+      "haystack": "links.delete teamwork.api.links.delete delete a link. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "links.get",
+      "haystack": "links.get teamwork.api.links.get get one link. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "links.list",
+      "haystack": "links.list teamwork.api.links.list list links across all projects. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "links.listForProject",
+      "haystack": "links.listforproject teamwork.api.links.listforproject list the links on a project. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "links.update",
+      "haystack": "links.update teamwork.api.links.update update a link. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "milestones.complete",
+      "haystack": "milestones.complete teamwork.api.milestones.complete mark a milestone complete. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "milestones.create",
+      "haystack": "milestones.create teamwork.api.milestones.create create a milestone in a project. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "milestones.delete",
+      "haystack": "milestones.delete teamwork.api.milestones.delete delete a milestone (it goes to the trash). destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "milestones.get",
+      "haystack": "milestones.get teamwork.api.milestones.get get one milestone. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "milestones.list",
+      "haystack": "milestones.list teamwork.api.milestones.list list milestones. filter with projectids, assignedtouserids, tagids and more. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "milestones.listByDeadline",
+      "haystack": "milestones.listbydeadline teamwork.api.milestones.listbydeadline list milestones due in a date range. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "milestones.uncomplete",
+      "haystack": "milestones.uncomplete teamwork.api.milestones.uncomplete reopen a completed milestone. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "milestones.update",
+      "haystack": "milestones.update teamwork.api.milestones.update update a milestone. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "notebookCategories.create",
+      "haystack": "notebookcategories.create teamwork.api.notebookcategories.create create a notebook category. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "notebookCategories.delete",
+      "haystack": "notebookcategories.delete teamwork.api.notebookcategories.delete delete a notebook category. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "notebookCategories.get",
+      "haystack": "notebookcategories.get teamwork.api.notebookcategories.get get one notebook category. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "notebookCategories.list",
+      "haystack": "notebookcategories.list teamwork.api.notebookcategories.list list a project's notebook categories. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "notebookCategories.update",
+      "haystack": "notebookcategories.update teamwork.api.notebookcategories.update update a notebook category. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "notebooks.copy",
+      "haystack": "notebooks.copy teamwork.api.notebooks.copy copy a notebook to another project. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "notebooks.create",
+      "haystack": "notebooks.create teamwork.api.notebooks.create create a notebook in a project. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "notebooks.delete",
+      "haystack": "notebooks.delete teamwork.api.notebooks.delete delete a notebook. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "notebooks.deleteVersions",
+      "haystack": "notebooks.deleteversions teamwork.api.notebooks.deleteversions delete notebook versions. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "notebooks.get",
+      "haystack": "notebooks.get teamwork.api.notebooks.get get one notebook with its contents. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "notebooks.getVersion",
+      "haystack": "notebooks.getversion teamwork.api.notebooks.getversion get one version of a notebook. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "notebooks.list",
+      "haystack": "notebooks.list teamwork.api.notebooks.list list notebooks. filter with projectids, categoryids, tagids. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "notebooks.listVersions",
+      "haystack": "notebooks.listversions teamwork.api.notebooks.listversions list a notebook's versions. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "notebooks.lock",
+      "haystack": "notebooks.lock teamwork.api.notebooks.lock lock a notebook for editing. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "notebooks.move",
+      "haystack": "notebooks.move teamwork.api.notebooks.move move a notebook to another project. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "notebooks.unlock",
+      "haystack": "notebooks.unlock teamwork.api.notebooks.unlock unlock a notebook. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "notebooks.update",
+      "haystack": "notebooks.update teamwork.api.notebooks.update update a notebook. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "people.addToProjects",
+      "haystack": "people.addtoprojects teamwork.api.people.addtoprojects add one user to many projects at once. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "people.create",
+      "haystack": "people.create teamwork.api.people.create add a user to the site. teamwork emails them an invitation unless sendinvite is false. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "people.delete",
+      "haystack": "people.delete teamwork.api.people.delete delete a user. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "people.get",
+      "haystack": "people.get teamwork.api.people.get get one person. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "people.list",
+      "haystack": "people.list teamwork.api.people.list list people. filter with projectids, companyids, teamids, searchterm and more. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "people.listDeleted",
+      "haystack": "people.listdeleted teamwork.api.people.listdeleted list deleted users. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "people.me",
+      "haystack": "people.me teamwork.api.people.me get the user the api key belongs to. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "people.myStats",
+      "haystack": "people.mystats teamwork.api.people.mystats summary counts for the current user (tasks, milestones, messages). read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "people.performance",
+      "haystack": "people.performance teamwork.api.people.performance the users who completed the most tasks. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "people.taskCompletion",
+      "haystack": "people.taskcompletion teamwork.api.people.taskcompletion task completions per user. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "people.update",
+      "haystack": "people.update teamwork.api.people.update update a user. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "people.utilization",
+      "haystack": "people.utilization teamwork.api.people.utilization user utilization for a date range. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "personalTasks.create",
+      "haystack": "personaltasks.create teamwork.api.personaltasks.create create a personal task. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "personalTasks.get",
+      "haystack": "personaltasks.get teamwork.api.personaltasks.get get one personal task. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "personalTasks.list",
+      "haystack": "personaltasks.list teamwork.api.personaltasks.list list the current user's personal tasks. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "portfolioBoards.create",
+      "haystack": "portfolioboards.create teamwork.api.portfolioboards.create create a portfolio board. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "portfolioBoards.delete",
+      "haystack": "portfolioboards.delete teamwork.api.portfolioboards.delete delete a portfolio board. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "portfolioBoards.list",
+      "haystack": "portfolioboards.list teamwork.api.portfolioboards.list list portfolio boards. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "portfolioBoards.update",
+      "haystack": "portfolioboards.update teamwork.api.portfolioboards.update update a portfolio board. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "portfolioCards.add",
+      "haystack": "portfoliocards.add teamwork.api.portfoliocards.add add a project to a portfolio column. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "portfolioCards.delete",
+      "haystack": "portfoliocards.delete teamwork.api.portfoliocards.delete remove a project card from a portfolio column. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "portfolioCards.get",
+      "haystack": "portfoliocards.get teamwork.api.portfoliocards.get get one portfolio card. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "portfolioCards.list",
+      "haystack": "portfoliocards.list teamwork.api.portfoliocards.list list the project cards in a portfolio column. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "portfolioCards.move",
+      "haystack": "portfoliocards.move teamwork.api.portfoliocards.move move a project card to another column. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "portfolioColumns.create",
+      "haystack": "portfoliocolumns.create teamwork.api.portfoliocolumns.create add a column to a portfolio board. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "portfolioColumns.delete",
+      "haystack": "portfoliocolumns.delete teamwork.api.portfoliocolumns.delete delete a portfolio column. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "portfolioColumns.get",
+      "haystack": "portfoliocolumns.get teamwork.api.portfoliocolumns.get get one portfolio column. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "portfolioColumns.list",
+      "haystack": "portfoliocolumns.list teamwork.api.portfoliocolumns.list list the columns of a portfolio board. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projectCategories.create",
+      "haystack": "projectcategories.create teamwork.api.projectcategories.create create a project category. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projectCategories.delete",
+      "haystack": "projectcategories.delete teamwork.api.projectcategories.delete delete a project category. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projectCategories.get",
+      "haystack": "projectcategories.get teamwork.api.projectcategories.get get one project category. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projectCategories.list",
+      "haystack": "projectcategories.list teamwork.api.projectcategories.list list project categories. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projectCategories.update",
+      "haystack": "projectcategories.update teamwork.api.projectcategories.update rename or move a project category. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projectMetrics.billable",
+      "haystack": "projectmetrics.billable teamwork.api.projectmetrics.billable total billable time per project. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projectMetrics.health",
+      "haystack": "projectmetrics.health teamwork.api.projectmetrics.health health summary across projects. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projectMetrics.invoices",
+      "haystack": "projectmetrics.invoices teamwork.api.projectmetrics.invoices open invoices across projects. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projectMetrics.unbilled",
+      "haystack": "projectmetrics.unbilled teamwork.api.projectmetrics.unbilled unbilled expenses across projects. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projectPeople.add",
+      "haystack": "projectpeople.add teamwork.api.projectpeople.add add people to a project. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projectPeople.get",
+      "haystack": "projectpeople.get teamwork.api.projectpeople.get get one person's membership on a project. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projectPeople.getPermissions",
+      "haystack": "projectpeople.getpermissions teamwork.api.projectpeople.getpermissions get a person's permissions on a project. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projectPeople.list",
+      "haystack": "projectpeople.list teamwork.api.projectpeople.list list the people on a project. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projectPeople.remove",
+      "haystack": "projectpeople.remove teamwork.api.projectpeople.remove remove a person from a project. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projectRoles.delete",
+      "haystack": "projectroles.delete teamwork.api.projectroles.delete delete a project role. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projectRoles.get",
+      "haystack": "projectroles.get teamwork.api.projectroles.get get one project role. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projectRoles.list",
+      "haystack": "projectroles.list teamwork.api.projectroles.list list the roles on a project. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projectRoles.update",
+      "haystack": "projectroles.update teamwork.api.projectroles.update update a project role. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projects.clone",
+      "haystack": "projects.clone teamwork.api.projects.clone copy a project, optionally with its tasks, milestones and people. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projects.convertTentative",
+      "haystack": "projects.converttentative teamwork.api.projects.converttentative convert a tentative project into a normal project. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projects.create",
+      "haystack": "projects.create teamwork.api.projects.create create a project. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projects.delete",
+      "haystack": "projects.delete teamwork.api.projects.delete delete a project. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projects.get",
+      "haystack": "projects.get teamwork.api.projects.get get one project by id. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projects.getRates",
+      "haystack": "projects.getrates teamwork.api.projects.getrates get a project's billable rates per user. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projects.getStats",
+      "haystack": "projects.getstats teamwork.api.projects.getstats get task and milestone counts for a project. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projects.list",
+      "haystack": "projects.list teamwork.api.projects.list list projects. filter with projectids, projectcompanyids, projectcategoryids, projectstatuses, searchterm and more. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projects.listStarred",
+      "haystack": "projects.liststarred teamwork.api.projects.liststarred list the projects the current user has starred. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projects.listTaskPredecessors",
+      "haystack": "projects.listtaskpredecessors teamwork.api.projects.listtaskpredecessors list every task dependency (predecessor) in a project. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projects.setRates",
+      "haystack": "projects.setrates teamwork.api.projects.setrates set a project's billable rates. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projects.star",
+      "haystack": "projects.star teamwork.api.projects.star star a project for the current user. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projects.update",
+      "haystack": "projects.update teamwork.api.projects.update update a project's name, dates, owner, category or settings. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projectTemplates.create",
+      "haystack": "projecttemplates.create teamwork.api.projecttemplates.create create a project template. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projectTemplates.get",
+      "haystack": "projecttemplates.get teamwork.api.projecttemplates.get get one project template. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projectTemplates.list",
+      "haystack": "projecttemplates.list teamwork.api.projecttemplates.list list project templates. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projectTemplates.listRequiredCustomFields",
+      "haystack": "projecttemplates.listrequiredcustomfields teamwork.api.projecttemplates.listrequiredcustomfields list the custom fields a template requires when a project is made from it. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projectUpdates.create",
+      "haystack": "projectupdates.create teamwork.api.projectupdates.create post a status update on a project. notifies the people in notifyids. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projectUpdates.delete",
+      "haystack": "projectupdates.delete teamwork.api.projectupdates.delete delete a project update. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projectUpdates.list",
+      "haystack": "projectupdates.list teamwork.api.projectupdates.list list project status updates. filter with projectids. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projectUpdates.request",
+      "haystack": "projectupdates.request teamwork.api.projectupdates.request ask the project owner for a status update. notifies the owner. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "projectUpdates.update",
+      "haystack": "projectupdates.update teamwork.api.projectupdates.update edit a project update. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "statuses.create",
+      "haystack": "statuses.create teamwork.api.statuses.create set a person's status. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "statuses.delete",
+      "haystack": "statuses.delete teamwork.api.statuses.delete delete a status by id. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "statuses.getForPerson",
+      "haystack": "statuses.getforperson teamwork.api.statuses.getforperson get a person's status. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "statuses.getMine",
+      "haystack": "statuses.getmine teamwork.api.statuses.getmine get the current user's status. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "statuses.list",
+      "haystack": "statuses.list teamwork.api.statuses.list list everyone's current status. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "statuses.timeline",
+      "haystack": "statuses.timeline teamwork.api.statuses.timeline the people status timeline. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "statuses.update",
+      "haystack": "statuses.update teamwork.api.statuses.update update a status by id. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "tasklists.copy",
+      "haystack": "tasklists.copy teamwork.api.tasklists.copy copy a task list, within its project or to another. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "tasklists.create",
+      "haystack": "tasklists.create teamwork.api.tasklists.create create a task list in a project. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "tasklists.delete",
+      "haystack": "tasklists.delete teamwork.api.tasklists.delete delete a task list and its tasks. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "tasklists.get",
+      "haystack": "tasklists.get teamwork.api.tasklists.get get one task list. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "tasklists.list",
+      "haystack": "tasklists.list teamwork.api.tasklists.list list task lists. filter with projectids. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "tasklists.listTemplates",
+      "haystack": "tasklists.listtemplates teamwork.api.tasklists.listtemplates list task list templates. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "tasklists.move",
+      "haystack": "tasklists.move teamwork.api.tasklists.move move a task list to another project. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "tasklists.reorder",
+      "haystack": "tasklists.reorder teamwork.api.tasklists.reorder reorder the task lists in a project. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "tasklists.update",
+      "haystack": "tasklists.update teamwork.api.tasklists.update update a task list. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "taskReminders.create",
+      "haystack": "taskreminders.create teamwork.api.taskreminders.create add a reminder to a task. teamwork emails or messages the people it names when it fires. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "taskReminders.delete",
+      "haystack": "taskreminders.delete teamwork.api.taskreminders.delete delete a task reminder. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "taskReminders.list",
+      "haystack": "taskreminders.list teamwork.api.taskreminders.list list the reminders on a task. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "taskReminders.update",
+      "haystack": "taskreminders.update teamwork.api.taskreminders.update change a reminder's time, type or note. to change who gets it, delete it and add a new one. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "tasks.complete",
+      "haystack": "tasks.complete teamwork.api.tasks.complete mark a task complete. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "tasks.copy",
+      "haystack": "tasks.copy teamwork.api.tasks.copy copy a task to another project or task list. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "tasks.countCompleted",
+      "haystack": "tasks.countcompleted teamwork.api.tasks.countcompleted count completed tasks. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "tasks.countLate",
+      "haystack": "tasks.countlate teamwork.api.tasks.countlate count late tasks. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "tasks.create",
+      "haystack": "tasks.create teamwork.api.tasks.create create a task in a task list. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "tasks.createSubtask",
+      "haystack": "tasks.createsubtask teamwork.api.tasks.createsubtask create a subtask under a task. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "tasks.delete",
+      "haystack": "tasks.delete teamwork.api.tasks.delete delete a task (it goes to the trash). destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "tasks.get",
+      "haystack": "tasks.get teamwork.api.tasks.get get one task. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "tasks.list",
+      "haystack": "tasks.list teamwork.api.tasks.list list tasks. filter with projectids, tasklistids, parenttaskid, responsiblepartyids, tagids, completedonly/includecompletedtasks, due dates and more. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "tasks.listDependencies",
+      "haystack": "tasks.listdependencies teamwork.api.tasks.listdependencies list the tasks that depend on a task. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "tasks.listPredecessors",
+      "haystack": "tasks.listpredecessors teamwork.api.tasks.listpredecessors list the tasks a task waits on. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "tasks.listRecurring",
+      "haystack": "tasks.listrecurring teamwork.api.tasks.listrecurring list the repeats of a recurring task. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "tasks.move",
+      "haystack": "tasks.move teamwork.api.tasks.move move a task to another project or task list. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "tasks.quickAdd",
+      "haystack": "tasks.quickadd teamwork.api.tasks.quickadd add several tasks to a project at once from lines of text. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "tasks.quickAddSubtasks",
+      "haystack": "tasks.quickaddsubtasks teamwork.api.tasks.quickaddsubtasks add several subtasks to a task at once from lines of text. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "tasks.reorder",
+      "haystack": "tasks.reorder teamwork.api.tasks.reorder reorder the tasks in a task list. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "tasks.setEstimate",
+      "haystack": "tasks.setestimate teamwork.api.tasks.setestimate set a task's time estimate. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "tasks.timeReport",
+      "haystack": "tasks.timereport teamwork.api.tasks.timereport report of time logged against tasks. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "tasks.uncomplete",
+      "haystack": "tasks.uncomplete teamwork.api.tasks.uncomplete reopen a completed task. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "tasks.update",
+      "haystack": "tasks.update teamwork.api.tasks.update update a task (only the fields you send change). write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "teams.create",
+      "haystack": "teams.create teamwork.api.teams.create create a team. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "teams.createForProject",
+      "haystack": "teams.createforproject teamwork.api.teams.createforproject create a project-specific team. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "teams.delete",
+      "haystack": "teams.delete teamwork.api.teams.delete delete a team. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "teams.get",
+      "haystack": "teams.get teamwork.api.teams.get get one team. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "teams.list",
+      "haystack": "teams.list teamwork.api.teams.list list teams. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "teams.listForCompany",
+      "haystack": "teams.listforcompany teamwork.api.teams.listforcompany list a company's teams. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "teams.listForPerson",
+      "haystack": "teams.listforperson teamwork.api.teams.listforperson list the teams a person is in. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "teams.listForProject",
+      "haystack": "teams.listforproject teamwork.api.teams.listforproject list the teams on a project. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "teams.listMemberIds",
+      "haystack": "teams.listmemberids teamwork.api.teams.listmemberids the user ids in every team. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "teams.listSubteams",
+      "haystack": "teams.listsubteams teamwork.api.teams.listsubteams list a team's subteams. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "teams.setMembers",
+      "haystack": "teams.setmembers teamwork.api.teams.setmembers add members to a team, or replace all of them (action defaults to replace). destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "teams.update",
+      "haystack": "teams.update teamwork.api.teams.update update a team. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "time.byCompany",
+      "haystack": "time.bycompany teamwork.api.time.bycompany time entries grouped by company. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "time.create",
+      "haystack": "time.create teamwork.api.time.create log time on a project. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "time.createForTask",
+      "haystack": "time.createfortask teamwork.api.time.createfortask log time on a task. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "time.delete",
+      "haystack": "time.delete teamwork.api.time.delete delete a time entry. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "time.estimatedTotals",
+      "haystack": "time.estimatedtotals teamwork.api.time.estimatedtotals estimated time totals per project. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "time.get",
+      "haystack": "time.get teamwork.api.time.get get one time entry. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "time.list",
+      "haystack": "time.list teamwork.api.time.list list time entries. filter with projectids, taskids, tasklistids, assignedtouserids, startdate/enddate and more. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "time.loggedByPerson",
+      "haystack": "time.loggedbyperson teamwork.api.time.loggedbyperson time a person logged, by day. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "time.report",
+      "haystack": "time.report teamwork.api.time.report time report for a date range (startdate and enddate required). read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "time.reportByType",
+      "haystack": "time.reportbytype teamwork.api.time.reportbytype time report grouped by user, project, company or task. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "time.reportTotals",
+      "haystack": "time.reporttotals teamwork.api.time.reporttotals time report totals for a date range. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "time.totals",
+      "haystack": "time.totals teamwork.api.time.totals total logged time. filter with projectids, tasklistids, taskids, userids. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "time.update",
+      "haystack": "time.update teamwork.api.time.update update a time entry (only the fields you send change). write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "time.validate",
+      "haystack": "time.validate teamwork.api.time.validate check whether a time entry can be logged (needs time approvals on the plan). read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "timers.complete",
+      "haystack": "timers.complete teamwork.api.timers.complete stop a timer and log its time. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "timers.create",
+      "haystack": "timers.create teamwork.api.timers.create start a timer. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "timers.delete",
+      "haystack": "timers.delete teamwork.api.timers.delete delete a timer. destructive"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "timers.get",
+      "haystack": "timers.get teamwork.api.timers.get get one timer. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "timers.list",
+      "haystack": "timers.list teamwork.api.timers.list list running timers. filter with userid, projectid, taskid. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "timers.listMine",
+      "haystack": "timers.listmine teamwork.api.timers.listmine list the current user's timers. read"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "timers.pause",
+      "haystack": "timers.pause teamwork.api.timers.pause pause a timer. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "timers.resume",
+      "haystack": "timers.resume teamwork.api.timers.resume resume a paused timer. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "timers.undelete",
+      "haystack": "timers.undelete teamwork.api.timers.undelete restore a deleted timer. write"
+    },
+    {
+      "pluginId": "teamwork",
+      "kind": "api",
+      "shortPath": "timers.update",
+      "haystack": "timers.update teamwork.api.timers.update edit a timer. write"
     },
     {
       "pluginId": "telegram",
@@ -161065,6 +164132,36 @@
       "kind": "webhook",
       "shortPath": "tweets.filterMatch",
       "haystack": "tweets.filtermatch twitterapiio.webhooks.tweets.filtermatch a tweet matched a configured filter rule"
+    },
+    {
+      "pluginId": "twocaptcha",
+      "kind": "api",
+      "shortPath": "account.balance",
+      "haystack": "account.balance twocaptcha.api.account.balance read the account balance in usd read"
+    },
+    {
+      "pluginId": "twocaptcha",
+      "kind": "api",
+      "shortPath": "account.reportCorrect",
+      "haystack": "account.reportcorrect twocaptcha.api.account.reportcorrect report that the site accepted a task answer destructive"
+    },
+    {
+      "pluginId": "twocaptcha",
+      "kind": "api",
+      "shortPath": "account.reportIncorrect",
+      "haystack": "account.reportincorrect twocaptcha.api.account.reportincorrect report that the site rejected a task answer; 2captcha reviews it and may refund the task destructive"
+    },
+    {
+      "pluginId": "twocaptcha",
+      "kind": "api",
+      "shortPath": "tasks.create",
+      "haystack": "tasks.create twocaptcha.api.tasks.create create a captcha-solving task, which the account pays for; returns the task id to poll destructive"
+    },
+    {
+      "pluginId": "twocaptcha",
+      "kind": "api",
+      "shortPath": "tasks.result",
+      "haystack": "tasks.result twocaptcha.api.tasks.result read a task result: processing while workers solve it, then ready with the solution and cost read"
     },
     {
       "pluginId": "twochat",

@@ -1,0 +1,277 @@
+---
+title: "SearchAPI API reference"
+sidebarTitle: "API"
+description: "API reference for the SearchAPI plugin in Corsair: every `searchapi.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Read account usage and the hourly limit.
+
+**Risk:** `read`
+
+```ts
+await corsair.searchapi.api.account.get({});
+```
+
+**Input:** _empty object_
+
+GET /api/v1/me. Stores the usage numbers on id account.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="account full type">
+
+```ts
+{
+  id: string,
+  currentMonthUsage?: number,
+  monthlyAllowance?: number,
+  remainingCredits?: number,
+  remainingSearches?: number,
+  searchesThisHour?: number,
+  hourlyRateLimit?: number,
+  periodStart?: string,
+  periodEnd?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Locations
+
+### list
+
+`locations.list`
+
+Look up Google locations by name.
+
+**Risk:** `read`
+
+```ts
+await corsair.searchapi.api.locations.list({ q: 'london' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+
+GET /api/v1/locations. Stores google_id, name, canonical name, country code, and target type.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `locations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="locations full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  canonicalName?: string,
+  countryCode?: string,
+  targetType?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Searches
+
+### get
+
+`searches.get`
+
+Read a cached search by id. Result rows are not stored.
+
+**Risk:** `read`
+
+```ts
+await corsair.searchapi.api.searches.get({ id: 'search_example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+GET /api/v1/searches/{id}. This is the json_url. Returns the same results and sections as searches.run. Stores id, status, and engine.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `object` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `sections` | `Record<string, any>` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="search full type">
+
+```ts
+{
+  id: string,
+  status?: string,
+  engine?: string
+}
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  position?: number,
+  title?: string,
+  link?: string,
+  displayed_link?: string,
+  snippet?: string,
+  date?: string,
+  source?: string,
+  domain?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### html
+
+`searches.html`
+
+Read cached search HTML by id. The HTML is not stored.
+
+**Risk:** `read`
+
+```ts
+await corsair.searchapi.api.searches.html({ id: 'search_example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+GET /api/v1/searches/{id}.html. Returns the HTML and does not store it.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `html` | `string` | Yes | — |
+
+
+
+---
+
+### run
+
+`searches.run`
+
+Run a search on any SearchAPI engine (google, google_news, bing, youtube, amazon_search, ...) with location, language, page and time filters. Returns organic results and every other section (answer box, AI overview, knowledge graph, news, local results). Uses one search credit. Results are not stored.
+
+**Risk:** `read`
+
+```ts
+await corsair.searchapi.api.searches.run({ engine: 'google', q: 'coffee roasters', location: 'Austin,Texas,United States', time_period: 'last_month' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `engine` | `string` | Yes | — |
+| `q` | `string` | No | — |
+| `location` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `device` | `desktop \| mobile \| tablet` | No | — |
+| `page` | `number` | No | — |
+| `safe` | `active \| blur \| off` | No | — |
+| `time_period` | `last_1_minute \| last_5_minutes \| last_15_minutes \| last_30_minutes \| last_hour \| last_day \| last_week \| last_month \| last_year` | No | — |
+| `params` | `Record<string, string \| number \| boolean>` | No | — |
+
+GET /api/v1/search. engine picks the source (google, google_news, google_maps, bing, youtube, amazon_search and the others in searchapi.io/docs). location, gl, hl, device, page, safe and time_period are typed; any other parameter the engine documents goes in params (for example { video_id } for youtube_transcripts). results holds organic_results (position, title, link, snippet, date, source, domain); sections holds every other part of the answer under SearchAPI's own key (answer_box, ai_overview, knowledge_graph, related_questions, top_stories, local_results, pagination). Uses one search credit. Stores id, status, and engine; the query and results are not stored.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `object` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `sections` | `Record<string, any>` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="search full type">
+
+```ts
+{
+  id: string,
+  status?: string,
+  engine?: string
+}
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  position?: number,
+  title?: string,
+  link?: string,
+  displayed_link?: string,
+  snippet?: string,
+  date?: string,
+  source?: string,
+  domain?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

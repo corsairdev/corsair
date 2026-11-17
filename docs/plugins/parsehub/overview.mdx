@@ -1,0 +1,148 @@
+---
+title: "ParseHub plugin"
+sidebarTitle: "Overview"
+description: "Run ParseHub scraping projects and get the data they extract."
+---
+
+Use **ParseHub** through Corsair: one client, typed API calls, local DB sync.
+
+Things to know before you call:
+
+- **Projects are built in the ParseHub desktop app.** The API lists, runs and reads projects; it cannot create or edit them.
+- **A run is asynchronous.** `projects.run` returns the new run straight away. Poll `runs.get` until `data_ready` is true or `status` is `cancelled` or `error` (ParseHub allows 25 polls in a run's first 5 minutes, then one every 3 minutes). A cancelled or failed run may have no data; when `data_ready` is true, call `runs.getData`. `projects.getLastReadyData` skips the polling and returns the newest finished data.
+- **Data comes as JSON or CSV.** `format: 'csv'` returns the CSV as a string.
+- **The key is the `api_key` parameter.** The client sends it in the query string on every call, where Corsair redacts it from errors. With no key stored, Corsair raises `AuthMissingError` before any request; a key ParseHub rejects comes back as HTTP 401.
+- **Limits.** 5 requests a second (up to 25 queued); `projects.list` returns at most 20 projects per page.
+
+**What you get:**
+
+- 8 typed API operations
+- 1 synced entity (`projects`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/parsehub better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/parsehub better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/parsehub better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/parsehub better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { parsehub } from '@corsair-dev/parsehub';
+
+export const corsair = createCorsair({
+	plugins: [
+		parsehub(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the ParseHub API key before the first call: `pnpm corsair setup --plugin=parsehub --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+parsehub()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'parsehub',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Get the latest scraped data of a project**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.parsehub.api.projects.getLastReadyData({ project_token: 't-0WMEZ-Bc9sWGHAMsYvP7y4' });
+```
+
+
+**Run a project with a search value**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.parsehub.api.projects.run({
+	project_token: 't-0WMEZ-Bc9sWGHAMsYvP7y4',
+	start_value_override: { query: 'San Francisco' },
+});
+```
+
+
+See the full list on the [API](/plugins/parsehub/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.parsehub.db.<entity>.search()` and `.list()`: `projects`.
+
+See [Database](/plugins/parsehub/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/parsehub/api">
+    Every `parsehub.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/parsehub/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
