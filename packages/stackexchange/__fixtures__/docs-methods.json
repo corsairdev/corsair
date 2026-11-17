@@ -1,0 +1,1220 @@
+{
+  "accept-answer": {
+    "method": "POST",
+    "path": "answers/{id}/accept",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "achievements-on-user": {
+    "method": "GET",
+    "path": "users/{id}/achievements",
+    "scopes": ["private_info"],
+    "site": false,
+    "token": true
+  },
+  "advanced-search": {
+    "method": "GET",
+    "path": "search/advanced",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "answer-flag-options": {
+    "method": "GET",
+    "path": "answers/{id}/flags/options",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "answers": {
+    "method": "GET",
+    "path": "answers",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "answers-by-collective": {
+    "method": "GET",
+    "path": "collectives/{slugs}/answers",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "answers-by-ids": {
+    "method": "GET",
+    "path": "answers/{ids}",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "answers-on-questions": {
+    "method": "GET",
+    "path": "questions/{ids}/answers",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "answers-on-users": {
+    "method": "GET",
+    "path": "users/{ids}/answers",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "associated-users": {
+    "method": "GET",
+    "path": "users/{ids}/associated",
+    "scopes": [],
+    "site": false,
+    "token": false
+  },
+  "badge-recipients": {
+    "method": "GET",
+    "path": "badges/recipients",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "badge-recipients-by-ids": {
+    "method": "GET",
+    "path": "badges/{ids}/recipients",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "badges": {
+    "method": "GET",
+    "path": "badges",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "badges-by-ids": {
+    "method": "GET",
+    "path": "badges/{ids}",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "badges-by-name": {
+    "method": "GET",
+    "path": "badges/name",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "badges-by-tag": {
+    "method": "GET",
+    "path": "badges/tags",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "badges-on-users": {
+    "method": "GET",
+    "path": "users/{ids}/badges",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "collectives": {
+    "method": "GET",
+    "path": "collectives",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "collectives-by-slug": {
+    "method": "GET",
+    "path": "collectives/{slugs}",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "comment-flag-options": {
+    "method": "GET",
+    "path": "comments/{id}/flags/options",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "comments": {
+    "method": "GET",
+    "path": "comments",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "comments-by-ids": {
+    "method": "GET",
+    "path": "comments/{ids}",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "comments-by-users-to-user": {
+    "method": "GET",
+    "path": "users/{ids}/comments/{toid}",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "comments-on-answers": {
+    "method": "GET",
+    "path": "answers/{ids}/comments",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "comments-on-posts": {
+    "method": "GET",
+    "path": "posts/{ids}/comments",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "comments-on-questions": {
+    "method": "GET",
+    "path": "questions/{ids}/comments",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "comments-on-users": {
+    "method": "GET",
+    "path": "users/{ids}/comments",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "create-answer": {
+    "method": "POST",
+    "path": "questions/{id}/answers/add",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "create-answer-flag": {
+    "method": "POST",
+    "path": "answers/{id}/flags/add",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "create-answer-suggested-edit": {
+    "method": "POST",
+    "path": "answers/{id}/suggested-edit/add",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "create-comment": {
+    "method": "POST",
+    "path": "posts/{id}/comments/add",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "create-comment-flag": {
+    "method": "POST",
+    "path": "comments/{id}/flags/add",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "create-filter": {
+    "method": "GET",
+    "path": "filters/create",
+    "scopes": [],
+    "site": false,
+    "token": false
+  },
+  "create-question": {
+    "method": "POST",
+    "path": "questions/add",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "create-question-flag": {
+    "method": "POST",
+    "path": "questions/{id}/flags/add",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "create-question-suggested-edit": {
+    "method": "POST",
+    "path": "questions/{id}/suggested-edit/add",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "delete-answer": {
+    "method": "POST",
+    "path": "answers/{id}/delete",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "delete-comment": {
+    "method": "POST",
+    "path": "comments/{id}/delete",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "delete-question": {
+    "method": "POST",
+    "path": "questions/{id}/delete",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "downvote-answer": {
+    "method": "POST",
+    "path": "answers/{id}/downvote",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "downvote-question": {
+    "method": "POST",
+    "path": "questions/{id}/downvote",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "edit-answer": {
+    "method": "POST",
+    "path": "answers/{id}/edit",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "edit-comment": {
+    "method": "POST",
+    "path": "comments/{id}/edit",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "edit-question": {
+    "method": "POST",
+    "path": "questions/{id}/edit",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "edit-tag-prefs-on-user": {
+    "method": "POST",
+    "path": "users/{id}/tag-preferences/edit",
+    "scopes": ["write_access", "private_info"],
+    "site": true,
+    "token": true
+  },
+  "elected-moderators": {
+    "method": "GET",
+    "path": "users/moderators/elected",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "errors": {
+    "method": "GET",
+    "path": "errors",
+    "scopes": [],
+    "site": false,
+    "token": false
+  },
+  "events": {
+    "method": "GET",
+    "path": "events",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "excerpt-search": {
+    "method": "GET",
+    "path": "search/excerpts",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "faqs-by-tags": {
+    "method": "GET",
+    "path": "tags/{tags}/faq",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "favorite-question": {
+    "method": "POST",
+    "path": "questions/{id}/favorite",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "favorites-on-users": {
+    "method": "GET",
+    "path": "users/{ids}/favorites",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "featured-questions": {
+    "method": "GET",
+    "path": "questions/featured",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "featured-questions-on-users": {
+    "method": "GET",
+    "path": "users/{ids}/questions/featured",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "full-reputation-history": {
+    "method": "GET",
+    "path": "users/{id}/reputation-history/full",
+    "scopes": ["private_info"],
+    "site": true,
+    "token": true
+  },
+  "inbox": {
+    "method": "GET",
+    "path": "inbox",
+    "scopes": ["read_inbox"],
+    "site": false,
+    "token": true
+  },
+  "inbox-unread": {
+    "method": "GET",
+    "path": "inbox/unread",
+    "scopes": ["read_inbox"],
+    "site": false,
+    "token": true
+  },
+  "info": {
+    "method": "GET",
+    "path": "info",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "linked-questions": {
+    "method": "GET",
+    "path": "questions/{ids}/linked",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "me": {
+    "method": "GET",
+    "path": "me",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "me-achievements": {
+    "method": "GET",
+    "path": "me/achievements",
+    "scopes": ["private_info"],
+    "site": false,
+    "token": true
+  },
+  "me-answers": {
+    "method": "GET",
+    "path": "me/answers",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "me-associated-users": {
+    "method": "GET",
+    "path": "me/associated",
+    "scopes": [],
+    "site": false,
+    "token": true
+  },
+  "me-badges": {
+    "method": "GET",
+    "path": "me/badges",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "me-comments": {
+    "method": "GET",
+    "path": "me/comments",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "me-comments-to": {
+    "method": "GET",
+    "path": "me/comments/{toId}",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "me-edit-tag-prefs": {
+    "method": "POST",
+    "path": "me/tag-preferences/edit",
+    "scopes": ["write_access", "private_info"],
+    "site": true,
+    "token": true
+  },
+  "me-favorites": {
+    "method": "GET",
+    "path": "me/favorites",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "me-featured-questions": {
+    "method": "GET",
+    "path": "me/questions/featured",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "me-full-reputation-history": {
+    "method": "GET",
+    "path": "me/reputation-history/full",
+    "scopes": ["private_info"],
+    "site": true,
+    "token": true
+  },
+  "me-inbox": {
+    "method": "GET",
+    "path": "me/inbox",
+    "scopes": ["read_inbox"],
+    "site": true,
+    "token": true
+  },
+  "me-mentioned": {
+    "method": "GET",
+    "path": "me/mentioned",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "me-merge-history": {
+    "method": "GET",
+    "path": "me/merges",
+    "scopes": [],
+    "site": false,
+    "token": true
+  },
+  "me-network-activity": {
+    "method": "GET",
+    "path": "me/network-activity",
+    "scopes": [],
+    "site": false,
+    "token": true
+  },
+  "me-no-answer-questions": {
+    "method": "GET",
+    "path": "me/questions/no-answers",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "me-notifications": {
+    "method": "GET",
+    "path": "me/notifications",
+    "scopes": ["read_inbox"],
+    "site": true,
+    "token": true
+  },
+  "me-posts": {
+    "method": "GET",
+    "path": "me/posts",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "me-privileges": {
+    "method": "GET",
+    "path": "me/privileges",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "me-questions": {
+    "method": "GET",
+    "path": "me/questions",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "me-reputation": {
+    "method": "GET",
+    "path": "me/reputation",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "me-reputation-history": {
+    "method": "GET",
+    "path": "me/reputation-history",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "me-suggested-edits": {
+    "method": "GET",
+    "path": "me/suggested-edits",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "me-tag-prefs": {
+    "method": "GET",
+    "path": "me/tag-preferences",
+    "scopes": ["private_info"],
+    "site": true,
+    "token": true
+  },
+  "me-tags": {
+    "method": "GET",
+    "path": "me/tags",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "me-tags-top-answers": {
+    "method": "GET",
+    "path": "me/tags/{tags}/top-answers",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "me-tags-top-questions": {
+    "method": "GET",
+    "path": "me/tags/{tags}/top-questions",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "me-timeline": {
+    "method": "GET",
+    "path": "me/timeline",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "me-top-answer-tags": {
+    "method": "GET",
+    "path": "me/top-answer-tags",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "me-top-question-tags": {
+    "method": "GET",
+    "path": "me/top-question-tags",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "me-top-tags": {
+    "method": "GET",
+    "path": "me/top-tags",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "me-unaccepted-questions": {
+    "method": "GET",
+    "path": "me/questions/unaccepted",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "me-unanswered-questions": {
+    "method": "GET",
+    "path": "me/questions/unanswered",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "me-unread-inbox": {
+    "method": "GET",
+    "path": "me/inbox/unread",
+    "scopes": ["read_inbox"],
+    "site": true,
+    "token": true
+  },
+  "me-unread-notifications": {
+    "method": "GET",
+    "path": "me/notifications/unread",
+    "scopes": ["read_inbox"],
+    "site": true,
+    "token": true
+  },
+  "mentions-on-users": {
+    "method": "GET",
+    "path": "users/{ids}/mentioned",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "merge-history": {
+    "method": "GET",
+    "path": "users/{ids}/merges",
+    "scopes": [],
+    "site": false,
+    "token": false
+  },
+  "moderator-only-tags": {
+    "method": "GET",
+    "path": "tags/moderator-only",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "moderators": {
+    "method": "GET",
+    "path": "users/moderators",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "no-answer-questions": {
+    "method": "GET",
+    "path": "questions/no-answers",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "no-answer-questions-on-users": {
+    "method": "GET",
+    "path": "users/{ids}/questions/no-answers",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "notifications": {
+    "method": "GET",
+    "path": "notifications",
+    "scopes": ["read_inbox"],
+    "site": false,
+    "token": true
+  },
+  "posts": {
+    "method": "GET",
+    "path": "posts",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "posts-by-ids": {
+    "method": "GET",
+    "path": "posts/{ids}",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "posts-on-suggested-edits": {
+    "method": "GET",
+    "path": "posts/{ids}/suggested-edits",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "posts-on-users": {
+    "method": "GET",
+    "path": "users/{ids}/posts",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "privileges": {
+    "method": "GET",
+    "path": "privileges",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "privileges-on-users": {
+    "method": "GET",
+    "path": "users/{id}/privileges",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "question-close-options": {
+    "method": "GET",
+    "path": "questions/{id}/close/options",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "question-flag-options": {
+    "method": "GET",
+    "path": "questions/{id}/flags/options",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "questions": {
+    "method": "GET",
+    "path": "questions",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "questions-by-answer-ids": {
+    "method": "GET",
+    "path": "answers/{ids}/questions",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "questions-by-collective": {
+    "method": "GET",
+    "path": "collectives/{slugs}/questions",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "questions-by-ids": {
+    "method": "GET",
+    "path": "questions/{ids}",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "questions-on-users": {
+    "method": "GET",
+    "path": "users/{ids}/questions",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "questions-timeline": {
+    "method": "GET",
+    "path": "questions/{ids}/timeline",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "read-filter": {
+    "method": "GET",
+    "path": "filters/{filters}",
+    "scopes": [],
+    "site": false,
+    "token": false
+  },
+  "recommend-answer": {
+    "method": "POST",
+    "path": "answers/{id}/recommend",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "related-questions": {
+    "method": "GET",
+    "path": "questions/{ids}/related",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "related-tags": {
+    "method": "GET",
+    "path": "tags/{tags}/related",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "render-answer": {
+    "method": "POST",
+    "path": "questions/{id}/answers/render",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "render-comment": {
+    "method": "POST",
+    "path": "posts/{id}/comments/render",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "render-question": {
+    "method": "POST",
+    "path": "questions/render",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "reputation-history": {
+    "method": "GET",
+    "path": "users/{ids}/reputation-history",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "reputation-on-users": {
+    "method": "GET",
+    "path": "users/{ids}/reputation",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "required-tags": {
+    "method": "GET",
+    "path": "tags/required",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "revisions-by-guids": {
+    "method": "GET",
+    "path": "revisions/{ids}",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "revisions-by-ids": {
+    "method": "GET",
+    "path": "posts/{ids}/revisions",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "search": {
+    "method": "GET",
+    "path": "search",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "similar": {
+    "method": "GET",
+    "path": "similar",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "simulate-error": {
+    "method": "GET",
+    "path": "errors/{id}",
+    "scopes": [],
+    "site": false,
+    "token": false
+  },
+  "sites": {
+    "method": "GET",
+    "path": "sites",
+    "scopes": [],
+    "site": false,
+    "token": false
+  },
+  "suggested-edits": {
+    "method": "GET",
+    "path": "suggested-edits",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "suggested-edits-by-ids": {
+    "method": "GET",
+    "path": "suggested-edits/{ids}",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "suggested-edits-on-users": {
+    "method": "GET",
+    "path": "users/{ids}/suggested-edits",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "synonyms-by-tags": {
+    "method": "GET",
+    "path": "tags/{tags}/synonyms",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "tag-prefs-on-user": {
+    "method": "GET",
+    "path": "users/{id}/tag-preferences",
+    "scopes": ["private_info"],
+    "site": true,
+    "token": true
+  },
+  "tag-synonyms": {
+    "method": "GET",
+    "path": "tags/synonyms",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "tags": {
+    "method": "GET",
+    "path": "tags",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "tags-by-collective": {
+    "method": "GET",
+    "path": "collectives/{slugs}/tags",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "tags-by-name": {
+    "method": "GET",
+    "path": "tags/{tags}/info",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "tags-on-users": {
+    "method": "GET",
+    "path": "users/{ids}/tags",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "timeline-on-users": {
+    "method": "GET",
+    "path": "users/{ids}/timeline",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "top-answer-tags-on-users": {
+    "method": "GET",
+    "path": "users/{id}/top-answer-tags",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "top-answerers-on-tags": {
+    "method": "GET",
+    "path": "tags/{tag}/top-answerers/{period}",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "top-askers-on-tags": {
+    "method": "GET",
+    "path": "tags/{tag}/top-askers/{period}",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "top-question-tags-on-users": {
+    "method": "GET",
+    "path": "users/{id}/top-question-tags",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "top-tags-on-users": {
+    "method": "GET",
+    "path": "users/{id}/top-tags",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "top-user-answers-in-tags": {
+    "method": "GET",
+    "path": "users/{id}/tags/{tags}/top-answers",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "top-user-questions-in-tags": {
+    "method": "GET",
+    "path": "users/{id}/tags/{tags}/top-questions",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "unaccepted-questions-on-users": {
+    "method": "GET",
+    "path": "users/{ids}/questions/unaccepted",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "unanswered-questions": {
+    "method": "GET",
+    "path": "questions/unanswered",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "unanswered-questions-my-tags": {
+    "method": "GET",
+    "path": "questions/unanswered/my-tags",
+    "scopes": [],
+    "site": true,
+    "token": true
+  },
+  "unanswered-questions-on-users": {
+    "method": "GET",
+    "path": "users/{ids}/questions/unanswered",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "undo-accept-answer": {
+    "method": "POST",
+    "path": "answers/{id}/accept/undo",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "undo-downvote-answer": {
+    "method": "POST",
+    "path": "answers/{id}/downvote/undo",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "undo-downvote-question": {
+    "method": "POST",
+    "path": "questions/{id}/downvote/undo",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "undo-favorite-question": {
+    "method": "POST",
+    "path": "questions/{id}/favorite/undo",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "undo-recommend-answer": {
+    "method": "POST",
+    "path": "answers/{id}/recommend/undo",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "undo-upvote-answer": {
+    "method": "POST",
+    "path": "answers/{id}/upvote/undo",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "undo-upvote-comment": {
+    "method": "POST",
+    "path": "comments/{id}/upvote/undo",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "undo-upvote-question": {
+    "method": "POST",
+    "path": "questions/{id}/upvote/undo",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "unread-notifications": {
+    "method": "GET",
+    "path": "notifications/unread",
+    "scopes": ["read_inbox"],
+    "site": false,
+    "token": true
+  },
+  "upvote-answer": {
+    "method": "POST",
+    "path": "answers/{id}/upvote",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "upvote-comment": {
+    "method": "POST",
+    "path": "comments/{id}/upvote",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "upvote-question": {
+    "method": "POST",
+    "path": "questions/{id}/upvote",
+    "scopes": ["write_access"],
+    "site": true,
+    "token": true
+  },
+  "user-inbox": {
+    "method": "GET",
+    "path": "users/{id}/inbox",
+    "scopes": ["read_inbox"],
+    "site": true,
+    "token": true
+  },
+  "user-notifications": {
+    "method": "GET",
+    "path": "users/{id}/notifications",
+    "scopes": ["read_inbox"],
+    "site": true,
+    "token": true
+  },
+  "user-unread-inbox": {
+    "method": "GET",
+    "path": "users/{id}/inbox/unread",
+    "scopes": ["read_inbox"],
+    "site": true,
+    "token": true
+  },
+  "user-unread-notifications": {
+    "method": "GET",
+    "path": "users/{id}/notifications/unread",
+    "scopes": ["read_inbox"],
+    "site": true,
+    "token": true
+  },
+  "users": {
+    "method": "GET",
+    "path": "users",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "users-by-collective": {
+    "method": "GET",
+    "path": "collectives/{slugs}/users",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "users-by-ids": {
+    "method": "GET",
+    "path": "users/{ids}",
+    "scopes": [],
+    "site": true,
+    "token": false
+  },
+  "users-network-activity": {
+    "method": "GET",
+    "path": "users/{id}/network-activity",
+    "scopes": [],
+    "site": false,
+    "token": false
+  },
+  "wikis-by-tags": {
+    "method": "GET",
+    "path": "tags/{tags}/wikis",
+    "scopes": [],
+    "site": true,
+    "token": false
+  }
+}

@@ -1,0 +1,1765 @@
+{
+  "id": "erpnext",
+  "displayName": "ERPNext",
+  "description": "Open-source ERP integration for documents, DocTypes, workflows, stock, selling, buying, and accounting over the Frappe REST API.",
+  "npmPackageName": "@corsair-dev/erpnext",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 51,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": [
+        "api_key",
+        "webhook_signature",
+        "api_secret",
+        "base_url"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "erpnext.api.desk.addComment",
+      "shortPath": "desk.addComment",
+      "description": "Add a comment to any document; the caller supplies the reference, content, and commenter identity. Users @mentioned in the content are notified by email",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ reference_doctype: string, reference_name: string, content: string, comment_email: string, comment_by: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.desk.addTag",
+      "shortPath": "desk.addTag",
+      "description": "Add a tag to a document, optionally with a color, for organization and filtering",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ tag: string, dt: string, dn: string, color?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.desk.searchGlobal",
+      "shortPath": "desk.searchGlobal",
+      "description": "Search a DocType by text across its searchable fields, with optional custom search method, filters, and result limit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "doctype",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "txt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "Name of a whitelisted method implementing a custom search for the DocType; defaults to the standard search"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "string",
+            "description": "JSON string filter expression in Frappe list format, for example [[\"customer_type\",\"=\",\"Company\"]], passed verbatim"
+          },
+          {
+            "key": "page_length",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of result rows to return"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.doctypes.getMeta",
+      "shortPath": "doctypes.getMeta",
+      "description": "Read the complete metadata of a DocType: field definitions, types, permissions, and configuration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "doctype",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "with_parent",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docs",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "user_settings",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "parent_dt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.doctypes.list",
+      "shortPath": "doctypes.list",
+      "description": "List the DocTypes available on the instance with optional filtering and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "string",
+            "description": "JSON string filter expression in Frappe list format, for example [[\"module\",\"=\",\"Core\"]], passed verbatim"
+          },
+          {
+            "key": "limit_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit_page_length",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.documents.cancel",
+      "shortPath": "documents.cancel",
+      "description": "Cancel a submitted document by doctype and name through the frappe.client RPC",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ doctype: string, name: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.documents.create",
+      "shortPath": "documents.create",
+      "description": "Create a document of any DocType from its field values; the response carries the created document",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "doctype",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.documents.delete",
+      "shortPath": "documents.delete",
+      "description": "Delete a document of a DocType by its name",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "doctype",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.documents.get",
+      "shortPath": "documents.get",
+      "description": "Read one document of a DocType by its name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "doctype",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.documents.getClient",
+      "shortPath": "documents.getClient",
+      "description": "Read a single document through the frappe.client RPC by doctype and name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "doctype",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.documents.getCount",
+      "shortPath": "documents.getCount",
+      "description": "Count the documents of a DocType matching optional filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "doctype",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "string",
+            "description": "JSON string filter expression, for example [[\"status\",\"=\",\"Open\"]], passed verbatim"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.documents.getList",
+      "shortPath": "documents.getList",
+      "description": "Query documents through the frappe.client RPC with filtering, field selection, and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "doctype",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "JSON array string of field names to return, for example [\"name\",\"customer_name\"], passed verbatim to Frappe"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "string",
+            "description": "JSON string filter expression in Frappe list format, for example [[\"customer_type\",\"=\",\"Company\"]], passed verbatim"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit_page_length",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.documents.getValue",
+      "shortPath": "documents.getValue",
+      "description": "Read specific field values from documents matching filters without loading the whole document",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "doctype",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fieldname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "string",
+            "description": "JSON string filter expression identifying the record, for example {\"name\":\"CUST-00001\"}, passed verbatim"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.documents.getWithMeta",
+      "shortPath": "documents.getWithMeta",
+      "description": "Read a document with its desk metadata: attachments, comments, activity logs, and related information",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "doctype",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docs",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.documents.insert",
+      "shortPath": "documents.insert",
+      "description": "Insert a document through the frappe.client RPC, passing the full document object including its doctype field",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ doc: Record<string, any> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.documents.insertMany",
+      "shortPath": "documents.insertMany",
+      "description": "Insert multiple documents in one call for efficiency; each item carries its doctype and field values",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ docs: Record<string, any>[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.documents.list",
+      "shortPath": "documents.list",
+      "description": "List documents of a DocType with field selection, filters, ordering, and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "doctype",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "JSON array string of field names to return, for example [\"name\",\"customer_name\"], passed verbatim to Frappe"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "string",
+            "description": "JSON string filter expression in Frappe list format, for example [[\"customer_type\",\"=\",\"Company\"]], passed verbatim"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit_page_length",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.documents.renameDoc",
+      "shortPath": "documents.renameDoc",
+      "description": "Rename a document by changing its primary identifier, optionally merging into an existing name",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ doctype: string, old_name: string, new_name: string, merge?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.documents.saveDocs",
+      "shortPath": "documents.saveDocs",
+      "description": "Save, submit, cancel, or update a document by sending its docstatus and fields through the frappe.client RPC",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ doc: Record<string, any> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.documents.saveDocument",
+      "shortPath": "documents.saveDocument",
+      "description": "Save an existing document through the frappe.client RPC, passing the complete document object with its changes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ doc: Record<string, any> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.documents.searchLink",
+      "shortPath": "documents.searchLink",
+      "description": "Search documents of a DocType for Link-field autocomplete suggestions by name or text",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "doctype",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "txt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "{ value: string, description: string, label?: string, image?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.documents.setValue",
+      "shortPath": "documents.setValue",
+      "description": "Set one field value on a document without loading or rewriting the whole document",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ doctype: string, name: string, fieldname: string | Record<string, any>, value?: any }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.documents.submit",
+      "shortPath": "documents.submit",
+      "description": "Submit a submittable document, moving it from draft to submitted through the frappe.client RPC",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ doc: Record<string, any> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.documents.update",
+      "shortPath": "documents.update",
+      "description": "Update a document by name; the body carries the fields to change",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "doctype",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.erp.getExchangeRate",
+      "shortPath": "erp.getExchangeRate",
+      "description": "Get the exchange rate between two currencies on an optional date; Frappe requires the date when the currencies differ",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from_currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "transaction_date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO date the rate applies to, for example 2026-01-15; Frappe requires it when the two currencies differ"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.erp.getItemDetails",
+      "shortPath": "erp.getItemDetails",
+      "description": "Get the pricing, tax, and stock details ERPNext computes for an item in a selling or buying context",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ctx",
+            "optional": false,
+            "type": "string",
+            "description": "JSON string of the item and pricing context, for example {\"item_code\":\"WIDGET\",\"qty\":2}, passed verbatim to Frappe"
+          },
+          {
+            "key": "for_validate",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.erp.getPartyDetails",
+      "shortPath": "erp.getPartyDetails",
+      "description": "Get the address, contact, currency, and payment-term details ERPNext attaches to a customer or supplier",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "party",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "party_type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.erp.getPaymentEntry",
+      "shortPath": "erp.getPaymentEntry",
+      "description": "Get a prefilled payment entry draft for an outstanding sales invoice, purchase invoice, or order",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dn",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.erp.getStockBalance",
+      "shortPath": "erp.getStockBalance",
+      "description": "Get the available stock balance of an item in a warehouse as of an optional posting date",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "warehouse",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "posting_date",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.erp.makeDeliveryNote",
+      "shortPath": "erp.makeDeliveryNote",
+      "description": "Map a sales order into a draft delivery note, preserving the linked item rows",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ source_name: string, target_doc?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.erp.makePurchaseOrder",
+      "shortPath": "erp.makePurchaseOrder",
+      "description": "Map a sales order or material request into draft purchase orders grouped by supplier",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ source_name: string, selected_items: string | { name?: string, item_code?: string, supplier: string }[], target_doc?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "Record<string, any>[] | Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.erp.makeSalesInvoice",
+      "shortPath": "erp.makeSalesInvoice",
+      "description": "Map a sales order into a draft sales invoice, preserving the linked item rows",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ source_name: string, target_doc?: string, args?: string, ignore_permissions?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.erp.makeStockEntry",
+      "shortPath": "erp.makeStockEntry",
+      "description": "Create a stock entry for material transfers, receipts, or issues between warehouses; ERPNext saves and submits it unless do_not_save or do_not_submit is set",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.files.downloadFile",
+      "shortPath": "files.downloadFile",
+      "description": "Download a stored file by its URL path; the plugin returns the bytes base64-encoded",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.files.downloadPdf",
+      "shortPath": "files.downloadPdf",
+      "description": "Download a document as PDF through a print format; the plugin returns the bytes base64-encoded",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "doctype",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "no_letterhead",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "letterhead",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.people.listEmployees",
+      "shortPath": "people.listEmployees",
+      "description": "List the employees recorded on the instance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "JSON array string of field names to return, for example [\"name\",\"employee_name\",\"department\"], passed verbatim to Frappe"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "string",
+            "description": "JSON string filter expression in Frappe list format, for example [[\"status\",\"=\",\"Active\"]], passed verbatim"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit_page_length",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum rows per page; Frappe treats 0 as no page limit and returns every employee"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.people.listProjects",
+      "shortPath": "people.listProjects",
+      "description": "List the projects recorded on the instance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "JSON array string of field names to return, for example [\"name\",\"project_name\",\"status\"], passed verbatim to Frappe"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "string",
+            "description": "JSON string filter expression in Frappe list format, for example [[\"status\",\"=\",\"Open\"]], passed verbatim"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit_page_length",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum rows per page; Frappe treats 0 as no page limit and returns every project"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.system.getAllLanguages",
+      "shortPath": "system.getAllLanguages",
+      "description": "List the languages available on the instance for translation and localization; pass limit_page_length 0 for all",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "JSON array string of field names to return, for example [\"language_code\",\"language_name\"], passed verbatim to Frappe"
+          },
+          {
+            "key": "limit_start",
+            "optional": true,
+            "type": "number",
+            "description": "Row offset for the next page"
+          },
+          {
+            "key": "limit_page_length",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum rows per page; Frappe treats 0 as no page limit and returns every language"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.system.getAllRoles",
+      "shortPath": "system.getAllRoles",
+      "description": "List the roles defined on the instance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "JSON array string of field names to return, for example [\"name\",\"desk_access\"], passed verbatim to Frappe"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "string",
+            "description": "JSON string filter expression in Frappe list format, for example [[\"desk_access\",\"=\",1]], passed verbatim"
+          },
+          {
+            "key": "limit_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit_page_length",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum rows per page; Frappe treats 0 as no page limit and returns every role"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.system.getFiscalYear",
+      "shortPath": "system.getFiscalYear",
+      "description": "List the fiscal years configured on the instance for accounting periods",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "JSON array string of field names to return, for example [\"name\",\"year_start_date\",\"year_end_date\"], passed verbatim to Frappe"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "string",
+            "description": "JSON string filter expression in Frappe list format, for example [[\"disabled\",\"=\",0]], passed verbatim"
+          },
+          {
+            "key": "limit_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit_page_length",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum rows per page; Frappe treats 0 as no page limit and returns every fiscal year"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.system.getFrameworkVersion",
+      "shortPath": "system.getFrameworkVersion",
+      "description": "Get the Frappe framework version and all installed app versions; requires a desk user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.system.getLoggedUser",
+      "shortPath": "system.getLoggedUser",
+      "description": "Get the user account the token authenticates as",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.system.getTimezones",
+      "shortPath": "system.getTimezones",
+      "description": "List all timezone identifiers available for user configuration and scheduling",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "{ timezones: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.system.getUserRoles",
+      "shortPath": "system.getUserRoles",
+      "description": "List role assignments (the Has Role child records) with optional user and role filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "JSON array string of field names to return, for example [\"parent\",\"role\"], passed verbatim to Frappe"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "string",
+            "description": "JSON string filter expression in Frappe list format, for example [[\"parenttype\",\"=\",\"User\"]], passed verbatim"
+          },
+          {
+            "key": "limit_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit_page_length",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum rows per page; Frappe treats 0 as no page limit and returns every assignment"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.system.ping",
+      "shortPath": "system.ping",
+      "description": "Check that the site answers authenticated API requests",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.timesheets.create",
+      "shortPath": "timesheets.create",
+      "description": "Create a timesheet with time log entries for an employee or project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.timesheets.list",
+      "shortPath": "timesheets.list",
+      "description": "List the timesheets recorded on the instance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "JSON array string of field names to return, for example [\"name\",\"employee\",\"total_hours\"], passed verbatim to Frappe"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "string",
+            "description": "JSON string filter expression in Frappe list format, for example [[\"docstatus\",\"=\",0]], passed verbatim"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit_page_length",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum rows per page; Frappe treats 0 as no page limit and returns every timesheet"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Create a webhook subscription that fires on a DocType event such as create, update, or submit",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List the configured webhook subscriptions on the instance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "string",
+            "description": "JSON string filter expression in Frappe list format, for example [[\"webhook_doctype\",\"=\",\"Sales Invoice\"]], passed verbatim"
+          },
+          {
+            "key": "limit_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit_page_length",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.workflow.apply",
+      "shortPath": "workflow.apply",
+      "description": "Apply a workflow action to a document, transitioning it through its configured workflow states; transitions can submit or cancel the document",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ doc: Record<string, any>, action: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "erpnext.api.workflow.getTransitions",
+      "shortPath": "workflow.getTransitions",
+      "description": "List the workflow transitions available for a document, optionally scoped to a role",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "doc",
+            "optional": false,
+            "type": "string",
+            "description": "JSON object string identifying the document, for example {\"doctype\":\"Sales Invoice\",\"name\":\"ACC-SINV-2026-00001\"}, passed verbatim to Frappe"
+          },
+          {
+            "key": "workflow",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the Workflow to consult; defaults to the active workflow on the document type"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "erpnext.db.documents.search",
+      "entityName": "documents",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "doctype",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "owner",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "creation",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "modified",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "modified_by",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "docstatus",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "idx",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}

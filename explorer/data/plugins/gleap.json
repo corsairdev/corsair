@@ -1,0 +1,2629 @@
+{
+  "id": "gleap",
+  "displayName": "Gleap",
+  "description": "Customer messaging, ticketing, feedback surveys, user sessions, and team collaboration platform.",
+  "npmPackageName": "@corsair-dev/gleap",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 42,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "project_id", "region"]
+    }
+  ],
+  "api": [
+    {
+      "path": "gleap.api.boards.create",
+      "shortPath": "boards.create",
+      "description": "Create a new ticket board with custom lanes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "restrictedToUsers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "restrictedToTeams",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "restrictedToUsers",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gleap.api.boards.delete",
+      "shortPath": "boards.delete",
+      "description": "Delete an empty ticket board",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gleap.api.boards.list",
+      "shortPath": "boards.list",
+      "description": "List all ticket boards (ticket types) for a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, _id?: string | null, type?: string | null, name?: string | null, path?: string | null, restrictedToUsers?: string[] | null }[]"
+      }
+    },
+    {
+      "path": "gleap.api.boards.update",
+      "shortPath": "boards.update",
+      "description": "Update a board configuration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "restrictedToUsers",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gleap.api.companies.createOrUpdate",
+      "shortPath": "companies.createOrUpdate",
+      "description": "Create or update a customer company record",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companyId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customData",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "companyId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gleap.api.companies.delete",
+      "shortPath": "companies.delete",
+      "description": "Delete a customer company record",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companyId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gleap.api.companies.get",
+      "shortPath": "companies.get",
+      "description": "Get company details by company ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companyId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "companyId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gleap.api.companies.list",
+      "shortPath": "companies.list",
+      "description": "List tracked customer companies in a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, _id?: string | null, companyId?: string | null, name?: string | null, domain?: string | null, plan?: string | null, value?: number | null }[] | { companies: { id?: string | null, _id?: string | null, companyId?: string | null, name?: string | null, domain?: string | null, plan?: string | null, value?: number | null }[] }"
+      }
+    },
+    {
+      "path": "gleap.api.feedback.rateConversation",
+      "shortPath": "feedback.rateConversation",
+      "description": "Rate a Conversations API conversation as the customer (CSAT, integer 0 to 10)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rating",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gleap.api.feedback.rateMessage",
+      "shortPath": "feedback.rateMessage",
+      "description": "Rate a message as the customer: positive or negative (thumbs up or down)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rating",
+            "optional": false,
+            "type": "positive | negative"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gleap.api.feedback.surveysGet",
+      "shortPath": "feedback.surveysGet",
+      "description": "Get details and schema of an engagement survey",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "surveyId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gleap.api.feedback.surveysList",
+      "shortPath": "feedback.surveysList",
+      "description": "Get all engagement surveys for a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, _id?: string | null, name?: string | null, title?: string | null, status?: string | null, createdAt?: string | null }[] | { items: { id?: string | null, _id?: string | null, name?: string | null, title?: string | null, status?: string | null, createdAt?: string | null }[] }"
+      }
+    },
+    {
+      "path": "gleap.api.feedback.surveysResponses",
+      "shortPath": "feedback.surveysResponses",
+      "description": "Get submitted responses for a survey",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "surveyId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string, answers?: any }[] | { items: any[] }"
+      }
+    },
+    {
+      "path": "gleap.api.feedback.surveysStats",
+      "shortPath": "feedback.surveysStats",
+      "description": "Get aggregate survey result statistics and daily counters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "surveyId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totals",
+            "optional": true,
+            "type": "{ shown?: number, started?: number, completed?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gleap.api.messages.create",
+      "shortPath": "messages.create",
+      "description": "Create a new message or internal note in a ticket",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticket",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "markdownComment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isNote",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "replyTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ticket",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "session",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "markdownComment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isNote",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "bot",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{ name?: string | null, url?: string | null, type?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gleap.api.messages.createThread",
+      "shortPath": "messages.createThread",
+      "description": "Reply inside a message thread (internal: visible to teammates, never to the customer)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ticket",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "session",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "markdownComment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isNote",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "bot",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{ name?: string | null, url?: string | null, type?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gleap.api.messages.delete",
+      "shortPath": "messages.delete",
+      "description": "Delete a message from a ticket",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gleap.api.messages.getThread",
+      "shortPath": "messages.getThread",
+      "description": "Get thread messages for a specific parent message",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ items: { id?: string | null, _id?: string | null, ticket?: any, user?: any, session?: any, comment?: any, markdownComment?: string | null, type?: string | null, isNote?: boolean | null, bot?: boolean | null, createdAt?: string | null, updatedAt?: string | null, attachments?: { name?: string | null, url?: string | null, type?: string | null }[] }[], hasMore?: boolean | null, nextBefore?: string | null } | { id?: string | null, _id?: string | null, ticket?: any, user?: any, session?: any, comment?: any, markdownComment?: string | null, type?: string | null, isNote?: boolean | null, bot?: boolean | null, createdAt?: string | null, updatedAt?: string | null, attachments?: { name?: string | null, url?: string | null, type?: string | null }[] }[] | { messages: { id?: string | null, _id?: string | null, ticket?: any, user?: any, session?: any, comment?: any, markdownComment?: string | null, type?: string | null, isNote?: boolean | null, bot?: boolean | null, createdAt?: string | null, updatedAt?: string | null, attachments?: { name?: string | null, url?: string | null, type?: string | null }[] }[] }"
+      }
+    },
+    {
+      "path": "gleap.api.messages.list",
+      "shortPath": "messages.list",
+      "description": "Find messages in a ticket with filtering and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticket",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paginated",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, _id?: string | null, ticket?: any, user?: any, session?: any, comment?: any, markdownComment?: string | null, type?: string | null, isNote?: boolean | null, bot?: boolean | null, createdAt?: string | null, updatedAt?: string | null, attachments?: { name?: string | null, url?: string | null, type?: string | null }[] }[] | { items: { id?: string | null, _id?: string | null, ticket?: any, user?: any, session?: any, comment?: any, markdownComment?: string | null, type?: string | null, isNote?: boolean | null, bot?: boolean | null, createdAt?: string | null, updatedAt?: string | null, attachments?: { name?: string | null, url?: string | null, type?: string | null }[] }[], hasMore?: boolean | null, nextBefore?: string | null }"
+      }
+    },
+    {
+      "path": "gleap.api.messages.update",
+      "shortPath": "messages.update",
+      "description": "Replace a message's text (Gleap overwrites the whole message body)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ticket",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "session",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "markdownComment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isNote",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "bot",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{ name?: string | null, url?: string | null, type?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gleap.api.sessions.activities",
+      "shortPath": "sessions.activities",
+      "description": "Get timeline activities and events for a session",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Activities per page (Gleap default 50)"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "Activities to skip, newest first (Gleap default 0)"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string, type?: string }[] | { activities: any[] }"
+      }
+    },
+    {
+      "path": "gleap.api.sessions.create",
+      "shortPath": "sessions.create",
+      "description": "Create a new contact session in a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customData",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customData",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gleap.api.sessions.delete",
+      "shortPath": "sessions.delete",
+      "description": "Delete a contact session and permanently delete every ticket attached to it",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gleap.api.sessions.get",
+      "shortPath": "sessions.get",
+      "description": "Get contact session details by session ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customData",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gleap.api.sessions.getByUserId",
+      "shortPath": "sessions.getByUserId",
+      "description": "Get a contact session by end-user ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customData",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gleap.api.sessions.list",
+      "shortPath": "sessions.list",
+      "description": "List contact sessions in a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, _id?: string | null, userId?: string | null, name?: string | null, email?: string | null, phone?: string | null, value?: number | null, plan?: string | null, customData?: Record<string, any>, createdAt?: string | null, updatedAt?: string | null }[] | { sessions: { id?: string | null, _id?: string | null, userId?: string | null, name?: string | null, email?: string | null, phone?: string | null, value?: number | null, plan?: string | null, customData?: Record<string, any>, createdAt?: string | null, updatedAt?: string | null }[], total?: number }"
+      }
+    },
+    {
+      "path": "gleap.api.sessions.search",
+      "shortPath": "sessions.search",
+      "description": "Search for contact sessions by query attributes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "searchTerm",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, _id?: string | null, userId?: string | null, name?: string | null, email?: string | null, phone?: string | null, value?: number | null, plan?: string | null, customData?: Record<string, any>, createdAt?: string | null, updatedAt?: string | null }[] | { results: { id?: string | null, _id?: string | null, userId?: string | null, name?: string | null, email?: string | null, phone?: string | null, value?: number | null, plan?: string | null, customData?: Record<string, any>, createdAt?: string | null, updatedAt?: string | null }[] }"
+      }
+    },
+    {
+      "path": "gleap.api.sessions.update",
+      "shortPath": "sessions.update",
+      "description": "Update a contact session",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customData",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customData",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gleap.api.teams.create",
+      "shortPath": "teams.create",
+      "description": "Create a new team in a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "assignmentMethod",
+            "optional": false,
+            "type": "random | balanced | manual | circular"
+          },
+          {
+            "key": "members",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "assignmentMethod",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "members",
+            "optional": true,
+            "type": "any[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gleap.api.teams.delete",
+      "shortPath": "teams.delete",
+      "description": "Delete a team from a project",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gleap.api.teams.list",
+      "shortPath": "teams.list",
+      "description": "Get all teams associated with a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, _id?: string | null, name?: string | null, assignmentMethod?: string | null, members?: any[] | null }[]"
+      }
+    },
+    {
+      "path": "gleap.api.teams.update",
+      "shortPath": "teams.update",
+      "description": "Replace a team's name, assignment method and full member list",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "assignmentMethod",
+            "optional": false,
+            "type": "random | balanced | manual | circular"
+          },
+          {
+            "key": "members",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "assignmentMethod",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "members",
+            "optional": true,
+            "type": "any[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gleap.api.tickets.counts",
+      "shortPath": "tickets.counts",
+      "description": "Get ticket counts grouped by board and status lane",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id?: string | null, count: number }[] | Record<string, number> | { counts?: Record<string, number> }"
+      }
+    },
+    {
+      "path": "gleap.api.tickets.create",
+      "shortPath": "tickets.create",
+      "description": "Create a new ticket in a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "session",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sourceTicketId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conversationClosed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "customData",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "formData",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "linkedTickets",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ticketNumber",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "session",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customData",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "formData",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "processingUser",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "processingTeam",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "slaBreached",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "snoozed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "snoozedUntil",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mentions",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "linkedTickets",
+            "optional": true,
+            "type": "any[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gleap.api.tickets.delete",
+      "shortPath": "tickets.delete",
+      "description": "Permanently delete a ticket and its associated data and replies",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticketId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gleap.api.tickets.get",
+      "shortPath": "tickets.get",
+      "description": "Get a ticket in a project by its ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticketId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ticketNumber",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "session",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customData",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "formData",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "processingUser",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "processingTeam",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "slaBreached",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "snoozed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "snoozedUntil",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mentions",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "linkedTickets",
+            "optional": true,
+            "type": "any[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gleap.api.tickets.list",
+      "shortPath": "tickets.list",
+      "description": "Get all tickets in a project with support for filtering, sorting, and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ignoreArchived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isSpam",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, _id?: string | null, ticketNumber?: number | string | null, title?: string | null, description?: string | null, type?: string | null, status?: string | null, priority?: string | null, session?: any, project?: string | null, createdAt?: string | null, updatedAt?: string | null, customData?: Record<string, any>, formData?: Record<string, any>, attributes?: Record<string, any>, processingUser?: any, processingTeam?: any, slaBreached?: boolean | null, snoozed?: boolean | null, snoozedUntil?: string | null, mentions?: any[] | null, linkedTickets?: any[] | null }[] | { tickets: { id?: string | null, _id?: string | null, ticketNumber?: number | string | null, title?: string | null, description?: string | null, type?: string | null, status?: string | null, priority?: string | null, session?: any, project?: string | null, createdAt?: string | null, updatedAt?: string | null, customData?: Record<string, any>, formData?: Record<string, any>, attributes?: Record<string, any>, processingUser?: any, processingTeam?: any, slaBreached?: boolean | null, snoozed?: boolean | null, snoozedUntil?: string | null, mentions?: any[] | null, linkedTickets?: any[] | null }[], count?: number | null } | { items: { id?: string | null, _id?: string | null, ticketNumber?: number | string | null, title?: string | null, description?: string | null, type?: string | null, status?: string | null, priority?: string | null, session?: any, project?: string | null, createdAt?: string | null, updatedAt?: string | null, customData?: Record<string, any>, formData?: Record<string, any>, attributes?: Record<string, any>, processingUser?: any, processingTeam?: any, slaBreached?: boolean | null, snoozed?: boolean | null, snoozedUntil?: string | null, mentions?: any[] | null, linkedTickets?: any[] | null }[], total?: number | null }"
+      }
+    },
+    {
+      "path": "gleap.api.tickets.search",
+      "shortPath": "tickets.search",
+      "description": "Full-text search over project tickets and comments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "searchTerm",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "addSession",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hits",
+            "optional": true,
+            "type": "{ ticket?: { id?: string | null, _id?: string | null, ticketNumber?: number | string | null, title?: string | null, description?: string | null, type?: string | null, status?: string | null, priority?: string | null, session?: any, project?: string | null, createdAt?: string | null, updatedAt?: string | null, customData?: Record<string, any>, formData?: Record<string, any>, attributes?: Record<string, any>, processingUser?: any, processingTeam?: any, slaBreached?: boolean | null, snoozed?: boolean | null, snoozedUntil?: string | null, mentions?: any[] | null, linkedTickets?: any[] | null }, score?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gleap.api.tickets.update",
+      "shortPath": "tickets.update",
+      "description": "Update an existing ticket in a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticketId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "processingUser",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "processingTeam",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "snoozed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "snoozedUntil",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "slaBreached",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "customData",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ticketNumber",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "session",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customData",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "formData",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "processingUser",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "processingTeam",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "slaBreached",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "snoozed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "snoozedUntil",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mentions",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "linkedTickets",
+            "optional": true,
+            "type": "any[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gleap.api.users.getMe",
+      "shortPath": "users.getMe",
+      "description": "Get the currently authenticated user profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "imageUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gleap.api.users.list",
+      "shortPath": "users.list",
+      "description": "Get all team members who can access the project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, _id?: string | null, name?: string | null, email?: string | null, role?: string | null, imageUrl?: string | null, createdAt?: string | null }[]"
+      }
+    },
+    {
+      "path": "gleap.api.users.update",
+      "shortPath": "users.update",
+      "description": "Update the API key owner's own profile (name, job title, availability); Gleap ignores the user id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "department",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "available",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "awayUntil",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "imageUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
