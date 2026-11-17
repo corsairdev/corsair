@@ -2041,6 +2041,14 @@
                 ]
               },
               {
+                "group": "Emailable",
+                "pages": [
+                  "plugins/emailable/overview",
+                  "plugins/emailable/api",
+                  "plugins/emailable/database"
+                ]
+              },
+              {
                 "group": "EmailOctopus",
                 "pages": [
                   "plugins/emailoctopus/overview",
