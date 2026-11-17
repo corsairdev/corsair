@@ -1,18 +1,83 @@
 displayName: Sympla
-description: List events for a Sympla organizer. The key is sent in the s_token header.
+description: Read a Sympla organizer's events, presentations, orders and participants, and check participants in.
 domain: sympla.com.br
 recommendedAuth: api_key
 overviewNote: |
-  An empty token comes back as HTTP 401 with code 100. The client does not send a bearer token.
+  Things to know before you call:
+
+  - **The token goes in the `s_token` header.** Create it in Sympla under Minha Conta > Integrações > Chave de acesso da API. With no token stored, Corsair raises `AuthMissingError` before any request; a token Sympla rejects comes back as HTTP 401 ("Invalid Token!").
+  - **This is Sympla's v1.6.0 Public API.** Lists page with a cursor: pass `pagination.next_cursor` back as `cursor` until it is empty. `page_size` goes up to 200 (500 for participants).
+  - **Ids.** `event_id` is the event id hash from `events.list`. Presentations are an event's sessions or dates; orders and participants can be read per event, per presentation or per order.
+  - **Dates use a timezone.** `from`, `to` and returned dates are local to `timezone` (Sympla default America/Sao_Paulo). Null fields may be left out of replies.
+  - **Personal data.** Orders and participants include buyer and participant names and emails. Corsair keeps them out of its event log; it stores only event ids and names.
+  - **Check-ins can't be undone through the API**, so the three check-in operations are `destructive`. A second check-in of the same ticket answers HTTP 400 "Participant has already checked-in."
+references:
+  - title: Sympla Public API reference
+    url: https://developers.sympla.com.br/api-doc/index.html
 examples:
   read:
-    path: events.list
-    title: List Sympla events
+    path: participants.list
+    title: List the participants of an event
     args:
-      page: 1
+      event_id: abc123def456
+      page_size: 100
+  write:
+    path: participants.checkInByTicketNumber
+    title: Check a participant in by ticket number
+    args:
+      event_id: abc123def456
+      ticket_number: '94461180000001'
 apiNotes:
   events.list: |
-    Page starts at 1 when you set it. sort is ASC or DESC. Omit a filter to take the service default.
+    `published` is published (Sympla default), not_published or all. Pass `pagination.next_cursor` as `cursor` for the next page.
+  participants.checkInByQrCode: |
+    Pass the fields of the decoded ticket QR code (`itemId`, `walletId`, `signature`, `timestamp`, `version`). An expired code answers HTTP 410.
 apiExamples:
   events.list:
-    page: 1
+    # call form: the docs check reads enum types as unquoted names, so a literal enum value fails it.
+    call: "{ published: 'all', page_size: 50 }"
+  events.get:
+    event_id: abc123def456
+  presentations.list:
+    event_id: abc123def456
+  presentations.get:
+    event_id: abc123def456
+    presentation_id: 12345
+  orders.list:
+    event_id: abc123def456
+    from: '2025-09-08T00:00:00'
+    to: '2025-09-09T23:59:59'
+  orders.listByPresentation:
+    event_id: abc123def456
+    presentation_id: 12345
+  orders.get:
+    event_id: abc123def456
+    order_id: ORD123
+  participants.list:
+    event_id: abc123def456
+    page_size: 100
+  participants.listByOrder:
+    event_id: abc123def456
+    order_id: ORD123
+  participants.listByPresentation:
+    event_id: abc123def456
+    presentation_id: 12345
+  participants.get:
+    event_id: abc123def456
+    participant_id: 12345
+  participants.getByTicketNumber:
+    event_id: abc123def456
+    ticket_number: '94461180000001'
+  participants.checkIn:
+    event_id: abc123def456
+    participant_id: 12345
+  participants.checkInByTicketNumber:
+    event_id: abc123def456
+    ticket_number: '94461180000001'
+  participants.checkInByQrCode:
+    event_id: abc123def456
+    itemId: item-1
+    walletId: wallet-1
+    signature: <130-132 character signature from the QR code>
+    timestamp: 1698770407738
+    version: 1

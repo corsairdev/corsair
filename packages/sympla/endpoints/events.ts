@@ -1,68 +1,90 @@
 import type { CorsairEndpoint } from 'corsair/core';
-import { AuthMissingError, logEventFromContext } from 'corsair/core';
-import { makeSymplaRequest } from '../client';
+import { pathPart } from '../client';
 import type { SymplaContext } from '../context';
 import { SymplaEventEntity } from '../schema/database';
-import type { ListEventsInput, ListEventsResponse } from './types';
-import { ListEventsInputSchema, ListEventsResponseSchema } from './types';
+import { callSympla, requireKey } from './shared';
+import type {
+	GetEventInput,
+	GetEventResponse,
+	ListEventsInput,
+	ListEventsResponse,
+	SymplaEvent,
+} from './types';
+import {
+	EventSchema,
+	GetEventInputSchema,
+	GetEventResponseSchema,
+	ListEventsInputSchema,
+	ListEventsResponseSchema,
+} from './types';
 
 export const listEvents: CorsairEndpoint<
 	SymplaContext,
 	ListEventsInput,
 	ListEventsResponse
 > = async (ctx, input) => {
-	if (!ctx.key) {
-		throw new AuthMissingError('sympla', 'api_key');
-	}
-
+	requireKey(ctx);
 	const parsed = ListEventsInputSchema.parse(input ?? {});
-	const body = await makeSymplaRequest<unknown>(ctx.key, {
-		page: parsed.page,
-		page_size: parsed.page_size,
-		published: parsed.published,
-		from: parsed.from,
-		to: parsed.to,
-		field_sort: parsed.field_sort,
-		sort: parsed.sort,
-	});
-	const result = ListEventsResponseSchema.parse(body);
-	await storeEvents(ctx, result.data);
-	await logEventFromContext(
+	const result = await callSympla(
 		ctx,
-		'sympla.events.list',
-		{ page: parsed.page ?? 1 },
-		'completed',
+		'events.list',
+		{ path: '/events', query: parsed },
+		ListEventsResponseSchema,
+		{},
 	);
+	await storeEvents(ctx, result.data);
 	return result;
 };
 
-function eventRow(item: unknown): SymplaEventEntity | undefined {
-	if (!item || typeof item !== 'object') return undefined;
-	const record = item as { id?: unknown; name?: unknown };
-	if (typeof record.id !== 'string' && typeof record.id !== 'number') {
-		return undefined;
-	}
-	const parsed = SymplaEventEntity.safeParse({
-		id: String(record.id),
-		name: typeof record.name === 'string' ? record.name : undefined,
-	});
-	return parsed.success ? parsed.data : undefined;
-}
+export const getEvent: CorsairEndpoint<
+	SymplaContext,
+	GetEventInput,
+	GetEventResponse
+> = async (ctx, input) => {
+	requireKey(ctx);
+	const parsed = GetEventInputSchema.parse(input);
+	const { event_id: _event_id, ...query } = parsed;
+	const result = await callSympla(
+		ctx,
+		'events.get',
+		{ path: `/events/${pathPart(parsed.event_id)}`, query },
+		GetEventResponseSchema,
+		{ event_id: String(parsed.event_id) },
+	);
+	// The reference shows the event both bare and wrapped in `{ data }`.
+	const event = EventSchema.safeParse('data' in result ? result.data : result);
+	if (event.success) await storeEvents(ctx, [event.data]);
+	return result;
+};
 
+/**
+ * Saves each event's id and name. A reply without a name leaves a stored
+ * event as it is, so a narrow `fields` read cannot undo a newer name.
+ */
 async function storeEvents(
 	ctx: SymplaContext,
-	events: unknown[],
+	events: SymplaEvent[],
 ): Promise<void> {
 	if (!ctx.db?.events) return;
-	for (const item of events) {
-		const row = eventRow(item);
-		if (!row) continue;
+	for (const event of events) {
+		const id = String(event.id);
 		try {
-			await ctx.db.events.upsertByEntityId(row.id, row);
+			const existing = await ctx.db.events.findByEntityId(id);
+			if (event.name == null && existing) continue;
+			const row = SymplaEventEntity.safeParse({
+				...existing?.data,
+				id,
+				name: event.name ?? undefined,
+			});
+			if (!row.success) continue;
+			await ctx.db.events.upsertByEntityId(id, row.data);
 		} catch {
 			console.warn('Failed to save Sympla event');
 		}
 	}
 }
 
-export const Events = { list: listEvents };
+export const Events = {
+	list: listEvents,
+	get: getEvent,
+};

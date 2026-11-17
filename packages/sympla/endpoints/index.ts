@@ -1,8 +1,5 @@
-export { Events, listEvents } from './events';
-export type { ListEventsInput, ListEventsResponse } from './types';
-export {
-	ListEventsInputSchema,
-	ListEventsResponseSchema,
-	SymplaEndpointInputSchemas,
-	SymplaEndpointOutputSchemas,
-} from './types';
+export { Events } from './events';
+export { Orders } from './orders';
+export { Participants } from './participants';
+export { Presentations } from './presentations';
+export * from './types';
