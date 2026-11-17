@@ -1,0 +1,29 @@
+displayName: Docparser
+description: Ping Docparser and list parsers, model layouts, and parsed documents.
+domain: docparser.com
+recommendedAuth: api_key
+overviewNote: |
+  The key is HTTP Basic, with the secret as the username and an empty password. Empty-key requests to ping, parsers, model layouts, and results each returned HTTP 403. Parsed field values and media links are not stored.
+examples:
+  read:
+    path: parsers.list
+    title: List parsers
+    args: {}
+apiNotes:
+  ping: |
+    GET /v1/ping. Stores the message under id ping.
+  parsers.list: |
+    GET /v1/parsers. Stores id and label.
+  models.list: |
+    GET /v1/parser/models/{id}. The stored id is parser id plus layout id.
+  results.list: |
+    GET /v1/results/{id}. Stores id, document id, file name, page count, and timestamps.
+apiExamples:
+  ping:
+    call: "{}"
+  parsers.list:
+    call: "{}"
+  models.list:
+    call: "{ id: 'abc123' }"
+  results.list:
+    call: "{ id: 'abc123' }"

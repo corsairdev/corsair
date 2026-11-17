@@ -1853,6 +1853,14 @@
                 ]
               },
               {
+                "group": "Docparser",
+                "pages": [
+                  "plugins/docparser/overview",
+                  "plugins/docparser/api",
+                  "plugins/docparser/database"
+                ]
+              },
+              {
                 "group": "DocsBot AI",
                 "pages": [
                   "plugins/docsbotai/overview",

@@ -1,0 +1,191 @@
+---
+title: "Docparser API reference"
+sidebarTitle: "API"
+description: "API reference for the Docparser plugin in Corsair: every `docparser.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Models
+
+### list
+
+`models.list`
+
+List model layouts for one parser.
+
+**Risk:** `read`
+
+```ts
+await corsair.docparser.api.models.list({ id: 'abc123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+GET /v1/parser/models/{id}. The stored id is parser id plus layout id.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `models` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="models full type">
+
+```ts
+{
+  id: string,
+  label?: string,
+  parserId: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Parsers
+
+### list
+
+`parsers.list`
+
+List document parsers.
+
+**Risk:** `read`
+
+```ts
+await corsair.docparser.api.parsers.list({});
+```
+
+**Input:** _empty object_
+
+GET /v1/parsers. Stores id and label.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parsers` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parsers full type">
+
+```ts
+{
+  id: string,
+  label?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ping
+
+### ping
+
+`ping`
+
+Check that the API key is accepted.
+
+**Risk:** `read`
+
+```ts
+await corsair.docparser.api.ping({});
+```
+
+**Input:** _empty object_
+
+GET /v1/ping. Stores the message under id ping.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ping` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="ping full type">
+
+```ts
+{
+  id: ping,
+  msg?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Results
+
+### list
+
+`results.list`
+
+List parsed documents. Parsed field values are not stored.
+
+**Risk:** `read`
+
+```ts
+await corsair.docparser.api.results.list({ id: 'abc123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+GET /v1/results/{id}. Stores id, document id, file name, page count, and timestamps.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  documentId?: string,
+  fileName?: string,
+  pageCount?: number,
+  uploadedAt?: string,
+  processedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
