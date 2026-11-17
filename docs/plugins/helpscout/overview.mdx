@@ -6,7 +6,7 @@ description: "Manage mailboxes, conversations, customer profiles, threads, tags,
 
 Use **Help Scout** through Corsair: one client, typed API calls.
 
-**Authentication.** Help Scout has no API keys. Create an app under Your Profile > My Apps and connect each Help Scout account with OAuth 2: Corsair refreshes the 2-day access token with the stored refresh token, and on a read it refreshes once more and retries after a 401 (writes are not retried: a write that gets a 401 fails, and running it again reuses the stored token until that token expires or a read's 401 retry replaces it). For a single Help Scout account, `clientCredentials: true` in plugin options mints tokens from the app's own id and secret instead (Help Scout's client-credentials grant), so no connect step is needed; leave it off when tenants connect their own accounts, because those tokens reach the account that owns the app. Passing `key` in plugin options sends that token as is, with no refresh.
+**Authentication.** Help Scout has no API keys: every token comes from a Help Scout app (Your Profile > My Apps) and lasts 2 days. Two ways to connect. `oauth_2` (default): each Help Scout account authorizes through an OAuth app, Corsair's or your own; Corsair renews the token with the stored refresh token. `api_key`: connect one Help Scout account with its own app by storing the app's App ID as `client_id` and App Secret as `client_secret` (no redirect URL needed); the plugin mints a token with Help Scout's client-credentials grant, keeps it in `api_key` and mints a new one before it expires. Either way, a read that gets a 401 renews the token once and retries; a write that gets a 401 fails and is not retried. Passing `key` in plugin options sends that token as is, with no renewal.
 
 **Rate Limiting.** The Mailbox API enforces rate limits per tenant. Corsair's HTTP transport retries a 429 up to three times, honoring `Retry-After`.
 
@@ -77,6 +77,19 @@ helpscout()
 ```
 
 More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+<Tab title="API Key">
+
+Store the Help Scout API key before the first call: `pnpm corsair setup --plugin=helpscout --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+helpscout({
+	authType: 'api_key',
+})
+```
+
+More: [API Key](/concepts/api-key)
 
 </Tab>
 </Tabs>
