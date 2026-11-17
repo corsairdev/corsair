@@ -1,16 +1,19 @@
 ---
 title: "Stormglass plugin"
 sidebarTitle: "Overview"
-description: "Read Stormglass tide stations, elevation, tide extremes, solar data, and weather."
+description: "Global weather, marine, tide, astronomy, solar, bio and elevation data for any coordinate, from the Stormglass API."
 ---
 
 Use **Stormglass** through Corsair: one client, typed API calls, local DB sync.
 
-The key is the Authorization header with no Bearer prefix. Missing-key requests to stations, elevation, weather, solar, and tide extremes returned HTTP 403 API key is invalid. A box of four comma-separated numbers returned HTTP 422. The same path with box 58.0,17.0:59.0,18.0 returned HTTP 403. Hourly source maps other than sg are not returned. Coordinates are not written to the event. Every call counts against the daily quota.
+The plugin covers the whole Stormglass v2 API: hourly weather and marine forecasts, historical weather back to 2014, tide extremes and hourly sea levels, tide stations, astronomy, solar, bio and elevation.
+Get a key from the Stormglass dashboard; it is sent as the Authorization header with no Bearer prefix. Every call counts against the account's daily request quota (10 a day on the free plan); each response's `quota` shows the limit and how many requests were used today. A 402 means the quota is used up.
+Hourly ops return `values` (one number per parameter: the first source you asked for, else Stormglass's own `sg` blend) and `sources` (every source's value). Times are UTC; `start` and `end` take UNIX seconds or ISO strings such as 2024-01-01 or 2024-01-01T06, and one call covers at most 10 days.
+Tide data is astronomical tide from the nearest tide station; `station` in the result names it and its distance. Coordinates are not written to events.
 
 **What you get:**
 
-- 6 typed API operations
+- 10 typed API operations
 - 4 synced entities (`extremes`, `points`, `quotas`, `stations`) for fast `.search()` / `.list()`
 
 ## Setup
@@ -97,20 +100,23 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**List stations**
+**Get tomorrow's wind and waves**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.stormglass.api.stations.list({});
+await tenant.stormglass.api.weather.get({
+	lat: 58.7984,
+	lng: 17.8081,
+	params: 'windSpeed,waveHeight',
+	start: '2024-06-02',
+	end: '2024-06-03',
+});
 ```
 
 
-**`elevation.get`**
+**Write**
 
-```ts
-const tenant = corsair.withTenant('acme');
-await tenant.stormglass.api.elevation.get({});
-```
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/stormglass/api) reference._
 
 
 See the full list on the [API](/plugins/stormglass/api) page.
