@@ -7298,5 +7298,32 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/swaggerhub",
+    "dir": "packages/swaggerhub",
+    "name": "SwaggerHub",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/talenthr",
+    "dir": "packages/talenthr",
+    "name": "TalentHR",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/twelvedata",
+    "dir": "packages/twelvedata",
+    "name": "Twelve Data",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
