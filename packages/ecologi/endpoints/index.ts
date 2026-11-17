@@ -5,3 +5,10 @@ export {
 	getImpact,
 	getTrees,
 } from './get';
+export {
+	purchaseCarbonAvoidance,
+	purchaseCarbonRemoval,
+	purchaseHabitat,
+	purchaseLocalTrees,
+	purchaseTrees,
+} from './purchase';

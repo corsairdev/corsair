@@ -16,9 +16,20 @@ import {
 	getHabitat,
 	getImpact,
 	getTrees,
+	purchaseCarbonAvoidance,
+	purchaseCarbonRemoval,
+	purchaseHabitat,
+	purchaseLocalTrees,
+	purchaseTrees,
 } from './endpoints';
 import {
 	ImpactResponseSchema,
+	PurchaseCarbonInputSchema,
+	PurchaseCarbonRemovalInputSchema,
+	PurchaseHabitatInputSchema,
+	PurchaseLocalTreesInputSchema,
+	PurchaseResponseSchema,
+	PurchaseTreesInputSchema,
 	TotalResponseSchema,
 	UsernameInputSchema,
 } from './endpoints/types';
@@ -38,10 +49,14 @@ export type EcologiPluginOptions = {
 export type EcologiKeyBuilderContext = KeyBuilderContext<EcologiPluginOptions>;
 
 const ecologiEndpointsNested = {
-	trees: { get: getTrees },
-	carbonOffsets: { get: getCarbonOffset },
-	carbonRemovals: { get: getCarbonRemoval },
-	habitats: { get: getHabitat },
+	trees: {
+		get: getTrees,
+		purchase: purchaseTrees,
+		purchaseLocal: purchaseLocalTrees,
+	},
+	carbonOffsets: { get: getCarbonOffset, purchase: purchaseCarbonAvoidance },
+	carbonRemovals: { get: getCarbonRemoval, purchase: purchaseCarbonRemoval },
+	habitats: { get: getHabitat, purchase: purchaseHabitat },
 	impacts: { get: getImpact },
 } as const;
 
@@ -55,6 +70,26 @@ export const ecologiEndpointSchemas = {
 	'carbonRemovals.get': total,
 	'habitats.get': total,
 	'impacts.get': { input: UsernameInputSchema, output: ImpactResponseSchema },
+	'trees.purchase': {
+		input: PurchaseTreesInputSchema,
+		output: PurchaseResponseSchema,
+	},
+	'trees.purchaseLocal': {
+		input: PurchaseLocalTreesInputSchema,
+		output: PurchaseResponseSchema,
+	},
+	'carbonOffsets.purchase': {
+		input: PurchaseCarbonInputSchema,
+		output: PurchaseResponseSchema,
+	},
+	'carbonRemovals.purchase': {
+		input: PurchaseCarbonRemovalInputSchema,
+		output: PurchaseResponseSchema,
+	},
+	'habitats.purchase': {
+		input: PurchaseHabitatInputSchema,
+		output: PurchaseResponseSchema,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof ecologiEndpointsNested
 >;
@@ -62,12 +97,32 @@ export const ecologiEndpointSchemas = {
 const read = (description: string) =>
 	({ riskLevel: 'read', description }) as const;
 
+const buy = (description: string) =>
+	({ riskLevel: 'destructive', description }) as const;
+
 const ecologiEndpointMeta = {
 	'trees.get': read('Read the trees funded by an Ecologi username.'),
 	'carbonOffsets.get': read('Read the CO2e avoided by an Ecologi username.'),
 	'carbonRemovals.get': read('Read the CO2e removed by an Ecologi username.'),
 	'habitats.get': read('Read the habitat restored by an Ecologi username.'),
 	'impacts.get': read('Read the combined impact for an Ecologi username.'),
+	// Purchases are billed to the account each month (unless `test` is true)
+	// and can email a recipient, so they are destructive under R8.
+	'trees.purchase': buy(
+		'Buy trees (GBP 0.60 each) for the Ecologi forest. Billed monthly; test: true charges nothing.',
+	),
+	'trees.purchaseLocal': buy(
+		'Buy trees planted in the UK, US, Australia or Brazil. Billed monthly; test: true charges nothing.',
+	),
+	'carbonOffsets.purchase': buy(
+		'Buy carbon avoidance by the kg or tonne (GBP 9.45 a tonne). Billed monthly; test: true charges nothing.',
+	),
+	'carbonRemovals.purchase': buy(
+		'Buy permanent carbon removal by the kg (GBP 150 a tonne). Billed monthly; test: true charges nothing.',
+	),
+	'habitats.purchase': buy(
+		'Buy habitat restoration by the square metre (GBP 5.55 each). Billed monthly; test: true charges nothing.',
+	),
 } as const satisfies RequiredPluginEndpointMeta<typeof ecologiEndpointsNested>;
 
 const defaultAuthType = 'api_key' as const satisfies AuthTypes;

@@ -1,7 +1,14 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
 import type { EcologiContext } from './context';
 import { getImpact, getTrees } from './endpoints/get';
+import {
+	purchaseCarbonAvoidance,
+	purchaseCarbonRemoval,
+	purchaseHabitat,
+	purchaseLocalTrees,
+	purchaseTrees,
+} from './endpoints/purchase';
 
 jest.mock('corsair/core', () => {
 	const actual = jest.requireActual('corsair/core');
@@ -120,5 +127,123 @@ describe('ecologi reads', () => {
 		expect(result.total.total).toBe(3);
 		expect(warn).toHaveBeenCalledWith('Failed to save Ecologi total');
 		warn.mockRestore();
+	});
+});
+
+describe('ecologi purchases (mocked only; never run live)', () => {
+	beforeEach(() => {
+		jest.clearAllMocks();
+	});
+
+	const TREES_RESPONSE = {
+		amount: 1.8,
+		currency: 'GBP',
+		treeUrl: 'https://app.ecologi.com/profile/test?tileId=604a',
+		name: 'Order 1042',
+		projectDetails: [
+			{
+				name: 'Forest restoration in Kenya',
+				projectUrl: 'https://ecologi.com/projects/forest-restoration-in-kenya',
+				splitPercentage: 100,
+				splitAmountTrees: 3,
+			},
+		],
+	};
+
+	it('posts trees with the Bearer key, test flag and Idempotency-Key header', async () => {
+		mockRequest.mockResolvedValue(TREES_RESPONSE);
+		const result = await purchaseTrees(context(), {
+			number: 3,
+			name: 'Order 1042',
+			test: true,
+			idempotencyKey: 'order-1042',
+		});
+		expect(result.amount).toBe(1.8);
+		const [config, options] = mockRequest.mock.calls[0] ?? [];
+		expect(config?.BASE).toBe('https://public.ecologi.com');
+		expect(config?.HEADERS).toMatchObject({
+			Authorization: 'Bearer sekrit',
+			'Idempotency-Key': 'order-1042',
+		});
+		expect(options).toMatchObject({
+			method: 'POST',
+			url: '/impact/trees',
+			mediaType: 'application/json',
+			body: { number: 3, name: 'Order 1042', test: true },
+		});
+		expect(options?.body).not.toHaveProperty('idempotencyKey');
+		const payload = mockLog.mock.calls[0]?.[2];
+		expect(payload).toEqual({ number: 3, test: true });
+		expect(JSON.stringify(payload)).not.toContain('Order 1042');
+	});
+
+	it('posts local trees with a country and carbon avoidance with units', async () => {
+		mockRequest.mockResolvedValue({ amount: 11, currency: 'GBP' });
+		await purchaseLocalTrees(context(), { number: 2, country: 'UK' });
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			url: '/impact/local-trees',
+			body: { number: 2, country: 'UK' },
+		});
+		mockRequest.mockResolvedValue({
+			number: 10,
+			units: 'KG',
+			numberInTonnes: 0.01,
+			amount: 0.09,
+			currency: 'GBP',
+			tileUrl: 'https://app.ecologi.com/profile/business-name?tileId=abc123',
+			projectDetails: [{ splitPercentage: 14, splitAmountTonnes: 0.0014 }],
+		});
+		const carbon = await purchaseCarbonAvoidance(context(), {
+			number: 10,
+			units: 'KG',
+		});
+		expect(carbon.numberInTonnes).toBe(0.01);
+		expect(mockRequest.mock.calls[1]?.[1]).toMatchObject({
+			url: '/impact/carbon',
+			body: { number: 10, units: 'KG' },
+		});
+	});
+
+	it('posts carbon removal and habitat restoration to their routes', async () => {
+		mockRequest.mockResolvedValue({ amount: 1.5, currency: 'GBP' });
+		await purchaseCarbonRemoval(context(), { number: 10 });
+		await purchaseHabitat(context(), {
+			number: 5.5,
+			recipientEmail: 'pranay+ecologi-test@corsair.dev',
+			test: true,
+		});
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			url: '/impact/carbon-removal',
+			body: { number: 10 },
+		});
+		expect(mockRequest.mock.calls[1]?.[1]).toMatchObject({
+			url: '/impact/habitat-restoration',
+			body: { number: 5.5, test: true },
+		});
+		expect(JSON.stringify(mockLog.mock.calls)).not.toContain('corsair.dev');
+	});
+
+	it('refuses out-of-range amounts and a bad email before any request', async () => {
+		await expect(purchaseTrees(context(), { number: 0 })).rejects.toThrow();
+		await expect(
+			purchaseTrees(context(), { number: 250_001 }),
+		).rejects.toThrow();
+		await expect(
+			purchaseHabitat(context(), { number: 0.05 }),
+		).rejects.toThrow();
+		await expect(
+			purchaseLocalTrees(context(), { number: 1, country: 'FR' } as never),
+		).rejects.toThrow();
+		await expect(
+			purchaseTrees(context(), { number: 1, recipientEmail: 'not-an-email' }),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('refuses a purchase without a key before any request', async () => {
+		await expect(
+			purchaseTrees({ key: '' } as unknown as EcologiContext, { number: 1 }),
+		).rejects.toBeInstanceOf(AuthMissingError);
+		expect(mockRequest).not.toHaveBeenCalled();
 	});
 });

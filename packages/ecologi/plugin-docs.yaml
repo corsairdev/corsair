@@ -1,9 +1,11 @@
 displayName: Ecologi
-description: Read Ecologi reporting totals for trees, carbon, habitat, and combined impact.
+description: Fund tree planting, carbon avoidance, carbon removal and habitat restoration through Ecologi's Impact API, and read any profile's impact totals.
 domain: ecologi.com
 recommendedAuth: api_key
 overviewNote: |
-  The reporting API is public. Requests go to https://public.ecologi.com and send no API key. GET /users/ecologi/trees, /carbon-offset, /carbon-removal, /habitat-restoration, and /impact each returned HTTP 200. GET /users/business-name/trees returned HTTP 404. Purchase endpoints are not catalog operations and are not implemented. The username is the row id and is not written to the event.
+  The reporting reads (`*.get`) are public: they send no API key and work for any Ecologi username. An unknown username returns HTTP 404. The username is the row id and is not written to the event.
+
+  The purchase operations (`*.purchase`, `trees.purchaseLocal`) spend money. They need the API key from Ecologi's Impact API page, sent as a Bearer token, and are billed to the account on the 1st of each month (minimum invoice GBP 3). Pass `test: true` to get the expected response without being charged. Send an `idempotencyKey` so a retried request is not bought twice. The `name` is shown publicly on a public profile, so don't send a customer's name without permission. A `recipientEmail` sends that person an email about the purchase.
 examples:
   read:
     path: trees.get
@@ -21,6 +23,16 @@ apiNotes:
     GET /users/{username}/habitat-restoration. Stored fields are total and pending.
   impacts.get: |
     GET /users/{username}/impact. Stores the four totals and the four pending totals.
+  trees.purchase: |
+    POST /impact/trees, 1 to 250,000 trees at GBP 0.60 each. Trees stay pending until the monthly invoice is paid. Same-name purchases within 24 hours share one tile.
+  trees.purchaseLocal: |
+    POST /impact/local-trees with `country` UK, US, AU or BR; each country has its own project and price.
+  carbonOffsets.purchase: |
+    POST /impact/carbon with `units` KG or Tonnes, at least 1 kg. Funding may be split across projects.
+  carbonRemovals.purchase: |
+    POST /impact/carbon-removal, in kilograms, at least 1 kg.
+  habitats.purchase: |
+    POST /impact/habitat-restoration, in square metres, at least 0.1 with one decimal place.
 apiExamples:
   trees.get:
     call: "{ username: 'ecologi' }"
@@ -32,3 +44,13 @@ apiExamples:
     call: "{ username: 'ecologi' }"
   impacts.get:
     call: "{ username: 'ecologi' }"
+  trees.purchase:
+    call: "{ number: 3, name: 'Order 1042', test: true, idempotencyKey: 'order-1042-trees' }"
+  trees.purchaseLocal:
+    call: "{ number: 2, country: 'UK', test: true }"
+  carbonOffsets.purchase:
+    call: "{ number: 10, units: 'KG', test: true }"
+  carbonRemovals.purchase:
+    call: "{ number: 10, test: true }"
+  habitats.purchase:
+    call: "{ number: 5.5, test: true }"

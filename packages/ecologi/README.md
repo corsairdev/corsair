@@ -17,10 +17,15 @@ pnpm add @corsair-dev/ecologi
 | `habitats.get` | `ecologi.api.habitats.get` | `read` | Read the habitat restored by an Ecologi username. |
 | `impacts.get` | `ecologi.api.impacts.get` | `read` | Read the combined impact for an Ecologi username. |
 | `trees.get` | `ecologi.api.trees.get` | `read` | Read the trees funded by an Ecologi username. |
+| `trees.purchase` | `ecologi.api.trees.purchase` | `destructive` | Buy trees (GBP 0.60 each). Billed monthly; `test: true` charges nothing. |
+| `trees.purchaseLocal` | `ecologi.api.trees.purchaseLocal` | `destructive` | Buy trees planted in the UK, US, Australia or Brazil. |
+| `carbonOffsets.purchase` | `ecologi.api.carbonOffsets.purchase` | `destructive` | Buy carbon avoidance by the kg or tonne. |
+| `carbonRemovals.purchase` | `ecologi.api.carbonRemovals.purchase` | `destructive` | Buy permanent carbon removal by the kg. |
+| `habitats.purchase` | `ecologi.api.habitats.purchase` | `destructive` | Buy habitat restoration by the square metre. |
 
 ## Auth
 
-Auth: API key. Corsair prompts your tenant for credentials on first use.
+Auth: API key, used only by the purchase operations (the reporting reads are public). Corsair prompts your tenant for credentials on first use.
 
 ## Webhooks
 
