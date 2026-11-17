@@ -172,7 +172,7 @@ await corsair.nethunt.api.records.callLog({ recordId: '596f644b8f6d05e16c24b830'
 
 `records.changes`
 
-Read the audit trail for a folder: who changed which field, when, with before and after values, including deletes
+Read the audit trail for a folder: who changed which field and when, as the values removed and added, including deletes
 
 **Risk:** `read`
 
@@ -190,7 +190,7 @@ await corsair.nethunt.api.records.changes({ folderId: '596f644b8f6d05e16c24b810'
 | `since` | `string` | No | An ISO 8601 instant, e.g. 2026-01-01T00:00:00.000Z. |
 | `limit` | `number` | No | — |
 
-This is the only route that reports a delete, and it carries before and after values per field.
+This is the only route that reports a delete. fieldActions gives remove and add values per field, not before and after snapshots.
 
 
 
@@ -205,13 +205,17 @@ This is the only route that reports a delete, and it carries before and after va
 
 ```ts
 {
+  id?: string | null,
   recordId?: string | null,
   time?: string | null,
-  user?: string | null,
+  user?: {
+    personalName?: string | null,
+    emailAddress?: string | null
+  } | null,
   recordAction?: string | null,
   fieldActions?: Record<string, {
-    before?: string | number | boolean | null | (string | number | boolean)[],
-    after?: string | number | boolean | null | (string | number | boolean)[]
+    remove?: string | number | boolean | null | (string | number | boolean)[],
+    add?: string | number | boolean | null | (string | number | boolean)[]
   }> | null
 }[]
 ```
@@ -442,6 +446,156 @@ NetHunt defaults the window to 24 hours before the request.
   createdAt?: string | null,
   updatedAt?: string | null,
   fields?: Record<string, string | number | boolean | null | (string | number | boolean)[]> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### recentCallLogs
+
+`records.recentCallLogs`
+
+List calls logged on records in a folder after a timestamp, with start, end and duration
+
+**Risk:** `read`
+
+```ts
+await corsair.nethunt.api.records.recentCallLogs({ folderId: '596f710ef5be7653dee0da14', since: '2026-11-01T00:00:00.000Z', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folderId` | `string` | Yes | The folder's id, from folders.list. |
+| `since` | `string` | No | Only items created after this instant. Defaults at NetHunt to 24 hours before the request. |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `callLogs` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="callLogs full type">
+
+```ts
+{
+  id?: string | null,
+  callLogId?: string | null,
+  recordId?: string | null,
+  createdAt?: string | null,
+  text?: string | null,
+  time?: string | null,
+  duration?: number | null,
+  endTime?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### recentComments
+
+`records.recentComments`
+
+List comments added to records in a folder after a timestamp; NetHunt defaults the window to 24 hours
+
+**Risk:** `read`
+
+```ts
+await corsair.nethunt.api.records.recentComments({ folderId: '596f710ef5be7653dee0da14', since: '2026-11-01T00:00:00.000Z', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folderId` | `string` | Yes | The folder's id, from folders.list. |
+| `since` | `string` | No | Only items created after this instant. Defaults at NetHunt to 24 hours before the request. |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comments` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="comments full type">
+
+```ts
+{
+  id?: string | null,
+  commentId?: string | null,
+  recordId?: string | null,
+  createdAt?: string | null,
+  text?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### recentFiles
+
+`records.recentFiles`
+
+List Google Drive files attached to records in a folder after a timestamp
+
+**Risk:** `read`
+
+```ts
+await corsair.nethunt.api.records.recentFiles({ folderId: '596f710ef5be7653dee0da14', since: '2026-11-01T00:00:00.000Z', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folderId` | `string` | Yes | The folder's id, from folders.list. |
+| `since` | `string` | No | Only items created after this instant. Defaults at NetHunt to 24 hours before the request. |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `files` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  id?: string | null,
+  fileId?: string | null,
+  folderId?: string | null,
+  recordId?: string | null,
+  createdAt?: string | null,
+  googleDriveFileId?: string | null,
+  description?: string | null,
+  iconUrl?: string | null,
+  mimeType?: string | null,
+  name?: string | null,
+  url?: string | null
 }[]
 ```
 </Accordion>

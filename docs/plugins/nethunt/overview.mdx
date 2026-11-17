@@ -15,7 +15,7 @@ What to know before you write:
 - **Folders hold user-defined fields.** `folders.list` gives the ids, and `folders.fields` gives the names a create or update may set. There are no fixed columns, so call both before building a field map.
 - **A create and an update take different shapes.** `records.create` takes a flat `fields` map plus a required `timeZone`, which NetHunt needs to interpret date values. `records.update` takes `fieldActions`, one entry per field, each able to `overwrite`, `remove` or `add`. Combining `overwrite` with `remove` is rejected here because NetHunt forbids it.
 - **A delete goes over POST and answers `{}`.** So does linking a Gmail thread. Both return a small result the plugin derives from the call that succeeded, rather than from a body that carries nothing.
-- **`records.changes` is the only route that reports a delete**, and it is also the one that shows before and after values for each field.
+- **`records.changes` is the only route that reports a delete.** Each change lists, per field, the values removed (`remove`) and added (`add`), and the user who made it as `{ personalName, emailAddress }`. It is a change log, not a snapshot history: it has no full before and after values.
 - **Reads page by time, not by offset.** `records.recent` and `records.updated` default their window to 24 hours and take a `since` instant. NetHunt takes `fieldName` repeatedly for one call, which the plugin sends as separate parameters.
 
 Worth knowing:
@@ -25,7 +25,7 @@ Worth knowing:
 
 **What you get:**
 
-- 13 typed API operations
+- 16 typed API operations
 
 ## Setup
 

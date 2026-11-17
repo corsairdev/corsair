@@ -3627,19 +3627,19 @@
                 ]
               },
               {
-                "group": "NetHunt CRM",
-                "pages": [
-                  "plugins/nethunt/overview",
-                  "plugins/nethunt/api",
-                  "plugins/nethunt/database"
-                ]
-              },
-              {
                 "group": "Neon",
                 "pages": [
                   "plugins/neon/overview",
                   "plugins/neon/api",
                   "plugins/neon/database"
+                ]
+              },
+              {
+                "group": "NetHunt CRM",
+                "pages": [
+                  "plugins/nethunt/overview",
+                  "plugins/nethunt/api",
+                  "plugins/nethunt/database"
                 ]
               },
               {
