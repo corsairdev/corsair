@@ -5025,6 +5025,14 @@
                 ]
               },
               {
+                "group": "Twelve Data",
+                "pages": [
+                  "plugins/twelvedata/overview",
+                  "plugins/twelvedata/api",
+                  "plugins/twelvedata/database"
+                ]
+              },
+              {
                 "group": "TwentyOne Risk",
                 "pages": [
                   "plugins/twentyonerisk/overview",

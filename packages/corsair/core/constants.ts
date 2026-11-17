@@ -608,6 +608,7 @@ export const BaseProviders = [
 	'truvera',
 	'turbotpipes',
 	'turso',
+	'twelvedata',
 	'twentyonerisk',
 	'twilio',
 	'twitter',
@@ -1270,6 +1271,7 @@ export const ProviderDisplayNames = {
 	truvera: 'Truvera',
 	turbotpipes: 'Turbot Pipes',
 	turso: 'Turso',
+	twelvedata: 'Twelve Data',
 	twentyonerisk: 'TwentyOneRisk',
 	twilio: 'Twilio',
 	twitter: 'Twitter',
@@ -1939,6 +1941,7 @@ export type AllProviders =
 	| 'truvera'
 	| 'turbotpipes'
 	| 'turso'
+	| 'twelvedata'
 	| 'twentyonerisk'
 	| 'twilio'
 	| 'twitter'
