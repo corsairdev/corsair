@@ -158,7 +158,9 @@ const CompetitorSchema = z
 		url: z.string().nullish(),
 		title: z.string().nullish(),
 		desc: z.string().nullish(),
-		content_score: z.number().nullish(),
+		// The docs print a blank score for an unscored competitor, so an empty
+		// string is accepted alongside a number.
+		content_score: z.union([z.number(), z.string()]).nullish(),
 	})
 	.loose();
 
@@ -314,6 +316,10 @@ export type ContentImportInput = z.input<typeof ContentPayloadSchema>;
 const ContentResultSchema = z
 	.object({
 		status: z.string().nullish(),
+		content_score: z
+			.number()
+			.nullish()
+			.describe('The content score of the imported or evaluated text.'),
 		error: z
 			.string()
 			.nullish()

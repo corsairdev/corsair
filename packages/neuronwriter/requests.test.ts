@@ -248,6 +248,22 @@ describe('analysis.get', () => {
 		expect(Array.isArray(competitors) ? competitors.length : 0).toBe(1);
 	});
 
+	it('accepts a blank score for an unscored competitor', async () => {
+		const blank = {
+			...analysisReady,
+			competitors: [{ rank: 2, url: 'https://example.com', content_score: '' }],
+		};
+		const { result } = await capture(
+			endpoints.analysis.get,
+			{ query: 'q' },
+			blank,
+		);
+
+		const competitors = asRecord(result)?.competitors;
+		const first = asRecord(Array.isArray(competitors) ? competitors[0] : null);
+		expect(first?.content_score).toBe('');
+	});
+
 	it('keeps the entity links as pairs', async () => {
 		const { result } = await capture(
 			endpoints.analysis.get,
@@ -335,6 +351,22 @@ describe('content.get', () => {
 });
 
 describe('content.import and evaluate', () => {
+	it('returns the content score as a number and rejects any other type', async () => {
+		const { result } = await capture(
+			endpoints.content.evaluate,
+			{ query: 'q', html: '<p>x</p>' },
+			{ status: 'ok', content_score: 63 },
+		);
+		expect(asRecord(result)?.content_score).toBe(63);
+		await expect(
+			capture(
+				endpoints.content.evaluate,
+				{ query: 'q', html: '<p>x</p>' },
+				{ status: 'ok', content_score: 'high' },
+			),
+		).rejects.toThrow();
+	});
+
 	it('posts HTML and reports the status', async () => {
 		const { result, url, init } = await capture(
 			endpoints.content.import,

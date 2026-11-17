@@ -144,7 +144,7 @@ Answers only a status until it is ready; the metrics, terms, ideas and competito
   url?: string | null,
   title?: string | null,
   desc?: string | null,
-  content_score?: number | null
+  content_score?: number | string | null
 }[] | null
 ```
 </Accordion>
@@ -228,6 +228,7 @@ Scores the content without saving a revision, so it costs no revision history.
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `string \| null` | No | — |
+| `content_score` | `number \| null` | No | The content score of the imported or evaluated text. |
 | `error` | `string \| null` | No | The reason an import or evaluation failed, when one did. |
 
 
@@ -302,6 +303,7 @@ Saves a new revision. Takes html or url, never both.
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `string \| null` | No | — |
+| `content_score` | `number \| null` | No | The content score of the imported or evaluated text. |
 | `error` | `string \| null` | No | The reason an import or evaluation failed, when one did. |
 
 
