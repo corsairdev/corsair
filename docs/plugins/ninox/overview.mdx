@@ -1,30 +1,33 @@
 ---
 title: "Ninox plugin"
 sidebarTitle: "Overview"
-description: "Read a Ninox workspace and its modules, list tables and their fields, and read, create, update, upsert and delete records, with a row-level change feed for tables that track history."
+description: "Read a Ninox workspace and its modules, create and delete tables and fields, read, create, update, upsert and delete records with a row-level change feed, list views, and run Ninox script."
 ---
 
 Use **Ninox** through Corsair: one client, typed API calls.
 
-Create a workspace API key in the Ninox app under **Workspace Integration**. Each key is scoped to one workspace and grants access to that workspace only, and some routes need a specific grant on the key, which shows up as a 403 rather than a bad-key error.
+Create a workspace API key in Ninox under **Settings &gt; Workspace &gt; API and connections**. Each key is scoped to one workspace and grants access to that workspace only, and some routes need a specific grant on the key, which shows up as a 403 rather than a bad-key error.
 
 The workspace id is the twelve-character lowercase code in the workspace, which is a required input on every call because the API has no "current workspace" notion.
 
 What to know:
 
 - **Names, not ids, address modules and tables.** A module or table is addressed by its name, so a rename breaks a stored name. The plugin percent-encodes the segment, because a name can hold a space or an ampersand.
-- **A record is `{ id, values }`.** `values` is keyed by the table's own field names, and each cell is a string, number, boolean or null, never a nested object. `fields.list` gives the names and types a write must use.
+- **A record is `{ id, values }`.** `values` is keyed by the table's own field names, and each cell is a string, number, boolean or null, or for a `multi` field an array of option ids. Never a nested object. `fields.list` gives the names and types a write must use.
 - **Dates, numbers and choices have their own cell rules.** A `date`, `timestamp` or `appointment` takes an ISO 8601 string or a Unix millisecond value. A `number` takes a finite number or a numeric string. A `boolean` takes only `true` or `false`, not `1` or `0`. A `choice` or `multi` takes an option id or label, and reads back as the option id.
 - **Writes are transactional across the batch.** A create, update or delete applies to every record or none: one bad record rolls the whole set back. So a batch that succeeds reported every id.
 - **`_expected` protects a concurrent edit.** Put the values you read into `_expected` on an update, and if one changed since, Ninox answers 409 instead of overwriting. `override: true` skips that check.
-- **The change feed needs history tracking.** `records.changes` answers 400 on a table that does not track history. It returns `meta.asOf`; pass that back as `since` on the next poll so nothing falls between two polls, and pass the first page's `asOf` as `asOf` while paging one poll.
+- **The change feed needs history tracking.** `records.changes` answers 400 on a table that does not track history. It returns `asOf` at the top level of the result (`result.asOf`); pass that back as `since` on the next poll so nothing falls between two polls, and pass the first page's `asOf` as `asOf` while paging one poll.
 - **A 409 can also be an ambiguous upsert.** When more than one row holds the `matchField` value, Ninox refuses rather than picking one, so `matchField` must be a field marked unique.
+
+- **Structure changes are API calls too.** `tables.create` and `fields.create` build a table; `fields.create` takes `options: [{ label }]` for a choice or multi field and Ninox assigns the ids. `tables.delete` and `fields.delete` remove the data with them and are `destructive`.
+- **`scripts.execute` runs Ninox script** in a module (e.g. `count(select orders)`) and returns its result. A script can change or delete records, so it is `destructive`. With `mode: 'background'`, or a script that runs long, Ninox answers the run instead of a result.
 
 The route quirk worth knowing: a single record is `record/{id}` while the collection is `records`, and the delete takes its ids in a `{ records: [...] }` body rather than a bare array. The plugin handles both.
 
 **What you get:**
 
-- 11 typed API operations
+- 19 typed API operations
 
 ## Setup
 
