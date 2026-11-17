@@ -163,7 +163,7 @@ describe('newsapi reads', () => {
 		expect(upsert).toHaveBeenCalledWith('bbc-news', result.sources[0]);
 	});
 
-	it('uses the legacy source string as sourceName', async () => {
+	it('uses the legacy source string as sourceId (it is an id like bbc-news)', async () => {
 		mockRequest.mockResolvedValue({
 			status: 'ok',
 			source: 'bbc-news',
@@ -172,7 +172,8 @@ describe('newsapi reads', () => {
 		const result = await legacyArticles(context('sekrit'), {
 			source: 'bbc-news',
 		});
-		expect(result.articles[0]?.sourceName).toBe('bbc-news');
+		expect(result.articles[0]?.sourceId).toBe('bbc-news');
+		expect(result.articles[0]?.sourceName).toBeUndefined();
 		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
 			url: '/v1/articles',
 		});

@@ -94,7 +94,7 @@ await corsair.newsapi.api.articles.headlines({ country: 'us' });
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
 
-GET /v2/top-headlines. sources cannot be combined with country or category. totalResults is returned for paging.
+GET /v2/top-headlines. Needs at least one of q, country, category or sources. sources cannot be combined with country or category. totalResults is returned for paging.
 
 
 
@@ -146,7 +146,7 @@ await corsair.newsapi.api.articles.legacy({ source: 'bbc-news' });
 | `source` | `string` | Yes | — |
 | `sortBy` | `string` | No | — |
 
-GET /v1/articles. source is required. The top-level source string is stored as sourceName.
+GET /v1/articles. source is required. The top-level source id (for example bbc-news) is stored as sourceId.
 
 
 

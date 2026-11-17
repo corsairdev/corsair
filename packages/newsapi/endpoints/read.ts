@@ -36,7 +36,7 @@ async function keyOf(ctx: NewsApiContext): Promise<string> {
 
 function articlesFrom(
 	body: unknown,
-	sourceName?: string,
+	sourceId?: string,
 ): NewsApiArticleEntity[] {
 	const row = asRecord(body);
 	if (row?.status && row.status !== 'ok') {
@@ -57,8 +57,8 @@ function articlesFrom(
 			author: text(article?.author),
 			urlToImage: text(article?.urlToImage),
 			publishedAt: text(article?.publishedAt),
-			sourceId: text(source?.id),
-			sourceName: text(source?.name) ?? sourceName,
+			sourceId: text(source?.id) ?? sourceId,
+			sourceName: text(source?.name),
 		});
 		return parsed.success ? [parsed.data] : [];
 	});
@@ -191,8 +191,9 @@ export const legacyArticles: CorsairEndpoint<
 		source: parsed.source,
 		sortBy: parsed.sortBy,
 	});
-	const sourceName = text(asRecord(body)?.source);
-	const articles = articlesFrom(body, sourceName);
+	// v1 sends the source id (e.g. bbc-news) once at the top level.
+	const sourceId = text(asRecord(body)?.source);
+	const articles = articlesFrom(body, sourceId);
 	await saveArticles(ctx, articles, 'newsapi.articles.legacy');
 	return { articles };
 };
