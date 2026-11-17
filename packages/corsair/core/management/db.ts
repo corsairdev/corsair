@@ -114,6 +114,7 @@ export async function callPluginDb(
 	assertModeAllows(
 		`${route.plugin}.db.${route.entityType}.${route.method}`,
 		risk,
+		route.plugin,
 	);
 	const plugin = (client as Record<string, unknown> | undefined)?.[
 		route.plugin

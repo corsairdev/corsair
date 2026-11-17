@@ -189,6 +189,12 @@ export type PluginPermissionsConfig<T extends EndpointTree = EndpointTree> = {
 	 * Only valid paths for this specific plugin compile — typos are type errors.
 	 */
 	overrides?: Partial<Record<EndpointPathsOf<T>, PermissionPolicy>>;
+	/**
+	 * A mode per account, keyed by its id, ref or label (e.g. its email). It
+	 * stands in for `mode` on that account's calls; the caller's mode still
+	 * tightens either.
+	 */
+	accounts?: Record<string, PermissionMode>;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────

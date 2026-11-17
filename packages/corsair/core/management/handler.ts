@@ -4,6 +4,7 @@ import {
 	clearConnectRequest,
 	readConnectRequest,
 } from '../connect-request/store';
+import type { ModeScope } from '../permissions';
 import { runWithMode } from '../permissions';
 import type { PermissionMode } from '../plugins';
 import { getCorsairInternal } from '../utils/corsair-instance';
@@ -516,6 +517,53 @@ const REQUEST_MODES = new Set<PermissionMode>([
 	'readonly',
 ]);
 
+const MAX_SCOPES_HEADER = 8_192;
+
+function requestMode(raw: unknown): PermissionMode {
+	if (!REQUEST_MODES.has(raw as PermissionMode)) {
+		throw badRequest(
+			`Unknown permission mode "${String(raw)}" — expected one of ${[...REQUEST_MODES].join(', ')}`,
+		);
+	}
+	return raw as PermissionMode;
+}
+
+// x-corsair-mode-scopes: the caller's open scopes, outermost first, each a
+// mode or { mode?, accounts?: { plugin: { account: mode } } }.
+function parseScopes(raw: string): ModeScope[] {
+	let parsed: unknown;
+	try {
+		parsed = raw.length <= MAX_SCOPES_HEADER ? JSON.parse(raw) : undefined;
+	} catch {
+		parsed = undefined;
+	}
+	if (!Array.isArray(parsed)) {
+		throw badRequest('x-corsair-mode-scopes must be a JSON array of modes');
+	}
+	return parsed.map((scope): ModeScope => {
+		if (typeof scope === 'string') return requestMode(scope);
+		const { mode, accounts } = (scope ?? {}) as {
+			mode?: unknown;
+			accounts?: unknown;
+		};
+		const out: Record<string, Record<string, PermissionMode>> = {};
+		for (const [plugin, byAccount] of Object.entries(
+			(accounts ?? {}) as Record<string, unknown>,
+		)) {
+			out[plugin] = {};
+			for (const [account, m] of Object.entries(
+				(byAccount ?? {}) as Record<string, unknown>,
+			)) {
+				out[plugin]![account] = requestMode(m);
+			}
+		}
+		return {
+			...(mode === undefined ? {} : { mode: requestMode(mode) }),
+			accounts: out,
+		};
+	});
+}
+
 /**
  * The mode a caller asked this request to run under. The binding layer
  * composes it with the plugin's own, so it can only tighten.
@@ -524,14 +572,16 @@ const REQUEST_MODES = new Set<PermissionMode>([
  * running it unrestricted is the one outcome they did not ask for.
  */
 function withRequestMode<T>(req: Request, fn: () => T): T {
+	const scopes = req.headers.get('x-corsair-mode-scopes');
+	if (scopes !== null) {
+		return parseScopes(scopes).reduceRight<() => T>(
+			(inner, scope) => () => runWithMode(scope, inner),
+			fn,
+		)();
+	}
 	const raw = req.headers.get('x-corsair-mode');
 	if (raw === null) return fn();
-	if (!REQUEST_MODES.has(raw as PermissionMode)) {
-		throw badRequest(
-			`Unknown permission mode "${raw}" — expected one of ${[...REQUEST_MODES].join(', ')}`,
-		);
-	}
-	return runWithMode(raw as PermissionMode, fn);
+	return runWithMode(requestMode(raw), fn);
 }
 
 export function managementHandler(

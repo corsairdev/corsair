@@ -379,7 +379,11 @@ function guardEntityClients(
 				// async: these methods reject, so a sync throw would slip past a
 				// caller that only attached a .catch().
 				return async (...args: Parameters<typeof call>) => {
-					assertModeAllows(`${pluginId}.db.${entityType}.${method}`, risk);
+					assertModeAllows(
+						`${pluginId}.db.${entityType}.${method}`,
+						risk,
+						pluginId,
+					);
 					return call.apply(target, args);
 				};
 			},
@@ -659,7 +663,11 @@ export function buildCorsairClient<
 		const pluginPermsConfig = (
 			plugin.options as Record<string, unknown> | undefined
 		)?.permissions as
-			| { mode: PermissionMode; overrides?: Record<string, PermissionPolicy> }
+			| {
+					mode: PermissionMode;
+					overrides?: Record<string, PermissionPolicy>;
+					accounts?: Record<string, PermissionMode>;
+			  }
 			| undefined;
 
 		bindEndpointsRecursively({

@@ -537,6 +537,55 @@ describe('call and db routes with an account', () => {
 			}),
 		);
 
+	const postWithScopes = (path: string, body: unknown, scopes: string) =>
+		handler(
+			new Request(`https://app.test${path}`, {
+				method: 'POST',
+				headers: {
+					authorization: 'Bearer k',
+					'content-type': 'application/json',
+					'x-corsair-mode-scopes': scopes,
+				},
+				body: JSON.stringify(body),
+			}),
+		);
+
+	it('runs a call under the mode the caller set for that account', async () => {
+		await addAccount('a', 'a@x.com', 'tok-a');
+		await addAccount('b', 'b@x.com', 'tok-b');
+		const scopes = JSON.stringify([
+			{ mode: 'open', accounts: { demo: { 'b@x.com': 'readonly' } } },
+		]);
+		const open = await postWithScopes(
+			'/t1/demo/call/token',
+			{ account: 'a' },
+			scopes,
+		);
+		expect(open.status).toBe(200);
+		const held = await postWithScopes(
+			'/t1/demo/call/token',
+			{ account: 'b' },
+			scopes,
+		);
+		expect(held.status).not.toBe(200);
+	});
+
+	it('refuses a misspelled per-account mode rather than running unrestricted', async () => {
+		await addAccount('a', 'a@x.com', 'tok-a');
+		const res = await postWithScopes(
+			'/t1/demo/call/token',
+			{ account: 'a' },
+			JSON.stringify([{ accounts: { demo: { a: 'opne' } } }]),
+		);
+		expect(res.status).toBe(400);
+		const garbled = await postWithScopes(
+			'/t1/demo/call/token',
+			{ account: 'a' },
+			'{',
+		);
+		expect(garbled.status).toBe(400);
+	});
+
 	it("call with account binds that account's token", async () => {
 		await addAccount('a', 'a@x.com', 'tok-a');
 		await addAccount('b', 'b@x.com', 'tok-b');

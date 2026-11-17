@@ -428,9 +428,11 @@ export {
 // failure from a transport failure. CloudApiError extends it.
 export { ManagementApiError } from './management/errors';
 export type {
+	AccountModes,
 	CorsairPermissionsNamespace,
 	EnforcePermissionOptions,
 	EnforcePermissionResult,
+	ModeScope,
 } from './permissions';
 export {
 	activeMode,

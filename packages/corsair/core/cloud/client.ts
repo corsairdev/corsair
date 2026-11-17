@@ -96,6 +96,7 @@ function buildDbProxy(
 								assertModeAllows(
 									`${pluginId}.db.${entityType}.${method}`,
 									risk,
+									pluginId,
 								);
 								const transport = await resolveTransport(transportSource);
 								const res = await cloudRequest<{ data: unknown }>(
