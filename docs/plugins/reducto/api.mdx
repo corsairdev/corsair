@@ -804,8 +804,25 @@ await corsair.reducto.api.files.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `file` | `custom` | Yes | — |
+| `file` | `string \| object \| custom` | Yes | — |
 | `extension` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1143,15 +1160,15 @@ string | string[] | {
         page: number,
         original_page?: number
       },
-      confidence?: string,
+      confidence?: string | null,
       granular_confidence?: {
         parse_confidence?: number | null,
         extract_confidence?: number | null
-      },
+      } | null,
       image_url?: string | null,
       chart_data?: string[] | null,
-      merged_tables?: any[],
-      extra?: Record<string, any>
+      merged_tables?: any[] | null,
+      extra?: Record<string, any> | null
     }[],
     enriched?: string | null,
     enrichment_success?: boolean
@@ -1167,9 +1184,9 @@ string | string[] | {
         page: number,
         original_page?: number
       },
-      confidence?: number,
-      chunk_index?: number,
-      rotation?: number
+      confidence?: number | null,
+      chunk_index?: number | null,
+      rotation?: number | null
     }[],
     lines?: {
       text: string,
@@ -1181,9 +1198,9 @@ string | string[] | {
         page: number,
         original_page?: number
       },
-      confidence?: number,
-      chunk_index?: number,
-      rotation?: number
+      confidence?: number | null,
+      chunk_index?: number | null,
+      rotation?: number | null
     }[]
   } | null,
   custom?: any | null
