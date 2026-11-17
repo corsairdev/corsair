@@ -240,10 +240,6 @@ const ParticipantSchema = z
 	})
 	.passthrough();
 
-/**
- * Check-in result. `data` is null when Sympla confirms with an empty
- * 204 No Content instead of a body.
- */
 const CheckInResultSchema = z
 	.object({
 		data: z
@@ -252,8 +248,7 @@ const CheckInResultSchema = z
 				check_in_date: Text,
 				check_in_id: IdValue.nullable().optional(),
 			})
-			.passthrough()
-			.nullable(),
+			.passthrough(),
 	})
 	.passthrough();
 

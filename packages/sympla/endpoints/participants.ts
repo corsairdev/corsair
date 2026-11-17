@@ -173,8 +173,6 @@ export const checkInParticipant: CorsairEndpoint<
 			event_id: String(parsed.event_id),
 			participant_id: String(parsed.participant_id),
 		},
-		// Sympla may confirm with an empty 204; data stays null then.
-		{ data: null },
 	);
 };
 
@@ -194,8 +192,6 @@ export const checkInByTicketNumber: CorsairEndpoint<
 		},
 		CheckInByTicketResponseSchema,
 		{ event_id: String(parsed.event_id) },
-		// Sympla may confirm with an empty 204; data stays null then.
-		{ data: null },
 	);
 };
 
@@ -217,8 +213,6 @@ export const checkInByQrCode: CorsairEndpoint<
 		},
 		CheckInByQrCodeResponseSchema,
 		{ event_id: String(parsed.event_id) },
-		// Sympla may confirm with an empty 204; data stays null then.
-		{ data: null },
 	);
 };
 

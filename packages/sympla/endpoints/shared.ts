@@ -22,16 +22,11 @@ export async function callSympla<S extends z.ZodTypeAny>(
 	req: SymplaRequest,
 	output: S,
 	eventPayload: Record<string, string> = {},
-	// unknown: what an empty 2xx reply (204 No Content) stands for, checked by `output`.
-	emptyReply?: unknown,
 ): Promise<z.infer<S>> {
 	const key = requireKey(ctx);
 	// unknown: the raw reply is untrusted until `output` parses it below.
 	const body = await makeSymplaRequest<unknown>(key, req);
-	const empty = body === undefined || body === null || body === '';
-	const result = output.parse(
-		empty && emptyReply !== undefined ? emptyReply : body,
-	);
+	const result = output.parse(body);
 	await logEventFromContext(
 		ctx,
 		`sympla.${operation}`,
