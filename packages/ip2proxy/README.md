@@ -12,7 +12,8 @@ pnpm add @corsair-dev/ip2proxy
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `proxy.checkProxy` | `ip2proxy.api.proxy.checkProxy` | `destructive` | Check whether an IP address is a proxy, VPN, Tor exit, or data-center address. |
+| `proxy.checkProxy` | `ip2proxy.api.proxy.checkProxy` | `read` | Check whether an IP address is a proxy, VPN, Tor exit, or data-center address. |
+| `account.getCredits` | `ip2proxy.api.account.getCredits` | `read` | Get the credits left on the API key. The balance lags by about 10 minutes. |
 
 ## Auth
 
