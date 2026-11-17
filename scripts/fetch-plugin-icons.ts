@@ -199,6 +199,9 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	// lookups find nothing; this is the site's own 512px web-app icon.
 	godial:
 		'https://godial.cc/wp-content/uploads/2023/09/cropped-android-chrome-512x512-1.png',
+	// CurrencyScoop is now CurrencyBeacon; its site's favicon link 404s and the
+	// Brand API only has the wide wordmark. The GitHub org avatar is the same mark.
+	currencyscoop: 'https://github.com/currencybeacon.png?size=200',
 	zoom: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/fc/d0/96/fcd09664-56c3-f856-4311-da9dcbae1fd2/AppIcon-0-0-1x_U007epad-0-1-0-0-85-220.png/512x512bb.png',
 	// twenty-icons has an old blue and green mark; typesafe.ai's apple touch icon
 	// is the current black knot on pink.
