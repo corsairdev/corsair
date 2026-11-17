@@ -8108,5 +8108,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/ip2proxy",
+    "dir": "packages/ip2proxy",
+    "name": "IP2Proxy",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
