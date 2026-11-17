@@ -3627,22 +3627,6 @@
                 ]
               },
               {
-                "group": "NEURONwriter",
-                "pages": [
-                  "plugins/neuronwriter/overview",
-                  "plugins/neuronwriter/api",
-                  "plugins/neuronwriter/database"
-                ]
-              },
-              {
-                "group": "NEURONwriter",
-                "pages": [
-                  "plugins/neuronwriter/overview",
-                  "plugins/neuronwriter/api",
-                  "plugins/neuronwriter/database"
-                ]
-              },
-              {
                 "group": "Neon",
                 "pages": [
                   "plugins/neon/overview",
@@ -3656,6 +3640,14 @@
                   "plugins/netsuite/overview",
                   "plugins/netsuite/api",
                   "plugins/netsuite/database"
+                ]
+              },
+              {
+                "group": "NEURONwriter",
+                "pages": [
+                  "plugins/neuronwriter/overview",
+                  "plugins/neuronwriter/api",
+                  "plugins/neuronwriter/database"
                 ]
               },
               {
