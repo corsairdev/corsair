@@ -10,7 +10,10 @@ if (!KEY) {
 
 describeLive('Sensibo live', () => {
 	it('lists pods', async () => {
-		const response = await makeSensiboRequest<unknown>(KEY as string, {});
+		const response = await makeSensiboRequest<unknown>(KEY as string, {
+			path: '/users/me/pods',
+			query: { fields: '*' },
+		});
 		const parsed = ListDevicesResponseSchema.parse(response);
 		expect(parsed.status).toBe('success');
 		expect(Array.isArray(parsed.result)).toBe(true);

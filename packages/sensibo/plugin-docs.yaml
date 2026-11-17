@@ -1,18 +1,107 @@
 displayName: Sensibo
-description: List the Sensibo pods on an account. The key is sent as the apiKey query parameter.
+description: Read and control Sensibo smart AC controllers (pods), their schedules, timers, Climate React and sensor history.
 domain: sensibo.com
 recommendedAuth: api_key
 overviewNote: |
-  An empty key comes back as HTTP 403. The client does not send a bearer token.
+  Things to know before you call:
+
+  - **The key goes in the query string.** Sensibo takes the API key as the `apiKey` query parameter; the client sends no bearer token. Create a key at home.sensibo.com/me/api. With no key stored, Corsair raises `AuthMissingError` before any request; a key Sensibo rejects comes back as HTTP 403.
+  - **Ask for the fields you need.** `devices.list` returns only pod ids unless you pass `fields` (`*` for everything, or a list such as `id,room,acState,measurements`).
+  - **AC values come from the pod's remote.** Valid `mode`, `fanLevel`, `swing` and `light` values are in the pod's `remoteCapabilities` (`devices.get` with `fields: '*'`). An AC state can be partial, such as `{ on: false }`.
+  - **Writes change a real air conditioner.** `acStates.set`, timers, schedules and Climate React act on the physical unit. `timer.set` and `climateReact.configure` replace the current timer or Climate React settings.
+  - **Unknown ids are 404.** A pod or sensor that is not on the account answers 404 "No such device or device is not associated with user".
+references:
+  - title: Sensibo API reference
+    url: https://support.sensibo.com/api/
 examples:
   read:
     path: devices.list
-    title: List Sensibo pods
+    title: List Sensibo pods with their rooms and AC state
     args:
-      fields: id,room
+      fields: id,room,acState
+  write:
+    path: acStates.set
+    title: Turn the AC on in cool mode at 22 degrees
+    args:
+      deviceId: abc123
+      acState:
+        'on': true
+        mode: cool
+        targetTemperature: 22
 apiNotes:
   devices.list: |
-    Pass a comma-separated field list when you want a smaller pod object. Omit it to take the service default.
+    Pass a comma-separated field list for a smaller pod object, or `*` for all fields. Without it Sensibo returns ids only.
+  acStates.setProperty: |
+    `property` names one field of the AC state. Sensibo fills in the rest from `currentAcState` when you pass it.
+  schedules.create: |
+    `recurOnDaysOfWeek` takes lowercase weekday names. An empty list runs the schedule once at the next `targetTimeLocal`.
 apiExamples:
   devices.list:
     fields: id,room
+  devices.get:
+    deviceId: abc123
+    fields: '*'
+  acStates.list:
+    deviceId: abc123
+    limit: 5
+  acStates.set:
+    deviceId: abc123
+    acState:
+      'on': false
+  acStates.setProperty:
+    # call form: the docs check reads enum types as unquoted names, so a literal property value fails it.
+    call: "{ deviceId: 'abc123', property: 'targetTemperature', newValue: 23 }"
+  measurements.history:
+    deviceId: abc123
+    days: 1
+  events.list:
+    deviceId: abc123
+    daysBackwards: 2
+  doorSensors.listEvents:
+    sensorId: ds_abc123
+    days: 1
+  climateReact.get:
+    deviceId: abc123
+  climateReact.setEnabled:
+    deviceId: abc123
+    enabled: false
+  climateReact.configure:
+    deviceId: abc123
+    enabled: true
+    lowTemperatureThreshold: 22
+    lowTemperatureState:
+      'on': false
+    highTemperatureThreshold: 25
+    highTemperatureState:
+      'on': true
+      mode: cool
+  timer.get:
+    deviceId: abc123
+  timer.set:
+    deviceId: abc123
+    minutesFromNow: 30
+    acState:
+      'on': false
+  timer.delete:
+    deviceId: abc123
+  schedules.list:
+    deviceId: abc123
+  schedules.get:
+    deviceId: abc123
+    scheduleId: sch123
+  schedules.create:
+    deviceId: abc123
+    targetTimeLocal: '22:15'
+    timezone: Europe/Oslo
+    acState:
+      'on': false
+    recurOnDaysOfWeek:
+      - sunday
+      - tuesday
+  schedules.setEnabled:
+    deviceId: abc123
+    scheduleId: sch123
+    isEnabled: false
+  schedules.delete:
+    deviceId: abc123
+    scheduleId: sch123

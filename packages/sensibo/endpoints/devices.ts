@@ -1,55 +1,88 @@
 import type { CorsairEndpoint } from 'corsair/core';
-import { AuthMissingError, logEventFromContext } from 'corsair/core';
-import { makeSensiboRequest } from '../client';
+import { pathPart } from '../client';
 import type { SensiboContext } from '../context';
 import { SensiboPodEntity } from '../schema/database';
-import type { ListDevicesInput, ListDevicesResponse } from './types';
-import { ListDevicesInputSchema, ListDevicesResponseSchema } from './types';
+import { callSensibo, requireKey } from './shared';
+import type {
+	GetDeviceInput,
+	GetDeviceResponse,
+	ListDevicesInput,
+	ListDevicesResponse,
+	SensiboPod,
+} from './types';
+import {
+	GetDeviceInputSchema,
+	GetDeviceResponseSchema,
+	ListDevicesInputSchema,
+	ListDevicesResponseSchema,
+} from './types';
 
 export const listDevices: CorsairEndpoint<
 	SensiboContext,
 	ListDevicesInput,
 	ListDevicesResponse
 > = async (ctx, input) => {
-	if (!ctx.key) {
-		throw new AuthMissingError('sensibo', 'api_key');
-	}
-
+	requireKey(ctx);
 	const parsed = ListDevicesInputSchema.parse(input ?? {});
-	const body = await makeSensiboRequest<unknown>(ctx.key, {
-		fields: parsed.fields,
-	});
-	const result = ListDevicesResponseSchema.parse(body);
+	const result = await callSensibo(
+		ctx,
+		'devices.list',
+		{ path: '/users/me/pods', query: { fields: parsed.fields } },
+		ListDevicesResponseSchema,
+	);
 	await storePods(ctx, result.result);
-	await logEventFromContext(ctx, 'sensibo.devices.list', {}, 'completed');
 	return result;
 };
 
-function podRow(item: unknown): SensiboPodEntity | undefined {
-	if (!item || typeof item !== 'object') return undefined;
-	const record = item as { id?: unknown; room?: unknown };
-	const room = record.room;
-	const roomName =
-		room &&
-		typeof room === 'object' &&
-		typeof (room as { name?: unknown }).name === 'string'
-			? (room as { name: string }).name
-			: undefined;
-	const parsed = SensiboPodEntity.safeParse({ id: record.id, roomName });
-	return parsed.success ? parsed.data : undefined;
-}
+export const getDevice: CorsairEndpoint<
+	SensiboContext,
+	GetDeviceInput,
+	GetDeviceResponse
+> = async (ctx, input) => {
+	requireKey(ctx);
+	const parsed = GetDeviceInputSchema.parse(input);
+	const result = await callSensibo(
+		ctx,
+		'devices.get',
+		{
+			path: `/pods/${pathPart(parsed.deviceId)}`,
+			query: { fields: parsed.fields },
+		},
+		GetDeviceResponseSchema,
+		{ deviceId: parsed.deviceId },
+	);
+	await storePods(ctx, [{ id: parsed.deviceId, ...result.result }]);
+	return result;
+};
 
-async function storePods(ctx: SensiboContext, pods: unknown[]): Promise<void> {
+/**
+ * Saves each pod that has an id. A response made with a narrow `fields` list
+ * may leave the room out, so a missing room keeps the stored room name.
+ */
+async function storePods(
+	ctx: SensiboContext,
+	pods: SensiboPod[],
+): Promise<void> {
 	if (!ctx.db?.pods) return;
-	for (const item of pods) {
-		const row = podRow(item);
-		if (!row) continue;
+	for (const pod of pods) {
+		if (typeof pod.id !== 'string' || pod.id.length === 0) continue;
 		try {
-			await ctx.db.pods.upsertByEntityId(row.id, row);
+			const existing = await ctx.db.pods.findByEntityId(pod.id);
+			const roomName =
+				pod.room === undefined
+					? existing?.data.roomName
+					: (pod.room?.name ?? undefined);
+			const row = SensiboPodEntity.safeParse({
+				...existing?.data,
+				id: pod.id,
+				roomName,
+			});
+			if (!row.success) continue;
+			await ctx.db.pods.upsertByEntityId(pod.id, row.data);
 		} catch {
 			console.warn('Failed to save Sensibo pod');
 		}
 	}
 }
 
-export const Devices = { list: listDevices };
+export const Devices = { list: listDevices, get: getDevice };
