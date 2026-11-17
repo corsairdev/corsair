@@ -74,24 +74,32 @@ export function stricterMode(
 	return STRICTNESS[a] >= STRICTNESS[b] ? a : b;
 }
 
-/** The mode keyed to this account, by its id, ref or label; the stricter if several match. */
+/**
+ * The mode keyed to this account by its id or ref. Never by label: a label
+ * can be a display name its owner renames, which must not pick up a mode.
+ */
 export function accountMode(
 	modes: Record<string, PermissionMode> | undefined,
 	names: AccountNames | undefined,
 ): PermissionMode | undefined {
 	if (!modes || !names) return undefined;
-	const label = names.label?.toLowerCase();
 	let found: PermissionMode | undefined;
 	for (const [key, mode] of Object.entries(modes)) {
-		if (
-			key === names.id ||
-			key === names.ref ||
-			(label !== undefined && key.toLowerCase() === label)
-		) {
+		if (key === names.id || key === names.ref)
 			found = stricterMode(found, mode);
-		}
 	}
 	return found;
+}
+
+/** The strictest of a set of modes. */
+export function strictestMode(
+	modes: Record<string, PermissionMode> | undefined,
+	floor?: PermissionMode,
+): PermissionMode | undefined {
+	return Object.values(modes ?? {}).reduce<PermissionMode | undefined>(
+		stricterMode,
+		floor,
+	);
 }
 
 // Without the account, the strictest mode any of its accounts could get.

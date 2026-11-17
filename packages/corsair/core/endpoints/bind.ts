@@ -19,7 +19,7 @@ import {
 	reportManagedJobCall,
 } from '../../hub/managed-pricing-jobs';
 import { reportPluginConnectionStatusFromBinding } from '../../hub/report-connection-status';
-import { accountNames } from '../account-lookup';
+import { AccountSelectionError, accountNames } from '../account-lookup';
 import { throwAuthMissingEndpointError } from '../auth/auth-missing-message';
 import { AuthMissingError } from '../auth/errors/auth-missing';
 import { CorsairKekMissingError } from '../auth/errors/kek-missing';
@@ -40,6 +40,7 @@ import {
 	resolveAsyncApprovalMessage,
 	stricterMode,
 	stricterPolicy,
+	strictestMode,
 } from '../permissions';
 import { PermissionRequiredError } from '../permissions/errors/permission-required';
 import type {
@@ -206,10 +207,12 @@ export function bindEndpointsRecursively({
 				// A mode only tightens, so a caller naming one cannot relax what the
 				// server configured.
 				const callerMode = activeMode(pluginId, names);
-				// An account's own mode stands in for the plugin's.
-				const configMode =
-					accountMode(permissionsConfig?.accounts, names) ??
-					permissionsConfig?.mode;
+				// An account's own mode stands in for the plugin's. An account whose
+				// identity couldn't be read takes the strictest any account has.
+				const configMode = names
+					? (accountMode(permissionsConfig?.accounts, names) ??
+						permissionsConfig?.mode)
+					: strictestMode(permissionsConfig?.accounts, permissionsConfig?.mode);
 				const mode = stricterMode(callerMode, configMode);
 				if (mode) {
 					const meta = endpointMetaEntry;
@@ -750,5 +753,13 @@ async function callAccountNames(
 ): Promise<AccountNames | undefined> {
 	const getAccountId = ctx.$getAccountId as (() => Promise<string>) | undefined;
 	if (!getAccountId || !database) return undefined;
-	return accountNames(database.db, await getAccountId(), kek);
+	// Naming no account among several is refused here; a missing account is
+	// left to the call itself, which reports it as auth-missing.
+	const names = await getAccountId()
+		.then((id) => accountNames(database.db, id, kek))
+		.catch((err) => {
+			if (err instanceof AccountSelectionError) throw err;
+			return undefined;
+		});
+	return names?.ref ? names : undefined;
 }

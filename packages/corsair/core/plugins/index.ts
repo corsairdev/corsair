@@ -190,7 +190,7 @@ export type PluginPermissionsConfig<T extends EndpointTree = EndpointTree> = {
 	 */
 	overrides?: Partial<Record<EndpointPathsOf<T>, PermissionPolicy>>;
 	/**
-	 * A mode per account, keyed by its id, ref or label (e.g. its email). It
+	 * A mode per account, keyed by its id or ref (e.g. its email). It
 	 * stands in for `mode` on that account's calls; the caller's mode still
 	 * tightens either.
 	 */

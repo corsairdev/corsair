@@ -555,7 +555,7 @@ describe('call and db routes with an account', () => {
 		await addAccount('a', 'a@x.com', 'tok-a');
 		await addAccount('b', 'b@x.com', 'tok-b');
 		const scopes = JSON.stringify([
-			{ mode: 'open', accounts: { demo: { 'b@x.com': 'readonly' } } },
+			{ mode: 'open', accounts: { demo: { b: 'readonly' } } },
 		]);
 		const open = await postWithScopes(
 			'/t1/demo/call/token',

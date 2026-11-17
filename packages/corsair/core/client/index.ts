@@ -9,6 +9,7 @@ import type {
 import type { HubConfig } from '../../hub';
 import type { AccountSummary } from '../account-lookup';
 import {
+	AccountSelectionError,
 	accountNames,
 	answersTo,
 	fanOutAccounts,
@@ -395,7 +396,14 @@ function guardEntityClients(
 						`${pluginId}.db.${entityType}.${method}`,
 						risk,
 						pluginId,
-						names && hasAccountModes(pluginId) ? await names() : undefined,
+						names && hasAccountModes(pluginId)
+							? await names()
+									.then((n) => (n.ref ? n : undefined))
+									.catch((err) => {
+										if (err instanceof AccountSelectionError) throw err;
+										return undefined;
+									})
+							: undefined,
 					);
 					return call.apply(target, args);
 				};

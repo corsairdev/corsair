@@ -31,7 +31,7 @@ const demo = {
 		authType: 'oauth_2' as const,
 		permissions: {
 			mode: 'cautious',
-			accounts: { 'ops@x.com': 'open', b: 'readonly' },
+			accounts: { a: 'open', b: 'readonly' },
 		},
 	},
 	authConfig: { oauth_2: { account: [] as const } },
@@ -125,7 +125,7 @@ describe('permission mode per account', () => {
 		);
 	});
 
-	it('names an account by its id as well as its label', async () => {
+	it('a mode follows the account however the call names it', async () => {
 		await expect(tenant('b').post()).rejects.toThrow(PermissionRequiredError);
 		await expect(tenant('Account 2').list()).resolves.toBe('listed');
 	});
@@ -149,7 +149,7 @@ describe('permission mode per account', () => {
 	describe("in the caller's scope", () => {
 		const scope = {
 			mode: 'strict' as const,
-			accounts: { demo: { 'sales@x.com': 'open' as const } },
+			accounts: { demo: { c: 'open' as const } },
 		};
 
 		it("an account's own mode in the scope stands in for the scope's default", async () => {
@@ -175,5 +175,39 @@ describe('permission mode per account', () => {
 				}),
 			);
 		});
+	});
+
+	// A label can be a display name its owner renames; it must not pick up a mode.
+	it('a mode keyed by label applies to no one', async () => {
+		await runWithMode(
+			{ mode: 'strict', accounts: { demo: { 'sales@x.com': 'open' } } },
+			async () => {
+				await expect(tenant('sales@x.com').post()).rejects.toThrow(
+					PermissionRequiredError,
+				);
+			},
+		);
+	});
+
+	it('an account whose identity cannot be read takes the strictest mode', async () => {
+		const integ = await env.db
+			.selectFrom('corsair_integrations')
+			.select('id')
+			.where('name', '=', 'demo')
+			.executeTakeFirstOrThrow();
+		await env.db
+			.insertInto('corsair_accounts')
+			.values({
+				id: 'acct-unread',
+				created_at: new Date('2026-04-01'),
+				updated_at: new Date('2026-04-01'),
+				tenant_id: 't1',
+				integration_id: integ.id,
+				config: {},
+				dek: null,
+			})
+			.execute();
+		await expect(tenant('acct-unread').post()).rejects.toThrow();
+		await expect(tenant('acct-unread').list()).resolves.toBe('listed');
 	});
 });

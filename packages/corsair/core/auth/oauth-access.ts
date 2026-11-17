@@ -10,6 +10,7 @@ import {
 	refreshOAuthTokensLocal,
 } from './oauth-refresh-local';
 import { cacheRefreshedTokens, isAccessTokenFresh } from './oauth-token-cache';
+import { refreshFlight } from './single-flight';
 import type { AccountKeyManagerFor } from './types';
 
 export type OAuthAccessContext = {
@@ -55,7 +56,8 @@ export async function getOAuthAccessToken(
 		// routine flight only exists while it is actually minting, so a forced
 		// joiner never inherits a stale token.
 		const runHubRefresh = (force: boolean): Promise<string> =>
-			ctx.keys.single_flight(
+			refreshFlight(
+				ctx.keys,
 				flightKey,
 				async () =>
 					(await getHubAccessToken(hubContext, { forceRefresh: force }))
@@ -84,7 +86,7 @@ export async function getOAuthAccessToken(
 	// routine creator only got here after its own freshness check failed, so a
 	// shortcut hit means a concurrent refresh already minted a fresh token.
 	const runRefresh = (force: boolean): Promise<string> =>
-		ctx.keys.single_flight(flightKey, async () => {
+		refreshFlight(ctx.keys, flightKey, async () => {
 			const [currentAccess, expiresAt, refreshToken] = await Promise.all([
 				ctx.keys.get_access_token(),
 				ctx.keys.get_expires_at(),

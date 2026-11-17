@@ -21,3 +21,20 @@ export function singleFlight<T>(
 	flights.set(key, pending);
 	return pending;
 }
+
+type AccountFlight = <T>(key: string, run: () => Promise<T>) => Promise<T>;
+
+/**
+ * Per account where the keys know their account (the SDK's key manager);
+ * otherwise per keys object, as before, for keys a plugin or test builds itself.
+ */
+export function refreshFlight<T>(
+	keys: object,
+	key: string,
+	run: () => Promise<T>,
+): Promise<T> {
+	const own = (keys as { single_flight?: AccountFlight }).single_flight;
+	return typeof own === 'function'
+		? own(key, run)
+		: singleFlight(keys, key, run);
+}

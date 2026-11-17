@@ -72,7 +72,12 @@ export async function processManagedOAuthDelivery(
 	// Delivery payloads are untyped at runtime; a blank id means no account.
 	const account =
 		typeof options.account?.id === 'string' && options.account.id.trim()
-			? options.account
+			? {
+					id: options.account.id,
+					...(typeof options.account.label === 'string' && {
+						label: options.account.label,
+					}),
+				}
 			: undefined;
 
 	if (!accessToken.trim()) {
