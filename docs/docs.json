@@ -1747,6 +1747,14 @@
                 ]
               },
               {
+                "group": "Deepline",
+                "pages": [
+                  "plugins/deepline/overview",
+                  "plugins/deepline/api",
+                  "plugins/deepline/database"
+                ]
+              },
+              {
                 "group": "DeepSeek",
                 "pages": [
                   "plugins/deepseek/overview",
