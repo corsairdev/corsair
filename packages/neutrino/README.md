@@ -23,7 +23,7 @@ pnpm add @corsair-dev/neutrino
 | `ip.probe` | `neutrino.api.ip.probe` | `read` | Identify the network and hosting provider behind an address and whether it is hosting rather than a consumer line |
 | `messaging.phoneVerify` | `neutrino.api.messaging.phoneVerify` | `destructive` | Call a number and read out a generated security code, which reaches a real person and costs credits; check the code with verifySecurityCode |
 | `messaging.smsVerify` | `neutrino.api.messaging.smsVerify` | `destructive` | Generate a security code and text it to a number, which sends a real SMS and costs a credit; check the code the person types with verifySecurityCode |
-| `messaging.verifySecurityCode` | `neutrino.api.messaging.verifySecurityCode` | `read` | Check a code a person typed against the codes smsVerify and phoneVerify sent, optionally capping failed attempts per user |
+| `messaging.verifySecurityCode` | `neutrino.api.messaging.verifySecurityCode` | `write` | Check a code a person typed against the codes smsVerify and phoneVerify sent, optionally capping failed attempts per user |
 | `phone.hlrLookup` | `neutrino.api.phone.hlrLookup` | `read` | Query the home location register for whether a number is live, which network it is on now and whether it was ported |
 | `phone.validate` | `neutrino.api.phone.validate` | `read` | Parse a number into international and local forms with its location, carrier prefix and mobile flag |
 | `text.badWordFilter` | `neutrino.api.text.badWordFilter` | `read` | Scan text or a page for profanity and return the words found and a censored copy |

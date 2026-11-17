@@ -437,7 +437,11 @@ const GeocodeAddressInputSchema = z
 		// Neutrino needs either a full address or the structured parts.
 		const hasAddress = Boolean(value.address);
 		const hasParts = Boolean(
-			value.city || value.street || value.postalCode || value.houseNumber,
+			value.city ||
+				value.street ||
+				value.postalCode ||
+				value.houseNumber ||
+				value.state,
 		);
 		if (!hasAddress && !hasParts) {
 			ctx.addIssue({
@@ -717,7 +721,7 @@ const BrowserBotInputSchema = z.object({
 		.array(z.string().min(1))
 		.optional()
 		.describe(
-			'JavaScript statements to run on the page in order, e.g. click or fill a field; their values come back in `exec-results`.',
+			'JavaScript statements to run on the page in order, e.g. click or fill a field; each one gets its own entry in `exec-results`.',
 		),
 	userAgent: z.string().min(1).optional(),
 	ignoreCertificateErrors: z.boolean().optional(),

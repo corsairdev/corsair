@@ -313,7 +313,9 @@ const neutrinoEndpointMeta = {
 			'Call a number and read out a generated security code, which reaches a real person and costs credits; check the code with verifySecurityCode',
 	},
 	'messaging.verifySecurityCode': {
-		riskLevel: 'read',
+		// With limitBy, each failed check counts toward a lockout for that
+		// identifier, so this changes state at Neutrino.
+		riskLevel: 'write',
 		description:
 			'Check a code a person typed against the codes smsVerify and phoneVerify sent, optionally capping failed attempts per user',
 	},

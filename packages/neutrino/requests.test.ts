@@ -309,6 +309,15 @@ describe('geocode endpoints', () => {
 		expect(parsed.searchParams.has('country')).toBe(false);
 	});
 
+	it('accepts a state on its own', async () => {
+		const { url } = await capture(
+			endpoints.geocode.address,
+			{ state: 'California' },
+			geocodeAddress,
+		);
+		expect(new URL(url).searchParams.get('state')).toBe('California');
+	});
+
 	it('rejects a geocode with no address at all', async () => {
 		await expect(
 			endpoints.geocode.address(makeContext() as never, {}),
@@ -483,7 +492,10 @@ describe('form-body operations', () => {
 		const body = new URLSearchParams(String(init.body));
 		expect(body.get('url')).toBe('https://example.com');
 		expect(body.get('selector')).toBe('h1');
-		expect(body.get('exec')).toBe('document.title\n1 + 1');
+		expect(JSON.parse(body.get('exec') ?? '')).toEqual([
+			'document.title',
+			'1 + 1',
+		]);
 		expect(body.has('user-agent')).toBe(false);
 	});
 });
@@ -576,6 +588,8 @@ describe('neutrino plugin definition', () => {
 			'messaging.phoneVerify': 'destructive',
 			// `exec` can click or submit on a third-party page.
 			'web.browserBot': 'write',
+			// limitBy counts failed checks toward a lockout.
+			'messaging.verifySecurityCode': 'write',
 		};
 		for (const [name, entry] of Object.entries(meta)) {
 			const expected = notRead[name] ?? 'read';

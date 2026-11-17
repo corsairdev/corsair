@@ -72,6 +72,8 @@ export const hostReputation: NeutrinoEndpoints['hostReputation'] = (
 			method: 'GET',
 			path: '/host-reputation',
 			query: { host },
+			// Neutrino documents up to 30 s while it queries every DNSBL.
+			timeoutMs: 45_000,
 		}),
 		{
 			// The host can be a customer's IP address, so it is not logged.
@@ -142,9 +144,10 @@ export const browserBot: NeutrinoEndpoints['browserBot'] = (ctx, input) =>
 				timeout,
 				delay,
 				selector,
-				// Neutrino reads `exec` as one string of statements separated by
-				// semicolons or new lines.
-				exec: exec?.join('\n'),
+				// Neutrino takes a JSON array for separate statements and answers
+				// one exec-results entry per statement; a single string would run
+				// as one script.
+				exec: exec ? JSON.stringify(exec) : undefined,
 				'user-agent': userAgent,
 				'ignore-certificate-errors': ignoreCertificateErrors,
 			},
