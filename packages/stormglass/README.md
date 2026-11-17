@@ -12,12 +12,16 @@ pnpm add @corsair-dev/stormglass
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `elevation.get` | `stormglass.api.elevation.get` | `write` | Read elevation for one coordinate. This counts against the daily quota. |
-| `solar.get` | `stormglass.api.solar.get` | `write` | Read solar values for one coordinate. This counts against the daily quota. |
-| `stations.area` | `stormglass.api.stations.area` | `read` | List tide stations inside a bounding box. |
-| `stations.list` | `stormglass.api.stations.list` | `read` | List tide stations. Each request counts against the daily quota. |
-| `tides.extremes` | `stormglass.api.tides.extremes` | `write` | Read high and low tides for one coordinate. This counts against the daily quota. |
-| `weather.get` | `stormglass.api.weather.get` | `write` | Read weather values for one coordinate. This counts against the daily quota. |
+| `astronomy.get` | `stormglass.api.astronomy.get` | `read` | Get sunrise, sunset, dawn, dusk, moonrise, moonset and moon phase per day for one coordinate. |
+| `bio.get` | `stormglass.api.bio.get` | `read` | Get hourly bio data (water chemistry, salinity, soil moisture and temperature) for one coordinate. |
+| `elevation.get` | `stormglass.api.elevation.get` | `read` | Get elevation (land) or depth (sea, negative) in meters for one coordinate. |
+| `solar.get` | `stormglass.api.solar.get` | `read` | Get hourly solar values (uvIndex, radiation) for one coordinate. |
+| `stations.area` | `stormglass.api.stations.area` | `read` | List tide stations inside a bounding box (lat,lng:lat,lng). |
+| `stations.list` | `stormglass.api.stations.list` | `read` | List every tide station Stormglass has data for. |
+| `tides.extremes` | `stormglass.api.tides.extremes` | `read` | Get high and low tide times and heights near a coordinate, up to 10 days, from the nearest tide station. |
+| `tides.seaLevel` | `stormglass.api.tides.seaLevel` | `read` | Get the hourly astronomical sea level near a coordinate, up to 10 days, from the nearest tide station. |
+| `weather.get` | `stormglass.api.weather.get` | `read` | Get hourly weather and marine forecast values (wind, waves, swell, temperature, ...) for one coordinate. Covers the past 14 days and up to 10 days ahead. |
+| `weather.historical` | `stormglass.api.weather.historical` | `read` | Get hourly historical weather for one coordinate from 2014 to about a week ago, up to 10 days per call. Needs start or end. |
 
 ## Auth
 
