@@ -1,0 +1,1294 @@
+---
+title: "Paperform API reference"
+sidebarTitle: "API"
+description: "API reference for the Paperform plugin in Corsair: every `paperform.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Coupons
+
+### create
+
+`coupons.create`
+
+Create a coupon code on a form, with a fixed amount or percentage off.
+
+**Risk:** `write`
+
+```ts
+await corsair.paperform.api.coupons.create({ form: 'eqadkzns', code: 'WELCOME10', enabled: true, target: 'price', discountPercentage: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form` | `string` | Yes | Form slug, custom slug or id (from forms.list). |
+| `code` | `string` | Yes | Coupon code. |
+| `enabled` | `boolean` | No | — |
+| `target` | `price \| subscription` | No | What the discount applies to. |
+| `discountAmount` | `number` | No | — |
+| `discountPercentage` | `number` | No | — |
+| `expiresAt` | `string \| null` | No | ISO date-time the coupon stops working. null never expires. |
+
+`POST /v1/forms/{slug_or_id}/coupons`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `coupon` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="coupon full type">
+
+```ts
+{
+  code: string,
+  enabled?: boolean,
+  target?: string | null,
+  discountAmount?: number | null,
+  discountPercentage?: number | null,
+  expiresAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`coupons.delete`
+
+Delete a coupon code from a form.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.paperform.api.coupons.delete({ form: 'eqadkzns', code: 'WELCOME10' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form` | `string` | Yes | Form slug, custom slug or id (from forms.list). |
+| `code` | `string` | Yes | Coupon code. |
+
+`DELETE /v1/forms/{slug_or_id}/coupons/{code}`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`coupons.get`
+
+Get one coupon on a form by code.
+
+**Risk:** `read`
+
+```ts
+await corsair.paperform.api.coupons.get({ form: 'eqadkzns', code: 'WELCOME10' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form` | `string` | Yes | Form slug, custom slug or id (from forms.list). |
+| `code` | `string` | Yes | Coupon code. |
+
+`GET /v1/forms/{slug_or_id}/coupons/{code}`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `coupon` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="coupon full type">
+
+```ts
+{
+  code: string,
+  enabled?: boolean,
+  target?: string | null,
+  discountAmount?: number | null,
+  discountPercentage?: number | null,
+  expiresAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`coupons.list`
+
+List the coupon codes on a form.
+
+**Risk:** `read`
+
+```ts
+await corsair.paperform.api.coupons.list({ form: 'eqadkzns' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form` | `string` | Yes | Form slug, custom slug or id (from forms.list). |
+
+`GET /v1/forms/{slug_or_id}/coupons`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `coupons` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="coupons full type">
+
+```ts
+{
+  code: string,
+  enabled?: boolean,
+  target?: string | null,
+  discountAmount?: number | null,
+  discountPercentage?: number | null,
+  expiresAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`coupons.update`
+
+Change a coupon (enable or disable, discount, expiry). Fields you leave out stay as they are.
+
+**Risk:** `write`
+
+```ts
+await corsair.paperform.api.coupons.update({ form: 'eqadkzns', code: 'WELCOME10', enabled: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form` | `string` | Yes | Form slug, custom slug or id (from forms.list). |
+| `code` | `string` | Yes | Coupon code. |
+| `enabled` | `boolean` | No | — |
+| `target` | `price \| subscription` | No | What the discount applies to. |
+| `discountAmount` | `number` | No | — |
+| `discountPercentage` | `number` | No | — |
+| `expiresAt` | `string \| null` | No | ISO date-time the coupon stops working. null never expires. |
+
+`PUT /v1/forms/{slug_or_id}/coupons/{code}`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `coupon` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="coupon full type">
+
+```ts
+{
+  code: string,
+  enabled?: boolean,
+  target?: string | null,
+  discountAmount?: number | null,
+  discountPercentage?: number | null,
+  expiresAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Fields
+
+### list
+
+`fields.list`
+
+List the questions on a form: each field key, title and type. Submission answers are keyed by these field keys.
+
+**Risk:** `read`
+
+```ts
+await corsair.paperform.api.fields.list({ form: 'eqadkzns' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form` | `string` | Yes | Form slug, custom slug or id (from forms.list). |
+| `search` | `string` | No | Text to search for. |
+
+`GET /v1/forms/{slug_or_id}/fields`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  key: string,
+  title?: string | null,
+  type?: string | null,
+  required?: boolean | null,
+  custom_key?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Files
+
+### sign
+
+`files.sign`
+
+Get a signed download link for a file uploaded in a submission. Links last 7 days.
+
+**Risk:** `read`
+
+```ts
+await corsair.paperform.api.files.sign({ url: 'https://paperform.co/file/s3.amazonaws.com/paperform/u-1/1/2019-04-14/58p3u6p/file.pdf' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | File URL from a submission answer (a paperform.co file link). |
+
+`POST /v1/files/sign`. Only works for files uploaded to your own forms.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileUrl` | `string` | Yes | — |
+| `storageUrl` | `string` | No | — |
+| `expiresAt` | `string \| null` | No | — |
+
+
+
+---
+
+## Forms
+
+### get
+
+`forms.get`
+
+Get one form by slug, custom slug or id.
+
+**Risk:** `read`
+
+```ts
+await corsair.paperform.api.forms.get({ form: 'eqadkzns' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form` | `string` | Yes | Form slug, custom slug or id (from forms.list). |
+
+`GET /v1/forms/{slug_or_id}`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="form full type">
+
+```ts
+{
+  id: string,
+  slug?: string | null,
+  custom_slug?: string | null,
+  space_id?: string,
+  title?: string | null,
+  description?: string | null,
+  url?: string | null,
+  live?: boolean,
+  submission_count?: number,
+  created_at_utc?: string | null,
+  updated_at_utc?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`forms.list`
+
+List forms, newest first by default. Filter with search, page with limit and skip.
+
+**Risk:** `read`
+
+```ts
+await corsair.paperform.api.forms.list({ search: 'order', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | Text to search for. |
+| `limit` | `number` | No | Results per page. Paperform defaults to 20. |
+| `skip` | `number` | No | Results to skip. |
+| `afterId` | `string` | No | Only results after this id. |
+| `beforeId` | `string` | No | Only results before this id. |
+| `afterDate` | `string` | No | Only results created after this date (YYYY-MM-DD or ISO). |
+| `beforeDate` | `string` | No | Only results created before this date (YYYY-MM-DD or ISO). |
+| `sort` | `ASC \| DESC` | No | Order by creation date. |
+
+`GET /v1/forms`. Stores id, title, slug, space id, live flag and submission count.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `forms` | `object[]` | Yes | — |
+| `page` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="forms full type">
+
+```ts
+{
+  id: string,
+  slug?: string | null,
+  custom_slug?: string | null,
+  space_id?: string,
+  title?: string | null,
+  description?: string | null,
+  url?: string | null,
+  live?: boolean,
+  submission_count?: number,
+  created_at_utc?: string | null,
+  updated_at_utc?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  total?: number,
+  hasMore?: boolean,
+  limit?: number,
+  skip?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Partial Submissions
+
+### get
+
+`partialSubmissions.get`
+
+Get one partial submission of a form.
+
+**Risk:** `read`
+
+```ts
+await corsair.paperform.api.partialSubmissions.get({ form: 'eqadkzns', id: '6afc3d79939666bf340d8a77' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form` | `string` | Yes | Form slug, custom slug or id (from forms.list). |
+| `id` | `string` | Yes | Submission id. |
+
+`GET /v1/forms/{slug_or_id}/partial-submissions/{id}`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `partialSubmission` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="partialSubmission full type">
+
+```ts
+{
+  id: string,
+  form_id?: string | null,
+  data?: Record<string, any>,
+  last_answered?: string | null,
+  submitted_at_utc?: string | null,
+  created_at_utc?: string | null,
+  updated_at_utc?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`partialSubmissions.list`
+
+List partial (unfinished) submissions of a form. Paperform keeps them only when partial submissions are turned on for the form.
+
+**Risk:** `read`
+
+```ts
+await corsair.paperform.api.partialSubmissions.list({ form: 'eqadkzns' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form` | `string` | Yes | Form slug, custom slug or id (from forms.list). |
+| `limit` | `number` | No | Results per page. Paperform defaults to 20. |
+| `skip` | `number` | No | Results to skip. |
+| `afterId` | `string` | No | Only results after this id. |
+| `beforeId` | `string` | No | Only results before this id. |
+| `afterDate` | `string` | No | Only results created after this date (YYYY-MM-DD or ISO). |
+| `beforeDate` | `string` | No | Only results created before this date (YYYY-MM-DD or ISO). |
+| `sort` | `ASC \| DESC` | No | Order by creation date. |
+
+`GET /v1/forms/{slug_or_id}/partial-submissions`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `partialSubmissions` | `object[]` | Yes | — |
+| `page` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="partialSubmissions full type">
+
+```ts
+{
+  id: string,
+  form_id?: string | null,
+  data?: Record<string, any>,
+  last_answered?: string | null,
+  submitted_at_utc?: string | null,
+  created_at_utc?: string | null,
+  updated_at_utc?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  total?: number,
+  hasMore?: boolean,
+  limit?: number,
+  skip?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Products
+
+### get
+
+`products.get`
+
+Get one product on a form by SKU.
+
+**Risk:** `read`
+
+```ts
+await corsair.paperform.api.products.get({ form: 'eqadkzns', sku: 'tshirt-small' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form` | `string` | Yes | Form slug, custom slug or id (from forms.list). |
+| `sku` | `string` | Yes | Product SKU. |
+
+`GET /v1/forms/{slug_or_id}/products/{sku}`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="product full type">
+
+```ts
+{
+  SKU?: string | null,
+  name?: string | null,
+  price?: number | string | null,
+  quantity?: number | string | null,
+  minimum?: number | string | null,
+  maximum?: number | string | null,
+  discountable?: boolean | null,
+  sold?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`products.list`
+
+List the products sold on a form, with price and stock.
+
+**Risk:** `read`
+
+```ts
+await corsair.paperform.api.products.list({ form: 'eqadkzns' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form` | `string` | Yes | Form slug, custom slug or id (from forms.list). |
+| `search` | `string` | No | Text to search for. |
+
+`GET /v1/forms/{slug_or_id}/products`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `products` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+{
+  SKU?: string | null,
+  name?: string | null,
+  price?: number | string | null,
+  quantity?: number | string | null,
+  minimum?: number | string | null,
+  maximum?: number | string | null,
+  discountable?: boolean | null,
+  sold?: number | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`products.update`
+
+Change a product on a form (name, price, stock, min/max per order). Fields you leave out stay as they are.
+
+**Risk:** `write`
+
+```ts
+await corsair.paperform.api.products.update({ form: 'eqadkzns', sku: 'tshirt-small', quantity: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form` | `string` | Yes | Form slug, custom slug or id (from forms.list). |
+| `sku` | `string` | Yes | Product SKU. |
+| `name` | `string` | No | — |
+| `price` | `number` | No | — |
+| `quantity` | `number \| null` | No | Stock left. null removes the limit. |
+| `minimum` | `number \| null` | No | — |
+| `maximum` | `number \| null` | No | — |
+| `discountable` | `boolean` | No | — |
+
+`PUT /v1/forms/{slug_or_id}/products/{sku}`. Business API.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="product full type">
+
+```ts
+{
+  SKU?: string | null,
+  name?: string | null,
+  price?: number | string | null,
+  quantity?: number | string | null,
+  minimum?: number | string | null,
+  maximum?: number | string | null,
+  discountable?: boolean | null,
+  sold?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Spaces
+
+### forms
+
+`spaces.forms`
+
+List the forms in one space.
+
+**Risk:** `read`
+
+```ts
+await corsair.paperform.api.spaces.forms({ id: '10001131833' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+`GET /v1/spaces/{id}/forms`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `forms` | `object[]` | Yes | — |
+| `page` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="forms full type">
+
+```ts
+{
+  id: string,
+  slug?: string | null,
+  custom_slug?: string | null,
+  space_id?: string,
+  title?: string | null,
+  description?: string | null,
+  url?: string | null,
+  live?: boolean,
+  submission_count?: number,
+  created_at_utc?: string | null,
+  updated_at_utc?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  total?: number,
+  hasMore?: boolean,
+  limit?: number,
+  skip?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`spaces.get`
+
+Get one space by id.
+
+**Risk:** `read`
+
+```ts
+await corsair.paperform.api.spaces.get({ id: '10001131833' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+`GET /v1/spaces/{id}`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `space` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="space full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  created_at_utc?: string | null,
+  updated_at_utc?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`spaces.list`
+
+List spaces (folders of forms).
+
+**Risk:** `read`
+
+```ts
+await corsair.paperform.api.spaces.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | Text to search for. |
+| `limit` | `number` | No | Results per page. Paperform defaults to 20. |
+| `skip` | `number` | No | Results to skip. |
+| `afterId` | `string` | No | Only results after this id. |
+| `beforeId` | `string` | No | Only results before this id. |
+| `afterDate` | `string` | No | Only results created after this date (YYYY-MM-DD or ISO). |
+| `beforeDate` | `string` | No | Only results created before this date (YYYY-MM-DD or ISO). |
+| `sort` | `ASC \| DESC` | No | Order by creation date. |
+
+`GET /v1/spaces`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spaces` | `object[]` | Yes | — |
+| `page` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="spaces full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  created_at_utc?: string | null,
+  updated_at_utc?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  total?: number,
+  hasMore?: boolean,
+  limit?: number,
+  skip?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Submissions
+
+### delete
+
+`submissions.delete`
+
+Delete one submission. It cannot be recovered.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.paperform.api.submissions.delete({ form: 'eqadkzns', id: '6afc3d806e698e3d810e785b' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form` | `string` | Yes | Form slug, custom slug or id (from forms.list). |
+| `id` | `string` | Yes | Submission id. |
+
+`DELETE /v1/forms/{slug_or_id}/submissions/{id}`. The local row goes only after Paperform confirms.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`submissions.get`
+
+Get one submission of a form, with its answers.
+
+**Risk:** `read`
+
+```ts
+await corsair.paperform.api.submissions.get({ form: 'eqadkzns', id: '6afc3d806e698e3d810e785b' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form` | `string` | Yes | Form slug, custom slug or id (from forms.list). |
+| `id` | `string` | Yes | Submission id. |
+
+`GET /v1/forms/{slug_or_id}/submissions/{id}`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `submission` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="submission full type">
+
+```ts
+{
+  id: string,
+  form_id?: string | null,
+  data?: Record<string, any>,
+  device?: any,
+  charge?: any,
+  pdfs?: any,
+  created_at_utc?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`submissions.list`
+
+List the completed submissions of a form, with their answers keyed by field key. Filter by date or id, page with limit and skip.
+
+**Risk:** `read`
+
+```ts
+await corsair.paperform.api.submissions.list({ form: 'eqadkzns', afterDate: '2026-11-01', sort: 'DESC' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form` | `string` | Yes | Form slug, custom slug or id (from forms.list). |
+| `limit` | `number` | No | Results per page. Paperform defaults to 20. |
+| `skip` | `number` | No | Results to skip. |
+| `afterId` | `string` | No | Only results after this id. |
+| `beforeId` | `string` | No | Only results before this id. |
+| `afterDate` | `string` | No | Only results created after this date (YYYY-MM-DD or ISO). |
+| `beforeDate` | `string` | No | Only results created before this date (YYYY-MM-DD or ISO). |
+| `sort` | `ASC \| DESC` | No | Order by creation date. |
+
+`GET /v1/forms/{slug_or_id}/submissions`. Stores id, form id and created date only.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `submissions` | `object[]` | Yes | — |
+| `page` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="submissions full type">
+
+```ts
+{
+  id: string,
+  form_id?: string | null,
+  data?: Record<string, any>,
+  device?: any,
+  charge?: any,
+  pdfs?: any,
+  created_at_utc?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  total?: number,
+  hasMore?: boolean,
+  limit?: number,
+  skip?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Translations
+
+### list
+
+`translations.list`
+
+List form translations (title and language). The mapping text is not stored.
+
+**Risk:** `read`
+
+```ts
+await corsair.paperform.api.translations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Results per page. Paperform defaults to 20. |
+| `skip` | `number` | No | Results to skip. |
+| `afterId` | `string` | No | Only results after this id. |
+| `beforeId` | `string` | No | Only results before this id. |
+| `afterDate` | `string` | No | Only results created after this date (YYYY-MM-DD or ISO). |
+| `beforeDate` | `string` | No | Only results created before this date (YYYY-MM-DD or ISO). |
+| `sort` | `ASC \| DESC` | No | Order by creation date. |
+
+`GET /v1/translations`. Stores id, title and language; not the mapping.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `translations` | `object[]` | Yes | — |
+| `page` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="translations full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  language?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  total?: number,
+  hasMore?: boolean,
+  limit?: number,
+  skip?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Add a webhook that posts each new submission (and optionally partial submission) of a form to an https URL.
+
+**Risk:** `write`
+
+```ts
+await corsair.paperform.api.webhooks.create({ form: 'eqadkzns', targetUrl: 'https://example.com/paperform', triggers: ['submission'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form` | `string` | Yes | Form slug, custom slug or id (from forms.list). |
+| `targetUrl` | `string` | Yes | HTTPS URL Paperform posts each submission to. |
+| `triggers` | `(submission \| partial_submission)[]` | Yes | Events that fire the webhook. |
+
+`POST /v1/forms/{slug_or_id}/webhooks`. Business API. The target URL stays out of events.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  id: string,
+  target_url?: string | null,
+  triggers?: string[],
+  created_at_utc?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a webhook by id.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.paperform.api.webhooks.delete({ id: '5d40fdaf174b4c0007043072' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Webhook id. |
+
+`DELETE /v1/webhooks/{id}`. Business API.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List a form's webhooks.
+
+**Risk:** `read`
+
+```ts
+await corsair.paperform.api.webhooks.list({ form: 'eqadkzns' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form` | `string` | Yes | Form slug, custom slug or id (from forms.list). |
+| `limit` | `number` | No | Results per page. Paperform defaults to 20. |
+| `skip` | `number` | No | Results to skip. |
+| `afterId` | `string` | No | Only results after this id. |
+| `beforeId` | `string` | No | Only results before this id. |
+| `afterDate` | `string` | No | Only results created after this date (YYYY-MM-DD or ISO). |
+| `beforeDate` | `string` | No | Only results created before this date (YYYY-MM-DD or ISO). |
+| `sort` | `ASC \| DESC` | No | Order by creation date. |
+
+`GET /v1/forms/{slug_or_id}/webhooks`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhooks` | `object[]` | Yes | — |
+| `page` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhooks full type">
+
+```ts
+{
+  id: string,
+  target_url?: string | null,
+  triggers?: string[],
+  created_at_utc?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  total?: number,
+  hasMore?: boolean,
+  limit?: number,
+  skip?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
