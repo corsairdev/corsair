@@ -1,16 +1,18 @@
 ---
 title: "Plate Recognizer plugin"
 sidebarTitle: "Overview"
-description: "Read Snapshot usage and recognize a license plate from a base64 image. Requests send Authorization Token."
+description: "Read license plates (with optional make, model and color) and text identifiers such as VINs, trailer ids and odometers from images, and check usage. Requests send Authorization Token."
 ---
 
 Use **Plate Recognizer** through Corsair: one client, typed API calls, local DB sync.
 
-Auth is Authorization Token, not Bearer. An empty token on GET /v1/statistics/ returned HTTP 403. Plate reads spend a Snapshot lookup and are not stored, because a plate is not a stable id. Usage is stored for the documented year and month.
+Auth is `Authorization: Token <key>`, not Bearer; the key is on the Snapshot Cloud dashboard. A missing or wrong token returns HTTP 403. Each `plates.read` uses one Snapshot lookup and each `ocr.read` one OCR call from the plan's monthly allowance. Plate text is not stored, because a plate is not a stable id. Snapshot usage is stored per year and month.
+
+OCR is a separate Plate Recognizer product: an account without it gets `403` from `ocr.read`.
 
 **What you get:**
 
-- 2 typed API operations
+- 4 typed API operations
 - 1 synced entity (`usage`) for fast `.search()` / `.list()`
 
 ## Setup
@@ -97,20 +99,20 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**Read usage**
+**Read the plates in an image by URL**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.platerecognizer.api.usage.get({});
+await tenant.platerecognizer.api.plates.read({
+	uploadUrl: 'https://app.platerecognizer.com/static/demo.jpg',
+	regions: ['us-ca'],
+});
 ```
 
 
-**`plates.read`**
+**Write**
 
-```ts
-const tenant = corsair.withTenant('acme');
-await tenant.platerecognizer.api.plates.read({});
-```
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/platerecognizer/api) reference._
 
 
 See the full list on the [API](/plugins/platerecognizer/api) page.
