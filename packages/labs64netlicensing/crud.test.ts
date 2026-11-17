@@ -464,6 +464,7 @@ describe('errors', () => {
 		);
 		expect(caught).toBe(error);
 		expect(JSON.stringify((caught as ApiError).request)).not.toContain('Jane');
+		expect((caught as ApiError).message).toBe('Bad Request: Bad input');
 	});
 
 	it('rejects a create without its required fields before sending', async () => {

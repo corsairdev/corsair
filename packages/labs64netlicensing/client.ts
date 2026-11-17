@@ -25,14 +25,34 @@ export async function netlicensingGet<T>(
 	query?: Record<string, string | undefined>,
 ): Promise<T> {
 	const requestOptions: ApiRequestOptions = { method: 'GET', url, query };
-	return await request<T>(configFor(apiKey), requestOptions);
+	try {
+		return await request<T>(configFor(apiKey), requestOptions);
+	} catch (error) {
+		explain(error);
+		throw error;
+	}
 }
 
-// A failed write keeps its form body on core's ApiError; it can hold licensee
-// names and custom properties, so drop it before the error leaves the plugin.
-function stripRequestBody(error: unknown): void {
-	if (error instanceof ApiError && error.request) {
+/**
+ * Core's message for a NetLicensing error is only the HTTP status text; the
+ * reason is in `infos.info[].value` (e.g. "Requested product does not
+ * exist."), so it is appended. A failed write also keeps its form body, which
+ * can hold licensee names and custom properties: it is dropped. The ApiError
+ * itself, its status and retry data stay.
+ */
+function explain(error: unknown): void {
+	if (!(error instanceof ApiError)) return;
+	if (error.request) {
 		(error.request as { body?: unknown }).body = undefined;
+	}
+	// unknown: the error body is provider JSON, checked field by field.
+	const infos = (error.body as { infos?: { info?: unknown } } | undefined)
+		?.infos?.info;
+	const reasons = asList(infos)
+		.map((info) => (info as { value?: unknown } | null)?.value)
+		.filter((value): value is string => typeof value === 'string');
+	if (reasons.length && !error.message.includes(reasons[0] ?? '')) {
+		error.message = `${error.message}: ${reasons.join(' ')}`;
 	}
 }
 
@@ -78,7 +98,7 @@ export async function netlicensingSend<T>(
 	try {
 		return await request<T>(configFor(apiKey), requestOptions);
 	} catch (error) {
-		stripRequestBody(error);
+		explain(error);
 		throw error;
 	}
 }
