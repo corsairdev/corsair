@@ -76,7 +76,7 @@ const TablesRowsResponseSchema = z.object({
 		.string()
 		.nullish()
 		.describe(
-			'The cursor for the next page, or null once this is the last page. Nasdaq sends no other paging state.',
+			'The cursor for the next page. Null or absent on the last page; check for either. Nasdaq sends no other paging state.',
 		),
 });
 
@@ -167,79 +167,28 @@ const TablesExportResponseSchema = z.object({
 
 export type TablesExportResponse = z.infer<typeof TablesExportResponseSchema>;
 
-// ── databases.list ────────────────────────────────────────────────────────
-
-const DatabasesListInputSchema = z.object({
-	query: z
-		.string()
-		.min(1)
-		.optional()
-		.describe(
-			'Only databases whose code or name contains this text. Nasdaq answers the whole catalogue when omitted.',
-		),
-	per_page: z.number().int().min(1).optional().describe('Databases per page.'),
-	page: z.number().int().min(1).optional().describe('1-based page number.'),
-});
-
-export type DatabasesListInput = z.input<typeof DatabasesListInputSchema>;
-
-const DatabaseSchema = z
-	.object({
-		id: z.number().nullish(),
-		name: z.string().nullish(),
-		database_code: z.string().nullish(),
-		description: z.string().nullish(),
-		datasets_count: z.number().nullish(),
-		downloads: z.number().nullish(),
-		premium: z.boolean().nullish(),
-		image: z.string().nullish(),
-		favorite: z.boolean().nullish(),
-	})
-	.loose();
-
-const DatabasesListResponseSchema = z.object({
-	databases: z.array(DatabaseSchema),
-	meta: z
-		.object({
-			per_page: z.number().nullish(),
-			current_page: z.number().nullish(),
-			next_page: z.number().nullish(),
-			prev_page: z.number().nullish(),
-			total_count: z.number().nullish(),
-			total_pages: z.number().nullish(),
-		})
-		.loose()
-		.nullish(),
-});
-
-export type DatabasesListResponse = z.infer<typeof DatabasesListResponseSchema>;
-
 // ── Registry ──────────────────────────────────────────────────────────────
 
 export type NasdaqEndpointInputs = {
 	tablesRows: TablesRowsInput;
 	tablesMetadata: TablesMetadataInput;
 	tablesExport: TablesExportInput;
-	databasesList: DatabasesListInput;
 };
 
 export type NasdaqEndpointOutputs = {
 	tablesRows: TablesRowsResponse;
 	tablesMetadata: TablesMetadataResponse;
 	tablesExport: TablesExportResponse;
-	databasesList: DatabasesListResponse;
 };
 
 export const NasdaqEndpointInputSchemas = {
 	tablesRows: TablesRowsInputSchema,
 	tablesMetadata: TablesMetadataInputSchema,
 	tablesExport: TablesExportInputSchema,
-	databasesList: DatabasesListInputSchema,
 } as const;
 
 export const NasdaqEndpointOutputSchemas = {
 	tablesRows: TablesRowsResponseSchema,
 	tablesMetadata: TablesMetadataResponseSchema,
 	tablesExport: TablesExportResponseSchema,
-	databasesList: DatabasesListResponseSchema,
 } as const;

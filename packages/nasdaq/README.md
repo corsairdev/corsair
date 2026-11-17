@@ -1,6 +1,6 @@
 # @corsair-dev/nasdaq
 
-Nasdaq Data Link plugin for Corsair: read table metadata, query rows with filters and cursor paging, queue bulk exports, and browse the database catalogue.
+Nasdaq Data Link plugin for Corsair: read table metadata, query rows with filters and cursor paging, and queue bulk exports.
 
 ## Install
 
@@ -12,7 +12,6 @@ pnpm add @corsair-dev/nasdaq
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `databases.list` | `nasdaq.api.databases.list` | `read` | List the database catalogue with each database code, description and dataset count, paged by number |
 | `tables.export` | `nasdaq.api.tables.export` | `read` | Queue a bulk export of a table and return the signed zip link, valid for 30 minutes; the first call usually reports the file as still being built |
 | `tables.metadata` | `nasdaq.api.tables.metadata` | `read` | Read a table definition: its columns and types, the columns that can filter a query, its primary key and when it last refreshed |
 | `tables.rows` | `nasdaq.api.tables.rows` | `read` | Read one page of rows from a Nasdaq Data Link table, filtered by the columns that table marks filterable; page with the returned cursor |

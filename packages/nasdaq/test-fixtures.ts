@@ -91,32 +91,6 @@ export const tableExportFresh = {
 	},
 };
 
-/** `GET /databases`, trimmed to one entry. */
-export const databasesPage = {
-	databases: [
-		{
-			id: 28,
-			name: 'Federal Reserve Economic Data',
-			database_code: 'FRED',
-			description: '232,000 economic time series from 76 sources.',
-			datasets_count: 232000,
-			downloads: 0,
-			premium: false,
-			image:
-				'https://next-pro.cdn.data.nasdaq.com/assets/images/databases/FRED.png',
-			favorite: false,
-		},
-	],
-	meta: {
-		per_page: 1,
-		current_page: 1,
-		next_page: 2,
-		prev_page: null,
-		total_count: 400,
-		total_pages: 400,
-	},
-};
-
 /** The `quandl_error` envelope, used for both a bad key and a bad query. */
 export const unknownKey = {
 	quandl_error: {

@@ -1,4 +1,4 @@
-import { asRecord, createCorsair } from 'corsair/core';
+import { createCorsair } from 'corsair/core';
 import { NasdaqEndpointOutputSchemas as Outputs } from './endpoints/types';
 import { nasdaq } from './index';
 
@@ -71,15 +71,6 @@ describeIfKey('Nasdaq Data Link live API', () => {
 		expect(second.rows).toHaveLength(1);
 		// The second page is a different row, not the same one repeated.
 		expect(second.rows[0]).not.toEqual(first.rows[0]);
-	}, 30_000);
-
-	it('lists databases through the output schema', async () => {
-		const parsed = Outputs.databasesList.parse(
-			await corsair.nasdaq.api.databases.list({ per_page: 1 }),
-		);
-
-		expect(parsed.databases.length).toBe(1);
-		expect(typeof asRecord(parsed.databases[0])?.database_code).toBe('string');
 	}, 30_000);
 
 	it('queues a bulk export through the output schema', async () => {

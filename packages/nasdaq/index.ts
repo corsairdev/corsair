@@ -11,7 +11,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Databases, Tables } from './endpoints';
+import { Tables } from './endpoints';
 import type {
 	NasdaqEndpointInputs,
 	NasdaqEndpointOutputs,
@@ -50,7 +50,6 @@ export type NasdaqEndpoints = {
 	tablesRows: NasdaqEndpoint<'tablesRows'>;
 	tablesMetadata: NasdaqEndpoint<'tablesMetadata'>;
 	tablesExport: NasdaqEndpoint<'tablesExport'>;
-	databasesList: NasdaqEndpoint<'databasesList'>;
 };
 
 export const nasdaqEndpointsNested = {
@@ -58,9 +57,6 @@ export const nasdaqEndpointsNested = {
 		rows: Tables.rows,
 		metadata: Tables.metadata,
 		export: Tables.exportTable,
-	},
-	databases: {
-		list: Databases.list,
 	},
 } as const;
 
@@ -76,10 +72,6 @@ export const nasdaqEndpointSchemas = {
 	'tables.export': {
 		input: NasdaqEndpointInputSchemas.tablesExport,
 		output: NasdaqEndpointOutputSchemas.tablesExport,
-	},
-	'databases.list': {
-		input: NasdaqEndpointInputSchemas.databasesList,
-		output: NasdaqEndpointOutputSchemas.databasesList,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof nasdaqEndpointsNested
@@ -102,11 +94,6 @@ const nasdaqEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Queue a bulk export of a table and return the signed zip link, valid for 30 minutes; the first call usually reports the file as still being built',
-	},
-	'databases.list': {
-		riskLevel: 'read',
-		description:
-			'List the database catalogue with each database code, description and dataset count, paged by number',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof nasdaqEndpointsNested>;
 
@@ -160,8 +147,6 @@ export function nasdaq<const T extends NasdaqPluginOptions>(
 export { NasdaqAPIError, tablePath } from './client';
 
 export type {
-	DatabasesListInput,
-	DatabasesListResponse,
 	NasdaqEndpointInputs,
 	NasdaqEndpointOutputs,
 	TablesExportInput,

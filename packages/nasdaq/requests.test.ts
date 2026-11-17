@@ -5,7 +5,6 @@ import type { NasdaqPluginOptions } from './index';
 import { nasdaq, nasdaqEndpointsNested } from './index';
 import {
 	dailyLimit,
-	databasesPage,
 	expiredCursor,
 	gatewayBlockPage,
 	missingKey,
@@ -111,7 +110,17 @@ describe('tables.rows', () => {
 			tableRowsLastPage,
 		);
 
-		expect(asRecord(result)?.next_cursor_id).toBeUndefined();
+		expect(asRecord(result)?.next_cursor_id).toBeNull();
+	});
+
+	it('rejects a cursor that is not a string instead of reading it as the last page', async () => {
+		await expect(
+			capture(
+				endpoints.tables.rows,
+				{ table: 'NDAQ/RTAT10' },
+				{ ...tableRows, meta: { next_cursor_id: 123 } },
+			),
+		).rejects.toThrow();
 	});
 
 	it('sends filters with their operator suffixes intact', async () => {
@@ -248,38 +257,12 @@ describe('tables.export', () => {
 	});
 });
 
-describe('databases.list', () => {
-	it('returns the catalogue with its paging block', async () => {
-		const { result, url } = await capture(
-			endpoints.databases.list,
-			{ per_page: 1 },
-			databasesPage,
-		);
-
-		expect(new URL(url).pathname).toBe('/api/v3/databases');
-		const page = asRecord(result);
-		const list = page?.databases;
-		expect(Array.isArray(list)).toBe(true);
-		const first = asRecord(Array.isArray(list) ? list[0] : null);
-		expect(first?.database_code).toBe('FRED');
-		expect(asRecord(page?.meta)?.next_page).toBe(2);
-	});
-
-	it('sends the search text', async () => {
-		const { url } = await capture(
-			endpoints.databases.list,
-			{ query: 'economic' },
-			databasesPage,
-		);
-
-		expect(new URL(url).searchParams.get('query')).toBe('economic');
-	});
-});
-
 describe('nasdaq error reporting', () => {
 	it('names the key as the problem on QEAx01', async () => {
 		await expect(
-			capture(endpoints.databases.list, {}, unknownKey, { status: 400 }),
+			capture(endpoints.tables.rows, { table: 'NDAQ/RTAT10' }, unknownKey, {
+				status: 400,
+			}),
 		).rejects.toThrow(/QEAx01/);
 	});
 
@@ -296,13 +279,17 @@ describe('nasdaq error reporting', () => {
 
 	it('reports a missing key by its own code', async () => {
 		await expect(
-			capture(endpoints.databases.list, {}, missingKey, { status: 403 }),
+			capture(endpoints.tables.rows, { table: 'NDAQ/RTAT10' }, missingKey, {
+				status: 403,
+			}),
 		).rejects.toThrow(/QEPx04/);
 	});
 
 	it('reports the daily cap by its own code', async () => {
 		await expect(
-			capture(endpoints.databases.list, {}, dailyLimit, { status: 429 }),
+			capture(endpoints.tables.rows, { table: 'NDAQ/RTAT10' }, dailyLimit, {
+				status: 429,
+			}),
 		).rejects.toThrow(/QEAx06/);
 	});
 
@@ -331,9 +318,14 @@ describe('nasdaq error reporting', () => {
 					'We could not recognize your API key: test-key. Please check your API key.',
 			},
 		};
-		const error = await capture(endpoints.databases.list, {}, echoed, {
-			status: 400,
-		}).catch((caught: unknown) => caught);
+		const error = await capture(
+			endpoints.tables.rows,
+			{ table: 'NDAQ/RTAT10' },
+			echoed,
+			{
+				status: 400,
+			},
+		).catch((caught: unknown) => caught);
 
 		expect(String(error)).not.toContain('test-key');
 		expect(String(error)).toContain('[REDACTED]');
@@ -353,12 +345,11 @@ describe('nasdaq plugin definition', () => {
 		).toBe(false);
 	});
 
-	it('exposes exactly the four catalog operations', () => {
+	it('exposes exactly the three Tables API operations', () => {
 		const nested = Object.entries(plugin().endpoints ?? {}).flatMap(
 			([group, fns]) => Object.keys(fns).map((name) => `${group}.${name}`),
 		);
 		expect(nested.sort()).toEqual([
-			'databases.list',
 			'tables.export',
 			'tables.metadata',
 			'tables.rows',
