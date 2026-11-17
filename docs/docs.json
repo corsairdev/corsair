@@ -3005,6 +3005,15 @@
                 ]
               },
               {
+                "group": "IdentityCheck",
+                "pages": [
+                  "plugins/identitycheck/overview",
+                  "plugins/identitycheck/api",
+                  "plugins/identitycheck/database",
+                  "plugins/identitycheck/webhooks"
+                ]
+              },
+              {
                 "group": "Ignisign",
                 "pages": [
                   "plugins/ignisign/overview",

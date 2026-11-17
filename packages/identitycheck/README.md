@@ -1,12 +1,12 @@
 # IdentityCheck
 
-StackGo IdentityCheck integration. The API requires a paid account and a key with the appropriate `verification.create` or `verification.info` scopes. Authentication is `Authorization: Basic <API_KEY>`.
+StackGo IdentityCheck integration. The API needs a paid StackGo plan (Professional or higher; trial accounts have no API access) and a key with the `verification.create`, `verification.info` or `verification.image` scope. Authentication is `Authorization: Basic <API_KEY>`.
 
-The five implemented operations start individual, SMS, KYB and Tranche 2 verifications and retrieve a verification. StackGo has not published the field-level request and response schemas, so inputs and results are opaque JSON objects. See https://stackgo.io/docs/ and https://stackgo.io/openapi.json.
+The six operations cover StackGo's whole public API: start individual, SMS, KYB and Tranche 2 verifications, retrieve a verification, and download an image captured during one. StackGo has not published the field-level request and response schemas, so request bodies and results are open JSON objects. See https://stackgo.io/docs/ and https://stackgo.io/openapi.json.
 
-The sixth operation, image retrieval, is deferred because its response format is not specified and the shared HTTP transport converts non-JSON bodies to text, which would corrupt binary data. The plugin handles the inbound Svix-signed `verification.decision` webhook when configured with a webhook secret. StackGo's published event does not identify an account, so automatic multi-tenant routing is not supported. Do not treat this work-in-progress plugin as production ready.
+Every check started through `create`, `sms`, `kyb` or `tranche2` is paid from the plan's credit, `sms` texts the person and `create` can email them, so all four are destructive and need approval in cautious mode. `verification.image` returns the file (base64 content, media type and size).
 
-Direct webhook deliveries require a valid Svix signature. Deliveries authenticated by Corsair Hub use the Hub's verification instead. SMS invitations are classified as destructive and require approval in cautious mode.
+The plugin handles the inbound Svix-signed `verification.decision` webhook when configured with the endpoint's signing secret. Direct deliveries need a valid Svix signature; deliveries authenticated by Corsair Hub use the Hub's verification instead. StackGo's event does not identify an account, so automatic multi-tenant routing is not supported.
 
 ## Operations
 
@@ -17,3 +17,4 @@ Direct webhook deliveries require a valid Svix signature. Deliveries authenticat
 | `verification.kyb` | POST `/api/v1/verification/namescan/kyb` |
 | `verification.tranche2` | POST `/api/v1/verification/tranche2` |
 | `verification.get` | GET `/api/v1/verification/info/{id}` |
+| `verification.image` | GET `/api/v1/verification/image/{verificationId}/{imageId}` |
