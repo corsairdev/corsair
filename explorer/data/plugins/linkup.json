@@ -1,0 +1,728 @@
+{
+  "id": "linkup",
+  "displayName": "Linkup",
+  "description": "Web search for AI agents with Linkup - search results with page text, sourced answers, structured JSON, page fetch, and async research tasks.",
+  "npmPackageName": "@corsair-dev/linkup",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 12,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "linkup.api.answers.get",
+      "shortPath": "answers.get",
+      "description": "Search the web and return a written answer with its sources ($0.006; deep $0.055).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "depth",
+            "optional": true,
+            "type": "flash | fast | standard | deep",
+            "description": "flash, fast and standard cost the same and get slower and broader in that order; deep runs several searches and costs 10x. Default fast."
+          },
+          {
+            "key": "includeInlineCitations",
+            "optional": true,
+            "type": "boolean",
+            "description": "Put numbered citations inside the answer text."
+          },
+          {
+            "key": "fromDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only sources published on or after this date (YYYY-MM-DD)."
+          },
+          {
+            "key": "toDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only sources published on or before this date (YYYY-MM-DD)."
+          },
+          {
+            "key": "includeDomains",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only search these domains."
+          },
+          {
+            "key": "excludeDomains",
+            "optional": true,
+            "type": "string[]",
+            "description": "Never return these domains."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "answer",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sources",
+            "optional": false,
+            "type": "{ name?: string, url: string, snippet?: string, favicon?: string | null, publishedAt?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkup.api.credits.get",
+      "shortPath": "credits.get",
+      "description": "Get the account's remaining credit balance in dollars.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credit",
+            "optional": false,
+            "type": "{ id: balance, balance: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkup.api.pages.fetch",
+      "shortPath": "pages.fetch",
+      "description": "Fetch one web page or PDF as markdown, optionally with typed data from a schema ($0.001 to $0.011).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "standard | pro",
+            "description": "pro gets past harder pages and costs 5x. Default standard."
+          },
+          {
+            "key": "renderJs",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run the page's JavaScript before reading it (costs 5x)."
+          },
+          {
+            "key": "extractImages",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeRawContent",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also return the page's raw text."
+          },
+          {
+            "key": "schema",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "JSON Schema for typed data to pull from the page."
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string",
+            "description": "What to pull from the page, used with schema."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "markdown",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "rawContent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkup.api.research.create",
+      "shortPath": "research.create",
+      "description": "Start a multi-step research task ($0.25 to $2.50 by reasoningDepth). Poll research.get for the result.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "The research question."
+          },
+          {
+            "key": "reasoningDepth",
+            "optional": true,
+            "type": "S | M | L | XL",
+            "description": "How hard to work: S $0.25 (default here), M $0.50, L $1.50, XL $2.50 per task."
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "auto | answer | investigate | research"
+          },
+          {
+            "key": "outputType",
+            "optional": true,
+            "type": "sourcedAnswer | structured"
+          },
+          {
+            "key": "schema",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "JSON Schema for structured output; needed when outputType is structured."
+          },
+          {
+            "key": "fromDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only sources published on or after this date (YYYY-MM-DD)."
+          },
+          {
+            "key": "toDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only sources published on or before this date (YYYY-MM-DD)."
+          },
+          {
+            "key": "includeDomains",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only search these domains."
+          },
+          {
+            "key": "excludeDomains",
+            "optional": true,
+            "type": "string[]",
+            "description": "Never return these domains."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task",
+            "optional": false,
+            "type": "{ id: string, type?: string, status: string, createdAt?: string, updatedAt?: string, error?: string | null, input?: Record<string, any>, output?: any }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkup.api.research.get",
+      "shortPath": "research.get",
+      "description": "Get a research task: status, and the answer or structured data once completed.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task",
+            "optional": false,
+            "type": "{ id: string, type?: string, status: string, createdAt?: string, updatedAt?: string, error?: string | null, input?: Record<string, any>, output?: any }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkup.api.research.list",
+      "shortPath": "research.list",
+      "description": "List research tasks, newest or oldest first, paged.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "createdAt | updatedAt"
+          },
+          {
+            "key": "sortDirection",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tasks",
+            "optional": false,
+            "type": "{ id: string, type?: string, status: string, createdAt?: string, updatedAt?: string, error?: string | null, input?: Record<string, any>, output?: any }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ page?: number, pageSize?: number, total?: number, totalPages?: number }"
+          },
+          {
+            "key": "quota",
+            "optional": true,
+            "type": "{ inFlight?: number, limit?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkup.api.responses.create",
+      "shortPath": "responses.create",
+      "description": "Generate an answer grounded in live web results (OpenAI Responses format). Paid generation.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "linkup-standard | linkup-deep",
+            "description": "linkup-standard is faster; linkup-deep is more thorough."
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string",
+            "description": "System-style instructions for the answer."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "response",
+            "optional": false,
+            "type": "{ id: string, model?: string, object?: string }"
+          },
+          {
+            "key": "outputText",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkup.api.search.run",
+      "shortPath": "search.run",
+      "description": "Search the web and return results with their text content ($0.005 a call; deep $0.05). Filter by date and domain.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "What to search for, in plain language."
+          },
+          {
+            "key": "depth",
+            "optional": true,
+            "type": "flash | fast | standard | deep",
+            "description": "flash, fast and standard cost the same and get slower and broader in that order; deep runs several searches and costs 10x. Default fast."
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "includeImages",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also return image results."
+          },
+          {
+            "key": "fromDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only sources published on or after this date (YYYY-MM-DD)."
+          },
+          {
+            "key": "toDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only sources published on or before this date (YYYY-MM-DD)."
+          },
+          {
+            "key": "includeDomains",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only search these domains."
+          },
+          {
+            "key": "excludeDomains",
+            "optional": true,
+            "type": "string[]",
+            "description": "Never return these domains."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ type?: string, name?: string, url: string, content?: string, favicon?: string | null, publishedAt?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkup.api.search.structured",
+      "shortPath": "search.structured",
+      "description": "Search the web and return JSON shaped by your JSON Schema, optionally with sources ($0.006; deep $0.055).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "schema",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "JSON Schema (type: object) for the data to return."
+          },
+          {
+            "key": "depth",
+            "optional": true,
+            "type": "flash | fast | standard | deep",
+            "description": "flash, fast and standard cost the same and get slower and broader in that order; deep runs several searches and costs 10x. Default fast."
+          },
+          {
+            "key": "includeSources",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also return the sources the data came from."
+          },
+          {
+            "key": "fromDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only sources published on or after this date (YYYY-MM-DD)."
+          },
+          {
+            "key": "toDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only sources published on or before this date (YYYY-MM-DD)."
+          },
+          {
+            "key": "includeDomains",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only search these domains."
+          },
+          {
+            "key": "excludeDomains",
+            "optional": true,
+            "type": "string[]",
+            "description": "Never return these domains."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "any"
+          },
+          {
+            "key": "sources",
+            "optional": true,
+            "type": "{ name?: string, url: string, snippet?: string, favicon?: string | null, publishedAt?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkup.api.tasks.create",
+      "shortPath": "tasks.create",
+      "description": "Queue up to 100 search, fetch or research calls to run in the background, each billed like the direct call. Poll tasks.get.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tasks",
+            "optional": false,
+            "type": "({ type: search, input: { q: string, depth: flash | fast | standard | deep, outputType: searchResults | sourcedAnswer | structured } } | { type: fetch, input: { url: string } } | { type: research, input: { q: string, outputType: sourcedAnswer | structured } })[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tasks",
+            "optional": false,
+            "type": "{ id: string, type?: string, status: string, createdAt?: string, updatedAt?: string, error?: string | null, input?: Record<string, any>, output?: any }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ page?: number, pageSize?: number, total?: number, totalPages?: number }"
+          },
+          {
+            "key": "quota",
+            "optional": true,
+            "type": "{ inFlight?: number, limit?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkup.api.tasks.get",
+      "shortPath": "tasks.get",
+      "description": "Get one background task with its status and output.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task",
+            "optional": false,
+            "type": "{ id: string, type?: string, status: string, createdAt?: string, updatedAt?: string, error?: string | null, input?: Record<string, any>, output?: any }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkup.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "List background tasks, filtered by type and status, paged, with the in-flight quota.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "(search | fetch | research)[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "(pending | processing | completed | failed)[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "createdAt | updatedAt"
+          },
+          {
+            "key": "sortDirection",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tasks",
+            "optional": false,
+            "type": "{ id: string, type?: string, status: string, createdAt?: string, updatedAt?: string, error?: string | null, input?: Record<string, any>, output?: any }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ page?: number, pageSize?: number, total?: number, totalPages?: number }"
+          },
+          {
+            "key": "quota",
+            "optional": true,
+            "type": "{ inFlight?: number, limit?: number }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "linkup.db.credits.search",
+      "entityName": "credits",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "balance",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "linkup.db.responses.search",
+      "entityName": "responses",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "model",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "object",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "linkup.db.sources.search",
+      "entityName": "sources",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "publishedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

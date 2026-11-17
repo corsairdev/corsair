@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-17T08:48:37.793Z",
-  "corsairVersion": "0.1.210",
+  "generatedAt": "2026-11-17T17:01:13.332Z",
+  "corsairVersion": "0.2.4",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -2921,6 +2921,21 @@
       }
     },
     {
+      "id": "deepline",
+      "displayName": "Deepline",
+      "description": "Find GTM tools, run and manage enrichment Plays and their triggers, deploy Monitors, manage provider credentials, secrets, notifications and billing through Deepline.",
+      "npmPackageName": "@corsair-dev/deepline",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 115,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "deepseek",
       "displayName": "DeepSeek",
       "description": "AI model provider API for chat completions, reasoning, and code generation tasks.",
@@ -3115,6 +3130,21 @@
         "api": 18,
         "webhooks": 0,
         "db": 5
+      }
+    },
+    {
+      "id": "docparser",
+      "displayName": "Docparser",
+      "description": "Send documents to Docparser parsers and read the data they extract (invoices, orders, bank statements, forms).",
+      "npmPackageName": "@corsair-dev/docparser",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 10,
+        "webhooks": 0,
+        "db": 4
       }
     },
     {
@@ -3429,6 +3459,21 @@
         "api": 457,
         "webhooks": 0,
         "db": 0
+      }
+    },
+    {
+      "id": "emailable",
+      "displayName": "Emailable",
+      "description": "Verify email addresses one at a time or in bulk batches with Emailable, and read the account's credits.",
+      "npmPackageName": "@corsair-dev/emailable",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 4,
+        "webhooks": 0,
+        "db": 3
       }
     },
     {
@@ -5196,6 +5241,20 @@
       }
     },
     {
+      "id": "identitycheck",
+      "displayName": "IdentityCheck",
+      "description": "Start StackGo identity verifications and retrieve their results.",
+      "npmPackageName": "@corsair-dev/identitycheck",
+      "authTypes": [
+        "api_key"
+      ],
+      "counts": {
+        "api": 6,
+        "webhooks": 1,
+        "db": 0
+      }
+    },
+    {
       "id": "ignisign",
       "displayName": "Ignisign",
       "description": "Electronic signature and document workflow integration for Ignisign eIDAS-compliant digital signatures.",
@@ -5447,6 +5506,21 @@
       "defaultAuthType": "api_key",
       "counts": {
         "api": 45,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "jumpcloud",
+      "displayName": "JumpCloud",
+      "description": "Manage JumpCloud directory resources — system users, systems, groups, policies, commands and organizations — through the official API 1.0/2.0 with x-api-key auth.",
+      "npmPackageName": "@corsair-dev/jumpcloud",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 48,
         "webhooks": 0,
         "db": 0
       }
@@ -5889,6 +5963,21 @@
       }
     },
     {
+      "id": "linkup",
+      "displayName": "Linkup",
+      "description": "Web search for AI agents with Linkup - search results with page text, sourced answers, structured JSON, page fetch, and async research tasks.",
+      "npmPackageName": "@corsair-dev/linkup",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 12,
+        "webhooks": 0,
+        "db": 3
+      }
+    },
+    {
       "id": "litescrape",
       "displayName": "LiteScrape",
       "description": "Search, maps, reviews and web-data scraping API (Google, Bing, DuckDuckGo, Apple, Yelp, Tripadvisor and app stores).",
@@ -6159,6 +6248,21 @@
       }
     },
     {
+      "id": "microsoftclarity",
+      "displayName": "Microsoft Clarity",
+      "description": "Export Microsoft Clarity project dashboard metrics with optional dimension breakdowns.",
+      "npmPackageName": "@corsair-dev/microsoftclarity",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 1,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "minerstat",
       "displayName": "Minerstat",
       "description": "Access mining data, hardware, pools, and profitability from Minerstat.",
@@ -6351,6 +6455,51 @@
       }
     },
     {
+      "id": "nasa",
+      "displayName": "NASA",
+      "description": "Astronomy Picture of the Day, near-Earth asteroid data from NeoWs, space weather from DONKI, DSCOVR EPIC imagery, EONET natural events and the NASA Image and Video Library.",
+      "npmPackageName": "@corsair-dev/nasa",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 24,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "nasdaq",
+      "displayName": "Nasdaq Data Link",
+      "description": "Query Nasdaq Data Link tables with column filters and cursor paging, read a table's columns and filterable fields, and queue bulk csv exports.",
+      "npmPackageName": "@corsair-dev/nasdaq",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 3,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "needle",
+      "displayName": "Needle",
+      "description": "Manage Needle leads and their LinkedIn and Instagram identities, run campaigns and enroll or stop leads, maintain suppression lists, search places and preview AI-composed messages.",
+      "npmPackageName": "@corsair-dev/needle",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 23,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "neon",
       "displayName": "Neon",
       "description": "Serverless Postgres platform for branching databases, scaling, and modern app backends.",
@@ -6363,6 +6512,21 @@
         "api": 110,
         "webhooks": 0,
         "db": 8
+      }
+    },
+    {
+      "id": "nethunt",
+      "displayName": "NetHunt CRM",
+      "description": "List NetHunt folders and their field names, search and page records, read the change history, and create, update, comment on, log calls against and delete records.",
+      "npmPackageName": "@corsair-dev/nethunt",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 16,
+        "webhooks": 0,
+        "db": 0
       }
     },
     {
@@ -6381,6 +6545,36 @@
       }
     },
     {
+      "id": "neuronwriter",
+      "displayName": "NEURONwriter",
+      "description": "List NEURONwriter projects, start and poll content analyses, read their target word count, terms, questions and SERP competitors, and read, import or score article content.",
+      "npmPackageName": "@corsair-dev/neuronwriter",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 7,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "neutrino",
+      "displayName": "Neutrino API",
+      "description": "Look up IP geolocation and blocklists, validate and verify email addresses and phone numbers, parse user agents, check domain and host reputation, inspect URLs, geocode addresses, look up card BINs, convert units, filter profanity, drive a headless browser, and send and check SMS or voice security codes.",
+      "npmPackageName": "@corsair-dev/neutrino",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 20,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "neverbounce",
       "displayName": "NeverBounce",
       "description": "Verify individual email addresses with the NeverBounce API.",
@@ -6391,6 +6585,21 @@
       "defaultAuthType": "api_key",
       "counts": {
         "api": 1,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "newrelic",
+      "displayName": "New Relic",
+      "description": "Read New Relic applications and metrics, search entities, list alert issues, manage alert policies and NRQL alert conditions, record deployment markers, and run NRQL queries through NerdGraph.",
+      "npmPackageName": "@corsair-dev/newrelic",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 18,
         "webhooks": 0,
         "db": 0
       }
@@ -6423,6 +6632,51 @@
         "api": 71,
         "webhooks": 0,
         "db": 1
+      }
+    },
+    {
+      "id": "ngrok",
+      "displayName": "ngrok",
+      "description": "Manage ngrok cloud endpoints and their traffic policies, reserve custom domains, list agent tunnels and API keys, and manage event subscriptions that deliver ngrok events to your destinations.",
+      "npmPackageName": "@corsair-dev/ngrok",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 18,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "niftyimages",
+      "displayName": "NiftyImages",
+      "description": "Read NiftyImages images, widgets, maps and Photoshop images with their open stats, manage Data Store records, map locations and widget or Bee Plugin users, move countdown timer dates, and edit Photoshop layers.",
+      "npmPackageName": "@corsair-dev/niftyimages",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 27,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "ninox",
+      "displayName": "Ninox",
+      "description": "Read a Ninox workspace and its modules, create and delete tables and fields, read, create, update, upsert and delete records with a row-level change feed, list views, and run Ninox script.",
+      "npmPackageName": "@corsair-dev/ninox",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 19,
+        "webhooks": 0,
+        "db": 0
       }
     },
     {
@@ -6710,6 +6964,21 @@
         "api": 9,
         "webhooks": 4,
         "db": 1
+      }
+    },
+    {
+      "id": "paperform",
+      "displayName": "Paperform",
+      "description": "Read Paperform forms, fields and submissions, and manage a form's products, coupons and webhooks.",
+      "npmPackageName": "@corsair-dev/paperform",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 24,
+        "webhooks": 0,
+        "db": 4
       }
     },
     {
@@ -7102,6 +7371,21 @@
         "api": 19,
         "webhooks": 0,
         "db": 0
+      }
+    },
+    {
+      "id": "postonce",
+      "displayName": "PostOnce",
+      "description": "Publish and schedule posts with text and media to LinkedIn, X, Threads, Bluesky, Facebook Pages, Instagram, TikTok, YouTube and Pinterest, keep drafts, upload media, read post analytics and manage cross-posting workflows and webhooks.",
+      "npmPackageName": "@corsair-dev/postonce",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 25,
+        "webhooks": 0,
+        "db": 2
       }
     },
     {
@@ -8659,6 +8943,21 @@
         "api": 12,
         "webhooks": 0,
         "db": 7
+      }
+    },
+    {
+      "id": "stormglass",
+      "displayName": "Stormglass",
+      "description": "Global weather, marine, tide, astronomy, solar, bio and elevation data for any coordinate, from the Stormglass API.",
+      "npmPackageName": "@corsair-dev/stormglass",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 10,
+        "webhooks": 0,
+        "db": 4
       }
     },
     {
@@ -54454,6 +54753,696 @@
       "haystack": "version.versionlist datarobot.api.version.versionlist retrieve version information. read"
     },
     {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "auth.status",
+      "haystack": "auth.status deepline.api.auth.status show the api key, user, workspace and rate-limit tier this plugin is using read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "billing.autoRecharge.get",
+      "haystack": "billing.autorecharge.get deepline.api.billing.autorecharge.get read the automatic credit recharge settings read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "billing.autoRecharge.update",
+      "haystack": "billing.autorecharge.update deepline.api.billing.autorecharge.update turn automatic recharge on or off or change its limits (lets deepline charge the saved card automatically) destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "billing.balance",
+      "haystack": "billing.balance deepline.api.billing.balance get workspace credit balance read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "billing.catalog",
+      "haystack": "billing.catalog deepline.api.billing.catalog read the published plan catalog, meters and the plan the workspace is on read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "billing.creditPurchases.create",
+      "haystack": "billing.creditpurchases.create deepline.api.billing.creditpurchases.create buy credits through a payment-gated purchase (spends money) destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "billing.creditPurchases.recover",
+      "haystack": "billing.creditpurchases.recover deepline.api.billing.creditpurchases.recover check or retire an uncertain credit purchase by its original key (never charges) write"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "billing.entitlements",
+      "haystack": "billing.entitlements deepline.api.billing.entitlements read current workspace provider benefits read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "billing.includedCompute",
+      "haystack": "billing.includedcompute deepline.api.billing.includedcompute read play compute pricing, included minutes and minutes used this period read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "billing.invoices",
+      "haystack": "billing.invoices deepline.api.billing.invoices list subscription invoices and credit purchase receipts, newest first read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "billing.ledger",
+      "haystack": "billing.ledger deepline.api.billing.ledger list or export the credit ledger read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "billing.plans",
+      "haystack": "billing.plans deepline.api.billing.plans list plans that can be started or changed to, and check a promo code without redeeming it read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "billing.planTransitions.create",
+      "haystack": "billing.plantransitions.create deepline.api.billing.plantransitions.create start, change, cancel or restore the billing plan (changes what the workspace pays) destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "billing.portalSessions.create",
+      "haystack": "billing.portalsessions.create deepline.api.billing.portalsessions.create create a stripe billing portal link for payment details and invoices (the link grants billing access) write"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "billing.quote",
+      "haystack": "billing.quote deepline.api.billing.quote estimate the maximum credits for play sandbox sessions (quote only, spends nothing) read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "billing.status",
+      "haystack": "billing.status deepline.api.billing.status read plan, payment, recharge and invoice state read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "billing.subscription.cancel",
+      "haystack": "billing.subscription.cancel deepline.api.billing.subscription.cancel cancel the subscription at period end, or undo a pending cancellation (changes the subscription) destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "billing.subscription.status",
+      "haystack": "billing.subscription.status deepline.api.billing.subscription.status read subscription state, renewal and cancellation facts, and remaining credit pools read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "billing.topUp",
+      "haystack": "billing.topup deepline.api.billing.topup charge the saved payment method and add credits (spends money) destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "billing.usage",
+      "haystack": "billing.usage deepline.api.billing.usage get usage and recent charges read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "billing.usageEvents",
+      "haystack": "billing.usageevents deepline.api.billing.usageevents page raw per-request usage events, or look up one by request_id (not a final charge) read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "datasets.history",
+      "haystack": "datasets.history deepline.api.datasets.history read immutable run row history with coverage and continuation cursor read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "datasets.rows",
+      "haystack": "datasets.rows deepline.api.datasets.rows read a page of saved dataset rows, optionally scoped to a run read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "db.query",
+      "haystack": "db.query deepline.api.db.query run sql on the workspace customer database; writes can change storage tables destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "executions.getByKey",
+      "haystack": "executions.getbykey deepline.api.executions.getbykey recover a tool execution by its idempotency key read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "health.get",
+      "haystack": "health.get deepline.api.health.get check runtime api availability read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "integrations.balance",
+      "haystack": "integrations.balance deepline.api.integrations.balance read the live balance of the workspace's own provider credential (leadmagic) read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "integrations.connectLink",
+      "haystack": "integrations.connectlink deepline.api.integrations.connectlink get the dashboard link where a workspace admin connects a provider read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "integrations.setCredentials",
+      "haystack": "integrations.setcredentials deepline.api.integrations.setcredentials save provider credential fields for the workspace (replaces the stored credential; values never returned) destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "integrations.startOAuth",
+      "haystack": "integrations.startoauth deepline.api.integrations.startoauth start provider oauth and return the url a person opens to grant access write"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "monitors.access",
+      "haystack": "monitors.access deepline.api.monitors.access check whether the workspace can use deepline monitors read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "monitors.available",
+      "haystack": "monitors.available deepline.api.monitors.available list deployable monitor tools, or describe the payload, outputs and pricing of one tool read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "monitors.batch.get",
+      "haystack": "monitors.batch.get deepline.api.monitors.batch.get read a monitor batch operation, such as the plan from a dry-run start or stop read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "monitors.check",
+      "haystack": "monitors.check deepline.api.monitors.check validate a monitor definition and show its plan and pricing without deploying or spending credits read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "monitors.delete",
+      "haystack": "monitors.delete deepline.api.monitors.delete delete a deployed monitor and deprovision its upstream resource; dryrun shows the plan destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "monitors.dependents",
+      "haystack": "monitors.dependents deepline.api.monitors.dependents list the published plays that react to one monitor read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "monitors.deploy",
+      "haystack": "monitors.deploy deepline.api.monitors.deploy deploy a monitor from a definition; creates an upstream provider resource and may spend credits destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "monitors.fleets.list",
+      "haystack": "monitors.fleets.list deepline.api.monitors.fleets.list list monitor fleets, or their overview with status counts read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "monitors.get",
+      "haystack": "monitors.get deepline.api.monitors.get get one deployed monitor by its public key read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "monitors.health",
+      "haystack": "monitors.health deepline.api.monitors.health read monitor delivery and convergence health read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "monitors.jobs.cancel",
+      "haystack": "monitors.jobs.cancel deepline.api.monitors.jobs.cancel cancel a running monitor job destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "monitors.jobs.get",
+      "haystack": "monitors.jobs.get deepline.api.monitors.jobs.get get the state, phase and counts of a monitor job read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "monitors.jobs.logs",
+      "haystack": "monitors.jobs.logs deepline.api.monitors.jobs.logs read the logs of a monitor job read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "monitors.ledger.findings",
+      "haystack": "monitors.ledger.findings deepline.api.monitors.ledger.findings list the recent findings of one monitor read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "monitors.ledger.get",
+      "haystack": "monitors.ledger.get deepline.api.monitors.ledger.get get the ledger entry of one monitor read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "monitors.ledger.list",
+      "haystack": "monitors.ledger.list deepline.api.monitors.ledger.list list monitors with status, findings counts, signals and the plays each one triggers read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "monitors.list",
+      "haystack": "monitors.list deepline.api.monitors.list list deployed monitors by lifecycle state, with cursor paging read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "monitors.preview",
+      "haystack": "monitors.preview deepline.api.monitors.preview sample recent matches for a monitor definition before deploying; each returned match costs credits destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "monitors.reactivate",
+      "haystack": "monitors.reactivate deepline.api.monitors.reactivate reactivate a disabled monitor, creating a replacement upstream resource; dryrun shows the cost destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "monitors.start",
+      "haystack": "monitors.start deepline.api.monitors.start apply the retained definition of a stopped monitor upstream; may spend credits destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "monitors.stop",
+      "haystack": "monitors.stop deepline.api.monitors.stop stop a monitor upstream while keeping its definition for monitors.start destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "monitors.test",
+      "haystack": "monitors.test deepline.api.monitors.test validate an explicit event payload against the webhook contract of a deployed monitor; writes, charges and dispatches nothing read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "monitors.update",
+      "haystack": "monitors.update deepline.api.monitors.update update the name or payload of a deployed monitor; payload changes can replace the upstream resource and spend credits destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "notifications.channels",
+      "haystack": "notifications.channels deepline.api.notifications.channels list slack channels visible to the connected deepline slack app read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "notifications.configuration.change",
+      "haystack": "notifications.configuration.change deepline.api.notifications.configuration.change save or delete one notification group atomically against the expected workspace version write"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "notifications.configuration.get",
+      "haystack": "notifications.configuration.get deepline.api.notifications.configuration.get read notification groups, destinations, rules and the workspace version read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "notifications.create",
+      "haystack": "notifications.create deepline.api.notifications.create create a named slack notification for chosen play events write"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "notifications.delete",
+      "haystack": "notifications.delete deepline.api.notifications.delete archive a named notification without touching its slack integration destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "notifications.dlq.get",
+      "haystack": "notifications.dlq.get deepline.api.notifications.dlq.get get one dead-lettered notification delivery read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "notifications.dlq.list",
+      "haystack": "notifications.dlq.list deepline.api.notifications.dlq.list list notification deliveries that exhausted their retries read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "notifications.dlq.update",
+      "haystack": "notifications.dlq.update deepline.api.notifications.dlq.update retry (send again) or archive one dead-lettered notification delivery destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "notifications.list",
+      "haystack": "notifications.list deepline.api.notifications.list list named notifications, the event catalog, destinations and dead-letter count read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "notifications.test",
+      "haystack": "notifications.test deepline.api.notifications.test send a test message to the slack target of a notification destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "notifications.update",
+      "haystack": "notifications.update deepline.api.notifications.update pause or resume a notification, or change its name, events and slack target write"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "plays.activity",
+      "haystack": "plays.activity deepline.api.plays.activity count play runs and delivered monitor findings by day read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "plays.clearHistory",
+      "haystack": "plays.clearhistory deepline.api.plays.clearhistory permanently delete a play's run history and saved sheet data, keeping its code and versions destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "plays.cost",
+      "haystack": "plays.cost deepline.api.plays.cost estimate credits per row or run for one saved or prebuilt play (does not start a run) read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "plays.delete",
+      "haystack": "plays.delete deepline.api.plays.delete move a workspace play to trash and disable its cron and webhook triggers (restorable) destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "plays.get",
+      "haystack": "plays.get deepline.api.plays.get describe one callable play read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "plays.list",
+      "haystack": "plays.list deepline.api.plays.list list and search callable plays read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "plays.paths",
+      "haystack": "plays.paths deepline.api.plays.paths list the folder locations of workspace plays, one page read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "plays.pin",
+      "haystack": "plays.pin deepline.api.plays.pin pin or unpin a workspace play so it sorts first write"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "plays.restore",
+      "haystack": "plays.restore deepline.api.plays.restore restore a workspace play from trash write"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "plays.run",
+      "haystack": "plays.run deepline.api.plays.run start a saved or prebuilt play run (may spend credits or perform external actions) destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "plays.settings.get",
+      "haystack": "plays.settings.get deepline.api.plays.settings.get read a workspace play's location and display name read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "plays.settings.update",
+      "haystack": "plays.settings.update deepline.api.plays.settings.update change a workspace play's location or display name; omitted fields stay as they are write"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "plays.share.get",
+      "haystack": "plays.share.get deepline.api.plays.share.get read a play's public share page status and revision picker read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "plays.share.publish",
+      "haystack": "plays.share.publish deepline.api.plays.share.publish publish or repoint a play's public share page to a revision (publicly viewable) destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "plays.share.regenerate",
+      "haystack": "plays.share.regenerate deepline.api.plays.share.regenerate regenerate a play's public share page copy with an llm (rewrites the public page) destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "plays.share.unpublish",
+      "haystack": "plays.share.unpublish deepline.api.plays.share.unpublish delete a play's public share page and its cards destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "plays.share.update",
+      "haystack": "plays.share.update deepline.api.plays.share.update change share page settings: search indexing, cost and latency display write"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "plays.triggers.get",
+      "haystack": "plays.triggers.get deepline.api.plays.triggers.get read a workspace play's cron schedule and inbound webhook trigger, with the webhook url read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "plays.triggers.history",
+      "haystack": "plays.triggers.history deepline.api.plays.triggers.history list one trigger's recent runs read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "plays.triggers.inventory",
+      "haystack": "plays.triggers.inventory deepline.api.plays.triggers.inventory list cron and webhook triggers across the workspace, one page read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "plays.triggers.update",
+      "haystack": "plays.triggers.update deepline.api.plays.triggers.update set or remove a play cron schedule or inbound webhook (optional hmac or standard webhooks signing) and publish it live (scheduled runs may spend credits) destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "plays.versions.list",
+      "haystack": "plays.versions.list deepline.api.plays.versions.list list a play's saved versions, newest first read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "plays.versions.publish",
+      "haystack": "plays.versions.publish deepline.api.plays.versions.publish make a play version live; its cron and webhook triggers then run that version (may spend credits) destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "runs.billing",
+      "haystack": "runs.billing deepline.api.runs.billing read credits billed to up to 100 runs and whether they are settling read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "runs.children",
+      "haystack": "runs.children deepline.api.runs.children list one page of async child runs read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "runs.events",
+      "haystack": "runs.events deepline.api.runs.events search structured run events across the workspace or one run read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "runs.get",
+      "haystack": "runs.get deepline.api.runs.get get one play run status read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "runs.history",
+      "haystack": "runs.history deepline.api.runs.history search and page workspace run history read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "runs.input",
+      "haystack": "runs.input deepline.api.runs.input read the exact original input retained for a run read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "runs.list",
+      "haystack": "runs.list deepline.api.runs.list list play runs filtered by play, status or run id read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "runs.logs",
+      "haystack": "runs.logs deepline.api.runs.logs read retained run logs; continue with lastseq as afterseq read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "runs.receipts",
+      "haystack": "runs.receipts deepline.api.runs.receipts read retained tool results for a run by receipt key, without executing tools read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "runs.rerun",
+      "haystack": "runs.rerun deepline.api.runs.rerun start a new run from a past run's input and revision (may spend credits) destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "runs.resume",
+      "haystack": "runs.resume deepline.api.runs.resume continue a failed or cancelled run in place (may spend credits) destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "runs.status",
+      "haystack": "runs.status deepline.api.runs.status read the lifecycle status and progress counters of one run read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "runs.stop",
+      "haystack": "runs.stop deepline.api.runs.stop stop one running play run destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "runs.stopAll",
+      "haystack": "runs.stopall deepline.api.runs.stopall stop every active run in the workspace; dryrun only lists them destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "search.query",
+      "haystack": "search.query deepline.api.search.query search tools, monitor types, plays, and docs read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "secrets.inspect",
+      "haystack": "secrets.inspect deepline.api.secrets.inspect check whether a secret is active for the org or a play, without its value read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "secrets.list",
+      "haystack": "secrets.list deepline.api.secrets.list list play secret metadata (never values) read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "secrets.set",
+      "haystack": "secrets.set deepline.api.secrets.set create or rotate a play or org secret (replaces the stored value; value never returned) destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "secrets.updateNote",
+      "haystack": "secrets.updatenote deepline.api.secrets.updatenote add, replace or clear the non-sensitive note on one secret write"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "tools.describeModel",
+      "haystack": "tools.describemodel deepline.api.tools.describemodel describe an ai gateway model: metadata, provider options and an example input read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "tools.execute",
+      "haystack": "tools.execute deepline.api.tools.execute execute one provider-backed tool (may spend credits or perform external actions) destructive"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "tools.get",
+      "haystack": "tools.get deepline.api.tools.get describe one provider-backed tool read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "tools.list",
+      "haystack": "tools.list deepline.api.tools.list list callable provider tools read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "tools.providers",
+      "haystack": "tools.providers deepline.api.tools.providers list discoverable providers with tool counts and categories, or only recent additions read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "tools.quote",
+      "haystack": "tools.quote deepline.api.tools.quote price an ai_inference, deeplineagent or ai_evaluate payload without running it read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "tools.search",
+      "haystack": "tools.search deepline.api.tools.search search callable provider tools read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "workspace.members.list",
+      "haystack": "workspace.members.list deepline.api.workspace.members.list list one page of workspace members and their grants read"
+    },
+    {
+      "pluginId": "deepline",
+      "kind": "api",
+      "shortPath": "workspace.serviceAccounts.list",
+      "haystack": "workspace.serviceaccounts.list deepline.api.workspace.serviceaccounts.list list workspace service accounts and key metadata (prefix and last 4 only) read"
+    },
+    {
       "pluginId": "deepseek",
       "kind": "api",
       "shortPath": "anthropic.createMessage",
@@ -64378,6 +65367,66 @@
       "haystack": "templates.render docmosis.api.templates.render generate a document from a template and json/xml data write"
     },
     {
+      "pluginId": "docparser",
+      "kind": "api",
+      "shortPath": "documents.fetch",
+      "haystack": "documents.fetch docparser.api.documents.fetch import a document from a public url into a parser. uses parsing credits (one per 5 pages). parsing takes a few minutes; check documents.status, then read results.get. destructive"
+    },
+    {
+      "pluginId": "docparser",
+      "kind": "api",
+      "shortPath": "documents.reintegrate",
+      "haystack": "documents.reintegrate docparser.api.documents.reintegrate send documents' parsed data to the parser's integrations and webhooks again. destructive"
+    },
+    {
+      "pluginId": "docparser",
+      "kind": "api",
+      "shortPath": "documents.reparse",
+      "haystack": "documents.reparse docparser.api.documents.reparse parse documents again with the parser's current rules, replacing their parsed data. uses no extra credits. destructive"
+    },
+    {
+      "pluginId": "docparser",
+      "kind": "api",
+      "shortPath": "documents.status",
+      "haystack": "documents.status docparser.api.documents.status check whether a document has been imported and parsed (done), and list any failed jobs. read"
+    },
+    {
+      "pluginId": "docparser",
+      "kind": "api",
+      "shortPath": "documents.upload",
+      "haystack": "documents.upload docparser.api.documents.upload upload a base64-encoded document into a parser. uses parsing credits (one per 5 pages). parsing takes a few minutes; check documents.status, then read results.get. destructive"
+    },
+    {
+      "pluginId": "docparser",
+      "kind": "api",
+      "shortPath": "models.list",
+      "haystack": "models.list docparser.api.models.list list the model layouts of one parser. read"
+    },
+    {
+      "pluginId": "docparser",
+      "kind": "api",
+      "shortPath": "parsers.list",
+      "haystack": "parsers.list docparser.api.parsers.list list document parsers (id and label). read"
+    },
+    {
+      "pluginId": "docparser",
+      "kind": "api",
+      "shortPath": "ping",
+      "haystack": "ping docparser.api.ping check that the api key is accepted. read"
+    },
+    {
+      "pluginId": "docparser",
+      "kind": "api",
+      "shortPath": "results.get",
+      "haystack": "results.get docparser.api.results.get get the parsed data of one document. read"
+    },
+    {
+      "pluginId": "docparser",
+      "kind": "api",
+      "shortPath": "results.list",
+      "haystack": "results.list docparser.api.results.list get the parsed data of a parser's documents, newest first (100 by default). filter by upload or processing date or remote id. each row holds the fields the parser extracted. read"
+    },
+    {
       "pluginId": "docsbotai",
       "kind": "api",
       "shortPath": "bots.create",
@@ -72698,6 +73747,30 @@
       "kind": "api",
       "shortPath": "v12.warehouse_update",
       "haystack": "v12.warehouse_update elorus.api.v12.warehouse_update update a warehouse. --- write"
+    },
+    {
+      "pluginId": "emailable",
+      "kind": "api",
+      "shortPath": "account.get",
+      "haystack": "account.get emailable.api.account.get get the credits left on the account. the owner email is not stored. read"
+    },
+    {
+      "pluginId": "emailable",
+      "kind": "api",
+      "shortPath": "batches.create",
+      "haystack": "batches.create emailable.api.batches.create start verifying a list of up to 50,000 addresses. uses one credit per address. poll batches.get for the results. destructive"
+    },
+    {
+      "pluginId": "emailable",
+      "kind": "api",
+      "shortPath": "batches.get",
+      "haystack": "batches.get emailable.api.batches.get get a batch: progress, counts per state and reason, and each address's result (up to 1,000 addresses) or a download link (larger batches). read"
+    },
+    {
+      "pluginId": "emailable",
+      "kind": "api",
+      "shortPath": "verifications.verify",
+      "haystack": "verifications.verify emailable.api.verifications.verify verify one email address: state (deliverable, undeliverable, risky, unknown), reason, score, and flags such as disposable, free, role and accept-all, plus a did-you-mean suggestion. uses one credit. if `pending` is true, call again within 5 minutes at no extra cost. read"
     },
     {
       "pluginId": "emailoctopus",
@@ -105070,6 +106143,48 @@
       "haystack": "web.search hyperbrowser.api.web.search search the web with clean structured results (consumes compute credits) read"
     },
     {
+      "pluginId": "identitycheck",
+      "kind": "api",
+      "shortPath": "verification.create",
+      "haystack": "verification.create identitycheck.api.verification.create start an individual verification; it uses plan credit, and with emailuser \"yes\" stackgo emails the person an invitation destructive"
+    },
+    {
+      "pluginId": "identitycheck",
+      "kind": "api",
+      "shortPath": "verification.get",
+      "haystack": "verification.get identitycheck.api.verification.get retrieve a verification and result read"
+    },
+    {
+      "pluginId": "identitycheck",
+      "kind": "api",
+      "shortPath": "verification.image",
+      "haystack": "verification.image identitycheck.api.verification.image download a document or selfie image captured during a verification (needs the verification.image key scope) read"
+    },
+    {
+      "pluginId": "identitycheck",
+      "kind": "api",
+      "shortPath": "verification.kyb",
+      "haystack": "verification.kyb identitycheck.api.verification.kyb start a business kyb check; it uses plan credit destructive"
+    },
+    {
+      "pluginId": "identitycheck",
+      "kind": "api",
+      "shortPath": "verification.sms",
+      "haystack": "verification.sms identitycheck.api.verification.sms start a verification and invite the person by sms; it uses plan credit destructive"
+    },
+    {
+      "pluginId": "identitycheck",
+      "kind": "api",
+      "shortPath": "verification.tranche2",
+      "haystack": "verification.tranche2 identitycheck.api.verification.tranche2 start a tranche 2 workflow; it uses plan credit destructive"
+    },
+    {
+      "pluginId": "identitycheck",
+      "kind": "webhook",
+      "shortPath": "verification.decision",
+      "haystack": "verification.decision identitycheck.webhooks.verification.decision a verification has a decision"
+    },
+    {
       "pluginId": "ignisign",
       "kind": "api",
       "shortPath": "applications.getContext",
@@ -109864,6 +110979,294 @@
       "haystack": "user.updatesettings jotform.api.user.updatesettings update user account settings including name, email, website and timezone write"
     },
     {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "applications.get",
+      "haystack": "applications.get jumpcloud.api.applications.get get a jumpcloud application by id read"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "applications.list",
+      "haystack": "applications.list jumpcloud.api.applications.list list jumpcloud applications with pagination read"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "commands.create",
+      "haystack": "commands.create jumpcloud.api.commands.create create a jumpcloud command write"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "commands.get",
+      "haystack": "commands.get jumpcloud.api.commands.get get a jumpcloud command by id read"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "commands.list",
+      "haystack": "commands.list jumpcloud.api.commands.list list jumpcloud commands with pagination read"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "commands.run",
+      "haystack": "commands.run jumpcloud.api.commands.run run a command against target systems destructive"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "organizations.get",
+      "haystack": "organizations.get jumpcloud.api.organizations.get get a jumpcloud organization by id read"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "organizations.list",
+      "haystack": "organizations.list jumpcloud.api.organizations.list list jumpcloud organizations read"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "policies.create",
+      "haystack": "policies.create jumpcloud.api.policies.create create a jumpcloud policy write"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "policies.delete",
+      "haystack": "policies.delete jumpcloud.api.policies.delete delete a jumpcloud policy destructive"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "policies.get",
+      "haystack": "policies.get jumpcloud.api.policies.get get a jumpcloud policy by id read"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "policies.list",
+      "haystack": "policies.list jumpcloud.api.policies.list list jumpcloud policies with pagination read"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "policies.listStatuses",
+      "haystack": "policies.liststatuses jumpcloud.api.policies.liststatuses list policy statuses for a policy read"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "policies.update",
+      "haystack": "policies.update jumpcloud.api.policies.update update a jumpcloud policy write"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "search.systems",
+      "haystack": "search.systems jumpcloud.api.search.systems search jumpcloud systems (post body search) read"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "search.systemUsers",
+      "haystack": "search.systemusers jumpcloud.api.search.systemusers search jumpcloud system users (post body search) read"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "systemGroups.create",
+      "haystack": "systemgroups.create jumpcloud.api.systemgroups.create create a jumpcloud system group write"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "systemGroups.delete",
+      "haystack": "systemgroups.delete jumpcloud.api.systemgroups.delete delete a jumpcloud system group destructive"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "systemGroups.get",
+      "haystack": "systemgroups.get jumpcloud.api.systemgroups.get get a jumpcloud system group by id read"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "systemGroups.list",
+      "haystack": "systemgroups.list jumpcloud.api.systemgroups.list list jumpcloud system groups with pagination read"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "systemGroups.manageMembers",
+      "haystack": "systemgroups.managemembers jumpcloud.api.systemgroups.managemembers manage (add or remove) members of a system group write"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "systemGroups.update",
+      "haystack": "systemgroups.update jumpcloud.api.systemgroups.update update a jumpcloud system group write"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "systems.delete",
+      "haystack": "systems.delete jumpcloud.api.systems.delete delete a jumpcloud system destructive"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "systems.get",
+      "haystack": "systems.get jumpcloud.api.systems.get get a jumpcloud system by id read"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "systems.list",
+      "haystack": "systems.list jumpcloud.api.systems.list list jumpcloud systems with pagination read"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "systems.listAssociations",
+      "haystack": "systems.listassociations jumpcloud.api.systems.listassociations list associations for a system read"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "systems.listPolicyStatuses",
+      "haystack": "systems.listpolicystatuses jumpcloud.api.systems.listpolicystatuses list policy statuses for a system read"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "systems.listUsers",
+      "haystack": "systems.listusers jumpcloud.api.systems.listusers list users bound to a system read"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "userGroups.create",
+      "haystack": "usergroups.create jumpcloud.api.usergroups.create create a jumpcloud user group write"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "userGroups.delete",
+      "haystack": "usergroups.delete jumpcloud.api.usergroups.delete delete a jumpcloud user group destructive"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "userGroups.get",
+      "haystack": "usergroups.get jumpcloud.api.usergroups.get get a jumpcloud user group by id read"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "userGroups.list",
+      "haystack": "usergroups.list jumpcloud.api.usergroups.list list jumpcloud user groups with pagination read"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "userGroups.listMembers",
+      "haystack": "usergroups.listmembers jumpcloud.api.usergroups.listmembers list members of a user group read"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "userGroups.listMembership",
+      "haystack": "usergroups.listmembership jumpcloud.api.usergroups.listmembership list a user group's membership graph read"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "userGroups.manageMembers",
+      "haystack": "usergroups.managemembers jumpcloud.api.usergroups.managemembers manage (add or remove) members of a user group write"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "userGroups.update",
+      "haystack": "usergroups.update jumpcloud.api.usergroups.update update a jumpcloud user group write"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "users.create",
+      "haystack": "users.create jumpcloud.api.users.create create a jumpcloud system user; unless state is staged, jumpcloud emails the user a welcome or activation link destructive"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "users.delete",
+      "haystack": "users.delete jumpcloud.api.users.delete delete a jumpcloud system user destructive"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "users.enforceMfa",
+      "haystack": "users.enforcemfa jumpcloud.api.users.enforcemfa update a system user's mfa requirement; an unenrolled user is locked out of mfa-protected resources once any exclusion ends destructive"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "users.expirePassword",
+      "haystack": "users.expirepassword jumpcloud.api.users.expirepassword expire a system user's password so they must reset it at next login destructive"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "users.get",
+      "haystack": "users.get jumpcloud.api.users.get get a jumpcloud system user by id read"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "users.list",
+      "haystack": "users.list jumpcloud.api.users.list list jumpcloud system users with limit/skip pagination read"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "users.listSshKeys",
+      "haystack": "users.listsshkeys jumpcloud.api.users.listsshkeys list ssh keys of a system user read"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "users.resetMfa",
+      "haystack": "users.resetmfa jumpcloud.api.users.resetmfa reset a system user's mfa (totp key) and start a new enrollment period destructive"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "users.setPassword",
+      "haystack": "users.setpassword jumpcloud.api.users.setpassword force-set a system user's password, replacing the current one destructive"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "users.syncMfa",
+      "haystack": "users.syncmfa jumpcloud.api.users.syncmfa sync system user mfa write"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "users.unlock",
+      "haystack": "users.unlock jumpcloud.api.users.unlock unlock a locked system user write"
+    },
+    {
+      "pluginId": "jumpcloud",
+      "kind": "api",
+      "shortPath": "users.update",
+      "haystack": "users.update jumpcloud.api.users.update update a jumpcloud system user; setting state to activated on a staged user emails them an activation link destructive"
+    },
+    {
       "pluginId": "junglescout",
       "kind": "api",
       "shortPath": "keywords.byAsin",
@@ -114646,6 +116049,78 @@
       "haystack": "videos.list linkedin.api.videos.list retrieve linkedin video metadata. read"
     },
     {
+      "pluginId": "linkup",
+      "kind": "api",
+      "shortPath": "answers.get",
+      "haystack": "answers.get linkup.api.answers.get search the web and return a written answer with its sources ($0.006; deep $0.055). read"
+    },
+    {
+      "pluginId": "linkup",
+      "kind": "api",
+      "shortPath": "credits.get",
+      "haystack": "credits.get linkup.api.credits.get get the account's remaining credit balance in dollars. read"
+    },
+    {
+      "pluginId": "linkup",
+      "kind": "api",
+      "shortPath": "pages.fetch",
+      "haystack": "pages.fetch linkup.api.pages.fetch fetch one web page or pdf as markdown, optionally with typed data from a schema ($0.001 to $0.011). read"
+    },
+    {
+      "pluginId": "linkup",
+      "kind": "api",
+      "shortPath": "research.create",
+      "haystack": "research.create linkup.api.research.create start a multi-step research task ($0.25 to $2.50 by reasoningdepth). poll research.get for the result. destructive"
+    },
+    {
+      "pluginId": "linkup",
+      "kind": "api",
+      "shortPath": "research.get",
+      "haystack": "research.get linkup.api.research.get get a research task: status, and the answer or structured data once completed. read"
+    },
+    {
+      "pluginId": "linkup",
+      "kind": "api",
+      "shortPath": "research.list",
+      "haystack": "research.list linkup.api.research.list list research tasks, newest or oldest first, paged. read"
+    },
+    {
+      "pluginId": "linkup",
+      "kind": "api",
+      "shortPath": "responses.create",
+      "haystack": "responses.create linkup.api.responses.create generate an answer grounded in live web results (openai responses format). paid generation. destructive"
+    },
+    {
+      "pluginId": "linkup",
+      "kind": "api",
+      "shortPath": "search.run",
+      "haystack": "search.run linkup.api.search.run search the web and return results with their text content ($0.005 a call; deep $0.05). filter by date and domain. read"
+    },
+    {
+      "pluginId": "linkup",
+      "kind": "api",
+      "shortPath": "search.structured",
+      "haystack": "search.structured linkup.api.search.structured search the web and return json shaped by your json schema, optionally with sources ($0.006; deep $0.055). read"
+    },
+    {
+      "pluginId": "linkup",
+      "kind": "api",
+      "shortPath": "tasks.create",
+      "haystack": "tasks.create linkup.api.tasks.create queue up to 100 search, fetch or research calls to run in the background, each billed like the direct call. poll tasks.get. destructive"
+    },
+    {
+      "pluginId": "linkup",
+      "kind": "api",
+      "shortPath": "tasks.get",
+      "haystack": "tasks.get linkup.api.tasks.get get one background task with its status and output. read"
+    },
+    {
+      "pluginId": "linkup",
+      "kind": "api",
+      "shortPath": "tasks.list",
+      "haystack": "tasks.list linkup.api.tasks.list list background tasks, filtered by type and status, paged, with the in-flight quota. read"
+    },
+    {
       "pluginId": "litescrape",
       "kind": "api",
       "shortPath": "appleAppStore.product",
@@ -116990,6 +118465,12 @@
       "kind": "api",
       "shortPath": "words.get",
       "haystack": "words.get merriamwebsterdict.api.words.get look up a word in merriam-webster (collegiate / sd2 / sd3 / sd4), returning definitions, part of speech, pronunciation, etymology, and audio — or spelling suggestions when no entry matches read"
+    },
+    {
+      "pluginId": "microsoftclarity",
+      "kind": "api",
+      "shortPath": "insights.get",
+      "haystack": "insights.get microsoftclarity.api.insights.get export project dashboard metrics for the past 1 to 3 days with optional dimension breakdowns read"
     },
     {
       "pluginId": "minerstat",
@@ -119932,6 +121413,306 @@
       "haystack": "predictions.listfiles nanonets.api.predictions.listfiles list a model prediction files in a day-since-epoch window, split into moderated and unmoderated read"
     },
     {
+      "pluginId": "nasa",
+      "kind": "api",
+      "shortPath": "apod.get",
+      "haystack": "apod.get nasa.api.apod.get read one day's picture by its six-digit date code, with title, explanation, image urls and the raw html page read"
+    },
+    {
+      "pluginId": "nasa",
+      "kind": "api",
+      "shortPath": "apod.list",
+      "haystack": "apod.list nasa.api.apod.list list astronomy picture of the day entries, newest first, or a date range in the legacy yymmdd form; nasa serves at most 25 per page read"
+    },
+    {
+      "pluginId": "nasa",
+      "kind": "api",
+      "shortPath": "donki.cme",
+      "haystack": "donki.cme nasa.api.donki.cme list coronal mass ejections in a date range, with the analyses and enlil model runs attached to each read"
+    },
+    {
+      "pluginId": "nasa",
+      "kind": "api",
+      "shortPath": "donki.cmeAnalysis",
+      "haystack": "donki.cmeanalysis nasa.api.donki.cmeanalysis list standalone cme analyses, filterable by speed, half angle, catalog and the provider's most-accurate flag read"
+    },
+    {
+      "pluginId": "nasa",
+      "kind": "api",
+      "shortPath": "donki.enlilSimulation",
+      "haystack": "donki.enlilsimulation nasa.api.donki.enlilsimulation list wsa-enlil model runs in a date range, with their cme inputs and the estimated arrival at each spacecraft read"
+    },
+    {
+      "pluginId": "nasa",
+      "kind": "api",
+      "shortPath": "donki.geomagneticStorm",
+      "haystack": "donki.geomagneticstorm nasa.api.donki.geomagneticstorm list geomagnetic storms in a date range, with the kp index readings behind each one read"
+    },
+    {
+      "pluginId": "nasa",
+      "kind": "api",
+      "shortPath": "donki.highSpeedStream",
+      "haystack": "donki.highspeedstream nasa.api.donki.highspeedstream list high speed solar wind streams in a date range, with the events each one is linked to read"
+    },
+    {
+      "pluginId": "nasa",
+      "kind": "api",
+      "shortPath": "donki.interplanetaryShock",
+      "haystack": "donki.interplanetaryshock nasa.api.donki.interplanetaryshock list interplanetary shocks in a date range, filterable by the observing spacecraft and the catalog read"
+    },
+    {
+      "pluginId": "nasa",
+      "kind": "api",
+      "shortPath": "donki.magnetopauseCrossing",
+      "haystack": "donki.magnetopausecrossing nasa.api.donki.magnetopausecrossing list magnetopause crossings in a date range read"
+    },
+    {
+      "pluginId": "nasa",
+      "kind": "api",
+      "shortPath": "donki.notification",
+      "haystack": "donki.notification nasa.api.donki.notification list space weather notifications in a date window of at most 30 days, readable as text or filtered to one event type read"
+    },
+    {
+      "pluginId": "nasa",
+      "kind": "api",
+      "shortPath": "donki.radiationBelt",
+      "haystack": "donki.radiationbelt nasa.api.donki.radiationbelt list radiation belt enhancements in a date range read"
+    },
+    {
+      "pluginId": "nasa",
+      "kind": "api",
+      "shortPath": "donki.solarEnergeticParticle",
+      "haystack": "donki.solarenergeticparticle nasa.api.donki.solarenergeticparticle list solar energetic particle events in a date range read"
+    },
+    {
+      "pluginId": "nasa",
+      "kind": "api",
+      "shortPath": "donki.solarFlare",
+      "haystack": "donki.solarflare nasa.api.donki.solarflare list solar flares in a date range, with begin, peak and end times, the class and the active region read"
+    },
+    {
+      "pluginId": "nasa",
+      "kind": "api",
+      "shortPath": "eonet.categories",
+      "haystack": "eonet.categories nasa.api.eonet.categories list the eonet categories events can be filed under read"
+    },
+    {
+      "pluginId": "nasa",
+      "kind": "api",
+      "shortPath": "eonet.event",
+      "haystack": "eonet.event nasa.api.eonet.event read one eonet event with its categories, sources and the geometry of each observation read"
+    },
+    {
+      "pluginId": "nasa",
+      "kind": "api",
+      "shortPath": "eonet.events",
+      "haystack": "eonet.events nasa.api.eonet.events list nasa's curated natural events, such as wildfires and storms, filterable by category, source, date window, magnitude and bounding box read"
+    },
+    {
+      "pluginId": "nasa",
+      "kind": "api",
+      "shortPath": "epic.availableDates",
+      "haystack": "epic.availabledates nasa.api.epic.availabledates list every day that has epic imagery, oldest first read"
+    },
+    {
+      "pluginId": "nasa",
+      "kind": "api",
+      "shortPath": "epic.images",
+      "haystack": "epic.images nasa.api.epic.images read dscovr epic's full-disc imagery metadata for the most recent day or one given day, in natural or enhanced colour read"
+    },
+    {
+      "pluginId": "nasa",
+      "kind": "api",
+      "shortPath": "images.asset",
+      "haystack": "images.asset nasa.api.images.asset list an asset's downloadable file urls at every size, and the metadata.json entry among them read"
+    },
+    {
+      "pluginId": "nasa",
+      "kind": "api",
+      "shortPath": "images.metadata",
+      "haystack": "images.metadata nasa.api.images.metadata return the url of an asset's metadata.json, which holds the raw exif and file details read"
+    },
+    {
+      "pluginId": "nasa",
+      "kind": "api",
+      "shortPath": "images.search",
+      "haystack": "images.search nasa.api.images.search search the nasa image and video library by text, centre, keywords, media type or year window, with the total hit count and the next page read"
+    },
+    {
+      "pluginId": "nasa",
+      "kind": "api",
+      "shortPath": "neo.browse",
+      "haystack": "neo.browse nasa.api.neo.browse page through the whole near-earth asteroid catalogue, with the total page count in the response read"
+    },
+    {
+      "pluginId": "nasa",
+      "kind": "api",
+      "shortPath": "neo.feed",
+      "haystack": "neo.feed nasa.api.neo.feed list asteroids making close approaches in a date window of at most seven days, grouped by the day of approach read"
+    },
+    {
+      "pluginId": "nasa",
+      "kind": "api",
+      "shortPath": "neo.lookup",
+      "haystack": "neo.lookup nasa.api.neo.lookup read one asteroid's full record, including its orbital elements and every recorded close approach read"
+    },
+    {
+      "pluginId": "nasdaq",
+      "kind": "api",
+      "shortPath": "tables.export",
+      "haystack": "tables.export nasdaq.api.tables.export queue a bulk export of a table and return the signed zip link, valid for 30 minutes; the first call usually reports the file as still being built read"
+    },
+    {
+      "pluginId": "nasdaq",
+      "kind": "api",
+      "shortPath": "tables.metadata",
+      "haystack": "tables.metadata nasdaq.api.tables.metadata read a table definition: its columns and types, the columns that can filter a query, its primary key and when it last refreshed read"
+    },
+    {
+      "pluginId": "nasdaq",
+      "kind": "api",
+      "shortPath": "tables.rows",
+      "haystack": "tables.rows nasdaq.api.tables.rows read one page of rows from a nasdaq data link table, filtered by the columns that table marks filterable; page with the returned cursor read"
+    },
+    {
+      "pluginId": "needle",
+      "kind": "api",
+      "shortPath": "account.me",
+      "haystack": "account.me needle.api.account.me read the user and organization the api key belongs to, with the key’s role read"
+    },
+    {
+      "pluginId": "needle",
+      "kind": "api",
+      "shortPath": "campaigns.create",
+      "haystack": "campaigns.create needle.api.campaigns.create create a campaign in draft from a sequence graph; it contacts nobody until campaigns.update sets it active write"
+    },
+    {
+      "pluginId": "needle",
+      "kind": "api",
+      "shortPath": "campaigns.delete",
+      "haystack": "campaigns.delete needle.api.campaigns.delete archive a campaign: it stops sending and leaves the active list, and the record is kept destructive"
+    },
+    {
+      "pluginId": "needle",
+      "kind": "api",
+      "shortPath": "campaigns.enroll",
+      "haystack": "campaigns.enroll needle.api.campaigns.enroll enroll up to 500 leads at once, with one result per lead so a batch can partly succeed; an enrolled lead can be contacted destructive"
+    },
+    {
+      "pluginId": "needle",
+      "kind": "api",
+      "shortPath": "campaigns.get",
+      "haystack": "campaigns.get needle.api.campaigns.get read one campaign, including its sequence graph and status read"
+    },
+    {
+      "pluginId": "needle",
+      "kind": "api",
+      "shortPath": "campaigns.leads",
+      "haystack": "campaigns.leads needle.api.campaigns.leads page through the leads enrolled in a campaign with their status read"
+    },
+    {
+      "pluginId": "needle",
+      "kind": "api",
+      "shortPath": "campaigns.list",
+      "haystack": "campaigns.list needle.api.campaigns.list page through campaigns, optionally filtered by status read"
+    },
+    {
+      "pluginId": "needle",
+      "kind": "api",
+      "shortPath": "campaigns.stats",
+      "haystack": "campaigns.stats needle.api.campaigns.stats read a campaign’s progress and funnel: invites, messages, replies, and why leads were skipped read"
+    },
+    {
+      "pluginId": "needle",
+      "kind": "api",
+      "shortPath": "campaigns.stopLeads",
+      "haystack": "campaigns.stopleads needle.api.campaigns.stopleads stop leads in a campaign so no further step reaches them, keeping them in the list write"
+    },
+    {
+      "pluginId": "needle",
+      "kind": "api",
+      "shortPath": "campaigns.update",
+      "haystack": "campaigns.update needle.api.campaigns.update rename a campaign, replace its graph, or set active to start sending and paused to halt it; going active begins contact and cannot be undone destructive"
+    },
+    {
+      "pluginId": "needle",
+      "kind": "api",
+      "shortPath": "compose.preview",
+      "haystack": "compose.preview needle.api.compose.preview preview an ai-composed message for a lead without sending it, with the context sources it used read"
+    },
+    {
+      "pluginId": "needle",
+      "kind": "api",
+      "shortPath": "leads.create",
+      "haystack": "leads.create needle.api.leads.create create a lead with a linkedin or instagram identity; a duplicate identity is refused with 409, so use leads.upsert to merge instead write"
+    },
+    {
+      "pluginId": "needle",
+      "kind": "api",
+      "shortPath": "leads.delete",
+      "haystack": "leads.delete needle.api.leads.delete delete a lead and its identities permanently; there is no restore call destructive"
+    },
+    {
+      "pluginId": "needle",
+      "kind": "api",
+      "shortPath": "leads.get",
+      "haystack": "leads.get needle.api.leads.get read one lead by id, with its identities and live enrollment read"
+    },
+    {
+      "pluginId": "needle",
+      "kind": "api",
+      "shortPath": "leads.list",
+      "haystack": "leads.list needle.api.leads.list page through the workspace’s leads by cursor read"
+    },
+    {
+      "pluginId": "needle",
+      "kind": "api",
+      "shortPath": "leads.search",
+      "haystack": "leads.search needle.api.leads.search search leads by free text and structured filters, combined with and, paged by cursor read"
+    },
+    {
+      "pluginId": "needle",
+      "kind": "api",
+      "shortPath": "leads.update",
+      "haystack": "leads.update needle.api.leads.update patch a lead’s fields by id; sending identities replaces the whole set rather than adding to it write"
+    },
+    {
+      "pluginId": "needle",
+      "kind": "api",
+      "shortPath": "leads.upsert",
+      "haystack": "leads.upsert needle.api.leads.upsert create the lead, or patch the fields onto the one an identity already belongs to, reporting created or matched write"
+    },
+    {
+      "pluginId": "needle",
+      "kind": "api",
+      "shortPath": "places.search",
+      "haystack": "places.search needle.api.places.search search places by free text or around a point, returning addresses, coordinates and websites read"
+    },
+    {
+      "pluginId": "needle",
+      "kind": "api",
+      "shortPath": "suppressions.check",
+      "haystack": "suppressions.check needle.api.suppressions.check check up to 1000 identities against the suppression list and answer contactable with the reason when not read"
+    },
+    {
+      "pluginId": "needle",
+      "kind": "api",
+      "shortPath": "suppressions.create",
+      "haystack": "suppressions.create needle.api.suppressions.create suppress up to 1000 leads or company domains, with counts for what was created and what was already listed write"
+    },
+    {
+      "pluginId": "needle",
+      "kind": "api",
+      "shortPath": "suppressions.delete",
+      "haystack": "suppressions.delete needle.api.suppressions.delete remove a suppression entry, which makes that person or domain contactable again destructive"
+    },
+    {
+      "pluginId": "needle",
+      "kind": "api",
+      "shortPath": "suppressions.list",
+      "haystack": "suppressions.list needle.api.suppressions.list page through suppression entries, optionally filtered by reason read"
+    },
+    {
       "pluginId": "neon",
       "kind": "api",
       "shortPath": "apiKeys.createApiKey",
@@ -120592,6 +122373,102 @@
       "haystack": "vpc.listprojectvpcendpoints neon.api.vpc.listprojectvpcendpoints list vpc endpoint restrictions read"
     },
     {
+      "pluginId": "nethunt",
+      "kind": "api",
+      "shortPath": "account.verify",
+      "haystack": "account.verify nethunt.api.account.verify confirm the email and key pair work and return the user behind them read"
+    },
+    {
+      "pluginId": "nethunt",
+      "kind": "api",
+      "shortPath": "folders.fields",
+      "haystack": "folders.fields nethunt.api.folders.fields list a folder's field names, which are user-defined and are what a create or update must use read"
+    },
+    {
+      "pluginId": "nethunt",
+      "kind": "api",
+      "shortPath": "folders.list",
+      "haystack": "folders.list nethunt.api.folders.list list the folders this account can read, or only the ones it may create records in read"
+    },
+    {
+      "pluginId": "nethunt",
+      "kind": "api",
+      "shortPath": "records.callLog",
+      "haystack": "records.calllog nethunt.api.records.calllog log a call on a record’s timeline with its start time and duration in minutes write"
+    },
+    {
+      "pluginId": "nethunt",
+      "kind": "api",
+      "shortPath": "records.changes",
+      "haystack": "records.changes nethunt.api.records.changes read the audit trail for a folder: who changed which field and when, as the values removed and added, including deletes read"
+    },
+    {
+      "pluginId": "nethunt",
+      "kind": "api",
+      "shortPath": "records.comment",
+      "haystack": "records.comment nethunt.api.records.comment add a comment to a record’s timeline write"
+    },
+    {
+      "pluginId": "nethunt",
+      "kind": "api",
+      "shortPath": "records.create",
+      "haystack": "records.create nethunt.api.records.create create one record in a folder from a flat map of the folder’s field names, with the time zone nethunt needs to read dates write"
+    },
+    {
+      "pluginId": "nethunt",
+      "kind": "api",
+      "shortPath": "records.delete",
+      "haystack": "records.delete nethunt.api.records.delete delete a record permanently; nethunt has no restore route and the audit trail keeps only the change entry destructive"
+    },
+    {
+      "pluginId": "nethunt",
+      "kind": "api",
+      "shortPath": "records.find",
+      "haystack": "records.find nethunt.api.records.find find records in a folder by id or by a text query such as name:doe read"
+    },
+    {
+      "pluginId": "nethunt",
+      "kind": "api",
+      "shortPath": "records.linkThread",
+      "haystack": "records.linkthread nethunt.api.records.linkthread attach an existing gmail thread to a record write"
+    },
+    {
+      "pluginId": "nethunt",
+      "kind": "api",
+      "shortPath": "records.recent",
+      "haystack": "records.recent nethunt.api.records.recent list records created in a folder after a timestamp; nethunt defaults the window to 24 hours read"
+    },
+    {
+      "pluginId": "nethunt",
+      "kind": "api",
+      "shortPath": "records.recentCallLogs",
+      "haystack": "records.recentcalllogs nethunt.api.records.recentcalllogs list calls logged on records in a folder after a timestamp, with start, end and duration read"
+    },
+    {
+      "pluginId": "nethunt",
+      "kind": "api",
+      "shortPath": "records.recentComments",
+      "haystack": "records.recentcomments nethunt.api.records.recentcomments list comments added to records in a folder after a timestamp; nethunt defaults the window to 24 hours read"
+    },
+    {
+      "pluginId": "nethunt",
+      "kind": "api",
+      "shortPath": "records.recentFiles",
+      "haystack": "records.recentfiles nethunt.api.records.recentfiles list google drive files attached to records in a folder after a timestamp read"
+    },
+    {
+      "pluginId": "nethunt",
+      "kind": "api",
+      "shortPath": "records.update",
+      "haystack": "records.update nethunt.api.records.update update a record’s fields through per-field actions, each able to overwrite, remove or add values write"
+    },
+    {
+      "pluginId": "nethunt",
+      "kind": "api",
+      "shortPath": "records.updated",
+      "haystack": "records.updated nethunt.api.records.updated list records updated in a folder after a timestamp, optionally only when named fields changed read"
+    },
+    {
       "pluginId": "netsuite",
       "kind": "api",
       "shortPath": "asyncJobs.asyncGetJobStatus",
@@ -121096,10 +122973,280 @@
       "haystack": "vendors.updatevendor netsuite.api.vendors.updatevendor update a netsuite vendor record write"
     },
     {
+      "pluginId": "neuronwriter",
+      "kind": "api",
+      "shortPath": "analysis.get",
+      "haystack": "analysis.get neuronwriter.api.analysis.get poll one analysis: the status alone while it runs, then the target word count, terms, questions and serp competitors read"
+    },
+    {
+      "pluginId": "neuronwriter",
+      "kind": "api",
+      "shortPath": "analysis.start",
+      "haystack": "analysis.start neuronwriter.api.analysis.start queue a content analysis for a keyword, spending one content writer analysis from the monthly limit; poll analysis.get for the recommendations destructive"
+    },
+    {
+      "pluginId": "neuronwriter",
+      "kind": "api",
+      "shortPath": "content.evaluate",
+      "haystack": "content.evaluate neuronwriter.api.content.evaluate score content against its analysis without saving a revision, so a draft can be checked before it is written back read"
+    },
+    {
+      "pluginId": "neuronwriter",
+      "kind": "api",
+      "shortPath": "content.get",
+      "haystack": "content.get neuronwriter.api.content.get read a query's last saved content revision, or the latest autosave as well read"
+    },
+    {
+      "pluginId": "neuronwriter",
+      "kind": "api",
+      "shortPath": "content.import",
+      "haystack": "content.import neuronwriter.api.content.import replace the editor content from html or a fetched url, saving it as a new revision write"
+    },
+    {
+      "pluginId": "neuronwriter",
+      "kind": "api",
+      "shortPath": "projects.list",
+      "haystack": "projects.list neuronwriter.api.projects.list list the account's projects with the id, language and search engine each one uses read"
+    },
+    {
+      "pluginId": "neuronwriter",
+      "kind": "api",
+      "shortPath": "queries.list",
+      "haystack": "queries.list neuronwriter.api.queries.list list the queries in a project, filterable by status, source, keyword, language, engine, dates and tags read"
+    },
+    {
+      "pluginId": "neutrino",
+      "kind": "api",
+      "shortPath": "commerce.binLookup",
+      "haystack": "commerce.binlookup neutrino.api.commerce.binlookup read card facts from a bin: brand, category, type, issuing country, and whether the calling ip matches that country read"
+    },
+    {
+      "pluginId": "neutrino",
+      "kind": "api",
+      "shortPath": "commerce.convert",
+      "haystack": "commerce.convert neutrino.api.commerce.convert convert between currencies, units and number bases using the unit codes neutrino publishes read"
+    },
+    {
+      "pluginId": "neutrino",
+      "kind": "api",
+      "shortPath": "email.validate",
+      "haystack": "email.validate neutrino.api.email.validate validate an address without contacting it: syntax, domain, mx, and flags for disposable, free and personal read"
+    },
+    {
+      "pluginId": "neutrino",
+      "kind": "api",
+      "shortPath": "email.verify",
+      "haystack": "email.verify neutrino.api.email.verify validate an address and probe its mailbox over smtp, reporting verified separately from valid read"
+    },
+    {
+      "pluginId": "neutrino",
+      "kind": "api",
+      "shortPath": "geocode.address",
+      "haystack": "geocode.address neutrino.api.geocode.address forward geocode a full address or its parts, returning every location that matched read"
+    },
+    {
+      "pluginId": "neutrino",
+      "kind": "api",
+      "shortPath": "geocode.reverse",
+      "haystack": "geocode.reverse neutrino.api.geocode.reverse reverse geocode a coordinate into a local address and a structured one with the same fields everywhere read"
+    },
+    {
+      "pluginId": "neutrino",
+      "kind": "api",
+      "shortPath": "ip.blocklist",
+      "haystack": "ip.blocklist neutrino.api.ip.blocklist check an address against the blocklists neutrino tracks, with a flag per threat type and the sensors that matched read"
+    },
+    {
+      "pluginId": "neutrino",
+      "kind": "api",
+      "shortPath": "ip.info",
+      "haystack": "ip.info neutrino.api.ip.info geolocate one ipv4 or ipv6 address: country, city, region, time zone and currency read"
+    },
+    {
+      "pluginId": "neutrino",
+      "kind": "api",
+      "shortPath": "ip.probe",
+      "haystack": "ip.probe neutrino.api.ip.probe identify the network and hosting provider behind an address and whether it is hosting rather than a consumer line read"
+    },
+    {
+      "pluginId": "neutrino",
+      "kind": "api",
+      "shortPath": "messaging.phoneVerify",
+      "haystack": "messaging.phoneverify neutrino.api.messaging.phoneverify call a number and read out a generated security code, which reaches a real person and costs credits; check the code with verifysecuritycode destructive"
+    },
+    {
+      "pluginId": "neutrino",
+      "kind": "api",
+      "shortPath": "messaging.smsVerify",
+      "haystack": "messaging.smsverify neutrino.api.messaging.smsverify generate a security code and text it to a number, which sends a real sms and costs a credit; check the code the person types with verifysecuritycode destructive"
+    },
+    {
+      "pluginId": "neutrino",
+      "kind": "api",
+      "shortPath": "messaging.verifySecurityCode",
+      "haystack": "messaging.verifysecuritycode neutrino.api.messaging.verifysecuritycode check a code a person typed against the codes smsverify and phoneverify sent, optionally capping failed attempts per user write"
+    },
+    {
+      "pluginId": "neutrino",
+      "kind": "api",
+      "shortPath": "phone.hlrLookup",
+      "haystack": "phone.hlrlookup neutrino.api.phone.hlrlookup query the home location register for whether a number is live, which network it is on now and whether it was ported read"
+    },
+    {
+      "pluginId": "neutrino",
+      "kind": "api",
+      "shortPath": "phone.validate",
+      "haystack": "phone.validate neutrino.api.phone.validate parse a number into international and local forms with its location, carrier prefix and mobile flag read"
+    },
+    {
+      "pluginId": "neutrino",
+      "kind": "api",
+      "shortPath": "text.badWordFilter",
+      "haystack": "text.badwordfilter neutrino.api.text.badwordfilter scan text or a page for profanity and return the words found and a censored copy read"
+    },
+    {
+      "pluginId": "neutrino",
+      "kind": "api",
+      "shortPath": "web.browserBot",
+      "haystack": "web.browserbot neutrino.api.web.browserbot load a page in a real browser, optionally run javascript on it (click, fill, submit), and return the rendered content and selected elements write"
+    },
+    {
+      "pluginId": "neutrino",
+      "kind": "api",
+      "shortPath": "web.domainLookup",
+      "haystack": "web.domainlookup neutrino.api.web.domainlookup read domain facts: subdomain and tld, rank, and whether the blocklists know it for phishing, malware or spam read"
+    },
+    {
+      "pluginId": "neutrino",
+      "kind": "api",
+      "shortPath": "web.hostReputation",
+      "haystack": "web.hostreputation neutrino.api.web.hostreputation check a host or ip against many dnsbls, with one entry per list showing whether it listed the host read"
+    },
+    {
+      "pluginId": "neutrino",
+      "kind": "api",
+      "shortPath": "web.uaLookup",
+      "haystack": "web.ualookup neutrino.api.web.ualookup parse a user-agent string into browser, engine, os and device fields read"
+    },
+    {
+      "pluginId": "neutrino",
+      "kind": "api",
+      "shortPath": "web.urlInfo",
+      "haystack": "web.urlinfo neutrino.api.web.urlinfo inspect a url: http status, server location and host, load time, and the page body when asked read"
+    },
+    {
       "pluginId": "neverbounce",
       "kind": "api",
       "shortPath": "single.check",
       "haystack": "single.check neverbounce.api.single.check verify one email address as it comes in, such as a form signup (valid, invalid, disposable, catchall or unknown); uses one verification credit. neverbounce may lock the account if this is looped over an existing list; lists belong in its bulk jobs read"
+    },
+    {
+      "pluginId": "newrelic",
+      "kind": "api",
+      "shortPath": "accounts.list",
+      "haystack": "accounts.list newrelic.api.accounts.list list the accounts this key can reach, with the ids nrql and issues take read"
+    },
+    {
+      "pluginId": "newrelic",
+      "kind": "api",
+      "shortPath": "alerts.conditions",
+      "haystack": "alerts.conditions newrelic.api.alerts.conditions list the apm, browser and mobile conditions in one policy; external service, synthetic and nrql conditions are separate endpoints and are not covered read"
+    },
+    {
+      "pluginId": "newrelic",
+      "kind": "api",
+      "shortPath": "alerts.createNrqlCondition",
+      "haystack": "alerts.createnrqlcondition newrelic.api.alerts.createnrqlcondition add a static nrql alert condition to a policy: the query, thresholds and how long they must hold write"
+    },
+    {
+      "pluginId": "newrelic",
+      "kind": "api",
+      "shortPath": "alerts.createPolicy",
+      "haystack": "alerts.createpolicy newrelic.api.alerts.createpolicy create an alert policy and choose whether incidents roll up per policy, per condition, or per condition and signal write"
+    },
+    {
+      "pluginId": "newrelic",
+      "kind": "api",
+      "shortPath": "alerts.deleteNrqlCondition",
+      "haystack": "alerts.deletenrqlcondition newrelic.api.alerts.deletenrqlcondition delete a nrql alert condition; new relic has no restore call destructive"
+    },
+    {
+      "pluginId": "newrelic",
+      "kind": "api",
+      "shortPath": "alerts.deletePolicy",
+      "haystack": "alerts.deletepolicy newrelic.api.alerts.deletepolicy delete an alert policy and the conditions attached to it; new relic has no restore call destructive"
+    },
+    {
+      "pluginId": "newrelic",
+      "kind": "api",
+      "shortPath": "alerts.nrqlConditions",
+      "haystack": "alerts.nrqlconditions newrelic.api.alerts.nrqlconditions list the static nrql conditions in one policy, with their query, thresholds and signal settings read"
+    },
+    {
+      "pluginId": "newrelic",
+      "kind": "api",
+      "shortPath": "alerts.policies",
+      "haystack": "alerts.policies newrelic.api.alerts.policies list alert policies with their incident rollup preference read"
+    },
+    {
+      "pluginId": "newrelic",
+      "kind": "api",
+      "shortPath": "alerts.updateNrqlCondition",
+      "haystack": "alerts.updatenrqlcondition newrelic.api.alerts.updatenrqlcondition replace a nrql condition, e.g. to enable it or move its threshold; send the whole condition, since a partial body is refused write"
+    },
+    {
+      "pluginId": "newrelic",
+      "kind": "api",
+      "shortPath": "alerts.updatePolicy",
+      "haystack": "alerts.updatepolicy newrelic.api.alerts.updatepolicy rename an alert policy or change how its incidents roll up; both fields are sent, since new relic replaces the policy write"
+    },
+    {
+      "pluginId": "newrelic",
+      "kind": "api",
+      "shortPath": "applications.get",
+      "haystack": "applications.get newrelic.api.applications.get read one application by id with the same health, reporting and summary block read"
+    },
+    {
+      "pluginId": "newrelic",
+      "kind": "api",
+      "shortPath": "applications.list",
+      "haystack": "applications.list newrelic.api.applications.list list applications with their health colour, whether they are reporting, and the summary metrics the ui shows read"
+    },
+    {
+      "pluginId": "newrelic",
+      "kind": "api",
+      "shortPath": "changeTracking.createDeployment",
+      "haystack": "changetracking.createdeployment newrelic.api.changetracking.createdeployment record a deployment marker (version, commit, changelog) on an entity; markers cannot be deleted destructive"
+    },
+    {
+      "pluginId": "newrelic",
+      "kind": "api",
+      "shortPath": "entities.get",
+      "haystack": "entities.get newrelic.api.entities.get read up to 25 entities by guid with their type, reporting state, alert severity and tags read"
+    },
+    {
+      "pluginId": "newrelic",
+      "kind": "api",
+      "shortPath": "entities.search",
+      "haystack": "entities.search newrelic.api.entities.search search monitored entities (services, hosts, browser apps, dashboards, monitors, alert conditions) with a filter such as type = 'application' read"
+    },
+    {
+      "pluginId": "newrelic",
+      "kind": "api",
+      "shortPath": "issues.list",
+      "haystack": "issues.list newrelic.api.issues.list list alert issues for an account, filtered by state, priority, entity or time window read"
+    },
+    {
+      "pluginId": "newrelic",
+      "kind": "api",
+      "shortPath": "metrics.get",
+      "haystack": "metrics.get newrelic.api.metrics.get read metric timeslices for an application over a time window, or one averaged value per metric with summarize read"
+    },
+    {
+      "pluginId": "newrelic",
+      "kind": "api",
+      "shortPath": "query.nrql",
+      "haystack": "query.nrql newrelic.api.query.nrql run a nrql query against one account through nerdgraph and return its rows and the time window new relic actually ran over read"
     },
     {
       "pluginId": "newsapi",
@@ -121550,6 +123697,390 @@
       "kind": "api",
       "shortPath": "setup.updateLinkedIp",
       "haystack": "setup.updatelinkedip nextdns.api.setup.updatelinkedip update the profile's linked ip to the caller's current public ip write"
+    },
+    {
+      "pluginId": "ngrok",
+      "kind": "api",
+      "shortPath": "apiKeys.create",
+      "haystack": "apikeys.create ngrok.api.apikeys.create mint an api key; the token is returned once in this response and never again, so it must be stored now write"
+    },
+    {
+      "pluginId": "ngrok",
+      "kind": "api",
+      "shortPath": "apiKeys.delete",
+      "haystack": "apikeys.delete ngrok.api.apikeys.delete revoke an api key permanently; anything still using it stops authenticating destructive"
+    },
+    {
+      "pluginId": "ngrok",
+      "kind": "api",
+      "shortPath": "apiKeys.list",
+      "haystack": "apikeys.list ngrok.api.apikeys.list list the account’s api keys without their tokens, with owner and creation time read"
+    },
+    {
+      "pluginId": "ngrok",
+      "kind": "api",
+      "shortPath": "domains.create",
+      "haystack": "domains.create ngrok.api.domains.create reserve a hostname and return the cname target to point dns at; certificate issuance starts once it resolves write"
+    },
+    {
+      "pluginId": "ngrok",
+      "kind": "api",
+      "shortPath": "domains.delete",
+      "haystack": "domains.delete ngrok.api.domains.delete release a reserved domain, which stops it resolving through ngrok; another account can then claim it destructive"
+    },
+    {
+      "pluginId": "ngrok",
+      "kind": "api",
+      "shortPath": "domains.get",
+      "haystack": "domains.get ngrok.api.domains.get read one reserved domain, including its certificate provisioning status read"
+    },
+    {
+      "pluginId": "ngrok",
+      "kind": "api",
+      "shortPath": "domains.list",
+      "haystack": "domains.list ngrok.api.domains.list list reserved domains with their cname target and certificate state read"
+    },
+    {
+      "pluginId": "ngrok",
+      "kind": "api",
+      "shortPath": "domains.update",
+      "haystack": "domains.update ngrok.api.domains.update change a reserved domain’s description, certificate, management policy or allowed ips write"
+    },
+    {
+      "pluginId": "ngrok",
+      "kind": "api",
+      "shortPath": "endpoints.create",
+      "haystack": "endpoints.create ngrok.api.endpoints.create create a cloud endpoint at a url you own (e.g. your ngrok dev domain); its required traffic policy decides what happens to requests, and it serves immediately write"
+    },
+    {
+      "pluginId": "ngrok",
+      "kind": "api",
+      "shortPath": "endpoints.delete",
+      "haystack": "endpoints.delete ngrok.api.endpoints.delete delete a cloud endpoint; its public url stops resolving and ngrok has no restore call destructive"
+    },
+    {
+      "pluginId": "ngrok",
+      "kind": "api",
+      "shortPath": "endpoints.get",
+      "haystack": "endpoints.get ngrok.api.endpoints.get read one cloud endpoint by id read"
+    },
+    {
+      "pluginId": "ngrok",
+      "kind": "api",
+      "shortPath": "endpoints.list",
+      "haystack": "endpoints.list ngrok.api.endpoints.list list cloud endpoints with their public url, upstream and traffic policy, newest first read"
+    },
+    {
+      "pluginId": "ngrok",
+      "kind": "api",
+      "shortPath": "endpoints.update",
+      "haystack": "endpoints.update ngrok.api.endpoints.update change an endpoint’s description, metadata, traffic policy or bindings, leaving fields that are omitted alone write"
+    },
+    {
+      "pluginId": "ngrok",
+      "kind": "api",
+      "shortPath": "events.create",
+      "haystack": "events.create ngrok.api.events.create subscribe to event types and deliver them to existing destination ids, which are created through a separate api write"
+    },
+    {
+      "pluginId": "ngrok",
+      "kind": "api",
+      "shortPath": "events.delete",
+      "haystack": "events.delete ngrok.api.events.delete delete an event subscription, which stops those events being delivered destructive"
+    },
+    {
+      "pluginId": "ngrok",
+      "kind": "api",
+      "shortPath": "events.get",
+      "haystack": "events.get ngrok.api.events.get read one event subscription by id read"
+    },
+    {
+      "pluginId": "ngrok",
+      "kind": "api",
+      "shortPath": "events.list",
+      "haystack": "events.list ngrok.api.events.list list event subscriptions with their sources and destinations read"
+    },
+    {
+      "pluginId": "ngrok",
+      "kind": "api",
+      "shortPath": "tunnels.list",
+      "haystack": "tunnels.list ngrok.api.tunnels.list list the tunnels open agent sessions and their public urls read"
+    },
+    {
+      "pluginId": "niftyimages",
+      "kind": "api",
+      "shortPath": "beePlugin.suspendUser",
+      "haystack": "beeplugin.suspenduser niftyimages.api.beeplugin.suspenduser suspend or reinstate a bee plugin user write"
+    },
+    {
+      "pluginId": "niftyimages",
+      "kind": "api",
+      "shortPath": "beePlugin.userImages",
+      "haystack": "beeplugin.userimages niftyimages.api.beeplugin.userimages list the images one bee plugin user made over a window read"
+    },
+    {
+      "pluginId": "niftyimages",
+      "kind": "api",
+      "shortPath": "beePlugin.users",
+      "haystack": "beeplugin.users niftyimages.api.beeplugin.users list bee plugin users with their image and open counts over a window read"
+    },
+    {
+      "pluginId": "niftyimages",
+      "kind": "api",
+      "shortPath": "images.delete",
+      "haystack": "images.delete niftyimages.api.images.delete delete an image or timer by url; emails that embed it stop showing it destructive"
+    },
+    {
+      "pluginId": "niftyimages",
+      "kind": "api",
+      "shortPath": "images.get",
+      "haystack": "images.get niftyimages.api.images.get read one image or timer by its url: type, opens, dates and whether it is active read"
+    },
+    {
+      "pluginId": "niftyimages",
+      "kind": "api",
+      "shortPath": "images.list",
+      "haystack": "images.list niftyimages.api.images.list page through every personalized image and countdown timer in the account read"
+    },
+    {
+      "pluginId": "niftyimages",
+      "kind": "api",
+      "shortPath": "images.stats",
+      "haystack": "images.stats niftyimages.api.images.stats opens per image over a date range (the last 30 days by default) read"
+    },
+    {
+      "pluginId": "niftyimages",
+      "kind": "api",
+      "shortPath": "maps.addLocation",
+      "haystack": "maps.addlocation niftyimages.api.maps.addlocation add a location to a map by address or coordinates, with custom properties write"
+    },
+    {
+      "pluginId": "niftyimages",
+      "kind": "api",
+      "shortPath": "maps.deleteLocation",
+      "haystack": "maps.deletelocation niftyimages.api.maps.deletelocation remove a location from a map destructive"
+    },
+    {
+      "pluginId": "niftyimages",
+      "kind": "api",
+      "shortPath": "maps.get",
+      "haystack": "maps.get niftyimages.api.maps.get read one map: how many locations are searchable, failed or queued, plus opens and clicks read"
+    },
+    {
+      "pluginId": "niftyimages",
+      "kind": "api",
+      "shortPath": "maps.list",
+      "haystack": "maps.list niftyimages.api.maps.list list the map images in the account with their opens read"
+    },
+    {
+      "pluginId": "niftyimages",
+      "kind": "api",
+      "shortPath": "maps.searchLocations",
+      "haystack": "maps.searchlocations niftyimages.api.maps.searchlocations find locations in a map by address, location id, niftyid or latitude and longitude read"
+    },
+    {
+      "pluginId": "niftyimages",
+      "kind": "api",
+      "shortPath": "maps.updateLocation",
+      "haystack": "maps.updatelocation niftyimages.api.maps.updatelocation change a map location found by niftyid or location id write"
+    },
+    {
+      "pluginId": "niftyimages",
+      "kind": "api",
+      "shortPath": "psd.get",
+      "haystack": "psd.get niftyimages.api.psd.get read a photoshop image: its text variables and every layer with its type and settings read"
+    },
+    {
+      "pluginId": "niftyimages",
+      "kind": "api",
+      "shortPath": "psd.update",
+      "haystack": "psd.update niftyimages.api.psd.update change a photoshop image: rename it, set variable defaults, or edit layers by name (text, colours, images, visibility) write"
+    },
+    {
+      "pluginId": "niftyimages",
+      "kind": "api",
+      "shortPath": "store.addRecord",
+      "haystack": "store.addrecord niftyimages.api.store.addrecord add a data store record, or update the one whose unique fields match write"
+    },
+    {
+      "pluginId": "niftyimages",
+      "kind": "api",
+      "shortPath": "store.deleteById",
+      "haystack": "store.deletebyid niftyimages.api.store.deletebyid delete a data store record by its id (the value of its unique field) destructive"
+    },
+    {
+      "pluginId": "niftyimages",
+      "kind": "api",
+      "shortPath": "store.deleteRecord",
+      "haystack": "store.deleterecord niftyimages.api.store.deleterecord delete the data store record whose unique fields match the ones given destructive"
+    },
+    {
+      "pluginId": "niftyimages",
+      "kind": "api",
+      "shortPath": "store.fields",
+      "haystack": "store.fields niftyimages.api.store.fields list the data store fields with their types and which ones are unique read"
+    },
+    {
+      "pluginId": "niftyimages",
+      "kind": "api",
+      "shortPath": "timers.updateTargetDate",
+      "haystack": "timers.updatetargetdate niftyimages.api.timers.updatetargetdate move a countdown timer to a new target date, optionally shifted by hours, days or months write"
+    },
+    {
+      "pluginId": "niftyimages",
+      "kind": "api",
+      "shortPath": "widgets.images",
+      "haystack": "widgets.images niftyimages.api.widgets.images list the images a widget generated in a time window, with each image’s url and own counts read"
+    },
+    {
+      "pluginId": "niftyimages",
+      "kind": "api",
+      "shortPath": "widgets.list",
+      "haystack": "widgets.list niftyimages.api.widgets.list list the account’s widgets with their names and keys, which every other widget call needs read"
+    },
+    {
+      "pluginId": "niftyimages",
+      "kind": "api",
+      "shortPath": "widgets.stats",
+      "haystack": "widgets.stats niftyimages.api.widgets.stats read per-widget user, image and impression counts for a time window, for every widget at once read"
+    },
+    {
+      "pluginId": "niftyimages",
+      "kind": "api",
+      "shortPath": "widgets.suspendUser",
+      "haystack": "widgets.suspenduser niftyimages.api.widgets.suspenduser suspend or reinstate a widget user write"
+    },
+    {
+      "pluginId": "niftyimages",
+      "kind": "api",
+      "shortPath": "widgets.userImages",
+      "haystack": "widgets.userimages niftyimages.api.widgets.userimages list the images a widget generated for one recipient read"
+    },
+    {
+      "pluginId": "niftyimages",
+      "kind": "api",
+      "shortPath": "widgets.users",
+      "haystack": "widgets.users niftyimages.api.widgets.users list the users one widget recorded in a time window, with their image and impression counts and whether they are suspended read"
+    },
+    {
+      "pluginId": "niftyimages",
+      "kind": "api",
+      "shortPath": "widgets.userStats",
+      "haystack": "widgets.userstats niftyimages.api.widgets.userstats read aggregated stats for one recipient of one widget read"
+    },
+    {
+      "pluginId": "ninox",
+      "kind": "api",
+      "shortPath": "fields.create",
+      "haystack": "fields.create ninox.api.fields.create add a field to a table: text, number, choice, date, reference and the other ninox types write"
+    },
+    {
+      "pluginId": "ninox",
+      "kind": "api",
+      "shortPath": "fields.delete",
+      "haystack": "fields.delete ninox.api.fields.delete delete a field and the value every record held in it destructive"
+    },
+    {
+      "pluginId": "ninox",
+      "kind": "api",
+      "shortPath": "fields.list",
+      "haystack": "fields.list ninox.api.fields.list list a table’s field names and types, which decide what a record write may set read"
+    },
+    {
+      "pluginId": "ninox",
+      "kind": "api",
+      "shortPath": "modules.get",
+      "haystack": "modules.get ninox.api.modules.get read one module (app) by its internal name read"
+    },
+    {
+      "pluginId": "ninox",
+      "kind": "api",
+      "shortPath": "modules.list",
+      "haystack": "modules.list ninox.api.modules.list list the workspace’s modules, paged by limit and offset read"
+    },
+    {
+      "pluginId": "ninox",
+      "kind": "api",
+      "shortPath": "records.changes",
+      "haystack": "records.changes ninox.api.records.changes poll a table’s row-level change feed since a timestamp, which needs history tracking enabled on that table read"
+    },
+    {
+      "pluginId": "ninox",
+      "kind": "api",
+      "shortPath": "records.create",
+      "haystack": "records.create ninox.api.records.create create rows in one transaction, so a single bad record rolls the whole batch back write"
+    },
+    {
+      "pluginId": "ninox",
+      "kind": "api",
+      "shortPath": "records.delete",
+      "haystack": "records.delete ninox.api.records.delete delete rows in one transaction, rolling the whole set back if any id is wrong; there is no restore call destructive"
+    },
+    {
+      "pluginId": "ninox",
+      "kind": "api",
+      "shortPath": "records.get",
+      "haystack": "records.get ninox.api.records.get read one row by id, which is the only way to fetch a known record because the id is not filterable read"
+    },
+    {
+      "pluginId": "ninox",
+      "kind": "api",
+      "shortPath": "records.list",
+      "haystack": "records.list ninox.api.records.list read rows from a table with a field filter, sort order and offset paging; only columns the table marks filterable are accepted read"
+    },
+    {
+      "pluginId": "ninox",
+      "kind": "api",
+      "shortPath": "records.update",
+      "haystack": "records.update ninox.api.records.update update rows in one transaction, optionally rejecting a write when a field no longer holds the value the caller read write"
+    },
+    {
+      "pluginId": "ninox",
+      "kind": "api",
+      "shortPath": "records.upsert",
+      "haystack": "records.upsert ninox.api.records.upsert create or update rows matched by one unique field, refusing an ambiguous match rather than picking a row write"
+    },
+    {
+      "pluginId": "ninox",
+      "kind": "api",
+      "shortPath": "scripts.execute",
+      "haystack": "scripts.execute ninox.api.scripts.execute run ninox script in a module and return its result; a script can change or delete records destructive"
+    },
+    {
+      "pluginId": "ninox",
+      "kind": "api",
+      "shortPath": "tables.create",
+      "haystack": "tables.create ninox.api.tables.create create a table in a module; add its fields with fields.create write"
+    },
+    {
+      "pluginId": "ninox",
+      "kind": "api",
+      "shortPath": "tables.delete",
+      "haystack": "tables.delete ninox.api.tables.delete delete a table and every record in it destructive"
+    },
+    {
+      "pluginId": "ninox",
+      "kind": "api",
+      "shortPath": "tables.get",
+      "haystack": "tables.get ninox.api.tables.get read one table with all of its field definitions read"
+    },
+    {
+      "pluginId": "ninox",
+      "kind": "api",
+      "shortPath": "tables.list",
+      "haystack": "tables.list ninox.api.tables.list list the tables inside one module read"
+    },
+    {
+      "pluginId": "ninox",
+      "kind": "api",
+      "shortPath": "views.list",
+      "haystack": "views.list ninox.api.views.list list a table's saved views read"
+    },
+    {
+      "pluginId": "ninox",
+      "kind": "api",
+      "shortPath": "workspace.get",
+      "haystack": "workspace.get ninox.api.workspace.get read the workspace and the modules in it read"
     },
     {
       "pluginId": "northflank",
@@ -125228,6 +127759,150 @@
       "kind": "webhook",
       "shortPath": "incidents.triggered",
       "haystack": "incidents.triggered pagerduty.webhooks.incidents.triggered an incident was triggered (created)"
+    },
+    {
+      "pluginId": "paperform",
+      "kind": "api",
+      "shortPath": "coupons.create",
+      "haystack": "coupons.create paperform.api.coupons.create create a coupon code on a form, with a fixed amount or percentage off. write"
+    },
+    {
+      "pluginId": "paperform",
+      "kind": "api",
+      "shortPath": "coupons.delete",
+      "haystack": "coupons.delete paperform.api.coupons.delete delete a coupon code from a form. destructive"
+    },
+    {
+      "pluginId": "paperform",
+      "kind": "api",
+      "shortPath": "coupons.get",
+      "haystack": "coupons.get paperform.api.coupons.get get one coupon on a form by code. read"
+    },
+    {
+      "pluginId": "paperform",
+      "kind": "api",
+      "shortPath": "coupons.list",
+      "haystack": "coupons.list paperform.api.coupons.list list the coupon codes on a form. read"
+    },
+    {
+      "pluginId": "paperform",
+      "kind": "api",
+      "shortPath": "coupons.update",
+      "haystack": "coupons.update paperform.api.coupons.update change a coupon (enable or disable, discount, expiry). fields you leave out stay as they are. write"
+    },
+    {
+      "pluginId": "paperform",
+      "kind": "api",
+      "shortPath": "fields.list",
+      "haystack": "fields.list paperform.api.fields.list list the questions on a form: each field key, title and type. submission answers are keyed by these field keys. read"
+    },
+    {
+      "pluginId": "paperform",
+      "kind": "api",
+      "shortPath": "files.sign",
+      "haystack": "files.sign paperform.api.files.sign get a signed download link for a file uploaded in a submission. links last 7 days. read"
+    },
+    {
+      "pluginId": "paperform",
+      "kind": "api",
+      "shortPath": "forms.get",
+      "haystack": "forms.get paperform.api.forms.get get one form by slug, custom slug or id. read"
+    },
+    {
+      "pluginId": "paperform",
+      "kind": "api",
+      "shortPath": "forms.list",
+      "haystack": "forms.list paperform.api.forms.list list forms, newest first by default. filter with search, page with limit and skip. read"
+    },
+    {
+      "pluginId": "paperform",
+      "kind": "api",
+      "shortPath": "partialSubmissions.get",
+      "haystack": "partialsubmissions.get paperform.api.partialsubmissions.get get one partial submission of a form. read"
+    },
+    {
+      "pluginId": "paperform",
+      "kind": "api",
+      "shortPath": "partialSubmissions.list",
+      "haystack": "partialsubmissions.list paperform.api.partialsubmissions.list list partial (unfinished) submissions of a form. paperform keeps them only when partial submissions are turned on for the form. read"
+    },
+    {
+      "pluginId": "paperform",
+      "kind": "api",
+      "shortPath": "products.get",
+      "haystack": "products.get paperform.api.products.get get one product on a form by sku. read"
+    },
+    {
+      "pluginId": "paperform",
+      "kind": "api",
+      "shortPath": "products.list",
+      "haystack": "products.list paperform.api.products.list list the products sold on a form, with price and stock. read"
+    },
+    {
+      "pluginId": "paperform",
+      "kind": "api",
+      "shortPath": "products.update",
+      "haystack": "products.update paperform.api.products.update change a product on a form (name, price, stock, min/max per order). fields you leave out stay as they are. write"
+    },
+    {
+      "pluginId": "paperform",
+      "kind": "api",
+      "shortPath": "spaces.forms",
+      "haystack": "spaces.forms paperform.api.spaces.forms list the forms in one space. read"
+    },
+    {
+      "pluginId": "paperform",
+      "kind": "api",
+      "shortPath": "spaces.get",
+      "haystack": "spaces.get paperform.api.spaces.get get one space by id. read"
+    },
+    {
+      "pluginId": "paperform",
+      "kind": "api",
+      "shortPath": "spaces.list",
+      "haystack": "spaces.list paperform.api.spaces.list list spaces (folders of forms). read"
+    },
+    {
+      "pluginId": "paperform",
+      "kind": "api",
+      "shortPath": "submissions.delete",
+      "haystack": "submissions.delete paperform.api.submissions.delete delete one submission. it cannot be recovered. destructive"
+    },
+    {
+      "pluginId": "paperform",
+      "kind": "api",
+      "shortPath": "submissions.get",
+      "haystack": "submissions.get paperform.api.submissions.get get one submission of a form, with its answers. read"
+    },
+    {
+      "pluginId": "paperform",
+      "kind": "api",
+      "shortPath": "submissions.list",
+      "haystack": "submissions.list paperform.api.submissions.list list the completed submissions of a form, with their answers keyed by field key. filter by date or id, page with limit and skip. read"
+    },
+    {
+      "pluginId": "paperform",
+      "kind": "api",
+      "shortPath": "translations.list",
+      "haystack": "translations.list paperform.api.translations.list list form translations (title and language). the mapping text is not stored. read"
+    },
+    {
+      "pluginId": "paperform",
+      "kind": "api",
+      "shortPath": "webhooks.create",
+      "haystack": "webhooks.create paperform.api.webhooks.create add a webhook that posts each new submission (and optionally partial submission) of a form to an https url. write"
+    },
+    {
+      "pluginId": "paperform",
+      "kind": "api",
+      "shortPath": "webhooks.delete",
+      "haystack": "webhooks.delete paperform.api.webhooks.delete delete a webhook by id. destructive"
+    },
+    {
+      "pluginId": "paperform",
+      "kind": "api",
+      "shortPath": "webhooks.list",
+      "haystack": "webhooks.list paperform.api.webhooks.list list a form's webhooks. read"
     },
     {
       "pluginId": "parallel",
@@ -129644,6 +132319,156 @@
       "kind": "api",
       "shortPath": "templates.validate",
       "haystack": "templates.validate postmark.api.templates.validate render a template against a model and report whether its subject and bodies are valid read"
+    },
+    {
+      "pluginId": "postonce",
+      "kind": "api",
+      "shortPath": "accounts.list",
+      "haystack": "accounts.list postonce.api.accounts.list list connected social accounts (linkedin, x, threads, bluesky, facebook pages, instagram, tiktok, youtube, pinterest) with status, capabilities and media requirements. their ids are the targets for posts.create. read"
+    },
+    {
+      "pluginId": "postonce",
+      "kind": "api",
+      "shortPath": "analytics.get",
+      "haystack": "analytics.get postonce.api.analytics.get per-account and per-post views, likes, comments, shares and saves over the last 7, 30 or 90 days, including posts made outside postonce, with each post compared to its account's median views. read"
+    },
+    {
+      "pluginId": "postonce",
+      "kind": "api",
+      "shortPath": "drafts.create",
+      "haystack": "drafts.create postonce.api.drafts.create save text, media and intended accounts as a draft without publishing or scheduling it. write"
+    },
+    {
+      "pluginId": "postonce",
+      "kind": "api",
+      "shortPath": "drafts.get",
+      "haystack": "drafts.get postonce.api.drafts.get get one draft. read"
+    },
+    {
+      "pluginId": "postonce",
+      "kind": "api",
+      "shortPath": "drafts.list",
+      "haystack": "drafts.list postonce.api.drafts.list list unscheduled drafts, newest first. page with after = meta.next_after and after_id = meta.next_after_id. read"
+    },
+    {
+      "pluginId": "postonce",
+      "kind": "api",
+      "shortPath": "drafts.update",
+      "haystack": "drafts.update postonce.api.drafts.update edit, archive, restore or mark a draft ready. pass the draft's current updated_at as expected_updated_at; a stale value gets a 409. write"
+    },
+    {
+      "pluginId": "postonce",
+      "kind": "api",
+      "shortPath": "media.createUpload",
+      "haystack": "media.createupload postonce.api.media.createupload get a signed url to upload an image or video to, and a media_id. after the file is put to the url, media.get gives the public url that posts and drafts accept. write"
+    },
+    {
+      "pluginId": "postonce",
+      "kind": "api",
+      "shortPath": "media.get",
+      "haystack": "media.get postonce.api.media.get turn a media_id into the uploaded file's public url. read"
+    },
+    {
+      "pluginId": "postonce",
+      "kind": "api",
+      "shortPath": "posts.cancel",
+      "haystack": "posts.cancel postonce.api.posts.cancel cancel a scheduled or still-pending post. the post record is kept with status cancelled; content already published on a network stays live. destructive"
+    },
+    {
+      "pluginId": "postonce",
+      "kind": "api",
+      "shortPath": "posts.create",
+      "haystack": "posts.create postonce.api.posts.create create one post for one or more connected accounts, with text and media urls. without publish_at it publishes immediately and cannot be recalled once live; with publish_at it is scheduled. an idempotencykey makes a retry return the original post. destructive"
+    },
+    {
+      "pluginId": "postonce",
+      "kind": "api",
+      "shortPath": "posts.get",
+      "haystack": "posts.get postonce.api.posts.get get one post with its per-account delivery state: status, platform post url and any platform error. read"
+    },
+    {
+      "pluginId": "postonce",
+      "kind": "api",
+      "shortPath": "posts.getAnalytics",
+      "haystack": "posts.getanalytics postonce.api.posts.getanalytics views, likes, comments, shares and saves for each published copy of one post (tiktok, instagram, youtube and facebook). cached for up to an hour. read"
+    },
+    {
+      "pluginId": "postonce",
+      "kind": "api",
+      "shortPath": "posts.list",
+      "haystack": "posts.list postonce.api.posts.list list the profile's posts, newest first, including dashboard and workflow posts. page with after = meta.next_cursor. read"
+    },
+    {
+      "pluginId": "postonce",
+      "kind": "api",
+      "shortPath": "posts.publish",
+      "haystack": "posts.publish postonce.api.posts.publish publish a scheduled post right now. it goes live on every target and cannot be recalled. destructive"
+    },
+    {
+      "pluginId": "postonce",
+      "kind": "api",
+      "shortPath": "posts.retryTarget",
+      "haystack": "posts.retrytarget postonce.api.posts.retrytarget retry one failed destination of a post (targetid from the post's targets). published destinations are not posted again. destructive"
+    },
+    {
+      "pluginId": "postonce",
+      "kind": "api",
+      "shortPath": "posts.update",
+      "haystack": "posts.update postonce.api.posts.update change a scheduled post before it runs: text, accounts, media or publish time. only the fields sent change. write"
+    },
+    {
+      "pluginId": "postonce",
+      "kind": "api",
+      "shortPath": "webhooks.create",
+      "haystack": "webhooks.create postonce.api.webhooks.create register an https endpoint for signed post.published, post.partially_published and post.failed events (up to 5). the reply is the only time the signing secret is shown. write"
+    },
+    {
+      "pluginId": "postonce",
+      "kind": "api",
+      "shortPath": "webhooks.delete",
+      "haystack": "webhooks.delete postonce.api.webhooks.delete delete a webhook endpoint and its delivery log. destructive"
+    },
+    {
+      "pluginId": "postonce",
+      "kind": "api",
+      "shortPath": "webhooks.get",
+      "haystack": "webhooks.get postonce.api.webhooks.get get one registered webhook endpoint. read"
+    },
+    {
+      "pluginId": "postonce",
+      "kind": "api",
+      "shortPath": "webhooks.list",
+      "haystack": "webhooks.list postonce.api.webhooks.list list registered webhook endpoints (signing secrets are not returned). read"
+    },
+    {
+      "pluginId": "postonce",
+      "kind": "api",
+      "shortPath": "workflows.create",
+      "haystack": "workflows.create postonce.api.workflows.create create a cross-posting workflow. while active, postonce publishes every new post from the source account to the target accounts automatically. destructive"
+    },
+    {
+      "pluginId": "postonce",
+      "kind": "api",
+      "shortPath": "workflows.delete",
+      "haystack": "workflows.delete postonce.api.workflows.delete delete a cross-posting workflow and its queued items. destructive"
+    },
+    {
+      "pluginId": "postonce",
+      "kind": "api",
+      "shortPath": "workflows.get",
+      "haystack": "workflows.get postonce.api.workflows.get get one cross-posting workflow. read"
+    },
+    {
+      "pluginId": "postonce",
+      "kind": "api",
+      "shortPath": "workflows.list",
+      "haystack": "workflows.list postonce.api.workflows.list list cross-posting workflows: each copies new posts from a source account to target accounts. read"
+    },
+    {
+      "pluginId": "postonce",
+      "kind": "api",
+      "shortPath": "workflows.update",
+      "haystack": "workflows.update postonce.api.workflows.update change a cross-posting workflow: name, accounts, filters or is_active. turning it on or adding targets makes postonce publish future posts to them automatically. destructive"
     },
     {
       "pluginId": "prerender",
@@ -151070,6 +153895,66 @@
       "kind": "api",
       "shortPath": "webhook.list",
       "haystack": "webhook.list starton.api.webhook.list list the webhook deliveries sent by watchers (paginated) read"
+    },
+    {
+      "pluginId": "stormglass",
+      "kind": "api",
+      "shortPath": "astronomy.get",
+      "haystack": "astronomy.get stormglass.api.astronomy.get get sunrise, sunset, dawn, dusk, moonrise, moonset and moon phase per day for one coordinate. read"
+    },
+    {
+      "pluginId": "stormglass",
+      "kind": "api",
+      "shortPath": "bio.get",
+      "haystack": "bio.get stormglass.api.bio.get get hourly bio data (water chemistry, salinity, soil moisture and temperature) for one coordinate. read"
+    },
+    {
+      "pluginId": "stormglass",
+      "kind": "api",
+      "shortPath": "elevation.get",
+      "haystack": "elevation.get stormglass.api.elevation.get get elevation (land) or depth (sea, negative) in meters for one coordinate. read"
+    },
+    {
+      "pluginId": "stormglass",
+      "kind": "api",
+      "shortPath": "solar.get",
+      "haystack": "solar.get stormglass.api.solar.get get hourly solar values (uvindex, radiation) for one coordinate. read"
+    },
+    {
+      "pluginId": "stormglass",
+      "kind": "api",
+      "shortPath": "stations.area",
+      "haystack": "stations.area stormglass.api.stations.area list tide stations inside a bounding box (lat,lng:lat,lng). read"
+    },
+    {
+      "pluginId": "stormglass",
+      "kind": "api",
+      "shortPath": "stations.list",
+      "haystack": "stations.list stormglass.api.stations.list list every tide station stormglass has data for. read"
+    },
+    {
+      "pluginId": "stormglass",
+      "kind": "api",
+      "shortPath": "tides.extremes",
+      "haystack": "tides.extremes stormglass.api.tides.extremes get high and low tide times and heights near a coordinate, up to 10 days, from the nearest tide station. read"
+    },
+    {
+      "pluginId": "stormglass",
+      "kind": "api",
+      "shortPath": "tides.seaLevel",
+      "haystack": "tides.sealevel stormglass.api.tides.sealevel get the hourly astronomical sea level near a coordinate, up to 10 days, from the nearest tide station. read"
+    },
+    {
+      "pluginId": "stormglass",
+      "kind": "api",
+      "shortPath": "weather.get",
+      "haystack": "weather.get stormglass.api.weather.get get hourly weather and marine forecast values (wind, waves, swell, temperature, ...) for one coordinate. covers the past 14 days and up to 10 days ahead. read"
+    },
+    {
+      "pluginId": "stormglass",
+      "kind": "api",
+      "shortPath": "weather.historical",
+      "haystack": "weather.historical stormglass.api.weather.historical get hourly historical weather for one coordinate from 2014 to about a week ago, up to 10 days per call. needs start or end. read"
     },
     {
       "pluginId": "storyblok",
