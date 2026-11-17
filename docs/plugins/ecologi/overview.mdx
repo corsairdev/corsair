@@ -1,16 +1,18 @@
 ---
 title: "Ecologi plugin"
 sidebarTitle: "Overview"
-description: "Read Ecologi reporting totals for trees, carbon, habitat, and combined impact."
+description: "Fund tree planting, carbon avoidance, carbon removal and habitat restoration through Ecologi's Impact API, and read any profile's impact totals."
 ---
 
 Use **Ecologi** through Corsair: one client, typed API calls, local DB sync.
 
-The reporting API is public. Requests go to https://public.ecologi.com and send no API key. GET /users/ecologi/trees, /carbon-offset, /carbon-removal, /habitat-restoration, and /impact each returned HTTP 200. GET /users/business-name/trees returned HTTP 404. Purchase endpoints are not catalog operations and are not implemented. The username is the row id and is not written to the event.
+The reporting reads (`*.get`) are public: they send no API key and work for any Ecologi username. An unknown username returns HTTP 404. The username is the row id and is not written to the event.
+
+The purchase operations (`*.purchase`, `trees.purchaseLocal`) spend money. They need the API key from Ecologi's Impact API page, sent as a Bearer token, and are billed to the account on the 1st of each month (minimum invoice GBP 3). Pass `test: true` to get the expected response without being charged. Send an `idempotencyKey` so a retried request is not bought twice. The `name` is shown publicly on a public profile, so don't send a customer's name without permission. A `recipientEmail` sends that person an email about the purchase.
 
 **What you get:**
 
-- 5 typed API operations
+- 10 typed API operations
 - 5 synced entities (`carbonOffsets`, `carbonRemovals`, `habitats`, `impacts`, `trees`) for fast `.search()` / `.list()`
 
 ## Setup
@@ -105,9 +107,12 @@ await tenant.ecologi.api.trees.get({ username: 'ecologi' });
 ```
 
 
-**Write**
+**`carbonOffsets.purchase`**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/ecologi/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.ecologi.api.carbonOffsets.purchase({});
+```
 
 
 See the full list on the [API](/plugins/ecologi/api) page.
