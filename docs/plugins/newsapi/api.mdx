@@ -1,0 +1,234 @@
+---
+title: "NewsAPI API reference"
+sidebarTitle: "API"
+description: "API reference for the NewsAPI plugin in Corsair: every `newsapi.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Articles
+
+### everything
+
+`articles.everything`
+
+Search articles across NewsAPI sources.
+
+**Risk:** `read`
+
+```ts
+await corsair.newsapi.api.articles.everything({ q: 'corsair', searchIn: 'title', from: '2026-11-01', sortBy: 'publishedAt' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `sources` | `string` | No | — |
+| `domains` | `string` | No | — |
+| `excludeDomains` | `string` | No | — |
+| `searchIn` | `string` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `language` | `string` | No | — |
+| `sortBy` | `string` | No | — |
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+GET /v2/everything. Requires q, sources, or domains. from and to take an ISO 8601 date or date-time, searchIn limits the match to title, description and/or content, excludeDomains drops domains. totalResults is returned for paging. A row is stored when url is present.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `articles` | `object[]` | Yes | — |
+| `totalResults` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="articles full type">
+
+```ts
+{
+  id: string,
+  title?: string,
+  description?: string,
+  author?: string,
+  urlToImage?: string,
+  publishedAt?: string,
+  sourceId?: string,
+  sourceName?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### headlines
+
+`articles.headlines`
+
+Read current top headlines.
+
+**Risk:** `read`
+
+```ts
+await corsair.newsapi.api.articles.headlines({ country: 'us' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `country` | `string` | No | — |
+| `category` | `string` | No | — |
+| `sources` | `string` | No | — |
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+GET /v2/top-headlines. Needs at least one of q, country, category or sources. sources cannot be combined with country or category. totalResults is returned for paging.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `articles` | `object[]` | Yes | — |
+| `totalResults` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="articles full type">
+
+```ts
+{
+  id: string,
+  title?: string,
+  description?: string,
+  author?: string,
+  urlToImage?: string,
+  publishedAt?: string,
+  sourceId?: string,
+  sourceName?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### legacy
+
+`articles.legacy`
+
+Read articles from the legacy v1 source endpoint.
+
+**Risk:** `read`
+
+```ts
+await corsair.newsapi.api.articles.legacy({ source: 'bbc-news' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `source` | `string` | Yes | — |
+| `sortBy` | `string` | No | — |
+
+GET /v1/articles. source is required. The top-level source id (for example bbc-news) is stored as sourceId.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `articles` | `object[]` | Yes | — |
+| `totalResults` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="articles full type">
+
+```ts
+{
+  id: string,
+  title?: string,
+  description?: string,
+  author?: string,
+  urlToImage?: string,
+  publishedAt?: string,
+  sourceId?: string,
+  sourceName?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sources
+
+### list
+
+`sources.list`
+
+List NewsAPI publishers.
+
+**Risk:** `read`
+
+```ts
+await corsair.newsapi.api.sources.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category` | `string` | No | — |
+| `language` | `string` | No | — |
+| `country` | `string` | No | — |
+
+GET /v2/top-headlines/sources. A row is stored when id is present.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sources` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="sources full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  description?: string,
+  url?: string,
+  category?: string,
+  language?: string,
+  country?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
