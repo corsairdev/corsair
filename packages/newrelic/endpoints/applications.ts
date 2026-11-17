@@ -181,3 +181,122 @@ export const conditions: NewrelicEndpoints['conditionsList'] = (ctx, input) =>
 			}),
 		},
 	);
+
+/** Renames a policy or changes how its incidents roll up. */
+export const updatePolicy: NewrelicEndpoints['policiesUpdate'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'alerts.policiesUpdate',
+			input: Inputs.policiesUpdate,
+			output: Outputs.policiesUpdate,
+		},
+		input,
+		({ policyId, name, incident_preference }) => ({
+			method: 'PUT',
+			path: `/alerts_policies/${segment(policyId)}.json`,
+			body: {
+				policy: {
+					...(name ? { name } : {}),
+					...(incident_preference ? { incident_preference } : {}),
+				},
+			},
+		}),
+		{ log: ({ policyId }) => ({ policyId }) },
+	);
+
+/**
+ * Lists the static NRQL conditions in one policy. These are the conditions
+ * most accounts use, and `alerts.conditions` does not return them.
+ */
+export const nrqlConditions: NewrelicEndpoints['nrqlConditionsList'] = (
+	ctx,
+	input,
+) =>
+	call(
+		ctx,
+		{
+			event: 'alerts.nrqlConditions',
+			input: Inputs.nrqlConditionsList,
+			output: Outputs.nrqlConditionsList,
+		},
+		input,
+		({ policyId, page }) => ({
+			method: 'GET',
+			path: '/alerts_nrql_conditions.json',
+			query: { policy_id: policyId, page },
+		}),
+		{
+			log: ({ policyId }, result) => ({
+				policyId,
+				count: result.nrql_conditions.length,
+			}),
+		},
+	);
+
+/** Adds a static NRQL condition to a policy. */
+export const createNrqlCondition: NewrelicEndpoints['nrqlConditionsCreate'] = (
+	ctx,
+	input,
+) =>
+	call(
+		ctx,
+		{
+			event: 'alerts.createNrqlCondition',
+			input: Inputs.nrqlConditionsCreate,
+			output: Outputs.nrqlConditionsCreate,
+		},
+		input,
+		({ policyId, condition }) => ({
+			method: 'POST',
+			path: `/alerts_nrql_conditions/policies/${segment(policyId)}.json`,
+			body: { nrql_condition: condition },
+		}),
+		{
+			log: ({ policyId }, result) => ({
+				policyId,
+				conditionId: result.nrql_condition.id ?? undefined,
+			}),
+		},
+	);
+
+/** Changes a NRQL condition; fields left out keep their values. */
+export const updateNrqlCondition: NewrelicEndpoints['nrqlConditionsUpdate'] = (
+	ctx,
+	input,
+) =>
+	call(
+		ctx,
+		{
+			event: 'alerts.updateNrqlCondition',
+			input: Inputs.nrqlConditionsUpdate,
+			output: Outputs.nrqlConditionsUpdate,
+		},
+		input,
+		({ conditionId, condition }) => ({
+			method: 'PUT',
+			path: `/alerts_nrql_conditions/${segment(conditionId)}.json`,
+			body: { nrql_condition: condition },
+		}),
+		{ log: ({ conditionId }) => ({ conditionId }) },
+	);
+
+/** Deletes a NRQL condition. New Relic answers the deleted condition. */
+export const deleteNrqlCondition: NewrelicEndpoints['nrqlConditionsDelete'] = (
+	ctx,
+	input,
+) =>
+	call(
+		ctx,
+		{
+			event: 'alerts.deleteNrqlCondition',
+			input: Inputs.nrqlConditionsDelete,
+			output: Outputs.nrqlConditionsDelete,
+		},
+		input,
+		({ conditionId }) => ({
+			method: 'DELETE',
+			path: `/alerts_nrql_conditions/${segment(conditionId)}.json`,
+		}),
+		{ log: ({ conditionId }) => ({ conditionId }) },
+	);

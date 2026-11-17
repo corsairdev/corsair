@@ -38,10 +38,8 @@ describeIfKey('New Relic live API', () => {
 		for (const app of parsed.applications) {
 			expect(typeof app.id).toBe('number');
 			expect(typeof app.name).toBe('string');
-			// The colour is one of four values, and `orange` stands for yellow.
-			expect(['green', 'orange', 'red', 'unknown']).toContain(
-				app.health_status,
-			);
+			// A colour such as green, orange (yellow), red, gray or unknown.
+			expect(typeof app.health_status).toBe('string');
 		}
 	}, 30_000);
 

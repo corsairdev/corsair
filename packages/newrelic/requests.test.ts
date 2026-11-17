@@ -7,15 +7,19 @@ import {
 	applications,
 	conditions,
 	createdPolicy,
+	entitySearchAnswer,
 	graphqlForbidden,
 	graphqlNrqlError,
+	issuesAnswer,
 	metricData,
+	nrqlCondition,
 	nrqlPercentileResult,
 	nrqlResult,
 	nrqlUniquesResult,
 	policies,
 	rateLimited,
 	restAuthError,
+	restErrorTitle,
 	silentApplication,
 	summarizedMetricData,
 } from './test-fixtures';
@@ -322,6 +326,188 @@ describe('alerts.conditions', () => {
 	});
 });
 
+describe('alerts policy update and NRQL conditions', () => {
+	it('updates a policy with PUT and only the fields given', async () => {
+		const { url, init } = await capture(
+			endpoints.alerts.updatePolicy,
+			{ policyId: 41534, name: 'renamed' },
+			createdPolicy,
+		);
+		expect(url).toBe('https://api.newrelic.com/v2/alerts_policies/41534.json');
+		expect(init.method).toBe('PUT');
+		expect(JSON.parse(String(init.body))).toEqual({
+			policy: { name: 'renamed' },
+		});
+	});
+
+	it('rejects an update with nothing to change', async () => {
+		await expect(
+			endpoints.alerts.updatePolicy(makeContext() as never, { policyId: 1 }),
+		).rejects.toThrow();
+	});
+
+	it('lists NRQL conditions and reads string thresholds', async () => {
+		const { result, url } = await capture(
+			endpoints.alerts.nrqlConditions,
+			{ policyId: 8345516 },
+			{ nrql_conditions: [nrqlCondition.nrql_condition] },
+		);
+		const parsed = new URL(url);
+		expect(parsed.pathname).toBe('/v2/alerts_nrql_conditions.json');
+		expect(parsed.searchParams.get('policy_id')).toBe('8345516');
+		const list = asRecord(result)?.nrql_conditions;
+		const first = asRecord(Array.isArray(list) ? list[0] : null);
+		expect(first?.entity_guid).toBe(
+			'ODc0NjQ2MXxBSU9QU3xDT05ESVRJT058Njk4Nzk2NzU',
+		);
+	});
+
+	it('creates a condition under its policy wrapped in nrql_condition', async () => {
+		const condition = {
+			name: 'corsair-plugin-test',
+			enabled: false,
+			terms: [
+				{
+					duration: '5',
+					operator: 'above',
+					priority: 'critical',
+					threshold: '1000',
+					time_function: 'all',
+				},
+			],
+			value_function: 'single_value',
+			nrql: { query: 'SELECT count(*) FROM Transaction' },
+			signal: { aggregation_window: '60' },
+		};
+		const { result, url, init } = await capture(
+			endpoints.alerts.createNrqlCondition,
+			{ policyId: 8345516, condition },
+			nrqlCondition,
+		);
+		expect(url).toBe(
+			'https://api.newrelic.com/v2/alerts_nrql_conditions/policies/8345516.json',
+		);
+		expect(init.method).toBe('POST');
+		expect(JSON.parse(String(init.body))).toEqual({
+			nrql_condition: condition,
+		});
+		expect(asRecord(asRecord(result)?.nrql_condition)?.id).toBe(69879675);
+	});
+
+	it('updates and deletes a condition by id', async () => {
+		const updated = await capture(
+			endpoints.alerts.updateNrqlCondition,
+			{ conditionId: 69879675, condition: { enabled: true } },
+			nrqlCondition,
+		);
+		expect(updated.url).toBe(
+			'https://api.newrelic.com/v2/alerts_nrql_conditions/69879675.json',
+		);
+		expect(updated.init.method).toBe('PUT');
+		expect(JSON.parse(String(updated.init.body))).toEqual({
+			nrql_condition: { enabled: true },
+		});
+
+		const deleted = await capture(
+			endpoints.alerts.deleteNrqlCondition,
+			{ conditionId: 69879675 },
+			nrqlCondition,
+		);
+		expect(deleted.init.method).toBe('DELETE');
+		expect(deleted.url).toBe(updated.url);
+	});
+});
+
+describe('NerdGraph reads and the deployment marker', () => {
+	it('lists accounts', async () => {
+		const { result, init } = await capture(
+			endpoints.accounts.list,
+			{},
+			{ data: { actor: { accounts: [{ id: 1, name: 'Main' }] } } },
+		);
+		expect(String(JSON.parse(String(init.body)).query)).toContain('accounts');
+		expect(asRecord(result)?.accounts).toEqual([{ id: 1, name: 'Main' }]);
+	});
+
+	it('searches entities and lifts the page out', async () => {
+		const { result, url, init } = await capture(
+			endpoints.entities.search,
+			{ query: "type = 'CONDITION'" },
+			entitySearchAnswer,
+		);
+		expect(url).toBe('https://api.newrelic.com/graphql');
+		expect(JSON.parse(String(init.body)).variables).toEqual({
+			query: "type = 'CONDITION'",
+		});
+		expect(asRecord(result)?.count).toBe(1);
+		const list = asRecord(result)?.entities;
+		expect(Array.isArray(list) ? list.length : 0).toBe(1);
+	});
+
+	it('reads entities by guid', async () => {
+		const entity =
+			entitySearchAnswer.data.actor.entitySearch.results.entities[0];
+		const { result, init } = await capture(
+			endpoints.entities.get,
+			{ guids: [entity?.guid ?? ''] },
+			{ data: { actor: { entities: [entity] } } },
+		);
+		expect(JSON.parse(String(init.body)).variables.guids).toEqual([
+			entity?.guid,
+		]);
+		const list = asRecord(result)?.entities;
+		expect(Array.isArray(list) ? list.length : 0).toBe(1);
+	});
+
+	it('sends the issue filter and time window as variables', async () => {
+		const { result, init } = await capture(
+			endpoints.issues.list,
+			{
+				accountId: 1234567,
+				states: ['ACTIVATED'],
+				startTime: 1,
+				endTime: 2,
+			},
+			issuesAnswer,
+		);
+		expect(JSON.parse(String(init.body)).variables).toEqual({
+			accountId: 1234567,
+			filter: { states: ['ACTIVATED'] },
+			timeWindow: { startTime: 1, endTime: 2 },
+		});
+		const list = asRecord(result)?.issues;
+		const first = asRecord(Array.isArray(list) ? list[0] : null);
+		expect(first?.title).toEqual(['CPU above 90%']);
+	});
+
+	it('creates a deployment marker without sending the region', async () => {
+		const { result, init } = await capture(
+			endpoints.changeTracking.createDeployment,
+			{ region: 'us', entityGuid: 'abc', version: '1.2.3' },
+			{
+				data: {
+					changeTrackingCreateDeployment: {
+						deploymentId: 'd-1',
+						entityGuid: 'abc',
+						version: '1.2.3',
+						timestamp: 1794915648829,
+					},
+				},
+			},
+		);
+		expect(JSON.parse(String(init.body)).variables).toEqual({
+			deployment: { entityGuid: 'abc', version: '1.2.3' },
+		});
+		expect(asRecord(result)?.deploymentId).toBe('d-1');
+	});
+
+	it('throws when the answer misses the asked-for path', async () => {
+		await expect(
+			capture(endpoints.entities.search, { query: 'x' }, { data: {} }),
+		).rejects.toThrow('data.actor.entitySearch');
+	});
+});
+
 describe('query.nrql', () => {
 	it('posts a GraphQL document with accountId and query as variables', async () => {
 		const { url, init } = await capture(
@@ -418,6 +604,16 @@ describe('query.nrql', () => {
 });
 
 describe('newrelic error reporting', () => {
+	it('reads the REST v2 error title', async () => {
+		const error = await capture(
+			endpoints.alerts.deletePolicy,
+			{ policyId: 1 },
+			restErrorTitle,
+			{ status: 404 },
+		).catch((caught: unknown) => caught);
+		expect(String(error)).toContain('Policy not found');
+	});
+
 	it('reads the REST v2 errors array', async () => {
 		const error = await capture(
 			endpoints.applications.list,
@@ -472,17 +668,27 @@ describe('newrelic plugin definition', () => {
 		).toBe(false);
 	});
 
-	it('exposes exactly the eight catalog operations', () => {
+	it('exposes exactly the 18 catalog operations', () => {
 		const nested = Object.entries(newrelicEndpointsNested).flatMap(
 			([group, fns]) => Object.keys(fns).map((name) => `${group}.${name}`),
 		);
 		expect(nested.sort()).toEqual([
+			'accounts.list',
 			'alerts.conditions',
+			'alerts.createNrqlCondition',
 			'alerts.createPolicy',
+			'alerts.deleteNrqlCondition',
 			'alerts.deletePolicy',
+			'alerts.nrqlConditions',
 			'alerts.policies',
+			'alerts.updateNrqlCondition',
+			'alerts.updatePolicy',
 			'applications.get',
 			'applications.list',
+			'changeTracking.createDeployment',
+			'entities.get',
+			'entities.search',
+			'issues.list',
 			'metrics.get',
 			'query.nrql',
 		]);
@@ -495,6 +701,25 @@ describe('newrelic plugin definition', () => {
 		expect(meta['alerts.createPolicy']?.riskLevel).toBe('write');
 		// A NRQL query only reads, even though NerdGraph takes it as a POST.
 		expect(meta['query.nrql']?.riskLevel).toBe('read');
+		expect(meta['alerts.deleteNrqlCondition']?.riskLevel).toBe('destructive');
+		expect(meta['alerts.deleteNrqlCondition']?.irreversible).toBe(true);
+		for (const write of [
+			'alerts.updatePolicy',
+			'alerts.createNrqlCondition',
+			'alerts.updateNrqlCondition',
+			'changeTracking.createDeployment',
+		] as const) {
+			expect(meta[write]?.riskLevel).toBe('write');
+		}
+		for (const read of [
+			'accounts.list',
+			'entities.search',
+			'entities.get',
+			'issues.list',
+			'alerts.nrqlConditions',
+		] as const) {
+			expect(meta[read]?.riskLevel).toBe('read');
+		}
 	});
 
 	it('builds a key from the option, then the stored key, then throws', async () => {

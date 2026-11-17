@@ -58,7 +58,7 @@ function readString(
 /**
  * New Relic's error bodies come in two shapes:
  *
- * - REST v2: `{ "errors": [{ "message": "..." }] }`, one entry per problem.
+ * - REST v2: `{ "error": { "title": "..." } }`, or `{ "errors": [{ "message" }] }`.
  * - NerdGraph: `{ "errors": [{ "message", "locations", "path", "extensions" }] }`,
  *   which is the GraphQL spec's shape. A 200 can still carry `errors`, which is
  *   how a bad NRQL query reports itself.
@@ -103,6 +103,9 @@ export function readErrors(body: unknown): {
 	messages: string[];
 	codes: string[];
 } {
+	// REST v2 answers most failures as `{ "error": { "title": "..." } }`.
+	const single = readString(asRecord(asRecord(body)?.error), 'title');
+	if (single) return { messages: [single], codes: [] };
 	const list = asRecord(body)?.errors;
 	if (!Array.isArray(list)) return { messages: [], codes: [] };
 	const messages: string[] = [];

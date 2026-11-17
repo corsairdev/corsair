@@ -129,7 +129,8 @@ export const conditions = {
 			type: 'apm_app_metric',
 			name: 'Apdex (High)',
 			enabled: true,
-			entities: [1129082],
+			// The docs show string ids.
+			entities: ['1129082'],
 			metric: 'apdex',
 			condition_scope: 'application',
 			terms: [
@@ -226,4 +227,88 @@ export const graphqlForbidden = {
 /** A 429 carries its wait in a Retry-After header rather than the body. */
 export const rateLimited = {
 	errors: [{ message: 'rate limit exceeded' }],
+};
+
+/** A NRQL condition as REST v2 returned it live (11-17), trimmed. */
+export const nrqlCondition = {
+	nrql_condition: {
+		id: 69879675,
+		entity_guid: 'ODc0NjQ2MXxBSU9QU3xDT05ESVRJT058Njk4Nzk2NzU',
+		type: 'static',
+		name: 'corsair-plugin-test',
+		enabled: false,
+		value_function: 'single_value',
+		violation_time_limit_seconds: 259200,
+		terms: [
+			{
+				duration: '5',
+				operator: 'above',
+				threshold: '1000.0',
+				time_function: 'all',
+				priority: 'critical',
+			},
+		],
+		nrql: { query: 'SELECT count(*) FROM Transaction', since_value: '3' },
+		signal: {
+			aggregation_window: '60',
+			evaluation_offset: '3',
+			fill_option: 'none',
+		},
+		data_account_id: 1234567,
+	},
+};
+
+/** REST v2's usual error body. */
+export const restErrorTitle = { error: { title: 'Policy not found' } };
+
+export const entitySearchAnswer = {
+	data: {
+		actor: {
+			entitySearch: {
+				count: 1,
+				results: {
+					nextCursor: null,
+					entities: [
+						{
+							guid: 'ODc0NjQ2MXxBSU9QU3xDT05ESVRJT058Njk4Nzk2NzU',
+							name: 'corsair-plugin-test',
+							type: 'CONDITION',
+							entityType: 'GENERIC_ENTITY',
+							domain: 'AIOPS',
+							accountId: 1234567,
+							reporting: true,
+							alertSeverity: null,
+							tags: [{ key: 'policyId', values: ['8345516'] }],
+						},
+					],
+				},
+			},
+		},
+	},
+};
+
+export const issuesAnswer = {
+	data: {
+		actor: {
+			account: {
+				aiIssues: {
+					issues: {
+						nextCursor: null,
+						issues: [
+							{
+								issueId: 'a1b2',
+								title: ['CPU above 90%'],
+								priority: 'CRITICAL',
+								state: 'ACTIVATED',
+								sources: ['newrelic'],
+								entityGuids: ['abc'],
+								totalIncidents: 1,
+								createdAt: 1794915648829,
+							},
+						],
+					},
+				},
+			},
+		},
+	},
 };

@@ -303,7 +303,8 @@ const AlertConditionSchema = z
 		type: z.string().nullish(),
 		name: z.string().nullish(),
 		enabled: z.boolean().nullish(),
-		entities: z.array(z.number()).nullish(),
+		// The docs show string ids (`["8288171"]`); numbers are accepted too.
+		entities: z.array(z.union([z.string(), z.number()])).nullish(),
 		metric: z.string().nullish(),
 		condition_scope: z.string().nullish(),
 		terms: z.array(ConditionTermSchema).nullish(),
@@ -431,6 +432,449 @@ export const GraphqlNrqlEnvelopeSchema = z.object({
 	}),
 });
 
+// ── alerts.updatePolicy ───────────────────────────────────────────────────
+
+const PoliciesUpdateInputSchema = z
+	.object({
+		region: RegionSchema,
+		policyId: z.number().int().positive(),
+		name: z.string().min(1).optional().describe('A new policy name.'),
+		incident_preference: z.enum(NEWRELIC_INCIDENT_PREFERENCES).optional(),
+	})
+	.refine((v) => v.name !== undefined || v.incident_preference !== undefined, {
+		message: 'Pass name, incident_preference or both.',
+	});
+
+export type PoliciesUpdateInput = z.input<typeof PoliciesUpdateInputSchema>;
+
+// ── alerts NRQL conditions ────────────────────────────────────────────────
+
+const NrqlConditionTermSchema = z
+	.object({
+		duration: z.union([z.string(), z.number()]).nullish(),
+		operator: z.string().nullish(),
+		priority: z.string().nullish(),
+		threshold: z.union([z.string(), z.number()]).nullish(),
+		time_function: z.string().nullish(),
+	})
+	.loose();
+
+/**
+ * A static NRQL condition as REST v2 returns it. Numbers such as `threshold`
+ * and `aggregation_window` come back as strings ("1000.0", "60"), so they are
+ * read as either.
+ */
+const NrqlConditionSchema = z
+	.object({
+		id: z.number().nullish(),
+		entity_guid: z.string().nullish(),
+		type: z.string().nullish(),
+		name: z.string().nullish(),
+		enabled: z.boolean().nullish(),
+		runbook_url: z.string().nullish(),
+		value_function: z.string().nullish(),
+		violation_time_limit_seconds: z.number().nullish(),
+		terms: z.array(NrqlConditionTermSchema).nullish(),
+		nrql: z
+			.object({
+				query: z.string().nullish(),
+				since_value: z.union([z.string(), z.number()]).nullish(),
+			})
+			.loose()
+			.nullish(),
+		// unknown: aggregation and fill settings, passed through as New Relic sends them.
+		signal: z.record(z.string(), z.unknown()).nullish(),
+		// unknown: loss-of-signal settings, passed through as New Relic sends them.
+		expiration: z.record(z.string(), z.unknown()).nullish(),
+		data_account_id: z.number().nullish(),
+	})
+	.loose();
+
+export type NewrelicNrqlCondition = z.infer<typeof NrqlConditionSchema>;
+
+const NrqlConditionsListInputSchema = z.object({
+	region: RegionSchema,
+	policyId: z
+		.number()
+		.int()
+		.positive()
+		.describe('Only NRQL conditions in this policy.'),
+	page: z.number().int().min(1).optional(),
+});
+
+export type NrqlConditionsListInput = z.input<
+	typeof NrqlConditionsListInputSchema
+>;
+
+const NrqlConditionsListResponseSchema = z.object({
+	nrql_conditions: z.array(NrqlConditionSchema),
+});
+
+export type NrqlConditionsListResponse = z.infer<
+	typeof NrqlConditionsListResponseSchema
+>;
+
+const TermInputSchema = z
+	.object({
+		duration: z
+			.string()
+			.min(1)
+			.describe('Minutes the threshold must hold, e.g. "5".'),
+		operator: z.enum(['above', 'below', 'equal']),
+		priority: z.enum(['critical', 'warning']).optional(),
+		threshold: z.string().min(1).describe('The value to compare, e.g. "1000".'),
+		time_function: z
+			.enum(['all', 'any'])
+			.describe('all = for the whole duration, any = at least once.'),
+	})
+	.loose();
+
+/**
+ * The condition body as REST v2 documents it. Documented fields are checked;
+ * other keys New Relic accepts (`expiration`, `signal` options) pass through.
+ */
+const NrqlConditionBodySchema = z
+	.object({
+		name: z.string().min(1),
+		enabled: z.boolean().optional(),
+		runbook_url: z.string().min(1).optional(),
+		terms: z.array(TermInputSchema).min(1),
+		value_function: z
+			.enum(['single_value', 'sum'])
+			.describe('single_value compares each result; sum adds them up.'),
+		nrql: z
+			.object({
+				query: z
+					.string()
+					.min(1)
+					.describe('The NRQL the condition evaluates, without SINCE.'),
+				since_value: z.string().min(1).optional(),
+			})
+			.loose(),
+		violation_time_limit_seconds: z.number().int().positive().optional(),
+		// unknown: aggregation and fill settings; New Relic validates the keys.
+		signal: z.record(z.string(), z.unknown()).optional(),
+		// unknown: loss-of-signal settings; New Relic validates the keys.
+		expiration: z.record(z.string(), z.unknown()).optional(),
+	})
+	.loose();
+
+const NrqlConditionCreateInputSchema = z.object({
+	region: RegionSchema,
+	policyId: z
+		.number()
+		.int()
+		.positive()
+		.describe('The policy the condition joins.'),
+	condition: NrqlConditionBodySchema,
+});
+
+export type NrqlConditionCreateInput = z.input<
+	typeof NrqlConditionCreateInputSchema
+>;
+
+const NrqlConditionUpdateInputSchema = z.object({
+	region: RegionSchema,
+	conditionId: z.number().int().positive(),
+	condition: NrqlConditionBodySchema.partial().describe(
+		'The fields to change; New Relic keeps the rest.',
+	),
+});
+
+export type NrqlConditionUpdateInput = z.input<
+	typeof NrqlConditionUpdateInputSchema
+>;
+
+const NrqlConditionDeleteInputSchema = z.object({
+	region: RegionSchema,
+	conditionId: z.number().int().positive(),
+});
+
+export type NrqlConditionDeleteInput = z.input<
+	typeof NrqlConditionDeleteInputSchema
+>;
+
+const NrqlConditionResponseSchema = z.object({
+	nrql_condition: NrqlConditionSchema,
+});
+
+export type NrqlConditionResponse = z.infer<typeof NrqlConditionResponseSchema>;
+
+// ── accounts.list ─────────────────────────────────────────────────────────
+
+const AccountsListInputSchema = z.object({ region: RegionSchema });
+
+export type AccountsListInput = z.input<typeof AccountsListInputSchema>;
+
+const AccountsListResponseSchema = z.object({
+	accounts: z.array(
+		z.object({ id: z.number().nullish(), name: z.string().nullish() }).loose(),
+	),
+});
+
+export type AccountsListResponse = z.infer<typeof AccountsListResponseSchema>;
+
+export const NEWRELIC_ACCOUNTS_DOCUMENT = `query Accounts {
+  actor {
+    accounts {
+      id
+      name
+    }
+  }
+}`;
+
+// ── entities ──────────────────────────────────────────────────────────────
+
+const EntityTagSchema = z
+	.object({
+		key: z.string().nullish(),
+		values: z.array(z.string()).nullish(),
+	})
+	.loose();
+
+const EntitySchema = z
+	.object({
+		guid: z.string().nullish(),
+		name: z.string().nullish(),
+		entityType: z.string().nullish(),
+		domain: z.string().nullish(),
+		type: z.string().nullish(),
+		accountId: z.number().nullish(),
+		reporting: z.boolean().nullish(),
+		alertSeverity: z.string().nullish(),
+		permalink: z.string().nullish(),
+		tags: z.array(EntityTagSchema).nullish(),
+	})
+	.loose();
+
+export type NewrelicEntity = z.infer<typeof EntitySchema>;
+
+const ENTITY_FIELDS = `guid
+        name
+        entityType
+        domain
+        type
+        accountId
+        reporting
+        alertSeverity
+        permalink
+        tags {
+          key
+          values
+        }`;
+
+const EntitiesSearchInputSchema = z.object({
+	region: RegionSchema,
+	query: z
+		.string()
+		.min(1)
+		.describe(
+			"An entity search filter, e.g. type = 'APPLICATION', domain = 'APM', name LIKE 'checkout', or accountId = 123. Combine with AND.",
+		),
+	cursor: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('The nextCursor from the previous page.'),
+});
+
+export type EntitiesSearchInput = z.input<typeof EntitiesSearchInputSchema>;
+
+const EntitiesSearchResponseSchema = z.object({
+	count: z.number().nullish(),
+	entities: z.array(EntitySchema),
+	nextCursor: z.string().nullish(),
+});
+
+export type EntitiesSearchResponse = z.infer<
+	typeof EntitiesSearchResponseSchema
+>;
+
+export const NEWRELIC_ENTITY_SEARCH_DOCUMENT = `query EntitySearch($query: String!, $cursor: String) {
+  actor {
+    entitySearch(query: $query) {
+      count
+      results(cursor: $cursor) {
+        nextCursor
+        entities {
+        ${ENTITY_FIELDS}
+        }
+      }
+    }
+  }
+}`;
+
+const EntitiesGetInputSchema = z.object({
+	region: RegionSchema,
+	guids: z
+		.array(z.string().min(1))
+		.min(1)
+		.max(25)
+		.describe('Entity GUIDs, from entities.search (at most 25).'),
+});
+
+export type EntitiesGetInput = z.input<typeof EntitiesGetInputSchema>;
+
+const EntitiesGetResponseSchema = z.object({
+	entities: z.array(EntitySchema),
+});
+
+export type EntitiesGetResponse = z.infer<typeof EntitiesGetResponseSchema>;
+
+export const NEWRELIC_ENTITIES_DOCUMENT = `query Entities($guids: [EntityGuid]!) {
+  actor {
+    entities(guids: $guids) {
+        ${ENTITY_FIELDS}
+    }
+  }
+}`;
+
+// ── issues.list ───────────────────────────────────────────────────────────
+
+const IssuesListInputSchema = z.object({
+	region: RegionSchema,
+	accountId: z.number().int().positive(),
+	states: z
+		.array(z.enum(['ACTIVATED', 'CREATED', 'CLOSED', 'DEACTIVATED']))
+		.optional()
+		.describe('Only issues in these states.'),
+	priority: z.array(z.enum(['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'])).optional(),
+	entityGuids: z.array(z.string().min(1)).optional(),
+	startTime: z
+		.number()
+		.int()
+		.optional()
+		.describe('Epoch milliseconds; with endTime, limits the window.'),
+	endTime: z.number().int().optional(),
+	cursor: z.string().min(1).optional(),
+});
+
+export type IssuesListInput = z.input<typeof IssuesListInputSchema>;
+
+/** Several fields are lists in NerdGraph even when they hold one value. */
+const IssueSchema = z
+	.object({
+		issueId: z.string().nullish(),
+		title: z.array(z.string()).nullish(),
+		description: z.array(z.string()).nullish(),
+		priority: z.string().nullish(),
+		state: z.string().nullish(),
+		sources: z.array(z.string()).nullish(),
+		entityGuids: z.array(z.string()).nullish(),
+		entityNames: z.array(z.string()).nullish(),
+		policyIds: z.array(z.union([z.string(), z.number()])).nullish(),
+		conditionName: z.array(z.string()).nullish(),
+		totalIncidents: z.number().nullish(),
+		createdAt: z.number().nullish(),
+		activatedAt: z.number().nullish(),
+		closedAt: z.number().nullish(),
+		acknowledgedAt: z.number().nullish(),
+		updatedAt: z.number().nullish(),
+		deepLinkUrl: z.array(z.string()).nullish(),
+	})
+	.loose();
+
+const IssuesListResponseSchema = z.object({
+	issues: z.array(IssueSchema),
+	nextCursor: z.string().nullish(),
+});
+
+export type IssuesListResponse = z.infer<typeof IssuesListResponseSchema>;
+
+export const NEWRELIC_ISSUES_DOCUMENT = `query Issues($accountId: Int!, $cursor: String, $filter: AiIssuesFilterIssues, $timeWindow: TimeWindowInput) {
+  actor {
+    account(id: $accountId) {
+      aiIssues {
+        issues(cursor: $cursor, filter: $filter, timeWindow: $timeWindow) {
+          nextCursor
+          issues {
+            issueId
+            title
+            description
+            priority
+            state
+            sources
+            entityGuids
+            entityNames
+            policyIds
+            conditionName
+            totalIncidents
+            createdAt
+            activatedAt
+            closedAt
+            acknowledgedAt
+            updatedAt
+            deepLinkUrl
+          }
+        }
+      }
+    }
+  }
+}`;
+
+// ── changeTracking.createDeployment ───────────────────────────────────────
+
+const DeploymentCreateInputSchema = z.object({
+	region: RegionSchema,
+	entityGuid: z
+		.string()
+		.min(1)
+		.describe('The entity the deployment belongs to, e.g. an APM service.'),
+	version: z.string().min(1).describe('The version deployed, e.g. 1.4.2.'),
+	description: z.string().min(1).optional(),
+	changelog: z.string().min(1).optional(),
+	commit: z.string().min(1).optional(),
+	user: z.string().min(1).optional(),
+	deepLink: z.string().min(1).optional(),
+	groupId: z.string().min(1).optional(),
+	deploymentType: z
+		.enum(['BASIC', 'BLUE_GREEN', 'CANARY', 'OTHER', 'ROLLING', 'SHADOW'])
+		.optional(),
+	timestamp: z
+		.number()
+		.int()
+		.optional()
+		.describe('Epoch milliseconds; defaults to now.'),
+});
+
+export type DeploymentCreateInput = z.input<typeof DeploymentCreateInputSchema>;
+
+const DeploymentCreateResponseSchema = z
+	.object({
+		deploymentId: z.string().nullish(),
+		entityGuid: z.string().nullish(),
+		version: z.string().nullish(),
+		timestamp: z.number().nullish(),
+		description: z.string().nullish(),
+		changelog: z.string().nullish(),
+		commit: z.string().nullish(),
+		user: z.string().nullish(),
+		deepLink: z.string().nullish(),
+		groupId: z.string().nullish(),
+		deploymentType: z.string().nullish(),
+	})
+	.loose();
+
+export type DeploymentCreateResponse = z.infer<
+	typeof DeploymentCreateResponseSchema
+>;
+
+export const NEWRELIC_DEPLOYMENT_DOCUMENT = `mutation CreateDeployment($deployment: ChangeTrackingDeploymentInput!) {
+  changeTrackingCreateDeployment(deployment: $deployment) {
+    deploymentId
+    entityGuid
+    version
+    timestamp
+    description
+    changelog
+    commit
+    user
+    deepLink
+    groupId
+    deploymentType
+  }
+}`;
+
 // ── Registry ──────────────────────────────────────────────────────────────
 
 export type NewrelicEndpointInputs = {
@@ -442,6 +886,16 @@ export type NewrelicEndpointInputs = {
 	policiesDelete: PoliciesDeleteInput;
 	conditionsList: ConditionsListInput;
 	queryNrql: NrqlInput;
+	policiesUpdate: PoliciesUpdateInput;
+	nrqlConditionsList: NrqlConditionsListInput;
+	nrqlConditionsCreate: NrqlConditionCreateInput;
+	nrqlConditionsUpdate: NrqlConditionUpdateInput;
+	nrqlConditionsDelete: NrqlConditionDeleteInput;
+	accountsList: AccountsListInput;
+	entitiesSearch: EntitiesSearchInput;
+	entitiesGet: EntitiesGetInput;
+	issuesList: IssuesListInput;
+	deploymentsCreate: DeploymentCreateInput;
 };
 
 export type NewrelicEndpointOutputs = {
@@ -453,6 +907,16 @@ export type NewrelicEndpointOutputs = {
 	policiesDelete: PoliciesDeleteResponse;
 	conditionsList: ConditionsListResponse;
 	queryNrql: NrqlResponse;
+	policiesUpdate: PoliciesCreateResponse;
+	nrqlConditionsList: NrqlConditionsListResponse;
+	nrqlConditionsCreate: NrqlConditionResponse;
+	nrqlConditionsUpdate: NrqlConditionResponse;
+	nrqlConditionsDelete: NrqlConditionResponse;
+	accountsList: AccountsListResponse;
+	entitiesSearch: EntitiesSearchResponse;
+	entitiesGet: EntitiesGetResponse;
+	issuesList: IssuesListResponse;
+	deploymentsCreate: DeploymentCreateResponse;
 };
 
 export const NewrelicEndpointInputSchemas = {
@@ -464,6 +928,16 @@ export const NewrelicEndpointInputSchemas = {
 	policiesDelete: PoliciesDeleteInputSchema,
 	conditionsList: ConditionsListInputSchema,
 	queryNrql: NrqlInputSchema,
+	policiesUpdate: PoliciesUpdateInputSchema,
+	nrqlConditionsList: NrqlConditionsListInputSchema,
+	nrqlConditionsCreate: NrqlConditionCreateInputSchema,
+	nrqlConditionsUpdate: NrqlConditionUpdateInputSchema,
+	nrqlConditionsDelete: NrqlConditionDeleteInputSchema,
+	accountsList: AccountsListInputSchema,
+	entitiesSearch: EntitiesSearchInputSchema,
+	entitiesGet: EntitiesGetInputSchema,
+	issuesList: IssuesListInputSchema,
+	deploymentsCreate: DeploymentCreateInputSchema,
 } as const;
 
 export const NewrelicEndpointOutputSchemas = {
@@ -475,4 +949,14 @@ export const NewrelicEndpointOutputSchemas = {
 	policiesDelete: PolicyDeletedResponseSchema,
 	conditionsList: ConditionsListResponseSchema,
 	queryNrql: NrqlResponseSchema,
+	policiesUpdate: PolicyResponseSchema,
+	nrqlConditionsList: NrqlConditionsListResponseSchema,
+	nrqlConditionsCreate: NrqlConditionResponseSchema,
+	nrqlConditionsUpdate: NrqlConditionResponseSchema,
+	nrqlConditionsDelete: NrqlConditionResponseSchema,
+	accountsList: AccountsListResponseSchema,
+	entitiesSearch: EntitiesSearchResponseSchema,
+	entitiesGet: EntitiesGetResponseSchema,
+	issuesList: IssuesListResponseSchema,
+	deploymentsCreate: DeploymentCreateResponseSchema,
 } as const;
