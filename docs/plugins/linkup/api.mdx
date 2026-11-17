@@ -14,12 +14,12 @@ description: "API reference for the Linkup plugin in Corsair: every `linkup.api.
 
 `answers.get`
 
-Ask for a sourced answer. This spends credits. Source text is not stored.
+Search the web and return a written answer with its sources ($0.006; deep $0.055).
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
-await corsair.linkup.api.answers.get({ q: 'weather' });
+await corsair.linkup.api.answers.get({ q: 'What is the capital of Norway?' });
 ```
 
 **Input**
@@ -27,8 +27,14 @@ await corsair.linkup.api.answers.get({ q: 'weather' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `q` | `string` | Yes | — |
+| `depth` | `flash \| fast \| standard \| deep` | No | flash, fast and standard cost the same and get slower and broader in that order; deep runs several searches and costs 10x. Default fast. |
+| `includeInlineCitations` | `boolean` | No | Put numbered citations inside the answer text. |
+| `fromDate` | `string` | No | Only sources published on or after this date (YYYY-MM-DD). |
+| `toDate` | `string` | No | Only sources published on or before this date (YYYY-MM-DD). |
+| `includeDomains` | `string[]` | No | Only search these domains. |
+| `excludeDomains` | `string[]` | No | Never return these domains. |
 
-POST /v1/search with outputType sourcedAnswer. Source text is not stored.
+`POST /v1/search` with outputType sourcedAnswer. Source text is not stored.
 
 
 
@@ -44,9 +50,10 @@ POST /v1/search with outputType sourcedAnswer. Source text is not stored.
 
 ```ts
 {
-  id: string,
   name?: string,
-  type?: string,
+  url: string,
+  snippet?: string,
+  favicon?: string | null,
   publishedAt?: string
 }[]
 ```
@@ -63,7 +70,7 @@ POST /v1/search with outputType sourcedAnswer. Source text is not stored.
 
 `credits.get`
 
-Read the remaining credit balance.
+Get the account's remaining credit balance in dollars.
 
 **Risk:** `read`
 
@@ -73,7 +80,7 @@ await corsair.linkup.api.credits.get({});
 
 **Input:** _empty object_
 
-GET /v1/credits/balance. Stores the balance.
+`GET /v1/credits/balance`. Stores the balance.
 
 
 **Output**
@@ -104,9 +111,9 @@ GET /v1/credits/balance. Stores the balance.
 
 `pages.fetch`
 
-Fetch one page as markdown. This spends credits. The page is not stored.
+Fetch one web page or PDF as markdown, optionally with typed data from a schema ($0.001 to $0.011).
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
 await corsair.linkup.api.pages.fetch({ url: 'https://example.com' });
@@ -117,8 +124,14 @@ await corsair.linkup.api.pages.fetch({ url: 'https://example.com' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string` | Yes | — |
+| `mode` | `standard \| pro` | No | pro gets past harder pages and costs 5x. Default standard. |
+| `renderJs` | `boolean` | No | Run the page's JavaScript before reading it (costs 5x). |
+| `extractImages` | `boolean` | No | — |
+| `includeRawContent` | `boolean` | No | Also return the page's raw text. |
+| `schema` | `Record<string, any>` | No | JSON Schema for typed data to pull from the page. |
+| `instructions` | `string` | No | What to pull from the page, used with schema. |
 
-POST /v1/fetch. Returns markdown and does not store the page.
+`POST /v1/fetch`. Returns markdown and does not store the page.
 
 
 
@@ -127,6 +140,197 @@ POST /v1/fetch. Returns markdown and does not store the page.
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `markdown` | `string` | Yes | — |
+| `data` | `Record<string, any>` | No | — |
+| `rawContent` | `string` | No | — |
+| `images` | `any[]` | No | — |
+| `contentType` | `string` | No | — |
+
+
+
+---
+
+## Research
+
+### create
+
+`research.create`
+
+Start a multi-step research task ($0.25 to $2.50 by reasoningDepth). Poll research.get for the result.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.linkup.api.research.create({ q: 'When did the Oslo Opera House open?', reasoningDepth: 'S' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | The research question. |
+| `reasoningDepth` | `S \| M \| L \| XL` | No | How hard to work: S $0.25, M $0.50, L $1.50, XL $2.50 per task. |
+| `mode` | `auto \| answer \| investigate \| research` | No | — |
+| `outputType` | `sourcedAnswer \| structured` | No | — |
+| `schema` | `Record<string, any>` | No | JSON Schema for structured output; needed when outputType is structured. |
+| `fromDate` | `string` | No | Only sources published on or after this date (YYYY-MM-DD). |
+| `toDate` | `string` | No | Only sources published on or before this date (YYYY-MM-DD). |
+| `includeDomains` | `string[]` | No | Only search these domains. |
+| `excludeDomains` | `string[]` | No | Never return these domains. |
+
+`POST /v1/research`. Returns the task; poll research.get.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="task full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  status: string,
+  createdAt?: string,
+  updatedAt?: string,
+  error?: string | null,
+  input?: Record<string, any>,
+  output?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`research.get`
+
+Get a research task: status, and the answer or structured data once completed.
+
+**Risk:** `read`
+
+```ts
+await corsair.linkup.api.research.get({ id: '4b26323e-c449-45ec-bf92-cd969ae98f7b' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+`GET /v1/research/{id}`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="task full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  status: string,
+  createdAt?: string,
+  updatedAt?: string,
+  error?: string | null,
+  input?: Record<string, any>,
+  output?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`research.list`
+
+List research tasks, newest or oldest first, paged.
+
+**Risk:** `read`
+
+```ts
+await corsair.linkup.api.research.list({ pageSize: 10, sortBy: 'createdAt', sortDirection: 'desc' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+| `sortBy` | `createdAt \| updatedAt` | No | — |
+| `sortDirection` | `asc \| desc` | No | — |
+
+`GET /v1/research`, paged.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tasks` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+| `quota` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="tasks full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  status: string,
+  createdAt?: string,
+  updatedAt?: string,
+  error?: string | null,
+  input?: Record<string, any>,
+  output?: any
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number,
+  pageSize?: number,
+  total?: number,
+  totalPages?: number
+}
+```
+</Accordion>
+
+<Accordion title="quota full type">
+
+```ts
+{
+  inFlight?: number,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -138,12 +342,12 @@ POST /v1/fetch. Returns markdown and does not store the page.
 
 `responses.create`
 
-Create a response. This spends credits. The generated text is not stored.
+Generate an answer grounded in live web results (OpenAI Responses format). Paid generation.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
-await corsair.linkup.api.responses.create({ input: 'Hello', model: 'linkup' });
+await corsair.linkup.api.responses.create({ input: 'What changed in the latest Node.js release?', model: 'linkup-standard' });
 ```
 
 **Input**
@@ -151,9 +355,10 @@ await corsair.linkup.api.responses.create({ input: 'Hello', model: 'linkup' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `input` | `string` | Yes | — |
-| `model` | `string` | Yes | — |
+| `model` | `linkup-standard \| linkup-deep` | Yes | linkup-standard is faster; linkup-deep is more thorough. |
+| `instructions` | `string` | No | System-style instructions for the answer. |
 
-POST /v1/responses. Stores id, model, and object.
+`POST /v1/responses` (OpenAI Responses format). Stores id, model, and object.
 
 
 
@@ -162,6 +367,7 @@ POST /v1/responses. Stores id, model, and object.
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `response` | `object` | Yes | — |
+| `outputText` | `string` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="response full type">
@@ -186,21 +392,28 @@ POST /v1/responses. Stores id, model, and object.
 
 `search.run`
 
-Search the web. This spends credits. Page text is not stored.
+Search the web and return results with their text content ($0.005 a call; deep $0.05). Filter by date and domain.
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
-await corsair.linkup.api.search.run({ q: 'weather' });
+await corsair.linkup.api.search.run({ q: 'Corsair integrations for AI agents', depth: 'fast', maxResults: 5, fromDate: '2026-01-01' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `q` | `string` | Yes | — |
+| `q` | `string` | Yes | What to search for, in plain language. |
+| `depth` | `flash \| fast \| standard \| deep` | No | flash, fast and standard cost the same and get slower and broader in that order; deep runs several searches and costs 10x. Default fast. |
+| `maxResults` | `number` | No | — |
+| `includeImages` | `boolean` | No | Also return image results. |
+| `fromDate` | `string` | No | Only sources published on or after this date (YYYY-MM-DD). |
+| `toDate` | `string` | No | Only sources published on or before this date (YYYY-MM-DD). |
+| `includeDomains` | `string[]` | No | Only search these domains. |
+| `excludeDomains` | `string[]` | No | Never return these domains. |
 
-POST /v1/search with outputType searchResults. Stores name, url, type, and date.
+`POST /v1/search` with outputType searchResults. Stores name, url, type, and date of each result.
 
 
 
@@ -215,11 +428,302 @@ POST /v1/search with outputType searchResults. Stores name, url, type, and date.
 
 ```ts
 {
-  id: string,
-  name?: string,
   type?: string,
+  name?: string,
+  url: string,
+  content?: string,
+  favicon?: string | null,
   publishedAt?: string
 }[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### structured
+
+`search.structured`
+
+Search the web and return JSON shaped by your JSON Schema, optionally with sources ($0.006; deep $0.055).
+
+**Risk:** `read`
+
+```ts
+await corsair.linkup.api.search.structured({ q: 'Population of Oslo', schema: { type: 'object', properties: { city: { type: 'string' }, population: { type: 'number' } } }, includeSources: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `schema` | `Record<string, any>` | Yes | JSON Schema (type: object) for the data to return. |
+| `depth` | `flash \| fast \| standard \| deep` | No | flash, fast and standard cost the same and get slower and broader in that order; deep runs several searches and costs 10x. Default fast. |
+| `includeSources` | `boolean` | No | Also return the sources the data came from. |
+| `fromDate` | `string` | No | Only sources published on or after this date (YYYY-MM-DD). |
+| `toDate` | `string` | No | Only sources published on or before this date (YYYY-MM-DD). |
+| `includeDomains` | `string[]` | No | Only search these domains. |
+| `excludeDomains` | `string[]` | No | Never return these domains. |
+
+`POST /v1/search` with outputType structured. The schema is sent as a JSON string.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+| `sources` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="sources full type">
+
+```ts
+{
+  name?: string,
+  url: string,
+  snippet?: string,
+  favicon?: string | null,
+  publishedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tasks
+
+### create
+
+`tasks.create`
+
+Queue up to 100 search, fetch or research calls to run in the background, each billed like the direct call. Poll tasks.get.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.linkup.api.tasks.create({ tasks: [{ type: 'fetch', input: { url: 'https://example.com' } }, { type: 'search', input: { q: 'Oslo weather', depth: 'fast', outputType: 'searchResults' } }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tasks` | `object[]` | Yes | — |
+
+`POST /v1/tasks` with an array of up to 100 search, fetch or research inputs.
+
+<AccordionGroup>
+<Accordion title="tasks full type">
+
+```ts
+(
+  {
+    type: search,
+    input: {
+      q: string,
+      depth: flash | fast | standard | deep,
+      outputType: searchResults | sourcedAnswer | structured
+    }
+  } | {
+    type: fetch,
+    input: {
+      url: string
+    }
+  } | {
+    type: research,
+    input: {
+      q: string,
+      outputType: sourcedAnswer | structured
+    }
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tasks` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+| `quota` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="tasks full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  status: string,
+  createdAt?: string,
+  updatedAt?: string,
+  error?: string | null,
+  input?: Record<string, any>,
+  output?: any
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number,
+  pageSize?: number,
+  total?: number,
+  totalPages?: number
+}
+```
+</Accordion>
+
+<Accordion title="quota full type">
+
+```ts
+{
+  inFlight?: number,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`tasks.get`
+
+Get one background task with its status and output.
+
+**Risk:** `read`
+
+```ts
+await corsair.linkup.api.tasks.get({ id: '74eb77e1-4eb7-4429-843b-86d61b504791' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+`GET /v1/tasks/{id}`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="task full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  status: string,
+  createdAt?: string,
+  updatedAt?: string,
+  error?: string | null,
+  input?: Record<string, any>,
+  output?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tasks.list`
+
+List background tasks, filtered by type and status, paged, with the in-flight quota.
+
+**Risk:** `read`
+
+```ts
+await corsair.linkup.api.tasks.list({ type: ['research'], status: ['completed'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `(search \| fetch \| research)[]` | No | — |
+| `status` | `(pending \| processing \| completed \| failed)[]` | No | — |
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+| `sortBy` | `createdAt \| updatedAt` | No | — |
+| `sortDirection` | `asc \| desc` | No | — |
+
+`GET /v1/tasks`, filtered by type and status, paged.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tasks` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+| `quota` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="tasks full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  status: string,
+  createdAt?: string,
+  updatedAt?: string,
+  error?: string | null,
+  input?: Record<string, any>,
+  output?: any
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number,
+  pageSize?: number,
+  total?: number,
+  totalPages?: number
+}
+```
+</Accordion>
+
+<Accordion title="quota full type">
+
+```ts
+{
+  inFlight?: number,
+  limit?: number
+}
 ```
 </Accordion>
 </AccordionGroup>

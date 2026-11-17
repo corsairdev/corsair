@@ -1,12 +1,14 @@
+import type { LinkupContext } from './context';
 import { getCredits } from './endpoints/read';
 
-console.warn('Skipping the live Linkup credits call in unit tests.');
+// Only the free credits call: every other Linkup call is billed.
+const key = process.env.LINKUP_API_KEY;
+const live = key ? it : it.skip;
+if (!key) {
+	console.warn('Skipping live Linkup tests: LINKUP_API_KEY is not set.');
+}
 
-const live = it.skip;
-
-live('reads credits when a key is present', async () => {
-	const key = process.env.LINKUP_API_KEY;
-	if (!key) return;
-	const result = await getCredits({ key } as never, {});
-	expect(result.credit.id).toBe('balance');
+live('reads the credit balance', async () => {
+	const result = await getCredits({ key } as LinkupContext, {});
+	expect(typeof result.credit.balance).toBe('number');
 });

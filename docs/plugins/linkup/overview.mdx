@@ -1,16 +1,20 @@
 ---
 title: "Linkup plugin"
 sidebarTitle: "Overview"
-description: "Read Linkup credits, search, answer, fetch a page, and create a response."
+description: "Web search for AI agents with Linkup - search results with page text, sourced answers, structured JSON, page fetch, and async research tasks."
 ---
 
 Use **Linkup** through Corsair: one client, typed API calls, local DB sync.
 
-The key is a Bearer token. An invalid bearer on credits, search, fetch, and responses each returned HTTP 401. Page text and generated text are not stored. Search and answer spend credits.
+Create an API key under API keys in the Linkup app; it is sent as a Bearer token. New accounts get $20 of credit each month. Every call except `credits.get`, `research.get/list` and `tasks.get/list` is billed per call: searches $0.005 to $0.055 by depth, page fetches $0.001 to $0.011, research $0.25 to $2.50 by `reasoningDepth`.
+`search.run`, `answers.get`, `search.structured` and `pages.fetch` are metered lookups (read). `responses.create`, `research.create` and `tasks.create` are paid generation jobs and are destructive.
+`depth`: flash, fast (default here) and standard cost the same; deep runs several searches and costs 10x. `fromDate`/`toDate` take YYYY-MM-DD and the domain filters take bare domains such as example.com.
+Research and batch tasks run in the background: create them, then poll `research.get` or `tasks.get` until `status` is `completed` (or `failed`); `output` holds the answer, results or data.
+Only the credit balance, source URLs with name, type and date, and response ids are stored. Page text, generated text and queries are not stored or put in events.
 
 **What you get:**
 
-- 5 typed API operations
+- 12 typed API operations
 - 3 synced entities (`credits`, `responses`, `sources`) for fast `.search()` / `.list()`
 
 ## Setup
@@ -97,19 +101,22 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**Read credits**
+**Search recent news on a domain**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.linkup.api.credits.get({});
+await tenant.linkup.api.search.run({
+	q: 'Corsair integrations for AI agents',
+	includeDomains: ['corsair.dev'],
+});
 ```
 
 
-**`answers.get`**
+**Start a short research task**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.linkup.api.answers.get({});
+await tenant.linkup.api.research.create({ q: 'When did the Oslo Opera House open, and who designed it?' });
 ```
 
 
