@@ -3028,6 +3028,14 @@
                 ]
               },
               {
+                "group": "Jotform",
+                "pages": [
+                  "plugins/jotform/overview",
+                  "plugins/jotform/api",
+                  "plugins/jotform/database"
+                ]
+              },
+              {
                 "group": "Kadoa",
                 "pages": [
                   "plugins/kadoa/overview",
