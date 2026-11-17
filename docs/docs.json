@@ -4814,6 +4814,14 @@
                 ]
               },
               {
+                "group": "TomTom",
+                "pages": [
+                  "plugins/tomtom/overview",
+                  "plugins/tomtom/api",
+                  "plugins/tomtom/database"
+                ]
+              },
+              {
                 "group": "TPSCheck",
                 "pages": [
                   "plugins/tpscheck/overview",
