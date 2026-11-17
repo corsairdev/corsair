@@ -9,15 +9,29 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import type { ProoflyContext } from './context';
-import { getUser, listActivity, listCampaigns } from './endpoints';
 import {
+	getNotificationData,
+	getUser,
+	listActivity,
+	listCampaigns,
+	listNotifications,
+	setCampaignEnabled,
+} from './endpoints';
+import {
+	GetNotificationDataInputSchema,
+	GetNotificationDataResponseSchema,
 	GetUserInputSchema,
 	GetUserResponseSchema,
 	ListActivityInputSchema,
 	ListActivityResponseSchema,
 	ListCampaignsInputSchema,
 	ListCampaignsResponseSchema,
+	ListNotificationsInputSchema,
+	ListNotificationsResponseSchema,
+	SetCampaignEnabledInputSchema,
+	SetCampaignEnabledResponseSchema,
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { ProoflySchema } from './schema';
@@ -35,7 +49,8 @@ export type ProoflyPluginOptions = {
 export type ProoflyKeyBuilderContext = KeyBuilderContext<ProoflyPluginOptions>;
 
 const prooflyEndpointsNested = {
-	campaigns: { list: listCampaigns },
+	campaigns: { list: listCampaigns, setEnabled: setCampaignEnabled },
+	notifications: { list: listNotifications, getData: getNotificationData },
 	user: { get: getUser },
 	activity: { list: listActivity },
 } as const;
@@ -55,6 +70,18 @@ export const prooflyEndpointSchemas = {
 		input: ListActivityInputSchema,
 		output: ListActivityResponseSchema,
 	},
+	'campaigns.setEnabled': {
+		input: SetCampaignEnabledInputSchema,
+		output: SetCampaignEnabledResponseSchema,
+	},
+	'notifications.list': {
+		input: ListNotificationsInputSchema,
+		output: ListNotificationsResponseSchema,
+	},
+	'notifications.getData': {
+		input: GetNotificationDataInputSchema,
+		output: GetNotificationDataResponseSchema,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof prooflyEndpointsNested
 >;
@@ -72,6 +99,21 @@ const prooflyEndpointMeta = {
 	'activity.list': {
 		riskLevel: 'read',
 		description: 'Read Proofly activity logs. The logs are not stored.',
+	},
+	'campaigns.setEnabled': {
+		riskLevel: 'write',
+		description:
+			'Turn a campaign on or off; sends nothing when it already has that state.',
+	},
+	'notifications.list': {
+		riskLevel: 'read',
+		description:
+			'List the notifications in a campaign with their settings and stats.',
+	},
+	'notifications.getData': {
+		riskLevel: 'read',
+		description:
+			'Read the leads and conversions a notification collected. Not stored.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof prooflyEndpointsNested>;
 
@@ -125,9 +167,9 @@ export function proofly<const T extends ProoflyPluginOptions>(
 			}
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const key = await ctx.keys.get_api_key();
-				return key ?? '';
+				if (key) return key;
 			}
-			return '';
+			throw new AuthMissingError('proofly', 'api_key');
 		},
 	} satisfies InternalProoflyPlugin;
 }

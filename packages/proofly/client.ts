@@ -1,23 +1,18 @@
-import type {
-	ApiRequestOptions,
-	OpenAPIConfig,
-	RateLimitConfig,
-} from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export const PROOFLY_API_BASE = 'https://proofly.io/api';
 
-const NO_TRANSPORT_RETRIES: RateLimitConfig = {
-	enabled: true,
-	maxRetries: 0,
-	initialRetryDelay: 0,
-	backoffMultiplier: 1,
-	headerNames: {
-		retryAfter: 'retry-after',
-	},
-};
-
-export async function prooflyGet<T>(apiKey: string, path: string): Promise<T> {
+/**
+ * One call to https://proofly.io/api with the key in `X-Api-Key`. Core
+ * retries an HTTP 429 (free accounts get 10 requests a minute).
+ * https://proofly.io/developers
+ */
+export async function prooflyRequest<T>(
+	apiKey: string,
+	method: 'GET' | 'PUT',
+	path: string,
+): Promise<T> {
 	const config: OpenAPIConfig = {
 		BASE: PROOFLY_API_BASE,
 		VERSION: '1',
@@ -28,15 +23,15 @@ export async function prooflyGet<T>(apiKey: string, path: string): Promise<T> {
 			'X-Api-Key': apiKey,
 		},
 	};
-	const requestOptions: ApiRequestOptions = {
-		method: 'GET',
-		url: path,
-	};
-	return await request<T>(config, requestOptions, {
-		rateLimitConfig: NO_TRANSPORT_RETRIES,
-	});
+	const requestOptions: ApiRequestOptions = { method, url: path };
+	return await request<T>(config, requestOptions);
 }
 
+export async function prooflyGet<T>(apiKey: string, path: string): Promise<T> {
+	return prooflyRequest<T>(apiKey, 'GET', path);
+}
+
+// unknown: any response body; only `ok: false` is checked.
 export function isProoflyFailure(body: unknown): boolean {
 	return (
 		typeof body === 'object' &&
@@ -46,7 +41,12 @@ export function isProoflyFailure(body: unknown): boolean {
 	);
 }
 
-export function prooflyFailure(path: string, body: unknown): ApiError {
+export function prooflyFailure(
+	path: string,
+	// unknown: the provider's `{ ok: false, error }` body.
+	body: unknown,
+	method: 'GET' | 'PUT' = 'GET',
+): ApiError {
 	const record =
 		typeof body === 'object' && body !== null
 			? (body as Record<string, unknown>)
@@ -55,7 +55,7 @@ export function prooflyFailure(path: string, body: unknown): ApiError {
 	const message =
 		typeof record.error === 'string' ? record.error : 'Proofly request failed';
 	return new ApiError(
-		{ method: 'GET', url: path },
+		{ method, url: path },
 		{
 			url: `${PROOFLY_API_BASE}${path}`,
 			ok: false,

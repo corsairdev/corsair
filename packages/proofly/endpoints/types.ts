@@ -96,3 +96,118 @@ export const ProoflyEndpointOutputSchemas = {
 	'user.get': GetUserResponseSchema,
 	'activity.list': ListActivityResponseSchema,
 };
+
+// ── Campaign notifications, toggling, and notification data ──
+// https://proofly.io/developers. Responses are parsed loosely: nullable
+// fields, open `type` strings, and extra fields kept.
+
+const NumericId = z
+	.union([z.number().int().positive(), z.string().regex(/^\d+$/)])
+	.transform((value) => String(value));
+
+export const ListNotificationsInputSchema = z.object({
+	campaign_id: NumericId.describe('Campaign id from campaigns.list'),
+});
+
+export const NotificationSchema = z
+	.object({
+		id: z.union([z.number(), z.string()]),
+		name: z.string().nullish(),
+		type: z
+			.string()
+			.nullish()
+			.describe('Notification kind, e.g. LATEST_CONVERSION'),
+		settings: z.object({}).loose().nullish(),
+		stats: z
+			.object({
+				impressions: z.number().nullish(),
+				hovers: z.number().nullish(),
+				clicks: z.number().nullish(),
+				leads: z.number().nullish(),
+			})
+			.loose()
+			.nullish(),
+		enabled: z.boolean().nullish(),
+		created: z.string().nullish(),
+	})
+	.loose();
+
+export const ListNotificationsResponseSchema = z
+	.object({
+		ok: z.literal(true),
+		status: z.number().optional(),
+		data: z.array(NotificationSchema),
+	})
+	.loose();
+
+export const SetCampaignEnabledInputSchema = z.object({
+	campaign_id: NumericId.describe('Campaign id from campaigns.list'),
+	enabled: z
+		.boolean()
+		.describe('true to turn the campaign on, false to turn it off'),
+});
+
+export const SetCampaignEnabledResponseSchema = z.object({
+	campaign_id: z.string(),
+	enabled: z.boolean(),
+	changed: z
+		.boolean()
+		.describe(
+			'false when the campaign already had that state and nothing was sent',
+		),
+	message: z
+		.string()
+		.optional()
+		.describe("Proofly's reply, when a change was sent"),
+});
+
+export const GetNotificationDataInputSchema = z.object({
+	notification_id: NumericId.describe(
+		'Notification id from notifications.list',
+	),
+});
+
+export const NotificationDataSchema = z
+	.object({
+		type: z.string().nullish().describe('e.g. collector or conversion'),
+		data: z.object({}).loose().nullish().describe('What the visitor entered'),
+		ip: z.string().nullish(),
+		url: z.string().nullish(),
+		location: z
+			.object({
+				city: z.string().nullish(),
+				country_code: z.string().nullish(),
+				country: z.string().nullish(),
+			})
+			.loose()
+			.nullish(),
+		date: z.string().nullish(),
+	})
+	.loose();
+
+export const GetNotificationDataResponseSchema = z
+	.object({
+		ok: z.literal(true),
+		status: z.number().optional(),
+		data: z.array(NotificationDataSchema),
+	})
+	.loose();
+
+export type ListNotificationsInput = z.input<
+	typeof ListNotificationsInputSchema
+>;
+export type ListNotificationsResponse = z.infer<
+	typeof ListNotificationsResponseSchema
+>;
+export type SetCampaignEnabledInput = z.input<
+	typeof SetCampaignEnabledInputSchema
+>;
+export type SetCampaignEnabledResponse = z.infer<
+	typeof SetCampaignEnabledResponseSchema
+>;
+export type GetNotificationDataInput = z.input<
+	typeof GetNotificationDataInputSchema
+>;
+export type GetNotificationDataResponse = z.infer<
+	typeof GetNotificationDataResponseSchema
+>;
