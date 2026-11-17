@@ -1,5 +1,6 @@
 displayName: IdentityCheck
 description: Start StackGo identity verifications and retrieve their results.
+domain: stackgo.io
 overviewNote: |
   - **Paid plan.** StackGo's API and webhooks come with the Professional plan and up; trial accounts get no API access. Create the key as a user with the developer permission (Account, then Users). Keys start with `key-` and carry fixed scopes: `verification.create`, `verification.info` and `verification.image`.
   - **Calls that spend credit or contact people.** `verification.create`, `sms`, `kyb` and `tranche2` each start a check paid from the plan's credit. `sms` texts the person, and `create` emails them an invitation when the body has `emailUser: "Yes"`. All four are marked destructive.
