@@ -4453,6 +4453,15 @@
                 ]
               },
               {
+                "group": "SignWell",
+                "pages": [
+                  "plugins/signwell/overview",
+                  "plugins/signwell/api",
+                  "plugins/signwell/database",
+                  "plugins/signwell/webhooks"
+                ]
+              },
+              {
                 "group": "Simple Analytics",
                 "pages": [
                   "plugins/simpleanalytics/overview",

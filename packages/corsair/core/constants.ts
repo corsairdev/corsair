@@ -537,6 +537,7 @@ export const BaseProviders = [
 	'shopify',
 	'shortcut',
 	'shortio',
+	'signwell',
 	'simpleanalytics',
 	'simplekpi',
 	'simplero',
@@ -1193,6 +1194,7 @@ export const ProviderDisplayNames = {
 	shopify: 'Shopify',
 	shortcut: 'Shortcut',
 	shortio: 'Short.io',
+	signwell: 'SignWell',
 	simpleanalytics: 'Simple Analytics',
 	simplekpi: 'SimpleKPI',
 	simplero: 'Simplero',
@@ -1856,6 +1858,7 @@ export type AllProviders =
 	| 'shopify'
 	| 'shortcut'
 	| 'shortio'
+	| 'signwell'
 	| 'simpleanalytics'
 	| 'simplekpi'
 	| 'simplero'
