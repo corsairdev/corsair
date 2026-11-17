@@ -1,6 +1,6 @@
 import { AuthMissingError } from '../core/auth/errors/auth-missing';
 import { cacheRefreshedTokens } from '../core/auth/oauth-token-cache';
-import { singleFlight } from '../core/auth/single-flight';
+import { flightStoreOf, singleFlight } from '../core/auth/single-flight';
 import type { AccountKeyManagerFor } from '../core/auth/types';
 import { hubApiPost } from './client/http';
 import { parseOAuthRefreshResponse } from './contracts/connect-api';
@@ -34,9 +34,11 @@ export async function getManagedAccessToken(
 	// async read so two callers share a single execution — and, when a refresh is
 	// needed, one stateless Hub mint. Forced (401) refreshes share the same key as
 	// routine ones so a 401 retry racing an expiry refresh can't spend a rotating
-	// refresh_token twice.
-	const flightKey = `managed:${plugin}:${tenantId}`;
-	return singleFlight(keys, flightKey, async () => {
+	// refresh_token twice. If the routine flight short-circuits on a token this
+	// caller just saw rejected, the fallback below mints once for the 401.
+	const readAndRefresh = async (
+		force: boolean,
+	): Promise<ManagedAccessTokenResult> => {
 		const [accessToken, expiresAt, refreshToken] = await Promise.all([
 			keys.get_access_token(),
 			keys.get_expires_at(),
@@ -49,7 +51,7 @@ export async function getManagedAccessToken(
 
 		const now = Math.floor(Date.now() / 1000);
 		if (
-			!forceRefresh &&
+			!force &&
 			accessToken &&
 			expiresAt &&
 			Number(expiresAt) > now + TOKEN_REFRESH_BUFFER_SECONDS
@@ -60,7 +62,7 @@ export async function getManagedAccessToken(
 		// Non-expiring tokens may have no refresh token — keep using the access
 		// token while still valid. If expired (or due for refresh), fall through to
 		// the hub, which may still hold a refresh token even when local storage does not.
-		if (!refreshToken && accessToken && !forceRefresh) {
+		if (!refreshToken && accessToken && !force) {
 			const expiresAtSeconds = expiresAt ? Number(expiresAt) : null;
 			const tokenStillUsable =
 				expiresAtSeconds === null ||
@@ -94,7 +96,21 @@ export async function getManagedAccessToken(
 			expiresAt: nextExpiresAt,
 			refreshed: true,
 		};
-	});
+	};
+
+	const flightKey = `managed:${plugin}:${tenantId}`;
+	const store = flightStoreOf(keys);
+	let result = await singleFlight(store, flightKey, () =>
+		readAndRefresh(forceRefresh),
+	);
+	// A routine caller can create the flight and short-circuit on a locally fresh
+	// token, while this caller was told that token is revoked (401). Retry on the
+	// same key until a forced execution actually mints: a separate key would let a
+	// new routine flight race this one and spend the same refresh_token twice.
+	while (forceRefresh && !result.refreshed) {
+		result = await singleFlight(store, flightKey, () => readAndRefresh(true));
+	}
+	return result;
 }
 
 function isManagedConnectionMissingOnHub(message: string): boolean {
