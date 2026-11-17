@@ -8569,5 +8569,14 @@
         "title": "Bump CORSAIR_SDK_VERSION with corsair's package version"
       }
     ]
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/nasdaq",
+    "dir": "packages/nasdaq",
+    "name": "Nasdaq Data Link",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
