@@ -4505,6 +4505,14 @@
                 ]
               },
               {
+                "group": "Spotlightr",
+                "pages": [
+                  "plugins/spotlightr/overview",
+                  "plugins/spotlightr/api",
+                  "plugins/spotlightr/database"
+                ]
+              },
+              {
                 "group": "Stack Exchange",
                 "pages": [
                   "plugins/stackexchange/overview",
