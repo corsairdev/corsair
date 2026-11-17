@@ -23,6 +23,7 @@ import {
 	ManagedOAuthDeliveryError,
 	processManagedOAuthDelivery,
 } from '../hub/managed-oauth';
+import { subscribeAndReport } from '../oauth/subscribe-report';
 import { resolveOAuthWebhookTenantLink } from '../webhooks/resolve-oauth-tenant-link';
 
 const KEK = 'test-kek-with-at-least-32-characters!!';
@@ -33,7 +34,7 @@ const gmail = {
 	id: 'gmail',
 	options: { authType: 'managed' as const },
 	authConfig: { managed: { account: ['team_id'] as const } },
-} as unknown as CorsairPlugin;
+} as unknown as CorsairPlugin; // a test literal: the plugin's full generics aren't needed
 
 describe('managed oauth delivery by account identity', () => {
 	let env: ReturnType<typeof createTestDatabase>;
@@ -69,9 +70,8 @@ describe('managed oauth delivery by account identity', () => {
 		});
 	// The manager's static type carries no plugin-specific account fields.
 	const teamIdOf = (ref: string) =>
-		(
-			km(ref) as unknown as { get_team_id(): Promise<string | null> }
-		).get_team_id();
+		(km(ref) as unknown as { get_team_id(): Promise<string | null> }) // a plugin field the base manager type doesn't carry
+			.get_team_id();
 	const deliver = (
 		accessToken: string,
 		account?: { id: string; label?: string },
@@ -82,6 +82,16 @@ describe('managed oauth delivery by account identity', () => {
 			accessToken,
 			account,
 		});
+
+	it('stores the subscription link on the account the delivery is for', async () => {
+		await deliver('at-a', { id: 'a', label: 'a@x.com' });
+		jest
+			.mocked(subscribeAndReport)
+			.mockResolvedValueOnce({ linkType: 'team_id', externalId: 'T9' });
+		await deliver('at-b', { id: 'b', label: 'b@x.com' });
+		expect(await teamIdOf('b')).toBe('T9');
+		expect(await teamIdOf('a')).toBeNull();
+	});
 
 	it('delivery without account writes the default row', async () => {
 		await deliver('at-default');

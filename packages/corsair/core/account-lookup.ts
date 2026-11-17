@@ -385,8 +385,12 @@ export async function upsertAccount(i: {
 	identity?: AccountIdentity;
 	/** Off: one account per tenant and plugin; a new identity replaces it. */
 	allowMany: boolean;
+	/** An identity with no label takes the next free "Account N". */
+	nameNew?: boolean;
+	/** Give the identity to this row (an unnamed account being reconnected). */
+	rowId?: string;
 }): Promise<{ accountId: string; created: boolean }> {
-	const { database, kek, tenantId, identity } = i;
+	const { database, kek, tenantId } = i;
 	return database.db.transaction().execute(async (trx) => {
 		// Lock the integration row before the check-then-insert so this
 		// cannot interleave with a concurrent disconnect (or another connect).
@@ -407,7 +411,7 @@ export async function upsertAccount(i: {
 			integrationId: integration.id,
 		}).execute();
 
-		if (!identity) {
+		if (!i.identity) {
 			if (rows[0]) return { accountId: rows[0].id, created: false };
 			return insertRow(trx, integration.id, tenantId, kek);
 		}
@@ -415,9 +419,17 @@ export async function upsertAccount(i: {
 		const known = await Promise.all(
 			rows.map(async (r) => ({ row: r, ...(await readIdentity(r, kek)) })),
 		);
+		// Named inside the lock, so two adds at once can't both take "Account 2".
+		const identity =
+			i.identity.label === undefined && i.nameNew
+				? { ...i.identity, label: nextAccountLabel(known.map((k) => k.label)) }
+				: i.identity;
 		const same = known.find((k) => k.ref === identity.id);
 		const target =
-			same ?? known.find((k) => !k.ref) ?? (i.allowMany ? undefined : known[0]);
+			(i.rowId ? known.find((k) => k.row.id === i.rowId) : undefined) ??
+			same ??
+			known.find((k) => !k.ref) ??
+			(i.allowMany ? undefined : known[0]);
 		if (target) {
 			if (!same || (identity.label && target.label !== identity.label)) {
 				// Another known identity taking the row starts it clean: its old

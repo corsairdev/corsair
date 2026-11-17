@@ -393,6 +393,7 @@ const ROUTES: Route[] = [
 								method: params.method!,
 							},
 							args,
+							account !== undefined,
 						),
 					),
 			);

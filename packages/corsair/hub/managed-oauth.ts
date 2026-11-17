@@ -200,14 +200,28 @@ export async function processManagedOAuthDelivery(
 		);
 	}
 
-	await subscribeAndReport(corsair, plugin, tenantId, accountKm).catch(
-		(error) => {
-			console.warn(
-				`[corsair:managed-oauth] subscribe failed for '${pluginId}' tenant '${tenantId}':`,
-				error,
-			);
-		},
-	);
+	try {
+		const link = await subscribeAndReport(corsair, plugin, tenantId, accountKm);
+		// Renewal stores the link it gets back; so must connect, or this
+		// account's events can't find it until the first renewal.
+		if (link) {
+			await setWebhookTenantLink({
+				database: internal.database,
+				kek: internal.kek,
+				pluginId,
+				tenantId,
+				link,
+				authType,
+				extraAccountFields: plugin.authConfig?.[authType]?.account ?? [],
+				accountId,
+			});
+		}
+	} catch (error) {
+		console.warn(
+			`[corsair:managed-oauth] subscribe failed for '${pluginId}' tenant '${tenantId}':`,
+			error,
+		);
+	}
 
 	return { plugin: pluginId, tenantId };
 }

@@ -42,7 +42,7 @@ const demo = {
 			return true;
 		},
 	},
-} as unknown as CorsairPlugin;
+} as unknown as CorsairPlugin; // a test literal: the plugin's full generics aren't needed
 
 describe('withTenant account scope', () => {
 	let env: ReturnType<typeof createTestDatabase>;

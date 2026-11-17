@@ -714,6 +714,7 @@ export async function completeOAuthCallback(
 				// and the caller's own tenant and account.
 				case 'account_required':
 				case 'account_unnamed':
+				case 'account_limit':
 					throw new ManagementApiError(400, oauthErr.code, oauthErr.message);
 				case 'account_not_found':
 					throw new ManagementApiError(404, oauthErr.code, oauthErr.message);

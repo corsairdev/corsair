@@ -46,7 +46,7 @@ const demo = {
 		post: async () => 'posted',
 		purge: async () => 'purged',
 	},
-} as unknown as CorsairPlugin;
+} as unknown as CorsairPlugin; // a test literal: the plugin's full generics aren't needed
 
 describe('permission mode per account', () => {
 	let env: ReturnType<typeof createTestDatabase>;
@@ -54,7 +54,8 @@ describe('permission mode per account', () => {
 	const tenant = (account?: string) =>
 		(
 			corsair as unknown as {
-				withTenant(t: string, o?: unknown): Tenant;
+				// plugin trees are keyed by runtime ids
+				withTenant(t: string, o?: unknown): Tenant; // options pass through untouched
 			}
 		).withTenant('t1', account ? { accounts: { demo: account } } : undefined)
 			.demo.api;

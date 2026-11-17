@@ -338,7 +338,7 @@ const githubStub = {
 			create: async (_ctx: unknown, args: unknown) => ({ echoed: args }),
 		},
 	},
-} as unknown as CorsairPlugin;
+} as unknown as CorsairPlugin; // a test literal: the plugin's full generics aren't needed
 
 async function readJson<T>(res: Response): Promise<T> {
 	return (await res.json()) as T;
@@ -475,7 +475,7 @@ describe('call and db routes with an account', () => {
 		endpoints: {
 			token: async (ctx: EndpointCtx) => ctx.keys.get_access_token(),
 		},
-	} as unknown as CorsairPlugin;
+	} as unknown as CorsairPlugin; // a test literal: the plugin's full generics aren't needed
 
 	let env: ReturnType<typeof createTestDatabase>;
 	let corsair: ReturnType<typeof createCorsair>;
@@ -526,7 +526,10 @@ describe('call and db routes with an account', () => {
 		}).set_access_token(token);
 	}
 
-	const post = (path: string, body: unknown) =>
+	const post = (
+		path: string,
+		body: unknown, // any JSON body the route accepts
+	) =>
 		handler(
 			new Request(`https://app.test${path}`, {
 				method: 'POST',
@@ -538,7 +541,11 @@ describe('call and db routes with an account', () => {
 			}),
 		);
 
-	const postWithScopes = (path: string, body: unknown, scopes: string) =>
+	const postWithScopes = (
+		path: string,
+		body: unknown,
+		scopes: string, // any JSON body the route accepts
+	) =>
 		handler(
 			new Request(`https://app.test${path}`, {
 				method: 'POST',

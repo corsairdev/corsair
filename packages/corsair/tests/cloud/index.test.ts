@@ -186,7 +186,7 @@ describe('createCorsair with a ck_cloud_ key', () => {
 			},
 		});
 		const prev = global.fetch;
-		global.fetch = fetchMock as unknown as typeof fetch;
+		global.fetch = fetchMock as unknown as typeof fetch; // a jest mock standing in for fetch
 		try {
 			const t = corsair.withTenant('acme', { accounts: { slack: 'a@x.com' } });
 			await t.slack.api.messages.post({ channel: '#g', text: 'hi' });

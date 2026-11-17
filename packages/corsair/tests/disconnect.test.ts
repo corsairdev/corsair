@@ -423,7 +423,7 @@ describe('manage.disconnect — one account', () => {
 					disconnectConnection(internalFor(db), {
 						plugin: 'slack',
 						tenantId: 't1',
-						account: account as unknown as string,
+						account: account as unknown as string, // deliberately not a string: the refusal is the test
 					}),
 				).rejects.toMatchObject({ status: 400, code: 'bad_request' });
 				expect(await accountCount(db, 'acc1')).toBe(1);

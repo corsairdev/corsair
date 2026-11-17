@@ -40,7 +40,7 @@ const mail = {
 	endpoints: {
 		token: async (ctx: EndpointCtx) => ctx.keys.get_access_token(),
 	},
-} as unknown as CorsairPlugin;
+} as unknown as CorsairPlugin; // a test literal: the plugin's full generics aren't needed
 
 describe('multiAccount off (default)', () => {
 	let env: ReturnType<typeof createTestDatabase>;
@@ -107,7 +107,7 @@ describe('multiAccount off (default)', () => {
 			tenantId: 't1',
 			kek: KEK,
 			database: database(),
-		}) as unknown as { get_refresh_token: () => Promise<string | null> };
+		}) as unknown as { get_refresh_token: () => Promise<string | null> }; // narrowed to the one getter under test
 		expect(await km.get_refresh_token()).toBeFalsy();
 	});
 
@@ -126,7 +126,7 @@ describe('multiAccount off (default)', () => {
 			tenantId: 't1',
 			kek: KEK,
 			database: database(),
-		}) as unknown as { get_refresh_token: () => Promise<string | null> };
+		}) as unknown as { get_refresh_token: () => Promise<string | null> }; // narrowed to the one getter under test
 		expect(await km.get_refresh_token()).toBe('rt-a');
 	});
 

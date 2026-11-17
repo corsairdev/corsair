@@ -93,11 +93,15 @@ function buildDbProxy(
 							return async (...args: unknown[]) => {
 								// The server re-checks, but its scope is AsyncLocalStorage
 								// and does not cross the request.
-								assertModeAllows(
-									`${pluginId}.db.${entityType}.${method}`,
-									risk,
-									pluginId,
-								);
+								// Bound to an account, the server judges it by that
+								// account's own mode; only it can resolve the names.
+								if (account === undefined) {
+									assertModeAllows(
+										`${pluginId}.db.${entityType}.${method}`,
+										risk,
+										pluginId,
+									);
+								}
 								const transport = await resolveTransport(transportSource);
 								const res = await cloudRequest<{ data: unknown }>(
 									transport,

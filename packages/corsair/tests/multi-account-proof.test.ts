@@ -47,7 +47,7 @@ const mail = {
 			return true;
 		},
 	},
-} as unknown as CorsairPlugin;
+} as unknown as CorsairPlugin; // a test literal: the plugin's full generics aren't needed
 
 describe('two accounts end to end', () => {
 	let env: ReturnType<typeof createTestDatabase>;
@@ -167,7 +167,7 @@ describe('two accounts end to end', () => {
 		const listed = (await listTenants(internal)).find((x) => x.id === 't1');
 		expect(listed?.accounts).toEqual(t.accounts);
 		const noKek = await describeTenant(
-			{ ...internal, kek: undefined } as unknown as typeof internal,
+			{ ...internal, kek: undefined } as unknown as typeof internal, // a config the type forbids: the missing kek is the test
 			't1',
 		);
 		expect(noKek.accounts[0]).not.toHaveProperty('ref');

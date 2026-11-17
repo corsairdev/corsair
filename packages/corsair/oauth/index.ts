@@ -1,3 +1,4 @@
+import { randomBytes } from 'node:crypto';
 import type {
 	CorsairInternalConfig,
 	CorsairPlugin,
@@ -9,8 +10,10 @@ import {
 	exchangeCodeForTokens,
 } from '../core';
 import {
+	AccountSelectionError,
 	listAccountSummaries,
-	nextAccountLabel,
+	MAX_ACCOUNTS_PER_INTEGRATION,
+	resolveAccount,
 	upsertAccount,
 } from '../core/account-lookup';
 import type { OAuthAccountTarget } from '../core/auth/state';
@@ -19,7 +22,6 @@ import {
 	signState,
 	verifyAndDecodeState,
 } from '../core/auth/state';
-import { generateUUID } from '../core/utils';
 import {
 	getCorsairInternal,
 	requireCorsairPlugin,
@@ -59,7 +61,8 @@ export type OAuthCallbackErrorCode =
 	// Multi-account: which account a connect is for.
 	| 'account_required'
 	| 'account_not_found'
-	| 'account_unnamed';
+	| 'account_unnamed'
+	| 'account_limit';
 
 export class OAuthCallbackError extends Error {
 	readonly code: OAuthCallbackErrorCode;
@@ -102,72 +105,125 @@ async function ensureAccount(
 	});
 }
 
+type AccountPlan =
+	| { kind: 'only' }
+	| { kind: 'row'; id: string; unnamed: boolean }
+	| { kind: 'new' };
+
+const asCallbackError = (err: unknown): unknown =>
+	err instanceof AccountSelectionError
+		? new OAuthCallbackError(err.code, err.message)
+		: err;
+
 /**
- * The account a connect writes, by the click signed into its state. Without
+ * Which account a connect is for, decided from the click signed into its
+ * state and written nowhere yet: the code is exchanged only once this holds,
+ * and an account is created only once that exchange worked. Without
  * multi-account there is one account, as before. With it the provider isn't
- * asked who signed in, so the account is named here ("Account N") and the
- * caller says whether this is a new one or a reconnect.
- * @returns the account row's id, or undefined for the tenant's only account.
+ * asked who signed in, so the caller says whether this is a new account or a
+ * reconnect, and a new one is named "Account N".
  */
-async function connectAccount(
+async function planAccount(
 	database: NonNullable<CorsairInternalConfig['database']>,
 	kek: string,
 	multiAccount: boolean,
 	pluginId: string,
 	tenantId: string,
 	target: OAuthAccountTarget | undefined,
-): Promise<string | undefined> {
-	if (!multiAccount) {
-		await ensureAccount(database, pluginId, tenantId, kek, false);
-		return undefined;
-	}
-	const accounts = await listAccountSummaries({
+): Promise<AccountPlan> {
+	if (!multiAccount) return { kind: 'only' };
+	const integration = await database.db
+		.selectFrom('corsair_integrations')
+		.select('id')
+		.where('name', '=', pluginId)
+		.executeTakeFirst();
+	const scope = {
 		db: database.db,
 		kek,
-		integrationName: pluginId,
 		tenantId,
-	});
+		integrationId: integration?.id ?? '',
+	};
+	const accounts = integration
+		? await listAccountSummaries({
+				db: database.db,
+				kek,
+				integrationName: pluginId,
+				tenantId,
+			})
+		: [];
 	if (target && 'reconnect' in target) {
-		const wanted = target.reconnect.toLowerCase();
-		const found = accounts.find(
-			(a) =>
-				a.id === target.reconnect ||
-				a.ref === target.reconnect ||
-				a.label?.toLowerCase() === wanted,
-		);
+		// resolveAccount's own rules: id first, then ref, and a label two
+		// accounts share is refused rather than guessed.
+		const found = await resolveAccount({
+			...scope,
+			ref: target.reconnect,
+		}).catch((err) => {
+			throw asCallbackError(err);
+		});
 		if (!found) {
 			throw new OAuthCallbackError(
 				'account_not_found',
 				`No ${pluginId} account "${target.reconnect}" to reconnect for tenant "${tenantId}"`,
 			);
 		}
-		return found.id;
+		const summary = accounts.find((a) => a.id === found.id);
+		return { kind: 'row', id: found.id, unnamed: !summary?.ref };
 	}
-	if (!target && accounts.length > 1) {
-		throw new OAuthCallbackError(
-			'account_required',
-			`${pluginId} has ${accounts.length} accounts for tenant "${tenantId}": say which one to reconnect, or add one`,
-		);
+	if (!target) {
+		if (accounts.length > 1) {
+			throw new OAuthCallbackError(
+				'account_required',
+				`${pluginId} has ${accounts.length} accounts for tenant "${tenantId}": say which one to reconnect, or add one`,
+			);
+		}
+		const only = accounts[0];
+		return only
+			? { kind: 'row', id: only.id, unnamed: !only.ref }
+			: { kind: 'new' };
 	}
-	if (!target && accounts[0]?.ref) return accounts[0].id;
 	// upsertAccount gives a new identity to an unnamed row, so adding beside
 	// one would hand that account's row to the new sign-in.
-	if (target && accounts.some((a) => !a.ref)) {
+	if (accounts.some((a) => !a.ref)) {
 		throw new OAuthCallbackError(
 			'account_unnamed',
 			`Reconnect the existing ${pluginId} account before adding another`,
 		);
 	}
+	if (accounts.length >= MAX_ACCOUNTS_PER_INTEGRATION) {
+		throw new OAuthCallbackError(
+			'account_limit',
+			`${pluginId} already has ${accounts.length} accounts for tenant "${tenantId}"`,
+		);
+	}
+	return { kind: 'new' };
+}
+
+/** Writes the planned account, now that the provider has handed over tokens. */
+async function commitAccount(
+	database: NonNullable<CorsairInternalConfig['database']>,
+	kek: string,
+	pluginId: string,
+	tenantId: string,
+	plan: AccountPlan,
+): Promise<string | undefined> {
+	if (plan.kind === 'only') {
+		await ensureAccount(database, pluginId, tenantId, kek, false);
+		return undefined;
+	}
+	if (plan.kind === 'row' && !plan.unnamed) return plan.id;
+	// A new account, or an unnamed one taking a name so Add can follow it.
 	const { accountId } = await upsertAccount({
 		database,
 		kek,
 		integrationName: pluginId,
 		tenantId,
 		allowMany: true,
-		identity: {
-			id: `acct_${generateUUID().replace(/-/g, '').slice(0, 16)}`,
-			label: nextAccountLabel(accounts.map((a) => a.label)),
-		},
+		nameNew: true,
+		...(plan.kind === 'row' && { rowId: plan.id }),
+		// Random, not a v7 UUID: two adds in one millisecond share a v7's prefix.
+		identity: { id: `acct_${randomBytes(12).toString('base64url')}` },
+	}).catch((err) => {
+		throw asCallbackError(err);
 	});
 	return accountId;
 }
@@ -386,7 +442,7 @@ export async function processOAuthCallback(
 	}
 
 	// Before the code is spent, so a refused account costs no sign-in.
-	const accountId = await connectAccount(
+	const plan = await planAccount(
 		internal.database,
 		internal.kek,
 		internal.multiAccount,
@@ -409,6 +465,14 @@ export async function processOAuthCallback(
 			`No access_token returned from ${oauthCfg.providerName}`,
 		);
 	}
+
+	const accountId = await commitAccount(
+		internal.database,
+		internal.kek,
+		pluginId,
+		tenantId,
+		plan,
+	);
 
 	const accountKm = createAccountKeyManager({
 		authType: 'oauth_2',

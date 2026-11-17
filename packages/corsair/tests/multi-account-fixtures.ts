@@ -8,10 +8,10 @@ export type NoteRow = {
 };
 
 type NotesClient = {
-	upsertByEntityId(id: string, data: { title: string }): Promise<unknown>;
+	upsertByEntityId(id: string, data: { title: string }): Promise<unknown>; // tests ignore the stored row
 	list(page?: { limit?: number; offset?: number }): Promise<NoteRow[]>;
 	count(): Promise<number>;
-	search(query: Record<string, unknown>): Promise<NoteRow[]>;
+	search(query: Record<string, unknown>): Promise<NoteRow[]>; // any filter the entity store takes
 	findByEntityId(id: string): Promise<NoteRow | null>;
 	findIdByEntityId(id: string): Promise<string | null>;
 	findManyByEntityIds(ids: string[]): Promise<NoteRow[]>;
@@ -21,7 +21,7 @@ type NotesClient = {
 type DynamicPlugin = {
 	api: {
 		token(): Promise<string>;
-		note(input?: { id: string }): Promise<unknown>;
+		note(input?: { id: string }): Promise<unknown>; // tests ignore the result
 	};
 	db: { notes: NotesClient };
 	accounts: {
@@ -41,7 +41,7 @@ export type EndpointCtx = {
 	keys: { get_access_token(): Promise<string> };
 	db: {
 		notes: {
-			upsertByEntityId(id: string, data: { title: string }): Promise<unknown>;
+			upsertByEntityId(id: string, data: { title: string }): Promise<unknown>; // tests ignore the stored row
 		};
 	};
 };
@@ -49,7 +49,7 @@ export type EndpointCtx = {
 export const neverResolves = () => {
 	throw new Error('expected a rejection');
 };
-export const asSelectionError = (e: unknown) => e as AccountSelectionError;
+export const asSelectionError = (e: unknown) => e as AccountSelectionError; // a caught error is unknown until narrowed
 
 /** The plugin tree is keyed by runtime plugin ids, so it is viewed through DynamicCorsair. */
 export const dynamic = <Id extends string>(corsair: unknown) =>

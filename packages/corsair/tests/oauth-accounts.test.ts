@@ -3,6 +3,7 @@ import {
 	createCorsair,
 	createIntegrationKeyManager,
 } from '../core';
+import { exchangeCodeForTokens } from '../core/auth/exchange';
 import type { CorsairPlugin } from '../core/plugins';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
 import type { OAuthCallbackError } from '../oauth';
@@ -49,7 +50,7 @@ const demo = {
 		scopes: ['read'],
 	},
 	subscribe: async () => undefined,
-} as unknown as CorsairPlugin;
+} as unknown as CorsairPlugin; // a test literal: the plugin's full generics aren't needed
 
 describe('self-hosted OAuth with several accounts', () => {
 	let env: ReturnType<typeof createTestDatabase>;
@@ -104,7 +105,9 @@ describe('self-hosted OAuth with several accounts', () => {
 			redirectUri: REDIRECT,
 		});
 	};
-	const codeOf = (promise: Promise<unknown>) =>
+	const codeOf = (
+		promise: Promise<unknown>, // only the rejection's code is read
+	) =>
 		promise.then(
 			() => undefined,
 			(e) => (e as OAuthCallbackError).code,
@@ -151,7 +154,50 @@ describe('self-hosted OAuth with several accounts', () => {
 			database: getCorsairInternal(corsair).database!,
 			extraAccountFields: ['subscription_id'],
 			account: { ref: 'Account 2' },
-		}) as unknown as { get_subscription_id(): Promise<string | null> };
+		}) as unknown as { get_subscription_id(): Promise<string | null> }; // a plugin field the base manager type doesn't carry
 		expect(await second.get_subscription_id()).toBe('sub-1');
+	});
+
+	it('a sign-in the provider refuses leaves no account behind', async () => {
+		await connect();
+		jest.mocked(exchangeCodeForTokens).mockResolvedValueOnce({});
+		expect(await codeOf(connect({ add: true }))).toBe('no_access_token');
+		expect(await rows()).toHaveLength(1);
+	});
+
+	it('reconnecting an account saved before names gives it one, so Add works', async () => {
+		await connect();
+		await env.db
+			.updateTable('corsair_accounts')
+			.set({ config: '{}', dek: null })
+			.execute();
+		const [row] = await rows();
+		expect(await codeOf(connect({ add: true }))).toBe('account_unnamed');
+		await connect({ reconnect: row!.id });
+		await connect({ add: true });
+		expect(await rows()).toHaveLength(2);
+	});
+
+	it('a label two accounts share is refused rather than guessed', async () => {
+		await connect();
+		await connect({ add: true });
+		const [first, second] = await rows();
+		// Copy the first account's sealed identity onto the second.
+		await env.db
+			.updateTable('corsair_accounts')
+			.set({ config: first!.config, dek: first!.dek })
+			.where('id', '=', second!.id)
+			.execute();
+		expect(await codeOf(connect({ reconnect: 'Account 1' }))).toBe(
+			'account_required',
+		);
+	});
+
+	it('two adds at once take different names', async () => {
+		await connect();
+		await Promise.all([connect({ add: true }), connect({ add: true })]);
+		expect(await rows()).toHaveLength(3);
+		expect(await tokenOf('Account 2')).toBeDefined();
+		expect(await tokenOf('Account 3')).toBeDefined();
 	});
 });
