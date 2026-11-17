@@ -1,0 +1,1957 @@
+---
+title: "Splitwise API reference"
+sidebarTitle: "API"
+description: "API reference for the Splitwise plugin in Corsair: every `splitwise.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Categories
+
+### list
+
+`categories.list`
+
+List expense categories with their subcategories; an expense must use a subcategory
+
+**Risk:** `read`
+
+```ts
+await corsair.splitwise.api.categories.list({});
+```
+
+**Input:** _empty object_
+
+An expense must reference a subcategory. A parent category ID is rejected.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `categories` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="categories full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  icon?: string | null,
+  icon_types?: Record<string, Record<string, string>> | null,
+  subcategories: {
+    id: number,
+    name: string,
+    icon?: string | null,
+    icon_types?: Record<string, Record<string, string>> | null
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Comments
+
+### create
+
+`comments.create`
+
+Post a comment on an expense
+
+**Risk:** `destructive`
+
+```ts
+await corsair.splitwise.api.comments.create({ expense_id: 51023, content: 'Does this include the delivery fee?' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `expense_id` | `number` | Yes | — |
+| `content` | `string` | Yes | Comment body |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comment` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="comment full type">
+
+```ts
+{
+  id: number,
+  content: string,
+  comment_type?: string | null,
+  relation_type?: string | null,
+  relation_id?: number | null,
+  created_at?: string | null,
+  deleted_at?: string | null,
+  user?: {
+    id: number,
+    first_name?: string | null,
+    last_name?: string | null,
+    picture?: {
+      small?: string | null,
+      medium?: string | null,
+      large?: string | null
+    } | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`comments.delete`
+
+Delete a comment; this cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.splitwise.api.comments.delete({ comment_id: 79800950 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comment_id` | `number` | Yes | — |
+
+A deleted comment cannot be restored.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comment` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="comment full type">
+
+```ts
+{
+  id: number,
+  content: string,
+  comment_type?: string | null,
+  relation_type?: string | null,
+  relation_id?: number | null,
+  created_at?: string | null,
+  deleted_at?: string | null,
+  user?: {
+    id: number,
+    first_name?: string | null,
+    last_name?: string | null,
+    picture?: {
+      small?: string | null,
+      medium?: string | null,
+      large?: string | null
+    } | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`comments.list`
+
+List the comments on an expense
+
+**Risk:** `read`
+
+```ts
+await corsair.splitwise.api.comments.list({ expense_id: 51023 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `expense_id` | `number` | Yes | Expense whose comments to read |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comments` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="comments full type">
+
+```ts
+{
+  id: number,
+  content: string,
+  comment_type?: string | null,
+  relation_type?: string | null,
+  relation_id?: number | null,
+  created_at?: string | null,
+  deleted_at?: string | null,
+  user?: {
+    id: number,
+    first_name?: string | null,
+    last_name?: string | null,
+    picture?: {
+      small?: string | null,
+      medium?: string | null,
+      large?: string | null
+    } | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Currencies
+
+### list
+
+`currencies.list`
+
+List the currency codes Splitwise accepts
+
+**Risk:** `read`
+
+```ts
+await corsair.splitwise.api.currencies.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `currencies` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="currencies full type">
+
+```ts
+{
+  currency_code: string,
+  unit: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Expenses
+
+### create
+
+`expenses.create`
+
+Record an expense, split either equally across a group or by an explicit paid and owed share per person
+
+**Risk:** `destructive`
+
+```ts
+await corsair.splitwise.api.expenses.create({ description: 'Internet', cost: 60, group_id: 321, split_equally: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `description` | `string` | Yes | A short description of the expense |
+| `cost` | `number` | Yes | Total cost of the expense, e.g. 25.5 |
+| `details` | `string` | No | Free-text notes |
+| `date` | `string` | No | ISO 8601 date and time the expense took place, e.g. "2026-05-02T13:00:00Z" |
+| `currency_code` | `string` | No | Currency code from `currencies.list`; defaults to the group currency |
+| `category_id` | `number` | No | A subcategory ID from `categories.list`; a parent category is rejected |
+| `repeat_interval` | `never \| weekly \| fortnightly \| monthly \| yearly` | No | — |
+| `split_equally` | `true` | No | Split equally between the group; requires `group_id` and no `users` |
+| `group_id` | `number` | No | Group to put the expense in, or 0 for an expense outside a group |
+| `users` | `object[]` | No | One entry per person, each with `paid_share` and `owed_share` |
+
+Pass either `split_equally: true` with a `group_id`, or a `users` list whose paid and owed amounts add up to `cost`.
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  user_id?: number,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
+  paid_share: number,
+  owed_share: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `expenses` | `object[]` | Yes | — |
+| `errors` | `Record<string, string[]> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="expenses full type">
+
+```ts
+{
+  id: number,
+  group_id?: number | null,
+  friendship_id?: number | null,
+  expense_bundle_id?: number | null,
+  description: string,
+  details?: string | null,
+  cost: string,
+  currency_code: string,
+  date?: string | null,
+  created_at?: string | null,
+  created_by?: {
+    id: number,
+    first_name?: string | null,
+    last_name?: string | null,
+    email?: string | null,
+    registration_status?: string | null,
+    picture?: {
+      small?: string | null,
+      medium?: string | null,
+      large?: string | null
+    } | null,
+    custom_picture?: boolean | null
+  } | null,
+  updated_at?: string | null,
+  updated_by?: {
+    id: number,
+    first_name?: string | null,
+    last_name?: string | null,
+    email?: string | null,
+    registration_status?: string | null,
+    picture?: {
+      small?: string | null,
+      medium?: string | null,
+      large?: string | null
+    } | null,
+    custom_picture?: boolean | null
+  } | null,
+  deleted_at?: string | null,
+  deleted_by?: {
+    id: number,
+    first_name?: string | null,
+    last_name?: string | null,
+    email?: string | null,
+    registration_status?: string | null,
+    picture?: {
+      small?: string | null,
+      medium?: string | null,
+      large?: string | null
+    } | null,
+    custom_picture?: boolean | null
+  } | null,
+  category?: {
+    id: number,
+    name: string
+  } | null,
+  receipt?: {
+    large?: string | null,
+    original?: string | null
+  } | null,
+  repeats?: boolean | null,
+  repeat_interval?: string | null,
+  email_reminder?: boolean | null,
+  email_reminder_in_advance?: number | null,
+  next_repeat?: string | null,
+  comments_count?: number | null,
+  payment?: boolean | null,
+  transaction_confirmed?: boolean | null,
+  repayments?: {
+    from: number,
+    to: number,
+    amount: string
+  }[] | null,
+  users?: {
+    user?: {
+      id: number,
+      first_name?: string | null,
+      last_name?: string | null,
+      picture?: {
+        small?: string | null,
+        medium?: string | null,
+        large?: string | null
+      } | null
+    } | null,
+    user_id: number,
+    paid_share: string,
+    owed_share: string,
+    net_balance: string
+  }[] | null,
+  comments?: {
+    id: number,
+    content: string,
+    comment_type?: string | null,
+    relation_type?: string | null,
+    relation_id?: number | null,
+    created_at?: string | null,
+    deleted_at?: string | null,
+    user?: {
+      id: number,
+      first_name?: string | null,
+      last_name?: string | null,
+      picture?: {
+        small?: string | null,
+        medium?: string | null,
+        large?: string | null
+      } | null
+    } | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`expenses.delete`
+
+Delete an expense; it can be restored with `expenses.undelete`
+
+**Risk:** `destructive`
+
+```ts
+await corsair.splitwise.api.expenses.delete({ expense_id: 51023 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `expense_id` | `number` | Yes | Splitwise expense ID |
+
+Soft delete: the expense can be restored with `expenses.undelete`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `errors` | `Record<string, string[]> \| string[] \| null` | No | — |
+
+
+
+---
+
+### get
+
+`expenses.get`
+
+Get one expense with its shares, repayments and comments
+
+**Risk:** `read`
+
+```ts
+await corsair.splitwise.api.expenses.get({ expense_id: 51023 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `expense_id` | `number` | Yes | Splitwise expense ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `expense` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="expense full type">
+
+```ts
+{
+  id: number,
+  group_id?: number | null,
+  friendship_id?: number | null,
+  expense_bundle_id?: number | null,
+  description: string,
+  details?: string | null,
+  cost: string,
+  currency_code: string,
+  date?: string | null,
+  created_at?: string | null,
+  created_by?: {
+    id: number,
+    first_name?: string | null,
+    last_name?: string | null,
+    email?: string | null,
+    registration_status?: string | null,
+    picture?: {
+      small?: string | null,
+      medium?: string | null,
+      large?: string | null
+    } | null,
+    custom_picture?: boolean | null
+  } | null,
+  updated_at?: string | null,
+  updated_by?: {
+    id: number,
+    first_name?: string | null,
+    last_name?: string | null,
+    email?: string | null,
+    registration_status?: string | null,
+    picture?: {
+      small?: string | null,
+      medium?: string | null,
+      large?: string | null
+    } | null,
+    custom_picture?: boolean | null
+  } | null,
+  deleted_at?: string | null,
+  deleted_by?: {
+    id: number,
+    first_name?: string | null,
+    last_name?: string | null,
+    email?: string | null,
+    registration_status?: string | null,
+    picture?: {
+      small?: string | null,
+      medium?: string | null,
+      large?: string | null
+    } | null,
+    custom_picture?: boolean | null
+  } | null,
+  category?: {
+    id: number,
+    name: string
+  } | null,
+  receipt?: {
+    large?: string | null,
+    original?: string | null
+  } | null,
+  repeats?: boolean | null,
+  repeat_interval?: string | null,
+  email_reminder?: boolean | null,
+  email_reminder_in_advance?: number | null,
+  next_repeat?: string | null,
+  comments_count?: number | null,
+  payment?: boolean | null,
+  transaction_confirmed?: boolean | null,
+  repayments?: {
+    from: number,
+    to: number,
+    amount: string
+  }[] | null,
+  users?: {
+    user?: {
+      id: number,
+      first_name?: string | null,
+      last_name?: string | null,
+      picture?: {
+        small?: string | null,
+        medium?: string | null,
+        large?: string | null
+      } | null
+    } | null,
+    user_id: number,
+    paid_share: string,
+    owed_share: string,
+    net_balance: string
+  }[] | null,
+  comments?: {
+    id: number,
+    content: string,
+    comment_type?: string | null,
+    relation_type?: string | null,
+    relation_id?: number | null,
+    created_at?: string | null,
+    deleted_at?: string | null,
+    user?: {
+      id: number,
+      first_name?: string | null,
+      last_name?: string | null,
+      picture?: {
+        small?: string | null,
+        medium?: string | null,
+        large?: string | null
+      } | null
+    } | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`expenses.list`
+
+List the current user expenses, filtered by group, friend or date, with limit and offset paging
+
+**Risk:** `read`
+
+```ts
+await corsair.splitwise.api.expenses.list({ group_id: 321, limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number` | No | Only expenses in this group; `friend_id` is then ignored |
+| `friend_id` | `number` | No | Only expenses between the current user and this user |
+| `dated_after` | `string` | No | — |
+| `dated_before` | `string` | No | — |
+| `updated_after` | `string` | No | — |
+| `updated_before` | `string` | No | — |
+| `limit` | `number` | No | Default 20 |
+| `offset` | `number` | No | Default 0 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `expenses` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="expenses full type">
+
+```ts
+{
+  id: number,
+  group_id?: number | null,
+  friendship_id?: number | null,
+  expense_bundle_id?: number | null,
+  description: string,
+  details?: string | null,
+  cost: string,
+  currency_code: string,
+  date?: string | null,
+  created_at?: string | null,
+  created_by?: {
+    id: number,
+    first_name?: string | null,
+    last_name?: string | null,
+    email?: string | null,
+    registration_status?: string | null,
+    picture?: {
+      small?: string | null,
+      medium?: string | null,
+      large?: string | null
+    } | null,
+    custom_picture?: boolean | null
+  } | null,
+  updated_at?: string | null,
+  updated_by?: {
+    id: number,
+    first_name?: string | null,
+    last_name?: string | null,
+    email?: string | null,
+    registration_status?: string | null,
+    picture?: {
+      small?: string | null,
+      medium?: string | null,
+      large?: string | null
+    } | null,
+    custom_picture?: boolean | null
+  } | null,
+  deleted_at?: string | null,
+  deleted_by?: {
+    id: number,
+    first_name?: string | null,
+    last_name?: string | null,
+    email?: string | null,
+    registration_status?: string | null,
+    picture?: {
+      small?: string | null,
+      medium?: string | null,
+      large?: string | null
+    } | null,
+    custom_picture?: boolean | null
+  } | null,
+  category?: {
+    id: number,
+    name: string
+  } | null,
+  receipt?: {
+    large?: string | null,
+    original?: string | null
+  } | null,
+  repeats?: boolean | null,
+  repeat_interval?: string | null,
+  email_reminder?: boolean | null,
+  email_reminder_in_advance?: number | null,
+  next_repeat?: string | null,
+  comments_count?: number | null,
+  payment?: boolean | null,
+  transaction_confirmed?: boolean | null,
+  repayments?: {
+    from: number,
+    to: number,
+    amount: string
+  }[] | null,
+  users?: {
+    user?: {
+      id: number,
+      first_name?: string | null,
+      last_name?: string | null,
+      picture?: {
+        small?: string | null,
+        medium?: string | null,
+        large?: string | null
+      } | null
+    } | null,
+    user_id: number,
+    paid_share: string,
+    owed_share: string,
+    net_balance: string
+  }[] | null,
+  comments?: {
+    id: number,
+    content: string,
+    comment_type?: string | null,
+    relation_type?: string | null,
+    relation_id?: number | null,
+    created_at?: string | null,
+    deleted_at?: string | null,
+    user?: {
+      id: number,
+      first_name?: string | null,
+      last_name?: string | null,
+      picture?: {
+        small?: string | null,
+        medium?: string | null,
+        large?: string | null
+      } | null
+    } | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### undelete
+
+`expenses.undelete`
+
+Restore a deleted expense
+
+**Risk:** `write`
+
+```ts
+await corsair.splitwise.api.expenses.undelete({ expense_id: 51023 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `expense_id` | `number` | Yes | Splitwise expense ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `errors` | `Record<string, string[]> \| string[] \| null` | No | — |
+
+
+
+---
+
+### update
+
+`expenses.update`
+
+Change an expense; passing any share replaces every share on it
+
+**Risk:** `destructive`
+
+```ts
+await corsair.splitwise.api.expenses.update({ expense_id: 51023, description: 'Brunch (updated)' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `description` | `string` | No | A short description of the expense |
+| `cost` | `number` | No | Total cost of the expense, e.g. 25.5 |
+| `details` | `string \| null` | No | Free-text notes; null clears them |
+| `date` | `string` | No | ISO 8601 date and time the expense took place, e.g. "2026-05-02T13:00:00Z" |
+| `currency_code` | `string` | No | Currency code from `currencies.list`; defaults to the group currency |
+| `category_id` | `number` | No | A subcategory ID from `categories.list`; a parent category is rejected |
+| `repeat_interval` | `never \| weekly \| fortnightly \| monthly \| yearly` | No | — |
+| `expense_id` | `number` | Yes | ID of the expense to update |
+| `group_id` | `number` | No | — |
+| `users` | `object[]` | No | Replaces every share on the expense when supplied |
+
+Passing `users` replaces every share, so `cost` is required with it. Omitted fields stay as they were.
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  user_id?: number,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
+  paid_share: number,
+  owed_share: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `expenses` | `object[]` | Yes | — |
+| `errors` | `Record<string, string[]> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="expenses full type">
+
+```ts
+{
+  id: number,
+  group_id?: number | null,
+  friendship_id?: number | null,
+  expense_bundle_id?: number | null,
+  description: string,
+  details?: string | null,
+  cost: string,
+  currency_code: string,
+  date?: string | null,
+  created_at?: string | null,
+  created_by?: {
+    id: number,
+    first_name?: string | null,
+    last_name?: string | null,
+    email?: string | null,
+    registration_status?: string | null,
+    picture?: {
+      small?: string | null,
+      medium?: string | null,
+      large?: string | null
+    } | null,
+    custom_picture?: boolean | null
+  } | null,
+  updated_at?: string | null,
+  updated_by?: {
+    id: number,
+    first_name?: string | null,
+    last_name?: string | null,
+    email?: string | null,
+    registration_status?: string | null,
+    picture?: {
+      small?: string | null,
+      medium?: string | null,
+      large?: string | null
+    } | null,
+    custom_picture?: boolean | null
+  } | null,
+  deleted_at?: string | null,
+  deleted_by?: {
+    id: number,
+    first_name?: string | null,
+    last_name?: string | null,
+    email?: string | null,
+    registration_status?: string | null,
+    picture?: {
+      small?: string | null,
+      medium?: string | null,
+      large?: string | null
+    } | null,
+    custom_picture?: boolean | null
+  } | null,
+  category?: {
+    id: number,
+    name: string
+  } | null,
+  receipt?: {
+    large?: string | null,
+    original?: string | null
+  } | null,
+  repeats?: boolean | null,
+  repeat_interval?: string | null,
+  email_reminder?: boolean | null,
+  email_reminder_in_advance?: number | null,
+  next_repeat?: string | null,
+  comments_count?: number | null,
+  payment?: boolean | null,
+  transaction_confirmed?: boolean | null,
+  repayments?: {
+    from: number,
+    to: number,
+    amount: string
+  }[] | null,
+  users?: {
+    user?: {
+      id: number,
+      first_name?: string | null,
+      last_name?: string | null,
+      picture?: {
+        small?: string | null,
+        medium?: string | null,
+        large?: string | null
+      } | null
+    } | null,
+    user_id: number,
+    paid_share: string,
+    owed_share: string,
+    net_balance: string
+  }[] | null,
+  comments?: {
+    id: number,
+    content: string,
+    comment_type?: string | null,
+    relation_type?: string | null,
+    relation_id?: number | null,
+    created_at?: string | null,
+    deleted_at?: string | null,
+    user?: {
+      id: number,
+      first_name?: string | null,
+      last_name?: string | null,
+      picture?: {
+        small?: string | null,
+        medium?: string | null,
+        large?: string | null
+      } | null
+    } | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Friends
+
+### add
+
+`friends.add`
+
+Add a friend by email; a first name is needed when the person has no Splitwise account yet
+
+**Risk:** `destructive`
+
+```ts
+await corsair.splitwise.api.friends.add({ user_email: 'grace@example.com', user_first_name: 'Grace' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_email` | `string` | Yes | The friend's email address |
+| `user_first_name` | `string` | No | Required only when the other person has no Splitwise account |
+| `user_last_name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `friend` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="friend full type">
+
+```ts
+{
+  id: number,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  registration_status?: string | null,
+  picture?: {
+    small?: string | null,
+    medium?: string | null,
+    large?: string | null
+  } | null,
+  custom_picture?: boolean | null,
+  groups?: {
+    group_id: number,
+    balance?: {
+      currency_code: string,
+      amount: string
+    }[] | null
+  }[] | null,
+  balance?: {
+    currency_code: string,
+    amount: string
+  }[] | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### addMany
+
+`friends.addMany`
+
+Add several friends in one call, returning each result alongside any errors
+
+**Risk:** `destructive`
+
+```ts
+await corsair.splitwise.api.friends.addMany({ users: [{ email: 'grace@example.com', first_name: 'Grace' }, { email: 'alan@example.com' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | Friends to add in one call |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  email: string,
+  first_name?: string,
+  last_name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+| `errors` | `Record<string, string[]> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id: number,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  registration_status?: string | null,
+  picture?: {
+    small?: string | null,
+    medium?: string | null,
+    large?: string | null
+  } | null,
+  custom_picture?: boolean | null,
+  groups?: {
+    group_id: number,
+    balance?: {
+      currency_code: string,
+      amount: string
+    }[] | null
+  }[] | null,
+  balance?: {
+    currency_code: string,
+    amount: string
+  }[] | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`friends.delete`
+
+Break off the friendship; Splitwise keeps the expenses but the friend is removed from the list and there is no undelete call
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.splitwise.api.friends.delete({ friend_id: 491923 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `friend_id` | `number` | Yes | The friend's user ID |
+
+There is no undelete call for a friendship.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `errors` | `Record<string, string[]> \| string[] \| null` | No | — |
+
+
+
+---
+
+### get
+
+`friends.get`
+
+Get one friend with their balances and shared groups
+
+**Risk:** `read`
+
+```ts
+await corsair.splitwise.api.friends.get({ friend_id: 491923 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `friend_id` | `number` | Yes | The friend's user ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `friend` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="friend full type">
+
+```ts
+{
+  id: number,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  registration_status?: string | null,
+  picture?: {
+    small?: string | null,
+    medium?: string | null,
+    large?: string | null
+  } | null,
+  custom_picture?: boolean | null,
+  groups?: {
+    group_id: number,
+    balance?: {
+      currency_code: string,
+      amount: string
+    }[] | null
+  }[] | null,
+  balance?: {
+    currency_code: string,
+    amount: string
+  }[] | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`friends.list`
+
+List the current user friends with the balance owed either way
+
+**Risk:** `read`
+
+```ts
+await corsair.splitwise.api.friends.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `friends` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="friends full type">
+
+```ts
+{
+  id: number,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  registration_status?: string | null,
+  picture?: {
+    small?: string | null,
+    medium?: string | null,
+    large?: string | null
+  } | null,
+  custom_picture?: boolean | null,
+  groups?: {
+    group_id: number,
+    balance?: {
+      currency_code: string,
+      amount: string
+    }[] | null
+  }[] | null,
+  balance?: {
+    currency_code: string,
+    amount: string
+  }[] | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Groups
+
+### addUser
+
+`groups.addUser`
+
+Add a Splitwise user, or a new person by name and email, to a group
+
+**Risk:** `destructive`
+
+```ts
+await corsair.splitwise.api.groups.addUser({ group_id: 321, user_id: 491923 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number` | Yes | — |
+| `user_id` | `number` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `email` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `user` | `object \| null` | No | — |
+| `errors` | `Record<string, string[]> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  registration_status?: string | null,
+  picture?: {
+    small?: string | null,
+    medium?: string | null,
+    large?: string | null
+  } | null,
+  custom_picture?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`groups.create`
+
+Create a group and add members by user ID or by name and email; the current user is added automatically
+
+**Risk:** `destructive`
+
+```ts
+await corsair.splitwise.api.groups.create({ name: 'Housemates 2026', group_type: 'home', users: [{ first_name: 'Grace', last_name: 'Hopper', email: 'grace@example.com' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the group |
+| `group_type` | `home \| trip \| couple \| other \| apartment \| house` | No | Splitwise recommends `home` in place of `house` or `apartment` |
+| `simplify_by_default` | `boolean` | No | Turn on simplify debts |
+| `users` | `object[]` | No | Members to add besides the current user, who is added automatically |
+
+Members are sent as `users__<index>__<property>` keys. A member needs either `user_id` or `email`; add `first_name` and `last_name` for someone without an account.
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  user_id?: number,
+  first_name?: string,
+  last_name?: string,
+  email?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="group full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  group_type?: string | null,
+  updated_at?: string | null,
+  simplify_by_default?: boolean | null,
+  members?: {
+    id: number,
+    first_name?: string | null,
+    last_name?: string | null,
+    email?: string | null,
+    registration_status?: string | null,
+    picture?: {
+      small?: string | null,
+      medium?: string | null,
+      large?: string | null
+    } | null,
+    custom_picture?: boolean | null,
+    balance?: {
+      currency_code: string,
+      amount: string
+    }[] | null
+  }[] | null,
+  original_debts?: {
+    from: number,
+    to: number,
+    amount: string,
+    currency_code: string
+  }[] | null,
+  simplified_debts?: {
+    from: number,
+    to: number,
+    amount: string,
+    currency_code: string
+  }[] | null,
+  avatar?: {
+    original?: string | null,
+    xxlarge?: string | null,
+    xlarge?: string | null,
+    large?: string | null,
+    medium?: string | null,
+    small?: string | null
+  } | null,
+  custom_avatar?: boolean | null,
+  cover_photo?: {
+    original?: string | null,
+    xxlarge?: string | null,
+    xlarge?: string | null,
+    large?: string | null,
+    medium?: string | null,
+    small?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`groups.delete`
+
+Delete a group and every expense in it; the group can be restored with `groups.undelete`
+
+**Risk:** `destructive`
+
+```ts
+await corsair.splitwise.api.groups.delete({ group_id: 321 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number` | Yes | Splitwise group ID |
+
+Deletes the group and every expense in it. The group can be restored with `groups.undelete`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `errors` | `Record<string, string[]> \| string[] \| null` | No | — |
+
+
+
+---
+
+### get
+
+`groups.get`
+
+Get one group with its members, balances and debts
+
+**Risk:** `read`
+
+```ts
+await corsair.splitwise.api.groups.get({ group_id: 321 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number` | Yes | Splitwise group ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="group full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  group_type?: string | null,
+  updated_at?: string | null,
+  simplify_by_default?: boolean | null,
+  members?: {
+    id: number,
+    first_name?: string | null,
+    last_name?: string | null,
+    email?: string | null,
+    registration_status?: string | null,
+    picture?: {
+      small?: string | null,
+      medium?: string | null,
+      large?: string | null
+    } | null,
+    custom_picture?: boolean | null,
+    balance?: {
+      currency_code: string,
+      amount: string
+    }[] | null
+  }[] | null,
+  original_debts?: {
+    from: number,
+    to: number,
+    amount: string,
+    currency_code: string
+  }[] | null,
+  simplified_debts?: {
+    from: number,
+    to: number,
+    amount: string,
+    currency_code: string
+  }[] | null,
+  avatar?: {
+    original?: string | null,
+    xxlarge?: string | null,
+    xlarge?: string | null,
+    large?: string | null,
+    medium?: string | null,
+    small?: string | null
+  } | null,
+  custom_avatar?: boolean | null,
+  cover_photo?: {
+    original?: string | null,
+    xxlarge?: string | null,
+    xlarge?: string | null,
+    large?: string | null,
+    medium?: string | null,
+    small?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`groups.list`
+
+List the current user groups with their members, balances and simplified debts; expenses outside a group appear as group 0
+
+**Risk:** `read`
+
+```ts
+await corsair.splitwise.api.groups.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groups` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  group_type?: string | null,
+  updated_at?: string | null,
+  simplify_by_default?: boolean | null,
+  members?: {
+    id: number,
+    first_name?: string | null,
+    last_name?: string | null,
+    email?: string | null,
+    registration_status?: string | null,
+    picture?: {
+      small?: string | null,
+      medium?: string | null,
+      large?: string | null
+    } | null,
+    custom_picture?: boolean | null,
+    balance?: {
+      currency_code: string,
+      amount: string
+    }[] | null
+  }[] | null,
+  original_debts?: {
+    from: number,
+    to: number,
+    amount: string,
+    currency_code: string
+  }[] | null,
+  simplified_debts?: {
+    from: number,
+    to: number,
+    amount: string,
+    currency_code: string
+  }[] | null,
+  avatar?: {
+    original?: string | null,
+    xxlarge?: string | null,
+    xlarge?: string | null,
+    large?: string | null,
+    medium?: string | null,
+    small?: string | null
+  } | null,
+  custom_avatar?: boolean | null,
+  cover_photo?: {
+    original?: string | null,
+    xxlarge?: string | null,
+    xlarge?: string | null,
+    large?: string | null,
+    medium?: string | null,
+    small?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeUser
+
+`groups.removeUser`
+
+Remove a user from a group; Splitwise refuses while that user has a non-zero balance
+
+**Risk:** `write`
+
+```ts
+await corsair.splitwise.api.groups.removeUser({ group_id: 321, user_id: 491923 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number` | Yes | — |
+| `user_id` | `number` | Yes | — |
+
+Splitwise refuses while the user has a non-zero balance.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `errors` | `Record<string, string[]> \| string[] \| null` | No | — |
+
+
+
+---
+
+### undelete
+
+`groups.undelete`
+
+Restore a deleted group
+
+**Risk:** `write`
+
+```ts
+await corsair.splitwise.api.groups.undelete({ group_id: 321 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number` | Yes | Splitwise group ID |
+
+This route reports `errors` as an array of strings rather than the map every other write uses.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `errors` | `string[] \| null` | No | — |
+
+
+
+---
+
+## Notifications
+
+### list
+
+`notifications.list`
+
+List recent activity on the account, newest first, optionally after a given time
+
+**Risk:** `read`
+
+```ts
+await corsair.splitwise.api.notifications.list({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `updated_after` | `string` | No | Only notifications created after this time |
+| `limit` | `number` | No | Maximum to return; omit for the provider maximum |
+
+Omit `limit` to get the provider maximum; Splitwise imposes its own cap on very old `updated_after` values.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notifications` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="notifications full type">
+
+```ts
+{
+  id: number,
+  type: number,
+  created_at?: string | null,
+  created_by?: number | null,
+  source?: {
+    type?: string | null,
+    id?: number | null,
+    url?: string | null
+  } | null,
+  image_url?: string | null,
+  image_shape?: string | null,
+  content?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+Get another user by ID; Splitwise only answers for people you share a group or expense with
+
+**Risk:** `read`
+
+```ts
+await corsair.splitwise.api.users.get({ user_id: 491923 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number` | Yes | Splitwise user ID, from `users.current` or a group member |
+
+Splitwise only answers for people you share a group or an expense with; anyone else is a 403.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  registration_status?: string | null,
+  picture?: {
+    small?: string | null,
+    medium?: string | null,
+    large?: string | null
+  } | null,
+  custom_picture?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCurrentUser
+
+`users.getCurrentUser`
+
+Get the user the key belongs to, with its notification settings and unread count
+
+**Risk:** `read`
+
+```ts
+await corsair.splitwise.api.users.getCurrentUser({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  registration_status?: string | null,
+  picture?: {
+    small?: string | null,
+    medium?: string | null,
+    large?: string | null
+  } | null,
+  custom_picture?: boolean | null,
+  notifications_read?: string | null,
+  notifications_count?: number | null,
+  notifications?: Record<string, boolean> | null,
+  default_currency?: string | null,
+  locale?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`users.update`
+
+Change a user's name, email, password, locale or default currency
+
+**Risk:** `write`
+
+```ts
+await corsair.splitwise.api.users.update({ user_id: 491923, default_currency: 'EUR' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number` | Yes | ID of the user to update |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `password` | `string` | No | — |
+| `locale` | `string` | No | ISO 639-1 two-letter locale code, e.g. "en" |
+| `default_currency` | `string` | No | Currency code from `currencies.list`, e.g. "USD" |
+
+The ID travels in the path, so it cannot also be changed through the body.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  registration_status?: string | null,
+  picture?: {
+    small?: string | null,
+    medium?: string | null,
+    large?: string | null
+  } | null,
+  custom_picture?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

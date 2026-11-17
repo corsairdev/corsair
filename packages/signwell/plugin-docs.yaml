@@ -1,0 +1,99 @@
+displayName: SignWell
+description: E-signatures through SignWell - send documents and templates for signature, follow each recipient's progress, remind, update or cancel a request, read a completed PDF by download URL, and receive document events on a webhook.
+domain: signwell.com
+recommendedAuth: api_key
+overviewNote: |
+  Create an API token in SignWell under Settings, then API. Pass it as the plugin's `key` option or store it on the account. SignWell reads it from the `X-Api-Key` header.
+
+  Things to know before you send:
+
+  - **Sending notifies real people.** `documents.create` and `documents.createFromTemplate` notify every recipient unless you set `draft: true`. `bulkSends.create` has no draft or test mode: it sends every row as soon as it is created. Test mode keeps a document out of billing and makes it non-binding, but the notifications still go out.
+  - **Test mode does not follow a draft.** SignWell documents that a document created in test mode is not automatically sent in test mode. The document routes (`documents.create`, `documents.createFromTemplate`, `documents.send`) accept `test_mode`, and the plugin also sets `X-TestMode-Enabled` so the two never disagree.
+  - **Recipient ids change meaning.** At creation, `recipients[].id` is the number you assign to attach fields. After the document exists, the id comes from `documents.get`, and `documents.updateRecipients` needs that one.
+  - **Only unsigned recipients can change.** Updating a recipient or their passcode fails with a 409 once that recipient has started signing.
+  - **Completed files come back as a URL.** SignWell returns a PDF or ZIP body by default, which this plugin cannot hand back intact, so `documents.getCompletedPdf` and `documents.getNom151Certificate` ask for `url_only` and return `file_url`.
+  - **Webhooks.** Register a URL with `webhooks.create`, then give the returned id to the plugin as `webhookSecret` (or store it as the account's webhook signature). SignWell signs each delivery with HMAC-SHA256 over `event.type@event.time`, keyed with that id; a delivery whose hash does not match is refused.
+  - **What the signature covers.** The hash covers the event type and its timestamp, not the document body, so it stops an unsigned sender but not a replay of a genuine envelope. Treat a delivery as a notification to go read the document, not as the document's final state.
+  - **Paging.** `bulkSends.list` and `bulkSends.getDocuments` page by number and report `next_page`. `webhooks.list` does not page.
+examples:
+  read:
+    path: documents.get
+    title: Read a document and its recipients
+    args:
+      id: a692e1ce-9929-4541-adc7-61932bab39d3
+  write:
+    path: documents.create
+    title: Send a PDF for signature
+    args:
+      files:
+        - name: offer.pdf
+          file_url: https://acme.example/offer.pdf
+      recipients:
+        - id: '1'
+          name: Jordan Lee
+          email: jordan@acme-logistics.com
+      with_signature_page: true
+      subject: Please sign the offer
+apiExamples:
+  me.get: {}
+  account.get: {}
+  account.update:
+    call: "{ name: 'Acme Logistics', date_format: 'DD/MM/YYYY' }"
+  documents.get:
+    call: "{ id: 'a692e1ce-9929-4541-adc7-61932bab39d3' }"
+  documents.create:
+    call: "{ files: [{ name: 'offer.pdf', file_url: 'https://acme.example/offer.pdf' }], recipients: [{ id: '1', name: 'Jordan Lee', email: 'jordan@acme-logistics.com' }], subject: 'Please sign the offer', draft: true }"
+  documents.createFromTemplate:
+    call: "{ template_id: 'd7315111-c671-4b15-8354-c9a19bbaefa0', recipients: [{ id: '1', name: 'Jordan Lee', email: 'jordan@acme-logistics.com' }] }"
+  documents.send:
+    call: "{ id: 'a692e1ce-9929-4541-adc7-61932bab39d3', subject: 'Please sign the offer' }"
+  documents.updateRecipients:
+    call: "{ id: 'a692e1ce-9929-4541-adc7-61932bab39d3', recipients: [{ id: '1', name: 'Jordan Lee', email: 'jordan.lee@acme-logistics.com' }] }"
+  documents.updateAuthentication:
+    call: "{ id: 'a692e1ce-9929-4541-adc7-61932bab39d3', recipients: [{ id: '1', passcode: '4821' }] }"
+  documents.sendReminder:
+    call: "{ id: 'a692e1ce-9929-4541-adc7-61932bab39d3' }"
+  documents.delete:
+    call: "{ id: 'a692e1ce-9929-4541-adc7-61932bab39d3' }"
+  documents.getCompletedPdf:
+    call: "{ id: 'a692e1ce-9929-4541-adc7-61932bab39d3', audit_page: true }"
+  documents.getNom151Certificate:
+    call: "{ id: 'a692e1ce-9929-4541-adc7-61932bab39d3' }"
+  templates.get:
+    call: "{ id: 'd7315111-c671-4b15-8354-c9a19bbaefa0' }"
+  templates.create:
+    call: "{ files: [{ name: 'contract.pdf', file_url: 'https://acme.example/contract.pdf' }], placeholders: [{ id: '1', name: 'Employee' }], name: 'Employment contract' }"
+  templates.update:
+    call: "{ id: 'd7315111-c671-4b15-8354-c9a19bbaefa0', name: 'Employment contract (2026)' }"
+  templates.delete:
+    call: "{ id: 'd7315111-c671-4b15-8354-c9a19bbaefa0' }"
+  webhooks.list: {}
+  webhooks.create:
+    call: "{ callback_url: 'https://acme.example/hooks/signwell' }"
+  webhooks.delete:
+    call: "{ id: '0f5c4c2a-1c1f-4a2e-9f0a-6c1f2d3e4b5a' }"
+  apiApplications.get:
+    call: "{ id: '5a67dbd7-928a-4ea0-a7e2-e476a0eb045f' }"
+  apiApplications.delete:
+    call: "{ id: '5a67dbd7-928a-4ea0-a7e2-e476a0eb045f' }"
+  bulkSends.list:
+    call: "{ page: 1, limit: 25 }"
+  bulkSends.get:
+    call: "{ id: '5a67dbd7-928a-4ea0-a7e2-e476a0eb045f' }"
+  bulkSends.getDocuments:
+    call: "{ id: '5a67dbd7-928a-4ea0-a7e2-e476a0eb045f', page: 1 }"
+  bulkSends.create:
+    call: "{ template_ids: ['d7315111-c671-4b15-8354-c9a19bbaefa0'], bulk_send_csv: 'bmFtZSxlbWFpbApUZXN0LHRlc3RAZXhhbXBsZS5jb20K' }"
+  bulkSends.getCsvTemplate:
+    call: "{ template_ids: ['d7315111-c671-4b15-8354-c9a19bbaefa0'] }"
+  bulkSends.validateCsv:
+    call: "{ template_ids: ['d7315111-c671-4b15-8354-c9a19bbaefa0'], bulk_send_csv: 'bmFtZSxlbWFpbApUZXN0LHRlc3RAZXhhbXBsZS5jb20K' }"
+apiNotes:
+  documents.create: 'Set draft: true to create without notifying anyone. Without it SignWell sends the request immediately. Each file also needs file_url or file_base64, never both: the schema rejects a call that sends both or neither.'
+  documents.createFromTemplate: 'Supply template_id or template_ids, never both; the schema rejects a call that sends both or neither.'
+  documents.send: 'A draft created in test mode is still sent live unless test_mode is set again here. The plugin sends it on every send route that accepts it.'
+  documents.updateRecipients: 'Use the recipient ids from documents.get, not the ids you supplied at creation.'
+  documents.getCompletedPdf: 'SignWell answers a PDF body by default. This operation asks for url_only and returns file_url, because the plugin cannot hand back binary content intact.'
+  webhooks.create: 'The returned id is the HMAC key for verifying deliveries. Give it to the plugin as webhookSecret, or store it as the account webhook signature.'
+  bulkSends.getCsvTemplate: 'The template ids go out as repeated template_ids[] parameters, which is how SignWell reads this array.'
+  documents.delete: 'Deleting cancels any signing in progress and removes the document, its signatures and its audit trail.'
