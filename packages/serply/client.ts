@@ -1,5 +1,5 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export const SERPLY_API_BASE = 'https://api.serply.io';
 
@@ -58,7 +58,32 @@ export async function serplyRequest<T>(
 			? { body: options.body, mediaType: 'application/json' }
 			: {}),
 	};
-	return await request<T>(config, requestOptions);
+	try {
+		return await request<T>(config, requestOptions);
+	} catch (error) {
+		if (error instanceof ApiError) {
+			// Search terms can be personal (a name, an email, a health question):
+			// keep them out of the error. The route, status and retry data stay.
+			const req = error.request as {
+				url?: unknown;
+				query?: unknown;
+				body?: unknown;
+			};
+			if (typeof req.url === 'string') req.url = withoutTerms(req.url);
+			req.query = undefined;
+			req.body = undefined;
+			(error as { url: string }).url = withoutTerms(error.url);
+		}
+		throw error;
+	}
+}
+
+/** Drops the query string and a Maps search term from a URL. */
+export function withoutTerms(url: string): string {
+	return (url.split('?')[0] ?? url).replace(
+		/\/v1\/maps\/search\/[^/]+/,
+		'/v1/maps/search/[query]',
+	);
 }
 
 export async function serplyGet<T>(

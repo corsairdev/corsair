@@ -49,6 +49,7 @@ import {
 	RedditObjectOutputSchema,
 	RedditPostInputSchema,
 	RedditUserInputSchema,
+	ScholarInputSchema,
 	SimpleSearchInputSchema,
 	SubredditAboutInputSchema,
 	SubredditPostsInputSchema,
@@ -97,7 +98,10 @@ const serplyWebhooksNested = {} as const;
 export const serplyEndpointSchemas = {
 	'images.search': { input: ImageInputSchema, output: ImageResponseSchema },
 	'places.search': { input: QueryInputSchema, output: PlaceResponseSchema },
-	'articles.search': { input: QueryInputSchema, output: ArticleResponseSchema },
+	'articles.search': {
+		input: ScholarInputSchema,
+		output: ArticleResponseSchema,
+	},
 	'web.search': { input: WebSearchInputSchema, output: WebSearchOutputSchema },
 	'bing.search': {
 		input: SimpleSearchInputSchema,

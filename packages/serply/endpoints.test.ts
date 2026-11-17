@@ -27,7 +27,7 @@ describe('serply searches', () => {
 		jest.clearAllMocks();
 	});
 
-	it('stores an image by page href and omits the query from the event', async () => {
+	it('stores an image by its original URL and omits the query from the event', async () => {
 		const upsert = jest.fn().mockResolvedValue(undefined);
 		mockRequest.mockResolvedValue({
 			image_results: [
@@ -56,7 +56,7 @@ describe('serply searches', () => {
 		);
 		expect(result.images).toEqual([
 			{
-				id: 'https://shop.example/bike',
+				id: 'https://shop.example/bike.png',
 				src: 'https://img.example/t.png',
 				alt: 'Bike',
 				title: 'Bike',
@@ -65,12 +65,17 @@ describe('serply searches', () => {
 				width: '100',
 				height: '80',
 			},
+			// No page link: keyed by the thumbnail instead of being dropped.
+			{
+				id: 'https://img.example/no-link.png',
+				src: 'https://img.example/no-link.png',
+			},
 		]);
 		expect(upsert).toHaveBeenCalledWith(
-			'https://shop.example/bike',
+			'https://shop.example/bike.png',
 			result.images[0],
 		);
-		expect(mockLog.mock.calls[0]?.[2]).toEqual({ count: 1 });
+		expect(mockLog.mock.calls[0]?.[2]).toEqual({ count: 2 });
 		expect(JSON.stringify(mockLog.mock.calls[0]?.[2])).not.toContain(
 			'secret-query',
 		);

@@ -13,19 +13,27 @@ import type {
 	ImageResponse,
 	PlaceResponse,
 	QueryInput,
+	ScholarInput,
 } from './types';
-import { ImageInputSchema, QueryInputSchema } from './types';
+import {
+	ImageInputSchema,
+	QueryInputSchema,
+	ScholarInputSchema,
+} from './types';
 
+// unknown: a field of an untrusted response row, checked here.
 function optionalString(value: unknown): string | undefined {
 	return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
 
+// unknown: a field of an untrusted response row, checked here.
 function optionalNumber(value: unknown): number | undefined {
 	return typeof value === 'number' && Number.isFinite(value)
 		? value
 		: undefined;
 }
 
+// unknown: any response node; returns it as a record when it is an object.
 function record(value: unknown): Record<string, unknown> | undefined {
 	return value && typeof value === 'object'
 		? (value as Record<string, unknown>)
@@ -44,6 +52,7 @@ export const searchImages: CorsairEndpoint<
 > = async (ctx, input) => {
 	const key = await requireKey(ctx);
 	const parsed = ImageInputSchema.parse(input ?? {});
+	// unknown: checked below for an `image_results` array.
 	const body = await serplyGet<unknown>(key, '/v1/image', {
 		q: parsed.q,
 		num: parsed.num === undefined ? undefined : String(parsed.num),
@@ -59,9 +68,13 @@ export const searchImages: CorsairEndpoint<
 		const link = record(row?.link);
 		const original = record(row?.original_image);
 		const href = optionalString(link?.href);
-		if (!href) return [];
+		// One page can host several images, so the row is keyed by the image
+		// itself; the hosting page is only the last resort.
+		const id =
+			optionalString(original?.src) ?? optionalString(image?.src) ?? href;
+		if (!id) return [];
 		const parsedRow = SerplyImageEntity.safeParse({
-			id: href,
+			id,
 			src: optionalString(image?.src),
 			alt: optionalString(image?.alt),
 			title: optionalString(link?.title),
@@ -97,6 +110,7 @@ export const searchPlaces: CorsairEndpoint<
 > = async (ctx, input) => {
 	const key = await requireKey(ctx);
 	const parsed = QueryInputSchema.parse(input ?? {});
+	// unknown: checked below for a `places` array.
 	const body = await serplyGet<unknown>(
 		key,
 		`/v1/maps/search/${encodeURIComponent(parsed.q)}`,
@@ -141,12 +155,17 @@ export const searchPlaces: CorsairEndpoint<
 
 export const searchArticles: CorsairEndpoint<
 	SerplyContext,
-	QueryInput,
+	ScholarInput,
 	ArticleResponse
 > = async (ctx, input) => {
 	const key = await requireKey(ctx);
-	const parsed = QueryInputSchema.parse(input ?? {});
-	const body = await serplyGet<unknown>(key, '/v1/scholar', { q: parsed.q });
+	const parsed = ScholarInputSchema.parse(input ?? {});
+	// unknown: checked below for an `articles` array.
+	const body = await serplyGet<unknown>(key, '/v1/scholar', {
+		q: parsed.q,
+		num: parsed.num === undefined ? undefined : String(parsed.num),
+		start: parsed.start === undefined ? undefined : String(parsed.start),
+	});
 	const rows = record(body);
 	const list = rows?.articles;
 	if (!Array.isArray(list)) {

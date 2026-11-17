@@ -27,8 +27,10 @@ await corsair.serply.api.articles.search({ q: 'large language model agents' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `q` | `string` | Yes | — |
+| `num` | `number` | No | Results per page, up to 200 |
+| `start` | `number` | No | Zero-based offset for the next page |
 
-GET /v1/scholar?q=. A row is stored when id is present. Author names are not stored.
+GET /v1/scholar?q=. Pages with `num` (up to 200) and `start`. A row is stored when id is present. Author names are not stored.
 
 
 
@@ -197,7 +199,7 @@ await corsair.serply.api.images.search({ q: 'bicycle' });
 | `q` | `string` | Yes | — |
 | `num` | `number` | No | — |
 
-GET /v1/image?q=. Up to 20 images per call; Serply ignores `num` here. A row is stored when link.href is present. The row id is that href.
+GET /v1/image?q=. Up to 20 images per call; Serply ignores `num` here. Rows are keyed by the original image URL (the thumbnail, then the hosting page, when it is missing).
 
 
 

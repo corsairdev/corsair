@@ -12,10 +12,10 @@ Things to know:
 
 - **Search terms.** Every search takes `q`. `web.search` also takes Google's `num` (about 10 per page at most), `start` (offset; 10 is page two), `gl` (country) and `hl` (language). Google operators such as `site:` work in `q`.
 - **Region and device.** `proxy_location` (US, DE, GB, ...) and `device` (desktop or mobile) set where Google thinks the search comes from. Without `gl` or a region, results can change between calls.
-- **Answers are passed through.** Each operation returns Serply's JSON with the main list typed (`results`, `jobs`, `products`, `entries`, Reddit `data.children`) and every other field kept as is.
+- **Answers.** `images.search`, `places.search` and `articles.search` return a fixed set of fields per row (the ones they store). Every other operation returns Serply's JSON as it came, with the main list typed (`results`, `jobs`, `products`, `entries`, Reddit `data.children`) and every other field kept.
 - **Reddit.** `reddit.subredditPosts` and `reddit.userPosts` page with `after` (the previous answer's `data.after`); `reddit.post` takes `with_comments`.
 - **Pages.** `pages.fetch` returns the page in `data`, as markdown (`response_type: markdown`) or HTML (`full`, which also returns the page's HTTP status).
-- **Stored rows.** Images, places and Scholar articles are stored locally; phone numbers and author names are not. Search terms are never written to events.
+- **Stored rows.** Images, places and Scholar articles are stored locally; phone numbers and author names are not. Search terms are never written to events, and a failed call drops them from the error.
 
 **What you get:**
 

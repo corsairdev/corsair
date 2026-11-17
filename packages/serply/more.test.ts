@@ -1,7 +1,8 @@
 import { logEventFromContext } from 'corsair/core';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 import type { SerplyContext } from './context';
 import * as More from './endpoints/more';
+import { searchArticles, searchImages } from './endpoints/search';
 import { serply } from './index';
 
 jest.mock('corsair/core', () => ({
@@ -355,6 +356,68 @@ describe('headers, validation and privacy', () => {
 		mockRequest.mockResolvedValueOnce(SERP);
 		await More.webSearch(ctx(), { q: 'private medical question' });
 		expect(JSON.stringify(mockLog.mock.calls)).not.toContain('medical');
+	});
+});
+
+describe('round 2', () => {
+	it('drops the search terms from a failed call', async () => {
+		const error = new ApiError(
+			{ method: 'GET', url: '/v1/search/?q=alice%40example.test' },
+			{
+				url: 'https://api.serply.io/v1/search/?q=alice%40example.test',
+				ok: false,
+				status: 401,
+				statusText: 'Unauthorized',
+				body: { detail: 'Invalid API key' },
+			},
+			'Invalid API key',
+		);
+		mockRequest.mockRejectedValueOnce(error);
+		const caught = await More.webSearch(ctx(), {
+			q: 'alice@example.test',
+		}).catch(
+			// unknown: a promise can reject with any value; checked below.
+			(e: unknown) => e,
+		);
+		expect(caught).toBe(error);
+		expect((caught as ApiError).url).toBe('https://api.serply.io/v1/search/');
+		expect(JSON.stringify((caught as ApiError).request)).not.toContain('alice');
+	});
+
+	it('keys stored images by the image, not the page that hosts it', async () => {
+		const upsert = jest.fn();
+		mockRequest.mockResolvedValueOnce({
+			image_results: [
+				{
+					image: { src: 'thumb1' },
+					link: { href: 'https://page' },
+					original_image: { src: 'https://img/1.jpg' },
+				},
+				{
+					image: { src: 'thumb2' },
+					link: { href: 'https://page' },
+					original_image: { src: 'https://img/2.jpg' },
+				},
+			],
+		});
+		await searchImages(
+			// unknown: the endpoint reads only `key` and `db.images`.
+			{
+				key: 'sk-test',
+				db: { images: { upsertByEntityId: upsert } },
+			} as unknown as SerplyContext,
+			{ q: 'bike' },
+		);
+		expect(upsert.mock.calls.map((c) => c[0])).toEqual([
+			'https://img/1.jpg',
+			'https://img/2.jpg',
+		]);
+	});
+
+	it('pages Scholar with num and start', async () => {
+		mockRequest.mockResolvedValueOnce({ articles: [] });
+		await searchArticles(ctx(), { q: 'agents', num: 50, start: 50 });
+		expect(sent().url).toBe('/v1/scholar?q=agents&num=50&start=50');
 	});
 });
 

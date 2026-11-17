@@ -13,6 +13,22 @@ export const ImageInputSchema = QueryInputSchema.extend({
 	num: z.number().int().min(1).max(20).optional(),
 });
 
+export const ScholarInputSchema = QueryInputSchema.extend({
+	num: z
+		.number()
+		.int()
+		.min(1)
+		.max(200)
+		.optional()
+		.describe('Results per page, up to 200'),
+	start: z
+		.number()
+		.int()
+		.min(0)
+		.optional()
+		.describe('Zero-based offset for the next page'),
+});
+
 export const ImageResponseSchema = z.object({
 	images: z.array(SerplyImageEntity),
 });
@@ -25,6 +41,7 @@ export const ArticleResponseSchema = z.object({
 
 export type QueryInput = z.infer<typeof QueryInputSchema>;
 export type ImageInput = z.infer<typeof ImageInputSchema>;
+export type ScholarInput = z.infer<typeof ScholarInputSchema>;
 export type ImageResponse = z.infer<typeof ImageResponseSchema>;
 export type PlaceResponse = z.infer<typeof PlaceResponseSchema>;
 export type ArticleResponse = z.infer<typeof ArticleResponseSchema>;
@@ -32,7 +49,7 @@ export type ArticleResponse = z.infer<typeof ArticleResponseSchema>;
 export const SerplyEndpointInputSchemas = {
 	'images.search': ImageInputSchema,
 	'places.search': QueryInputSchema,
-	'articles.search': QueryInputSchema,
+	'articles.search': ScholarInputSchema,
 };
 
 export const SerplyEndpointOutputSchemas = {
