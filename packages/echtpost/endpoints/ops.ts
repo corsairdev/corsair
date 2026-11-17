@@ -5,6 +5,7 @@ import type { EchtpostQuery } from '../client';
 import { echtpostRequest } from '../client';
 import type { EchtpostContext } from '../context';
 import { EchtpostTemplateEntity } from '../schema/database';
+import { fontOf } from './list';
 import {
 	CancelSchema,
 	CardCreateInputSchema,
@@ -248,6 +249,7 @@ export const templatesGet = op({
 			content: t.content ?? undefined,
 			content_ps: t.content_ps ?? undefined,
 			content_vertical: t.content_vertical ?? undefined,
+			font: fontOf(t.font),
 			qr_code_url: t.qr_code_url ?? undefined,
 			preview_url: t.preview_url ?? undefined,
 			source: t.source ?? undefined,

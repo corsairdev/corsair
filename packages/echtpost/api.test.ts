@@ -47,12 +47,15 @@ live('creates, updates and deletes a sandbox group and contact', async () => {
 			country_code: 'DE',
 			group_ids: [group.id],
 		});
-		const updated = await Ops.contactsUpdate(ctx, {
-			id: contact.id,
-			city: 'Hamburg',
-		});
-		expect(updated.city).toBe('Hamburg');
-		await Ops.contactsDelete(ctx, { id: contact.id });
+		try {
+			const updated = await Ops.contactsUpdate(ctx, {
+				id: contact.id,
+				city: 'Hamburg',
+			});
+			expect(updated.city).toBe('Hamburg');
+		} finally {
+			await Ops.contactsDelete(ctx, { id: contact.id });
+		}
 	} finally {
 		await Ops.groupsDelete(ctx, { id: group.id });
 	}

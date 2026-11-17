@@ -247,7 +247,7 @@ Prints, posts and bills a real card per recipient with a live key. `motive_id` i
 | `content` | `string \| null` | No | — |
 | `content_ps` | `string \| null` | No | — |
 | `content_vertical` | `string \| null` | No | — |
-| `font` | `object \| null` | No | Optional; EchtPost picks architects_daughter at a middle size |
+| `font` | `object \| null` | No | — |
 | `contacts_count` | `number \| null` | No | — |
 | `deliver_at` | `string \| null` | No | — |
 | `cancelable` | `boolean \| null` | No | — |
@@ -260,10 +260,10 @@ Prints, posts and bills a real card per recipient with a live key. `motive_id` i
 
 ```ts
 {
-  family?: string,
-  size?: number,
-  color?: string,
-  line_height?: number
+  family?: string | null,
+  size?: number | null,
+  color?: string | null,
+  line_height?: number | null
 } | null
 ```
 </Accordion>
@@ -338,7 +338,7 @@ Same as cards.create, using a saved template's motive, text and font.
 | `content` | `string \| null` | No | — |
 | `content_ps` | `string \| null` | No | — |
 | `content_vertical` | `string \| null` | No | — |
-| `font` | `object \| null` | No | Optional; EchtPost picks architects_daughter at a middle size |
+| `font` | `object \| null` | No | — |
 | `contacts_count` | `number \| null` | No | — |
 | `deliver_at` | `string \| null` | No | — |
 | `cancelable` | `boolean \| null` | No | — |
@@ -351,10 +351,10 @@ Same as cards.create, using a saved template's motive, text and font.
 
 ```ts
 {
-  family?: string,
-  size?: number,
-  color?: string,
-  line_height?: number
+  family?: string | null,
+  size?: number | null,
+  color?: string | null,
+  line_height?: number | null
 } | null
 ```
 </Accordion>
@@ -396,7 +396,7 @@ await corsair.echtpost.api.cards.get({ id: '0b9e3c1e-2a4f-4b8a-9f00-1c2d3e4f5a6b
 | `content` | `string \| null` | No | — |
 | `content_ps` | `string \| null` | No | — |
 | `content_vertical` | `string \| null` | No | — |
-| `font` | `object \| null` | No | Optional; EchtPost picks architects_daughter at a middle size |
+| `font` | `object \| null` | No | — |
 | `contacts_count` | `number \| null` | No | — |
 | `deliver_at` | `string \| null` | No | — |
 | `cancelable` | `boolean \| null` | No | — |
@@ -409,10 +409,10 @@ await corsair.echtpost.api.cards.get({ id: '0b9e3c1e-2a4f-4b8a-9f00-1c2d3e4f5a6b
 
 ```ts
 {
-  family?: string,
-  size?: number,
-  color?: string,
-  line_height?: number
+  family?: string | null,
+  size?: number | null,
+  color?: string | null,
+  line_height?: number | null
 } | null
 ```
 </Accordion>
@@ -468,10 +468,10 @@ await corsair.echtpost.api.cards.list({ status: 'scheduled' });
   content_ps?: string | null,
   content_vertical?: string | null,
   font?: {
-    family?: string,
-    size?: number,
-    color?: string,
-    line_height?: number
+    family?: string | null,
+    size?: number | null,
+    color?: string | null,
+    line_height?: number | null
   } | null,
   contacts_count?: number | null,
   deliver_at?: string | null,
@@ -1124,7 +1124,7 @@ await corsair.echtpost.api.templates.get({ id: 12 });
 | `content` | `string \| null` | No | — |
 | `content_ps` | `string \| null` | No | — |
 | `content_vertical` | `string \| null` | No | — |
-| `font` | `object \| null` | No | Optional; EchtPost picks architects_daughter at a middle size |
+| `font` | `object \| null` | No | — |
 | `qr_code_url` | `string \| null` | No | — |
 | `preview_url` | `string \| null` | No | — |
 | `source` | `string \| null` | No | — |
@@ -1136,10 +1136,10 @@ await corsair.echtpost.api.templates.get({ id: 12 });
 
 ```ts
 {
-  family?: string,
-  size?: number,
-  color?: string,
-  line_height?: number
+  family?: string | null,
+  size?: number | null,
+  color?: string | null,
+  line_height?: number | null
 } | null
 ```
 </Accordion>

@@ -23,6 +23,7 @@ const mockRequest = jest.mocked(request);
 const mockLog = jest.mocked(logEventFromContext);
 
 function context(key: string, db?: EchtpostContext['db']): EchtpostContext {
+	// unknown: the endpoint reads only `key` and `db`; a full context is not needed.
 	return { key, db } as unknown as EchtpostContext;
 }
 
@@ -52,6 +53,7 @@ describe('templates.list', () => {
 		const result = await listTemplates(
 			context('sekrit', {
 				templates: { upsertByEntityId: upsert },
+				// unknown: a fake table with only the methods the endpoint calls.
 			} as unknown as EchtpostContext['db']),
 			{ page: 1, per_page: 50 },
 		);
@@ -136,6 +138,7 @@ describe('templates.list', () => {
 		const result = await listTemplates(
 			context('sekrit', {
 				templates: { upsertByEntityId: upsert },
+				// unknown: a fake table with only the methods the endpoint calls.
 			} as unknown as EchtpostContext['db']),
 			{},
 		);

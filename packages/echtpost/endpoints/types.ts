@@ -46,6 +46,16 @@ export const FontSchema = z
 	})
 	.describe('Optional; EchtPost picks architects_daughter at a middle size');
 
+// The same font as EchtPost returns it: any field can be null.
+const FontOutSchema = z
+	.object({
+		family: z.string().nullish(),
+		size: z.number().nullish(),
+		color: z.string().nullish(),
+		line_height: z.number().nullish(),
+	})
+	.loose();
+
 const GreetingStyle = z
 	.enum([
 		'informal',
@@ -119,7 +129,7 @@ export const TemplateSchema = z
 		content: z.string().nullish(),
 		content_ps: z.string().nullish(),
 		content_vertical: z.string().nullish(),
-		font: FontSchema.nullish(),
+		font: FontOutSchema.nullish(),
 		qr_code_url: z.string().nullish(),
 		preview_url: z.string().nullish(),
 		source: z.string().nullish(),
@@ -158,7 +168,7 @@ export const CardSchema = z
 		content: z.string().nullish(),
 		content_ps: z.string().nullish(),
 		content_vertical: z.string().nullish(),
-		font: FontSchema.nullish(),
+		font: FontOutSchema.nullish(),
 		contacts_count: z.number().nullish(),
 		deliver_at: z.string().nullish(),
 		cancelable: z.boolean().nullish(),

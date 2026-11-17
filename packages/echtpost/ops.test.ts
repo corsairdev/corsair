@@ -104,6 +104,8 @@ beforeEach(() => {
 });
 
 // [name, endpoint, input, method, url, query, body, response, expected]
+// unknown: each row holds a different endpoint with its own input and JSON
+// response, so the table is typed by the widest shape.
 type Row = [
 	string,
 	(c: EchtpostContext, i: never) => Promise<unknown>,
@@ -502,6 +504,7 @@ describe('safety', () => {
 			source: 'regular',
 		});
 		await Ops.templatesGet(
+			// unknown: a fake table with only the method the endpoint calls.
 			ctx({ templates } as unknown as EchtpostContext['db']),
 			{ id: 12 },
 		);
@@ -509,6 +512,28 @@ describe('safety', () => {
 			'12',
 			expect.objectContaining({ id: '12', motive_id: 42 }),
 		);
+	});
+
+	it('keeps the font when templates.get saves a template', async () => {
+		const templates = { upsertByEntityId: jest.fn() };
+		mockRequest.mockResolvedValueOnce({
+			id: 12,
+			font: {
+				family: 'reenie_beanie',
+				size: 16,
+				color: null,
+				line_height: null,
+			},
+		});
+		await Ops.templatesGet(
+			// unknown: a fake table with only the method the endpoint calls.
+			ctx({ templates } as unknown as EchtpostContext['db']),
+			{ id: 12 },
+		);
+		expect(templates.upsertByEntityId.mock.calls[0]?.[1].font).toEqual({
+			family: 'reenie_beanie',
+			size: 16,
+		});
 	});
 });
 

@@ -6,17 +6,20 @@ import { EchtpostFont, EchtpostTemplateEntity } from '../schema/database';
 import type { ListTemplatesInput, ListTemplatesResponse } from './types';
 import { ListTemplatesInputSchema } from './types';
 
+// unknown: a field of an untrusted response row, checked here.
 function optionalString(value: unknown): string | undefined {
 	return typeof value === 'string' ? value : undefined;
 }
 
+// unknown: a field of an untrusted response row, checked here.
 function optionalNumber(value: unknown): number | undefined {
 	return typeof value === 'number' && Number.isFinite(value)
 		? value
 		: undefined;
 }
 
-function fontOf(value: unknown) {
+// unknown: the `font` field of a response row, checked field by field.
+export function fontOf(value: unknown) {
 	if (!value || typeof value !== 'object') return undefined;
 	const font = value as Record<string, unknown>;
 	const parsed = EchtpostFont.safeParse({
@@ -47,6 +50,7 @@ export const listTemplates: CorsairEndpoint<
 		throw new AuthMissingError('echtpost', 'api_key');
 	}
 	const parsed = ListTemplatesInputSchema.parse(input ?? {});
+	// unknown: the body must be an array of rows; checked below.
 	const body = await echtpostGet<unknown>(ctx.key, '/templates', {
 		page: parsed.page === undefined ? undefined : String(parsed.page),
 		per_page:
