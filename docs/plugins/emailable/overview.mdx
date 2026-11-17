@@ -1,12 +1,14 @@
 ---
 title: "Emailable plugin"
 sidebarTitle: "Overview"
-description: "Read an Emailable account, verify addresses, and build an OAuth authorize URL."
+description: "Verify email addresses one at a time or in bulk batches with Emailable, and read the account's credits."
 ---
 
 Use **Emailable** through Corsair: one client, typed API calls, local DB sync.
 
-The key is the api_key query parameter, or a JSON field on batch create. Empty-key requests to account, verify, batch status, and batch create each returned HTTP 403. Owner email, names, and batch address lists are not stored. The authorize URL is built and not fetched.
+Create a secret API key under API in Emailable. It is sent as a Bearer token, so it never appears in a URL or request body. A test key (starts with `test_`) returns sample results and spends no credits; with it, addresses such as deliverable@example.com, risky@example.com or disposable@example.com return that result.
+`verifications.verify` uses one credit per address. When Emailable needs more time it answers HTTP 249; the plugin then returns `pending: true`, and calling again within 5 minutes costs nothing extra. `batches.create` verifies up to 50,000 addresses for one credit each and is marked destructive; poll `batches.get` until `done` is true.
+Only credits, a verification's state, score and reason (keyed by address), and batch ids are stored. Names Emailable guesses from an address are returned but not stored. Verified addresses are kept out of events and are removed from propagated errors.
 
 **What you get:**
 
@@ -97,19 +99,21 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**Read account credits**
+**Verify one address**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.emailable.api.account.get({});
+await tenant.emailable.api.verifications.verify({ email: 'deliverable@example.com' });
 ```
 
 
-**`batches.create`**
+**Verify a list of addresses**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.emailable.api.batches.create({});
+await tenant.emailable.api.batches.create({
+	emails: ['deliverable@example.com', 'risky@example.com'],
+});
 ```
 
 

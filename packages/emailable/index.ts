@@ -9,6 +9,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import type { EmailableContext } from './context';
 import {
 	authorize,
@@ -24,6 +25,7 @@ import {
 	BatchCreateInputSchema,
 	BatchIdInputSchema,
 	BatchResponseSchema,
+	BatchStatusResponseSchema,
 	EmptyInputSchema,
 	VerificationResponseSchema,
 	VerifyInputSchema,
@@ -63,7 +65,10 @@ export const emailableEndpointSchemas = {
 		input: BatchCreateInputSchema,
 		output: BatchResponseSchema,
 	},
-	'batches.get': { input: BatchIdInputSchema, output: BatchResponseSchema },
+	'batches.get': {
+		input: BatchIdInputSchema,
+		output: BatchStatusResponseSchema,
+	},
 	'oauth.authorize': {
 		input: AuthorizeInputSchema,
 		output: AuthorizeResponseSchema,
@@ -74,18 +79,25 @@ export const emailableEndpointSchemas = {
 
 const read = (description: string) =>
 	({ riskLevel: 'read', description }) as const;
-const write = (description: string) =>
-	({ riskLevel: 'write', description }) as const;
+// A batch verifies up to 50,000 addresses in one call and bills a credit for
+// each, so it is a paid bulk job (R8: destructive). Verifying one address is a
+// metered lookup and stays read, as in the Ahrefs plugin.
+const destructive = (description: string) =>
+	({ riskLevel: 'destructive', description }) as const;
 
 const emailableEndpointMeta = {
-	'account.get': read('Read remaining credits. The owner email is not stored.'),
-	'verifications.verify': write(
-		'Verify one address. This spends a credit. Names are not stored.',
+	'account.get': read(
+		'Get the credits left on the account. The owner email is not stored.',
 	),
-	'batches.create': write(
-		'Start a batch verification. This spends credits. Addresses are not stored.',
+	'verifications.verify': read(
+		'Verify one email address: state (deliverable, undeliverable, risky, unknown), reason, score, and flags such as disposable, free, role and accept-all, plus a did-you-mean suggestion. Uses one credit. If `pending` is true, call again within 5 minutes at no extra cost.',
 	),
-	'batches.get': read('Read a batch. Addresses are not stored.'),
+	'batches.create': destructive(
+		'Start verifying a list of up to 50,000 addresses. Uses one credit per address. Poll batches.get for the results.',
+	),
+	'batches.get': read(
+		"Get a batch: progress, counts per state and reason, and each address's result (up to 1,000 addresses) or a download link (larger batches).",
+	),
 	'oauth.authorize': read(
 		'Build the OAuth authorize URL. The client id is not stored.',
 	),
@@ -137,8 +149,13 @@ export function emailable<const T extends EmailablePluginOptions>(
 			if (source === 'endpoint' && options.key) return options.key;
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const key = await ctx.keys.get_api_key();
-				return key ?? '';
+				if (!key) throw new AuthMissingError('emailable', 'api_key');
+				return key;
 			}
+			// No stored key and no key manager: ask for a connection instead of
+			// sending an unauthenticated request.
+			if (source === 'endpoint')
+				throw new AuthMissingError('emailable', 'api_key');
 			return '';
 		},
 	} satisfies InternalEmailablePlugin;
