@@ -536,6 +536,7 @@ export const BaseProviders = [
 	'shortio',
 	'simpleanalytics',
 	'simplekpi',
+	'simplero',
 	'slack',
 	'slackbot',
 	'snapchat',
@@ -1181,6 +1182,7 @@ export const ProviderDisplayNames = {
 	shortio: 'Short.io',
 	simpleanalytics: 'Simple Analytics',
 	simplekpi: 'SimpleKPI',
+	simplero: 'Simplero',
 	slack: 'Slack',
 	slackbot: 'Slackbot',
 	snapchat: 'Snapchat',
@@ -1833,6 +1835,7 @@ export type AllProviders =
 	| 'shortio'
 	| 'simpleanalytics'
 	| 'simplekpi'
+	| 'simplero'
 	| 'slack'
 	| 'slackbot'
 	| 'snapchat'
