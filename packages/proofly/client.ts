@@ -37,6 +37,7 @@ export function isProoflyFailure(body: unknown): boolean {
 		typeof body === 'object' &&
 		body !== null &&
 		'ok' in body &&
+		// unknown: only `ok` is read from the body.
 		(body as { ok: unknown }).ok === false
 	);
 }
@@ -49,7 +50,8 @@ export function prooflyFailure(
 ): ApiError {
 	const record =
 		typeof body === 'object' && body !== null
-			? (body as Record<string, unknown>)
+			? // unknown: the error body is provider JSON, read field by field.
+				(body as Record<string, unknown>)
 			: {};
 	const status = typeof record.status === 'number' ? record.status : 400;
 	const message =

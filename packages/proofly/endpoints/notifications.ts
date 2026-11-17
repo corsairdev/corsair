@@ -35,6 +35,7 @@ export const listNotifications: CorsairEndpoint<
 > = async (ctx, input) => {
 	const { campaign_id } = ListNotificationsInputSchema.parse(input);
 	const path = `/campaign/${encodeURIComponent(campaign_id)}`;
+	// unknown: checked for `ok: false`, then parsed by the response schema.
 	const body = await prooflyGet<unknown>(ctx.key, path);
 	if (isProoflyFailure(body)) throw prooflyFailure(path, body);
 	const result = ListNotificationsResponseSchema.parse(body);
@@ -54,6 +55,7 @@ export const listNotifications: CorsairEndpoint<
  */
 // One read-and-flip at a time per key and campaign: two overlapping calls
 // that both saw "on" would each flip, and the second would undo the first.
+// unknown: each entry is a pending call whose result only orders the next one.
 const flipsInFlight = new Map<string, Promise<unknown>>();
 
 async function readCampaigns(ctx: ProoflyContext) {
@@ -143,6 +145,7 @@ export const getNotificationData: CorsairEndpoint<
 > = async (ctx, input) => {
 	const { notification_id } = GetNotificationDataInputSchema.parse(input);
 	const path = `/data/${encodeURIComponent(notification_id)}`;
+	// unknown: checked for `ok: false`, then parsed by the response schema.
 	const body = await prooflyGet<unknown>(ctx.key, path);
 	if (isProoflyFailure(body)) throw prooflyFailure(path, body);
 	const result = GetNotificationDataResponseSchema.parse(body);

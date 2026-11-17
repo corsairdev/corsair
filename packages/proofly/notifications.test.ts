@@ -119,6 +119,7 @@ describe('campaigns.setEnabled', () => {
 			{
 				key: 'pk-test',
 				db: { campaigns: { upsertByEntityId: upsert } },
+				// unknown: a fake with only what the endpoint reads.
 			} as unknown as ProoflyContext,
 			{ campaign_id: '464014', enabled: false },
 		);
@@ -172,6 +173,7 @@ describe('campaigns.setEnabled', () => {
 	it('runs overlapping calls for one campaign one after the other', async () => {
 		let state = true;
 		const fake = async (
+			// unknown: the fake ignores config and returns arbitrary JSON bodies.
 			_config: unknown,
 			options: { method?: string },
 		): Promise<unknown> => {
