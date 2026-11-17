@@ -7469,5 +7469,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/dopplermarketingautomation",
+    "dir": "packages/dopplermarketingautomation",
+    "name": "Doppler Marketing Automation",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
