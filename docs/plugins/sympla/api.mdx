@@ -446,7 +446,7 @@ await corsair.sympla.api.participants.checkIn({ event_id: 'abc123def456', partic
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
+| `data` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -456,7 +456,7 @@ await corsair.sympla.api.participants.checkIn({ event_id: 'abc123def456', partic
   check_in?: boolean | null,
   check_in_date?: string | null,
   check_in_id?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -503,7 +503,7 @@ Pass the fields of the decoded ticket QR code (`itemId`, `walletId`, `signature`
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
+| `data` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -513,7 +513,7 @@ Pass the fields of the decoded ticket QR code (`itemId`, `walletId`, `signature`
   check_in?: boolean | null,
   check_in_date?: string | null,
   check_in_id?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -547,7 +547,7 @@ await corsair.sympla.api.participants.checkInByTicketNumber({ event_id: 'abc123d
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
+| `data` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -557,7 +557,7 @@ await corsair.sympla.api.participants.checkInByTicketNumber({ event_id: 'abc123d
   check_in?: boolean | null,
   check_in_date?: string | null,
   check_in_id?: string | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>

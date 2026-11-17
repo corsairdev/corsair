@@ -476,6 +476,34 @@ describe('responses', () => {
 		).resolves.toEqual(reply);
 	});
 
+	it.each([undefined, ''])(
+		'reports an empty 204 check-in as data null (%p)',
+		async (empty) => {
+			mockRequest.mockResolvedValue(empty as never);
+			await expect(
+				checkInByQrCode(context('k'), { event_id: 'e', ...QR }),
+			).resolves.toEqual({ data: null });
+			await expect(
+				checkInParticipant(context('k'), { event_id: 'e', participant_id: 1 }),
+			).resolves.toEqual({ data: null });
+			await expect(
+				checkInByTicketNumber(context('k'), {
+					event_id: 'e',
+					ticket_number: 't',
+				}),
+			).resolves.toEqual({ data: null });
+			expect(mockLog).toHaveBeenCalledTimes(3);
+		},
+	);
+
+	it('still rejects an empty reply where a record is expected', async () => {
+		mockRequest.mockResolvedValue(undefined as never);
+		await expect(
+			getOrder(context('k'), { event_id: 'e', order_id: 'o' }),
+		).rejects.toThrow();
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
 	it('lets an HTTP 401 ApiError through unchanged', async () => {
 		const error = new ApiError(
 			{ method: 'GET', url: '/public/v1.6.0/events' },
