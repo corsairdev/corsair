@@ -18,6 +18,7 @@ import type {
 } from './types';
 import {
 	ConvertInputSchema,
+	ConvertResponseSchema,
 	HistoricalInputSchema,
 	RatesInputSchema,
 	TimeseriesInputSchema,
@@ -30,10 +31,12 @@ async function keyOf(ctx: CurrencyScoopContext): Promise<string> {
 	return ctx.key;
 }
 
+// unknown: a raw JSON field; this narrows it to a non-empty string.
 function optionalString(value: unknown): string | undefined {
 	return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
 
+// unknown: the raw response body; read field by field so a new field never breaks a call.
 function responseOf(body: unknown): Record<string, unknown> {
 	const row = asRecord(body);
 	const response = asRecord(row?.response);
@@ -44,6 +47,7 @@ function responseOf(body: unknown): Record<string, unknown> {
 function quotesFrom(
 	date: string,
 	base: string,
+	// unknown: the raw rates map; non-numeric values are skipped.
 	rates: unknown,
 ): CurrencyScoopQuoteEntity[] {
 	const map = asRecord(rates);
@@ -198,13 +202,14 @@ export const convertQuote: CorsairEndpoint<
 	) {
 		throw new Error('CurrencyScoop convert response was missing a value');
 	}
+	const result = ConvertResponseSchema.parse({ from, to, amount, value, date });
 	await logEventFromContext(
 		ctx,
 		'currencyscoop.quotes.convert',
 		{ count: 1 },
 		'completed',
 	);
-	return { from, to, amount, value, date };
+	return result;
 };
 
 export const timeseriesQuotes: CorsairEndpoint<

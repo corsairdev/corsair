@@ -39,6 +39,7 @@ export async function currencyGet<T>(
 	});
 }
 
+// Responses arrive as untyped JSON; callers narrow each field before use.
 export function asRecord(value: unknown): Record<string, unknown> | undefined {
 	return value && typeof value === 'object'
 		? (value as Record<string, unknown>)
