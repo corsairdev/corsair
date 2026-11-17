@@ -10,11 +10,137 @@ description: "API reference for the ParseHub plugin in Corsair: every `parsehub.
 
 ## Projects
 
+### get
+
+`projects.get`
+
+Get one project with its last run, last ready run and the 20 most recent runs.
+
+**Risk:** `read`
+
+```ts
+await corsair.parsehub.api.projects.get({ project_token: 't-0WMEZ-Bc9sWGHAMsYvP7y4', include_options: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_token` | `string` | Yes | Project token from projects.list (not the API key). |
+| `offset` | `number` | No | Offset into run_list (the 20 most recent runs). Default 0. |
+| `include_options` | `boolean` | No | Include options_json and related fields. Sent as 1 or 0. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | Yes | — |
+| `title` | `string \| null` | No | — |
+| `templates_json` | `string \| null` | No | — |
+| `main_template` | `string \| null` | No | — |
+| `main_site` | `string \| null` | No | — |
+| `options_json` | `string \| null` | No | — |
+| `webhook` | `string \| null` | No | — |
+| `last_run` | `object \| null` | No | — |
+| `last_ready_run` | `object \| null` | No | — |
+| `run_list` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="last_run full type">
+
+```ts
+{
+  project_token?: string | null,
+  run_token: string,
+  status?: string | null,
+  data_ready?: boolean | number | null,
+  start_time?: string | null,
+  end_time?: string | null,
+  pages?: number | null,
+  md5sum?: string | null,
+  start_url?: string | null,
+  start_template?: string | null,
+  start_value?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="last_ready_run full type">
+
+```ts
+{
+  project_token?: string | null,
+  run_token: string,
+  status?: string | null,
+  data_ready?: boolean | number | null,
+  start_time?: string | null,
+  end_time?: string | null,
+  pages?: number | null,
+  md5sum?: string | null,
+  start_url?: string | null,
+  start_template?: string | null,
+  start_value?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="run_list full type">
+
+```ts
+{
+  project_token?: string | null,
+  run_token: string,
+  status?: string | null,
+  data_ready?: boolean | number | null,
+  start_time?: string | null,
+  end_time?: string | null,
+  pages?: number | null,
+  md5sum?: string | null,
+  start_url?: string | null,
+  start_template?: string | null,
+  start_value?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getLastReadyData
+
+`projects.getLastReadyData`
+
+Get the extracted data of the most recent run of a project that has data ready.
+
+**Risk:** `read`
+
+```ts
+await corsair.parsehub.api.projects.getLastReadyData({ project_token: 't-0WMEZ-Bc9sWGHAMsYvP7y4' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_token` | `string` | Yes | Project token from projects.list (not the API key). |
+| `format` | `json \| csv` | No | json (default) returns the extracted data as JSON; csv returns it as CSV text. |
+
+
+
+**Output:** `Record<string, any> \| any[] \| string`
+
+
+---
+
 ### list
 
 `projects.list`
 
-List projects for the authenticated ParseHub account.
+List the scraping projects on the ParseHub account, 20 at a time.
 
 **Risk:** `read`
 
@@ -28,9 +154,9 @@ await corsair.parsehub.api.projects.list({ offset: 0, limit: 20 });
 |------|------|----------|-------------|
 | `offset` | `number` | No | Zero-based start index. Default 0. |
 | `limit` | `number` | No | Page size, 1 to 20. Default 20. |
-| `include_options` | `boolean` | No | Include options_json and related fields. |
+| `include_options` | `boolean` | No | Include options_json and related fields. Sent as 1 or 0. |
 
-Omit offset, limit, or include_options to take the service default. include_options is sent as 1 or 0.
+Omit offset, limit or include_options to take the service default. include_options is sent as 1 or 0.
 
 
 
@@ -46,11 +172,245 @@ Omit offset, limit, or include_options to take the service default. include_opti
 
 ```ts
 {
+  token: string,
+  title?: string | null,
+  templates_json?: string | null,
+  main_template?: string | null,
+  main_site?: string | null,
+  options_json?: string | null,
+  webhook?: string | null,
+  last_run?: {
+    project_token?: string | null,
+    run_token: string,
+    status?: string | null,
+    data_ready?: boolean | number | null,
+    start_time?: string | null,
+    end_time?: string | null,
+    pages?: number | null,
+    md5sum?: string | null,
+    start_url?: string | null,
+    start_template?: string | null,
+    start_value?: string | null
+  } | null,
+  last_ready_run?: {
+    project_token?: string | null,
+    run_token: string,
+    status?: string | null,
+    data_ready?: boolean | number | null,
+    start_time?: string | null,
+    end_time?: string | null,
+    pages?: number | null,
+    md5sum?: string | null,
+    start_url?: string | null,
+    start_template?: string | null,
+    start_value?: string | null
+  } | null,
+  run_list?: {
+    project_token?: string | null,
+    run_token: string,
+    status?: string | null,
+    data_ready?: boolean | number | null,
+    start_time?: string | null,
+    end_time?: string | null,
+    pages?: number | null,
+    md5sum?: string | null,
+    start_url?: string | null,
+    start_template?: string | null,
+    start_value?: string | null
+  }[] | null
 }[]
 ```
 </Accordion>
 </AccordionGroup>
 
+
+
+---
+
+### run
+
+`projects.run`
+
+Start a run of a project on the ParseHub cloud. Returns the new run; poll runs.get until data_ready.
+
+**Risk:** `write`
+
+```ts
+await corsair.parsehub.api.projects.run({
+	project_token: 't-0WMEZ-Bc9sWGHAMsYvP7y4',
+	start_url: 'https://www.example.com',
+	start_value_override: { query: 'San Francisco' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_token` | `string` | Yes | Project token from projects.list (not the API key). |
+| `start_url` | `string` | No | URL to start on. Defaults to the project start site. |
+| `start_template` | `string` | No | Template to start with. Defaults to the project main template. |
+| `start_value_override` | `Record<string, any>` | No | Starting global scope for the run, e.g. &#123; "query": "San Francisco" &#125;. Sent as a JSON string. |
+| `send_email` | `boolean` | No | Email the account owner when the run completes or fails. Default false. |
+
+`start_value_override` is sent as a JSON string. `send_email: true` emails the account owner when the run ends.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_token` | `string \| null` | No | — |
+| `run_token` | `string` | Yes | — |
+| `status` | `string \| null` | No | — |
+| `data_ready` | `boolean \| number \| null` | No | — |
+| `start_time` | `string \| null` | No | — |
+| `end_time` | `string \| null` | No | — |
+| `pages` | `number \| null` | No | — |
+| `md5sum` | `string \| null` | No | — |
+| `start_url` | `string \| null` | No | — |
+| `start_template` | `string \| null` | No | — |
+| `start_value` | `string \| null` | No | — |
+
+
+
+---
+
+## Runs
+
+### cancel
+
+`runs.cancel`
+
+Cancel a running run. Data extracted so far stays available.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.parsehub.api.runs.cancel({ run_token: 'tCcB4hfFP6wvBRe2gwZv9aJp' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `run_token` | `string` | Yes | Run token from projects.run or projects.get. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_token` | `string \| null` | No | — |
+| `run_token` | `string` | Yes | — |
+| `status` | `string \| null` | No | — |
+| `data_ready` | `boolean \| number \| null` | No | — |
+| `start_time` | `string \| null` | No | — |
+| `end_time` | `string \| null` | No | — |
+| `pages` | `number \| null` | No | — |
+| `md5sum` | `string \| null` | No | — |
+| `start_url` | `string \| null` | No | — |
+| `start_template` | `string \| null` | No | — |
+| `start_value` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`runs.delete`
+
+Delete a run and its data, cancelling it first if it is running.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.parsehub.api.runs.delete({ run_token: 'tCcB4hfFP6wvBRe2gwZv9aJp' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `run_token` | `string` | Yes | Run token from projects.run or projects.get. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `run_token` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`runs.get`
+
+Get one run: status, data_ready, page count and timing.
+
+**Risk:** `read`
+
+```ts
+await corsair.parsehub.api.runs.get({ run_token: 'tCcB4hfFP6wvBRe2gwZv9aJp' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `run_token` | `string` | Yes | Run token from projects.run or projects.get. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_token` | `string \| null` | No | — |
+| `run_token` | `string` | Yes | — |
+| `status` | `string \| null` | No | — |
+| `data_ready` | `boolean \| number \| null` | No | — |
+| `start_time` | `string \| null` | No | — |
+| `end_time` | `string \| null` | No | — |
+| `pages` | `number \| null` | No | — |
+| `md5sum` | `string \| null` | No | — |
+| `start_url` | `string \| null` | No | — |
+| `start_template` | `string \| null` | No | — |
+| `start_value` | `string \| null` | No | — |
+
+
+
+---
+
+### getData
+
+`runs.getData`
+
+Get the data a run extracted, as JSON or CSV.
+
+**Risk:** `read`
+
+```ts
+await corsair.parsehub.api.runs.getData({ run_token: 'tCcB4hfFP6wvBRe2gwZv9aJp' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `run_token` | `string` | Yes | Run token from projects.run or projects.get. |
+| `format` | `json \| csv` | No | json (default) returns the extracted data as JSON; csv returns it as CSV text. |
+
+
+
+**Output:** `Record<string, any> \| any[] \| string`
 
 
 ---

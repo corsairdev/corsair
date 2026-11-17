@@ -1,16 +1,22 @@
 ---
 title: "ParseHub plugin"
 sidebarTitle: "Overview"
-description: "List the scraping projects on a ParseHub account. The key is the api_key query parameter."
+description: "Run ParseHub scraping projects and get the data they extract."
 ---
 
 Use **ParseHub** through Corsair: one client, typed API calls, local DB sync.
 
-An empty key comes back as HTTP 401. Offset starts at 0. Limit is 1 to 20.
+Things to know before you call:
+
+- **Projects are built in the ParseHub desktop app.** The API lists, runs and reads projects; it cannot create or edit them.
+- **A run is asynchronous.** `projects.run` returns the new run straight away. Poll `runs.get` until `data_ready` is true (ParseHub allows 25 polls in a run's first 5 minutes, then one every 3 minutes), then call `runs.getData`. `projects.getLastReadyData` skips the polling and returns the newest finished data.
+- **Data comes as JSON or CSV.** `format: 'csv'` returns the CSV as a string.
+- **The key is the `api_key` parameter.** The client sends it in the query string for reads and in the form body for POST calls. With no key stored, Corsair raises `AuthMissingError` before any request; a key ParseHub rejects comes back as HTTP 401.
+- **Limits.** 5 requests a second (up to 25 queued); `projects.list` returns at most 20 projects per page.
 
 **What you get:**
 
-- 1 typed API operations
+- 8 typed API operations
 - 1 synced entity (`projects`) for fast `.search()` / `.list()`
 
 ## Setup
@@ -97,17 +103,23 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**List ParseHub projects**
+**Get the latest scraped data of a project**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.parsehub.api.projects.list({ offset: 0, limit: 20 });
+await tenant.parsehub.api.projects.getLastReadyData({ project_token: 't-0WMEZ-Bc9sWGHAMsYvP7y4' });
 ```
 
 
-**Write**
+**Run a project with a search value**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/parsehub/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.parsehub.api.projects.run({
+	project_token: 't-0WMEZ-Bc9sWGHAMsYvP7y4',
+	start_value_override: { query: 'San Francisco' },
+});
+```
 
 
 See the full list on the [API](/plugins/parsehub/api) page.
