@@ -4613,6 +4613,14 @@
                 ]
               },
               {
+                "group": "Storyblok",
+                "pages": [
+                  "plugins/storyblok/overview",
+                  "plugins/storyblok/api",
+                  "plugins/storyblok/database"
+                ]
+              },
+              {
                 "group": "SuiteDash",
                 "pages": [
                   "plugins/suitedash/overview",

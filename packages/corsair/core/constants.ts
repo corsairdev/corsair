@@ -556,6 +556,7 @@ export const BaseProviders = [
 	'strava',
 	'streamtime',
 	'stripe',
+	'storyblok',
 	'studiobyai21labs',
 	'suitedash',
 	'supersaas',
@@ -1213,6 +1214,7 @@ export const ProviderDisplayNames = {
 	strava: 'Strava',
 	streamtime: 'Streamtime',
 	stripe: 'Stripe',
+	storyblok: 'Storyblok',
 	studiobyai21labs: 'StudioByAI21Labs',
 	suitedash: 'SuiteDash',
 	supersaas: 'SuperSaaS',
@@ -1877,6 +1879,7 @@ export type AllProviders =
 	| 'strava'
 	| 'streamtime'
 	| 'stripe'
+	| 'storyblok'
 	| 'studiobyai21labs'
 	| 'suitedash'
 	| 'supersaas'
