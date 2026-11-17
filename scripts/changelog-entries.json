@@ -6920,5 +6920,23 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/etermin",
+    "dir": "packages/etermin",
+    "name": "etermin",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/klipfolio",
+    "dir": "packages/klipfolio",
+    "name": "Klipfolio",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
