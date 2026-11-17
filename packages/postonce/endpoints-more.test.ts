@@ -341,7 +341,7 @@ describe('PostOnce added operations', () => {
 		}
 	});
 
-	it('does not retry writes that could post or create twice', () => {
+	it('retries reads only, never a write whose reply was lost', () => {
 		for (const op of [
 			'posts.publish',
 			'posts.retryTarget',
@@ -352,8 +352,20 @@ describe('PostOnce added operations', () => {
 		]) {
 			expect(isNonIdempotent(op)).toBe(true);
 		}
+		for (const op of ['drafts.update', 'workflows.update', 'webhooks.delete']) {
+			expect(isNonIdempotent(op)).toBe(true);
+		}
 		expect(isNonIdempotent('drafts.list')).toBe(false);
 		expect(isNonIdempotent('analytics.get')).toBe(false);
+	});
+
+	it('parses the input of the list calls too', async () => {
+		const { ctx } = makeCtx();
+		reply = { data: [] };
+		await expect(
+			handlers.listWorkflows(ctx, { extra: 1 } as never),
+		).resolves.toEqual({ data: [] });
+		await expect(handlers.listWebhooks(ctx, 'x' as never)).rejects.toThrow();
 	});
 
 	it('rejects a reply that is not the documented envelope', async () => {

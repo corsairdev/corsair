@@ -39,6 +39,8 @@ export type PostOnceQuery = Record<
 
 export type PostOnceRequestOptions = {
 	method?: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
+	// JSON bodies differ per operation; each endpoint's Zod input schema has
+	// already checked the fields, so the client only passes them through.
 	body?: Record<string, unknown>;
 	query?: PostOnceQuery;
 	/** Sent as `Idempotency-Key`; a repeat with the same body returns the original post. */
@@ -54,7 +56,10 @@ export function compactQuery(query: PostOnceQuery): PostOnceQuery {
 	return out;
 }
 
-/** Same as {@link compactQuery}, for JSON bodies. */
+/**
+ * Same as {@link compactQuery}, for JSON bodies. Values stay `unknown`: the
+ * body was validated by the endpoint's input schema and is only copied here.
+ */
 export function compactBody(
 	body: Record<string, unknown>,
 ): Record<string, unknown> {

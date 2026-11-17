@@ -15,6 +15,9 @@ import {
 	PostOnceEndpointOutputSchemas,
 } from './types';
 
+// `unknown` in this file marks data not yet checked: PostOnce replies before
+// the output schema parses them, raw input before parseInput, and cached
+// records before their entity schema. Each one is parsed before use.
 type CallCtx = {
 	key: string;
 };
@@ -449,8 +452,20 @@ export const getMedia: PostOnceEndpoints['getMedia'] = async (ctx, input) => {
 };
 
 /** GET /v1/workflows */
-export const listWorkflows: PostOnceEndpoints['listWorkflows'] = async (ctx) =>
-	run(ctx, 'listWorkflows', 'postonce.workflows.list', 'workflows', {}, {});
+export const listWorkflows: PostOnceEndpoints['listWorkflows'] = async (
+	ctx,
+	input,
+) => {
+	parseInput('listWorkflows', input);
+	return run(
+		ctx,
+		'listWorkflows',
+		'postonce.workflows.list',
+		'workflows',
+		{},
+		{},
+	);
+};
 
 /** GET /v1/workflows/{id} */
 export const getWorkflow: PostOnceEndpoints['getWorkflow'] = async (
@@ -519,8 +534,13 @@ export const deleteWorkflow: PostOnceEndpoints['deleteWorkflow'] = async (
 };
 
 /** GET /v1/webhooks */
-export const listWebhooks: PostOnceEndpoints['listWebhooks'] = async (ctx) =>
-	run(ctx, 'listWebhooks', 'postonce.webhooks.list', 'webhooks', {}, {});
+export const listWebhooks: PostOnceEndpoints['listWebhooks'] = async (
+	ctx,
+	input,
+) => {
+	parseInput('listWebhooks', input);
+	return run(ctx, 'listWebhooks', 'postonce.webhooks.list', 'webhooks', {}, {});
+};
 
 /** GET /v1/webhooks/{id} */
 export const getWebhook: PostOnceEndpoints['getWebhook'] = async (
