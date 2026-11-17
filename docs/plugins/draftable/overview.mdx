@@ -1,0 +1,145 @@
+---
+title: "Draftable plugin"
+sidebarTitle: "Overview"
+description: "Compare PDF, Word and PowerPoint documents with Draftable, view the differences and export them as PDF."
+---
+
+Use **Draftable** through Corsair: one client, typed API calls, local DB sync.
+
+Things to know before you call:
+
+- **The key is your auth token.** Find it in your Draftable API account under API Credentials (there is a Testing and a Live pair; testing comparisons are free and expire). The client sends `Authorization: Token <token>`, not Bearer. With no token stored, Corsair raises `AuthMissingError` before any request; a token Draftable rejects comes back as HTTP 401.
+- **Comparisons take document URLs.** `comparisons.create` downloads each side from a public `source_url`. Supported types: pdf, docx, docm, doc, rtf, pptx, pptm, ppt, txt. Each comparison counts against the plan's monthly quota, so the operation is `destructive`.
+- **Comparisons run asynchronously.** `comparisons.create` returns `ready: false`; poll `comparisons.get` until `ready` is true (or `failed`).
+- **Viewing.** `comparisons.getViewerUrl` returns the viewer link. For a private comparison it signs the link with your token (valid 30 minutes by default), the way Draftable's own client libraries do; the token itself never appears in the link.
+- **Exports.** `exports.create` starts a PDF export; poll `exports.get` until `ready`, then download `url`.
+
+**What you get:**
+
+- 7 typed API operations
+- 1 synced entity (`comparisons`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/draftable better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/draftable better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/draftable better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/draftable better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { draftable } from '@corsair-dev/draftable';
+
+export const corsair = createCorsair({
+	plugins: [
+		draftable(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Draftable API key before the first call: `pnpm corsair setup --plugin=draftable --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+draftable()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'draftable',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Check whether a comparison is ready**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.draftable.api.comparisons.get({ identifier: 'contract-v1-v2' });
+```
+
+
+**Compare two PDF versions of a contract**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.draftable.api.comparisons.create({});
+```
+
+
+See the full list on the [API](/plugins/draftable/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.draftable.db.<entity>.search()` and `.list()`: `comparisons`.
+
+See [Database](/plugins/draftable/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/draftable/api">
+    Every `draftable.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/draftable/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
