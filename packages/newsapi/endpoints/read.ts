@@ -12,16 +12,20 @@ import type {
 	SourcesInput,
 } from './types';
 import {
+	ArticleListResponseSchema,
 	EverythingInputSchema,
 	HeadlinesInputSchema,
 	LegacyInputSchema,
+	SourceListResponseSchema,
 	SourcesInputSchema,
 } from './types';
 
+// unknown: a raw JSON field; this narrows it to a non-empty string.
 function text(value: unknown): string | undefined {
 	return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
 
+// unknown: the raw response body; only a finite number is kept.
 function totalOf(body: unknown): number | undefined {
 	const total = asRecord(body)?.totalResults;
 	return typeof total === 'number' && Number.isFinite(total)
@@ -35,6 +39,7 @@ async function keyOf(ctx: NewsApiContext): Promise<string> {
 }
 
 function articlesFrom(
+	// unknown: the raw response body; articles are read field by field.
 	body: unknown,
 	sourceId?: string,
 ): NewsApiArticleEntity[] {
@@ -104,7 +109,10 @@ export const everything: CorsairEndpoint<
 	});
 	const articles = articlesFrom(body);
 	await saveArticles(ctx, articles, 'newsapi.articles.everything');
-	return { articles, totalResults: totalOf(body) };
+	return ArticleListResponseSchema.parse({
+		articles,
+		totalResults: totalOf(body),
+	});
 };
 
 export const headlines: CorsairEndpoint<
@@ -125,7 +133,10 @@ export const headlines: CorsairEndpoint<
 	});
 	const articles = articlesFrom(body);
 	await saveArticles(ctx, articles, 'newsapi.articles.headlines');
-	return { articles, totalResults: totalOf(body) };
+	return ArticleListResponseSchema.parse({
+		articles,
+		totalResults: totalOf(body),
+	});
 };
 
 export const listSources: CorsairEndpoint<
@@ -177,7 +188,7 @@ export const listSources: CorsairEndpoint<
 		{ count: sources.length },
 		'completed',
 	);
-	return { sources };
+	return SourceListResponseSchema.parse({ sources });
 };
 
 export const legacyArticles: CorsairEndpoint<
@@ -195,5 +206,5 @@ export const legacyArticles: CorsairEndpoint<
 	const sourceId = text(asRecord(body)?.source);
 	const articles = articlesFrom(body, sourceId);
 	await saveArticles(ctx, articles, 'newsapi.articles.legacy');
-	return { articles };
+	return ArticleListResponseSchema.parse({ articles });
 };
