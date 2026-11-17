@@ -434,16 +434,19 @@ export const GraphqlNrqlEnvelopeSchema = z.object({
 
 // ── alerts.updatePolicy ───────────────────────────────────────────────────
 
-const PoliciesUpdateInputSchema = z
-	.object({
-		region: RegionSchema,
-		policyId: z.number().int().positive(),
-		name: z.string().min(1).optional().describe('A new policy name.'),
-		incident_preference: z.enum(NEWRELIC_INCIDENT_PREFERENCES).optional(),
-	})
-	.refine((v) => v.name !== undefined || v.incident_preference !== undefined, {
-		message: 'Pass name, incident_preference or both.',
-	});
+/**
+ * REST v2 replaces the policy: a PUT without both fields answers 422 (no name)
+ * or 500 (no incident_preference), so both are required. Pass the current
+ * value for the one you are not changing.
+ */
+const PoliciesUpdateInputSchema = z.object({
+	region: RegionSchema,
+	policyId: z.number().int().positive(),
+	name: z.string().min(1).describe('The policy name (current or new).'),
+	incident_preference: z
+		.enum(NEWRELIC_INCIDENT_PREFERENCES)
+		.describe('The incident roll-up (current or new).'),
+});
 
 export type PoliciesUpdateInput = z.input<typeof PoliciesUpdateInputSchema>;
 
@@ -576,8 +579,10 @@ export type NrqlConditionCreateInput = z.input<
 const NrqlConditionUpdateInputSchema = z.object({
 	region: RegionSchema,
 	conditionId: z.number().int().positive(),
-	condition: NrqlConditionBodySchema.partial().describe(
-		'The fields to change; New Relic keeps the rest.',
+	// REST v2 replaces the condition: a PUT with only the changed fields
+	// answers 400, so the whole condition is sent (read it with nrqlConditions).
+	condition: NrqlConditionBodySchema.describe(
+		'The whole condition with your changes; New Relic replaces the stored one.',
 	),
 });
 

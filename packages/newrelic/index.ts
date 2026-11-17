@@ -231,7 +231,8 @@ const newrelicEndpointMeta = {
 	},
 	'alerts.updatePolicy': {
 		riskLevel: 'write',
-		description: 'Rename an alert policy or change how its incidents roll up',
+		description:
+			'Rename an alert policy or change how its incidents roll up; both fields are sent, since New Relic replaces the policy',
 	},
 	'alerts.nrqlConditions': {
 		riskLevel: 'read',
@@ -246,7 +247,7 @@ const newrelicEndpointMeta = {
 	'alerts.updateNrqlCondition': {
 		riskLevel: 'write',
 		description:
-			'Change a NRQL condition, e.g. enable it or move its threshold; fields left out keep their values',
+			'Replace a NRQL condition, e.g. to enable it or move its threshold; send the whole condition, since a partial body is refused',
 	},
 	'alerts.deleteNrqlCondition': {
 		riskLevel: 'destructive',

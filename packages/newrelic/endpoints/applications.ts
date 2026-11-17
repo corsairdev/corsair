@@ -196,10 +196,7 @@ export const updatePolicy: NewrelicEndpoints['policiesUpdate'] = (ctx, input) =>
 			method: 'PUT',
 			path: `/alerts_policies/${segment(policyId)}.json`,
 			body: {
-				policy: {
-					...(name ? { name } : {}),
-					...(incident_preference ? { incident_preference } : {}),
-				},
+				policy: { name, incident_preference },
 			},
 		}),
 		{ log: ({ policyId }) => ({ policyId }) },
@@ -260,7 +257,7 @@ export const createNrqlCondition: NewrelicEndpoints['nrqlConditionsCreate'] = (
 		},
 	);
 
-/** Changes a NRQL condition; fields left out keep their values. */
+/** Replaces a NRQL condition with the whole body given. */
 export const updateNrqlCondition: NewrelicEndpoints['nrqlConditionsUpdate'] = (
 	ctx,
 	input,

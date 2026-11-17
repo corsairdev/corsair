@@ -330,19 +330,31 @@ describe('alerts policy update and NRQL conditions', () => {
 	it('updates a policy with PUT and only the fields given', async () => {
 		const { url, init } = await capture(
 			endpoints.alerts.updatePolicy,
-			{ policyId: 41534, name: 'renamed' },
+			{
+				policyId: 41534,
+				name: 'renamed',
+				incident_preference: 'PER_CONDITION',
+			},
 			createdPolicy,
 		);
 		expect(url).toBe('https://api.newrelic.com/v2/alerts_policies/41534.json');
 		expect(init.method).toBe('PUT');
 		expect(JSON.parse(String(init.body))).toEqual({
-			policy: { name: 'renamed' },
+			policy: { name: 'renamed', incident_preference: 'PER_CONDITION' },
 		});
 	});
 
-	it('rejects an update with nothing to change', async () => {
+	it('requires both policy fields, since New Relic replaces the policy', async () => {
+		// Live 11-17: a PUT with only `name` answered 500, without it 422.
 		await expect(
-			endpoints.alerts.updatePolicy(makeContext() as never, { policyId: 1 }),
+			endpoints.alerts.updatePolicy(
+				makeContext() as never,
+				{
+					policyId: 1,
+					name: 'only-name',
+					// The missing field is the point of the test.
+				} as never,
+			),
 		).rejects.toThrow();
 	});
 
@@ -394,10 +406,37 @@ describe('alerts policy update and NRQL conditions', () => {
 		expect(asRecord(asRecord(result)?.nrql_condition)?.id).toBe(69879675);
 	});
 
+	it('rejects a partial condition update, which New Relic answers 400', async () => {
+		await expect(
+			endpoints.alerts.updateNrqlCondition(
+				makeContext() as never,
+				{
+					conditionId: 1,
+					condition: { enabled: true },
+					// The partial body is the point of the test.
+				} as never,
+			),
+		).rejects.toThrow();
+	});
+
 	it('updates and deletes a condition by id', async () => {
+		const condition = {
+			name: 'corsair-plugin-test-2',
+			enabled: true,
+			terms: [
+				{
+					duration: '5',
+					operator: 'above',
+					threshold: '1000',
+					time_function: 'all',
+				},
+			],
+			value_function: 'single_value',
+			nrql: { query: 'SELECT count(*) FROM Transaction' },
+		};
 		const updated = await capture(
 			endpoints.alerts.updateNrqlCondition,
-			{ conditionId: 69879675, condition: { enabled: true } },
+			{ conditionId: 69879675, condition },
 			nrqlCondition,
 		);
 		expect(updated.url).toBe(
@@ -405,7 +444,7 @@ describe('alerts policy update and NRQL conditions', () => {
 		);
 		expect(updated.init.method).toBe('PUT');
 		expect(JSON.parse(String(updated.init.body))).toEqual({
-			nrql_condition: { enabled: true },
+			nrql_condition: condition,
 		});
 
 		const deleted = await capture(
