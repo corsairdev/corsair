@@ -568,18 +568,25 @@ const onedriveEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get thumbnails for a drive item',
 	},
-	'items.download': { riskLevel: 'read', description: 'Download a file' },
+	'items.download': {
+		riskLevel: 'read',
+		description:
+			'Download a file. A text file comes back as text, any other file as base64, up to about 700 KB; size and type are always returned.',
+	},
 	'items.downloadByPath': {
 		riskLevel: 'read',
-		description: 'Download a file by path',
+		description:
+			'Download a file by path. A text file comes back as text, any other file as base64, up to about 700 KB; size and type are always returned.',
 	},
 	'items.downloadAsFormat': {
 		riskLevel: 'read',
-		description: 'Download a file converted to a different format',
+		description:
+			'Download a file converted to a different format. A text file comes back as text, any other file as base64, up to about 700 KB; size and type are always returned.',
 	},
 	'items.downloadVersion': {
 		riskLevel: 'read',
-		description: 'Download a specific version of a file',
+		description:
+			'Download a specific version of a file. A text file comes back as text, any other file as base64, up to about 700 KB; size and type are always returned.',
 	},
 	'items.updateContent': {
 		riskLevel: 'write',
