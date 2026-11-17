@@ -3,9 +3,9 @@ import { AccountEndpoints, TasksEndpoints } from './endpoints';
 
 /**
  * Live run against API v2. It runs only when `TWOCAPTCHA_API_KEY` is set.
- * It reads the balance and, on an account with no funds, checks that
- * createTask answers ERROR_ZERO_BALANCE (nothing is charged). With funds it
- * skips createTask: a task costs money.
+ * It reads the balance. The createTask refusal check also needs
+ * `TWOCAPTCHA_LIVE_ZERO_BALANCE=1`, set only for an account that holds no
+ * funds: a funded account would be charged for the task.
  */
 const API_KEY = process.env.TWOCAPTCHA_API_KEY;
 const describeIfKey = API_KEY ? describe : describe.skip;
@@ -23,6 +23,7 @@ function ctx() {
 }
 
 describeIfKey('2Captcha live API', () => {
+	const zeroBalanceOptIn = process.env.TWOCAPTCHA_LIVE_ZERO_BALANCE === '1';
 	let funded = true;
 
 	it('reads the balance', async () => {
@@ -33,8 +34,8 @@ describeIfKey('2Captcha live API', () => {
 	});
 
 	it('answers ERROR_ZERO_BALANCE to createTask on an empty account', async () => {
-		if (funded) {
-			console.log('account has funds: createTask not run (it would charge)');
+		if (!zeroBalanceOptIn || funded) {
+			console.log('createTask not run: it charges a funded account');
 			return;
 		}
 		const error = await TasksEndpoints.create(ctx(), {
