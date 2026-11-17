@@ -1,0 +1,1653 @@
+---
+title: "NASA API reference"
+sidebarTitle: "API"
+description: "API reference for the NASA plugin in Corsair: every `nasa.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Apod
+
+### get
+
+`apod.get`
+
+Read one day's picture by its six-digit date code, with title, explanation, image URLs and the raw HTML page
+
+**Risk:** `read`
+
+```ts
+await corsair.nasa.api.apod.get({ date: '240115' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string` | Yes | NASA's six-digit date code for the picture, e.g. 240115 for 2024-01-15. This is the only addressable form: the feed has no lookup by YYYY-MM-DD. |
+
+The date is the legacy six-digit code, so 240115 means 2024-01-15.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string \| null` | No | — |
+| `post_id` | `number \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `permalink` | `string \| null` | No | — |
+| `media_type` | `string \| null` | No | — |
+| `explanation` | `string \| null` | No | — |
+| `credit` | `string \| null` | No | — |
+| `copyright` | `string \| null` | No | — |
+| `alt` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `hdurl` | `string \| null` | No | — |
+| `basic_html` | `string \| null` | No | — |
+| `basic_html_url` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`apod.list`
+
+List Astronomy Picture of the Day entries, newest first, or a date range in the legacy YYMMDD form; NASA serves at most 25 per page
+
+**Risk:** `read`
+
+```ts
+await corsair.nasa.api.apod.list({ per_page: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | 1-based page number. |
+| `per_page` | `number` | No | Entries per page, 1 to 25. NASA serves at most 25, so the plugin rejects a larger value instead of returning fewer than asked. |
+| `date_from` | `string` | No | Oldest day as the six-digit YYMMDD code, e.g. '240115' or '050101'. A string, so the leading zero of a 2000-2009 date survives. Only honoured when date_to is also sent. |
+| `date_to` | `string` | No | Newest day as the six-digit YYMMDD code, e.g. '240117'. Only honoured when date_from is also sent. |
+
+per_page takes 1 to 25, the most NASA serves per page. date_from and date_to are six-digit YYMMDD strings and apply only as a pair.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entries` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  date?: string | null,
+  post_id?: number | null,
+  title?: string | null,
+  permalink?: string | null,
+  media_type?: string | null,
+  explanation?: string | null,
+  credit?: string | null,
+  copyright?: string | null,
+  alt?: string | null,
+  url?: string | null,
+  hdurl?: string | null,
+  basic_html?: string | null,
+  basic_html_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Donki
+
+### cme
+
+`donki.cme`
+
+List coronal mass ejections in a date range, with the analyses and ENLIL model runs attached to each
+
+**Risk:** `read`
+
+```ts
+await corsair.nasa.api.donki.cme({ startDate: '2026-11-01', endDate: '2026-11-05' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startDate` | `string` | Yes | First day to include. |
+| `endDate` | `string` | Yes | Last day to include, inclusive. |
+
+NASA answers 400 unless both startDate and endDate are sent.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  activityID?: string | null,
+  catalog?: string | null,
+  startTime?: string | null,
+  sourceLocation?: string | null,
+  activeRegionNum?: number | null,
+  note?: string | null,
+  cmeAnalyses?: {
+    catalog?: string | null,
+    isMostAccurate?: boolean | null,
+    time21_5?: string | null,
+    latitude?: number | null,
+    longitude?: number | null,
+    halfAngle?: number | null,
+    speed?: number | null,
+    type?: string | null,
+    associatedCMEID?: string | null,
+    associatedCMEstartTime?: string | null,
+    associatedCMELink?: string | null,
+    featureCode?: string | null,
+    dataLevel?: string | null,
+    measurementTechnique?: string | null,
+    imageType?: string | null,
+    tilt?: number | null,
+    minorHalfWidth?: number | null,
+    speedMeasuredAtHeight?: number | null,
+    note?: string | null,
+    levelOfData?: number | null,
+    enlilList?: {
+      modelCompletionTime?: string | null,
+      au?: number | null,
+      estimatedShockArrivalTime?: string | null,
+      isEarthGB?: boolean | null,
+      isEarthMinorImpact?: boolean | null,
+      rmin_re?: number | null,
+      kp_18?: number | null,
+      kp_90?: number | null,
+      kp_135?: number | null,
+      kp_180?: number | null,
+      estimatedDuration?: number | null,
+      link?: string | null,
+      impactList?: {
+        location?: string | null,
+        arrivalTime?: string | null,
+        isGlancingBlow?: boolean | null,
+        isMinorImpact?: boolean | null
+      }[] | null,
+      cmeIDs?: string[] | null
+    }[] | null
+  }[] | null,
+  link?: string | null,
+  linkedEvents?: {
+    activityID?: string | null
+  }[] | null,
+  sentNotifications?: {
+    messageID?: string | null,
+    messageIssueTime?: string | null,
+    messageURL?: string | null
+  }[] | null,
+  submissionTime?: string | null,
+  versionId?: number | null,
+  instruments?: {
+    displayName?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### cmeAnalysis
+
+`donki.cmeAnalysis`
+
+List standalone CME analyses, filterable by speed, half angle, catalog and the provider's most-accurate flag
+
+**Risk:** `read`
+
+```ts
+await corsair.nasa.api.donki.cmeAnalysis({ startDate: '2026-10-20', endDate: '2026-10-31', speed: 500, halfAngle: 30 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startDate` | `string` | No | A date in YYYY-MM-DD format. |
+| `endDate` | `string` | No | A date in YYYY-MM-DD format. |
+| `mostAccurateOnly` | `boolean` | No | Keep only the analysis NASA marks most accurate. Defaults at the provider to true. |
+| `completeEntryOnly` | `boolean` | No | Keep only complete analyses. Defaults at the provider to true. |
+| `speed` | `number` | No | Lowest speed in km/s to include. Defaults to 0. |
+| `halfAngle` | `number` | No | Smallest half angle in degrees to include. Defaults to 0. |
+| `catalog` | `ALL \| SWRC_CATALOG \| JANG_ET_AL_CATALOG` | No | Which analysis catalog to read. Defaults to ALL. |
+| `keyword` | `string` | No | Free-text filter, such as swpc_annex. |
+
+mostAccurateOnly and completeEntryOnly default to true at the provider, so omitting them hides most analyses.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `analyses` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="analyses full type">
+
+```ts
+{
+  catalog?: string | null,
+  isMostAccurate?: boolean | null,
+  time21_5?: string | null,
+  latitude?: number | null,
+  longitude?: number | null,
+  halfAngle?: number | null,
+  speed?: number | null,
+  type?: string | null,
+  associatedCMEID?: string | null,
+  associatedCMEstartTime?: string | null,
+  associatedCMELink?: string | null,
+  featureCode?: string | null,
+  dataLevel?: string | null,
+  measurementTechnique?: string | null,
+  imageType?: string | null,
+  tilt?: number | null,
+  minorHalfWidth?: number | null,
+  speedMeasuredAtHeight?: number | null,
+  note?: string | null,
+  levelOfData?: number | null,
+  enlilList?: {
+    modelCompletionTime?: string | null,
+    au?: number | null,
+    estimatedShockArrivalTime?: string | null,
+    isEarthGB?: boolean | null,
+    isEarthMinorImpact?: boolean | null,
+    rmin_re?: number | null,
+    kp_18?: number | null,
+    kp_90?: number | null,
+    kp_135?: number | null,
+    kp_180?: number | null,
+    estimatedDuration?: number | null,
+    link?: string | null,
+    impactList?: {
+      location?: string | null,
+      arrivalTime?: string | null,
+      isGlancingBlow?: boolean | null,
+      isMinorImpact?: boolean | null
+    }[] | null,
+    cmeIDs?: string[] | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### enlilSimulation
+
+`donki.enlilSimulation`
+
+List WSA-ENLIL model runs in a date range, with their CME inputs and the estimated arrival at each spacecraft
+
+**Risk:** `read`
+
+```ts
+await corsair.nasa.api.donki.enlilSimulation({ startDate: '2026-10-20', endDate: '2026-10-22' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startDate` | `string` | No | First day to include. Defaults at the provider to seven days before today (UTC). |
+| `endDate` | `string` | No | Last day to include, inclusive. Defaults at the provider to today. |
+
+Omitted dates default to the last seven days, not 30.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `simulations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="simulations full type">
+
+```ts
+{
+  simulationID?: string | null,
+  modelCompletionTime?: string | null,
+  au?: number | null,
+  cmeInputs?: {
+    cmeStartTime?: string | null,
+    latitude?: number | null,
+    longitude?: number | null,
+    speed?: number | null,
+    halfAngle?: number | null,
+    time21_5?: string | null,
+    featureCode?: string | null,
+    isMostAccurate?: boolean | null,
+    levelOfData?: number | null,
+    CMEID?: string | null,
+    ipsList?: {
+      catalog?: string | null,
+      activityID?: string | null,
+      location?: string | null,
+      eventTime?: string | null,
+      instruments?: {
+        displayName?: string | null
+      }[] | null,
+      linkedEvents?: {
+        activityID?: string | null
+      }[] | null,
+      sentNotifications?: {
+        messageID?: string | null,
+        messageIssueTime?: string | null,
+        messageURL?: string | null
+      }[] | null,
+      link?: string | null,
+      submissionTime?: string | null,
+      versionId?: number | null
+    }[] | null
+  }[] | null,
+  estimatedShockArrivalTime?: string | null,
+  isEarthGB?: boolean | null,
+  isEarthMinorImpact?: boolean | null,
+  rmin_re?: number | null,
+  kp_18?: number | null,
+  kp_90?: number | null,
+  kp_135?: number | null,
+  kp_180?: number | null,
+  estimatedDuration?: number | null,
+  impactList?: {
+    location?: string | null,
+    arrivalTime?: string | null,
+    isGlancingBlow?: boolean | null,
+    isMinorImpact?: boolean | null
+  }[] | null,
+  link?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### geomagneticStorm
+
+`donki.geomagneticStorm`
+
+List geomagnetic storms in a date range, with the Kp index readings behind each one
+
+**Risk:** `read`
+
+```ts
+await corsair.nasa.api.donki.geomagneticStorm({ startDate: '2026-10-20', endDate: '2026-10-31' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startDate` | `string` | No | First day to include. Defaults at the provider to 30 days before today. |
+| `endDate` | `string` | No | Last day to include, inclusive. Defaults at the provider to today. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storms` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="storms full type">
+
+```ts
+{
+  gstID?: string | null,
+  startTime?: string | null,
+  allKpIndex?: {
+    kpIndex?: number | null,
+    observedTime?: string | null,
+    source?: string | null
+  }[] | null,
+  link?: string | null,
+  linkedEvents?: {
+    activityID?: string | null
+  }[] | null,
+  sentNotifications?: {
+    messageID?: string | null,
+    messageIssueTime?: string | null,
+    messageURL?: string | null
+  }[] | null,
+  submissionTime?: string | null,
+  versionId?: number | null,
+  instruments?: {
+    displayName?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### highSpeedStream
+
+`donki.highSpeedStream`
+
+List high speed solar wind streams in a date range, with the events each one is linked to
+
+**Risk:** `read`
+
+```ts
+await corsair.nasa.api.donki.highSpeedStream({ startDate: '2026-10-01', endDate: '2026-10-31' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startDate` | `string` | No | First day to include. Defaults at the provider to 30 days before today. |
+| `endDate` | `string` | No | Last day to include, inclusive. Defaults at the provider to today. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `streams` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="streams full type">
+
+```ts
+{
+  hssID?: string | null,
+  eventTime?: string | null,
+  link?: string | null,
+  linkedEvents?: {
+    activityID?: string | null
+  }[] | null,
+  sentNotifications?: {
+    messageID?: string | null,
+    messageIssueTime?: string | null,
+    messageURL?: string | null
+  }[] | null,
+  submissionTime?: string | null,
+  versionId?: number | null,
+  instruments?: {
+    displayName?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### interplanetaryShock
+
+`donki.interplanetaryShock`
+
+List interplanetary shocks in a date range, filterable by the observing spacecraft and the catalog
+
+**Risk:** `read`
+
+```ts
+await corsair.nasa.api.donki.interplanetaryShock({ startDate: '2026-10-20', endDate: '2026-10-31', location: 'Earth' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startDate` | `string` | No | First day to include. Defaults at the provider to 30 days before today. |
+| `endDate` | `string` | No | Last day to include, inclusive. Defaults at the provider to today. |
+| `location` | `Earth \| MESSENGER \| STEREO A \| STEREO B` | No | Which spacecraft observed the shock. Defaults to ALL. |
+| `catalog` | `ALL \| SWRC_CATALOG \| WINSLOW_MESSENGER_ICME_CATALOG` | No | Which catalog to read. Defaults to ALL. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shocks` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="shocks full type">
+
+```ts
+{
+  activityID?: string | null,
+  catalog?: string | null,
+  location?: string | null,
+  eventTime?: string | null,
+  link?: string | null,
+  linkedEvents?: {
+    activityID?: string | null
+  }[] | null,
+  sentNotifications?: {
+    messageID?: string | null,
+    messageIssueTime?: string | null,
+    messageURL?: string | null
+  }[] | null,
+  submissionTime?: string | null,
+  versionId?: number | null,
+  instruments?: {
+    displayName?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### magnetopauseCrossing
+
+`donki.magnetopauseCrossing`
+
+List magnetopause crossings in a date range
+
+**Risk:** `read`
+
+```ts
+await corsair.nasa.api.donki.magnetopauseCrossing({ startDate: '2026-10-01', endDate: '2026-10-31' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startDate` | `string` | No | First day to include. Defaults at the provider to 30 days before today. |
+| `endDate` | `string` | No | Last day to include, inclusive. Defaults at the provider to today. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `crossings` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="crossings full type">
+
+```ts
+{
+  mpcID?: string | null,
+  eventTime?: string | null,
+  link?: string | null,
+  linkedEvents?: {
+    activityID?: string | null
+  }[] | null,
+  sentNotifications?: {
+    messageID?: string | null,
+    messageIssueTime?: string | null,
+    messageURL?: string | null
+  }[] | null,
+  submissionTime?: string | null,
+  versionId?: number | null,
+  instruments?: {
+    displayName?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### notification
+
+`donki.notification`
+
+List space weather notifications in a date window of at most 30 days, readable as text or filtered to one event type
+
+**Risk:** `read`
+
+```ts
+await corsair.nasa.api.donki.notification({ startDate: '2026-11-01', endDate: '2026-11-03', type: 'all' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startDate` | `string` | No | First day to include. Defaults at the provider to seven days before today. |
+| `endDate` | `string` | No | Last day to include, inclusive. Defaults at the provider to today. |
+| `type` | `all \| FLR \| SEP \| CME \| IPS \| MPC \| GST \| RBE \| report` | No | Which notifications to return. Defaults to all. NASA caps the window at 30 days and quietly shifts it when a wider range is sent. |
+
+Defaults to the last seven days. The provider caps the window at 30 days and shifts a wider range rather than rejecting it.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notifications` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="notifications full type">
+
+```ts
+{
+  messageType?: string | null,
+  messageID?: string | null,
+  messageURL?: string | null,
+  messageIssueTime?: string | null,
+  messageBody?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### radiationBelt
+
+`donki.radiationBelt`
+
+List radiation belt enhancements in a date range
+
+**Risk:** `read`
+
+```ts
+await corsair.nasa.api.donki.radiationBelt({ startDate: '2026-10-01', endDate: '2026-10-31' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startDate` | `string` | No | First day to include. Defaults at the provider to 30 days before today. |
+| `endDate` | `string` | No | Last day to include, inclusive. Defaults at the provider to today. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `enhancements` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="enhancements full type">
+
+```ts
+{
+  rbeID?: string | null,
+  eventTime?: string | null,
+  link?: string | null,
+  linkedEvents?: {
+    activityID?: string | null
+  }[] | null,
+  sentNotifications?: {
+    messageID?: string | null,
+    messageIssueTime?: string | null,
+    messageURL?: string | null
+  }[] | null,
+  submissionTime?: string | null,
+  versionId?: number | null,
+  instruments?: {
+    displayName?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### solarEnergeticParticle
+
+`donki.solarEnergeticParticle`
+
+List solar energetic particle events in a date range
+
+**Risk:** `read`
+
+```ts
+await corsair.nasa.api.donki.solarEnergeticParticle({ startDate: '2026-10-01', endDate: '2026-10-31' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startDate` | `string` | No | First day to include. Defaults at the provider to 30 days before today. |
+| `endDate` | `string` | No | Last day to include, inclusive. Defaults at the provider to today. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `particles` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="particles full type">
+
+```ts
+{
+  sepID?: string | null,
+  eventTime?: string | null,
+  link?: string | null,
+  linkedEvents?: {
+    activityID?: string | null
+  }[] | null,
+  sentNotifications?: {
+    messageID?: string | null,
+    messageIssueTime?: string | null,
+    messageURL?: string | null
+  }[] | null,
+  submissionTime?: string | null,
+  versionId?: number | null,
+  instruments?: {
+    displayName?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### solarFlare
+
+`donki.solarFlare`
+
+List solar flares in a date range, with begin, peak and end times, the class and the active region
+
+**Risk:** `read`
+
+```ts
+await corsair.nasa.api.donki.solarFlare({ startDate: '2026-10-01', endDate: '2026-10-31' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startDate` | `string` | No | First day to include. Defaults at the provider to 30 days before today. |
+| `endDate` | `string` | No | Last day to include, inclusive. Defaults at the provider to today. |
+
+api.nasa.gov answered 404 for every FLR request on 2026-11-17; the route matches NASA's docs.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `flares` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="flares full type">
+
+```ts
+{
+  flrID?: string | null,
+  beginTime?: string | null,
+  peakTime?: string | null,
+  endTime?: string | null,
+  classType?: string | null,
+  sourceLocation?: string | null,
+  activeRegionNum?: number | null,
+  link?: string | null,
+  linkedEvents?: {
+    activityID?: string | null
+  }[] | null,
+  sentNotifications?: {
+    messageID?: string | null,
+    messageIssueTime?: string | null,
+    messageURL?: string | null
+  }[] | null,
+  submissionTime?: string | null,
+  versionId?: number | null,
+  instruments?: {
+    displayName?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Eonet
+
+### categories
+
+`eonet.categories`
+
+List the EONET categories events can be filed under
+
+**Risk:** `read`
+
+```ts
+await corsair.nasa.api.eonet.categories({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `categories` | `object[]` | Yes | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `link` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="categories full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  description?: string | null,
+  link?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### event
+
+`eonet.event`
+
+Read one EONET event with its categories, sources and the geometry of each observation
+
+**Risk:** `read`
+
+```ts
+await corsair.nasa.api.eonet.event({ eventId: 'EONET_26331' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventId` | `string` | Yes | The event's EONET ID, e.g. EONET_26331. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `link` | `string \| null` | No | — |
+| `closed` | `string \| null` | No | — |
+| `categories` | `object[] \| null` | No | — |
+| `sources` | `object[] \| null` | No | — |
+| `geometry` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="categories full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  description?: string | null,
+  link?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="sources full type">
+
+```ts
+{
+  id?: string | null,
+  url?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="geometry full type">
+
+```ts
+{
+  magnitudeValue?: number | null,
+  magnitudeUnit?: string | null,
+  magnitudeDescription?: string | null,
+  date?: string | null,
+  type?: string | null,
+  coordinates?: number[] | number[][][] | number[][] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### events
+
+`eonet.events`
+
+List NASA's curated natural events, such as wildfires and storms, filterable by category, source, date window, magnitude and bounding box
+
+**Risk:** `read`
+
+```ts
+await corsair.nasa.api.eonet.events({ category: ['wildfires'], limit: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `source` | `string[]` | No | Only events from these source IDs, e.g. InciWeb or EO. |
+| `category` | `string[]` | No | Only events in these category IDs, e.g. wildfires. |
+| `status` | `open \| closed \| all` | No | Only open, only closed, or both. EONET returns only open events when this is omitted. |
+| `limit` | `number` | No | Most events to return. |
+| `days` | `number` | No | Only events from this many prior days, today included. |
+| `start` | `string` | No | First day of the event window. |
+| `end` | `string` | No | Last day of the event window. |
+| `magID` | `string` | No | Magnitude ID to filter on, e.g. mag_kts. |
+| `magMin` | `number` | No | Smallest magnitude to include. |
+| `magMax` | `number` | No | Largest magnitude to include. |
+| `bbox` | `string` | No | Bounding box as minLon,maxLat,maxLon,minLat. |
+
+Omitting status returns only open events.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `object[]` | Yes | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `link` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  description?: string | null,
+  link?: string | null,
+  closed?: string | null,
+  categories?: {
+    id?: string | null,
+    title?: string | null,
+    description?: string | null,
+    link?: string | null
+  }[] | null,
+  sources?: {
+    id?: string | null,
+    url?: string | null
+  }[] | null,
+  geometry?: {
+    magnitudeValue?: number | null,
+    magnitudeUnit?: string | null,
+    magnitudeDescription?: string | null,
+    date?: string | null,
+    type?: string | null,
+    coordinates?: number[] | number[][][] | number[][] | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Epic
+
+### availableDates
+
+`epic.availableDates`
+
+List every day that has EPIC imagery, oldest first
+
+**Risk:** `read`
+
+```ts
+await corsair.nasa.api.epic.availableDates({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `natural \| enhanced` | No | Colour treatment. Defaults to natural. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dates` | `string[]` | Yes | — |
+
+
+
+---
+
+### images
+
+`epic.images`
+
+Read DSCOVR EPIC's full-disc imagery metadata for the most recent day or one given day, in natural or enhanced colour
+
+**Risk:** `read`
+
+```ts
+await corsair.nasa.api.epic.images({ date: '2019-05-30' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `natural \| enhanced` | No | Colour treatment. Defaults to natural. |
+| `date` | `string` | No | A day with imagery. Omit for the most recent day NASA holds. |
+
+EPIC timestamps are "YYYY-MM-DD HH:MM:SS", not ISO 8601. A valid date without imagery answers an empty list.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `images` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+{
+  identifier?: string | null,
+  caption?: string | null,
+  image?: string | null,
+  version?: string | null,
+  date?: string | null,
+  centroid_coordinates?: {
+    lat?: number | null,
+    lon?: number | null
+  } | null,
+  dscovr_j2000_position?: {
+    x?: number | null,
+    y?: number | null,
+    z?: number | null
+  } | null,
+  lunar_j2000_position?: {
+    x?: number | null,
+    y?: number | null,
+    z?: number | null
+  } | null,
+  sun_j2000_position?: {
+    x?: number | null,
+    y?: number | null,
+    z?: number | null
+  } | null,
+  attitude_quaternions?: {
+    q0?: number | null,
+    q1?: number | null,
+    q2?: number | null,
+    q3?: number | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Images
+
+### asset
+
+`images.asset`
+
+List an asset's downloadable file URLs at every size, and the metadata.json entry among them
+
+**Risk:** `read`
+
+```ts
+await corsair.nasa.api.images.asset({ nasa_id: 'as11-40-5874' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nasa_id` | `string` | Yes | The asset NASA ID, e.g. as11-40-5874. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `manifest` | `string[]` | Yes | — |
+| `metadata_url` | `string \| null` | No | The metadata.json entry in the manifest, when NASA lists one. |
+
+
+
+---
+
+### metadata
+
+`images.metadata`
+
+Return the URL of an asset's metadata.json, which holds the raw EXIF and file details
+
+**Risk:** `read`
+
+```ts
+await corsair.nasa.api.images.metadata({ nasa_id: 'as11-40-5874' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nasa_id` | `string` | Yes | The asset NASA ID, e.g. as11-40-5874. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `string` | Yes | — |
+
+
+
+---
+
+### search
+
+`images.search`
+
+Search the NASA Image and Video Library by text, centre, keywords, media type or year window, with the total hit count and the next page
+
+**Risk:** `read`
+
+```ts
+await corsair.nasa.api.images.search({ q: 'apollo 11', media_type: 'image', page_size: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | Free-text search terms. |
+| `center` | `string` | No | — |
+| `description` | `string` | No | — |
+| `description_508` | `string` | No | — |
+| `keywords` | `string[]` | No | Keywords to match. Sent comma-separated. |
+| `location` | `string` | No | — |
+| `media_type` | `image \| video \| audio` | No | Restrict to one media type. |
+| `nasa_id` | `string` | No | — |
+| `page` | `number` | No | 1-based page number. |
+| `page_size` | `number` | No | Results per page. NASA defaults to 100. |
+| `photographer` | `string` | No | — |
+| `secondary_creator` | `string` | No | — |
+| `title` | `string` | No | — |
+| `year_start` | `string` | No | — |
+| `year_end` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `total_hits` | `number \| null` | No | — |
+| `next_page` | `number \| null` | No | The page after this one, when NASA supplied a next link. |
+| `href` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  href?: string | null,
+  data?: {
+    center?: string | null,
+    date_created?: string | null,
+    description?: string | null,
+    description_508?: string | null,
+    keywords?: string[] | null,
+    media_type?: string | null,
+    nasa_id?: string | null,
+    title?: string | null,
+    photographer?: string | null,
+    secondary_creator?: string | null,
+    location?: string | null,
+    album?: string[] | null
+  }[] | null,
+  links?: {
+    href?: string | null,
+    rel?: string | null,
+    render?: string | null,
+    width?: number | null,
+    height?: number | null,
+    size?: number | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Neo
+
+### browse
+
+`neo.browse`
+
+Page through the whole near-Earth asteroid catalogue, with the total page count in the response
+
+**Risk:** `read`
+
+```ts
+await corsair.nasa.api.neo.browse({ page: 0, size: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | 0-based page number. |
+| `size` | `number` | No | Objects per page. NASA defaults to 20 and returns 20 when this is omitted. |
+
+The response carries page.total_pages, so a caller can walk the whole catalogue.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `near_earth_objects` | `object[]` | Yes | — |
+| `page` | `object` | Yes | — |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="near_earth_objects full type">
+
+```ts
+{
+  id?: string | null,
+  neo_reference_id?: string | null,
+  name?: string | null,
+  name_limited?: string | null,
+  designation?: string | null,
+  nasa_jpl_url?: string | null,
+  absolute_magnitude_h?: number | null,
+  is_potentially_hazardous_asteroid?: boolean | null,
+  is_sentry_object?: boolean | null,
+  estimated_diameter?: {
+    meters?: {
+      estimated_diameter_min?: number | null,
+      estimated_diameter_max?: number | null
+    } | null
+  } | null,
+  close_approach_data?: {
+    close_approach_date?: string | null,
+    close_approach_date_full?: string | null,
+    epoch_date_close_approach?: number | null,
+    orbiting_body?: string | null,
+    miss_distance?: {
+      astronomical?: string | null,
+      lunar?: string | null,
+      kilometers?: string | null,
+      miles?: string | null
+    } | null,
+    relative_velocity?: {
+      kilometers_per_second?: string | null,
+      kilometers_per_hour?: string | null,
+      miles_per_hour?: string | null
+    } | null
+  }[] | null,
+  orbital_data?: {
+    aphelion_distance?: string | null,
+    perihelion_distance?: string | null,
+    semi_major_axis?: string | null,
+    eccentricity?: string | null,
+    inclination?: string | null,
+    mean_motion?: string | null,
+    orbital_period?: string | null,
+    orbit_determination_date?: string | null,
+    first_observation_date?: string | null,
+    last_observation_date?: string | null,
+    data_arc_in_days?: number | null,
+    observations_used?: number | null,
+    orbit_uncertainty?: string | null,
+    orbit_id?: string | null,
+    orbit_class?: {
+      orbit_class_type?: string | null,
+      orbit_class_description?: string | null,
+      orbit_class_range?: string | null
+    } | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  size?: number | null,
+  number?: number | null,
+  total_elements?: number | null,
+  total_pages?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  next?: string | null,
+  previous?: string | null,
+  self?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### feed
+
+`neo.feed`
+
+List asteroids making close approaches in a date window of at most seven days, grouped by the day of approach
+
+**Risk:** `read`
+
+```ts
+await corsair.nasa.api.neo.feed({ start_date: '2026-11-01', end_date: '2026-11-02' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_date` | `string` | No | First day of close approaches. NASA accepts at most seven days between the two bounds. |
+| `end_date` | `string` | No | Last day of close approaches, inclusive. |
+| `detailed` | `boolean` | No | Return the fuller asteroid record. Defaults at NASA to false. |
+
+NASA accepts at most seven days between start_date and end_date.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `element_count` | `number` | Yes | — |
+| `near_earth_objects` | `object` | Yes | — |
+| `links` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="near_earth_objects full type">
+
+```ts
+Record<string, {
+  id?: string | null,
+  neo_reference_id?: string | null,
+  name?: string | null,
+  name_limited?: string | null,
+  designation?: string | null,
+  nasa_jpl_url?: string | null,
+  absolute_magnitude_h?: number | null,
+  is_potentially_hazardous_asteroid?: boolean | null,
+  is_sentry_object?: boolean | null,
+  estimated_diameter?: {
+    meters?: {
+      estimated_diameter_min?: number | null,
+      estimated_diameter_max?: number | null
+    } | null
+  } | null,
+  close_approach_data?: {
+    close_approach_date?: string | null,
+    close_approach_date_full?: string | null,
+    epoch_date_close_approach?: number | null,
+    orbiting_body?: string | null,
+    miss_distance?: {
+      astronomical?: string | null,
+      lunar?: string | null,
+      kilometers?: string | null,
+      miles?: string | null
+    } | null,
+    relative_velocity?: {
+      kilometers_per_second?: string | null,
+      kilometers_per_hour?: string | null,
+      miles_per_hour?: string | null
+    } | null
+  }[] | null,
+  orbital_data?: {
+    aphelion_distance?: string | null,
+    perihelion_distance?: string | null,
+    semi_major_axis?: string | null,
+    eccentricity?: string | null,
+    inclination?: string | null,
+    mean_motion?: string | null,
+    orbital_period?: string | null,
+    orbit_determination_date?: string | null,
+    first_observation_date?: string | null,
+    last_observation_date?: string | null,
+    data_arc_in_days?: number | null,
+    observations_used?: number | null,
+    orbit_uncertainty?: string | null,
+    orbit_id?: string | null,
+    orbit_class?: {
+      orbit_class_type?: string | null,
+      orbit_class_description?: string | null,
+      orbit_class_range?: string | null
+    } | null
+  } | null
+}[]>
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  next?: string | null,
+  previous?: string | null,
+  self?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### lookup
+
+`neo.lookup`
+
+Read one asteroid's full record, including its orbital elements and every recorded close approach
+
+**Risk:** `read`
+
+```ts
+await corsair.nasa.api.neo.lookup({ asteroid_id: 3542519 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asteroid_id` | `string \| number` | Yes | The asteroid's JPL SPK-ID, e.g. 3542519. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `neo_reference_id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `name_limited` | `string \| null` | No | — |
+| `designation` | `string \| null` | No | — |
+| `nasa_jpl_url` | `string \| null` | No | — |
+| `absolute_magnitude_h` | `number \| null` | No | — |
+| `is_potentially_hazardous_asteroid` | `boolean \| null` | No | — |
+| `is_sentry_object` | `boolean \| null` | No | — |
+| `estimated_diameter` | `object \| null` | No | — |
+| `close_approach_data` | `object[] \| null` | No | — |
+| `orbital_data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="estimated_diameter full type">
+
+```ts
+{
+  meters?: {
+    estimated_diameter_min?: number | null,
+    estimated_diameter_max?: number | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="close_approach_data full type">
+
+```ts
+{
+  close_approach_date?: string | null,
+  close_approach_date_full?: string | null,
+  epoch_date_close_approach?: number | null,
+  orbiting_body?: string | null,
+  miss_distance?: {
+    astronomical?: string | null,
+    lunar?: string | null,
+    kilometers?: string | null,
+    miles?: string | null
+  } | null,
+  relative_velocity?: {
+    kilometers_per_second?: string | null,
+    kilometers_per_hour?: string | null,
+    miles_per_hour?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="orbital_data full type">
+
+```ts
+{
+  aphelion_distance?: string | null,
+  perihelion_distance?: string | null,
+  semi_major_axis?: string | null,
+  eccentricity?: string | null,
+  inclination?: string | null,
+  mean_motion?: string | null,
+  orbital_period?: string | null,
+  orbit_determination_date?: string | null,
+  first_observation_date?: string | null,
+  last_observation_date?: string | null,
+  data_arc_in_days?: number | null,
+  observations_used?: number | null,
+  orbit_uncertainty?: string | null,
+  orbit_id?: string | null,
+  orbit_class?: {
+    orbit_class_type?: string | null,
+    orbit_class_description?: string | null,
+    orbit_class_range?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

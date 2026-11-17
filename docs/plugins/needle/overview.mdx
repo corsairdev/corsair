@@ -1,0 +1,148 @@
+---
+title: "Needle plugin"
+sidebarTitle: "Overview"
+description: "Manage Needle leads and their LinkedIn and Instagram identities, run campaigns and enroll or stop leads, maintain suppression lists, search places and preview AI-composed messages."
+---
+
+Use **Needle** through Corsair: one client, typed API calls.
+
+A key comes from https://needle.app/settings/api-keys. It is shown once, so copy it then. Each key is bound to one user and one workspace, and every call runs as that user in that workspace.
+
+- **Every lead needs at least one identity and a timezone.** Identities are a LinkedIn public identifier, `/in/` path, profile URL or user id, or an Instagram username, handle or URL. Needle stores the bare identifier, so the value read back is not the URL sent in. The timezone drives the sending window, so it decides when a step may fire.
+- **`leads.create` refuses a duplicate.** A second lead with the same identity answers 409. `leads.upsert` is the merging call: it answers `created` or `matched`, and on a match it patches the fields sent onto the existing lead.
+- **`leads.update` replaces identities rather than adding.** Sending `identities` replaces the whole set, so omit it to leave the existing channels alone.
+- **A campaign is a graph and starts in draft.** `campaigns.create` takes `nodes` (at least a start and an end) and the `edges` that connect them; both are required. Nodes can be `delay`, `action`, `condition` (branches on `yes`/`no` edges) or `wait_until` (follows `on_event` or `on_timeout`). `schedule`, `limits` and `suppressionPolicy` set the sending window, the gap between actions and who is skipped. Nothing is sent until `campaigns.update` sets `status: 'active'`; `paused` halts it again. `campaigns.delete` archives rather than erases.
+- **Enrollment partly succeeds.** `campaigns.enroll` takes up to 500 lead ids and returns one result per lead: an accepted entry carries an enrollment id, a skipped one carries a reason such as `suppressed` or `recently_contacted`.
+- **Run `suppressions.check` before enrolling.** It answers `contactable` per identity with the reason when false. Needle also applies its own suppression policy during a send, so an enrolled lead can still be skipped.
+- **`compose.preview` never sends.** It returns suggested text and the context sources used.
+
+Worth knowing:
+
+- **There is no error code.** Every failure is `{ requestId, error }`, so the status is the only classification: 401 a bad key, 403 a missing scope or plan limit, 409 a duplicate identity, 422 validation. Keep the `requestId`: it is what Needle support asks for. An HTTP failure is core's `ApiError`, with the id in `error.body.requestId`; `NeedleAPIError` only covers a transport failure that never got a response.
+- **Paging is a cursor.** Pass `nextCursor` back as `cursor`; it is null on the last page. `places.search` is the exception: a text search returns `cursor` (not `nextCursor`), absent on the last page, and a nearby search does not page.
+- **Only reads are retried on a 5xx.** A failed send or enroll may have gone through, and Needle takes no idempotency key.
+
+**What you get:**
+
+- 23 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/needle better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/needle better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/needle better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/needle better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { needle } from '@corsair-dev/needle';
+
+export const corsair = createCorsair({
+	plugins: [
+		needle(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Needle API key before the first call: `pnpm corsair setup --plugin=needle --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+needle()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'needle',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the first page of leads**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.needle.api.leads.list({ limit: 10 });
+```
+
+
+**Add a lead, or merge into the existing one**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.needle.api.leads.upsert({
+	identities: { linkedin: 'dana-okafor' },
+	timezone: 'Europe/London',
+	firstName: 'Dana',
+	companyName: 'Northwind Freight',
+});
+```
+
+
+See the full list on the [API](/plugins/needle/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/needle/api">
+    Every `needle.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

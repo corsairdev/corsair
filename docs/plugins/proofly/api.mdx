@@ -120,7 +120,7 @@ await corsair.proofly.api.campaigns.setEnabled({ campaign_id: 464014, enabled: f
 | `campaign_id` | `number \| string` | Yes | Campaign id from campaigns.list |
 | `enabled` | `boolean` | Yes | true to turn the campaign on, false to turn it off |
 
-PUT /campaign/{campaign_id} flips the campaign. The plugin first reads GET /campaigns and sends the PUT only when the current state differs from `enabled`.
+PUT /campaign/&#123;campaign_id&#125; flips the campaign. The plugin first reads GET /campaigns and sends the PUT only when the current state differs from `enabled`.
 
 
 
@@ -157,7 +157,7 @@ await corsair.proofly.api.notifications.getData({ notification_id: 745613007 });
 |------|------|----------|-------------|
 | `notification_id` | `number \| string` | Yes | Notification id from notifications.list |
 
-GET /data/{notification_id}. Leads and conversions with visitor input, IP and location. Returned, not stored.
+GET /data/&#123;notification_id&#125;. Leads and conversions with visitor input, IP and location. Returned, not stored.
 
 
 
@@ -212,7 +212,7 @@ await corsair.proofly.api.notifications.list({ campaign_id: 464014 });
 |------|------|----------|-------------|
 | `campaign_id` | `number \| string` | Yes | Campaign id from campaigns.list |
 
-GET /campaign/{campaign_id}. One entry per notification, with settings and stats.
+GET /campaign/&#123;campaign_id&#125;. One entry per notification, with settings and stats.
 
 
 

@@ -1,0 +1,3589 @@
+---
+title: "JumpCloud API reference"
+sidebarTitle: "API"
+description: "API reference for the JumpCloud plugin in Corsair: every `jumpcloud.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Applications
+
+### get
+
+`applications.get`
+
+Get a JumpCloud application by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.jumpcloud.api.applications.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | id (path) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `beta` | `boolean \| null` | No | — |
+| `color` | `"" \| #202D38 \| #005466 \| #3E8696 \| #006CAC \| #0617AC \| #7C6ADA \| #D5779D \| #9E2F00 \| #FFB000 \| #58C469 \| #57C49F \| #FF6C03 \| string \| null` | No | — |
+| `config` | `object \| null` | No | Only required for SAML configuration (not required for Bookmarks) |
+| `created` | `string \| null` | No | — |
+| `databaseAttributes` | `Record<string, any>[] \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `displayLabel` | `string \| null` | No | — |
+| `displayName` | `string \| null` | No | — |
+| `learnMore` | `string \| null` | No | — |
+| `logo` | `object \| null` | No | — |
+| `name` | `string` | Yes | — |
+| `organization` | `string \| null` | No | — |
+| `sso` | `object \| null` | No | — |
+| `ssoUrl` | `string` | Yes | — |
+| `parentApp` | `string \| null` | No | — |
+| `referenceApplications` | `object[] \| null` | No | Organization-specific copies of this shared SSO application chain. Returned only for all-organizations list requests (x-org-id '-'). |
+| `aiReady` | `boolean \| null` | No | Admin opt-in that this application instance should appear as AI Ready in the User Portal. Informational only — does not grant access. Setting to true requires at least one configured MCP connection. Gated by feature flag DC-4194-app-ai-ready. |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+  spErrorFlow?: any | null,
+  signAssertion?: any | null,
+  signResponse?: any | null,
+  acsUrl?: {
+    label?: string | null,
+    options?: any | null,
+    position?: number | null,
+    readOnly?: boolean | null,
+    required?: boolean | null,
+    toggle?: any | null,
+    tooltip?: any | null,
+    type?: string | null,
+    value?: string | null,
+    visible?: boolean | null
+  } | null,
+  constantAttributes?: any | null,
+  databaseAttributes?: {
+    position?: number | null
+  } | null,
+  idpCertificate?: {
+    label?: string | null,
+    options?: any | null,
+    position?: number | null,
+    readOnly?: boolean | null,
+    required?: boolean | null,
+    toggle?: any | null,
+    tooltip?: any | null,
+    type?: string | null,
+    value?: string | null,
+    visible?: boolean | null
+  } | null,
+  idpEntityId?: {
+    label?: string | null,
+    options?: any | null,
+    position?: number | null,
+    readOnly?: boolean | null,
+    required?: boolean | null,
+    toggle?: any | null,
+    tooltip?: any | null,
+    type?: string | null,
+    value?: string | null,
+    visible?: boolean | null
+  } | null,
+  idpPrivateKey?: {
+    label?: string | null,
+    options?: any | null,
+    position?: number | null,
+    readOnly?: boolean | null,
+    required?: boolean | null,
+    toggle?: any | null,
+    tooltip?: any | null,
+    type?: string | null,
+    value?: string | null,
+    visible?: boolean | null
+  } | null,
+  spEntityId?: {
+    label?: string | null,
+    options?: any | null,
+    position?: number | null,
+    readOnly?: boolean | null,
+    required?: boolean | null,
+    toggle?: any | null,
+    tooltip?: any | null,
+    type?: string | null,
+    value?: string | null,
+    visible?: boolean | null
+  } | null,
+  authClaimConfiguration?: any | null
+} | null
+```
+</Accordion>
+
+<Accordion title="logo full type">
+
+```ts
+{
+  color?: "" | #202D38 | #005466 | #3E8696 | #006CAC | #0617AC | #7C6ADA | #D5779D | #9E2F00 | #FFB000 | #58C469 | #57C49F | #FF6C03 | string | null,
+  url?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="sso full type">
+
+```ts
+{
+  type?: string | null,
+  beta?: boolean | null,
+  jit?: boolean | null,
+  idpCertExpirationAt?: string | null,
+  idpCertificateUpdatedAt?: string | null,
+  idpPrivateKeyUpdatedAt?: string | null,
+  spCertificateUpdatedAt?: string | null,
+  hidden?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="referenceApplications full type">
+
+```ts
+{
+  id: string,
+  orgId: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`applications.list`
+
+List JumpCloud applications with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.jumpcloud.api.applications.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string` | No | The space separated fields included in the returned records. If omitted the default list of fields will be returned. |
+| `limit` | `number` | No | The number of records to return at once. |
+| `skip` | `number` | No | The offset into the records to return. |
+| `sort` | `string` | No | The space separated fields used to sort the collection. Default sort is ascending, prefix with - to sort descending. |
+| `filter` | `string` | No | A filter to apply to the query. See the supported operators below. For more complex searches,<br />see the related `/search/<domain>` endpoints,<br />e.g. `/search/systems`.<br /><br />**Filter structure**: The filter syntax follows a consistent pattern of `<field>:<operator>:<value>` (e.g. `department:$eq:Finance`)<br /><br />* |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string \| null` | No | — |
+| `results` | `any[] \| null` | No | The list of applications. |
+| `totalCount` | `number \| null` | No | The total number of applications. |
+
+
+
+---
+
+## Commands
+
+### create
+
+`commands.create`
+
+Create a JumpCloud command
+
+**Risk:** `write`
+
+```ts
+await corsair.jumpcloud.api.commands.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  command: string,
+  commandType: string,
+  user?: string,
+  sudo?: boolean,
+  shell?: string,
+  launchType?: string,
+  timeout?: string | number,
+  schedule?: string,
+  trigger?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `command` | `string` | Yes | The command to execute on the server. |
+| `commandRunners` | `string[] \| null` | No | An array of IDs of the Command Runner Users that can execute this command. |
+| `commandTarget` | `enterprise \| organization \| string \| null` | No | EP create target when enterprise command sharing is enabled. `enterprise`<br />creates a default-shared Enterprise command (grants all current child orgs).<br />`organization` creates a local command in `targetOrganizationId` (or the<br />pinned org). Ignored when sharing is disabled.<br /> |
+| `targetOrganizationId` | `string \| null` | No | Child organization ID for a local command when `commandTarget` is<br />`organization` in Enterprise / View All context. Ignored for Enterprise<br />create and when sharing is disabled.<br /> |
+| `commandType` | `string` | Yes | The Command OS |
+| `files` | `string[] \| null` | No | An array of file IDs to include with the command. |
+| `launchType` | `string \| null` | No | How the command will execute. |
+| `listensTo` | `string \| null` | No | — |
+| `name` | `string` | Yes | — |
+| `organization` | `string \| null` | No | The ID of the organization. |
+| `schedule` | `string \| null` | No | A crontab that consists of: [ (seconds) (minutes) (hours) (days of month) (months) (weekdays) ] or [ immediate ]. If you send this as an empty string, it will run immediately.<br /> |
+| `scheduleRepeatType` | `string \| null` | No | When the command will repeat. |
+| `sudo` | `boolean \| null` | No | — |
+| `systems` | `string[] \| null` | No | Not used. Use /api/v2/commands/&#123;id&#125;/associations to bind commands to systems. |
+| `template` | `string \| null` | No | The template this command was created from |
+| `timeout` | `string \| null` | No | The time in seconds to allow the command to run for. The maximum value is 86400 seconds (1 day). |
+| `trigger` | `string \| null` | No | The name of the command trigger. |
+| `user` | `string \| null` | No | The ID of the system user to run the command as. This field is required when creating a command with a commandType of "mac" or "linux". |
+| `shell` | `string \| null` | No | The shell used to run the command. |
+| `timeToLiveSeconds` | `number \| null` | No | Time in seconds a command can wait in the queue to be run before timing out |
+| `scheduleYear` | `number \| null` | No | The year that a scheduled command will launch in. |
+| `filesS3` | `any[] \| null` | No | An array of file stored in S3 to include with the command. |
+| `description` | `string \| null` | No | Description of the command. |
+| `aiGenerated` | `boolean \| null` | No | Whether this command was generated with AI assistance. |
+| `templatingRequired` | `boolean \| null` | No | Whether this command requires templating before execution. |
+| `managedBy` | `enterprise \| organization \| string \| null` | No | Command owner type (`enterprise` or `organization`). |
+
+
+
+---
+
+### get
+
+`commands.get`
+
+Get a JumpCloud command by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.jumpcloud.api.commands.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | id (path) |
+| `fields` | `string` | No | Use a space seperated string of field parameters to include the data in the response. If omitted, the default list of fields will be returned.<br /> |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `command` | `string \| null` | No | The command to execute on the server. |
+| `commandRunners` | `string[] \| null` | No | An array of IDs of the Command Runner Users that can execute this command. |
+| `commandTarget` | `enterprise \| organization \| string \| null` | No | EP create target when enterprise command sharing is enabled. `enterprise`<br />creates a default-shared Enterprise command (grants all current child orgs).<br />`organization` creates a local command in `targetOrganizationId` (or the<br />pinned org). Ignored when sharing is disabled.<br /> |
+| `targetOrganizationId` | `string \| null` | No | Child organization ID for a local command when `commandTarget` is<br />`organization` in Enterprise / View All context. Ignored for Enterprise<br />create and when sharing is disabled.<br /> |
+| `commandType` | `string \| null` | No | The Command OS |
+| `files` | `string[] \| null` | No | An array of file IDs to include with the command. |
+| `launchType` | `string \| null` | No | How the command will execute. |
+| `listensTo` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `organization` | `string \| null` | No | The ID of the organization. |
+| `schedule` | `string \| null` | No | A crontab that consists of: [ (seconds) (minutes) (hours) (days of month) (months) (weekdays) ] or [ immediate ]. If you send this as an empty string, it will run immediately.<br /> |
+| `scheduleRepeatType` | `string \| null` | No | When the command will repeat. |
+| `sudo` | `boolean \| null` | No | — |
+| `systems` | `string[] \| null` | No | Not used. Use /api/v2/commands/&#123;id&#125;/associations to bind commands to systems. |
+| `template` | `string \| null` | No | The template this command was created from |
+| `timeout` | `string \| null` | No | The time in seconds to allow the command to run for. The maximum value is 86400 seconds (1 day). |
+| `trigger` | `string \| null` | No | The name of the command trigger. |
+| `user` | `string \| null` | No | The ID of the system user to run the command as. This field is required when creating a command with a commandType of "mac" or "linux". |
+| `shell` | `string \| null` | No | The shell used to run the command. |
+| `timeToLiveSeconds` | `number \| null` | No | Time in seconds a command can wait in the queue to be run before timing out |
+| `scheduleYear` | `number \| null` | No | The year that a scheduled command will launch in. |
+| `filesS3` | `any[] \| null` | No | An array of file stored in S3 to include with the command. |
+| `description` | `string \| null` | No | Description of the command. |
+| `aiGenerated` | `boolean \| null` | No | Whether this command was generated with AI assistance. |
+| `templatingRequired` | `boolean \| null` | No | Whether this command requires templating before execution. |
+| `managedBy` | `enterprise \| organization \| string \| null` | No | Command owner type (`enterprise` or `organization`). |
+
+
+
+---
+
+### list
+
+`commands.list`
+
+List JumpCloud commands with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.jumpcloud.api.commands.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string` | No | Use a space seperated string of field parameters to include the data in the response. If omitted, the default list of fields will be returned.<br /> |
+| `filter` | `string` | No | A filter to apply to the query. See the supported operators below. For more complex searches,<br />see the related `/search/<domain>` endpoints,<br />e.g. `/search/systems`.<br /><br />**Filter structure**: The filter syntax follows a consistent pattern of `<field>:<operator>:<value>` (e.g. `department:$eq:Finance`)<br /><br />* |
+| `limit` | `number` | No | The number of records to return at once. Limited to 100. |
+| `skip` | `number` | No | The offset into the records to return. |
+| `sort` | `string` | No | Use space separated sort parameters to sort the collection.<br />Default sort is ascending. Prefix with `-` to sort descending.<br /> |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[] \| null` | No | — |
+| `totalCount` | `number \| null` | No | The total number of commands |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id?: string | null,
+  command?: string | null,
+  commandType?: string | null,
+  launchType?: string | null,
+  listensTo?: string | null,
+  name?: string | null,
+  organization?: string | null,
+  schedule?: string | null,
+  scheduleRepeatType?: string | null,
+  trigger?: string | null,
+  description?: string | null,
+  aiGenerated?: boolean | null,
+  templatingRequired?: boolean | null,
+  managedBy?: enterprise | organization | string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### run
+
+`commands.run`
+
+Run a command against target systems
+
+**Risk:** `destructive`
+
+```ts
+await corsair.jumpcloud.api.commands.run({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  _id?: string,
+  systemIds?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `queueIds` | `string[] \| null` | No | — |
+| `workflowInstanceId` | `string \| null` | No | — |
+
+
+
+---
+
+## Organizations
+
+### get
+
+`organizations.get`
+
+Get a JumpCloud organization by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.jumpcloud.api.organizations.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | id (path) |
+| `fields` | `string` | No | Use a space seperated string of field parameters to include the data in the response. If omitted, the default list of fields will be returned.<br /> |
+| `filter` | `string` | No | A filter to apply to the query. See the supported operators below. For more complex searches,<br />see the related `/search/<domain>` endpoints,<br />e.g. `/search/systems`.<br /><br />**Filter structure**: The filter syntax follows a consistent pattern of `<field>:<operator>:<value>` (e.g. `department:$eq:Finance`)<br /><br />* |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `customEmailSettings` | `object \| null` | No | Custom email settings for an organization |
+| `displayName` | `string \| null` | No | — |
+| `entitlement` | `object \| null` | No | — |
+| `hasStripeCustomerId` | `boolean \| null` | No | — |
+| `hasCreditCard` | `boolean \| null` | No | — |
+| `lastEstimateCalculationTimeStamp` | `string \| null` | No | — |
+| `lastSfdcSyncStatus` | `Record<string, any> \| null` | No | — |
+| `accountsReceivable` | `string \| null` | No | — |
+| `accessRestriction` | `string \| null` | No | — |
+| `accountType` | `Alliance \| Distributor \| MSP \| VAR \| Direct \| Indirect \| Tenant \| Deleted Organization \| Partner \| Customer \| Prospective Customer \| Prospective Partner \| string \| null` | No | Salesforce Account Type (`Account_Type__c`) written back to the org via BSS sync. Returned only when requested via the `fields` query parameter. |
+| `logoUrl` | `any \| null` | No | — |
+| `provider` | `any \| null` | No | — |
+| `settings` | `object \| null` | No | — |
+| `totalBillingEstimate` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="customEmailSettings full type">
+
+```ts
+{
+  enabled?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="entitlement full type">
+
+```ts
+{
+  billingModel?: string | null,
+  capUserQuantity?: boolean | null,
+  maxUserQuantity?: number | null,
+  purchaseChannel?: string | null,
+  entitlementProducts?: Record<string, any>[] | null,
+  isManuallyBilled?: boolean | null,
+  pricePerUserSum?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+  agentVersion?: string | null,
+  betaFeatures?: Record<string, any> | null,
+  chromeDTCEnabled?: boolean | null,
+  contactEmail?: string | null,
+  contactName?: string | null,
+  disableCommandRunner?: boolean | null,
+  disableLdap?: boolean | null,
+  disableUM?: boolean | null,
+  duplicateLDAPGroups?: boolean | null,
+  emailDisclaimer?: string | null,
+  enableGoogleApps?: boolean | null,
+  enableManagedUID?: boolean | null,
+  enableO365?: boolean | null,
+  enableUserPortalAgentInstall?: boolean | null,
+  features?: Record<string, any> | null,
+  growthData?: Record<string, any> | null,
+  logo?: string | null,
+  name?: string | null,
+  newSystemUserStateDefaults?: Record<string, any> | null,
+  passwordCompliance?: custom | pci3 | windows | string | null,
+  passwordPolicy?: Record<string, any> | null,
+  pendingDelete?: boolean | null,
+  requireAdminMFA?: boolean | null,
+  showIntro?: boolean | null,
+  systemUserDefaults?: Record<string, any> | null,
+  systemUserPasswordExpirationInDays?: number | null,
+  systemUsersCanEdit?: boolean | null,
+  disableGoogleLogin?: boolean | null,
+  userPortal?: Record<string, any> | null,
+  deviceIdentificationEnabled?: boolean | null,
+  trustedAppConfig?: any | null,
+  maxSystemUsers?: number | null,
+  windowsMDM?: Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`organizations.list`
+
+List JumpCloud organizations
+
+**Risk:** `read`
+
+```ts
+await corsair.jumpcloud.api.organizations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string` | No | Use a space seperated string of field parameters to include the data in the response. If omitted, the default list of fields will be returned.<br /> |
+| `filter` | `string` | No | A filter to apply to the query. See the supported operators below. For more complex searches,<br />see the related `/search/<domain>` endpoints,<br />e.g. `/search/systems`.<br /><br />**Filter structure**: The filter syntax follows a consistent pattern of `<field>:<operator>:<value>` (e.g. `department:$eq:Finance`)<br /><br />* |
+| `limit` | `number` | No | The number of records to return at once. Limited to 100. |
+| `search` | `string` | No | A nested object containing a `searchTerm` string or array of strings and a list of `fields` to search on. |
+| `skip` | `number` | No | The offset into the records to return. |
+| `sort` | `string` | No | Use space separated sort parameters to sort the collection.<br />Default sort is ascending. Prefix with `-` to sort descending.<br /> |
+| `sortIgnoreCase` | `string` | No | Use space separated sort parameters to sort the collection, ignoring case.<br />Default sort is ascending. Prefix with `-` to sort descending.<br /> |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[] \| null` | No | The list of organizations. |
+| `totalCount` | `number \| null` | No | The total number of organizations.  |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id?: string | null,
+  displayName?: string | null,
+  logoUrl?: any | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Policies
+
+### create
+
+`policies.create`
+
+Create a JumpCloud policy
+
+**Risk:** `write`
+
+```ts
+await corsair.jumpcloud.api.policies.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | A request to create an instance of a policy template. |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  notes?: string,
+  template: {
+    id: string
+  },
+  values?: any[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `configFields` | `any[] \| null` | No | — |
+| `id` | `string \| null` | No | ObjectId uniquely identifying a Policy. |
+| `name` | `string \| null` | No | The description for this specific Policy. |
+| `notes` | `string \| null` | No | The notes for this specific Policy. |
+| `template` | `object \| null` | No | The shallow information about a Policy Template. |
+| `values` | `any[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="template full type">
+
+```ts
+{
+  activation?: string | null,
+  behavior?: string | null,
+  deliveryTypes?: (agent | mdm | string)[] | null,
+  description?: string | null,
+  displayName?: string | null,
+  id?: string | null,
+  name?: string | null,
+  osMetaFamily?: linux | darwin | windows | ios | universal | android | string | null,
+  state?: string | null,
+  alert?: any | null,
+  reference?: any | null,
+  osRestrictions?: any[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`policies.delete`
+
+Delete a JumpCloud policy
+
+**Risk:** `destructive`
+
+```ts
+await corsair.jumpcloud.api.policies.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ObjectID of the Policy object. |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`policies.get`
+
+Get a JumpCloud policy by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.jumpcloud.api.policies.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ObjectID of the Policy object. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `configFields` | `any[] \| null` | No | — |
+| `id` | `string \| null` | No | ObjectId uniquely identifying a Policy. |
+| `name` | `string \| null` | No | The description for this specific Policy. |
+| `notes` | `string \| null` | No | The notes for this specific Policy. |
+| `template` | `object \| null` | No | The shallow information about a Policy Template. |
+| `values` | `any[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="template full type">
+
+```ts
+{
+  activation?: string | null,
+  behavior?: string | null,
+  deliveryTypes?: (agent | mdm | string)[] | null,
+  description?: string | null,
+  displayName?: string | null,
+  id?: string | null,
+  name?: string | null,
+  osMetaFamily?: linux | darwin | windows | ios | universal | android | string | null,
+  state?: string | null,
+  alert?: any | null,
+  reference?: any | null,
+  osRestrictions?: any[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`policies.list`
+
+List JumpCloud policies with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.jumpcloud.api.policies.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `(string \| number)[]` | No | The comma separated fields included in the returned records.<br />If omitted, the default list of fields will be returned.<br /> |
+| `filter` | `(string \| number)[]` | No | A filter to apply to the query.<br /><br />**Filter structure**: `<field>:<operator>:<value>`.<br /><br />**field** = Populate with a valid field from an endpoint response.<br /><br />**operator** =  Supported operators are: eq, ne, gt, ge, lt, le, between, search, in.<br />_Note: v1 operators differ from v2 operators._<br /><br />**value** =  |
+| `limit` | `number` | No | The number of records to return at once. Limited to 100. |
+| `skip` | `number` | No | The offset into the records to return. |
+| `sort` | `(string \| number)[]` | No | The comma separated fields used to sort the collection.<br />Default sort is ascending, prefix with `-` to sort descending.<br /> |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  template?: any | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listStatuses
+
+`policies.listStatuses`
+
+List policy statuses for a policy
+
+**Risk:** `read`
+
+```ts
+await corsair.jumpcloud.api.policies.listStatuses({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `policy_id` | `string` | Yes | policy_id (path) |
+| `fields` | `(string \| number)[]` | No | The comma separated fields included in the returned records.<br />If omitted, the default list of fields will be returned.<br /> |
+| `filter` | `(string \| number)[]` | No | A filter to apply to the query.<br /><br />**Filter structure**: `<field>:<operator>:<value>`.<br /><br />**field** = Populate with a valid field from an endpoint response.<br /><br />**operator** =  Supported operators are: eq, ne, gt, ge, lt, le, between, search, in.<br />_Note: v1 operators differ from v2 operators._<br /><br />**value** =  |
+| `limit` | `number` | No | The number of records to return at once. Limited to 100. |
+| `skip` | `number` | No | The offset into the records to return. |
+| `sort` | `(string \| number)[]` | No | The comma separated fields used to sort the collection.<br />Default sort is ascending, prefix with `-` to sort descending.<br /> |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  detail?: string | null,
+  endedAt?: string | null,
+  exitStatus?: number | null,
+  id?: string | null,
+  policyID?: string | null,
+  startedAt?: string | null,
+  state?: string | null,
+  stdErr?: string | null,
+  stdOut?: string | null,
+  success?: boolean | null,
+  systemID?: string | null,
+  userObjectId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`policies.update`
+
+Update a JumpCloud policy
+
+**Risk:** `write`
+
+```ts
+await corsair.jumpcloud.api.policies.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ObjectID of the Policy object. |
+| `body` | `object` | Yes | A request to update an instance of a policy template. |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  notes?: string,
+  values?: any[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | ObjectId uniquely identifying a Policy. |
+| `name` | `string \| null` | No | The description for this specific Policy. |
+| `template` | `object \| null` | No | The shallow information about a Policy Template. |
+
+<AccordionGroup>
+<Accordion title="template full type">
+
+```ts
+{
+  activation?: string | null,
+  behavior?: string | null,
+  deliveryTypes?: (agent | mdm | string)[] | null,
+  description?: string | null,
+  displayName?: string | null,
+  id?: string | null,
+  name?: string | null,
+  osMetaFamily?: linux | darwin | windows | ios | universal | android | string | null,
+  state?: string | null,
+  alert?: any | null,
+  reference?: any | null,
+  osRestrictions?: any[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Search
+
+### systems
+
+`search.systems`
+
+Search JumpCloud systems (POST body search)
+
+**Risk:** `read`
+
+```ts
+await corsair.jumpcloud.api.search.systems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string` | No | Use a space seperated string of field parameters to include the data in the response. If omitted, the default list of fields will be returned.<br /> |
+| `limit` | `number` | No | The number of records to return at once. Limited to 100. |
+| `skip` | `number` | No | The offset into the records to return. |
+| `filter` | `string` | No | A filter to apply to the query. See the supported operators below. For more complex searches,<br />see the related `/search/<domain>` endpoints,<br />e.g. `/search/systems`.<br /><br />**Filter structure**: The filter syntax follows a consistent pattern of `<field>:<operator>:<value>` (e.g. `department:$eq:Finance`)<br /><br />* |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  filter?: Record<string, any>[] | {
+    and?: Record<string, any>[],
+    or?: Record<string, any>[]
+  },
+  searchFilter?: {
+    searchTerm: string | string[],
+    fields: string[]
+  },
+  fields?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `any[] \| null` | No | The list of systems. |
+| `totalCount` | `number \| null` | No | The total number of systems. |
+
+
+
+---
+
+### systemUsers
+
+`search.systemUsers`
+
+Search JumpCloud system users (POST body search)
+
+**Risk:** `read`
+
+```ts
+await corsair.jumpcloud.api.search.systemUsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string` | No | Use a space seperated string of field parameters to include the data in the response. If omitted, the default list of fields will be returned.<br /> |
+| `filter` | `string` | No | A filter to apply to the query. See the supported operators below. For more complex searches,<br />see the related `/search/<domain>` endpoints,<br />e.g. `/search/systems`.<br /><br />**Filter structure**: The filter syntax follows a consistent pattern of `<field>:<operator>:<value>` (e.g. `department:$eq:Finance`)<br /><br />* |
+| `limit` | `number` | No | The number of records to return at once. Limited to 100. |
+| `skip` | `number` | No | The offset into the records to return. |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  filter?: Record<string, any>[] | {
+    and?: Record<string, any>[],
+    or?: Record<string, any>[]
+  },
+  searchFilter?: {
+    searchTerm: string | string[],
+    fields: string[]
+  },
+  fields?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `any[] \| null` | No | The list of system users. |
+| `totalCount` | `number \| null` | No | The total number of system users. |
+
+
+
+---
+
+## System Groups
+
+### create
+
+`systemGroups.create`
+
+Create a JumpCloud system group
+
+**Risk:** `write`
+
+```ts
+await corsair.jumpcloud.api.systemGroups.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  attributes?: any,
+  email?: string,
+  description?: string,
+  name: string,
+  memberQuery?: any,
+  membershipMethod?: NOTSET | STATIC | DYNAMIC_REVIEW_REQUIRED | DYNAMIC_AUTOMATED,
+  memberSuggestionsNotify?: boolean,
+  memberQueryExemptions?: any[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attributes` | `any \| null` | No | The graph attributes. |
+| `description` | `string \| null` | No | Description of a System Group |
+| `email` | `string \| null` | No | E-mail address associated with a System Group |
+| `id` | `string \| null` | No | ObjectId uniquely identifying a System Group. |
+| `memberQuery` | `any \| null` | No | Dynamic group member query. v1 (default): include queryType (FilterQuery, Filter, or Search). v2 (x-query-dsl: v2): omit queryType; filters use field, operation, and value. |
+| `memberQueryErrorFlags` | `string[] \| null` | No | Group error flags indicating errors encountered during member query evaluation.<br /><br />Possible flag values:<br />- CYCLE: A cyclic dependency was detected in group membership<br />- INVALID_GROUP_REFERENCE: The group reference is invalid or does not exist<br /><br />The `member_query_error_flags` as a field supports array-b |
+| `memberQueryExemptions` | `any[] \| null` | No | Array of GraphObjects exempted from the query |
+| `membershipMethod` | `NOTSET \| STATIC \| DYNAMIC_REVIEW_REQUIRED \| DYNAMIC_AUTOMATED \| string \| null` | No | The type of membership method for this group. Valid values include NOTSET, STATIC, DYNAMIC_REVIEW_REQUIRED, and DYNAMIC_AUTOMATED.<br /><br />Note DYNAMIC_AUTOMATED and DYNAMIC_REVIEW_REQUIRED group rules will supersede any group enrollment for [group-associated MDM-enrolled devices](https://jumpcloud.com/sup |
+| `memberSuggestionsNotify` | `boolean \| null` | No | True if notification emails are to be sent for membership suggestions. |
+| `name` | `string \| null` | No | Display name of a System Group. |
+| `organizationObjectId` | `any \| null` | No | id of the organization owning this group |
+| `type` | `system_group \| string \| null` | No | The type of the group; always 'system' for a System Group. |
+
+
+
+---
+
+### delete
+
+`systemGroups.delete`
+
+Delete a JumpCloud system group
+
+**Risk:** `destructive`
+
+```ts
+await corsair.jumpcloud.api.systemGroups.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ObjectID of the System Group. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attributes` | `any \| null` | No | The graph attributes. |
+| `description` | `string \| null` | No | Description of a System Group |
+| `email` | `string \| null` | No | E-mail address associated with a System Group |
+| `id` | `string \| null` | No | ObjectId uniquely identifying a System Group. |
+| `memberQuery` | `any \| null` | No | Dynamic group member query. v1 (default): include queryType (FilterQuery, Filter, or Search). v2 (x-query-dsl: v2): omit queryType; filters use field, operation, and value. |
+| `memberQueryErrorFlags` | `string[] \| null` | No | Group error flags indicating errors encountered during member query evaluation.<br /><br />Possible flag values:<br />- CYCLE: A cyclic dependency was detected in group membership<br />- INVALID_GROUP_REFERENCE: The group reference is invalid or does not exist<br /><br />The `member_query_error_flags` as a field supports array-b |
+| `memberQueryExemptions` | `any[] \| null` | No | Array of GraphObjects exempted from the query |
+| `membershipMethod` | `NOTSET \| STATIC \| DYNAMIC_REVIEW_REQUIRED \| DYNAMIC_AUTOMATED \| string \| null` | No | The type of membership method for this group. Valid values include NOTSET, STATIC, DYNAMIC_REVIEW_REQUIRED, and DYNAMIC_AUTOMATED.<br /><br />Note DYNAMIC_AUTOMATED and DYNAMIC_REVIEW_REQUIRED group rules will supersede any group enrollment for [group-associated MDM-enrolled devices](https://jumpcloud.com/sup |
+| `memberSuggestionsNotify` | `boolean \| null` | No | True if notification emails are to be sent for membership suggestions. |
+| `name` | `string \| null` | No | Display name of a System Group. |
+| `organizationObjectId` | `any \| null` | No | id of the organization owning this group |
+| `type` | `system_group \| string \| null` | No | The type of the group; always 'system' for a System Group. |
+
+
+
+---
+
+### get
+
+`systemGroups.get`
+
+Get a JumpCloud system group by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.jumpcloud.api.systemGroups.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ObjectID of the System Group. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attributes` | `any \| null` | No | The graph attributes. |
+| `description` | `string \| null` | No | Description of a System Group |
+| `email` | `string \| null` | No | E-mail address associated with a System Group |
+| `id` | `string \| null` | No | ObjectId uniquely identifying a System Group. |
+| `memberQuery` | `any \| null` | No | Dynamic group member query. v1 (default): include queryType (FilterQuery, Filter, or Search). v2 (x-query-dsl: v2): omit queryType; filters use field, operation, and value. |
+| `memberQueryErrorFlags` | `string[] \| null` | No | Group error flags indicating errors encountered during member query evaluation.<br /><br />Possible flag values:<br />- CYCLE: A cyclic dependency was detected in group membership<br />- INVALID_GROUP_REFERENCE: The group reference is invalid or does not exist<br /><br />The `member_query_error_flags` as a field supports array-b |
+| `memberQueryExemptions` | `any[] \| null` | No | Array of GraphObjects exempted from the query |
+| `membershipMethod` | `NOTSET \| STATIC \| DYNAMIC_REVIEW_REQUIRED \| DYNAMIC_AUTOMATED \| string \| null` | No | The type of membership method for this group. Valid values include NOTSET, STATIC, DYNAMIC_REVIEW_REQUIRED, and DYNAMIC_AUTOMATED.<br /><br />Note DYNAMIC_AUTOMATED and DYNAMIC_REVIEW_REQUIRED group rules will supersede any group enrollment for [group-associated MDM-enrolled devices](https://jumpcloud.com/sup |
+| `memberSuggestionsNotify` | `boolean \| null` | No | True if notification emails are to be sent for membership suggestions. |
+| `name` | `string \| null` | No | Display name of a System Group. |
+| `organizationObjectId` | `any \| null` | No | id of the organization owning this group |
+| `type` | `system_group \| string \| null` | No | The type of the group; always 'system' for a System Group. |
+
+
+
+---
+
+### list
+
+`systemGroups.list`
+
+List JumpCloud system groups with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.jumpcloud.api.systemGroups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `(string \| number)[]` | No | The comma separated fields included in the returned records.<br />If omitted, the default list of fields will be returned.<br /> |
+| `filter` | `(string \| number)[]` | No | A filter to apply to the query.<br /><br />**Filter structure**: `<field>:<operator>:<value>`.<br /><br />**field** = Populate with a valid field from an endpoint response.<br /><br />**operator** =  Supported operators are: eq, ne, gt, ge, lt, le, between, search, in.<br />_Note: v1 operators differ from v2 operators._<br /><br />**value** =  |
+| `limit` | `number` | No | The number of records to return at once. Limited to 100. |
+| `skip` | `number` | No | The offset into the records to return. |
+| `sort` | `(string \| number)[]` | No | The comma separated fields used to sort the collection.<br />Default sort is ascending, prefix with `-` to sort descending.<br /> |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  attributes?: any | null,
+  description?: string | null,
+  email?: string | null,
+  id?: string | null,
+  memberQuery?: any | null,
+  memberQueryErrorFlags?: any | null,
+  memberQueryExemptions?: any[] | null,
+  membershipMethod?: any | null,
+  memberSuggestionsNotify?: boolean | null,
+  name?: string | null,
+  organizationObjectId?: any | null,
+  type?: system_group | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### manageMembers
+
+`systemGroups.manageMembers`
+
+Manage (add or remove) members of a system group
+
+**Risk:** `write`
+
+```ts
+await corsair.jumpcloud.api.systemGroups.manageMembers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `string` | Yes | ObjectID of the System Group. |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  id: string,
+  op: add | remove | update,
+  type: system,
+  attributes?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `void`
+
+
+---
+
+### update
+
+`systemGroups.update`
+
+Update a JumpCloud system group
+
+**Risk:** `write`
+
+```ts
+await corsair.jumpcloud.api.systemGroups.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ObjectID of the System Group. |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  attributes?: any,
+  email?: string,
+  description?: string,
+  name: string,
+  memberQuery?: any,
+  membershipMethod?: NOTSET | STATIC | DYNAMIC_REVIEW_REQUIRED | DYNAMIC_AUTOMATED,
+  memberSuggestionsNotify?: boolean,
+  memberQueryExemptions?: any[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attributes` | `any \| null` | No | The graph attributes. |
+| `description` | `string \| null` | No | Description of a System Group |
+| `email` | `string \| null` | No | E-mail address associated with a System Group |
+| `id` | `string \| null` | No | ObjectId uniquely identifying a System Group. |
+| `memberQuery` | `any \| null` | No | Dynamic group member query. v1 (default): include queryType (FilterQuery, Filter, or Search). v2 (x-query-dsl: v2): omit queryType; filters use field, operation, and value. |
+| `memberQueryErrorFlags` | `string[] \| null` | No | Group error flags indicating errors encountered during member query evaluation.<br /><br />Possible flag values:<br />- CYCLE: A cyclic dependency was detected in group membership<br />- INVALID_GROUP_REFERENCE: The group reference is invalid or does not exist<br /><br />The `member_query_error_flags` as a field supports array-b |
+| `memberQueryExemptions` | `any[] \| null` | No | Array of GraphObjects exempted from the query |
+| `membershipMethod` | `NOTSET \| STATIC \| DYNAMIC_REVIEW_REQUIRED \| DYNAMIC_AUTOMATED \| string \| null` | No | The type of membership method for this group. Valid values include NOTSET, STATIC, DYNAMIC_REVIEW_REQUIRED, and DYNAMIC_AUTOMATED.<br /><br />Note DYNAMIC_AUTOMATED and DYNAMIC_REVIEW_REQUIRED group rules will supersede any group enrollment for [group-associated MDM-enrolled devices](https://jumpcloud.com/sup |
+| `memberSuggestionsNotify` | `boolean \| null` | No | True if notification emails are to be sent for membership suggestions. |
+| `name` | `string \| null` | No | Display name of a System Group. |
+| `organizationObjectId` | `any \| null` | No | id of the organization owning this group |
+| `type` | `system_group \| string \| null` | No | The type of the group; always 'system' for a System Group. |
+
+
+
+---
+
+## Systems
+
+### delete
+
+`systems.delete`
+
+Delete a JumpCloud system
+
+**Risk:** `destructive`
+
+```ts
+await corsair.jumpcloud.api.systems.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | id (path) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `agentHasFullDiskAccess` | `boolean \| null` | No | — |
+| `agentVersion` | `string \| null` | No | — |
+| `allowMultiFactorAuthentication` | `boolean \| null` | No | — |
+| `allowPublicKeyAuthentication` | `boolean \| null` | No | — |
+| `allowSshPasswordAuthentication` | `boolean \| null` | No | — |
+| `allowSshRootLogin` | `boolean \| null` | No | — |
+| `amazonInstanceID` | `string \| null` | No | — |
+| `arch` | `string \| null` | No | — |
+| `archFamily` | `string \| null` | No | — |
+| `attributes` | `any[] \| null` | No | — |
+| `connectionHistory` | `Record<string, any>[] \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `desktopCapable` | `boolean \| null` | No | — |
+| `displayName` | `string \| null` | No | — |
+| `fde` | `object \| null` | No | Indicates if the Full Disk Encryption is active in the system |
+| `fileSystem` | `any \| null` | No | — |
+| `hasServiceAccount` | `boolean \| null` | No | — |
+| `hostname` | `string \| null` | No | — |
+| `hwVendor` | `string \| null` | No | — |
+| `isPolicyBound` | `boolean \| null` | No | — |
+| `lastContact` | `any \| null` | No | — |
+| `modifySSHDConfig` | `boolean \| null` | No | — |
+| `networkInterfaces` | `object[] \| null` | No | — |
+| `networkInfo` | `object \| null` | No | — |
+| `organization` | `string \| null` | No | — |
+| `os` | `string \| null` | No | — |
+| `osVersionDetail` | `object \| null` | No | — |
+| `policyStats` | `object \| null` | No | — |
+| `provisionMetadata` | `object \| null` | No | — |
+| `primarySystemUser` | `object \| null` | No | — |
+| `remoteIP` | `string \| null` | No | — |
+| `serialNumber` | `string \| null` | No | — |
+| `sshRootEnabled` | `boolean \| null` | No | — |
+| `sshdParams` | `object[] \| null` | No | — |
+| `systemInsights` | `object \| null` | No | — |
+| `systemTimezone` | `number \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `templateName` | `string \| null` | No | — |
+| `version` | `string \| null` | No | — |
+| `mdm` | `object \| null` | No | — |
+| `builtInCommands` | `object[] \| null` | No | — |
+| `osFamily` | `string \| null` | No | — |
+| `domainInfo` | `object \| null` | No | — |
+| `userMetrics` | `object[] \| null` | No | — |
+| `serviceAccountState` | `object \| null` | No | — |
+| `azureAdJoined` | `boolean \| null` | No | — |
+| `displayManager` | `string \| null` | No | — |
+| `secureLogin` | `object \| null` | No | — |
+| `remoteAssistAgentVersion` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="fde full type">
+
+```ts
+{
+  active?: boolean | null,
+  keyPresent?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="networkInterfaces full type">
+
+```ts
+{
+  address?: string | null,
+  family?: IPv4 | IPv6 | string | null,
+  internal?: boolean | null,
+  name?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="networkInfo full type">
+
+```ts
+{
+  imei?: string | null,
+  macAddress?: string | null,
+  simInfo?: Record<string, any>[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="osVersionDetail full type">
+
+```ts
+{
+  osName?: string | null,
+  releaseName?: string | null,
+  major?: string | null,
+  minor?: string | null,
+  patch?: string | null,
+  majorNumber?: number | null,
+  minorNumber?: number | null,
+  patchNumber?: number | null,
+  revision?: string | null,
+  distributionName?: string | null,
+  version?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="policyStats full type">
+
+```ts
+{
+  duplicate?: number | null,
+  failed?: number | null,
+  pending?: number | null,
+  success?: number | null,
+  total?: number | null,
+  unsupportedOs?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="provisionMetadata full type">
+
+```ts
+{
+  provisioner?: {
+    type?: administrator | mdm | user | string | null,
+    provisionerId?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="primarySystemUser full type">
+
+```ts
+{
+  id?: any | null
+} | null
+```
+</Accordion>
+
+<Accordion title="sshdParams full type">
+
+```ts
+{
+  name?: string | null,
+  value?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="systemInsights full type">
+
+```ts
+{
+  state?: enabled | disabled | deferred | string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="mdm full type">
+
+```ts
+{
+  vendor?: unknown | none | internal | external | string | null,
+  internal?: {
+    deviceId?: string | null,
+    windowsDeviceId?: string | null
+  } | null,
+  profileIdentifier?: string | null,
+  dep?: boolean | null,
+  userApproved?: boolean | null,
+  enrollmentType?: unknown | automated device | device | user | string | null,
+  providerId?: string | null,
+  windows?: {
+    upn?: string | null
+  } | null,
+  lostModeStatus?: string | null,
+  deviceLockStatus?: number | null,
+  enrollmentStatus?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="builtInCommands full type">
+
+```ts
+{
+  type?: security | string | null,
+  name?: erase | lock | restart | shutdown | string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="domainInfo full type">
+
+```ts
+{
+  partOfDomain?: boolean | null,
+  domainName?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="userMetrics full type">
+
+```ts
+{
+  userName?: string | null,
+  admin?: boolean | null,
+  managed?: boolean | null,
+  suspended?: boolean | null,
+  secureTokenEnabled?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="serviceAccountState full type">
+
+```ts
+{
+  hasSecureToken?: boolean | null,
+  passwordODValid?: boolean | null,
+  passwordAPFSValid?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="secureLogin full type">
+
+```ts
+{
+  supported?: boolean | null,
+  enabled?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`systems.get`
+
+Get a JumpCloud system by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.jumpcloud.api.systems.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | id (path) |
+| `fields` | `string` | No | Use a space seperated string of field parameters to include the data in the response. If omitted, the default list of fields will be returned.<br /> |
+| `filter` | `string` | No | A filter to apply to the query. See the supported operators below. For more complex searches,<br />see the related `/search/<domain>` endpoints,<br />e.g. `/search/systems`.<br /><br />**Filter structure**: The filter syntax follows a consistent pattern of `<field>:<operator>:<value>` (e.g. `department:$eq:Finance`)<br /><br />* |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `agentHasFullDiskAccess` | `boolean \| null` | No | — |
+| `agentVersion` | `string \| null` | No | — |
+| `allowMultiFactorAuthentication` | `boolean \| null` | No | — |
+| `allowPublicKeyAuthentication` | `boolean \| null` | No | — |
+| `allowSshPasswordAuthentication` | `boolean \| null` | No | — |
+| `allowSshRootLogin` | `boolean \| null` | No | — |
+| `amazonInstanceID` | `string \| null` | No | — |
+| `arch` | `string \| null` | No | — |
+| `archFamily` | `string \| null` | No | — |
+| `attributes` | `any[] \| null` | No | — |
+| `connectionHistory` | `Record<string, any>[] \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `desktopCapable` | `boolean \| null` | No | — |
+| `displayName` | `string \| null` | No | — |
+| `fde` | `object \| null` | No | Indicates if the Full Disk Encryption is active in the system |
+| `fileSystem` | `any \| null` | No | — |
+| `hasServiceAccount` | `boolean \| null` | No | — |
+| `hostname` | `string \| null` | No | — |
+| `hwVendor` | `string \| null` | No | — |
+| `isPolicyBound` | `boolean \| null` | No | — |
+| `lastContact` | `any \| null` | No | — |
+| `modifySSHDConfig` | `boolean \| null` | No | — |
+| `networkInterfaces` | `object[] \| null` | No | — |
+| `networkInfo` | `object \| null` | No | — |
+| `organization` | `string \| null` | No | — |
+| `os` | `string \| null` | No | — |
+| `osVersionDetail` | `object \| null` | No | — |
+| `policyStats` | `object \| null` | No | — |
+| `provisionMetadata` | `object \| null` | No | — |
+| `primarySystemUser` | `object \| null` | No | — |
+| `remoteIP` | `string \| null` | No | — |
+| `serialNumber` | `string \| null` | No | — |
+| `sshRootEnabled` | `boolean \| null` | No | — |
+| `sshdParams` | `object[] \| null` | No | — |
+| `systemInsights` | `object \| null` | No | — |
+| `systemTimezone` | `number \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `templateName` | `string \| null` | No | — |
+| `version` | `string \| null` | No | — |
+| `mdm` | `object \| null` | No | — |
+| `builtInCommands` | `object[] \| null` | No | — |
+| `osFamily` | `string \| null` | No | — |
+| `domainInfo` | `object \| null` | No | — |
+| `userMetrics` | `object[] \| null` | No | — |
+| `serviceAccountState` | `object \| null` | No | — |
+| `azureAdJoined` | `boolean \| null` | No | — |
+| `displayManager` | `string \| null` | No | — |
+| `secureLogin` | `object \| null` | No | — |
+| `remoteAssistAgentVersion` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="fde full type">
+
+```ts
+{
+  active?: boolean | null,
+  keyPresent?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="networkInterfaces full type">
+
+```ts
+{
+  address?: string | null,
+  family?: IPv4 | IPv6 | string | null,
+  internal?: boolean | null,
+  name?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="networkInfo full type">
+
+```ts
+{
+  imei?: string | null,
+  macAddress?: string | null,
+  simInfo?: Record<string, any>[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="osVersionDetail full type">
+
+```ts
+{
+  osName?: string | null,
+  releaseName?: string | null,
+  major?: string | null,
+  minor?: string | null,
+  patch?: string | null,
+  majorNumber?: number | null,
+  minorNumber?: number | null,
+  patchNumber?: number | null,
+  revision?: string | null,
+  distributionName?: string | null,
+  version?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="policyStats full type">
+
+```ts
+{
+  duplicate?: number | null,
+  failed?: number | null,
+  pending?: number | null,
+  success?: number | null,
+  total?: number | null,
+  unsupportedOs?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="provisionMetadata full type">
+
+```ts
+{
+  provisioner?: {
+    type?: administrator | mdm | user | string | null,
+    provisionerId?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="primarySystemUser full type">
+
+```ts
+{
+  id?: any | null
+} | null
+```
+</Accordion>
+
+<Accordion title="sshdParams full type">
+
+```ts
+{
+  name?: string | null,
+  value?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="systemInsights full type">
+
+```ts
+{
+  state?: enabled | disabled | deferred | string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="mdm full type">
+
+```ts
+{
+  vendor?: unknown | none | internal | external | string | null,
+  internal?: {
+    deviceId?: string | null,
+    windowsDeviceId?: string | null
+  } | null,
+  profileIdentifier?: string | null,
+  dep?: boolean | null,
+  userApproved?: boolean | null,
+  enrollmentType?: unknown | automated device | device | user | string | null,
+  providerId?: string | null,
+  windows?: {
+    upn?: string | null
+  } | null,
+  lostModeStatus?: string | null,
+  deviceLockStatus?: number | null,
+  enrollmentStatus?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="builtInCommands full type">
+
+```ts
+{
+  type?: security | string | null,
+  name?: erase | lock | restart | shutdown | string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="domainInfo full type">
+
+```ts
+{
+  partOfDomain?: boolean | null,
+  domainName?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="userMetrics full type">
+
+```ts
+{
+  userName?: string | null,
+  admin?: boolean | null,
+  managed?: boolean | null,
+  suspended?: boolean | null,
+  secureTokenEnabled?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="serviceAccountState full type">
+
+```ts
+{
+  hasSecureToken?: boolean | null,
+  passwordODValid?: boolean | null,
+  passwordAPFSValid?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="secureLogin full type">
+
+```ts
+{
+  supported?: boolean | null,
+  enabled?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`systems.list`
+
+List JumpCloud systems with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.jumpcloud.api.systems.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string` | No | Use a space seperated string of field parameters to include the data in the response. If omitted, the default list of fields will be returned.<br /> |
+| `limit` | `number` | No | The number of records to return at once. Limited to 100. |
+| `search` | `string` | No | A nested object containing a `searchTerm` string or array of strings and a list of `fields` to search on. |
+| `skip` | `number` | No | The offset into the records to return. |
+| `sort` | `string` | No | Use space separated sort parameters to sort the collection.<br />Default sort is ascending. Prefix with `-` to sort descending.<br /> |
+| `filter` | `string` | No | A filter to apply to the query. See the supported operators below. For more complex searches,<br />see the related `/search/<domain>` endpoints,<br />e.g. `/search/systems`.<br /><br />**Filter structure**: The filter syntax follows a consistent pattern of `<field>:<operator>:<value>` (e.g. `department:$eq:Finance`)<br /><br />* |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `any[] \| null` | No | The list of systems. |
+| `totalCount` | `number \| null` | No | The total number of systems. |
+
+
+
+---
+
+### listAssociations
+
+`systems.listAssociations`
+
+List associations for a system
+
+**Risk:** `read`
+
+```ts
+await corsair.jumpcloud.api.systems.listAssociations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `system_id` | `string` | Yes | ObjectID of the System. |
+| `targets` | `(string \| number)[]` | No | Targets which a "system" can be associated to. |
+| `limit` | `number` | No | The number of records to return at once. Limited to 100. |
+| `skip` | `number` | No | The offset into the records to return. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  attributes?: any | null,
+  from?: any | null,
+  to: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listPolicyStatuses
+
+`systems.listPolicyStatuses`
+
+List policy statuses for a system
+
+**Risk:** `read`
+
+```ts
+await corsair.jumpcloud.api.systems.listPolicyStatuses({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `system_id` | `string` | Yes | ObjectID of the System. |
+| `fields` | `(string \| number)[]` | No | The comma separated fields included in the returned records.<br />If omitted, the default list of fields will be returned.<br /> |
+| `filter` | `(string \| number)[]` | No | A filter to apply to the query.<br /><br />**Filter structure**: `<field>:<operator>:<value>`.<br /><br />**field** = Populate with a valid field from an endpoint response.<br /><br />**operator** =  Supported operators are: eq, ne, gt, ge, lt, le, between, search, in.<br />_Note: v1 operators differ from v2 operators._<br /><br />**value** =  |
+| `limit` | `number` | No | The number of records to return at once. Limited to 100. |
+| `skip` | `number` | No | The offset into the records to return. |
+| `sort` | `(string \| number)[]` | No | The comma separated fields used to sort the collection.<br />Default sort is ascending, prefix with `-` to sort descending.<br /> |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  detail?: string | null,
+  endedAt?: string | null,
+  exitStatus?: number | null,
+  id?: string | null,
+  policyID?: string | null,
+  startedAt?: string | null,
+  state?: string | null,
+  stdErr?: string | null,
+  stdOut?: string | null,
+  success?: boolean | null,
+  systemID?: string | null,
+  userObjectId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listUsers
+
+`systems.listUsers`
+
+List users bound to a system
+
+**Risk:** `read`
+
+```ts
+await corsair.jumpcloud.api.systems.listUsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `system_id` | `string` | Yes | ObjectID of the System. |
+| `limit` | `number` | No | The number of records to return at once. Limited to 100. |
+| `skip` | `number` | No | The offset into the records to return. |
+| `filter` | `(string \| number)[]` | No | A filter to apply to the query.<br /><br />**Filter structure**: `<field>:<operator>:<value>`.<br /><br />**field** = Populate with a valid field from an endpoint response.<br /><br />**operator** =  Supported operators are: eq, ne, gt, ge, lt, le, between, search, in.<br />_Note: v1 operators differ from v2 operators._<br /><br />**value** =  |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  compiledAttributes?: any | null,
+  id: string,
+  paths: any[][],
+  type: any,
+  externalId?: string | null,
+  syncStatus?: any | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## User Groups
+
+### create
+
+`userGroups.create`
+
+Create a JumpCloud user group
+
+**Risk:** `write`
+
+```ts
+await corsair.jumpcloud.api.userGroups.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  attributes?: any,
+  email?: string,
+  description?: string,
+  memberQuery?: any,
+  memberQueryExemptions?: any[],
+  memberSuggestionsNotify?: boolean,
+  membershipMethod?: NOTSET | STATIC | DYNAMIC_REVIEW_REQUIRED | DYNAMIC_AUTOMATED,
+  name: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attributes` | `any \| null` | No | The graph attributes for a UserGroup. |
+| `email` | `string \| null` | No | Email address of a User Group |
+| `description` | `string \| null` | No | Description of a User Group |
+| `id` | `string \| null` | No | ObjectId uniquely identifying a User Group. |
+| `memberQuery` | `any \| null` | No | Dynamic group member query. v1 (default): include queryType (FilterQuery, Filter, or Search). v2 (x-query-dsl: v2): omit queryType; filters use field, operation, and value. |
+| `memberQueryExemptions` | `any[] \| null` | No | Array of GraphObjects exempted from the query |
+| `memberSuggestionsNotify` | `boolean \| null` | No | True if notification emails are to be sent for membership suggestions. |
+| `memberQueryErrorFlags` | `string[] \| null` | No | Group error flags indicating errors encountered during member query evaluation.<br /><br />Possible flag values:<br />- CYCLE: A cyclic dependency was detected in group membership<br />- INVALID_GROUP_REFERENCE: The group reference is invalid or does not exist<br /><br />The `member_query_error_flags` as a field supports array-b |
+| `membershipMethod` | `NOTSET \| STATIC \| DYNAMIC_REVIEW_REQUIRED \| DYNAMIC_AUTOMATED \| string \| null` | No | The type of membership method for this group. Valid values include NOTSET, STATIC, DYNAMIC_REVIEW_REQUIRED, and DYNAMIC_AUTOMATED.<br /><br />Note DYNAMIC_AUTOMATED and DYNAMIC_REVIEW_REQUIRED group rules will supersede any group enrollment for [group-associated MDM-enrolled devices](https://jumpcloud.com/sup |
+| `name` | `string \| null` | No | Display name of a User Group. |
+| `organizationObjectId` | `any \| null` | No | id of the organization owning this group |
+| `suggestionCounts` | `object \| null` | No | — |
+| `type` | `user_group \| string \| null` | No | The type of the group. |
+
+<AccordionGroup>
+<Accordion title="suggestionCounts full type">
+
+```ts
+{
+  add?: number | null,
+  remove?: number | null,
+  total?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`userGroups.delete`
+
+Delete a JumpCloud user group
+
+**Risk:** `destructive`
+
+```ts
+await corsair.jumpcloud.api.userGroups.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ObjectID of the User Group. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attributes` | `any \| null` | No | The graph attributes for a UserGroup. |
+| `email` | `string \| null` | No | Email address of a User Group |
+| `description` | `string \| null` | No | Description of a User Group |
+| `id` | `string \| null` | No | ObjectId uniquely identifying a User Group. |
+| `memberQuery` | `any \| null` | No | Dynamic group member query. v1 (default): include queryType (FilterQuery, Filter, or Search). v2 (x-query-dsl: v2): omit queryType; filters use field, operation, and value. |
+| `memberQueryExemptions` | `any[] \| null` | No | Array of GraphObjects exempted from the query |
+| `memberSuggestionsNotify` | `boolean \| null` | No | True if notification emails are to be sent for membership suggestions. |
+| `memberQueryErrorFlags` | `string[] \| null` | No | Group error flags indicating errors encountered during member query evaluation.<br /><br />Possible flag values:<br />- CYCLE: A cyclic dependency was detected in group membership<br />- INVALID_GROUP_REFERENCE: The group reference is invalid or does not exist<br /><br />The `member_query_error_flags` as a field supports array-b |
+| `membershipMethod` | `NOTSET \| STATIC \| DYNAMIC_REVIEW_REQUIRED \| DYNAMIC_AUTOMATED \| string \| null` | No | The type of membership method for this group. Valid values include NOTSET, STATIC, DYNAMIC_REVIEW_REQUIRED, and DYNAMIC_AUTOMATED.<br /><br />Note DYNAMIC_AUTOMATED and DYNAMIC_REVIEW_REQUIRED group rules will supersede any group enrollment for [group-associated MDM-enrolled devices](https://jumpcloud.com/sup |
+| `name` | `string \| null` | No | Display name of a User Group. |
+| `organizationObjectId` | `any \| null` | No | id of the organization owning this group |
+| `suggestionCounts` | `object \| null` | No | — |
+| `type` | `user_group \| string \| null` | No | The type of the group. |
+
+<AccordionGroup>
+<Accordion title="suggestionCounts full type">
+
+```ts
+{
+  add?: number | null,
+  remove?: number | null,
+  total?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`userGroups.get`
+
+Get a JumpCloud user group by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.jumpcloud.api.userGroups.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ObjectID of the User Group. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attributes` | `any \| null` | No | The graph attributes for a UserGroup. |
+| `email` | `string \| null` | No | Email address of a User Group |
+| `description` | `string \| null` | No | Description of a User Group |
+| `id` | `string \| null` | No | ObjectId uniquely identifying a User Group. |
+| `memberQuery` | `any \| null` | No | Dynamic group member query. v1 (default): include queryType (FilterQuery, Filter, or Search). v2 (x-query-dsl: v2): omit queryType; filters use field, operation, and value. |
+| `memberQueryExemptions` | `any[] \| null` | No | Array of GraphObjects exempted from the query |
+| `memberSuggestionsNotify` | `boolean \| null` | No | True if notification emails are to be sent for membership suggestions. |
+| `memberQueryErrorFlags` | `string[] \| null` | No | Group error flags indicating errors encountered during member query evaluation.<br /><br />Possible flag values:<br />- CYCLE: A cyclic dependency was detected in group membership<br />- INVALID_GROUP_REFERENCE: The group reference is invalid or does not exist<br /><br />The `member_query_error_flags` as a field supports array-b |
+| `membershipMethod` | `NOTSET \| STATIC \| DYNAMIC_REVIEW_REQUIRED \| DYNAMIC_AUTOMATED \| string \| null` | No | The type of membership method for this group. Valid values include NOTSET, STATIC, DYNAMIC_REVIEW_REQUIRED, and DYNAMIC_AUTOMATED.<br /><br />Note DYNAMIC_AUTOMATED and DYNAMIC_REVIEW_REQUIRED group rules will supersede any group enrollment for [group-associated MDM-enrolled devices](https://jumpcloud.com/sup |
+| `name` | `string \| null` | No | Display name of a User Group. |
+| `organizationObjectId` | `any \| null` | No | id of the organization owning this group |
+| `suggestionCounts` | `object \| null` | No | — |
+| `type` | `user_group \| string \| null` | No | The type of the group. |
+
+<AccordionGroup>
+<Accordion title="suggestionCounts full type">
+
+```ts
+{
+  add?: number | null,
+  remove?: number | null,
+  total?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`userGroups.list`
+
+List JumpCloud user groups with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.jumpcloud.api.userGroups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `(string \| number)[]` | No | The comma separated fields included in the returned records.<br />If omitted, the default list of fields will be returned.<br /> |
+| `filter` | `(string \| number)[]` | No | A filter to apply to the query.<br /><br />**Filter structure**: `<field>:<operator>:<value>`.<br /><br />**field** = Populate with a valid field from an endpoint response.<br /><br />**operator** =  Supported operators are: eq, ne, gt, ge, lt, le, between, search, in.<br />_Note: v1 operators differ from v2 operators._<br /><br />**value** =  |
+| `limit` | `number` | No | The number of records to return at once. Limited to 100. |
+| `skip` | `number` | No | The offset into the records to return. |
+| `sort` | `(string \| number)[]` | No | The comma separated fields used to sort the collection.<br />Default sort is ascending, prefix with `-` to sort descending.<br /> |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  attributes?: any | null,
+  email?: string | null,
+  description?: string | null,
+  id?: string | null,
+  memberQuery?: any | null,
+  memberQueryExemptions?: any[] | null,
+  memberSuggestionsNotify?: boolean | null,
+  memberQueryErrorFlags?: any | null,
+  membershipMethod?: any | null,
+  name?: string | null,
+  organizationObjectId?: any | null,
+  suggestionCounts?: any | null,
+  type?: user_group | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listMembers
+
+`userGroups.listMembers`
+
+List members of a user group
+
+**Risk:** `read`
+
+```ts
+await corsair.jumpcloud.api.userGroups.listMembers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `string` | Yes | ObjectID of the User Group. |
+| `limit` | `number` | No | The number of records to return at once. Limited to 100. |
+| `skip` | `number` | No | The offset into the records to return. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  attributes?: any | null,
+  from?: any | null,
+  to: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listMembership
+
+`userGroups.listMembership`
+
+List a user group's membership graph
+
+**Risk:** `read`
+
+```ts
+await corsair.jumpcloud.api.userGroups.listMembership({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `string` | Yes | ObjectID of the User Group. |
+| `filter` | `(string \| number)[]` | No | A filter to apply to the query.<br /><br />**Filter structure**: `<field>:<operator>:<value>`.<br /><br />**field** = Populate with a valid field from an endpoint response.<br /><br />**operator** =  Supported operators are: eq, ne, gt, ge, lt, le, between, search, in.<br />_Note: v1 operators differ from v2 operators._<br /><br />**value** =  |
+| `limit` | `number` | No | The number of records to return at once. Limited to 100. |
+| `skip` | `number` | No | The offset into the records to return. |
+| `sort` | `(string \| number)[]` | No | The comma separated fields used to sort the collection.<br />Default sort is ascending, prefix with `-` to sort descending.<br /> |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  compiledAttributes?: any | null,
+  id: string,
+  paths: any[][],
+  type: any,
+  externalId?: string | null,
+  syncStatus?: any | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### manageMembers
+
+`userGroups.manageMembers`
+
+Manage (add or remove) members of a user group
+
+**Risk:** `write`
+
+```ts
+await corsair.jumpcloud.api.userGroups.manageMembers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `string` | Yes | ObjectID of the User Group. |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  id: string,
+  op: add | remove | update,
+  type: user,
+  attributes?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `void`
+
+
+---
+
+### update
+
+`userGroups.update`
+
+Update a JumpCloud user group
+
+**Risk:** `write`
+
+```ts
+await corsair.jumpcloud.api.userGroups.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ObjectID of the User Group. |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  attributes?: any,
+  email?: string,
+  description?: string,
+  memberQuery?: any,
+  memberQueryExemptions?: any[],
+  memberSuggestionsNotify?: boolean,
+  membershipMethod?: NOTSET | STATIC | DYNAMIC_REVIEW_REQUIRED | DYNAMIC_AUTOMATED,
+  name: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attributes` | `any \| null` | No | The graph attributes for a UserGroup. |
+| `email` | `string \| null` | No | Email address of a User Group |
+| `description` | `string \| null` | No | Description of a User Group |
+| `id` | `string \| null` | No | ObjectId uniquely identifying a User Group. |
+| `memberQuery` | `any \| null` | No | Dynamic group member query. v1 (default): include queryType (FilterQuery, Filter, or Search). v2 (x-query-dsl: v2): omit queryType; filters use field, operation, and value. |
+| `memberQueryExemptions` | `any[] \| null` | No | Array of GraphObjects exempted from the query |
+| `memberSuggestionsNotify` | `boolean \| null` | No | True if notification emails are to be sent for membership suggestions. |
+| `memberQueryErrorFlags` | `string[] \| null` | No | Group error flags indicating errors encountered during member query evaluation.<br /><br />Possible flag values:<br />- CYCLE: A cyclic dependency was detected in group membership<br />- INVALID_GROUP_REFERENCE: The group reference is invalid or does not exist<br /><br />The `member_query_error_flags` as a field supports array-b |
+| `membershipMethod` | `NOTSET \| STATIC \| DYNAMIC_REVIEW_REQUIRED \| DYNAMIC_AUTOMATED \| string \| null` | No | The type of membership method for this group. Valid values include NOTSET, STATIC, DYNAMIC_REVIEW_REQUIRED, and DYNAMIC_AUTOMATED.<br /><br />Note DYNAMIC_AUTOMATED and DYNAMIC_REVIEW_REQUIRED group rules will supersede any group enrollment for [group-associated MDM-enrolled devices](https://jumpcloud.com/sup |
+| `name` | `string \| null` | No | Display name of a User Group. |
+| `organizationObjectId` | `any \| null` | No | id of the organization owning this group |
+| `suggestionCounts` | `object \| null` | No | — |
+| `type` | `user_group \| string \| null` | No | The type of the group. |
+
+<AccordionGroup>
+<Accordion title="suggestionCounts full type">
+
+```ts
+{
+  add?: number | null,
+  remove?: number | null,
+  total?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### create
+
+`users.create`
+
+Create a JumpCloud system user; unless state is STAGED, JumpCloud emails the user a welcome or activation link
+
+**Risk:** `destructive`
+
+```ts
+await corsair.jumpcloud.api.users.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fullValidationDetails` | `string` | No | Pass this query parameter when a client wants all validation errors<br />to be returned with a detailed error response for the form field<br />specified. The current form fields are allowed:<br /><br />* `password`<br /><br />#### Password validation flag<br />Use the `password` validation flag to receive details on a possible<br />bad re |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  account_locked?: boolean,
+  activated?: boolean,
+  addresses?: {
+    country?: string,
+    extendedAddress?: string,
+    locality?: string,
+    poBox?: string,
+    postalCode?: string,
+    region?: string,
+    streetAddress?: string,
+    type?: string
+  }[],
+  allow_public_key?: boolean,
+  alternateEmail?: string,
+  attributes?: {
+    name?: string,
+    value?: string
+  }[],
+  company?: string,
+  costCenter?: string,
+  department?: string,
+  description?: string,
+  disableDeviceMaxLoginAttempts?: boolean,
+  displayname?: string,
+  email: string,
+  employeeIdentifier?: string,
+  employeeType?: string,
+  enable_managed_uid?: boolean,
+  enable_user_portal_multifactor?: boolean,
+  external_dn?: string,
+  external_password_expiration_date?: string,
+  external_source_type?: string,
+  externally_managed?: boolean,
+  firstname?: string,
+  jobTitle?: string,
+  lastname?: string,
+  ldap_binding_user?: boolean,
+  location?: string,
+  manager?: string,
+  mfa?: {
+    configured?: boolean,
+    exclusion?: boolean,
+    exclusionUntil?: string,
+    exclusionDays?: number
+  },
+  middlename?: string,
+  password?: string,
+  password_never_expires?: boolean,
+  passwordless_sudo?: boolean,
+  phoneNumbers?: {
+    number?: string,
+    type?: string
+  }[],
+  public_key?: string,
+  recoveryEmail?: {
+    address?: string
+  },
+  relationships?: {
+    type?: string,
+    value?: string
+  }[],
+  samba_service_user?: boolean,
+  state?: STAGED | ACTIVATED | SUSPENDED,
+  sudo?: boolean,
+  suspended?: boolean,
+  tags?: string[],
+  unix_guid?: number,
+  unix_uid?: number,
+  username: string,
+  managedAppleId?: string,
+  delegatedAuthority?: any,
+  restrictedFields?: any[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string \| null` | No | — |
+| `account_locked` | `boolean \| null` | No | — |
+| `account_locked_date` | `any \| null` | No | — |
+| `activated` | `boolean \| null` | No | — |
+| `admin` | `any \| null` | No | — |
+| `addresses` | `object[] \| null` | No | — |
+| `allow_public_key` | `boolean \| null` | No | — |
+| `alternateEmail` | `string \| null` | No | — |
+| `attributes` | `any[] \| null` | No | — |
+| `badLoginAttempts` | `number \| null` | No | — |
+| `company` | `string \| null` | No | — |
+| `costCenter` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `department` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `disableDeviceMaxLoginAttempts` | `boolean \| null` | No | — |
+| `displayname` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `employeeIdentifier` | `string \| null` | No | Must be unique per user.  |
+| `employeeType` | `string \| null` | No | — |
+| `enable_managed_uid` | `boolean \| null` | No | — |
+| `enable_user_portal_multifactor` | `boolean \| null` | No | — |
+| `external_dn` | `string \| null` | No | — |
+| `external_password_expiration_date` | `string \| null` | No | — |
+| `external_source_type` | `string \| null` | No | — |
+| `externally_managed` | `boolean \| null` | No | The externally_managed property has been deprecated. Whenever a user has their externally_managed field modified their restrictedFields property gets populated with the appropriate value, even if it is already set to a value an administrator manually set. |
+| `firstname` | `string \| null` | No | — |
+| `jobTitle` | `string \| null` | No | — |
+| `lastname` | `string \| null` | No | — |
+| `ldap_binding_user` | `boolean \| null` | No | — |
+| `location` | `string \| null` | No | — |
+| `manager` | `string \| null` | No | Relation with another systemuser to identify the last as a manager. |
+| `mfa` | `object \| null` | No | — |
+| `mfaEnrollment` | `object \| null` | No | — |
+| `middlename` | `string \| null` | No | — |
+| `organization` | `string \| null` | No | — |
+| `password_date` | `any \| null` | No | — |
+| `password_expiration_date` | `any \| null` | No | — |
+| `password_expired` | `boolean \| null` | No | — |
+| `password_never_expires` | `boolean \| null` | No | — |
+| `passwordless_sudo` | `boolean \| null` | No | — |
+| `phoneNumbers` | `object[] \| null` | No | — |
+| `public_key` | `string \| null` | No | — |
+| `recoveryEmail` | `object \| null` | No | — |
+| `relationships` | `object[] \| null` | No | — |
+| `samba_service_user` | `boolean \| null` | No | — |
+| `ssh_keys` | `any[] \| null` | No | — |
+| `state` | `STAGED \| ACTIVATED \| SUSPENDED \| string \| null` | No | — |
+| `sudo` | `boolean \| null` | No | — |
+| `suspended` | `boolean \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `totp_enabled` | `boolean \| null` | No | — |
+| `unix_guid` | `number \| null` | No | — |
+| `unix_uid` | `number \| null` | No | — |
+| `username` | `string \| null` | No | — |
+| `managedAppleId` | `string \| null` | No | — |
+| `creationSource` | `string \| null` | No | — |
+| `delegatedAuthority` | `any \| null` | No | Used by auth to determine password delegation authority |
+| `restrictedFields` | `any[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="addresses full type">
+
+```ts
+{
+  country?: string | null,
+  extendedAddress?: string | null,
+  id?: string | null,
+  locality?: string | null,
+  poBox?: string | null,
+  postalCode?: string | null,
+  region?: string | null,
+  streetAddress?: string | null,
+  type?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="mfa full type">
+
+```ts
+{
+  configured?: boolean | null,
+  exclusion?: boolean | null,
+  exclusionUntil?: string | null,
+  exclusionDays?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="mfaEnrollment full type">
+
+```ts
+{
+  totpStatus?: any | null,
+  webAuthnStatus?: any | null,
+  pushStatus?: any | null,
+  smsStatus?: any | null,
+  overallStatus?: any | null,
+  jcGoStatus?: any | null
+} | null
+```
+</Accordion>
+
+<Accordion title="phoneNumbers full type">
+
+```ts
+{
+  id?: string | null,
+  number?: string | null,
+  type?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="recoveryEmail full type">
+
+```ts
+{
+  address?: string | null,
+  verified?: boolean | null,
+  verifiedAt?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="relationships full type">
+
+```ts
+{
+  type?: string | null,
+  value?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`users.delete`
+
+Delete a JumpCloud system user
+
+**Risk:** `destructive`
+
+```ts
+await corsair.jumpcloud.api.users.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | id (path) |
+| `cascade_manager` | `string` | No | This is an optional flag that can be enabled on the DELETE call, DELETE /systemusers/&#123;id&#125;?cascade_manager=null. This parameter will clear the Manager attribute on all direct reports and then delete the account. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string \| null` | No | — |
+| `account_locked` | `boolean \| null` | No | — |
+| `account_locked_date` | `any \| null` | No | — |
+| `activated` | `boolean \| null` | No | — |
+| `admin` | `any \| null` | No | — |
+| `addresses` | `object[] \| null` | No | — |
+| `allow_public_key` | `boolean \| null` | No | — |
+| `alternateEmail` | `string \| null` | No | — |
+| `attributes` | `any[] \| null` | No | — |
+| `badLoginAttempts` | `number \| null` | No | — |
+| `company` | `string \| null` | No | — |
+| `costCenter` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `department` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `disableDeviceMaxLoginAttempts` | `boolean \| null` | No | — |
+| `displayname` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `employeeIdentifier` | `string \| null` | No | Must be unique per user.  |
+| `employeeType` | `string \| null` | No | — |
+| `enable_managed_uid` | `boolean \| null` | No | — |
+| `enable_user_portal_multifactor` | `boolean \| null` | No | — |
+| `external_dn` | `string \| null` | No | — |
+| `external_password_expiration_date` | `string \| null` | No | — |
+| `external_source_type` | `string \| null` | No | — |
+| `externally_managed` | `boolean \| null` | No | The externally_managed property has been deprecated. Whenever a user has their externally_managed field modified their restrictedFields property gets populated with the appropriate value, even if it is already set to a value an administrator manually set. |
+| `firstname` | `string \| null` | No | — |
+| `jobTitle` | `string \| null` | No | — |
+| `lastname` | `string \| null` | No | — |
+| `ldap_binding_user` | `boolean \| null` | No | — |
+| `location` | `string \| null` | No | — |
+| `manager` | `string \| null` | No | Relation with another systemuser to identify the last as a manager. |
+| `mfa` | `object \| null` | No | — |
+| `mfaEnrollment` | `object \| null` | No | — |
+| `middlename` | `string \| null` | No | — |
+| `organization` | `string \| null` | No | — |
+| `password_date` | `any \| null` | No | — |
+| `password_expiration_date` | `any \| null` | No | — |
+| `password_expired` | `boolean \| null` | No | — |
+| `password_never_expires` | `boolean \| null` | No | — |
+| `passwordless_sudo` | `boolean \| null` | No | — |
+| `phoneNumbers` | `object[] \| null` | No | — |
+| `public_key` | `string \| null` | No | — |
+| `recoveryEmail` | `object \| null` | No | — |
+| `relationships` | `object[] \| null` | No | — |
+| `samba_service_user` | `boolean \| null` | No | — |
+| `ssh_keys` | `any[] \| null` | No | — |
+| `state` | `STAGED \| ACTIVATED \| SUSPENDED \| string \| null` | No | — |
+| `sudo` | `boolean \| null` | No | — |
+| `suspended` | `boolean \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `totp_enabled` | `boolean \| null` | No | — |
+| `unix_guid` | `number \| null` | No | — |
+| `unix_uid` | `number \| null` | No | — |
+| `username` | `string \| null` | No | — |
+| `managedAppleId` | `string \| null` | No | — |
+| `creationSource` | `string \| null` | No | — |
+| `delegatedAuthority` | `any \| null` | No | Used by auth to determine password delegation authority |
+| `restrictedFields` | `any[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="addresses full type">
+
+```ts
+{
+  country?: string | null,
+  extendedAddress?: string | null,
+  id?: string | null,
+  locality?: string | null,
+  poBox?: string | null,
+  postalCode?: string | null,
+  region?: string | null,
+  streetAddress?: string | null,
+  type?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="mfa full type">
+
+```ts
+{
+  configured?: boolean | null,
+  exclusion?: boolean | null,
+  exclusionUntil?: string | null,
+  exclusionDays?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="mfaEnrollment full type">
+
+```ts
+{
+  totpStatus?: any | null,
+  webAuthnStatus?: any | null,
+  pushStatus?: any | null,
+  smsStatus?: any | null,
+  overallStatus?: any | null,
+  jcGoStatus?: any | null
+} | null
+```
+</Accordion>
+
+<Accordion title="phoneNumbers full type">
+
+```ts
+{
+  id?: string | null,
+  number?: string | null,
+  type?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="recoveryEmail full type">
+
+```ts
+{
+  address?: string | null,
+  verified?: boolean | null,
+  verifiedAt?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="relationships full type">
+
+```ts
+{
+  type?: string | null,
+  value?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### enforceMfa
+
+`users.enforceMfa`
+
+Update a system user's MFA requirement; an unenrolled user is locked out of MFA-protected resources once any exclusion ends
+
+**Risk:** `destructive`
+
+```ts
+await corsair.jumpcloud.api.users.enforceMfa({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | id (path) |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  enable_user_portal_multifactor?: boolean,
+  mfa?: {
+    configured?: boolean,
+    exclusion?: boolean,
+    exclusionUntil?: string,
+    exclusionDays?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `void`
+
+
+---
+
+### expirePassword
+
+`users.expirePassword`
+
+Expire a system user's password so they must reset it at next login
+
+**Risk:** `destructive`
+
+```ts
+await corsair.jumpcloud.api.users.expirePassword({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | id (path) |
+
+
+
+**Output:** `string \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+string | {
+  orgPasswordPolicyUpdate?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`users.get`
+
+Get a JumpCloud system user by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.jumpcloud.api.users.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | id (path) |
+| `fields` | `string` | No | Use a space seperated string of field parameters to include the data in the response. If omitted, the default list of fields will be returned.<br /> |
+| `filter` | `string` | No | A filter to apply to the query. See the supported operators below. For more complex searches,<br />see the related `/search/<domain>` endpoints,<br />e.g. `/search/systems`.<br /><br />**Filter structure**: The filter syntax follows a consistent pattern of `<field>:<operator>:<value>` (e.g. `department:$eq:Finance`)<br /><br />* |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string \| null` | No | — |
+| `account_locked` | `boolean \| null` | No | — |
+| `account_locked_date` | `any \| null` | No | — |
+| `activated` | `boolean \| null` | No | — |
+| `admin` | `any \| null` | No | — |
+| `addresses` | `object[] \| null` | No | — |
+| `allow_public_key` | `boolean \| null` | No | — |
+| `alternateEmail` | `string \| null` | No | — |
+| `attributes` | `any[] \| null` | No | — |
+| `badLoginAttempts` | `number \| null` | No | — |
+| `company` | `string \| null` | No | — |
+| `costCenter` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `department` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `disableDeviceMaxLoginAttempts` | `boolean \| null` | No | — |
+| `displayname` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `employeeIdentifier` | `string \| null` | No | Must be unique per user.  |
+| `employeeType` | `string \| null` | No | — |
+| `enable_managed_uid` | `boolean \| null` | No | — |
+| `enable_user_portal_multifactor` | `boolean \| null` | No | — |
+| `external_dn` | `string \| null` | No | — |
+| `external_password_expiration_date` | `string \| null` | No | — |
+| `external_source_type` | `string \| null` | No | — |
+| `externally_managed` | `boolean \| null` | No | The externally_managed property has been deprecated. Whenever a user has their externally_managed field modified their restrictedFields property gets populated with the appropriate value, even if it is already set to a value an administrator manually set. |
+| `firstname` | `string \| null` | No | — |
+| `jobTitle` | `string \| null` | No | — |
+| `lastname` | `string \| null` | No | — |
+| `ldap_binding_user` | `boolean \| null` | No | — |
+| `location` | `string \| null` | No | — |
+| `manager` | `string \| null` | No | Relation with another systemuser to identify the last as a manager. |
+| `mfa` | `object \| null` | No | — |
+| `mfaEnrollment` | `object \| null` | No | — |
+| `middlename` | `string \| null` | No | — |
+| `organization` | `string \| null` | No | — |
+| `password_date` | `any \| null` | No | — |
+| `password_expiration_date` | `any \| null` | No | — |
+| `password_expired` | `boolean \| null` | No | — |
+| `password_never_expires` | `boolean \| null` | No | — |
+| `passwordless_sudo` | `boolean \| null` | No | — |
+| `phoneNumbers` | `object[] \| null` | No | — |
+| `public_key` | `string \| null` | No | — |
+| `recoveryEmail` | `object \| null` | No | — |
+| `relationships` | `object[] \| null` | No | — |
+| `samba_service_user` | `boolean \| null` | No | — |
+| `ssh_keys` | `any[] \| null` | No | — |
+| `state` | `STAGED \| ACTIVATED \| SUSPENDED \| string \| null` | No | — |
+| `sudo` | `boolean \| null` | No | — |
+| `suspended` | `boolean \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `totp_enabled` | `boolean \| null` | No | — |
+| `unix_guid` | `number \| null` | No | — |
+| `unix_uid` | `number \| null` | No | — |
+| `username` | `string \| null` | No | — |
+| `managedAppleId` | `string \| null` | No | — |
+| `creationSource` | `string \| null` | No | — |
+| `delegatedAuthority` | `any \| null` | No | Used by auth to determine password delegation authority |
+| `restrictedFields` | `any[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="addresses full type">
+
+```ts
+{
+  country?: string | null,
+  extendedAddress?: string | null,
+  id?: string | null,
+  locality?: string | null,
+  poBox?: string | null,
+  postalCode?: string | null,
+  region?: string | null,
+  streetAddress?: string | null,
+  type?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="mfa full type">
+
+```ts
+{
+  configured?: boolean | null,
+  exclusion?: boolean | null,
+  exclusionUntil?: string | null,
+  exclusionDays?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="mfaEnrollment full type">
+
+```ts
+{
+  totpStatus?: any | null,
+  webAuthnStatus?: any | null,
+  pushStatus?: any | null,
+  smsStatus?: any | null,
+  overallStatus?: any | null,
+  jcGoStatus?: any | null
+} | null
+```
+</Accordion>
+
+<Accordion title="phoneNumbers full type">
+
+```ts
+{
+  id?: string | null,
+  number?: string | null,
+  type?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="recoveryEmail full type">
+
+```ts
+{
+  address?: string | null,
+  verified?: boolean | null,
+  verifiedAt?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="relationships full type">
+
+```ts
+{
+  type?: string | null,
+  value?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`users.list`
+
+List JumpCloud system users with limit/skip pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.jumpcloud.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | The number of records to return at once. |
+| `skip` | `number` | No | The offset into the records to return. |
+| `sort` | `string` | No | The space separated fields used to sort the collection.<br />User-entered text fields such as lastname, firstname, and jobTitle are sorted ignoring case.<br />Email, status, and category fields use stored ordering.<br />Default sort is ascending, prefix with `-` to sort descending.<br /> |
+| `fields` | `string` | No | The space separated fields included in the returned records.<br />If omitted the default list of fields will be returned.<br /> |
+| `filter` | `string` | No | A filter to apply to the query. See the supported operators below. For more complex searches,<br />see the related `/search/<domain>` endpoints,<br />e.g. `/search/systems`.<br /><br />**Filter structure**: The filter syntax follows a consistent pattern of `<field>:<operator>:<value>` (e.g. `department:$eq:Finance`)<br /><br />* |
+| `search` | `string` | No | A nested object containing a `searchTerm` string or array of strings and a list of `fields` to search on. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `any[] \| null` | No | The list of system users. |
+| `totalCount` | `number \| null` | No | The total number of system users. |
+
+
+
+---
+
+### listSshKeys
+
+`users.listSshKeys`
+
+List SSH keys of a system user
+
+**Risk:** `read`
+
+```ts
+await corsair.jumpcloud.api.users.listSshKeys({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | id (path) |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id?: string | null,
+  create_date?: string | null,
+  name?: string | null,
+  public_key?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### resetMfa
+
+`users.resetMfa`
+
+Reset a system user's MFA (TOTP key) and start a new enrollment period
+
+**Risk:** `destructive`
+
+```ts
+await corsair.jumpcloud.api.users.resetMfa({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | id (path) |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  exclusion?: boolean,
+  exclusionUntil?: string,
+  exclusionDays?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `string`
+
+
+---
+
+### setPassword
+
+`users.setPassword`
+
+Force-set a system user's password, replacing the current one
+
+**Risk:** `destructive`
+
+```ts
+await corsair.jumpcloud.api.users.setPassword({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | id (path) |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  password?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `void`
+
+
+---
+
+### syncMfa
+
+`users.syncMfa`
+
+Sync system user MFA
+
+**Risk:** `write`
+
+```ts
+await corsair.jumpcloud.api.users.syncMfa({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | id (path) |
+
+
+
+**Output:** `string`
+
+
+---
+
+### unlock
+
+`users.unlock`
+
+Unlock a locked system user
+
+**Risk:** `write`
+
+```ts
+await corsair.jumpcloud.api.users.unlock({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | id (path) |
+
+
+
+**Output:** `string`
+
+
+---
+
+### update
+
+`users.update`
+
+Update a JumpCloud system user; setting state to ACTIVATED on a staged user emails them an activation link
+
+**Risk:** `destructive`
+
+```ts
+await corsair.jumpcloud.api.users.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | id (path) |
+| `fullValidationDetails` | `string` | No | This endpoint can take in a query when a client wants all validation errors to be returned with error response for the form field specified, i.e. 'password'<br />#### Password validation flag<br />Use the "password" validation flag to receive details on a possible bad request response<br />Without the `password` f |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  account_locked?: boolean,
+  addresses?: {
+    country?: string,
+    extendedAddress?: string,
+    locality?: string,
+    poBox?: string,
+    postalCode?: string,
+    region?: string,
+    streetAddress?: string,
+    type?: string
+  }[],
+  allow_public_key?: boolean,
+  alternateEmail?: string,
+  attributes?: {
+    name?: string,
+    value?: string
+  }[],
+  company?: string,
+  costCenter?: string,
+  department?: string,
+  description?: string,
+  disableDeviceMaxLoginAttempts?: boolean,
+  displayname?: string,
+  email?: string,
+  employeeIdentifier?: string,
+  employeeType?: string,
+  enable_managed_uid?: boolean,
+  enable_user_portal_multifactor?: boolean,
+  external_dn?: string,
+  external_password_expiration_date?: string,
+  external_source_type?: string,
+  externally_managed?: boolean,
+  firstname?: string,
+  jobTitle?: string,
+  lastname?: string,
+  ldap_binding_user?: boolean,
+  location?: string,
+  manager?: string,
+  mfa?: {
+    configured?: boolean,
+    exclusion?: boolean,
+    exclusionUntil?: string,
+    exclusionDays?: number
+  },
+  middlename?: string,
+  password?: string,
+  password_never_expires?: boolean,
+  phoneNumbers?: {
+    number?: string,
+    type?: string
+  }[],
+  public_key?: string,
+  relationships?: {
+    type?: string,
+    value?: string
+  }[],
+  samba_service_user?: boolean,
+  ssh_keys?: any[],
+  state?: ACTIVATED | SUSPENDED,
+  sudo?: boolean,
+  suspended?: boolean,
+  tags?: string[],
+  unix_guid?: number,
+  unix_uid?: number,
+  username?: string,
+  managedAppleId?: string,
+  delegatedAuthority?: any,
+  restrictedFields?: any[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string \| null` | No | — |
+| `account_locked` | `boolean \| null` | No | — |
+| `account_locked_date` | `any \| null` | No | — |
+| `activated` | `boolean \| null` | No | — |
+| `admin` | `any \| null` | No | — |
+| `addresses` | `object[] \| null` | No | — |
+| `allow_public_key` | `boolean \| null` | No | — |
+| `alternateEmail` | `string \| null` | No | — |
+| `attributes` | `any[] \| null` | No | — |
+| `badLoginAttempts` | `number \| null` | No | — |
+| `company` | `string \| null` | No | — |
+| `costCenter` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `department` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `disableDeviceMaxLoginAttempts` | `boolean \| null` | No | — |
+| `displayname` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `employeeIdentifier` | `string \| null` | No | Must be unique per user.  |
+| `employeeType` | `string \| null` | No | — |
+| `enable_managed_uid` | `boolean \| null` | No | — |
+| `enable_user_portal_multifactor` | `boolean \| null` | No | — |
+| `external_dn` | `string \| null` | No | — |
+| `external_password_expiration_date` | `string \| null` | No | — |
+| `external_source_type` | `string \| null` | No | — |
+| `externally_managed` | `boolean \| null` | No | The externally_managed property has been deprecated. Whenever a user has their externally_managed field modified their restrictedFields property gets populated with the appropriate value, even if it is already set to a value an administrator manually set. |
+| `firstname` | `string \| null` | No | — |
+| `jobTitle` | `string \| null` | No | — |
+| `lastname` | `string \| null` | No | — |
+| `ldap_binding_user` | `boolean \| null` | No | — |
+| `location` | `string \| null` | No | — |
+| `manager` | `string \| null` | No | Relation with another systemuser to identify the last as a manager. |
+| `mfa` | `object \| null` | No | — |
+| `mfaEnrollment` | `object \| null` | No | — |
+| `middlename` | `string \| null` | No | — |
+| `organization` | `string \| null` | No | — |
+| `password_date` | `any \| null` | No | — |
+| `password_expiration_date` | `any \| null` | No | — |
+| `password_expired` | `boolean \| null` | No | — |
+| `password_never_expires` | `boolean \| null` | No | — |
+| `passwordless_sudo` | `boolean \| null` | No | — |
+| `phoneNumbers` | `object[] \| null` | No | — |
+| `public_key` | `string \| null` | No | — |
+| `recoveryEmail` | `object \| null` | No | — |
+| `relationships` | `object[] \| null` | No | — |
+| `samba_service_user` | `boolean \| null` | No | — |
+| `ssh_keys` | `any[] \| null` | No | — |
+| `state` | `STAGED \| ACTIVATED \| SUSPENDED \| string \| null` | No | — |
+| `sudo` | `boolean \| null` | No | — |
+| `suspended` | `boolean \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `totp_enabled` | `boolean \| null` | No | — |
+| `unix_guid` | `number \| null` | No | — |
+| `unix_uid` | `number \| null` | No | — |
+| `username` | `string \| null` | No | — |
+| `managedAppleId` | `string \| null` | No | — |
+| `creationSource` | `string \| null` | No | — |
+| `delegatedAuthority` | `any \| null` | No | Used by auth to determine password delegation authority |
+| `restrictedFields` | `any[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="addresses full type">
+
+```ts
+{
+  country?: string | null,
+  extendedAddress?: string | null,
+  id?: string | null,
+  locality?: string | null,
+  poBox?: string | null,
+  postalCode?: string | null,
+  region?: string | null,
+  streetAddress?: string | null,
+  type?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="mfa full type">
+
+```ts
+{
+  configured?: boolean | null,
+  exclusion?: boolean | null,
+  exclusionUntil?: string | null,
+  exclusionDays?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="mfaEnrollment full type">
+
+```ts
+{
+  totpStatus?: any | null,
+  webAuthnStatus?: any | null,
+  pushStatus?: any | null,
+  smsStatus?: any | null,
+  overallStatus?: any | null,
+  jcGoStatus?: any | null
+} | null
+```
+</Accordion>
+
+<Accordion title="phoneNumbers full type">
+
+```ts
+{
+  id?: string | null,
+  number?: string | null,
+  type?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="recoveryEmail full type">
+
+```ts
+{
+  address?: string | null,
+  verified?: boolean | null,
+  verifiedAt?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="relationships full type">
+
+```ts
+{
+  type?: string | null,
+  value?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

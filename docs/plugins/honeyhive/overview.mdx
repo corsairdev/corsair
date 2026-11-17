@@ -9,11 +9,11 @@ Use **HoneyHive** through Corsair: one client, typed API calls.
 HoneyHive provides AI agent observability and evaluation across development and production:
 
 - **Authentication**: HoneyHive routes accept different key types, so the connection holds up to three keys, each sent as `Authorization: Bearer <key>`:
-  - `api_key`: a classic project API key (`hh_...`, Settings > Project > API Keys > Project). Used by sessions, event ingestion and updates, metrics, configurations and the legacy (non-project-scoped) dataset, run and event routes.
+  - `api_key`: a classic project API key (`hh_...`, Settings &gt; Project &gt; API Keys &gt; Project). Used by sessions, event ingestion and updates, metrics, configurations and the legacy (non-project-scoped) dataset, run and event routes.
   - `data_plane_api_key` (account field, optional): a data plane fine-grained key (`hh_fgdp_...`). Required by the project-scoped operations that take a `project_id` (`datasets.list`, `experiments.getRun`, `events.search` and the rest); HoneyHive rejects a classic key there.
-  - `control_plane_api_key` (account field, optional): a control plane fine-grained key (`hh_fgcp_...`, Settings > Workspace > API Keys > Control Plane). Required by `projects.*`, which run on `https://api.cp.us.honeyhive.ai`.
+  - `control_plane_api_key` (account field, optional): a control plane fine-grained key (`hh_fgcp_...`, Settings &gt; Workspace &gt; API Keys &gt; Control Plane). Required by `projects.*`, which run on `https://api.cp.us.honeyhive.ai`.
   - A connection with only fine-grained keys works for the operations those keys cover; operations that need the classic key raise `AuthMissingError` instead of sending a fine-grained key.
-- **Dedicated or self-hosted data plane**: set the `base_url` account field to your project's Data plane URL (default `https://api.dp1.us.honeyhive.ai`, shown under Settings > Project > API Keys).
+- **Dedicated or self-hosted data plane**: set the `base_url` account field to your project's Data plane URL (default `https://api.dp1.us.honeyhive.ai`, shown under Settings &gt; Project &gt; API Keys).
 - **Tracing & Sessions**: Group multi-step agent and tool spans into sessions with `sessions.create` and stream event batches with `sessions.createEventBatch` or `events.createBatch`.
 - **Datasets & Experiments**: Curate evaluation datasets and run automated test suites across prompts, configurations, and models.
 - **Evaluators & Metrics**: Define custom metrics, deploy metric version snapshots, and run automated evaluations against trace events.
