@@ -1,0 +1,562 @@
+---
+title: "Jungle Scout API reference"
+sidebarTitle: "API"
+description: "API reference for the Jungle Scout plugin in Corsair: every `junglescout.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Keywords
+
+### byAsin
+
+`keywords.byAsin`
+
+Query keywords and rankings for up to 10 Amazon ASINs
+
+**Risk:** `read`
+
+```ts
+await corsair.junglescout.api.keywords.byAsin({ marketplace: 'us', asins: ['B08RT1NF23', 'B002UXRXE6'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `marketplace` | `us \| uk \| de \| in \| ca \| fr \| it \| es \| mx \| jp` | Yes | — |
+| `asins` | `string[]` | Yes | — |
+| `sort` | `name \| -name \| dominant_category \| -dominant_category \| monthly_trend \| -monthly_trend \| quarterly_trend \| -quarterly_trend \| monthly_search_volume_exact \| -monthly_search_volume_exact \| monthly_search_volume_broad \| -monthly_search_volume_broad \| recommended_promotions \| -recommended_promotions \| sp_brand_ad_bid \| -sp_brand_ad_bid \| ppc_bid_broad \| -ppc_bid_broad \| ppc_bid_exact \| -ppc_bid_exact \| ease_of_ranking_score \| -ease_of_ranking_score \| relevancy_score \| -relevancy_score \| organic_product_count \| -organic_product_count` | No | — |
+| `page_size` | `number` | No | — |
+| `page_cursor` | `string` | No | — |
+| `include_variants` | `boolean` | No | — |
+| `min_monthly_search_volume_exact` | `number` | No | — |
+| `max_monthly_search_volume_exact` | `number` | No | — |
+| `min_monthly_search_volume_broad` | `number` | No | — |
+| `max_monthly_search_volume_broad` | `number` | No | — |
+| `min_word_count` | `number` | No | — |
+| `max_word_count` | `number` | No | — |
+| `min_organic_product_count` | `number` | No | — |
+| `max_organic_product_count` | `number` | No | — |
+
+Query up to 10 ASINs per request. Returns exact and broad search volume, PPC bids, and competitor ranking data.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object \| null` | No | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  attributes: {
+    country?: string | null,
+    name?: string | null,
+    primary_asin?: string | null,
+    monthly_trend?: number | null,
+    monthly_search_volume_exact?: number | null,
+    quarterly_trend?: number | null,
+    monthly_search_volume_broad?: number | null,
+    dominant_category?: string | null,
+    recommended_promotions?: number | null,
+    updated_at?: string | null,
+    sp_brand_ad_bid?: number | null,
+    ppc_bid_broad?: number | null,
+    ppc_bid_exact?: number | null,
+    ease_of_ranking_score?: number | null,
+    relevancy_score?: number | null,
+    organic_product_count?: number | null,
+    sponsored_product_count?: number | null,
+    organic_rank?: number | null,
+    sponsored_rank?: number | null,
+    overall_rank?: number | null,
+    organic_ranking_asins_count?: number | null,
+    sponsored_ranking_asins_count?: number | null,
+    avg_competitor_organic_rank?: number | null,
+    avg_competitor_sponsored_rank?: number | null,
+    relative_organic_position?: number | null,
+    relative_sponsored_position?: number | null,
+    competitor_organic_rank?: {
+      asin?: string | null,
+      organic_rank?: number | null
+    }[] | null,
+    competitor_sponsored_rank?: {
+      asin?: string | null,
+      sponsored_rank?: number | null
+    }[] | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_items?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### byKeyword
+
+`keywords.byKeyword`
+
+Discover keyword search volumes and relevancy metrics for search terms
+
+**Risk:** `read`
+
+```ts
+await corsair.junglescout.api.keywords.byKeyword({ marketplace: 'us', search_terms: ['wireless earbuds'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `marketplace` | `us \| uk \| de \| in \| ca \| fr \| it \| es \| mx \| jp` | Yes | — |
+| `search_terms` | `string[]` | Yes | — |
+| `categories` | `string[] \| null` | No | — |
+| `sort` | `name \| -name \| dominant_category \| -dominant_category \| monthly_trend \| -monthly_trend \| quarterly_trend \| -quarterly_trend \| monthly_search_volume_exact \| -monthly_search_volume_exact \| monthly_search_volume_broad \| -monthly_search_volume_broad \| recommended_promotions \| -recommended_promotions \| sp_brand_ad_bid \| -sp_brand_ad_bid \| ppc_bid_broad \| -ppc_bid_broad \| ppc_bid_exact \| -ppc_bid_exact \| ease_of_ranking_score \| -ease_of_ranking_score \| relevancy_score \| -relevancy_score \| organic_product_count \| -organic_product_count` | No | — |
+| `page_size` | `number` | No | — |
+| `page_cursor` | `string` | No | — |
+| `min_monthly_search_volume_exact` | `number` | No | — |
+| `max_monthly_search_volume_exact` | `number` | No | — |
+| `min_monthly_search_volume_broad` | `number` | No | — |
+| `max_monthly_search_volume_broad` | `number` | No | — |
+| `min_word_count` | `number` | No | — |
+| `max_word_count` | `number` | No | — |
+| `min_organic_product_count` | `number` | No | — |
+| `max_organic_product_count` | `number` | No | — |
+
+Pass one or more search phrases in search_terms. Dominant category names vary by marketplace.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object \| null` | No | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  attributes: {
+    country?: string | null,
+    name?: string | null,
+    monthly_trend?: number | null,
+    monthly_search_volume_exact?: number | null,
+    quarterly_trend?: number | null,
+    monthly_search_volume_broad?: number | null,
+    dominant_category?: string | null,
+    recommended_promotions?: number | null,
+    sp_brand_ad_bid?: number | null,
+    ppc_bid_broad?: number | null,
+    ppc_bid_exact?: number | null,
+    relevancy_score?: number | null,
+    organic_product_count?: number | null,
+    sponsored_product_count?: number | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_items?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### historicalSearchVolume
+
+`keywords.historicalSearchVolume`
+
+Retrieve weekly historical search volume trends for a keyword
+
+**Risk:** `read`
+
+```ts
+await corsair.junglescout.api.keywords.historicalSearchVolume({ marketplace: 'us', keyword: 'yoga mat', start_date: '2024-01-01', end_date: '2024-06-01' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `marketplace` | `us \| uk \| de \| in \| ca \| fr \| it \| es \| mx \| jp` | Yes | — |
+| `keyword` | `string` | Yes | — |
+| `start_date` | `string` | Yes | — |
+| `end_date` | `string` | Yes | — |
+
+Date ranges must use YYYY-MM-DD format with start date prior to end date.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  attributes: {
+    estimate_start_date?: string | null,
+    estimate_end_date?: string | null,
+    estimated_exact_search_volume?: number | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Product Database
+
+### query
+
+`productDatabase.query`
+
+Search Amazon product catalog with sales, revenue, rank, and review filters
+
+**Risk:** `read`
+
+```ts
+await corsair.junglescout.api.productDatabase.query({ marketplace: 'us', include_keywords: ['stainless steel water bottle'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `marketplace` | `us \| uk \| de \| in \| ca \| fr \| it \| es \| mx \| jp` | Yes | — |
+| `sort` | `name \| -name \| category \| -category \| revenue \| -revenue \| sales \| -sales \| price \| -price \| rank \| -rank \| reviews \| -reviews \| lqs \| -lqs \| sellers \| -sellers` | No | — |
+| `page_size` | `number` | No | — |
+| `page_cursor` | `string` | No | — |
+| `include_keywords` | `string[]` | No | — |
+| `exclude_keywords` | `string[]` | No | — |
+| `categories` | `string[] \| null` | No | — |
+| `product_tiers` | `(standard \| oversize)[]` | No | — |
+| `seller_types` | `(amz \| fba \| fbm)[]` | No | — |
+| `exclude_top_brands` | `boolean` | No | — |
+| `exclude_unavailable_products` | `boolean` | No | — |
+| `min_price` | `number` | No | — |
+| `max_price` | `number` | No | — |
+| `min_net` | `number` | No | — |
+| `max_net` | `number` | No | — |
+| `min_rank` | `number` | No | — |
+| `max_rank` | `number` | No | — |
+| `min_sales` | `number` | No | — |
+| `max_sales` | `number` | No | — |
+| `min_revenue` | `number` | No | — |
+| `max_revenue` | `number` | No | — |
+| `min_reviews` | `number` | No | — |
+| `max_reviews` | `number` | No | — |
+| `min_rating` | `number` | No | — |
+| `max_rating` | `number` | No | — |
+| `min_weight` | `number` | No | — |
+| `max_weight` | `number` | No | — |
+| `min_sellers` | `number` | No | — |
+| `max_sellers` | `number` | No | — |
+| `min_lqs` | `number` | No | — |
+| `max_lqs` | `number` | No | — |
+| `min_updated_at` | `string` | No | — |
+| `max_updated_at` | `string` | No | — |
+
+Supports filtering by price, rank, sales, reviews, ratings, seller types (amz/fba/fbm), and product tiers. include_keywords and exclude_keywords allow up to 100 values of at most 50 characters each.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object \| null` | No | — |
+| `meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  attributes: {
+    title?: string | null,
+    price?: number | null,
+    reviews?: number | null,
+    category?: string | null,
+    rating?: number | null,
+    image_url?: string | null,
+    parent_asin?: string | null,
+    is_variant?: boolean | null,
+    seller_type?: string | null,
+    breadcrumb_path?: string | null,
+    is_standalone?: boolean | null,
+    is_parent?: boolean | null,
+    is_available?: boolean | null,
+    brand?: string | null,
+    product_rank?: number | null,
+    weight_value?: number | null,
+    weight_unit?: string | null,
+    length_value?: number | null,
+    width_value?: number | null,
+    height_value?: number | null,
+    dimensions_unit?: string | null,
+    listing_quality_score?: number | null,
+    number_of_sellers?: number | null,
+    buy_box_owner?: string | null,
+    buy_box_owner_seller_id?: string | null,
+    date_first_available?: string | null,
+    date_first_available_is_estimated?: boolean | null,
+    approximate_30_day_revenue?: number | null,
+    approximate_30_day_units_sold?: number | null,
+    subcategory_ranks?: {
+      subcategory?: string | null,
+      rank?: number | null,
+      id?: string | null
+    }[] | null,
+    fee_breakdown?: {
+      fba_fee?: number | null,
+      referral_fee?: number | null,
+      variable_closing_fee?: number | null,
+      total_fees?: number | null
+    } | null,
+    ean_list?: string[] | null,
+    isbn_list?: string[] | null,
+    upc_list?: string[] | null,
+    gtin_list?: string[] | null,
+    variant_reviews?: number | null,
+    updated_at?: string | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_items?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sales Estimates
+
+### query
+
+`salesEstimates.query`
+
+Retrieve daily historical sales estimates and pricing for an ASIN
+
+**Risk:** `read`
+
+```ts
+await corsair.junglescout.api.salesEstimates.query({ marketplace: 'us', asin: 'B08JYQLKXZ', start_date: '2024-01-01', end_date: '2024-01-15' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `marketplace` | `us \| uk \| de \| in \| ca \| fr \| it \| es \| mx \| jp` | Yes | — |
+| `asin` | `string` | Yes | — |
+| `start_date` | `string` | Yes | — |
+| `end_date` | `string` | Yes | — |
+
+End date must precede the current UTC date. Returns daily sales estimates and pricing trends.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  attributes: {
+    asin?: string | null,
+    is_parent?: boolean | null,
+    is_variant?: boolean | null,
+    is_standalone?: boolean | null,
+    parent_asin?: string | null,
+    variants?: string[] | null,
+    data: {
+      date?: string | null,
+      estimated_units_sold?: number | null,
+      last_known_price?: number | null
+    }[]
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Share Of Voice
+
+### get
+
+`shareOfVoice.get`
+
+Retrieve brand market share and visibility metrics for a search term
+
+**Risk:** `read`
+
+```ts
+await corsair.junglescout.api.shareOfVoice.get({ marketplace: 'us', keyword: 'coffee maker' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `marketplace` | `us \| uk \| de \| in \| ca \| fr \| it \| es \| mx \| jp` | Yes | — |
+| `keyword` | `string` | Yes | — |
+
+Returns organic, sponsored, and combined brand market share and top 3 ASIN click/conversion analytics.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  attributes: {
+    estimated_30_day_search_volume?: number | null,
+    exact_suggested_bid_median?: number | null,
+    product_count?: number | null,
+    updated_at?: string | null,
+    top_asins_model_start_date?: string | null,
+    top_asins_model_end_date?: string | null,
+    brands?: {
+      brand?: string | null,
+      combined_products?: number | null,
+      combined_weighted_sov?: number | null,
+      combined_basic_sov?: number | null,
+      combined_average_position?: number | null,
+      combined_average_price?: number | null,
+      organic_products?: number | null,
+      organic_weighted_sov?: number | null,
+      organic_basic_sov?: number | null,
+      organic_average_position?: number | null,
+      organic_average_price?: number | null,
+      sponsored_products?: number | null,
+      sponsored_weighted_sov?: number | null,
+      sponsored_basic_sov?: number | null,
+      sponsored_average_position?: number | null,
+      sponsored_average_price?: number | null
+    }[] | null,
+    top_asins?: {
+      asin?: string | null,
+      name?: string | null,
+      brand?: string | null,
+      clicks?: number | null,
+      conversions?: number | null,
+      conversion_rate?: number | null
+    }[] | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

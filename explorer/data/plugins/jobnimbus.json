@@ -1,0 +1,5105 @@
+{
+  "id": "jobnimbus",
+  "displayName": "JobNimbus",
+  "description": "Cloud-based CRM and job management software for contractors — manage contacts, jobs, work orders, estimates, invoices, material orders, payments, tasks, and files.",
+  "npmPackageName": "@corsair-dev/jobnimbus",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 67,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "jobnimbus.api.account.createActivityType",
+      "shortPath": "account.createActivityType",
+      "description": "Create an activity type in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "TypeName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "IsActive",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "HideFromCalendarView",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "HideFromTaskList",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "DefaultName",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ActivityTypeId",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "TypeName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IsActive",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.account.createCustomField",
+      "shortPath": "account.createCustomField",
+      "description": "Create a custom field in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object_type",
+            "optional": false,
+            "type": "contact | job | workorder"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "date | double | long | string | boolean | dropdown"
+          },
+          {
+            "key": "is_required",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_currency",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "object_type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.account.createFileType",
+      "shortPath": "account.createFileType",
+      "description": "Create a file attachment type in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "TypeName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "IsActive",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "FileTypeId",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "TypeName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IsActive",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.account.createLeadSource",
+      "shortPath": "account.createLeadSource",
+      "description": "Create a lead source in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "SourceName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "IsActive",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "JobSourceId",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "SourceName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IsActive",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.account.createLocation",
+      "shortPath": "account.createLocation",
+      "description": "Create a company location in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "address_line1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_line2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.account.createTaskType",
+      "shortPath": "account.createTaskType",
+      "description": "Create a task type in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "TypeName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "IsActive",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "HideFromCalendarView",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "HideFromTaskList",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "DefaultName",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "TaskTypeId",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "TypeName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IsActive",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.account.createWorkflow",
+      "shortPath": "account.createWorkflow",
+      "description": "Create a workflow in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object_type",
+            "optional": false,
+            "type": "contact | job | workorder"
+          },
+          {
+            "key": "is_sub_contractor",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "can_access_by_all",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_vendor",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_supplier",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "object_type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.account.createWorkflowStatus",
+      "shortPath": "account.createWorkflowStatus",
+      "description": "Create a status within a workflow in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "is_lead",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_closed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "send_to_quickbooks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "force_mobile_sync",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.account.getGroups",
+      "shortPath": "account.getGroups",
+      "description": "Retrieve group configuration in JobNimbus",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ name?: string, managers?: string[], members?: string[] }[]"
+      }
+    },
+    {
+      "path": "jobnimbus.api.account.getSettings",
+      "shortPath": "account.getSettings",
+      "description": "Retrieve account settings configuration in JobNimbus",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "field",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ workflows?: any[], fileTypes?: any[], taskTypes?: any[], activityTypes?: any[], sources?: any[] } | any[]"
+      }
+    },
+    {
+      "path": "jobnimbus.api.account.getUoms",
+      "shortPath": "account.getUoms",
+      "description": "Retrieve units of measurement in JobNimbus",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string[]"
+      }
+    },
+    {
+      "path": "jobnimbus.api.account.getUsers",
+      "shortPath": "account.getUsers",
+      "description": "Retrieve users and team members in JobNimbus",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": true,
+            "type": "{ id?: string, first_name?: string, last_name?: string, email?: string, calendar_color?: string, is_active?: boolean }[]"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.activities.create",
+      "shortPath": "activities.create",
+      "description": "Create a new activity note in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "note",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "record_type_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "primary",
+            "optional": true,
+            "type": "{ id: string, type?: string, name?: string, number?: string }"
+          },
+          {
+            "key": "related",
+            "optional": true,
+            "type": "{ id: string, type?: string, name?: string, number?: string, email?: string | null }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "record_type_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_by_name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.activities.get",
+      "shortPath": "activities.get",
+      "description": "Retrieve an activity by ID in JobNimbus",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "record_type_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_by_name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.activities.list",
+      "shortPath": "activities.list",
+      "description": "Retrieve all activities in JobNimbus",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "actor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ jnid?: string, note?: string, record_type_name?: string | null, date_created?: number, date_updated?: number, created_by?: string, created_by_name?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.budgets.list",
+      "shortPath": "budgets.list",
+      "description": "Retrieve all budgets in JobNimbus",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "actor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ jnid?: string, type?: string, date_created?: number, date_updated?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a new contact in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "record_type_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "home_phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobile_phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "work_phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fax_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_line1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_line2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sales_rep",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "geo",
+            "optional": true,
+            "type": "{ lat?: number, lon?: number }"
+          },
+          {
+            "key": "owners",
+            "optional": true,
+            "type": "{ id: string }[]"
+          },
+          {
+            "key": "related",
+            "optional": true,
+            "type": "{ id: string, type?: string, name?: string, number?: string, email?: string | null }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "record_type_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "home_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mobile_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "work_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fax_number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address_line1",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address_line2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state_text",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Delete (deactivate) a contact in JobNimbus",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "record_type_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "home_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mobile_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "work_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fax_number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address_line1",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address_line2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state_text",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Retrieve a contact by ID in JobNimbus",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "record_type_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "home_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mobile_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "work_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fax_number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address_line1",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address_line2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state_text",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "Retrieve all contacts in JobNimbus",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "actor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ jnid?: string, first_name?: string | null, last_name?: string | null, display_name?: string | null, company_name?: string | null, record_type_name?: string | null, status_name?: string | null, email?: string | null, home_phone?: string | null, mobile_phone?: string | null, work_phone?: string | null, fax_number?: string | null, address_line1?: string | null, address_line2?: string | null, city?: string | null, state_text?: string | null, zip?: string | null, country_name?: string | null, is_active?: boolean, date_created?: number, date_updated?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update an existing contact in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "record_type_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "home_phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobile_phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "work_phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fax_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_line1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_line2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sales_rep",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "geo",
+            "optional": true,
+            "type": "{ lat?: number, lon?: number }"
+          },
+          {
+            "key": "owners",
+            "optional": true,
+            "type": "{ id: string }[]"
+          },
+          {
+            "key": "related",
+            "optional": true,
+            "type": "{ id: string, type?: string, name?: string, number?: string, email?: string | null }[]"
+          },
+          {
+            "key": "jnid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "record_type_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "home_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mobile_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "work_phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fax_number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address_line1",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address_line2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state_text",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.estimates.create",
+      "shortPath": "estimates.create",
+      "description": "Create a new estimate in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_estimate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "internal_note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "related",
+            "optional": true,
+            "type": "{ id: string, type?: string, name?: string, number?: string, email?: string | null }[]"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_estimate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.estimates.delete",
+      "shortPath": "estimates.delete",
+      "description": "Delete (deactivate) an estimate in JobNimbus",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_estimate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.estimates.get",
+      "shortPath": "estimates.get",
+      "description": "Retrieve an estimate by ID in JobNimbus",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_estimate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.estimates.list",
+      "shortPath": "estimates.list",
+      "description": "Retrieve all estimates in JobNimbus",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "actor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ type?: string, jnid?: string, number?: string | null, status?: number, is_active?: boolean, date_estimate?: number, date_created?: number, date_updated?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.estimates.update",
+      "shortPath": "estimates.update",
+      "description": "Update an existing estimate in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_estimate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "internal_note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "related",
+            "optional": true,
+            "type": "{ id: string, type?: string, name?: string, number?: string, email?: string | null }[]"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "jnid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_estimate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.files.abortMultipartUpload",
+      "shortPath": "files.abortMultipartUpload",
+      "description": "Abort a multipart file upload in JobNimbus",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "uploadId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.files.completeMultipartUpload",
+      "shortPath": "files.completeMultipartUpload",
+      "description": "Complete a multipart file upload in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "uploadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parts",
+            "optional": false,
+            "type": "{ partNumber: number, etag: string }[]"
+          },
+          {
+            "key": "generateThumbnail",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ jnid?: string, thumbnailUrl?: string }"
+          },
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "thumbnailUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.files.completeSinglePartUpload",
+      "shortPath": "files.completeSinglePartUpload",
+      "description": "Complete a single part file upload in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "generateThumbnail",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ jnid?: string, thumbnailUrl?: string }"
+          },
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "thumbnailUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.files.create",
+      "shortPath": "files.create",
+      "description": "Create a file attachment with base64 data in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "subtype",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "related",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "is_private",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "persist",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ jnid?: string, filename?: string, content_type?: string | null, size?: number, type?: string | null, record_type?: number, record_type_name?: string | null, description?: string | null, is_private?: boolean, is_active?: boolean, date_created?: number, date_updated?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.files.createFromUrl",
+      "shortPath": "files.createFromUrl",
+      "description": "Create a file attachment from a URL in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "related",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.files.get",
+      "shortPath": "files.get",
+      "description": "Retrieve a file attachment by ID in JobNimbus",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "record_type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "record_type_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_private",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.files.list",
+      "shortPath": "files.list",
+      "description": "Retrieve list of file attachments in JobNimbus",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "actor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ jnid?: string, filename?: string, content_type?: string | null, size?: number, type?: string | null, record_type?: number, record_type_name?: string | null, description?: string | null, is_private?: boolean, is_active?: boolean, date_created?: number, date_updated?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.files.requestMultipartUpload",
+      "shortPath": "files.requestMultipartUpload",
+      "description": "Request presigned URLs for multipart file upload in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "partCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "fileSize",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "isPrivate",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "related",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ presignedUrl?: string, jnid?: string, presignedUrls?: string[], uploadId?: string }"
+          },
+          {
+            "key": "presignedUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.files.requestSinglePartUpload",
+      "shortPath": "files.requestSinglePartUpload",
+      "description": "Request a presigned URL for single part file upload in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "related",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "isPrivate",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ presignedUrl?: string, jnid?: string, presignedUrls?: string[], uploadId?: string }"
+          },
+          {
+            "key": "presignedUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.invoices.create",
+      "shortPath": "invoices.create",
+      "description": "Create a new invoice in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_invoice",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_due",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "internal_note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "related",
+            "optional": true,
+            "type": "{ id: string, type?: string, name?: string, number?: string, email?: string | null }[]"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_invoice",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_due",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.invoices.delete",
+      "shortPath": "invoices.delete",
+      "description": "Delete (deactivate) an invoice in JobNimbus",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_invoice",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_due",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.invoices.get",
+      "shortPath": "invoices.get",
+      "description": "Retrieve an invoice by ID in JobNimbus",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_invoice",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_due",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.invoices.list",
+      "shortPath": "invoices.list",
+      "description": "Retrieve all invoices in JobNimbus",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "actor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ type?: string, jnid?: string, number?: string | null, status?: number, is_active?: boolean, date_invoice?: number, date_due?: number, date_created?: number, date_updated?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.invoices.update",
+      "shortPath": "invoices.update",
+      "description": "Update an existing invoice in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_invoice",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_due",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "internal_note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "related",
+            "optional": true,
+            "type": "{ id: string, type?: string, name?: string, number?: string, email?: string | null }[]"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "jnid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_invoice",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_due",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.jobs.create",
+      "shortPath": "jobs.create",
+      "description": "Create a new job in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "record_type_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_line1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_line2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sales_rep",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "geo",
+            "optional": true,
+            "type": "{ lat?: number, lon?: number }"
+          },
+          {
+            "key": "primary",
+            "optional": true,
+            "type": "{ id: string, type?: string, name?: string, number?: string }"
+          },
+          {
+            "key": "owners",
+            "optional": true,
+            "type": "{ id: string }[]"
+          },
+          {
+            "key": "related",
+            "optional": true,
+            "type": "{ id: string, type?: string, name?: string, number?: string, email?: string | null }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "record_type_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.jobs.delete",
+      "shortPath": "jobs.delete",
+      "description": "Delete (deactivate) a job in JobNimbus",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "record_type_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.jobs.get",
+      "shortPath": "jobs.get",
+      "description": "Retrieve a job by ID in JobNimbus",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "record_type_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.jobs.list",
+      "shortPath": "jobs.list",
+      "description": "Retrieve all jobs in JobNimbus",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "actor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ jnid?: string, name?: string, record_type_name?: string | null, status_name?: string | null, number?: string | null, description?: string | null, is_active?: boolean, date_created?: number, date_updated?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.jobs.update",
+      "shortPath": "jobs.update",
+      "description": "Update an existing job in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "record_type_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_line1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_line2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sales_rep",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "geo",
+            "optional": true,
+            "type": "{ lat?: number, lon?: number }"
+          },
+          {
+            "key": "primary",
+            "optional": true,
+            "type": "{ id: string, type?: string, name?: string, number?: string }"
+          },
+          {
+            "key": "owners",
+            "optional": true,
+            "type": "{ id: string }[]"
+          },
+          {
+            "key": "related",
+            "optional": true,
+            "type": "{ id: string, type?: string, name?: string, number?: string, email?: string | null }[]"
+          },
+          {
+            "key": "jnid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "record_type_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.materialOrders.create",
+      "shortPath": "materialOrders.create",
+      "description": "Create a new material order in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer_note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "internal_note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "esigned",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ category?: string, color?: string | null, cost?: number, description?: string, name?: string, quantity?: number, uom?: string }[]"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ address_line1?: string, address_line2?: string, city?: string, state_text?: string, zip?: string, geo?: { lat?: number, lon?: number } }"
+          },
+          {
+            "key": "related",
+            "optional": true,
+            "type": "{ id: string, type?: string, name?: string, number?: string, email?: string | null }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer_note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "internal_note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.materialOrders.delete",
+      "shortPath": "materialOrders.delete",
+      "description": "Delete (deactivate) a material order in JobNimbus",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer_note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "internal_note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.materialOrders.get",
+      "shortPath": "materialOrders.get",
+      "description": "Retrieve a material order by ID in JobNimbus",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer_note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "internal_note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.materialOrders.list",
+      "shortPath": "materialOrders.list",
+      "description": "Retrieve all material orders in JobNimbus",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "actor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ type?: string, jnid?: string, customer_note?: string | null, internal_note?: string | null, is_active?: boolean, date_created?: number, date_updated?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.materialOrders.update",
+      "shortPath": "materialOrders.update",
+      "description": "Update an existing material order in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer_note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "internal_note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "esigned",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ category?: string, color?: string | null, cost?: number, description?: string, name?: string, quantity?: number, uom?: string }[]"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ address_line1?: string, address_line2?: string, city?: string, state_text?: string, zip?: string, geo?: { lat?: number, lon?: number } }"
+          },
+          {
+            "key": "related",
+            "optional": true,
+            "type": "{ id: string, type?: string, name?: string, number?: string, email?: string | null }[]"
+          },
+          {
+            "key": "jnid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer_note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "internal_note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.payments.create",
+      "shortPath": "payments.create",
+      "description": "Create a payment in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date_payment",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "invoices",
+            "optional": true,
+            "type": "{ invoice_id: string, amount: number, invoice_no?: string, date_created?: number, created_by?: string, is_active?: boolean }[]"
+          },
+          {
+            "key": "estimates",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "primary",
+            "optional": true,
+            "type": "{ id: string, type?: string, name?: string, number?: string }"
+          },
+          {
+            "key": "owners",
+            "optional": true,
+            "type": "{ id: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "isSuccess",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Detail",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.payments.list",
+      "shortPath": "payments.list",
+      "description": "Retrieve all payments in JobNimbus",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "actor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ jnid?: string, customer?: string, total?: number, date_payment?: number, type?: string, is_active?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.products.create",
+      "shortPath": "products.create",
+      "description": "Create a new product in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "suppliers",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "location_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tax_exempt",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "item_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uoms",
+            "optional": true,
+            "type": "{ uom?: string, material?: Record<string, any>, labor?: Record<string, any> }[]"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tax_exempt",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "item_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.products.delete",
+      "shortPath": "products.delete",
+      "description": "Delete (deactivate) a product in JobNimbus",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tax_exempt",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "item_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.products.get",
+      "shortPath": "products.get",
+      "description": "Retrieve a product by ID in JobNimbus",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tax_exempt",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "item_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.products.list",
+      "shortPath": "products.list",
+      "description": "Retrieve all products in JobNimbus",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "actor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ type?: string, jnid?: string, name?: string, description?: string | null, is_active?: boolean, tax_exempt?: boolean, item_type?: string, location_id?: number, date_created?: number, date_updated?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.products.update",
+      "shortPath": "products.update",
+      "description": "Update an existing product in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "suppliers",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "location_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tax_exempt",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "item_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uoms",
+            "optional": true,
+            "type": "{ uom?: string, material?: Record<string, any>, labor?: Record<string, any> }[]"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jnid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tax_exempt",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "item_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.tasks.create",
+      "shortPath": "tasks.create",
+      "description": "Create a new task in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date_start",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "date_end",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "record_type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "record_type_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "primary",
+            "optional": true,
+            "type": "{ id: string, type?: string, name?: string, number?: string }"
+          },
+          {
+            "key": "related",
+            "optional": true,
+            "type": "{ id: string, type?: string, name?: string, number?: string, email?: string | null }[]"
+          },
+          {
+            "key": "assigned_to",
+            "optional": true,
+            "type": "{ id: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_end",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "record_type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "record_type_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.tasks.delete",
+      "shortPath": "tasks.delete",
+      "description": "Delete (deactivate) a task in JobNimbus",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_end",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "record_type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "record_type_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.tasks.get",
+      "shortPath": "tasks.get",
+      "description": "Retrieve a task by ID in JobNimbus",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_end",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "record_type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "record_type_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "Retrieve all tasks in JobNimbus",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "actor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ jnid?: string, title?: string, date_start?: number, date_end?: number, record_type?: number, record_type_name?: string | null, description?: string | null, is_completed?: boolean, is_active?: boolean, date_created?: number, date_updated?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.tasks.update",
+      "shortPath": "tasks.update",
+      "description": "Update an existing task in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_end",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "record_type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "record_type_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "primary",
+            "optional": true,
+            "type": "{ id: string, type?: string, name?: string, number?: string }"
+          },
+          {
+            "key": "related",
+            "optional": true,
+            "type": "{ id: string, type?: string, name?: string, number?: string, email?: string | null }[]"
+          },
+          {
+            "key": "assigned_to",
+            "optional": true,
+            "type": "{ id: string }[]"
+          },
+          {
+            "key": "jnid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_end",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "record_type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "record_type_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.workOrders.create",
+      "shortPath": "workOrders.create",
+      "description": "Create a new work order in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "class_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "class_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "supplier",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "internal_note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "related",
+            "optional": true,
+            "type": "{ id: string, type?: string, name?: string, number?: string, email?: string | null }[]"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.workOrders.delete",
+      "shortPath": "workOrders.delete",
+      "description": "Delete (deactivate) a work order in JobNimbus",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.workOrders.get",
+      "shortPath": "workOrders.get",
+      "description": "Retrieve a work order by ID in JobNimbus",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jnid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.workOrders.list",
+      "shortPath": "workOrders.list",
+      "description": "Retrieve all work orders in JobNimbus",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "actor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ type?: string, jnid?: string, customer?: string, is_active?: boolean, date_created?: number, date_updated?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jobnimbus.api.workOrders.update",
+      "shortPath": "workOrders.update",
+      "description": "Update an existing work order in JobNimbus",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "class_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "class_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "supplier",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "internal_note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "related",
+            "optional": true,
+            "type": "{ id: string, type?: string, name?: string, number?: string, email?: string | null }[]"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jnid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

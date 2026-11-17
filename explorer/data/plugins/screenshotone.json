@@ -1,0 +1,435 @@
+{
+  "id": "screenshotone",
+  "displayName": "ScreenshotOne",
+  "description": "Read ScreenshotOne usage and devices, and take a still, animated, or bulk screenshot.",
+  "npmPackageName": "@corsair-dev/screenshotone",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 5,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "screenshotone.api.devices.list",
+      "shortPath": "devices.list",
+      "description": "List device presets. User agent strings are not stored.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "devices",
+            "optional": false,
+            "type": "{ id: string, name?: string, width?: number, height?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "screenshotone.api.shots.animate",
+      "shortPath": "shots.animate",
+      "description": "Record a page as a video or GIF (default or scroll scenario). Returns a link to the file. Spends a request from the plan.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "viewport_width",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "viewport_height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "device_scale_factor",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "viewport_device",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "viewport_mobile",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "delay",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "wait_until",
+            "optional": true,
+            "type": "(load | domcontentloaded | networkidle0 | networkidle2)[]"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "block_ads",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "block_cookie_banners",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "block_trackers",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "block_chats",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dark_mode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "scenario",
+            "optional": true,
+            "type": "default | scroll"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "mp4 | mov | avi | webm | gif"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "screenshotUrl",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cacheUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "screenshotone.api.shots.bulk",
+      "shortPath": "shots.bulk",
+      "description": "Build up to 20 screenshot requests at once; with execute true they run now (one plan request each) and each url gets its status.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "execute",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ viewport_width?: number, viewport_height?: number, device_scale_factor?: number, viewport_device?: string, viewport_mobile?: boolean, delay?: number, wait_until?: (load | domcontentloaded | networkidle0 | networkidle2)[], timeout?: number, block_ads?: boolean, block_cookie_banners?: boolean, block_trackers?: boolean, block_chats?: boolean, dark_mode?: boolean, format?: png | jpeg | jpg | webp | gif | jp2 | tiff | avif | heif | pdf | html | markdown, full_page?: boolean, selector?: string, image_quality?: number, omit_background?: boolean, cache?: boolean, cache_ttl?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ url: string, isSuccessful?: boolean, status?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "screenshotone.api.shots.take",
+      "shortPath": "shots.take",
+      "description": "Screenshot a url, HTML or Markdown as an image or PDF, with viewport, device, full page, selector, blocking and caching options. Returns a link to the file. Spends a request from the plan.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "viewport_width",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "viewport_height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "device_scale_factor",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "viewport_device",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "viewport_mobile",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "delay",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "wait_until",
+            "optional": true,
+            "type": "(load | domcontentloaded | networkidle0 | networkidle2)[]"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "block_ads",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "block_cookie_banners",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "block_trackers",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "block_chats",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dark_mode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "png | jpeg | jpg | webp | gif | jp2 | tiff | avif | heif | pdf | html | markdown"
+          },
+          {
+            "key": "full_page",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "selector",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image_quality",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "omit_background",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cache",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cache_ttl",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "markdown",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "screenshotUrl",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cacheUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "screenshotone.api.usage.get",
+      "shortPath": "usage.get",
+      "description": "Read the current plan usage and request bucket.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "usage",
+            "optional": false,
+            "type": "{ id: string, total?: number, available?: number, used?: number, concurrencyLimit?: number, concurrencyRemaining?: number, concurrencyReset?: number }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "screenshotone.db.devices.search",
+      "entityName": "devices",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "width",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "height",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "screenshotone.db.usage.search",
+      "entityName": "usage",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "total",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "available",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "used",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "concurrencyLimit",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "concurrencyRemaining",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "concurrencyReset",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}

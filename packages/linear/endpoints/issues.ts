@@ -8,114 +8,76 @@ import type {
 	IssuesListResponse,
 	IssueUpdateResponse,
 } from './types';
+import { LinearEndpointInputSchemas } from './types';
 
-const ISSUES_LIST_QUERY = `
-  query Issues($teamId: ID!, $first: Int!, $after: String) {
-    issues(filter: { team: { id: { eq: $teamId } } }, first: $first, after: $after) {
-      nodes {
-        id
-        title
-        description
-        priority
-        estimate
-        sortOrder
-        number
-        identifier
-        url
-        state {
-          id
-          name
-          type
-          color
-          position
-        }
-        team {
-          id
-          name
-          key
-        }
-        assignee {
-          id
-          name
-          displayName
-          email
-          avatarUrl
-        }
-        creator {
-          id
-          name
-          displayName
-          email
-          avatarUrl
-        }
-        labels {
-          nodes {
-            id
-            name
-            color
-          }
-        }
-        createdAt
-        updatedAt
-      }
-      pageInfo {
-        hasNextPage
-        hasPreviousPage
-        startCursor
-        endCursor
-      }
+// Single selection for every query that upserts issues: upsertByEntityId replaces the
+// stored row, so a thinner query would drop fields another path stored.
+const ISSUE_FIELDS = `
+  id
+  title
+  description
+  priority
+  estimate
+  sortOrder
+  number
+  identifier
+  url
+  state {
+    id
+    name
+    type
+    color
+    position
+  }
+  team {
+    id
+    name
+    key
+  }
+  assignee {
+    id
+    name
+    displayName
+    email
+    avatarUrl
+  }
+  creator {
+    id
+    name
+    displayName
+    email
+    avatarUrl
+  }
+  project {
+    id
+    name
+    state
+  }
+  cycle {
+    id
+    number
+    name
+  }
+  labels {
+    nodes {
+      id
+      name
+      color
     }
   }
+  dueDate
+  startedAt
+  completedAt
+  canceledAt
+  createdAt
+  updatedAt
 `;
 
-const ISSUES_LIST_QUERY_NO_FILTER = `
-  query Issues($first: Int!, $after: String) {
-    issues(first: $first, after: $after) {
+const ISSUES_LIST_QUERY = `
+  query Issues($filter: IssueFilter, $orderBy: PaginationOrderBy, $first: Int!, $after: String) {
+    issues(filter: $filter, orderBy: $orderBy, first: $first, after: $after) {
       nodes {
-        id
-        title
-        description
-        priority
-        estimate
-        sortOrder
-        number
-        identifier
-        url
-        state {
-          id
-          name
-          type
-          color
-          position
-        }
-        team {
-          id
-          name
-          key
-        }
-        assignee {
-          id
-          name
-          displayName
-          email
-          avatarUrl
-        }
-        creator {
-          id
-          name
-          displayName
-          email
-          avatarUrl
-        }
-        labels {
-          nodes {
-            id
-            name
-            color
-          }
-        }
-        createdAt
-        updatedAt
+        ${ISSUE_FIELDS}
       }
       pageInfo {
         hasNextPage
@@ -130,58 +92,7 @@ const ISSUES_LIST_QUERY_NO_FILTER = `
 const ISSUE_GET_QUERY = `
   query Issue($id: String!) {
     issue(id: $id) {
-      id
-      title
-      description
-      priority
-      estimate
-      sortOrder
-      number
-      identifier
-      url
-      state {
-        id
-        name
-        type
-        color
-        position
-      }
-      team {
-        id
-        name
-        key
-      }
-      assignee {
-        id
-        name
-        displayName
-        email
-        avatarUrl
-      }
-      creator {
-        id
-        name
-        displayName
-        email
-        avatarUrl
-      }
-      project {
-        id
-        name
-        state
-      }
-      cycle {
-        id
-        number
-        name
-      }
-      labels {
-        nodes {
-          id
-          name
-          color
-        }
-      }
+      ${ISSUE_FIELDS}
       subscribers {
         nodes {
           id
@@ -189,12 +100,6 @@ const ISSUE_GET_QUERY = `
           displayName
         }
       }
-      dueDate
-      startedAt
-      completedAt
-      canceledAt
-      createdAt
-      updatedAt
     }
   }
 `;
@@ -283,20 +188,32 @@ const ISSUE_DELETE_MUTATION = `
   }
 `;
 
-export const list: LinearEndpoints['issuesList'] = async (ctx, input) => {
-	const query = input.teamId ? ISSUES_LIST_QUERY : ISSUES_LIST_QUERY_NO_FILTER;
+export const list: LinearEndpoints['issuesList'] = async (ctx, rawInput) => {
+	// Core doesn't apply input schemas to direct calls; parse so a bad filter or orderBy
+	// fails here instead of reaching Linear.
+	const input = LinearEndpointInputSchemas.issuesList.parse(rawInput);
+	const teamFilter = input.teamId
+		? { team: { id: { eq: input.teamId } } }
+		: undefined;
+	const filter =
+		teamFilter && input.filter
+			? { and: [teamFilter, input.filter] }
+			: (teamFilter ?? input.filter);
 	const variables: Record<string, unknown> = {
 		first: input.first || 50,
 	};
-	if (input.teamId) {
-		variables.teamId = input.teamId;
+	if (filter) {
+		variables.filter = filter;
+	}
+	if (input.orderBy) {
+		variables.orderBy = input.orderBy;
 	}
 	if (input.after) {
 		variables.after = input.after;
 	}
 
 	const response = await makeLinearRequest<IssuesListResponse>(
-		query,
+		ISSUES_LIST_QUERY,
 		ctx.key,
 		variables,
 	);
@@ -312,6 +229,8 @@ export const list: LinearEndpoints['issuesList'] = async (ctx, input) => {
 					teamId: issue.team?.id,
 					assigneeId: issue.assignee?.id,
 					creatorId: issue.creator?.id,
+					projectId: issue.project?.id,
+					cycleId: issue.cycle?.id,
 					createdAt: new Date(issue.createdAt ?? ''),
 					updatedAt: new Date(issue.updatedAt ?? ''),
 				});
