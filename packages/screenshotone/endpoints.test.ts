@@ -28,6 +28,7 @@ function context(
 	key?: string,
 	db?: ScreenshotOneContext['db'],
 ): ScreenshotOneContext {
+	// unknown: a partial context with only the fields these endpoints read.
 	return { key, db } as unknown as ScreenshotOneContext;
 }
 
@@ -47,6 +48,7 @@ describe('screenshotone', () => {
 		const result = await getUsage(
 			context('sekrit', {
 				usage: { upsertByEntityId: upsert },
+				// unknown: a stub table with only the upsert the endpoint calls.
 			} as unknown as ScreenshotOneContext['db']),
 			{},
 		);
@@ -240,6 +242,14 @@ describe('screenshotone', () => {
 		expect(JSON.stringify(mockRequest.mock.calls[0]?.[1]?.body)).not.toContain(
 			'sekrit',
 		);
+	});
+
+	it('rejects unexpected input on the no-input reads', async () => {
+		await expect(getUsage(context('k'), { x: 1 } as never)).rejects.toThrow();
+		await expect(
+			listDevices(context('k'), { x: 1 } as never),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
 	it('lets an HTTP 400 through unchanged', async () => {

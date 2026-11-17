@@ -21,6 +21,7 @@ import {
 	BulkInputSchema,
 	BulkResponseSchema,
 	DeviceListResponseSchema,
+	EmptyInputSchema,
 	ShotResponseSchema,
 	TakeInputSchema,
 	UsageResponseSchema,
@@ -56,7 +57,8 @@ export const getUsage: CorsairEndpoint<
 	ScreenshotOneContext,
 	EmptyInput,
 	UsageResponse
-> = async (ctx) => {
+> = async (ctx, input) => {
+	EmptyInputSchema.parse(input ?? {});
 	const body = await screenshotoneRequest<unknown>(ctx.key, 'GET', '/usage');
 	const row = asRecord(body);
 	const concurrency = asRecord(row?.concurrency);
@@ -92,7 +94,8 @@ export const listDevices: CorsairEndpoint<
 	ScreenshotOneContext,
 	EmptyInput,
 	DeviceListResponse
-> = async (ctx) => {
+> = async (ctx, input) => {
+	EmptyInputSchema.parse(input ?? {});
 	const body = await screenshotoneRequest<unknown>(ctx.key, 'GET', '/devices');
 	if (!Array.isArray(body)) {
 		throw new Error('ScreenshotOne devices response was not an array');

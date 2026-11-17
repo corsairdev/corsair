@@ -4,7 +4,7 @@ import {
 	ScreenshotOneUsageEntity,
 } from '../schema/database';
 
-export const EmptyInputSchema = z.object({});
+export const EmptyInputSchema = z.object({}).strict();
 export type EmptyInput = z.infer<typeof EmptyInputSchema>;
 
 /** Page rendering options shared by take, animate and bulk. https://screenshotone.com/docs/options/ */
