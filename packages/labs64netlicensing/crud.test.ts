@@ -332,6 +332,7 @@ describe('reads', () => {
 	it('stores a fetched product and license locally', async () => {
 		const products = { upsertByEntityId: jest.fn() };
 		const licenses = { upsertByEntityId: jest.fn() };
+		// unknown: a fake with only what the endpoint reads; a full context or table is not needed.
 		const db = { products, licenses } as unknown as NetLicensingContext['db'];
 		mockRequest.mockResolvedValueOnce(
 			oneItem('Product', {
@@ -404,6 +405,7 @@ describe('deletes', () => {
 
 	it('removes the local row only after NetLicensing confirms', async () => {
 		const products = { deleteByEntityId: jest.fn() };
+		// unknown: a fake with only what the endpoint reads; a full context or table is not needed.
 		const db = { products } as unknown as NetLicensingContext['db'];
 		mockRequest.mockRejectedValueOnce(new Error('400'));
 		await expect(
