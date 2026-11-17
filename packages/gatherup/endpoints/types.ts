@@ -59,7 +59,8 @@ export const GatherupBusinessSchema = z
 		communicationMethod: z.string().nullish(),
 		nps: z.number().nullish(),
 		ratingsReceived: z.number().nullish(),
-		customersNotSent: z.string().nullish(),
+		// The reference shows a string; the live API answers a number (11-14).
+		customersNotSent: z.union([z.number(), z.string()]).nullish(),
 		legalBusinessName: z.string().nullish(),
 		isActive: z.boolean().nullish(),
 	})
@@ -254,13 +255,14 @@ export const GatherupCustomerSchema = z
 			.nullish()
 			.describe('The caller’s own reference for the job.'),
 		customId: z.string().nullish(),
-		parentId: z.string().nullish(),
+		// The reference shows strings; the live API answers numbers (11-14).
+		parentId: z.union([z.number(), z.string()]).nullish(),
 		// A rating arrives as a decimal string, such as `5.00`, or null.
 		rating: z.string().nullish(),
 		review: z.string().nullish(),
 		statusInfo: z.string().nullish(),
 		subscription: z.number().nullish(),
-		unsubscribed: z.string().nullish(),
+		unsubscribed: z.union([z.number(), z.string()]).nullish(),
 		createdAt: z.string().nullish(),
 	})
 	.loose();
