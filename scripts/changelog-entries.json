@@ -7145,5 +7145,23 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/telnyx",
+    "dir": "packages/telnyx",
+    "name": "Telnyx",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/truvera",
+    "dir": "packages/truvera",
+    "name": "Truvera",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
