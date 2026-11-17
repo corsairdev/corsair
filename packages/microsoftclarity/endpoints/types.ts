@@ -9,14 +9,21 @@ export const InsightsGetInputSchema = z.object({
 	dimension3: dimension.optional(),
 });
 // Information fields vary by metric and selected dimensions; Microsoft only
-// publishes a sample, not exhaustive schemas for other metric records.
+// publishes a sample, not exhaustive schemas. Live responses differ from that
+// sample: counts come back as numbers (the sample shows strings), averages are
+// null when a project has no traffic, and the keys are distinctUserCount and
+// pagesPerSessionPercentage. Known keys accept either spelling and type; every
+// other key passes through.
+const count = z.union([z.string(), z.number()]).nullish();
 const InsightInformationSchema = z
 	.object({
-		totalSessionCount: z.string().optional(),
-		totalBotSessionCount: z.string().optional(),
-		distantUserCount: z.string().optional(),
-		PagesPerSessionPercentage: z.number().optional(),
-		OS: z.string().optional(),
+		totalSessionCount: count,
+		totalBotSessionCount: count,
+		distinctUserCount: count,
+		distantUserCount: count,
+		pagesPerSessionPercentage: z.number().nullish(),
+		PagesPerSessionPercentage: z.number().nullish(),
+		OS: z.string().nullish(),
 	})
 	.loose();
 export const InsightsGetResponseSchema = z.array(
