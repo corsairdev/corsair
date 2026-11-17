@@ -338,5 +338,39 @@ describe('Help Scout Client & Transport', () => {
 			expect(dump).not.toContain('jane@example.com');
 			expect(dump).not.toContain('Jane');
 		});
+
+		it('redacts a hal+json error body that arrives as a string', async () => {
+			// Core reads application/hal+json as text and copies it into the message.
+			const text = JSON.stringify({
+				message: 'Validation error',
+				_embedded: {
+					errors: [{ path: 'emails', rejectedValue: 'jane@example.com' }],
+				},
+			});
+			const rawError = new ApiError(
+				{ method: 'POST', url: '/customers' },
+				{
+					url: 'https://api.helpscout.net/v2/customers',
+					ok: false,
+					status: 400,
+					statusText: 'Bad Request',
+					body: text,
+				},
+				`Generic Error: status: 400; status text: Bad Request; body: ${JSON.stringify(text)}`,
+			);
+			mockRequest.mockRejectedValueOnce(rawError);
+			const caught = (await makeHelpscoutRequest('/customers', 'k', {
+				method: 'POST',
+				body: {},
+			}).catch(
+				// unknown: a rejected promise can carry any value; the cast below
+				// narrows it to the ApiError this test throws.
+				(e: unknown) => e,
+			)) as ApiError;
+			expect(caught).toBe(rawError);
+			expect(caught.message).toBe('Validation error');
+			expect(JSON.stringify(caught.body)).not.toContain('jane@example.com');
+			expect(JSON.stringify(caught.body)).toContain('emails');
+		});
 	});
 });

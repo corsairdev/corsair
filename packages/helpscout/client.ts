@@ -221,12 +221,35 @@ export function redactValue(value: unknown, secrets: string[]): unknown {
  */
 export function redactApiErrorInPlace(error: ApiError, apiKey?: string): void {
 	const secrets = apiKey ? [apiKey] : [];
-	if (error.message) {
-		error.message = redactString(error.message, secrets);
+	// Help Scout sends errors as hal+json, which core's transport keeps as a
+	// string and copies whole into the message. Parse it so the echoed
+	// `rejectedValue` (names, emails, text) can be removed from both.
+	// `unknown` because provider response bodies are untrusted JSON.
+	let body: unknown = error.body;
+	if (typeof body === 'string') {
+		try {
+			body = JSON.parse(body);
+		} catch {
+			// Not JSON: only tokens are redacted below.
+		}
 	}
-	if (error.body !== undefined) {
-		// `unknown` because provider response bodies are untrusted JSON.
-		const redactedBody: unknown = redactValue(error.body, secrets);
+	if (error.message) {
+		let message = error.message;
+		if (typeof error.body === 'string' && body !== error.body) {
+			const providerMessage = (body as { message?: unknown } | null)?.message;
+			const cut = message.indexOf('; body: ');
+			message =
+				typeof providerMessage === 'string'
+					? providerMessage
+					: cut >= 0
+						? message.slice(0, cut)
+						: message;
+		}
+		error.message = redactString(message, secrets);
+	}
+	if (body !== undefined) {
+		// unknown: the redacted copy of an untrusted body.
+		const redactedBody: unknown = redactValue(body, secrets);
 		// Mutate in-place so status/retryAfter and identity are preserved.
 		(error as { body: unknown }).body = redactedBody;
 	}
