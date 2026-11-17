@@ -25,7 +25,7 @@ overviewNote: |
   - **Parameters are hyphenated.** `country-code`, `bin-number`, `from-value`, `fetch-content`, `code-length`. The plugin maps its own camelCase inputs onto those names, so a caller writes `countryCode` and `binNumber`.
   - **A convert result comes twice.** `result` is a string and `result-float` a number; use the one the surrounding code needs rather than parsing the first.
 
-  Errors are `{ "api-error": <number>, "api-error-msg": "..." }`. **Code 43 is the credential check**, and it is the only code that means a bad user id or key; a 403 with another code is a plan or permission limit. The auth check runs before routing, so a bad key hides whether a route exists.
+  Errors are `{ "api-error": <number>, "api-error-msg": "..." }`. **Code 43 is the credential check**, and it is the only code that means a bad user id or key; a 403 with another code is a plan or permission limit. A route that does not exist answers 400 with code 45 even without credentials.
 examples:
   read:
     path: ip.info

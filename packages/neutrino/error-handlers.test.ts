@@ -103,6 +103,16 @@ describe('neutrino error handlers', () => {
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
+	it('never replays a 5xx from the call or the browser bot', async () => {
+		// A call may already be ringing; browser-bot may already have run the
+		// caller's clicks or form submits on the page.
+		for (const path of ['/phone-verify', '/browser-bot']) {
+			const error = apiError(500, { path });
+			expect(classify(error)).toBe('DEFAULT');
+			expect(await strategy(error)).toEqual({ maxRetries: 0 });
+		}
+	});
+
 	it('falls back to DEFAULT for a transport failure', () => {
 		expect(classify(new NeutrinoAPIError('socket hang up'))).toBe('DEFAULT');
 	});
