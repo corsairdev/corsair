@@ -1,5 +1,6 @@
 displayName: Helpwise
 description: Shared team inboxes, conversations, messages, contacts, tags, and analytics for Helpwise.
+domain: helpwise.io
 overviewNote: >-
   Helpwise authentication requires both an API Key and API Secret from Helpwise
   Settings > API (HTTP Basic auth header formatted as `API_KEY:API_SECRET`).
