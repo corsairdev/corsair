@@ -389,6 +389,8 @@ export async function upsertAccount(i: {
 	nameNew?: boolean;
 	/** Give the identity to this row (an unnamed account being reconnected). */
 	rowId?: string;
+	/** Every account the hub holds for this plugin and tenant, `identity` included. */
+	hubAccounts?: AccountIdentity[];
 }): Promise<{ accountId: string; created: boolean }> {
 	const { database, kek, tenantId } = i;
 	return database.db.transaction().execute(async (trx) => {
@@ -437,6 +439,19 @@ export async function upsertAccount(i: {
 			if (requested.ref) return { accountId: requested.row.id, created: false };
 			await writeIdentity(trx, requested.row, identity, kek);
 			return { accountId: requested.row.id, created: false };
+		}
+
+		// An unnamed row predates account names. When the hub holds exactly one
+		// account this tenant has no named row for, that row is it: name it, so
+		// the account being delivered is added beside it instead of taking it.
+		const unnamed = known.filter((k) => !k.ref);
+		const unplaced = (i.hubAccounts ?? []).filter(
+			(a) => a.id !== identity.id && !known.some((k) => k.ref === a.id),
+		);
+		if (unnamed.length === 1 && unplaced.length === 1) {
+			await writeIdentity(trx, unnamed[0]!.row, unplaced[0]!, kek);
+			unnamed[0]!.ref = unplaced[0]!.id;
+			unnamed[0]!.label = unplaced[0]!.label;
 		}
 
 		const same = known.find((k) => k.ref === identity.id);

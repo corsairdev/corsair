@@ -260,6 +260,7 @@ export async function handleHubDeliveryGet(
 				authType: payload.authType,
 				providerData: payload.providerData,
 				account: payload.account,
+				accounts: payload.accounts,
 			});
 		} else {
 			if (

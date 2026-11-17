@@ -131,6 +131,7 @@ export type OAuthTokensTunnelPayload = {
 	// resolver can read it — secrets stripped Hub-side.
 	providerData?: Record<string, unknown>;
 	account?: { id: string; label?: string };
+	accounts?: { id: string; label?: string }[];
 };
 
 export type PermissionDecisionTunnelPayload = {
@@ -373,6 +374,7 @@ async function handleOAuthTokensTunnel(
 		authType: payload.authType,
 		providerData: payload.providerData,
 		account: payload.account,
+		accounts: payload.accounts,
 	});
 	return { status: 'ok' };
 }
