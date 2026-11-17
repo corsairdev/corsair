@@ -80,7 +80,11 @@ function proxy(
 		headers: {
 			...forwarded,
 			...connectionHeaders(args),
-			Retries: args.retries === undefined ? undefined : String(args.retries),
+			// Nango replays on 5xx and network errors, so only a GET may ask for it.
+			Retries:
+				method === 'GET' && args.retries !== undefined
+					? String(args.retries)
+					: undefined,
 		},
 		body: args.body,
 	};

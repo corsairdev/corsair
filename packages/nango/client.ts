@@ -56,8 +56,6 @@ export function readNangoError(body: unknown): {
 	code?: string;
 	message?: string;
 } {
-	if (typeof body === 'string')
-		return { message: body.length > 500 ? `${body.slice(0, 500)}…` : body };
 	const record = asRecord(body);
 	const error = record?.error;
 	if (typeof error === 'string') return { message: error };
@@ -73,10 +71,15 @@ export function readNangoError(body: unknown): {
 
 /**
  * Rebuilds an HTTP error as a core `ApiError` (R8) without the request body,
- * query and headers: an import sends third-party credentials, a proxy call
- * sends whatever the caller passes on to the end customer's account, and
- * neither may end up in an error log. Anything that equals the environment key
- * is cut from the message.
+ * query and headers, and without the query string in the URL: an import sends
+ * third-party credentials, list filters can hold end-user tags, and a proxy
+ * call sends whatever the caller passes on to the end customer's account.
+ *
+ * Only Nango's own error text is kept (its `error` envelope), with the
+ * environment key cut out. A proxy error body comes from the end customer's
+ * API and can echo their data, so for `/proxy/` calls only the status and an
+ * error code survive. Core's own message is never reused: for an unknown body
+ * it embeds the whole response.
  */
 function sanitizeApiError(error: ApiError, apiKey: string): ApiError {
 	const redact = (text: string): string =>
@@ -88,22 +91,30 @@ function sanitizeApiError(error: ApiError, apiKey: string): ApiError {
 		headers: _headers,
 		...requestInfo
 	} = error.request;
-	const { code, message } = readNangoError(error.body);
+	const isProxy = requestInfo.url.startsWith('/proxy/');
+	const parsed = readNangoError(error.body);
+	const code = parsed.code;
+	const message =
+		isProxy || parsed.message === undefined
+			? undefined
+			: redact(parsed.message);
 	const label = [error.status, code].filter((part) => part !== undefined);
-	const text = message ? redact(message) : error.message;
+	const fallback = isProxy
+		? 'the external API returned an error (body withheld)'
+		: error.statusText || 'request failed';
 	return new ApiError(
 		requestInfo,
 		{
-			url: error.url,
+			url: error.url.split('?')[0] ?? error.url,
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,
 			body:
 				code === undefined && message === undefined
 					? undefined
-					: { error: { code, message: message ? redact(message) : undefined } },
+					: { error: { code, message } },
 		},
-		`Nango ${label.join(' ')}: ${text}`,
+		`Nango ${isProxy ? 'proxy ' : ''}${label.join(' ')}: ${message ?? fallback}`,
 		{
 			retryAfter: error.retryAfter,
 			rateLimitReset: error.rateLimitReset,

@@ -577,9 +577,13 @@ const ProxyInput = z.object({
 		.min(0)
 		.max(10)
 		.optional()
-		.describe('Retries Nango makes on failure, with exponential back-off.'),
+		.describe(
+			'Retries Nango makes on a 5xx or network error, with back-off (GET only).',
+		),
 });
-const ProxyBodyInput = ProxyInput.extend({
+// No `retries` on writes: Nango retries 5xx and network errors, and a write
+// that already landed upstream would run twice (R8, Retries).
+const ProxyBodyInput = ProxyInput.omit({ retries: true }).extend({
 	body: AnyJson.optional().describe('JSON body sent to the external API.'),
 });
 // The external API's response, exactly as it returned it.

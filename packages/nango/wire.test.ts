@@ -821,6 +821,55 @@ describe('nango responses and errors', () => {
 		);
 	});
 
+	it('keeps proxied API error text and filter values out of errors', async () => {
+		mockFetch({ message: 'Invalid customer alice@example.com' }, 400);
+		const proxyError = (await api.proxy
+			.post({
+				connection_id: 'c',
+				provider_config_key: 'echo',
+				path: '/customers',
+				body: { email: 'alice@example.com' },
+			})
+			.catch((e: unknown) => e)) as ApiError;
+		expect(proxyError).toBeInstanceOf(ApiError);
+		expect(proxyError.status).toBe(400);
+		expect(proxyError.message).toBe(
+			'Nango proxy 400: the external API returned an error (body withheld)',
+		);
+		jest.restoreAllMocks();
+		mockFetch({ detail: 'customer alice@example.com' }, 422);
+		const listError = (await api.connections
+			.list({ tags: { email: 'alice@example.com' } })
+			.catch((e: unknown) => e)) as ApiError;
+		expect(listError.status).toBe(422);
+		for (const error of [proxyError, listError]) {
+			const serialized = JSON.stringify({
+				message: error.message,
+				url: error.url,
+				body: error.body,
+				request: error.request,
+			});
+			expect(serialized).not.toContain('alice');
+		}
+	});
+
+	it('sends Retries only on proxy GETs', async () => {
+		expect(
+			Object.keys(nangoEndpointSchemas['proxy.post'].input.shape),
+		).not.toContain('retries');
+		const fetchMock = mockFetch({ ok: true });
+		await api.proxy.post({
+			connection_id: 'c',
+			provider_config_key: 'echo',
+			path: '/x',
+			// @ts-expect-error retries is not accepted on writes
+			retries: 3,
+		});
+		expect(
+			new Headers(fetchMock.mock.calls[0]?.[1]?.headers).get('Retries'),
+		).toBeNull();
+	});
+
 	it('lets core retry a 429 and honour Retry-After', async () => {
 		const fetchMock = jest
 			.spyOn(globalThis, 'fetch')
