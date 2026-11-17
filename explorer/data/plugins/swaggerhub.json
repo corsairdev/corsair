@@ -1,0 +1,2687 @@
+{
+  "id": "swaggerhub",
+  "displayName": "SwaggerHub",
+  "description": "Registry for API definitions, for storing, validating, comparing and publishing OpenAPI specs, domains and templates.",
+  "npmPackageName": "@corsair-dev/swaggerhub",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 44,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "swaggerhub.api.apis.cloneVersion",
+      "shortPath": "apis.cloneVersion",
+      "description": "Create a version that starts as a copy of an existing one",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "newVersion",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sourceVersion",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.apis.compare",
+      "shortPath": "apis.compare",
+      "description": "Compare a definition against the stored version and list the differences",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "definition",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "yaml | json"
+          },
+          {
+            "key": "method",
+            "optional": true,
+            "type": "FULL | LOGICAL | STRUCTURAL",
+            "description": "Defaults to \"FULL\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "changes",
+            "optional": false,
+            "type": "{ description?: string | null, breaking?: boolean | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.apis.delete",
+      "shortPath": "apis.delete",
+      "description": "Delete an API and every version of it. There is no undo and the comments go with it",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.apis.deleteVersion",
+      "shortPath": "apis.deleteVersion",
+      "description": "Delete one version of an API. The other versions stay, and there is no undo",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.apis.disableNotifications",
+      "shortPath": "apis.disableNotifications",
+      "description": "Disable every notification the caller has on one API. Nothing else about the API changes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.apis.forkVersion",
+      "shortPath": "apis.forkVersion",
+      "description": "Fork a version into another owner and name, including another organisation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "targetOwner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "targetName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "targetVersion",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "targetOwner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "targetName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "targetVersion",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "forked",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.apis.getCapabilities",
+      "shortPath": "apis.getCapabilities",
+      "description": "Read what the token may do with one API version, such as seeing standardization errors",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "canViewStandardizationErrors",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.apis.getDefaultVersion",
+      "shortPath": "apis.getDefaultVersion",
+      "description": "Read which version the API shows by default. Null when none is set",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.apis.getDefinition",
+      "shortPath": "apis.getDefinition",
+      "description": "Read the stored definition of one API version as text, optionally resolved or flattened",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resolved",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "flatten",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "definition",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.apis.getNotifications",
+      "shortPath": "apis.getNotifications",
+      "description": "Read which notification scopes are enabled for one API, and for the caller",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "scope",
+            "optional": true,
+            "type": "USER | ALL",
+            "description": "Defaults to \"USER\"."
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.apis.list",
+      "shortPath": "apis.list",
+      "description": "List the APIs under one owner, with paging, sorting and a filter for the token user own APIs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "user"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "NAME | UPDATED | CREATED | OWNER | BEST_MATCH | TITLE"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "ASC | DESC"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "specificationVersion",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "defaultVersion",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "blocked",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "apis",
+            "optional": false,
+            "type": "{ name?: string | null, description?: string | null, summary?: string | null, tags?: string[] | null, properties?: { type: string, url?: string | null, value?: string | null }[] | null, totalCount?: { errors?: number | null, warnings?: number | null, hints?: number | null, infos?: number | null } | null, contractTesting?: {} | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.apis.listVersions",
+      "shortPath": "apis.listVersions",
+      "description": "List every version of one API, with its default version and metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "specificationVersion",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "defaultVersion",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "blocked",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "apis",
+            "optional": false,
+            "type": "{ name?: string | null, description?: string | null, summary?: string | null, tags?: string[] | null, properties?: { type: string, url?: string | null, value?: string | null }[] | null, totalCount?: { errors?: number | null, warnings?: number | null, hints?: number | null, infos?: number | null } | null, contractTesting?: {} | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.apis.rename",
+      "shortPath": "apis.rename",
+      "description": "Rename an API. Its published URLs change, so anything pointing at the old name breaks",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "newName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "newName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "renamed",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.apis.save",
+      "shortPath": "apis.save",
+      "description": "Save a definition to one API, creating the version or updating it. Answers 409 on a published version unless force is set",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "definition",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "yaml | json | graphql"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isPrivate",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "force",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "projectName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "noReconcile",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "saved",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.apis.setDefaultVersion",
+      "shortPath": "apis.setDefaultVersion",
+      "description": "Change which version the API shows by default. The version has to exist",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.apis.setNotifications",
+      "shortPath": "apis.setNotifications",
+      "description": "Turn on notification scopes for one API. The body is the bare list of scopes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.apiSettings.getLifecycle",
+      "shortPath": "apiSettings.getLifecycle",
+      "description": "Read whether one API version is published",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "published",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.apiSettings.getVisibility",
+      "shortPath": "apiSettings.getVisibility",
+      "description": "Read whether one API version is private",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "private",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.apiSettings.setLifecycle",
+      "shortPath": "apiSettings.setLifecycle",
+      "description": "Publish or unpublish one API version. Publishing exposes it to everyone it is visible to",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "published",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "force",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "published",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.apiSettings.setVisibility",
+      "shortPath": "apiSettings.setVisibility",
+      "description": "Make one API version private or public. A private version leaves public view immediately",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "private",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "private",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.comments.create",
+      "shortPath": "comments.create",
+      "description": "Post a comment on one API version, optionally anchored to a line range. Collaborators with notifications on are told about it",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "range",
+            "optional": true,
+            "type": "{ startLine?: number, endLine?: number, startColumn?: number, endColumn?: number, startOffset?: number, endOffset?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id?: string | null, email?: string | null, name?: string | null }"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{ id: string, user: { id?: string | null, email?: string | null, name?: string | null }, created?: string | null, modified?: string | null, body: string }[] | null"
+          },
+          {
+            "key": "range",
+            "optional": true,
+            "type": "{ startLine?: number, endLine?: number, startColumn?: number, endColumn?: number, startOffset?: number, endOffset?: number } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.comments.delete",
+      "shortPath": "comments.delete",
+      "description": "Delete one comment and its replies. There is no undo",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.comments.list",
+      "shortPath": "comments.list",
+      "description": "List the comments on one API version with their replies and open or resolved status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comments",
+            "optional": false,
+            "type": "{ id: string, user: { id?: string | null, email?: string | null, name?: string | null }, created?: string | null, modified?: string | null, body: string, status?: string | null, replies?: { id: string, user: { id?: string | null, email?: string | null, name?: string | null }, created?: string | null, modified?: string | null, body: string }[] | null, range?: { startLine?: number, endLine?: number, startColumn?: number, endColumn?: number, startOffset?: number, endOffset?: number } | null }[]"
+          },
+          {
+            "key": "empty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.comments.reply",
+      "shortPath": "comments.reply",
+      "description": "Post a reply to an existing comment. Collaborators with notifications on are told about it",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id?: string | null, email?: string | null, name?: string | null }"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.comments.update",
+      "shortPath": "comments.update",
+      "description": "Change the text of one comment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id?: string | null, email?: string | null, name?: string | null }"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{ id: string, user: { id?: string | null, email?: string | null, name?: string | null }, created?: string | null, modified?: string | null, body: string }[] | null"
+          },
+          {
+            "key": "range",
+            "optional": true,
+            "type": "{ startLine?: number, endLine?: number, startColumn?: number, endColumn?: number, startOffset?: number, endOffset?: number } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.domains.delete",
+      "shortPath": "domains.delete",
+      "description": "Delete a domain and every version of it. There is no undo",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "force",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.domains.deleteVersion",
+      "shortPath": "domains.deleteVersion",
+      "description": "Delete one version of a domain. The other versions stay, and there is no undo",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "force",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.domains.getDefinition",
+      "shortPath": "domains.getDefinition",
+      "description": "Read the stored definition of one domain version as text",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "definition",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.domains.getVersions",
+      "shortPath": "domains.getVersions",
+      "description": "List every version of one domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "specificationVersion",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "defaultVersion",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "blocked",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "apis",
+            "optional": false,
+            "type": "{ name?: string | null, description?: string | null, summary?: string | null, tags?: string[] | null, properties?: { type: string, url?: string | null, value?: string | null }[] | null, totalCount?: { errors?: number | null, warnings?: number | null, hints?: number | null, infos?: number | null } | null, contractTesting?: {} | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.domains.list",
+      "shortPath": "domains.list",
+      "description": "List the domains under one owner",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "NAME | UPDATED | CREATED | OWNER | BEST_MATCH | TITLE"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "ASC | DESC"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "specificationVersion",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "defaultVersion",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "blocked",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "apis",
+            "optional": false,
+            "type": "{ name?: string | null, description?: string | null, summary?: string | null, tags?: string[] | null, properties?: { type: string, url?: string | null, value?: string | null }[] | null, totalCount?: { errors?: number | null, warnings?: number | null, hints?: number | null, infos?: number | null } | null, contractTesting?: {} | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.domains.save",
+      "shortPath": "domains.save",
+      "description": "Save a definition to one domain, creating the version or updating it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "definition",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "yaml | json"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isPrivate",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "force",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "projectName",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "saved",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.integrations.execute",
+      "shortPath": "integrations.execute",
+      "description": "Run one integration once, which pushes the stored definition to its target such as a repository or gateway",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "integrationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "commitMessage",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "integrationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "executed",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.integrations.list",
+      "shortPath": "integrations.list",
+      "description": "List the integrations configured on one API version, with their ids and enabled state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "integrations",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, pluginIdentifier?: string | null, enabled?: boolean | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a project from a list of API, domain and template names that already exist in the organisation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "apis",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "templates",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "apis",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "domains",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "templates",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Delete a project. The APIs, domains and templates it grouped stay on the account",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Read one project with the APIs, domains and templates it groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "apis",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "domains",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "templates",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List the projects in one organisation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "ASC | DESC"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "projects",
+            "optional": false,
+            "type": "{ owner?: string | null, name?: string | null, description?: string | null, apis?: string[] | null, domains?: string[] | null, templates?: string[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Replace a project definition. A collection left out is cleared, so send all three",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "apis",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "templates",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "apis",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "domains",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "templates",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.specs.list",
+      "shortPath": "specs.list",
+      "description": "List the specs visible to the account, filtered by type, owner, visibility, state or free text",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "specType",
+            "optional": true,
+            "type": "API | DOMAIN | TEMPLATE | ANY"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "PUBLIC | PRIVATE | ANY"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "specification",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "oas",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "user"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "NAME | UPDATED | CREATED | OWNER | BEST_MATCH | TITLE"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "ASC | DESC"
+          },
+          {
+            "key": "ignoreCount",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "specificationVersion",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "defaultVersion",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "blocked",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "apis",
+            "optional": false,
+            "type": "{ name?: string | null, description?: string | null, summary?: string | null, tags?: string[] | null, properties?: { type: string, url?: string | null, value?: string | null }[] | null, totalCount?: { errors?: number | null, warnings?: number | null, hints?: number | null, infos?: number | null } | null, contractTesting?: {} | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.specs.validate",
+      "shortPath": "specs.validate",
+      "description": "Validate an OpenAPI or AsyncAPI definition and get findings with line and column positions. Nothing is saved",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "definition",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "maxProblems",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "uri",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "valid",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "recognized",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "spec",
+            "optional": true,
+            "type": "{ namespace?: string | null, version?: string | null, format?: string | null, mediaType?: string | null } | null"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "{ errors?: number | null, warnings?: number | null, total?: number | null, durationMs?: number | null } | null"
+          },
+          {
+            "key": "findings",
+            "optional": true,
+            "type": "({} & { severity?: string | null, message?: string | null, path?: string | null, range?: { start?: { line?: number | null, column?: number | null, offset?: number | null } | null, end?: { line?: number | null, column?: number | null, offset?: number | null } | null } | null })[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.templates.delete",
+      "shortPath": "templates.delete",
+      "description": "Delete one template version, or the whole template when no version is given. There is no undo",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Read one template definition as text, optionally a built-in template",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "flatten",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "builtin",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "definition",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List the template catalog, optionally narrowed to one owner, including the built-in templates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templates",
+            "optional": false,
+            "type": "{ id?: string | null, title?: string | null, specification?: string | null, builtIn?: boolean | null, defaultVersion?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "swaggerhub.api.templates.save",
+      "shortPath": "templates.save",
+      "description": "Create or update a template and its version",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "definition",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "yaml | json"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isPrivate",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "force",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "saved",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

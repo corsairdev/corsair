@@ -1,0 +1,2610 @@
+{
+  "id": "tave",
+  "displayName": "Tave",
+  "description": "Studio management with Tave, the VSCO Workspace API - manage jobs and their stages, the product price list, payments against a job, tasks and notes, and read the job types, lead sources and brands they reference.",
+  "npmPackageName": "@corsair-dev/tave",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 29,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "tave.api.brands.list",
+      "shortPath": "brands.list",
+      "description": "List the brands of the studio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page of results, starting at 1. Defaults to 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, from 10 to 100. The API defaults it to 100, so omit it unless you need smaller pages."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, alias?: string | null, created?: string | null, modified?: string | null, hidden?: boolean | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ currentPage?: number | null, totalPages?: number | null, totalItems?: number | null, pageSize?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tave.api.jobs.create",
+      "shortPath": "jobs.create",
+      "description": "Create a lead or job with its type, lead source, brand and event date",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "The job name, which overrides the generated title."
+          },
+          {
+            "key": "stage",
+            "optional": true,
+            "type": "lead | booked | fulfillment | completed",
+            "description": "The pipeline stage."
+          },
+          {
+            "key": "jobTypeId",
+            "optional": true,
+            "type": "string",
+            "description": "The job type."
+          },
+          {
+            "key": "leadSourceId",
+            "optional": true,
+            "type": "string",
+            "description": "The lead source."
+          },
+          {
+            "key": "leadStatusId",
+            "optional": true,
+            "type": "string",
+            "description": "The lead status."
+          },
+          {
+            "key": "brandId",
+            "optional": true,
+            "type": "string",
+            "description": "The brand."
+          },
+          {
+            "key": "eventDate",
+            "optional": true,
+            "type": "string",
+            "description": "The event date."
+          },
+          {
+            "key": "inquiryDate",
+            "optional": true,
+            "type": "string",
+            "description": "The inquiry date."
+          },
+          {
+            "key": "guestCount",
+            "optional": true,
+            "type": "number",
+            "description": "The guest count."
+          },
+          {
+            "key": "closedReasonId",
+            "optional": true,
+            "type": "string",
+            "description": "The closed reason."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "stage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "closed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "closedReasonId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "closedReasonName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "closedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "inquiryDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "bookingDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "eventDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "completedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fulfillmentDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "clientContacts",
+            "optional": true,
+            "type": "{ data?: {}[] | null } | null"
+          },
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "{ data?: {}[] | null } | null"
+          },
+          {
+            "key": "customNumber",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "jobTypeId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "jobTypeName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "leadSourceId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "leadSourceName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "leadStatusId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "leadStatusName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "accountBalance",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "creditBalance",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalCost",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalProfit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalRevenue",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "guestCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "brandId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workflowId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workflowName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "pinned",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "sample",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "webLead",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: { href?: string | null, title?: string | null, type?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tave.api.jobs.delete",
+      "shortPath": "jobs.delete",
+      "description": "Permanently delete a job with its orders, invoices and notes",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string",
+            "description": "A lowercase ULID entity ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tave.api.jobs.get",
+      "shortPath": "jobs.get",
+      "description": "Read one job with its contacts, orders, invoices and totals",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string",
+            "description": "A lowercase ULID entity ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "stage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "closed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "closedReasonId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "closedReasonName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "closedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "inquiryDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "bookingDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "eventDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "completedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fulfillmentDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "clientContacts",
+            "optional": true,
+            "type": "{ data?: {}[] | null } | null"
+          },
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "{ data?: {}[] | null } | null"
+          },
+          {
+            "key": "customNumber",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "jobTypeId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "jobTypeName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "leadSourceId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "leadSourceName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "leadStatusId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "leadStatusName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "accountBalance",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "creditBalance",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalCost",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalProfit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalRevenue",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "guestCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "brandId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workflowId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workflowName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "pinned",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "sample",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "webLead",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: { href?: string | null, title?: string | null, type?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tave.api.jobs.list",
+      "shortPath": "jobs.list",
+      "description": "List jobs with their stage, balances and event dates, filtered by stage, lead status or event date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page of results, starting at 1. Defaults to 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, from 10 to 100. The API defaults it to 100, so omit it unless you need smaller pages."
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string",
+            "description": "A property to sort by, optionally followed by \" asc\" or \" desc\", e.g. \"modified desc\"."
+          },
+          {
+            "key": "includeClosed",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include jobs that have been closed. Defaults to false."
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string",
+            "description": "Entity-qualified dot paths to expand inline, comma-separated, e.g. \"Job.clientContacts\"."
+          },
+          {
+            "key": "stage",
+            "optional": true,
+            "type": "(lead | booked | fulfillment | completed)[]",
+            "description": "Only jobs in these stages."
+          },
+          {
+            "key": "leadStatusId",
+            "optional": true,
+            "type": "string",
+            "description": "Only jobs with this lead status."
+          },
+          {
+            "key": "eventDateFrom",
+            "optional": true,
+            "type": "string",
+            "description": "Only jobs whose event date is on or after this date; jobs without an event date are excluded."
+          },
+          {
+            "key": "eventDateTo",
+            "optional": true,
+            "type": "string",
+            "description": "Only jobs whose event date is on or before this date; jobs without an event date are excluded."
+          },
+          {
+            "key": "staleBefore",
+            "optional": true,
+            "type": "string",
+            "description": "Only jobs whose stale date is on or before this date."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, created?: string | null, modified?: string | null, hidden?: boolean | null, title?: string | null, name?: string | null, stage?: string | null, closed?: boolean | null, closedReasonId?: string | null, closedReasonName?: string | null, closedDate?: string | null, inquiryDate?: string | null, bookingDate?: string | null, eventDate?: string | null, completedDate?: string | null, fulfillmentDate?: string | null, clientContacts?: { data?: {}[] | null } | null, contacts?: { data?: {}[] | null } | null, customNumber?: string | null, jobTypeId?: string | null, jobTypeName?: string | null, leadSourceId?: string | null, leadSourceName?: string | null, leadStatusId?: string | null, leadStatusName?: string | null, accountBalance?: number | null, creditBalance?: number | null, totalCost?: number | null, totalProfit?: number | null, totalRevenue?: number | null, guestCount?: number | null, brandId?: string | null, workflowId?: string | null, workflowName?: string | null, pinned?: boolean | null, sample?: boolean | null, webLead?: boolean | null, links?: { self?: { href?: string | null, title?: string | null, type?: string | null } | null } | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ currentPage?: number | null, totalPages?: number | null, totalItems?: number | null, pageSize?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tave.api.jobs.payments",
+      "shortPath": "jobs.payments",
+      "description": "List the payments recorded against one job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string",
+            "description": "A lowercase ULID entity ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, created?: string | null, modified?: string | null, hidden?: boolean | null, jobId?: string | null, payerId?: string | null, paymentMethodId?: string | null, invoiceItemId?: string | null, status?: string | null, amount?: number | null, refundedAmount?: number | null, memo?: string | null, checkNumber?: string | null, transactionId?: string | null, authCode?: string | null, received?: string | null, links?: { self?: { href?: string | null, title?: string | null, type?: string | null } | null } | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ currentPage?: number | null, totalPages?: number | null, totalItems?: number | null, pageSize?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tave.api.jobs.update",
+      "shortPath": "jobs.update",
+      "description": "Change a job's stage, dates, type, lead source, brand or closed state",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string",
+            "description": "A lowercase ULID entity ID."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stage",
+            "optional": true,
+            "type": "lead | booked | fulfillment | completed"
+          },
+          {
+            "key": "jobTypeId",
+            "optional": true,
+            "type": "string | null",
+            "description": "A lowercase ULID entity ID."
+          },
+          {
+            "key": "leadSourceId",
+            "optional": true,
+            "type": "string | null",
+            "description": "A lowercase ULID entity ID."
+          },
+          {
+            "key": "leadStatusId",
+            "optional": true,
+            "type": "string | null",
+            "description": "A lowercase ULID entity ID."
+          },
+          {
+            "key": "brandId",
+            "optional": true,
+            "type": "string | null",
+            "description": "A lowercase ULID entity ID."
+          },
+          {
+            "key": "eventDate",
+            "optional": true,
+            "type": "string | null",
+            "description": "A calendar date as \"YYYY-MM-DD\"."
+          },
+          {
+            "key": "inquiryDate",
+            "optional": true,
+            "type": "string | null",
+            "description": "A calendar date as \"YYYY-MM-DD\"."
+          },
+          {
+            "key": "guestCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "closed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "closedReasonId",
+            "optional": true,
+            "type": "string | null",
+            "description": "A lowercase ULID entity ID."
+          },
+          {
+            "key": "closedDate",
+            "optional": true,
+            "type": "string | null",
+            "description": "A calendar date as \"YYYY-MM-DD\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "stage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "closed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "closedReasonId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "closedReasonName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "closedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "inquiryDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "bookingDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "eventDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "completedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fulfillmentDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "clientContacts",
+            "optional": true,
+            "type": "{ data?: {}[] | null } | null"
+          },
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "{ data?: {}[] | null } | null"
+          },
+          {
+            "key": "customNumber",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "jobTypeId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "jobTypeName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "leadSourceId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "leadSourceName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "leadStatusId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "leadStatusName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "accountBalance",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "creditBalance",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalCost",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalProfit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalRevenue",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "guestCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "brandId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workflowId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workflowName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "pinned",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "sample",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "webLead",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: { href?: string | null, title?: string | null, type?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tave.api.jobTypes.list",
+      "shortPath": "jobTypes.list",
+      "description": "List the job types, whose IDs jobs.create takes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page of results, starting at 1. Defaults to 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, from 10 to 100. The API defaults it to 100, so omit it unless you need smaller pages."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, alias?: string | null, created?: string | null, modified?: string | null, hidden?: boolean | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ currentPage?: number | null, totalPages?: number | null, totalItems?: number | null, pageSize?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tave.api.leadSources.list",
+      "shortPath": "leadSources.list",
+      "description": "List the lead sources, for reporting where a lead came from",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page of results, starting at 1. Defaults to 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, from 10 to 100. The API defaults it to 100, so omit it unless you need smaller pages."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, alias?: string | null, created?: string | null, modified?: string | null, hidden?: boolean | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ currentPage?: number | null, totalPages?: number | null, totalItems?: number | null, pageSize?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tave.api.leadStatuses.list",
+      "shortPath": "leadStatuses.list",
+      "description": "List the lead statuses, whose IDs jobs.list filters by",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page of results, starting at 1. Defaults to 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, from 10 to 100. The API defaults it to 100, so omit it unless you need smaller pages."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, alias?: string | null, created?: string | null, modified?: string | null, hidden?: boolean | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ currentPage?: number | null, totalPages?: number | null, totalItems?: number | null, pageSize?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tave.api.notes.create",
+      "shortPath": "notes.create",
+      "description": "Add an HTML note to a job or a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentHtml",
+            "optional": false,
+            "type": "string",
+            "description": "The note body as HTML."
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string",
+            "description": "A lowercase ULID entity ID."
+          },
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "string",
+            "description": "A lowercase ULID entity ID."
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string",
+            "description": "A calendar date as \"YYYY-MM-DD\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "contentHtml",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "authorId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tave.api.notes.delete",
+      "shortPath": "notes.delete",
+      "description": "Permanently delete a note",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "noteId",
+            "optional": false,
+            "type": "string",
+            "description": "A lowercase ULID entity ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tave.api.notes.list",
+      "shortPath": "notes.list",
+      "description": "List notes, optionally only those on one job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page of results, starting at 1. Defaults to 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, from 10 to 100. The API defaults it to 100, so omit it unless you need smaller pages."
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string",
+            "description": "Only notes on this job."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, created?: string | null, modified?: string | null, hidden?: boolean | null, contentHtml?: string | null, date?: string | null, jobId?: string | null, contactId?: string | null, authorId?: string | null, author?: string | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ currentPage?: number | null, totalPages?: number | null, totalItems?: number | null, pageSize?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tave.api.payments.create",
+      "shortPath": "payments.create",
+      "description": "Record a payment against a job, which changes that job balance",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string",
+            "description": "The job the payment belongs to."
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number",
+            "description": "The amount as an integer in the studio currency, above 0."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "future | confirmed-future | posted | failed | pending",
+            "description": "The payment status. The API defaults it to \"posted\"."
+          },
+          {
+            "key": "paymentMethodId",
+            "optional": true,
+            "type": "string",
+            "description": "A lowercase ULID entity ID."
+          },
+          {
+            "key": "payerId",
+            "optional": true,
+            "type": "string",
+            "description": "A lowercase ULID entity ID."
+          },
+          {
+            "key": "invoiceItemId",
+            "optional": true,
+            "type": "string",
+            "description": "A lowercase ULID entity ID."
+          },
+          {
+            "key": "memo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "checkNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "transactionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "authCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "received",
+            "optional": true,
+            "type": "string",
+            "description": "When the payment was received."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "payerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "paymentMethodId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "invoiceItemId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "refundedAmount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "memo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "checkNumber",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "transactionId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "authCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "received",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: { href?: string | null, title?: string | null, type?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tave.api.payments.delete",
+      "shortPath": "payments.delete",
+      "description": "Delete a payment, which removes it from the job balance",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "paymentId",
+            "optional": false,
+            "type": "string",
+            "description": "A lowercase ULID entity ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tave.api.payments.get",
+      "shortPath": "payments.get",
+      "description": "Read one payment with its refunded amount and memo",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "paymentId",
+            "optional": false,
+            "type": "string",
+            "description": "A lowercase ULID entity ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "payerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "paymentMethodId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "invoiceItemId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "refundedAmount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "memo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "checkNumber",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "transactionId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "authCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "received",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: { href?: string | null, title?: string | null, type?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tave.api.payments.list",
+      "shortPath": "payments.list",
+      "description": "List payments with their job, amount, status and method",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page of results, starting at 1. Defaults to 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, from 10 to 100. The API defaults it to 100, so omit it unless you need smaller pages."
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string",
+            "description": "A property to sort by, optionally followed by \" asc\" or \" desc\", e.g. \"modified desc\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, created?: string | null, modified?: string | null, hidden?: boolean | null, jobId?: string | null, payerId?: string | null, paymentMethodId?: string | null, invoiceItemId?: string | null, status?: string | null, amount?: number | null, refundedAmount?: number | null, memo?: string | null, checkNumber?: string | null, transactionId?: string | null, authCode?: string | null, received?: string | null, links?: { self?: { href?: string | null, title?: string | null, type?: string | null } | null } | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ currentPage?: number | null, totalPages?: number | null, totalItems?: number | null, pageSize?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tave.api.payments.update",
+      "shortPath": "payments.update",
+      "description": "Change a payment's status, memo, method or payer; the amount is read-only, so to fix it delete the payment and record it again (the delete cannot be undone and the new payment gets a new id)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "paymentId",
+            "optional": false,
+            "type": "string",
+            "description": "A lowercase ULID entity ID."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "future | confirmed-future | posted | failed | pending"
+          },
+          {
+            "key": "paymentMethodId",
+            "optional": true,
+            "type": "string | null",
+            "description": "A lowercase ULID entity ID."
+          },
+          {
+            "key": "payerId",
+            "optional": true,
+            "type": "string | null",
+            "description": "A lowercase ULID entity ID."
+          },
+          {
+            "key": "memo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "checkNumber",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "transactionId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "authCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "received",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "payerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "paymentMethodId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "invoiceItemId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "refundedAmount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "memo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "checkNumber",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "transactionId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "authCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "received",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: { href?: string | null, title?: string | null, type?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tave.api.products.create",
+      "shortPath": "products.create",
+      "description": "Add a product to the price list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The product name."
+          },
+          {
+            "key": "price",
+            "optional": false,
+            "type": "number",
+            "description": "The price as an integer in the studio currency, not a decimal."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string",
+            "description": "The product type."
+          },
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptionHtml",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "manualEntry",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "taxable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "deliverable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "vendorId",
+            "optional": true,
+            "type": "string",
+            "description": "A lowercase ULID entity ID."
+          },
+          {
+            "key": "expenseCategoryId",
+            "optional": true,
+            "type": "string",
+            "description": "A lowercase ULID entity ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "descriptionHtml",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "manualEntry",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "taxable",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "deliverable",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "vendorId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expenseCategoryId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tave.api.products.delete",
+      "shortPath": "products.delete",
+      "description": "Delete a product; orders that already include it keep their line item",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "productId",
+            "optional": false,
+            "type": "string",
+            "description": "A lowercase ULID entity ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tave.api.products.get",
+      "shortPath": "products.get",
+      "description": "Read one product with its price, SKU and flags",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "productId",
+            "optional": false,
+            "type": "string",
+            "description": "A lowercase ULID entity ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "descriptionHtml",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "manualEntry",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "taxable",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "deliverable",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "vendorId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expenseCategoryId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tave.api.products.list",
+      "shortPath": "products.list",
+      "description": "List the products in your price list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string",
+            "description": "A property to sort by, optionally followed by \" asc\" or \" desc\", e.g. \"modified desc\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, created?: string | null, modified?: string | null, hidden?: boolean | null, name?: string | null, price?: number | null, type?: string | null, sku?: string | null, descriptionHtml?: string | null, manualEntry?: boolean | null, taxable?: boolean | null, deliverable?: boolean | null, vendorId?: string | null, expenseCategoryId?: string | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ currentPage?: number | null, totalPages?: number | null, totalItems?: number | null, pageSize?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tave.api.products.update",
+      "shortPath": "products.update",
+      "description": "Change a product's name, price, SKU or flags",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "productId",
+            "optional": false,
+            "type": "string",
+            "description": "A lowercase ULID entity ID."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null",
+            "description": "A lowercase ULID entity ID."
+          },
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "descriptionHtml",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "manualEntry",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "taxable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "deliverable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "vendorId",
+            "optional": true,
+            "type": "string | null",
+            "description": "A lowercase ULID entity ID."
+          },
+          {
+            "key": "expenseCategoryId",
+            "optional": true,
+            "type": "string | null",
+            "description": "A lowercase ULID entity ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "descriptionHtml",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "manualEntry",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "taxable",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "deliverable",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "vendorId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expenseCategoryId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tave.api.studio.get",
+      "shortPath": "studio.get",
+      "description": "Read the studio profile, including its currency and timezone",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: { href?: string | null, title?: string | null, type?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tave.api.taskLists.list",
+      "shortPath": "taskLists.list",
+      "description": "List the task lists, whose IDs tasks.create takes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page of results, starting at 1. Defaults to 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, from 10 to 100. The API defaults it to 100, so omit it unless you need smaller pages."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, created?: string | null, modified?: string | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ currentPage?: number | null, totalPages?: number | null, totalItems?: number | null, pageSize?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tave.api.tasks.create",
+      "shortPath": "tasks.create",
+      "description": "Create a task in a task list, optionally on a job",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The task name."
+          },
+          {
+            "key": "taskListId",
+            "optional": false,
+            "type": "string",
+            "description": "The task list the task belongs to."
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string",
+            "description": "A lowercase ULID entity ID."
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string",
+            "description": "The user the task is assigned to."
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string",
+            "description": "A calendar date as \"YYYY-MM-DD\"."
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "taskListId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "completedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "completedById",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: { href?: string | null, title?: string | null, type?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tave.api.tasks.delete",
+      "shortPath": "tasks.delete",
+      "description": "Permanently delete a task",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string",
+            "description": "A lowercase ULID entity ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tave.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "List tasks with their list, assignee and due date",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page of results, starting at 1. Defaults to 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, from 10 to 100. The API defaults it to 100, so omit it unless you need smaller pages."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, created?: string | null, modified?: string | null, hidden?: boolean | null, name?: string | null, taskListId?: string | null, jobId?: string | null, userId?: string | null, completed?: boolean | null, completedAt?: string | null, completedById?: string | null, dueDate?: string | null, links?: { self?: { href?: string | null, title?: string | null, type?: string | null } | null } | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ currentPage?: number | null, totalPages?: number | null, totalItems?: number | null, pageSize?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tave.api.tasks.update",
+      "shortPath": "tasks.update",
+      "description": "Change a task's name, assignee, due date or completed state",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string",
+            "description": "A lowercase ULID entity ID."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string | null",
+            "description": "A lowercase ULID entity ID."
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string | null",
+            "description": "A calendar date as \"YYYY-MM-DD\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "taskListId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "completedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "completedById",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: { href?: string | null, title?: string | null, type?: string | null } | null } | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
