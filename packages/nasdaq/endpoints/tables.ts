@@ -24,7 +24,9 @@ function isScalar(value: unknown): value is string | number | boolean | null {
 export function shapeRows(raw: unknown): {
 	columns: unknown[];
 	rows: (string | number | boolean | null)[][];
-	next_cursor_id: string | undefined;
+	// unknown: Nasdaq's cursor, a string or null; anything else is left for the
+	// output schema to reject rather than read as the last page.
+	next_cursor_id: unknown;
 } {
 	const envelope = asRecord(raw);
 	const datatable = asRecord(envelope?.datatable);
@@ -50,13 +52,14 @@ export function shapeRows(raw: unknown): {
 	return {
 		columns,
 		rows,
-		next_cursor_id: typeof cursor === 'string' ? cursor : undefined,
+		next_cursor_id: cursor,
 	};
 }
 
 /**
  * Pages by cursor, not by page number. `next_cursor_id` stays set while rows
- * remain and is null on the last page, so a null is the only end signal.
+ * remain and is null (or absent) on the last page, so a nullish cursor is the
+ * only end signal.
  */
 export const rows: NasdaqEndpoints['tablesRows'] = (ctx, input) =>
 	call(
@@ -82,7 +85,7 @@ export const rows: NasdaqEndpoints['tablesRows'] = (ctx, input) =>
 			log: ({ table }, result) => ({
 				table,
 				rows: result.rows.length,
-				hasMore: result.next_cursor_id !== undefined,
+				hasMore: typeof result.next_cursor_id === 'string',
 			}),
 		},
 	);
