@@ -9,6 +9,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import type { NewsApiContext } from './context';
 import {
 	everything,
@@ -120,7 +121,8 @@ export function newsapi<const T extends NewsApiPluginOptions>(
 			if (source === 'endpoint' && options.key) return options.key;
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const key = await ctx.keys.get_api_key();
-				return key ?? '';
+				if (!key) throw new AuthMissingError('newsapi', 'api_key');
+				return key;
 			}
 			return '';
 		},
