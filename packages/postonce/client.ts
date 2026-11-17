@@ -77,7 +77,7 @@ export function segment(value: string): string {
  * `error.message`) and rate-limit metadata reach the plugin error handlers.
  * Wrapping them would drop `retryAfter` and skip RATE_LIMIT_ERROR.
  *
- * Auth: `Authorization: Bearer API_KEY`, created under Developers in the
+ * Auth: `Authorization: Bearer API_KEY`, created under Preferences, API Keys in the
  * PostOnce dashboard.
  * Docs: https://docs.postonce.to/getting-started/authentication
  */

@@ -415,7 +415,7 @@ export type ExternalPostOncePlugin<T extends PostOncePluginOptions> =
 /**
  * Builds the PostOnce plugin.
  *
- * Auth is an API key (`Authorization: Bearer`), created under Developers in
+ * Auth is an API key (`Authorization: Bearer`), created under Preferences, API Keys in
  * the PostOnce dashboard.
  */
 export function postonce<const T extends PostOncePluginOptions>(

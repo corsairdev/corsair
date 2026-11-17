@@ -68,7 +68,7 @@ export const errorHandlers = {
 		},
 		handler: async (_error, context) => {
 			console.warn(
-				`[POSTONCE:${context.operation}] Authentication failed - check the API key (PostOnce dashboard, Developers)`,
+				`[POSTONCE:${context.operation}] Authentication failed - check the API key (PostOnce dashboard, Preferences, API Keys)`,
 			);
 			return { maxRetries: 0 };
 		},
@@ -154,8 +154,11 @@ export const errorHandlers = {
 	DEFAULT: {
 		match: () => true,
 		handler: async (error, context) => {
+			// The message can carry text from the provider's reply, so only the
+			// status and PostOnce's error code are logged.
+			const status = error instanceof ApiError ? error.status : undefined;
 			console.error(
-				`[POSTONCE:${context.operation}] Unhandled error: ${error.message}`,
+				`[POSTONCE:${context.operation}] Unhandled error (${status ?? 'no status'}, ${postonceErrorCode(error) ?? 'no code'})`,
 			);
 			return { maxRetries: 0 };
 		},

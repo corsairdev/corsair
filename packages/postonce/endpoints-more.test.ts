@@ -4,8 +4,9 @@
  * this runs in CI.
  */
 import { logEventFromContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import * as handlers from './endpoints/handlers';
-import { isNonIdempotent } from './error-handlers';
+import { errorHandlers, isNonIdempotent } from './error-handlers';
 import { postonceEndpointMeta, postonceEndpointSchemas } from './index';
 
 jest.mock('corsair/core', () => ({
@@ -404,5 +405,51 @@ describe('PostOnce added operations', () => {
 			'workflows.delete',
 			'workflows.update',
 		]);
+	});
+});
+
+describe('PostOnce input, output and logging checks', () => {
+	it('rejects bad input before sending a request', async () => {
+		const { ctx } = makeCtx();
+		reply = { data: [] };
+		// No request may go out, so the last request stays unset.
+		last = undefined as never;
+		await expect(handlers.listPosts(ctx, { limit: 101 })).rejects.toThrow();
+		await expect(
+			handlers.updateDraft(ctx, { id: DRAFT_ID } as never),
+		).rejects.toThrow();
+		expect(last).toBeUndefined();
+	});
+
+	it('rejects a post reply without an id instead of returning it', async () => {
+		const { ctx, posts } = makeCtx();
+		reply = { data: { id: 42 } };
+		await expect(handlers.getPost(ctx, { id: POST_ID })).rejects.toThrow();
+		expect(posts.upsertByEntityId).not.toHaveBeenCalled();
+		expect(mockLogEvent).not.toHaveBeenCalled();
+	});
+
+	it('logs only the status and code for an unhandled error', async () => {
+		const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
+		const error = new ApiError(
+			{ method: 'GET', url: 'posts' },
+			{
+				url: 'https://postonce.to/api/public/v1/posts',
+				ok: false,
+				status: 418,
+				statusText: 'Teapot',
+				body: { error: { code: 'odd', message: 'owner jane@example.com' } },
+			},
+			'owner jane@example.com',
+		);
+		await errorHandlers.DEFAULT.handler(error, {
+			pluginId: 'postonce',
+			operation: 'posts.list',
+			input: {},
+			originalError: error,
+		} as never);
+		expect(JSON.stringify(spy.mock.calls)).not.toContain('jane@example.com');
+		expect(JSON.stringify(spy.mock.calls)).toContain('418');
+		spy.mockRestore();
 	});
 });

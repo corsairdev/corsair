@@ -10,7 +10,10 @@ import {
 import type { PostOnceEndpoints } from '../index';
 import { PostOnceAccount, PostOncePost } from '../schema/database';
 import type { PostOnceEndpointOutputs } from './types';
-import { PostOnceEndpointOutputSchemas } from './types';
+import {
+	PostOnceEndpointInputSchemas,
+	PostOnceEndpointOutputSchemas,
+} from './types';
 
 type CallCtx = {
 	key: string;
@@ -26,6 +29,30 @@ async function postonceCall<T>(
 	options: PostOnceRequestOptions = {},
 ): Promise<T> {
 	return await makePostOnceRequest<T>(endpoint, ctx.key, options);
+}
+
+/**
+ * Core does not parse endpoint input or output, so each handler checks its
+ * input before building the request and its reply before caching, logging or
+ * returning it. The parsed input is a fresh copy, so the request and the
+ * event log see the same values.
+ */
+function parseInput<K extends keyof PostOnceEndpointOutputs>(
+	operation: K,
+	input: unknown,
+): z.infer<(typeof PostOnceEndpointInputSchemas)[K]> {
+	return PostOnceEndpointInputSchemas[operation].parse(input) as z.infer<
+		(typeof PostOnceEndpointInputSchemas)[K]
+	>;
+}
+
+function parseOutput<K extends keyof PostOnceEndpointOutputs>(
+	operation: K,
+	raw: unknown,
+): PostOnceEndpointOutputs[K] {
+	return PostOnceEndpointOutputSchemas[operation].parse(
+		raw,
+	) as PostOnceEndpointOutputs[K];
 }
 
 /**
@@ -87,9 +114,10 @@ export const listAccounts: PostOnceEndpoints['listAccounts'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await postonceCall<PostOnceEndpointOutputs['listAccounts']>(
-		ctx,
-		'accounts',
+	input = parseInput('listAccounts', input);
+	const result = parseOutput(
+		'listAccounts',
+		await postonceCall<unknown>(ctx, 'accounts'),
 	);
 
 	await cacheEntities(ctx.db.accounts, PostOnceAccount, result.data, 'account');
@@ -108,10 +136,10 @@ export const createPost: PostOnceEndpoints['createPost'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await postonceCall<PostOnceEndpointOutputs['createPost']>(
-		ctx,
-		'posts',
-		{
+	input = parseInput('createPost', input);
+	const result = parseOutput(
+		'createPost',
+		await postonceCall<unknown>(ctx, 'posts', {
 			method: 'POST',
 			idempotencyKey: input.idempotencyKey,
 			body: compactBody({
@@ -121,7 +149,7 @@ export const createPost: PostOnceEndpoints['createPost'] = async (
 				publish_at: input.publish_at,
 				external_id: input.external_id,
 			}),
-		},
+		}),
 	);
 
 	await cacheEntity(ctx.db.posts, PostOncePost, result.data, 'post');
@@ -141,9 +169,10 @@ export const createPost: PostOnceEndpoints['createPost'] = async (
 
 /** GET /v1/posts/{id} */
 export const getPost: PostOnceEndpoints['getPost'] = async (ctx, input) => {
-	const result = await postonceCall<PostOnceEndpointOutputs['getPost']>(
-		ctx,
-		`posts/${segment(input.id)}`,
+	input = parseInput('getPost', input);
+	const result = parseOutput(
+		'getPost',
+		await postonceCall<unknown>(ctx, `posts/${segment(input.id)}`),
 	);
 
 	await cacheEntity(ctx.db.posts, PostOncePost, result.data, 'post');
@@ -159,15 +188,15 @@ export const getPost: PostOnceEndpoints['getPost'] = async (ctx, input) => {
 
 /** GET /v1/posts */
 export const listPosts: PostOnceEndpoints['listPosts'] = async (ctx, input) => {
-	const result = await postonceCall<PostOnceEndpointOutputs['listPosts']>(
-		ctx,
-		'posts',
-		{
+	input = parseInput('listPosts', input);
+	const result = parseOutput(
+		'listPosts',
+		await postonceCall<unknown>(ctx, 'posts', {
 			query: compactQuery({
 				limit: input.limit,
 				after: input.after,
 			}),
-		},
+		}),
 	);
 
 	await cacheEntities(ctx.db.posts, PostOncePost, result.data, 'post');
@@ -186,10 +215,12 @@ export const cancelPost: PostOnceEndpoints['cancelPost'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await postonceCall<PostOnceEndpointOutputs['cancelPost']>(
-		ctx,
-		`posts/${segment(input.id)}/cancel`,
-		{ method: 'POST' },
+	input = parseInput('cancelPost', input);
+	const result = parseOutput(
+		'cancelPost',
+		await postonceCall<unknown>(ctx, `posts/${segment(input.id)}/cancel`, {
+			method: 'POST',
+		}),
 	);
 
 	// The post record is kept with status `cancelled`, so refresh it rather
@@ -230,6 +261,7 @@ export const updatePost: PostOnceEndpoints['updatePost'] = async (
 	ctx,
 	input,
 ) => {
+	input = parseInput('updatePost', input);
 	const { id, ...fields } = input;
 	const result = await run(
 		ctx,
@@ -248,6 +280,7 @@ export const publishPost: PostOnceEndpoints['publishPost'] = async (
 	ctx,
 	input,
 ) => {
+	input = parseInput('publishPost', input);
 	const result = await run(
 		ctx,
 		'publishPost',
@@ -265,6 +298,7 @@ export const retryPostTarget: PostOnceEndpoints['retryPostTarget'] = async (
 	ctx,
 	input,
 ) => {
+	input = parseInput('retryPostTarget', input);
 	const result = await run(
 		ctx,
 		'retryPostTarget',
@@ -281,8 +315,9 @@ export const retryPostTarget: PostOnceEndpoints['retryPostTarget'] = async (
 export const getPostAnalytics: PostOnceEndpoints['getPostAnalytics'] = async (
 	ctx,
 	input,
-) =>
-	run(
+) => {
+	input = parseInput('getPostAnalytics', input);
+	return run(
 		ctx,
 		'getPostAnalytics',
 		'postonce.posts.getAnalytics',
@@ -290,13 +325,15 @@ export const getPostAnalytics: PostOnceEndpoints['getPostAnalytics'] = async (
 		{},
 		auditPayload(input, ['id']),
 	);
+};
 
 /** GET /v1/analytics */
 export const getAnalytics: PostOnceEndpoints['getAnalytics'] = async (
 	ctx,
 	input,
-) =>
-	run(
+) => {
+	input = parseInput('getAnalytics', input);
+	return run(
 		ctx,
 		'getAnalytics',
 		'postonce.analytics.get',
@@ -310,10 +347,15 @@ export const getAnalytics: PostOnceEndpoints['getAnalytics'] = async (
 		},
 		auditPayload(input, ['days']),
 	);
+};
 
 /** GET /v1/drafts */
-export const listDrafts: PostOnceEndpoints['listDrafts'] = async (ctx, input) =>
-	run(
+export const listDrafts: PostOnceEndpoints['listDrafts'] = async (
+	ctx,
+	input,
+) => {
+	input = parseInput('listDrafts', input);
+	return run(
 		ctx,
 		'listDrafts',
 		'postonce.drafts.list',
@@ -328,12 +370,14 @@ export const listDrafts: PostOnceEndpoints['listDrafts'] = async (ctx, input) =>
 		},
 		auditPayload(input, ['limit', 'status']),
 	);
+};
 
 /** POST /v1/drafts */
 export const createDraft: PostOnceEndpoints['createDraft'] = async (
 	ctx,
 	input,
 ) => {
+	input = parseInput('createDraft', input);
 	const { idempotencyKey, ...fields } = input;
 	return run(
 		ctx,
@@ -346,8 +390,9 @@ export const createDraft: PostOnceEndpoints['createDraft'] = async (
 };
 
 /** GET /v1/drafts/{id} */
-export const getDraft: PostOnceEndpoints['getDraft'] = async (ctx, input) =>
-	run(
+export const getDraft: PostOnceEndpoints['getDraft'] = async (ctx, input) => {
+	input = parseInput('getDraft', input);
+	return run(
 		ctx,
 		'getDraft',
 		'postonce.drafts.get',
@@ -355,12 +400,14 @@ export const getDraft: PostOnceEndpoints['getDraft'] = async (ctx, input) =>
 		{},
 		auditPayload(input, ['id']),
 	);
+};
 
 /** PATCH /v1/drafts/{id} */
 export const updateDraft: PostOnceEndpoints['updateDraft'] = async (
 	ctx,
 	input,
 ) => {
+	input = parseInput('updateDraft', input);
 	const { id, ...fields } = input;
 	return run(
 		ctx,
@@ -376,8 +423,9 @@ export const updateDraft: PostOnceEndpoints['updateDraft'] = async (
 export const createMediaUpload: PostOnceEndpoints['createMediaUpload'] = async (
 	ctx,
 	input,
-) =>
-	run(
+) => {
+	input = parseInput('createMediaUpload', input);
+	return run(
 		ctx,
 		'createMediaUpload',
 		'postonce.media.createUpload',
@@ -385,10 +433,12 @@ export const createMediaUpload: PostOnceEndpoints['createMediaUpload'] = async (
 		{ method: 'POST', body: { ...input } },
 		auditPayload(input, ['content_type']),
 	);
+};
 
 /** GET /v1/media/{id} */
-export const getMedia: PostOnceEndpoints['getMedia'] = async (ctx, input) =>
-	run(
+export const getMedia: PostOnceEndpoints['getMedia'] = async (ctx, input) => {
+	input = parseInput('getMedia', input);
+	return run(
 		ctx,
 		'getMedia',
 		'postonce.media.get',
@@ -396,6 +446,7 @@ export const getMedia: PostOnceEndpoints['getMedia'] = async (ctx, input) =>
 		{},
 		{},
 	);
+};
 
 /** GET /v1/workflows */
 export const listWorkflows: PostOnceEndpoints['listWorkflows'] = async (ctx) =>
@@ -405,8 +456,9 @@ export const listWorkflows: PostOnceEndpoints['listWorkflows'] = async (ctx) =>
 export const getWorkflow: PostOnceEndpoints['getWorkflow'] = async (
 	ctx,
 	input,
-) =>
-	run(
+) => {
+	input = parseInput('getWorkflow', input);
+	return run(
 		ctx,
 		'getWorkflow',
 		'postonce.workflows.get',
@@ -414,12 +466,14 @@ export const getWorkflow: PostOnceEndpoints['getWorkflow'] = async (
 		{},
 		auditPayload(input, ['id']),
 	);
+};
 
 /** POST /v1/workflows */
 export const createWorkflow: PostOnceEndpoints['createWorkflow'] = async (
 	ctx,
 	input,
 ) => {
+	input = parseInput('createWorkflow', input);
 	const { idempotencyKey, ...fields } = input;
 	return run(
 		ctx,
@@ -436,6 +490,7 @@ export const updateWorkflow: PostOnceEndpoints['updateWorkflow'] = async (
 	ctx,
 	input,
 ) => {
+	input = parseInput('updateWorkflow', input);
 	const { id, ...fields } = input;
 	return run(
 		ctx,
@@ -451,8 +506,9 @@ export const updateWorkflow: PostOnceEndpoints['updateWorkflow'] = async (
 export const deleteWorkflow: PostOnceEndpoints['deleteWorkflow'] = async (
 	ctx,
 	input,
-) =>
-	run(
+) => {
+	input = parseInput('deleteWorkflow', input);
+	return run(
 		ctx,
 		'deleteWorkflow',
 		'postonce.workflows.delete',
@@ -460,14 +516,19 @@ export const deleteWorkflow: PostOnceEndpoints['deleteWorkflow'] = async (
 		{ method: 'DELETE' },
 		auditPayload(input, ['id']),
 	);
+};
 
 /** GET /v1/webhooks */
 export const listWebhooks: PostOnceEndpoints['listWebhooks'] = async (ctx) =>
 	run(ctx, 'listWebhooks', 'postonce.webhooks.list', 'webhooks', {}, {});
 
 /** GET /v1/webhooks/{id} */
-export const getWebhook: PostOnceEndpoints['getWebhook'] = async (ctx, input) =>
-	run(
+export const getWebhook: PostOnceEndpoints['getWebhook'] = async (
+	ctx,
+	input,
+) => {
+	input = parseInput('getWebhook', input);
+	return run(
 		ctx,
 		'getWebhook',
 		'postonce.webhooks.get',
@@ -475,13 +536,15 @@ export const getWebhook: PostOnceEndpoints['getWebhook'] = async (ctx, input) =>
 		{},
 		auditPayload(input, ['id']),
 	);
+};
 
 /** POST /v1/webhooks: the reply carries the signing secret, the event does not. */
 export const createWebhook: PostOnceEndpoints['createWebhook'] = async (
 	ctx,
 	input,
-) =>
-	run(
+) => {
+	input = parseInput('createWebhook', input);
+	return run(
 		ctx,
 		'createWebhook',
 		'postonce.webhooks.create',
@@ -489,13 +552,15 @@ export const createWebhook: PostOnceEndpoints['createWebhook'] = async (
 		{ method: 'POST', body: compactBody(input) },
 		auditPayload(input, []),
 	);
+};
 
 /** DELETE /v1/webhooks/{id} */
 export const deleteWebhook: PostOnceEndpoints['deleteWebhook'] = async (
 	ctx,
 	input,
-) =>
-	run(
+) => {
+	input = parseInput('deleteWebhook', input);
+	return run(
 		ctx,
 		'deleteWebhook',
 		'postonce.webhooks.delete',
@@ -503,3 +568,4 @@ export const deleteWebhook: PostOnceEndpoints['deleteWebhook'] = async (
 		{ method: 'DELETE' },
 		auditPayload(input, ['id']),
 	);
+};
