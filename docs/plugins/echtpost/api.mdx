@@ -1,0 +1,1210 @@
+---
+title: "Echtpost API reference"
+sidebarTitle: "API"
+description: "API reference for the Echtpost plugin in Corsair: every `echtpost.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### credits
+
+`account.credits`
+
+Get the credit balance, cards left and price per card.
+
+**Risk:** `read`
+
+```ts
+await corsair.echtpost.api.account.credits({});
+```
+
+**Input:** _empty object_
+
+Balance in EUR, cards left at the regular and foreign price, and the price per card.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credits_eur` | `string \| null` | No | — |
+| `cards_regular` | `number \| null` | No | — |
+| `cards_foreign` | `number \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `price_per_card_eur` | `string \| null` | No | — |
+| `price_per_foreign_card_eur` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`account.get`
+
+Get the account, user, API key metadata and balance.
+
+**Risk:** `read`
+
+```ts
+await corsair.echtpost.api.account.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `object \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `api_key` | `object \| null` | No | — |
+| `balance` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="account full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  country_code?: string | null,
+  default_greeting_style?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  email?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="api_key full type">
+
+```ts
+{
+  id?: number | null,
+  last_used_on?: string | null,
+  created_at?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="balance full type">
+
+```ts
+{
+  credits_eur?: string | null,
+  cards_regular?: number | null,
+  cards_foreign?: number | null,
+  currency?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Cards
+
+### cancel
+
+`cards.cancel`
+
+Cancel a card that has not been printed yet; it cannot be restored.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.echtpost.api.cards.cancel({ id: '0b9e3c1e-2a4f-4b8a-9f00-1c2d3e4f5a6b' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Card id (UUID) |
+
+Only while `cancelable` is true; answers with the new status.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `string \| null` | No | — |
+| `cancelable` | `boolean \| null` | No | — |
+
+
+
+---
+
+### create
+
+`cards.create`
+
+Print and post a real postcard to each recipient; the account is billed per card.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.echtpost.api.cards.create({ motive_id: 42, content: '{anrede}, thank you for your order!', recipient_ids: [101], deliver_at: 'tomorrow' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `motive_id` | `number` | Yes | — |
+| `content` | `string` | No | Card text; &#123;anrede&#125; becomes each recipient salutation |
+| `content_ps` | `string` | No | — |
+| `content_vertical` | `string` | No | — |
+| `qr_code_url` | `string` | No | — |
+| `deduplicate_recipients` | `boolean` | No | — |
+| `font` | `object` | No | Optional; EchtPost picks architects_daughter at a middle size |
+| `notifications` | `object[]` | No | — |
+| `deliver_at` | `string` | No | YYYY-MM-DD, today, asap, tomorrow or N-days-from-now; at most 90 days out |
+| `move_to_next_print_date` | `boolean` | No | — |
+| `recipient_ids` | `number[]` | No | — |
+| `group_ids` | `number[]` | No | — |
+| `recipients` | `object[]` | No | New recipients by postal address |
+
+Prints, posts and bills a real card per recipient with a live key. `motive_id` is required; `content` is required when the motive allows text.
+
+<AccordionGroup>
+<Accordion title="font full type">
+
+```ts
+{
+  family?: string,
+  size?: number,
+  color?: string,
+  line_height?: number
+}
+```
+</Accordion>
+
+<Accordion title="notifications full type">
+
+```ts
+{
+  type: after_sent | before_send,
+  email: string,
+  send_on?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="recipients full type">
+
+```ts
+{
+  first_name?: string,
+  last_name: string,
+  title?: string,
+  greeting_style?: informal | formal | official | dear_first_name | dear_last_name | good_day_first_name | good_day_last_name | custom,
+  custom_salutation?: string,
+  gender?: string,
+  company_name?: string,
+  department?: string,
+  street: string,
+  zip: string,
+  city: string,
+  state_code?: string,
+  country_code: string,
+  birthdate?: string,
+  external_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `motive_id` | `number \| null` | No | — |
+| `template_id` | `number \| null` | No | — |
+| `status` | `string \| null` | No | pending, scheduled, sent or canceled |
+| `type` | `string \| null` | No | — |
+| `content` | `string \| null` | No | — |
+| `content_ps` | `string \| null` | No | — |
+| `content_vertical` | `string \| null` | No | — |
+| `font` | `object \| null` | No | — |
+| `contacts_count` | `number \| null` | No | — |
+| `deliver_at` | `string \| null` | No | — |
+| `cancelable` | `boolean \| null` | No | — |
+| `web_url` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="font full type">
+
+```ts
+{
+  family?: string | null,
+  size?: number | null,
+  color?: string | null,
+  line_height?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createFromTemplate
+
+`cards.createFromTemplate`
+
+Print and post a real postcard from a saved template; the account is billed per card.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.echtpost.api.cards.createFromTemplate({ template_id: 12, group_ids: [7] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `number` | Yes | — |
+| `content_vertical` | `string \| null` | No | — |
+| `deliver_at` | `string` | No | YYYY-MM-DD, today, asap, tomorrow or N-days-from-now; at most 90 days out |
+| `move_to_next_print_date` | `boolean` | No | — |
+| `recipient_ids` | `number[]` | No | — |
+| `group_ids` | `number[]` | No | — |
+| `recipients` | `object[]` | No | New recipients by postal address |
+
+Same as cards.create, using a saved template's motive, text and font.
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  first_name?: string,
+  last_name: string,
+  title?: string,
+  greeting_style?: informal | formal | official | dear_first_name | dear_last_name | good_day_first_name | good_day_last_name | custom,
+  custom_salutation?: string,
+  gender?: string,
+  company_name?: string,
+  department?: string,
+  street: string,
+  zip: string,
+  city: string,
+  state_code?: string,
+  country_code: string,
+  birthdate?: string,
+  external_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `motive_id` | `number \| null` | No | — |
+| `template_id` | `number \| null` | No | — |
+| `status` | `string \| null` | No | pending, scheduled, sent or canceled |
+| `type` | `string \| null` | No | — |
+| `content` | `string \| null` | No | — |
+| `content_ps` | `string \| null` | No | — |
+| `content_vertical` | `string \| null` | No | — |
+| `font` | `object \| null` | No | — |
+| `contacts_count` | `number \| null` | No | — |
+| `deliver_at` | `string \| null` | No | — |
+| `cancelable` | `boolean \| null` | No | — |
+| `web_url` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="font full type">
+
+```ts
+{
+  family?: string | null,
+  size?: number | null,
+  color?: string | null,
+  line_height?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`cards.get`
+
+Get one card and its status.
+
+**Risk:** `read`
+
+```ts
+await corsair.echtpost.api.cards.get({ id: '0b9e3c1e-2a4f-4b8a-9f00-1c2d3e4f5a6b' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Card id (UUID) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `motive_id` | `number \| null` | No | — |
+| `template_id` | `number \| null` | No | — |
+| `status` | `string \| null` | No | pending, scheduled, sent or canceled |
+| `type` | `string \| null` | No | — |
+| `content` | `string \| null` | No | — |
+| `content_ps` | `string \| null` | No | — |
+| `content_vertical` | `string \| null` | No | — |
+| `font` | `object \| null` | No | — |
+| `contacts_count` | `number \| null` | No | — |
+| `deliver_at` | `string \| null` | No | — |
+| `cancelable` | `boolean \| null` | No | — |
+| `web_url` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="font full type">
+
+```ts
+{
+  family?: string | null,
+  size?: number | null,
+  color?: string | null,
+  line_height?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`cards.list`
+
+List cards, filtered by status, delivery date or motive.
+
+**Risk:** `read`
+
+```ts
+await corsair.echtpost.api.cards.list({ status: 'scheduled' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `status` | `string` | No | pending, scheduled, sent or canceled |
+| `deliver_at` | `string` | No | YYYY-MM-DD |
+| `motive_id` | `number` | No | — |
+| `sort` | `created_at \| deliver_at` | No | — |
+| `direction` | `asc \| desc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cards` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="cards full type">
+
+```ts
+{
+  id: string,
+  motive_id?: number | null,
+  template_id?: number | null,
+  status?: string | null,
+  type?: string | null,
+  content?: string | null,
+  content_ps?: string | null,
+  content_vertical?: string | null,
+  font?: {
+    family?: string | null,
+    size?: number | null,
+    color?: string | null,
+    line_height?: number | null
+  } | null,
+  contacts_count?: number | null,
+  deliver_at?: string | null,
+  cancelable?: boolean | null,
+  web_url?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### previewFit
+
+`cards.previewFit`
+
+Check whether card text fits at a font and size, without creating a card.
+
+**Risk:** `read`
+
+```ts
+await corsair.echtpost.api.cards.previewFit({ content: 'Thank you for your order!', font: { family: 'architects_daughter', size: 13 } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | Yes | — |
+| `sample_greeting` | `string` | No | — |
+| `font` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="font full type">
+
+```ts
+{
+  family?: string,
+  size?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fits` | `boolean` | Yes | — |
+| `lines_used` | `number \| null` | No | — |
+| `max_lines` | `number \| null` | No | — |
+| `overflow_line` | `number \| null` | No | — |
+| `suggested_font_size` | `number \| null` | No | — |
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a contact with a postal address.
+
+**Risk:** `write`
+
+```ts
+await corsair.echtpost.api.contacts.create({ first_name: 'Max', last_name: 'Mustermann', street: 'Hauptstr. 1', zip: '10115', city: 'Berlin', country_code: 'DE' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `greeting_style` | `informal \| formal \| official \| dear_first_name \| dear_last_name \| good_day_first_name \| good_day_last_name \| custom` | No | How &#123;anrede&#125; is written for this recipient |
+| `custom_salutation` | `string` | No | — |
+| `gender` | `string` | No | — |
+| `company_name` | `string` | No | — |
+| `department` | `string` | No | — |
+| `street` | `string` | Yes | — |
+| `zip` | `string` | Yes | — |
+| `city` | `string` | Yes | — |
+| `state_code` | `string` | No | — |
+| `country_code` | `string` | Yes | ISO 3166-1 alpha-2, e.g. DE |
+| `birthdate` | `string` | No | YYYY-MM-DD |
+| `external_id` | `string` | No | — |
+| `group_ids` | `number[]` | No | — |
+| `group_names` | `string[]` | No | Group names; missing groups are created |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `company_name` | `string \| null` | No | — |
+| `street` | `string \| null` | No | — |
+| `zip` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `country_code` | `string \| null` | No | — |
+| `greeting_style` | `string \| null` | No | — |
+| `greeting` | `string \| null` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `group_ids` | `number[] \| null` | No | — |
+| `card_ids` | `string[] \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Delete a contact.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.echtpost.api.contacts.delete({ id: 101 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Get one contact by id.
+
+**Risk:** `read`
+
+```ts
+await corsair.echtpost.api.contacts.get({ id: 101 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `company_name` | `string \| null` | No | — |
+| `street` | `string \| null` | No | — |
+| `zip` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `country_code` | `string \| null` | No | — |
+| `greeting_style` | `string \| null` | No | — |
+| `greeting` | `string \| null` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `group_ids` | `number[] \| null` | No | — |
+| `card_ids` | `string[] \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List contacts (postcard recipients), with filters and paging.
+
+**Risk:** `read`
+
+```ts
+await corsair.echtpost.api.contacts.list({ search: 'Mustermann', per_page: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `country_code` | `string` | No | — |
+| `group_id` | `number` | No | — |
+| `external_id` | `string` | No | — |
+| `search` | `string` | No | Substring of first name, last name, company or city |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `company_name` | `string` | No | — |
+| `street` | `string` | No | — |
+| `zip` | `string` | No | — |
+| `city` | `string` | No | — |
+| `sort` | `last_name \| created_at \| updated_at` | No | — |
+| `direction` | `asc \| desc` | No | — |
+| `include` | `string` | No | groups and/or cards, comma separated, to add group_ids/card_ids |
+
+`search` matches first name, last name, company or city. `include: "groups"` adds `group_ids` to each contact.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  id: number,
+  first_name?: string | null,
+  last_name?: string | null,
+  company_name?: string | null,
+  street?: string | null,
+  zip?: string | null,
+  city?: string | null,
+  country_code?: string | null,
+  greeting_style?: string | null,
+  greeting?: string | null,
+  external_id?: string | null,
+  group_ids?: number[] | null,
+  card_ids?: string[] | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update a contact; fields left out stay as they are.
+
+**Risk:** `write`
+
+```ts
+await corsair.echtpost.api.contacts.update({ id: 101, city: 'Hamburg' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `title` | `string` | No | — |
+| `greeting_style` | `informal \| formal \| official \| dear_first_name \| dear_last_name \| good_day_first_name \| good_day_last_name \| custom` | No | How &#123;anrede&#125; is written for this recipient |
+| `custom_salutation` | `string` | No | — |
+| `gender` | `string` | No | — |
+| `company_name` | `string` | No | — |
+| `department` | `string` | No | — |
+| `street` | `string` | No | — |
+| `zip` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state_code` | `string` | No | — |
+| `country_code` | `string` | No | — |
+| `birthdate` | `string` | No | — |
+| `external_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `company_name` | `string \| null` | No | — |
+| `street` | `string \| null` | No | — |
+| `zip` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `country_code` | `string \| null` | No | — |
+| `greeting_style` | `string \| null` | No | — |
+| `greeting` | `string \| null` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `group_ids` | `number[] \| null` | No | — |
+| `card_ids` | `string[] \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+## Groups
+
+### create
+
+`groups.create`
+
+Create a contact group.
+
+**Risk:** `write`
+
+```ts
+await corsair.echtpost.api.groups.create({ name: 'Customers' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `external_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `recipient_count` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`groups.delete`
+
+Delete a group.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.echtpost.api.groups.delete({ id: 7 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`groups.get`
+
+Get one group by id.
+
+**Risk:** `read`
+
+```ts
+await corsair.echtpost.api.groups.get({ id: 7 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `recipient_count` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`groups.list`
+
+List contact groups.
+
+**Risk:** `read`
+
+```ts
+await corsair.echtpost.api.groups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `sort` | `name \| created_at \| updated_at` | No | — |
+| `direction` | `asc \| desc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groups` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  external_id?: string | null,
+  recipient_count?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`groups.update`
+
+Rename a group or change its external id.
+
+**Risk:** `write`
+
+```ts
+await corsair.echtpost.api.groups.update({ id: 7, name: 'VIP customers' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | No | — |
+| `external_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `recipient_count` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+## Motives
+
+### get
+
+`motives.get`
+
+Get one motive and what text fields it allows.
+
+**Risk:** `read`
+
+```ts
+await corsair.echtpost.api.motives.get({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `desc` | `string \| null` | No | — |
+| `orientation` | `string \| null` | No | — |
+| `content_available` | `boolean \| null` | No | — |
+| `content_ps_available` | `boolean \| null` | No | — |
+| `vertical_text_available` | `boolean \| null` | No | — |
+| `qr_code_available` | `boolean \| null` | No | — |
+| `has_back_side` | `boolean \| null` | No | — |
+| `preview_image_url` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `temporary` | `boolean \| null` | No | — |
+
+
+
+---
+
+### list
+
+`motives.list`
+
+List the postcard motives (front designs) the account can use.
+
+**Risk:** `read`
+
+```ts
+await corsair.echtpost.api.motives.list({ search: 'birthday' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `search` | `string` | No | — |
+| `temporary` | `boolean` | No | Only uploaded temporary motives |
+| `sort` | `name \| created_at` | No | — |
+| `direction` | `asc \| desc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `motives` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="motives full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  desc?: string | null,
+  orientation?: string | null,
+  content_available?: boolean | null,
+  content_ps_available?: boolean | null,
+  vertical_text_available?: boolean | null,
+  qr_code_available?: boolean | null,
+  has_back_side?: boolean | null,
+  preview_image_url?: string | null,
+  tags?: string[] | null,
+  temporary?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Templates
+
+### get
+
+`templates.get`
+
+Get one saved template by id.
+
+**Risk:** `read`
+
+```ts
+await corsair.echtpost.api.templates.get({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `motive_id` | `number \| null` | No | — |
+| `content` | `string \| null` | No | — |
+| `content_ps` | `string \| null` | No | — |
+| `content_vertical` | `string \| null` | No | — |
+| `font` | `object \| null` | No | — |
+| `qr_code_url` | `string \| null` | No | — |
+| `preview_url` | `string \| null` | No | — |
+| `source` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="font full type">
+
+```ts
+{
+  family?: string | null,
+  size?: number | null,
+  color?: string | null,
+  line_height?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`templates.list`
+
+List saved Echtpost postcard templates.
+
+**Risk:** `read`
+
+```ts
+await corsair.echtpost.api.templates.list({ page: 1, per_page: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+GET /templates. The body is a JSON array. A row is stored only when id is a number. source is stored as a string so a new enum value does not fail the parse.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templates` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="templates full type">
+
+```ts
+{
+  id: string,
+  motive_id?: number,
+  content?: string,
+  content_ps?: string,
+  content_vertical?: string,
+  font?: {
+    family?: string,
+    size?: number,
+    color?: string,
+    line_height?: number
+  },
+  qr_code_url?: string,
+  preview_url?: string,
+  source?: string,
+  created_at?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

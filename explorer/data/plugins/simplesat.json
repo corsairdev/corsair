@@ -1,0 +1,1341 @@
+{
+  "id": "simplesat",
+  "displayName": "Simplesat",
+  "description": "Customer feedback from Simplesat - manage customers and team members, list surveys and questions, search and read responses and answers, correct an answer, and send a survey by email.",
+  "npmPackageName": "@corsair-dev/simplesat",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 17,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "simplesat.api.answers.get",
+      "shortPath": "answers.get",
+      "description": "Read one answer with its question, chosen option, sentiment and comment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "answer_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "question",
+            "optional": true,
+            "type": "{ id?: number | null, text?: string | null, metric?: string | null } | null"
+          },
+          {
+            "key": "choice",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "choice_label",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "choices",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "sentiment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "follow_up_answer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "follow_up_answer_choice",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "follow_up_answer_choices",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "survey",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplesat.api.answers.search",
+      "shortPath": "answers.search",
+      "description": "Search answers by date range and filters such as sentiment, across every survey",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, up to 250. Defaults to 50."
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string",
+            "description": "The `next` path from the previous page. It replaces the other filters, because Simplesat already encoded them into it."
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ key: string, values: string[], attribute?: string, comparison: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null",
+            "description": "Path of the next page, or null on the last one. Pass it back as `next`."
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Total matching records."
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id?: number | null, question?: { id?: number | null, text?: string | null, metric?: string | null } | null, choice?: string | null, choice_label?: string | null, choices?: string[] | null, sentiment?: string | null, comment?: string | null, follow_up_answer?: string | null, follow_up_answer_choice?: string | null, follow_up_answer_choices?: string[] | null, survey?: { id?: number | null, name?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplesat.api.answers.update",
+      "shortPath": "answers.update",
+      "description": "Change an answer's chosen option, comment or sentiment. The question and survey it belongs to are fixed",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "answer_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "choice",
+            "optional": true,
+            "type": "string | null",
+            "description": "The chosen option id."
+          },
+          {
+            "key": "choices",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "The chosen option ids, for a multi-select question."
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sentiment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "follow_up_answer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "follow_up_answer_choice",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "follow_up_answer_choices",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "question",
+            "optional": true,
+            "type": "{ id?: number | null, text?: string | null, metric?: string | null } | null"
+          },
+          {
+            "key": "choice",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "choice_label",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "choices",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "sentiment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "follow_up_answer",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "follow_up_answer_choice",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "follow_up_answer_choices",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "survey",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplesat.api.customers.bulk",
+      "shortPath": "customers.bulk",
+      "description": "Queue many customer upserts in one request. The answer carries a request_id rather than the stored records, because the write is queued",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customers",
+            "optional": false,
+            "type": "{ external_id?: string | null, email?: string | null, name?: string | null, company?: string | null, language?: string | null, tags?: string[] | null, custom_attributes?: Record<string, any> | null }[]",
+            "description": "The customers to create or update."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "detail",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplesat.api.customers.create",
+      "shortPath": "customers.create",
+      "description": "Create or update a customer. Simplesat matches on external_id or email, so it is an upsert rather than a plain create",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Your own id for this customer."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "custom_attributes",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "custom_attributes",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplesat.api.customers.get",
+      "shortPath": "customers.get",
+      "description": "Read one customer by their Simplesat id, with their tags and custom attributes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Simplesat customer id. An external id answers 404."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "custom_attributes",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplesat.api.customers.list",
+      "shortPath": "customers.list",
+      "description": "List customers with filters for when they were created or modified and whether they are subscribed; follow `next` for the following page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, up to 250. Defaults to 50."
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string",
+            "description": "The `next` path from the previous page. It replaces the other filters, because Simplesat already encoded them into it."
+          },
+          {
+            "key": "created_after",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "created_before",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "modified_after",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "modified_before",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "subscribed",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null",
+            "description": "Path of the next page, or null on the last one. Pass it back as `next`."
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Total matching records."
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id?: number | null, external_id?: string | null, email?: string | null, name?: string | null, company?: string | null, language?: string | null, tags?: string[] | null, custom_attributes?: Record<string, any> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplesat.api.customers.update",
+      "shortPath": "customers.update",
+      "description": "Update one customer by their Simplesat id, replacing the fields sent",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Simplesat customer id."
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Your own id for this customer."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "custom_attributes",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "custom_attributes",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplesat.api.questions.list",
+      "shortPath": "questions.list",
+      "description": "List the questions behind the surveys, filtered by survey or metric, with their types and choices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, up to 250. Defaults to 50."
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string",
+            "description": "The `next` path from the previous page. It replaces the other filters, because Simplesat already encoded them into it."
+          },
+          {
+            "key": "survey_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "metric",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null",
+            "description": "Path of the next page, or null on the last one. Pass it back as `next`."
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Total matching records."
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id?: number | null, survey?: { id?: number | null, name?: string | null } | null, order?: number | null, metric?: string | null, type?: string | null, text?: string | null, rating_scale?: boolean | null, required?: boolean | null, choices?: string[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplesat.api.responses.create",
+      "shortPath": "responses.create",
+      "description": "Create a response, or update the one that already matches it. `created` backdates it, which is how a survey answered elsewhere is imported",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "survey_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string",
+            "description": "Backdates the response, when the survey was answered elsewhere."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "answers",
+            "optional": true,
+            "type": "{ question_id: number, choice?: string, choices?: string[], comment?: string, sentiment?: string, follow_up_answer?: string, follow_up_answer_choice?: string, follow_up_answer_choices?: string[] }[]"
+          },
+          {
+            "key": "team_members",
+            "optional": true,
+            "type": "{ email: string, role: string, is_primary: boolean, external_id?: string, name?: string, custom_attributes?: Record<string, any> }[]"
+          },
+          {
+            "key": "ticket",
+            "optional": true,
+            "type": "{ external_id?: string, subject?: string, custom_attributes?: Record<string, any> }"
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "{ email: string, external_id?: string, name?: string, tags?: string[], company?: string, custom_attributes?: Record<string, any> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "survey_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "ip_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "ticket",
+            "optional": true,
+            "type": "{ external_id?: string | null, subject?: string | null, custom_attributes?: Record<string, any> | null } | null"
+          },
+          {
+            "key": "team_members",
+            "optional": true,
+            "type": "{ external_id?: string | null, name?: string | null, email?: string | null, role?: string | null, is_primary?: boolean | null }[] | null"
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "{ id?: number | null, external_id?: string | null, email?: string | null, name?: string | null, company?: string | null, language?: string | null, tags?: string[] | null, custom_attributes?: Record<string, any> | null } | null"
+          },
+          {
+            "key": "answers",
+            "optional": true,
+            "type": "{ id?: number | null, question?: { id?: number | null, text?: string | null, metric?: string | null } | null, choice?: string | null, choice_label?: string | null, choices?: string[] | null, sentiment?: string | null, comment?: string | null, follow_up_answer?: string | null, follow_up_answer_choice?: string | null, follow_up_answer_choices?: string[] | null, survey?: { id?: number | null, name?: string | null } | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplesat.api.responses.get",
+      "shortPath": "responses.get",
+      "description": "Read one response with its survey, customer, answers and team members",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "response_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "survey_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "ip_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "ticket",
+            "optional": true,
+            "type": "{ external_id?: string | null, subject?: string | null, custom_attributes?: Record<string, any> | null } | null"
+          },
+          {
+            "key": "team_members",
+            "optional": true,
+            "type": "{ external_id?: string | null, name?: string | null, email?: string | null, role?: string | null, is_primary?: boolean | null }[] | null"
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "{ id?: number | null, external_id?: string | null, email?: string | null, name?: string | null, company?: string | null, language?: string | null, tags?: string[] | null, custom_attributes?: Record<string, any> | null } | null"
+          },
+          {
+            "key": "answers",
+            "optional": true,
+            "type": "{ id?: number | null, question?: { id?: number | null, text?: string | null, metric?: string | null } | null, choice?: string | null, choice_label?: string | null, choices?: string[] | null, sentiment?: string | null, comment?: string | null, follow_up_answer?: string | null, follow_up_answer_choice?: string | null, follow_up_answer_choices?: string[] | null, survey?: { id?: number | null, name?: string | null } | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplesat.api.responses.search",
+      "shortPath": "responses.search",
+      "description": "Search responses by date range and filters such as customer email, with each response's answers and team members",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, up to 250. Defaults to 50."
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string",
+            "description": "The `next` path from the previous page. It replaces the other filters, because Simplesat already encoded them into it."
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "created_start_date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "created_end_date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "modified_start_date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "modified_end_date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ key: string, values: string[], attribute?: string, comparison: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null",
+            "description": "Path of the next page, or null on the last one. Pass it back as `next`."
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Total matching records."
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id?: number | null, survey_id?: number | null, language?: string | null, created?: string | null, modified?: string | null, ip_address?: string | null, tags?: string[] | null, ticket?: { external_id?: string | null, subject?: string | null, custom_attributes?: Record<string, any> | null } | null, team_members?: { external_id?: string | null, name?: string | null, email?: string | null, role?: string | null, is_primary?: boolean | null }[] | null, customer?: { id?: number | null, external_id?: string | null, email?: string | null, name?: string | null, company?: string | null, language?: string | null, tags?: string[] | null, custom_attributes?: Record<string, any> | null } | null, answers?: { id?: number | null, question?: { id?: number | null, text?: string | null, metric?: string | null } | null, choice?: string | null, choice_label?: string | null, choices?: string[] | null, sentiment?: string | null, comment?: string | null, follow_up_answer?: string | null, follow_up_answer_choice?: string | null, follow_up_answer_choices?: string[] | null, survey?: { id?: number | null, name?: string | null } | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplesat.api.responses.update",
+      "shortPath": "responses.update",
+      "description": "Update one response by id. The body takes the same shape as a create, so the whole response is sent back",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "response_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "survey_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string",
+            "description": "Backdates the response, when the survey was answered elsewhere."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "answers",
+            "optional": true,
+            "type": "{ question_id: number, choice?: string, choices?: string[], comment?: string, sentiment?: string, follow_up_answer?: string, follow_up_answer_choice?: string, follow_up_answer_choices?: string[] }[]"
+          },
+          {
+            "key": "team_members",
+            "optional": true,
+            "type": "{ email: string, role: string, is_primary: boolean, external_id?: string, name?: string, custom_attributes?: Record<string, any> }[]"
+          },
+          {
+            "key": "ticket",
+            "optional": true,
+            "type": "{ external_id?: string, subject?: string, custom_attributes?: Record<string, any> }"
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "{ email: string, external_id?: string, name?: string, tags?: string[], company?: string, custom_attributes?: Record<string, any> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "survey_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "ip_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "ticket",
+            "optional": true,
+            "type": "{ external_id?: string | null, subject?: string | null, custom_attributes?: Record<string, any> | null } | null"
+          },
+          {
+            "key": "team_members",
+            "optional": true,
+            "type": "{ external_id?: string | null, name?: string | null, email?: string | null, role?: string | null, is_primary?: boolean | null }[] | null"
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "{ id?: number | null, external_id?: string | null, email?: string | null, name?: string | null, company?: string | null, language?: string | null, tags?: string[] | null, custom_attributes?: Record<string, any> | null } | null"
+          },
+          {
+            "key": "answers",
+            "optional": true,
+            "type": "{ id?: number | null, question?: { id?: number | null, text?: string | null, metric?: string | null } | null, choice?: string | null, choice_label?: string | null, choices?: string[] | null, sentiment?: string | null, comment?: string | null, follow_up_answer?: string | null, follow_up_answer_choice?: string | null, follow_up_answer_choices?: string[] | null, survey?: { id?: number | null, name?: string | null } | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplesat.api.surveys.email",
+      "shortPath": "surveys.email",
+      "description": "Send a survey to one customer by email. This notifies a real person, and the survey is identified by its token",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "survey_token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customer",
+            "optional": false,
+            "type": "{ email: string, id?: string | null, name?: string | null, external_id?: string | null }",
+            "description": "The customer to send the survey to."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "detail",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplesat.api.surveys.list",
+      "shortPath": "surveys.list",
+      "description": "List the surveys on the account with their metric, type and survey_token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, up to 250. Defaults to 50."
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string",
+            "description": "The `next` path from the previous page. It replaces the other filters, because Simplesat already encoded them into it."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Only surveys whose name matches."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null",
+            "description": "Path of the next page, or null on the last one. Pass it back as `next`."
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Total matching records."
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, metric?: string | null, survey_token?: string | null, survey_type?: string | null, brand_name?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplesat.api.teamMembers.create",
+      "shortPath": "teamMembers.create",
+      "description": "Create or update a team member, which is how a response is attributed to the person who handled it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_attributes",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_attributes",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplesat.api.teamMembers.get",
+      "shortPath": "teamMembers.get",
+      "description": "Read one team member with their groups and custom attributes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_member_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Simplesat team member id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_attributes",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

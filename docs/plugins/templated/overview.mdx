@@ -1,0 +1,146 @@
+---
+title: "Templated plugin"
+sidebarTitle: "Overview"
+description: "Image, PDF and video generation with Templated - render templates with layer overrides, manage templates and their layers, merge renders into one PDF, upload images, and organise renders into folders."
+---
+
+Use **Templated** through Corsair: one client, typed API calls.
+
+Create a key in the Templated dashboard under the API Key tab, then send it as `Authorization: Bearer <key>`.
+
+Things to know before you call:
+
+- **Rendering spends a credit.** `renders.create`, `renders.duplicate` and `renders.merge` each use API quota, and a deleted render does not refund it.
+- **A render is synchronous by default.** It comes back complete with its `url` in about two seconds. Pass `async: true` to return while it is still `PENDING` and give `webhook_url` for Templated to call when it finishes; the render then moves to `COMPLETED` or `FAILED`.
+- **Batch renders answer an array.** Sending `templates` instead of `template` renders each one, so the response is an array of renders rather than one object. Both shapes parse.
+- **The list routes are paged by number, starting at 0.** `renders.list` documents no query parameters at all, so the plugin rejects a filter on it. `templates.list` takes `query`, `page`, `limit`, `width` and `height`, and defaults to 25 per page; `uploads.list` and `folders.list` default to 15.
+- **Uploads need real file bytes.** `uploads.create` takes `fileName` and `fileBase64`, rebuilds the bytes as a Blob and sends multipart, because the route accepts an image file up to 2 MB and nothing else. Templated does not accept a hosted URL in its place.
+- **Deleting uploads takes repeated ids.** `uploads.delete` sends `ids` once per upload, not one comma-joined value.
+- **Tags are bare arrays.** `templates.addTags` and `templates.removeTags` take a JSON array of strings as the whole body, not an object with a `tags` key.
+- **A merge needs hosting.** `renders.merge` always asks Templated to host the result, because without that flag the route answers the PDF bytes rather than JSON.
+- **Deletes are permanent.** A deleted render loses its file and its URL stops working, and a deleted template cannot be restored.
+
+**What you get:**
+
+- 23 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/templated better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/templated better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/templated better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/templated better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { templated } from '@corsair-dev/templated';
+
+export const corsair = createCorsair({
+	plugins: [
+		templated(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Templated API key before the first call: `pnpm corsair setup --plugin=templated --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+templated()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'templated',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the first page of templates**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.templated.api.templates.list({ page: 0 });
+```
+
+
+**Render a template with a text override**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.templated.api.renders.create({
+	template: '306c724a-d138-486a-a601-0b2a9ced52be',
+	layers: {
+		text-1: { text: 'Hello from Templated' },
+	},
+});
+```
+
+
+See the full list on the [API](/plugins/templated/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/templated/api">
+    Every `templated.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

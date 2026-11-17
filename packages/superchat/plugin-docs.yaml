@@ -1,0 +1,87 @@
+displayName: Superchat
+description: Multi-channel messaging from Superchat - manage contacts and contact lists, read conversations and their messages, and send text messages on WhatsApp, SMS, Instagram, Messenger, Telegram or email.
+domain: superchat.com
+recommendedAuth: api_key
+overviewNote: |
+  Create an API token in Superchat under Settings, then API. You have to be an administrator to see it. Pass it as the plugin's `key` option or store it on the account; the plugin sends it as the `X-API-KEY` header.
+
+  Things to know before you write:
+
+  - **The API path carries `v1.0`, not `v1`.** A request to `/v1/contacts` answers 405 Method Not Allowed, which reads like a routing bug rather than a wrong path. The plugin uses `v1.0`, as Superchat's own examples do.
+  - **A missing key is 401 and a wrong key is 403.** The 403 does not mean a scope is missing, so the plugin treats both as an auth failure.
+  - **Sending reaches a real person.** `messages.send` delivers on WhatsApp, SMS, Instagram, Messenger, Telegram or email, depending on the `from` channel and the recipient's handle. The content has to suit that channel: a channel that only accepts templates will reject a plain text body.
+  - **One recipient per message.** The spec caps `to` at one entry, and the schema enforces it.
+  - **A contact needs a handle.** A handle is the email address or phone number that identifies a contact on a channel, and at least one is required. Creating a contact with none would leave Superchat nothing to reach them on.
+  - **The contact update route requires three fields.** `contacts.update` is a PATCH, but it lists `first_name`, `last_name` and `gender` as required, so a caller changing one sends the other two back. Their values may be null; the keys may not be absent.
+  - **Snoozing needs two fields.** Set `status: 'snoozed'` together with a `snoozed_until` time, or leave snoozing alone. The schema rejects the mismatch.
+  - **Paging is by cursor.** `after` takes the last id of the previous page and `before` reads backwards. Only one may be set, and `limit` is 1 to 100, defaulting to 50.
+  - **Rate limits.** Each workspace gets 2500 requests per 5-minute window, shared across its API keys, and a trial workspace is capped at 10000 calls for its whole lifetime. Both answer 429, and the plugin retries three times with backoff.
+examples:
+  read:
+    path: conversations.messages
+    title: Read the messages in a conversation
+    args:
+      id: cv_1aBMS9FKwvSDjljRJI1aZ
+  write:
+    path: messages.send
+    title: Send a text message to one recipient
+    args:
+      to:
+        - identifier: jane@example.com
+      from:
+        channel_id: mc_1aBMS9FKwvSDjljRJI1aZ
+        name: Acme Support
+      content:
+        type: text
+        body: Hello from Corsair
+apiExamples:
+  contacts.list:
+    call: "{ limit: 10 }"
+  contacts.get:
+    call: "{ contactId: 'ct_1aBMS9FKwvSDjljRJI1aZ' }"
+  contacts.create:
+    call: "{ first_name: 'Jane', last_name: 'Smith', gender: null, handles: [{ id: null, type: 'mail', value: 'jane@example.com' }] }"
+  contacts.update:
+    call: "{ contactId: 'ct_1aBMS9FKwvSDjljRJI1aZ', first_name: 'Jane', last_name: 'Smith', gender: null }"
+  contacts.search:
+    call: "{ query: { value: [{ field: 'mail', operator: '=', value: 'jane@example.com' }] } }"
+  contacts.delete:
+    call: "{ contactId: 'ct_1aBMS9FKwvSDjljRJI1aZ' }"
+  contactLists.list: {}
+  contactLists.create:
+    call: "{ name: 'Newsletter Subscribers', description: 'Contacts subscribed to the newsletter' }"
+  contactLists.delete:
+    call: "{ contactListId: 'cl_1aBMS9FKwvSDjljRJI1aZ' }"
+  contactLists.forContact:
+    call: "{ contactId: 'ct_1aBMS9FKwvSDjljRJI1aZ' }"
+  contactLists.addContact:
+    call: "{ contactId: 'ct_1aBMS9FKwvSDjljRJI1aZ', contactListId: 'cl_1aBMS9FKwvSDjljRJI1aZ' }"
+  contactLists.removeContact:
+    call: "{ contactId: 'ct_1aBMS9FKwvSDjljRJI1aZ', contactListId: 'cl_1aBMS9FKwvSDjljRJI1aZ' }"
+  conversations.list:
+    call: "{ limit: 20 }"
+  conversations.get:
+    call: "{ id: 'cv_1aBMS9FKwvSDjljRJI1aZ' }"
+  conversations.update:
+    call: "{ id: 'cv_1aBMS9FKwvSDjljRJI1aZ', status: 'snoozed', snoozed_until: '2026-03-20T09:00:00Z' }"
+  conversations.messages:
+    call: "{ id: 'cv_1aBMS9FKwvSDjljRJI1aZ' }"
+  messages.send:
+    call: "{ to: [{ identifier: 'jane@example.com' }], from: { channel_id: 'mc_1aBMS9FKwvSDjljRJI1aZ', name: 'Acme Support' }, content: { type: 'text', body: 'Hello!' } }"
+  messages.get:
+    call: "{ id: 'me_1aBMS9FKwvSDjljRJI1aZ' }"
+  channels.list:
+    call: "{ inbox_id: 'in_1aBMS9FKwvSDjljRJI1aZ' }"
+  channels.get:
+    call: "{ channelId: 'mc_1aBMS9FKwvSDjljRJI1aZ' }"
+  inboxes.list: {}
+  inboxes.get:
+    call: "{ inboxId: 'in_1aBMS9FKwvSDjljRJI1aZ' }"
+apiNotes:
+  messages.send: 'Delivers to a real person on the channel named in from. The content has to suit that channel, and the spec caps to at one recipient.'
+  contacts.create: 'At least one handle is required; a handle is the email address or phone number that identifies the contact on a channel.'
+  contacts.update: 'The route requires first_name, last_name and gender even though it is a PATCH. Their values may be null, but the keys must be present.'
+  contacts.search: 'Every expression has to match. A custom_attribute expression also needs an identifier; the schema rejects one without it.'
+  conversations.update: 'Snoozing needs both status snoozed and a snoozed_until time, or the API rejects the call.'
+  contacts.list: 'Paging is by cursor: set after or before, never both, and limit is 1 to 100 with a default of 50.'
+  contactLists.addContact: 'The list id goes in the body as `{ id }`, not in the path, on this route. Removing a contact takes it in the path instead.'

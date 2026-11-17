@@ -1,0 +1,66 @@
+displayName: Serply
+description: Search Google (web, news, images, videos, maps, jobs, Scholar), Bing, products and eBay, read Reddit, and fetch web pages as markdown through Serply. The key is sent in X-Api-Key.
+domain: serply.io
+recommendedAuth: api_key
+overviewNote: |
+  Copy your API key from the Serply dashboard (app.serply.io). Each uncached call spends one credit, so every operation is a metered read (`read`); new accounts get free credits for 30 days.
+
+  Things to know:
+
+  - **Search terms.** Every search takes `q`. `web.search` also takes Google's `num` (about 10 per page at most), `start` (offset; 10 is page two), `gl` (country) and `hl` (language). Google operators such as `site:` work in `q`.
+  - **Region and device.** `proxy_location` (US, DE, GB, ...) and `device` (desktop or mobile) set where Google thinks the search comes from. Without `gl` or a region, results can change between calls.
+  - **Answers.** `images.search`, `places.search` and `articles.search` return a fixed set of fields per row (the ones they store). Every other operation returns Serply's JSON as it came, with the main list typed (`results`, `jobs`, `products`, `entries`, Reddit `data.children`) and every other field kept.
+  - **Reddit.** `reddit.subredditPosts` and `reddit.userPosts` page with `after` (the previous answer's `data.after`); `reddit.post` takes `with_comments`.
+  - **Pages.** `pages.fetch` returns the page in `data`, as markdown (`response_type: markdown`) or HTML (`full`, which also returns the page's HTTP status).
+  - **Stored rows.** Images, places and Scholar articles are stored locally; phone numbers and author names are not. Search terms are never written to events, and a failed call drops them from the error.
+examples:
+  read:
+    path: web.search
+    title: Search Google
+    args:
+      q: integration platform for ai agents
+      num: 10
+      gl: us
+apiNotes:
+  images.search: |
+    GET /v1/image?q=. Up to 20 images per call; Serply ignores `num` here. Rows are keyed by the original image URL (the thumbnail, then the hosting page, when it is missing).
+  places.search: |
+    GET /v1/maps/search/{query}. A row is stored when place_id or data_id is present.
+  articles.search: |
+    GET /v1/scholar?q=. Pages with `num` (up to 200) and `start`. A row is stored when id is present. Author names are not stored.
+  news.search: '`ceid` picks the edition (US:en, GB:en, DE:de). `resolve_links: true` swaps Google News redirect links for the publisher URL and takes 2-3 s longer.'
+  ebay.search: Serply returned no listings for common queries in an 11-17 live run; the call itself succeeds.
+  pages.fetch: POST /v1/request. Spends a credit like a search.
+apiExamples:
+  images.search:
+    call: "{ q: 'bicycle' }"
+  places.search:
+    call: "{ q: 'coffee berlin' }"
+  articles.search:
+    call: "{ q: 'large language model agents' }"
+  web.search:
+    call: "{ q: 'integration platform for ai agents', num: 10, gl: 'us' }"
+  bing.search:
+    call: "{ q: 'typescript zod' }"
+  news.search:
+    call: "{ q: 'open source ai agents', ceid: 'US:en' }"
+  videos.search:
+    call: "{ q: 'zod tutorial' }"
+  jobs.search:
+    call: "{ q: 'typescript developer remote' }"
+  products.search:
+    call: "{ q: 'mechanical keyboard' }"
+  ebay.search:
+    call: "{ q: 'vinyl records' }"
+  reddit.subredditPosts:
+    call: "{ subreddit: 'typescript', sort: 'top', t: 'week', limit: 10 }"
+  reddit.subredditAbout:
+    call: "{ subreddit: 'typescript' }"
+  reddit.userPosts:
+    call: "{ username: 'spez', limit: 10 }"
+  reddit.post:
+    call: "{ id: '1ul97v0', with_comments: true }"
+  reddit.comments:
+    call: "{ id: '1ul97v0' }"
+  pages.fetch:
+    call: "{ url: 'https://serply.io/', response_type: 'markdown' }"

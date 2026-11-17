@@ -1,0 +1,1305 @@
+{
+  "id": "teltel",
+  "displayName": "TelTEL",
+  "description": "SMS and voice with TelTEL - send SMS one at a time or in bulk, read outbound and inbound message reports, run SMS campaigns, manage contacts and groups, place click-to-call calls, and read the DID numbers and countries on the account.",
+  "npmPackageName": "@corsair-dev/teltel",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 34,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "teltel.api.account.balance",
+      "shortPath": "account.balance",
+      "description": "Read the account balance, its credit limit and the outstanding amount where one is owed",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ credit?: number | null, credit_limit?: number | null, balance?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.calls.create",
+      "shortPath": "calls.create",
+      "description": "Place a click-to-call between two numbers, which bills per minute once answered",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "caller_number",
+            "optional": false,
+            "type": "string",
+            "description": "The phone number or SIP device that places the call."
+          },
+          {
+            "key": "caller_displayname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "destination_number",
+            "optional": false,
+            "type": "string",
+            "description": "The number to dial."
+          },
+          {
+            "key": "destination_displayname",
+            "optional": false,
+            "type": "string",
+            "description": "The display name shown to the destination."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ status?: number | null, message?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.calls.list",
+      "shortPath": "calls.list",
+      "description": "List calls with their duration, cost and hangup reason, filtered by direction or start time",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results to return, 1 to 5000. TelTEL defaults it to 500."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Results to skip. TelTEL defaults it to 0."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Fields to sort by; prefix one with \"-\" for descending."
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "inbound | outbound"
+          },
+          {
+            "key": "starttime[from]",
+            "optional": true,
+            "type": "string",
+            "description": "Only calls started after this timestamp (strict)."
+          },
+          {
+            "key": "starttime[to]",
+            "optional": true,
+            "type": "string",
+            "description": "Only calls started before this timestamp (strict)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ call_id: string, starttime?: string | null, stoptime?: string | null, direction?: string | null, type?: string | null, status?: string | null, duration_sec?: number | null, waiting_sec?: number | null, handle_sec?: number | null, rate?: number | null, cost?: number | null, caller?: { number?: string | null, type?: string | null, cid?: string | null, dnid?: string | null, user_id?: number | null } | null, callee?: { number?: string | null, type?: string | null, user_id?: number | null } | null, extra_prefix?: string | null, hangup_by?: string | null, hangup_value?: string | null, call_flow?: string | null, audio_url?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.campaigns.action",
+      "shortPath": "campaigns.action",
+      "description": "Start, pause or stop a campaign; start sends to every contact in its groups",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number",
+            "description": "The campaign to act on."
+          },
+          {
+            "key": "action",
+            "optional": false,
+            "type": "start | pause | stop",
+            "description": "What to do: start sending, pause, or stop for good."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, action?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.campaigns.create",
+      "shortPath": "campaigns.create",
+      "description": "Create an SMS campaign for a set of contact groups; it does not send until `campaigns.action` starts it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string",
+            "description": "The campaign title."
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string",
+            "description": "The sender for the campaign."
+          },
+          {
+            "key": "contact_groups",
+            "optional": false,
+            "type": "number[]",
+            "description": "The contact group IDs to send to."
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "The message body."
+          },
+          {
+            "key": "rate",
+            "optional": true,
+            "type": "number",
+            "description": "Messages per minute. TelTEL picks its own rate when omitted."
+          },
+          {
+            "key": "unicode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, title?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.campaigns.delete",
+      "shortPath": "campaigns.delete",
+      "description": "Delete an SMS campaign and its history",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number",
+            "description": "The SMS campaign ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ deleted?: boolean | null, updated?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.campaigns.get",
+      "shortPath": "campaigns.get",
+      "description": "Read one SMS campaign by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number",
+            "description": "The SMS campaign ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, title?: string | null, from?: string | null, contact_groups?: number[] | null, message?: string | null, rate?: number | null, unicode?: boolean | null, state?: string | null, type?: string | null, created_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.campaigns.list",
+      "shortPath": "campaigns.list",
+      "description": "List SMS campaigns with their state, sender and rate",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results to return, 1 to 5000. TelTEL defaults it to 500."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Results to skip. TelTEL defaults it to 0."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, title?: string | null, from?: string | null, contact_groups?: number[] | null, message?: string | null, rate?: number | null, unicode?: boolean | null, state?: string | null, type?: string | null, created_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.campaigns.update",
+      "shortPath": "campaigns.update",
+      "description": "Change a campaign's title, sender, groups, message or rate",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number",
+            "description": "The campaign to change."
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact_groups",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rate",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ deleted?: boolean | null, updated?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.contactGroups.contacts",
+      "shortPath": "contactGroups.contacts",
+      "description": "List the contacts in one group",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results to return, 1 to 5000. TelTEL defaults it to 500."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Results to skip. TelTEL defaults it to 0."
+          },
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "number",
+            "description": "The contact group ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | string | null, group_id?: number | string | null, phone?: string | null, param_1?: string | null, param_2?: string | null, param_3?: string | null, param_4?: string | null, param_5?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.contactGroups.create",
+      "shortPath": "contactGroups.create",
+      "description": "Create a contact group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The group name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, total_contacts?: number | null, created?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.contactGroups.delete",
+      "shortPath": "contactGroups.delete",
+      "description": "Delete a contact group and its contacts",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "number",
+            "description": "The group to delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ deleted?: boolean | null, updated?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.contactGroups.get",
+      "shortPath": "contactGroups.get",
+      "description": "Read one contact group by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "number",
+            "description": "The contact group ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, total_contacts?: number | null, created?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.contactGroups.list",
+      "shortPath": "contactGroups.list",
+      "description": "List contact groups with their contact counts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results to return, 1 to 5000. TelTEL defaults it to 500."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Results to skip. TelTEL defaults it to 0."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, total_contacts?: number | null, created?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.contactGroups.update",
+      "shortPath": "contactGroups.update",
+      "description": "Rename a contact group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "number",
+            "description": "The group to rename."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The new group name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ deleted?: boolean | null, updated?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Add a contact to a contact group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "phone",
+            "optional": false,
+            "type": "string",
+            "description": "The contact phone number."
+          },
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number",
+            "description": "The contact group ID, from `contactGroups.list`."
+          },
+          {
+            "key": "param_1",
+            "optional": true,
+            "type": "string",
+            "description": "A custom field."
+          },
+          {
+            "key": "param_2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "param_3",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "param_4",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "param_5",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, phone?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.contacts.createBulk",
+      "shortPath": "contacts.createBulk",
+      "description": "Add many contacts in one call; a partial result reports which entries failed",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ phone: string, group_id: number, param_1?: string, param_2?: string, param_3?: string, param_4?: string, param_5?: string }[]",
+            "description": "The contacts to create in one call."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id: number | string }[] | { success?: { id: number | string }[] | null, errors?: { index?: number | null, title?: string | null, detail?: string | null }[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Delete a contact",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "number",
+            "description": "The contact to delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ deleted?: boolean | null, updated?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Read one contact by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "number",
+            "description": "The contact ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | string | null, group_id?: number | string | null, phone?: string | null, param_1?: string | null, param_2?: string | null, param_3?: string | null, param_4?: string | null, param_5?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contacts with their group and custom fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results to return, 1 to 5000. TelTEL defaults it to 500."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Results to skip. TelTEL defaults it to 0."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | string | null, group_id?: number | string | null, phone?: string | null, param_1?: string | null, param_2?: string | null, param_3?: string | null, param_4?: string | null, param_5?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Change a contact's phone, group or custom fields",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "number",
+            "description": "The contact to change."
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "param_1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "param_2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "param_3",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "param_4",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "param_5",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ deleted?: boolean | null, updated?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.inbox.get",
+      "shortPath": "inbox.get",
+      "description": "Read one inbound message by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inboxMessageId",
+            "optional": false,
+            "type": "number",
+            "description": "The inbound message ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, from?: string | null, to?: string | null, state?: string | null, received_at?: string | null, message?: string | null, error_msg?: number | null, sms_handler_email?: string | null, sms_handler_url?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.inbox.list",
+      "shortPath": "inbox.list",
+      "description": "List inbound messages with their sender and handler",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results to return, 1 to 5000. TelTEL defaults it to 500."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Results to skip. TelTEL defaults it to 0."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, from?: string | null, to?: string | null, state?: string | null, received_at?: string | null, message?: string | null, error_msg?: number | null, sms_handler_email?: string | null, sms_handler_url?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.numberCountries.get",
+      "shortPath": "numberCountries.get",
+      "description": "Read one number country by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "countryId",
+            "optional": false,
+            "type": "number",
+            "description": "The country resource ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, prefix?: string | null, sms_support?: number | null, needs_verification?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.numberCountries.list",
+      "shortPath": "numberCountries.list",
+      "description": "List the countries numbers can be ordered in, with their prefix and SMS support",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, prefix?: string | null, sms_support?: number | null, needs_verification?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.numbers.get",
+      "shortPath": "numbers.get",
+      "description": "Read one DID number by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "numberId",
+            "optional": false,
+            "type": "number",
+            "description": "The DID number resource ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, activated?: number | null, iduser?: number | null, country_id?: number | null, country_name?: string | null, did?: string | null, overphone?: string | null, description?: string | null, monthly_price?: number | null, reservation_date?: string | null, release_date?: string | null, next_payment_date?: string | null, month_payed?: number | null, auto_renew?: number | null, sms_support?: number | null, sms_handler_url?: string | null, sms_handler_email?: string | null, spam_score?: number | null, spam_checked_at?: string | null, spam_score_details?: string | null, groups?: any[] | null, users?: any[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.numbers.list",
+      "shortPath": "numbers.list",
+      "description": "List the DID numbers on the account with their renewal date and SMS settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results to return, 1 to 5000. TelTEL defaults it to 500."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Results to skip. TelTEL defaults it to 0."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, activated?: number | null, iduser?: number | null, country_id?: number | null, country_name?: string | null, did?: string | null, overphone?: string | null, description?: string | null, monthly_price?: number | null, reservation_date?: string | null, release_date?: string | null, next_payment_date?: string | null, month_payed?: number | null, auto_renew?: number | null, sms_support?: number | null, sms_handler_url?: string | null, sms_handler_email?: string | null, spam_score?: number | null, spam_checked_at?: string | null, spam_score_details?: string | null, groups?: any[] | null, users?: any[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.numbers.update",
+      "shortPath": "numbers.update",
+      "description": "Change a number's auto-renew or SMS handler URL and email",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "numberId",
+            "optional": false,
+            "type": "number",
+            "description": "The number to change."
+          },
+          {
+            "key": "auto_renew",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sms_handler_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sms_handler_email",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, activated?: number | null, iduser?: number | null, country_id?: number | null, country_name?: string | null, did?: string | null, overphone?: string | null, description?: string | null, monthly_price?: number | null, reservation_date?: string | null, release_date?: string | null, next_payment_date?: string | null, month_payed?: number | null, auto_renew?: number | null, sms_support?: number | null, sms_handler_url?: string | null, sms_handler_email?: string | null, spam_score?: number | null, spam_checked_at?: string | null, spam_score_details?: string | null, groups?: any[] | null, users?: any[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.priceGroups.list",
+      "shortPath": "priceGroups.list",
+      "description": "List a country's price groups, whose IDs an order takes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "countryId",
+            "optional": false,
+            "type": "number",
+            "description": "The country resource ID the price groups belong to."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results to return, 1 to 5000. TelTEL defaults it to 500."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Results to skip. TelTEL defaults it to 0."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ price_group_id: number, country_id?: number | null, name?: string | null, prefix?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.sms.send",
+      "shortPath": "sms.send",
+      "description": "Send one SMS from a verified number or sender ID, charging the account per part",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string",
+            "description": "The sender: a numeric number or a 3 to 11 character alphanumeric sender ID. Only verified numbers work unless dynamic sender IDs are enabled."
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string",
+            "description": "The destination number in international format."
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "The message body."
+          },
+          {
+            "key": "callback",
+            "optional": true,
+            "type": "boolean | string",
+            "description": "A delivery receipt URL, or a boolean to use the account default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.sms.sendBulk",
+      "shortPath": "sms.sendBulk",
+      "description": "Send many SMS in one call; a partial result answers 207 with the messages that failed",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ from: string, to: string, message: string, callback?: boolean | string }[]",
+            "description": "The messages to send, one entry per recipient."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, index?: number | null }[] | { success?: { id?: string | null, index?: number | null }[] | null, errors?: { index?: number | null, title?: string | null, detail?: string | null }[] | null } | null"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "{ id?: string | null, index?: number | null }[] | null"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{ index?: number | null, title?: string | null, detail?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.smsReports.get",
+      "shortPath": "smsReports.get",
+      "description": "Read one outbound message report by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reportId",
+            "optional": false,
+            "type": "number",
+            "description": "The message report ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, from?: string | null, to?: string | null, country?: { id?: number | null, name?: string | null, iso?: string | null, mcc?: number | null } | null, operator?: { id?: number | null, name?: string | null, mnc?: number | null } | null, created_at?: string | null, delivered?: string | null, multipart?: boolean | null, parts?: number | null, price?: number | null, sum?: number | null, state?: string | null, detailed_state?: string | null, message?: string | null, campaign_id?: number | null, error_msg?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.smsReports.list",
+      "shortPath": "smsReports.list",
+      "description": "List outbound messages with their state, price and delivery details, filtered by number or date",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results to return, 1 to 5000. TelTEL defaults it to 500."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Results to skip. TelTEL defaults it to 0."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "A field to sort by; prefix it with \"-\" for descending."
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string",
+            "description": "Only messages in this state: NEW, PROC, WAIT, DONE, ERROR or CANCEL."
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "Only messages from this number."
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "Only messages to this number."
+          },
+          {
+            "key": "created_at[from]",
+            "optional": true,
+            "type": "string",
+            "description": "Only messages created after this timestamp (strict), e.g. \"2024-03-01T00:00:00\"."
+          },
+          {
+            "key": "created_at[to]",
+            "optional": true,
+            "type": "string",
+            "description": "Only messages created before this timestamp (strict), e.g. \"2024-03-31T23:59:59\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, from?: string | null, to?: string | null, country?: { id?: number | null, name?: string | null, iso?: string | null, mcc?: number | null } | null, operator?: { id?: number | null, name?: string | null, mnc?: number | null } | null, created_at?: string | null, delivered?: string | null, multipart?: boolean | null, parts?: number | null, price?: number | null, sum?: number | null, state?: string | null, detailed_state?: string | null, message?: string | null, campaign_id?: number | null, error_msg?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "teltel.api.users.list",
+      "shortPath": "users.list",
+      "description": "List the account users with their login and email; their API keys are left out",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results to return, 1 to 5000. TelTEL defaults it to 500."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Results to skip. TelTEL defaults it to 0."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, realname?: string | null, email?: string | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

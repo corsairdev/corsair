@@ -1,0 +1,2758 @@
+{
+  "id": "d2lbrightspace",
+  "displayName": "D2L Brightspace",
+  "description": "Manage users, roles, courses, grades, quizzes, and demographics in D2L Brightspace.",
+  "npmPackageName": "@corsair-dev/d2lbrightspace",
+  "authTypes": [],
+  "counts": {
+    "api": 45,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [],
+  "api": [
+    {
+      "path": "d2lbrightspace.api.courses.create",
+      "shortPath": "courses.create",
+      "description": "Create a course offering",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ Name: string, Code: string, StartDate: string | null, EndDate: string | null, LocaleId: number | null, ForceLocale: boolean, ShowAddressBook: boolean, IsActive: boolean, Description: { Content: string, Type: Text | Html }, CanSelfRegister: boolean | null, Path: string, CourseTemplateId: number, SemesterId: number | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "IsActive",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "StartDate",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "EndDate",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "LocaleId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "ForceLocale",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "CourseTemplate",
+            "optional": false,
+            "type": "{ Identifier: string, Name: string, Code: string } | null"
+          },
+          {
+            "key": "Semester",
+            "optional": false,
+            "type": "{ Identifier: string, Name: string, Code: string } | null"
+          },
+          {
+            "key": "Department",
+            "optional": false,
+            "type": "{ Identifier: string, Name: string, Code: string } | null"
+          },
+          {
+            "key": "Description",
+            "optional": false,
+            "type": "{ Text?: string, Html?: string | null }"
+          },
+          {
+            "key": "CanSelfRegister",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "ShowAddressBook",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.courses.delete",
+      "shortPath": "courses.delete",
+      "description": "Archive a course offering",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.courses.get",
+      "shortPath": "courses.get",
+      "description": "Get a course offering",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "IsActive",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "StartDate",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "EndDate",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "LocaleId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "ForceLocale",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "CourseTemplate",
+            "optional": false,
+            "type": "{ Identifier: string, Name: string, Code: string } | null"
+          },
+          {
+            "key": "Semester",
+            "optional": false,
+            "type": "{ Identifier: string, Name: string, Code: string } | null"
+          },
+          {
+            "key": "Department",
+            "optional": false,
+            "type": "{ Identifier: string, Name: string, Code: string } | null"
+          },
+          {
+            "key": "Description",
+            "optional": false,
+            "type": "{ Text?: string, Html?: string | null }"
+          },
+          {
+            "key": "CanSelfRegister",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "ShowAddressBook",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.courses.schema",
+      "shortPath": "courses.schema",
+      "description": "Get course parent constraints",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ Type: { Id: number, Code: string, Name: string }, IsNotAllowed: boolean, IsRequired: boolean }[]"
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.courses.update",
+      "shortPath": "courses.update",
+      "description": "Update a course offering",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ Name: string, Code: string, StartDate: string | null, EndDate: string | null, LocaleId: number | null, ForceLocale: boolean, ShowAddressBook: boolean, IsActive: boolean, Description: { Content: string, Type: Text | Html }, CanSelfRegister: boolean | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.demographics.deleteUser",
+      "shortPath": "demographics.deleteUser",
+      "description": "Delete user demographics",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ entryIds?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.demographics.getOrgUnit",
+      "shortPath": "demographics.getOrgUnit",
+      "description": "Get org unit demographics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ fieldIds?: string, roleIds?: string, userIds?: string, search?: string, bookmark?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "PagingInfo",
+            "optional": false,
+            "type": "{ Bookmark: string | null, HasMoreItems: boolean }"
+          },
+          {
+            "key": "Items",
+            "optional": false,
+            "type": "{ UserId: number, EntryValues: { Name: string, Values: string[] }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.grades.access",
+      "shortPath": "grades.access",
+      "description": "List users with access to a grade",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "gradeObjectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ userId?: string, roleId?: string, bookmark?: string }"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "Objects",
+            "optional": false,
+            "type": "{ UserId: number, HasAccess: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.grades.create",
+      "shortPath": "grades.create",
+      "description": "Create a grade object",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ Name: string, ShortName: string, CategoryId: number | null, Description: { Content: string, Type: Text | Html }, IsHidden?: boolean, AssociatedTool?: { ToolId: number, ToolItemId: number } | null, MaxPoints: number, IsBonus: boolean, ExcludeFromFinalGradeCalculation: boolean, GradeType: Numeric, CanExceedMaxPoints: boolean, GradeSchemeId: number | null } | { Name: string, ShortName: string, CategoryId: number | null, Description: { Content: string, Type: Text | Html }, IsHidden?: boolean, AssociatedTool?: { ToolId: number, ToolItemId: number } | null, MaxPoints: number, IsBonus: boolean, ExcludeFromFinalGradeCalculation: boolean, GradeType: PassFail, GradeSchemeId: number | null } | { Name: string, ShortName: string, CategoryId: number | null, Description: { Content: string, Type: Text | Html }, IsHidden?: boolean, AssociatedTool?: { ToolId: number, ToolItemId: number } | null, MaxPoints: number, IsBonus: boolean, ExcludeFromFinalGradeCalculation: boolean, GradeType: SelectBox, GradeSchemeId: number } | { Name: string, ShortName: string, CategoryId: number | null, Description: { Content: string, Type: Text | Html }, IsHidden?: boolean, AssociatedTool?: { ToolId: number, ToolItemId: number } | null, GradeType: Text }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "GradeType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ShortName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "CategoryId",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "Description",
+            "optional": false,
+            "type": "{ Text?: string, Html?: string | null }"
+          },
+          {
+            "key": "MaxPoints",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "CanExceedMaxPoints",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "IsBonus",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ExcludeFromFinalGradeCalculation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "GradeSchemeId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Weight",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "GradeSchemeUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IsHidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "AssociatedTool",
+            "optional": true,
+            "type": "{ ToolId: number, ToolItemId: number } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.grades.delete",
+      "shortPath": "grades.delete",
+      "description": "Delete a grade object",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "gradeObjectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.grades.get",
+      "shortPath": "grades.get",
+      "description": "Get a grade object",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "gradeObjectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "GradeType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ShortName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "CategoryId",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "Description",
+            "optional": false,
+            "type": "{ Text?: string, Html?: string | null }"
+          },
+          {
+            "key": "MaxPoints",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "CanExceedMaxPoints",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "IsBonus",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ExcludeFromFinalGradeCalculation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "GradeSchemeId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Weight",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "GradeSchemeUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IsHidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "AssociatedTool",
+            "optional": true,
+            "type": "{ ToolId: number, ToolItemId: number } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.grades.list",
+      "shortPath": "grades.list",
+      "description": "List grade objects",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ Id: number, GradeType: string, Name: string, ShortName: string, CategoryId: number | null, Description: { Text?: string, Html?: string | null }, MaxPoints?: number, CanExceedMaxPoints?: boolean, IsBonus?: boolean, ExcludeFromFinalGradeCalculation?: boolean, GradeSchemeId?: number | null, Weight?: number | null, GradeSchemeUrl?: string, IsHidden?: boolean, AssociatedTool?: { ToolId: number, ToolItemId: number } | null }[]"
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.grades.setup",
+      "shortPath": "grades.setup",
+      "description": "Get grade setup",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "GradingSystem",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "IsNullGradeZero",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "DefaultGradeSchemeId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.grades.statistics",
+      "shortPath": "grades.statistics",
+      "description": "Get grade statistics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "gradeObjectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "OrgUnitId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "GradeObjectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "Minimum",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "Maximum",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "Average",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "Mode",
+            "optional": false,
+            "type": "number[]"
+          },
+          {
+            "key": "Median",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "StandardDeviation",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.grades.update",
+      "shortPath": "grades.update",
+      "description": "Update a grade object",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "gradeObjectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ Name: string, ShortName: string, CategoryId: number | null, Description: { Content: string, Type: Text | Html }, IsHidden?: boolean, AssociatedTool?: { ToolId: number, ToolItemId: number } | null, MaxPoints: number, IsBonus: boolean, ExcludeFromFinalGradeCalculation: boolean, GradeType: Numeric, CanExceedMaxPoints: boolean, GradeSchemeId: number | null } | { Name: string, ShortName: string, CategoryId: number | null, Description: { Content: string, Type: Text | Html }, IsHidden?: boolean, AssociatedTool?: { ToolId: number, ToolItemId: number } | null, MaxPoints: number, IsBonus: boolean, ExcludeFromFinalGradeCalculation: boolean, GradeType: PassFail, GradeSchemeId: number | null } | { Name: string, ShortName: string, CategoryId: number | null, Description: { Content: string, Type: Text | Html }, IsHidden?: boolean, AssociatedTool?: { ToolId: number, ToolItemId: number } | null, MaxPoints: number, IsBonus: boolean, ExcludeFromFinalGradeCalculation: boolean, GradeType: SelectBox, GradeSchemeId: number } | { Name: string, ShortName: string, CategoryId: number | null, Description: { Content: string, Type: Text | Html }, IsHidden?: boolean, AssociatedTool?: { ToolId: number, ToolItemId: number } | null, GradeType: Text }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "GradeType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ShortName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "CategoryId",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "Description",
+            "optional": false,
+            "type": "{ Text?: string, Html?: string | null }"
+          },
+          {
+            "key": "MaxPoints",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "CanExceedMaxPoints",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "IsBonus",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ExcludeFromFinalGradeCalculation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "GradeSchemeId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Weight",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "GradeSchemeUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IsHidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "AssociatedTool",
+            "optional": true,
+            "type": "{ ToolId: number, ToolItemId: number } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.grades.updateSetup",
+      "shortPath": "grades.updateSetup",
+      "description": "Update grade setup",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ GradingSystem: Points | Weighted | Formula, IsNullGradeZero: boolean, DefaultGradeSchemeId: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "GradingSystem",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "IsNullGradeZero",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "DefaultGradeSchemeId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.quizCategories.create",
+      "shortPath": "quizCategories.create",
+      "description": "Create a quiz category",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ Name: string, SortOrder: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "SortOrder",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "CategoryId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.quizCategories.delete",
+      "shortPath": "quizCategories.delete",
+      "description": "Delete a quiz category",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "categoryId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.quizCategories.get",
+      "shortPath": "quizCategories.get",
+      "description": "Get a quiz category",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "categoryId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "SortOrder",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "CategoryId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.quizCategories.list",
+      "shortPath": "quizCategories.list",
+      "description": "List quiz categories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "Objects",
+            "optional": false,
+            "type": "{ Name: string, SortOrder: number, CategoryId: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.quizCategories.update",
+      "shortPath": "quizCategories.update",
+      "description": "Update a quiz category",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "categoryId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ Name: string, SortOrder: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "SortOrder",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "CategoryId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.quizzes.access",
+      "shortPath": "quizzes.access",
+      "description": "List users with quiz access",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "quizId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ userId?: string, roleId?: string }"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "Objects",
+            "optional": false,
+            "type": "{ UserId: number, HasAccess: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.quizzes.create",
+      "shortPath": "quizzes.create",
+      "description": "Create a quiz",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ Name: string, IsActive: boolean, SortOrder: number, AutoExportToGrades: boolean | null, GradeItemId: number | null, IsAutoSetGraded: boolean, Instructions: { Text: { Content: string, Type: Text | Html }, IsDisplayed: boolean }, Description: { Text: { Content: string, Type: Text | Html }, IsDisplayed: boolean }, StartDate: string | null, EndDate: string | null, DueDate: string | null, DisplayInCalendar: boolean, NumberOfAttemptsAllowed: number | null, LateSubmissionInfo: { LateSubmissionOption: number, LateLimitMinutes: number | null }, SubmissionTimeLimit: { IsEnforced: boolean, ShowClock: boolean, TimeLimitValue: number }, SubmissionGracePeriod: number | null, Password: string | null, Header: { Text: { Content: string, Type: Text | Html }, IsDisplayed: boolean }, Footer: { Text: { Content: string, Type: Text | Html }, IsDisplayed: boolean }, AllowHints: boolean, DisableRightClick: boolean, DisablePagerAndAlerts: boolean, NotificationEmail: string | null, CalcTypeId: number, RestrictIPAddressRange: { IPRangeStart: string, IPRangeEnd: string | null }[] | null, CategoryId: number | null, PreventMovingBackwards: boolean, Shuffle: boolean, AllowOnlyUsersWithSpecialAccess: boolean, IsRetakeIncorrectOnly: boolean, PagingTypeId: number | null, IsSynchronous: boolean, DeductionPercentage: number | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "QuizId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "Name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "IsActive",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "SortOrder",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "AutoExportToGrades",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "GradeItemId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "IsAutoSetGraded",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "Instructions",
+            "optional": true,
+            "type": "{ Text: { Text?: string, Html?: string | null }, IsDisplayed: boolean }"
+          },
+          {
+            "key": "Description",
+            "optional": true,
+            "type": "{ Text: { Text?: string, Html?: string | null }, IsDisplayed: boolean }"
+          },
+          {
+            "key": "Header",
+            "optional": true,
+            "type": "{ Text: { Text?: string, Html?: string | null }, IsDisplayed: boolean }"
+          },
+          {
+            "key": "Footer",
+            "optional": true,
+            "type": "{ Text: { Text?: string, Html?: string | null }, IsDisplayed: boolean }"
+          },
+          {
+            "key": "StartDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "EndDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DueDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DisplayInCalendar",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "AttemptsAllowed",
+            "optional": true,
+            "type": "{ IsUnlimited: boolean, NumberOfAttemptsAllowed: number | null }"
+          },
+          {
+            "key": "LateSubmissionInfo",
+            "optional": true,
+            "type": "{ LateSubmissionOption: number, LateLimitMinutes: number | null }"
+          },
+          {
+            "key": "SubmissionTimeLimit",
+            "optional": true,
+            "type": "{ IsEnforced: boolean, ShowClock: boolean, TimeLimitValue: number }"
+          },
+          {
+            "key": "SubmissionGracePeriod",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Password",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "AllowHints",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "DisableRightClick",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "DisablePagerAndAlerts",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "NotificationEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CalcTypeId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "RestrictIPAddressRange",
+            "optional": true,
+            "type": "{ IPRangeStart: string, IPRangeEnd: string | null }[] | null"
+          },
+          {
+            "key": "CategoryId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "PreventMovingBackwards",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "Shuffle",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ActivityId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "AllowOnlyUsersWithSpecialAccess",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "IsRetakeIncorrectOnly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "PagingTypeId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "IsSynchronous",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "DeductionPercentage",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "HideQuestionPoints",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "IsSingleSession",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "AnnotationToolsEnabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.quizzes.delete",
+      "shortPath": "quizzes.delete",
+      "description": "Delete a quiz",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "quizId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.quizzes.get",
+      "shortPath": "quizzes.get",
+      "description": "Get a quiz",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "quizId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "QuizId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "Name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "IsActive",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "SortOrder",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "AutoExportToGrades",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "GradeItemId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "IsAutoSetGraded",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "Instructions",
+            "optional": true,
+            "type": "{ Text: { Text?: string, Html?: string | null }, IsDisplayed: boolean }"
+          },
+          {
+            "key": "Description",
+            "optional": true,
+            "type": "{ Text: { Text?: string, Html?: string | null }, IsDisplayed: boolean }"
+          },
+          {
+            "key": "Header",
+            "optional": true,
+            "type": "{ Text: { Text?: string, Html?: string | null }, IsDisplayed: boolean }"
+          },
+          {
+            "key": "Footer",
+            "optional": true,
+            "type": "{ Text: { Text?: string, Html?: string | null }, IsDisplayed: boolean }"
+          },
+          {
+            "key": "StartDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "EndDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DueDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DisplayInCalendar",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "AttemptsAllowed",
+            "optional": true,
+            "type": "{ IsUnlimited: boolean, NumberOfAttemptsAllowed: number | null }"
+          },
+          {
+            "key": "LateSubmissionInfo",
+            "optional": true,
+            "type": "{ LateSubmissionOption: number, LateLimitMinutes: number | null }"
+          },
+          {
+            "key": "SubmissionTimeLimit",
+            "optional": true,
+            "type": "{ IsEnforced: boolean, ShowClock: boolean, TimeLimitValue: number }"
+          },
+          {
+            "key": "SubmissionGracePeriod",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Password",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "AllowHints",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "DisableRightClick",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "DisablePagerAndAlerts",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "NotificationEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CalcTypeId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "RestrictIPAddressRange",
+            "optional": true,
+            "type": "{ IPRangeStart: string, IPRangeEnd: string | null }[] | null"
+          },
+          {
+            "key": "CategoryId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "PreventMovingBackwards",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "Shuffle",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ActivityId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "AllowOnlyUsersWithSpecialAccess",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "IsRetakeIncorrectOnly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "PagingTypeId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "IsSynchronous",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "DeductionPercentage",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "HideQuestionPoints",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "IsSingleSession",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "AnnotationToolsEnabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.quizzes.getAttempt",
+      "shortPath": "quizzes.getAttempt",
+      "description": "Get a quiz attempt",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "quizId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "attemptId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "AttemptId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "QuizId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "UserId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "AttemptNumber",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "Score",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "Started",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Completed",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "AttemptFeedback",
+            "optional": false,
+            "type": "{ Text?: string, Html?: string | null }"
+          },
+          {
+            "key": "FeedbackLastModified",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "IsPublished",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "IsRetakeIncorrectOnly",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "AttemptDueDate",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "AttemptEnforceTimeLimit",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "AttemptSubmissionTimeLimit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "AttemptSubmissionGraceLimit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "AttemptSubmissionLateTypeId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "AttemptSubmissionLateData",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "AttemptIsSynchronous",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "DeductionPercentage",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.quizzes.list",
+      "shortPath": "quizzes.list",
+      "description": "List quizzes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "Objects",
+            "optional": false,
+            "type": "{ QuizId: number, Name: string, IsActive: boolean, SortOrder: number, AutoExportToGrades?: boolean | null, GradeItemId?: number | null, IsAutoSetGraded?: boolean, Instructions?: { Text: { Text?: string, Html?: string | null }, IsDisplayed: boolean }, Description?: { Text: { Text?: string, Html?: string | null }, IsDisplayed: boolean }, Header?: { Text: { Text?: string, Html?: string | null }, IsDisplayed: boolean }, Footer?: { Text: { Text?: string, Html?: string | null }, IsDisplayed: boolean }, StartDate?: string | null, EndDate?: string | null, DueDate?: string | null, DisplayInCalendar?: boolean, AttemptsAllowed?: { IsUnlimited: boolean, NumberOfAttemptsAllowed: number | null }, LateSubmissionInfo?: { LateSubmissionOption: number, LateLimitMinutes: number | null }, SubmissionTimeLimit?: { IsEnforced: boolean, ShowClock: boolean, TimeLimitValue: number }, SubmissionGracePeriod?: number | null, Password?: string | null, AllowHints?: boolean, DisableRightClick?: boolean, DisablePagerAndAlerts?: boolean, NotificationEmail?: string | null, CalcTypeId?: number, RestrictIPAddressRange?: { IPRangeStart: string, IPRangeEnd: string | null }[] | null, CategoryId?: number | null, PreventMovingBackwards?: boolean, Shuffle?: boolean, ActivityId?: string | null, AllowOnlyUsersWithSpecialAccess?: boolean, IsRetakeIncorrectOnly?: boolean, PagingTypeId?: number | null, IsSynchronous?: boolean, DeductionPercentage?: number | null, HideQuestionPoints?: boolean, IsSingleSession?: boolean, AnnotationToolsEnabled?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.quizzes.listAttempts",
+      "shortPath": "quizzes.listAttempts",
+      "description": "List quiz attempts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "quizId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ userId?: string }"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "Objects",
+            "optional": false,
+            "type": "{ AttemptId: number, QuizId: number, UserId: number, AttemptNumber: number, Score: number | null, Started: string, Completed: string | null, AttemptFeedback: { Text?: string, Html?: string | null }, FeedbackLastModified: string | null, IsPublished: boolean, IsRetakeIncorrectOnly: boolean, AttemptDueDate: string | null, AttemptEnforceTimeLimit: boolean, AttemptSubmissionTimeLimit: number, AttemptSubmissionGraceLimit: number, AttemptSubmissionLateTypeId: number, AttemptSubmissionLateData: number, AttemptIsSynchronous: boolean, DeductionPercentage: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.quizzes.listQuestions",
+      "shortPath": "quizzes.listQuestions",
+      "description": "List quiz questions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "quizId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "Objects",
+            "optional": false,
+            "type": "{ QuestionId: number, QuestionTypeId: number, Name: string | null, QuestionText: { Text?: string, Html?: string | null }, Points: number, Difficulty: number, Bonus: boolean, Mandatory: boolean, Hint: { Text?: string, Html?: string | null }, Feedback: { Text?: string, Html?: string | null }, LastModified: string, LastModifiedBy: number | null, SectionId: number, QuestionTemplateId: number, QuestionTemplateVersionId: number, QuestionInfo: Record<string, any> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.quizzes.update",
+      "shortPath": "quizzes.update",
+      "description": "Update a quiz",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "quizId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ Name: string, IsActive: boolean, SortOrder: number, AutoExportToGrades: boolean | null, GradeItemId: number | null, IsAutoSetGraded: boolean, Instructions: { Text: { Content: string, Type: Text | Html }, IsDisplayed: boolean }, Description: { Text: { Content: string, Type: Text | Html }, IsDisplayed: boolean }, StartDate: string | null, EndDate: string | null, DueDate: string | null, DisplayInCalendar: boolean, NumberOfAttemptsAllowed: number | null, LateSubmissionInfo: { LateSubmissionOption: number, LateLimitMinutes: number | null }, SubmissionTimeLimit: { IsEnforced: boolean, ShowClock: boolean, TimeLimitValue: number }, SubmissionGracePeriod: number | null, Password: string | null, Header: { Text: { Content: string, Type: Text | Html }, IsDisplayed: boolean }, Footer: { Text: { Content: string, Type: Text | Html }, IsDisplayed: boolean }, AllowHints: boolean, DisableRightClick: boolean, DisablePagerAndAlerts: boolean, NotificationEmail: string | null, CalcTypeId: number, RestrictIPAddressRange: { IPRangeStart: string, IPRangeEnd: string | null }[] | null, CategoryId: number | null, PreventMovingBackwards: boolean, Shuffle: boolean, AllowOnlyUsersWithSpecialAccess: boolean, IsRetakeIncorrectOnly: boolean, PagingTypeId: number | null, IsSynchronous: boolean, DeductionPercentage: number | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "QuizId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "Name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "IsActive",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "SortOrder",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "AutoExportToGrades",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "GradeItemId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "IsAutoSetGraded",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "Instructions",
+            "optional": true,
+            "type": "{ Text: { Text?: string, Html?: string | null }, IsDisplayed: boolean }"
+          },
+          {
+            "key": "Description",
+            "optional": true,
+            "type": "{ Text: { Text?: string, Html?: string | null }, IsDisplayed: boolean }"
+          },
+          {
+            "key": "Header",
+            "optional": true,
+            "type": "{ Text: { Text?: string, Html?: string | null }, IsDisplayed: boolean }"
+          },
+          {
+            "key": "Footer",
+            "optional": true,
+            "type": "{ Text: { Text?: string, Html?: string | null }, IsDisplayed: boolean }"
+          },
+          {
+            "key": "StartDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "EndDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DueDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DisplayInCalendar",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "AttemptsAllowed",
+            "optional": true,
+            "type": "{ IsUnlimited: boolean, NumberOfAttemptsAllowed: number | null }"
+          },
+          {
+            "key": "LateSubmissionInfo",
+            "optional": true,
+            "type": "{ LateSubmissionOption: number, LateLimitMinutes: number | null }"
+          },
+          {
+            "key": "SubmissionTimeLimit",
+            "optional": true,
+            "type": "{ IsEnforced: boolean, ShowClock: boolean, TimeLimitValue: number }"
+          },
+          {
+            "key": "SubmissionGracePeriod",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Password",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "AllowHints",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "DisableRightClick",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "DisablePagerAndAlerts",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "NotificationEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CalcTypeId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "RestrictIPAddressRange",
+            "optional": true,
+            "type": "{ IPRangeStart: string, IPRangeEnd: string | null }[] | null"
+          },
+          {
+            "key": "CategoryId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "PreventMovingBackwards",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "Shuffle",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ActivityId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "AllowOnlyUsersWithSpecialAccess",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "IsRetakeIncorrectOnly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "PagingTypeId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "IsSynchronous",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "DeductionPercentage",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "HideQuestionPoints",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "IsSingleSession",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "AnnotationToolsEnabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.roles.copy",
+      "shortPath": "roles.copy",
+      "description": "Copy a role using the unsupported unstable API",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deepCopyRoleId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ RoleName: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "DisplayName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "RoleAlias",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IsCascading",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "AccessFutureCourses",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "AccessInactiveCourses",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "AccessPastCourses",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ShowInGrades",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ShowInUserProgress",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "InClassList",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.roles.get",
+      "shortPath": "roles.get",
+      "description": "Get a role by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roleId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "DisplayName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "RoleAlias",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IsCascading",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "AccessFutureCourses",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "AccessInactiveCourses",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "AccessPastCourses",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ShowInGrades",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ShowInUserProgress",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "InClassList",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.roles.getEnrolled",
+      "shortPath": "roles.getEnrolled",
+      "description": "List enrolled roles in an org unit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ Identifier: string, DisplayName: string, Code: string, Description?: string, RoleAlias?: string, IsCascading?: boolean, AccessFutureCourses?: boolean, AccessInactiveCourses?: boolean, AccessPastCourses?: boolean, ShowInGrades?: boolean, ShowInUserProgress?: boolean, InClassList?: boolean }[]"
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.roles.list",
+      "shortPath": "roles.list",
+      "description": "List roles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ Identifier: string, DisplayName: string, Code: string, Description?: string, RoleAlias?: string, IsCascading?: boolean, AccessFutureCourses?: boolean, AccessInactiveCourses?: boolean, AccessPastCourses?: boolean, ShowInGrades?: boolean, ShowInUserProgress?: boolean, InClassList?: boolean }[]"
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.templates.create",
+      "shortPath": "templates.create",
+      "description": "Create a course template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ Name: string, Code: string, Path: string, ParentOrgUnitIds: number[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Path",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.templates.delete",
+      "shortPath": "templates.delete",
+      "description": "Archive a course template",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Get a course template",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Path",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.templates.schema",
+      "shortPath": "templates.schema",
+      "description": "Get course template parent constraints",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ Type: { Id: number, Code: string, Name: string }, IsNotAllowed: boolean, IsRequired: boolean }[]"
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.templates.update",
+      "shortPath": "templates.update",
+      "description": "Update a course template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ Name: string, Code: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.users.create",
+      "shortPath": "users.create",
+      "description": "Create a user (SendCreationEmail emails the new user their account details)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ OrgDefinedId: string | null, FirstName: string, MiddleName: string | null, LastName: string, ExternalEmail: string | null, UserName: string, RoleId: number, IsActive: boolean, SendCreationEmail: boolean, Pronouns: string | null, PasswordData?: { Password: string, ForcePasswordReset?: boolean } | null }"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ subOrganizationOrgUnitId?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "OrgId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "UserId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "FirstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "MiddleName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "LastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "UserName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ExternalEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "OrgDefinedId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UniqueIdentifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Activation",
+            "optional": true,
+            "type": "{ IsActive: boolean }"
+          },
+          {
+            "key": "DisplayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "LastAccessedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Pronouns",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "FirstLoginDate",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.users.current",
+      "shortPath": "users.current",
+      "description": "Get the current user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "FirstName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "LastName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "UniqueName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ProfileIdentifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Pronouns",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.users.delete",
+      "shortPath": "users.delete",
+      "description": "Delete a user",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ subOrganizationOrgUnitId?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.users.get",
+      "shortPath": "users.get",
+      "description": "Get a user by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ subOrganizationOrgUnitId?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "OrgId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "UserId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "FirstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "MiddleName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "LastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "UserName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ExternalEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "OrgDefinedId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UniqueIdentifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Activation",
+            "optional": true,
+            "type": "{ IsActive: boolean }"
+          },
+          {
+            "key": "DisplayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "LastAccessedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Pronouns",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "FirstLoginDate",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.users.list",
+      "shortPath": "users.list",
+      "description": "List or search users",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ orgDefinedId?: string, userName?: string, externalEmail?: string, bookmark?: string, subOrganizationOrgUnitId?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ OrgId: number, UserId: number, FirstName?: string, MiddleName?: string | null, LastName?: string, UserName?: string, ExternalEmail?: string | null, OrgDefinedId?: string | null, UniqueIdentifier?: string, Activation?: { IsActive: boolean }, DisplayName?: string, LastAccessedDate?: string | null, Pronouns?: string | null, FirstLoginDate?: string | null } | { OrgId: number, UserId: number, FirstName?: string, MiddleName?: string | null, LastName?: string, UserName?: string, ExternalEmail?: string | null, OrgDefinedId?: string | null, UniqueIdentifier?: string, Activation?: { IsActive: boolean }, DisplayName?: string, LastAccessedDate?: string | null, Pronouns?: string | null, FirstLoginDate?: string | null }[] | { PagingInfo: { Bookmark: string | null, HasMoreItems: boolean }, Items: { OrgId: number, UserId: number, FirstName?: string, MiddleName?: string | null, LastName?: string, UserName?: string, ExternalEmail?: string | null, OrgDefinedId?: string | null, UniqueIdentifier?: string, Activation?: { IsActive: boolean }, DisplayName?: string, LastAccessedDate?: string | null, Pronouns?: string | null, FirstLoginDate?: string | null }[] }"
+      }
+    },
+    {
+      "path": "d2lbrightspace.api.users.update",
+      "shortPath": "users.update",
+      "description": "Update a user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ OrgDefinedId: string, FirstName: string, MiddleName: string | null, LastName: string, ExternalEmail: string | null, UserName: string, Activation: { IsActive: boolean }, Pronouns: string | null }"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ subOrganizationOrgUnitId?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "OrgId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "UserId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "FirstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "MiddleName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "LastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "UserName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ExternalEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "OrgDefinedId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UniqueIdentifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Activation",
+            "optional": true,
+            "type": "{ IsActive: boolean }"
+          },
+          {
+            "key": "DisplayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "LastAccessedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Pronouns",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "FirstLoginDate",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
