@@ -1,0 +1,110 @@
+displayName: Twelve Data
+description: 'Read quotes, prices and OHLC time series, exchange rates and technical indicators, plus the stock, forex and crypto reference lists.'
+domain: twelvedata.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a free API key at https://twelvedata.com/pricing, or copy it from your dashboard. The plugin sends the key in the `Authorization: apikey <key>` header, so it never appears in a URL or in an error.
+
+  Things to know:
+
+  - **A 200 can mean the lookup failed.** An unknown symbol answers HTTP 200 with `{ code: 400, status: 'error', message: ... }`. The plugin reads `status` on every answer and throws `TwelveDataAPIError` when it says `error`, so a resolved promise means the data arrived. HTTP failures (401, 403, 429) come through as core's `ApiError`.
+  - **Every number is a string.** Twelve Data sends prices and volumes as decimal strings (`"211.66"`), and the plugin keeps that type. Convert with `Number(...)` where arithmetic is needed. The exception is `exchange_rate`, whose `rate` is a JSON number.
+  - **Plan limits are per endpoint.** A 403 names the plan the endpoint needs, so `earnings`, `splits`, `dividends` and `profile` are left out: they need a paid plan and are not part of this plugin.
+  - **Paging is `outputsize`.** A time series returns the newest candles by default; `outputsize` caps them and `start_date` / `end_date` set a window. The free plan caps the interval history at 8 requests a minute. `funds` and `bonds` page with `page` and `outputsize`.
+  - **Indicators return one shape each.** `rsi` answers `values[].rsi`, `macd` answers `macd`, `macd_signal` and `macd_hist`, and so on. Each value is a decimal string, and the schema keeps them as an open record rather than a fixed field list per indicator.
+  - **Reference lists are open at Twelve Data, but the plugin still needs a key.** `stocks`, `forex_pairs`, `cryptocurrencies`, `exchanges`, `etf`, `funds` and `bonds` answer without a key, which is why their shapes are the best documented here. The plugin sends the stored key on every call, so configure one before using them.
+  - **Two envelopes.** `stocks`, `forex_pairs`, `cryptocurrencies`, `exchanges` and `etf` answer `{ data: [...] }`. `funds` and `bonds` answer `{ result: { count, list } }`, so their schemas differ.
+
+examples:
+  read:
+    path: market.quote
+    title: Read the latest quote for a symbol
+    args:
+      symbol: AAPL
+  write:
+    path: market.exchangeRate
+    title: Read the current exchange rate for a currency pair
+    args:
+      symbol: EUR/USD
+apiExamples:
+  market.quote:
+    call: "{ symbol: 'AAPL', exchange: 'NASDAQ' }"
+  market.price:
+    call: "{ symbol: 'AAPL' }"
+  market.timeSeries:
+    call: "{ symbol: 'AAPL', interval: '1day', outputsize: 30 }"
+  market.exchangeRate:
+    call: "{ symbol: 'EUR/USD' }"
+  market.apiUsage: {}
+  reference.stocks:
+    call: "{ symbol: 'AAPL' }"
+  reference.forexPairs:
+    call: "{ currency_base: 'EUR' }"
+  reference.cryptocurrencies:
+    call: "{ symbol: '0xBTC/USD' }"
+  reference.exchanges:
+    call: "{ country: 'United States' }"
+  reference.etf:
+    call: "{ symbol: '0000D0' }"
+  reference.funds:
+    call: "{ country: 'United States' }"
+  reference.bonds:
+    call: "{ symbol: 'ABXL' }"
+  indicators.rsi:
+    call: "{ symbol: 'AAPL', interval: '1day', time_period: 14 }"
+  indicators.macd:
+    call: "{ symbol: 'AAPL', interval: '1day', time_period: 14 }"
+  indicators.sma:
+    call: "{ symbol: 'AAPL', interval: '1day', time_period: 14 }"
+  indicators.ema:
+    call: "{ symbol: 'AAPL', interval: '1day', time_period: 14 }"
+  indicators.bbands:
+    call: "{ symbol: 'AAPL', interval: '1day', time_period: 14 }"
+  indicators.stoch:
+    call: "{ symbol: 'AAPL', interval: '1day', time_period: 14 }"
+  indicators.atr:
+    call: "{ symbol: 'AAPL', interval: '1day', time_period: 14 }"
+  indicators.adx:
+    call: "{ symbol: 'AAPL', interval: '1day', time_period: 14 }"
+  indicators.cci:
+    call: "{ symbol: 'AAPL', interval: '1day', time_period: 14 }"
+  indicators.willr:
+    call: "{ symbol: 'AAPL', interval: '1day', time_period: 14 }"
+  indicators.mfi:
+    call: "{ symbol: 'AAPL', interval: '1day', time_period: 14 }"
+  indicators.roc:
+    call: "{ symbol: 'AAPL', interval: '1day', time_period: 14 }"
+  indicators.supertrend:
+    call: "{ symbol: 'AAPL', interval: '1day', time_period: 14 }"
+  indicators.apo:
+    call: "{ symbol: 'AAPL', interval: '1day', time_period: 14 }"
+  indicators.ppo:
+    call: "{ symbol: 'AAPL', interval: '1day', time_period: 14 }"
+  indicators.stochrsi:
+    call: "{ symbol: 'AAPL', interval: '1day', time_period: 14 }"
+  indicators.ultosc:
+    call: "{ symbol: 'AAPL', interval: '1day', time_period: 14 }"
+  indicators.wma:
+    call: "{ symbol: 'AAPL', interval: '1day', time_period: 14 }"
+  indicators.min:
+    call: "{ symbol: 'AAPL', interval: '1day', time_period: 14 }"
+  indicators.max:
+    call: "{ symbol: 'AAPL', interval: '1day', time_period: 14 }"
+  indicators.stddev:
+    call: "{ symbol: 'AAPL', interval: '1day', time_period: 14 }"
+  indicators.beta:
+    call: "{ symbol: 'AAPL', interval: '1day', time_period: 14 }"
+  indicators.correl:
+    call: "{ symbol: 'AAPL', interval: '1day', time_period: 14 }"
+  indicators.tsf:
+    call: "{ symbol: 'AAPL', interval: '1day', time_period: 14 }"
+apiNotes:
+  market.quote: 'Takes one symbol. Call once per symbol for several: a comma list is rejected before any request.'
+  market.timeSeries: '`outputsize` caps the candles and `order` sets newest-first or oldest-first. The free plan caps the history depth.'
+  market.exchangeRate: 'The symbol is a pair such as EUR/USD, not a single currency.'
+  reference.stocks: 'Filter by symbol, exchange, country or type. Twelve Data serves this list without a key, but the plugin still needs a configured key and sends it.'
+  reference.etf: 'Uses the same `{ data }` envelope and fields as `reference.stocks`.'
+  reference.funds: 'Answers `{ result: { count, list } }` rather than the `{ data }` array the other lists use.'
+  reference.bonds: 'Answers `{ result: { count, list } }` rather than the `{ data }` array the other lists use.'
+  indicators.rsi: 'Each indicator answers its own field names as decimal strings; `rsi` returns `values[].rsi`.'
+  indicators.macd: 'Returns `macd`, `macd_signal` and `macd_hist` per candle, all as strings.'

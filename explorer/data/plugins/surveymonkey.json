@@ -1,0 +1,4843 @@
+{
+  "id": "surveymonkey",
+  "displayName": "SurveyMonkey",
+  "description": "Surveys and responses for building surveys, collecting answers through collectors and contacts, and reading results.",
+  "npmPackageName": "@corsair-dev/surveymonkey",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 63,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "api_host"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "surveymonkey.api.collectors.create",
+      "shortPath": "collectors.create",
+      "description": "Create a weblink or email collector for a survey, which is what gives it a public link",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "survey_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "weblink | email"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "thank_you_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "disqualification_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "disqualification_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "close_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closed_page_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "display_survey_results",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "edit_response_type",
+            "optional": true,
+            "type": "until_complete | never | always"
+          },
+          {
+            "key": "anonymous_type",
+            "optional": true,
+            "type": "not_anonymous | partially_anonymous | fully_anonymous"
+          },
+          {
+            "key": "allow_multiple_responses",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sender_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "redirect_type",
+            "optional": true,
+            "type": "url | close | loop"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_collector_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "thank_you_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "disqualification_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "disqualification_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "close_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "closed_page_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "redirect_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "display_survey_results",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "edit_response_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "anonymous_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "allow_multiple_responses",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "date_modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "open",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "password_enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "sender_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "response_limit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "redirect_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.collectors.delete",
+      "shortPath": "collectors.delete",
+      "description": "Delete a collector. Its link stops working, and the responses it gathered stay",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collector_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collector_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.collectors.get",
+      "shortPath": "collectors.get",
+      "description": "Read one collector with its settings, link and status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collector_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "thank_you_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "disqualification_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "disqualification_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "close_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "closed_page_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "redirect_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "display_survey_results",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "edit_response_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "anonymous_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "allow_multiple_responses",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "date_modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "open",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "password_enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "sender_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "response_limit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "redirect_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.collectors.list",
+      "shortPath": "collectors.list",
+      "description": "List the collectors of a survey with their links and status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "survey_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "id | date_created | date_modified | name"
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "ASC | DESC"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null, first?: string | null, last?: string | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, status?: string | null, type?: string | null, name?: string | null, thank_you_message?: string | null, disqualification_message?: string | null, disqualification_url?: string | null, close_date?: string | null, closed_page_message?: string | null, redirect_url?: string | null, display_survey_results?: boolean | null, edit_response_type?: string | null, anonymous_type?: string | null, allow_multiple_responses?: boolean | null, date_modified?: string | null, date_created?: string | null, url?: string | null, open?: boolean | null, password_enabled?: boolean | null, sender_email?: string | null, response_limit?: number | null, redirect_type?: string | null, href?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.collectors.update",
+      "shortPath": "collectors.update",
+      "description": "Change a collector settings, or open and close it by status",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collector_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "open | closed"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "thank_you_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "disqualification_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "disqualification_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "close_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closed_page_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "display_survey_results",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "edit_response_type",
+            "optional": true,
+            "type": "until_complete | never | always"
+          },
+          {
+            "key": "anonymous_type",
+            "optional": true,
+            "type": "not_anonymous | partially_anonymous | fully_anonymous"
+          },
+          {
+            "key": "allow_multiple_responses",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sender_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "redirect_type",
+            "optional": true,
+            "type": "url | close | loop"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "thank_you_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "disqualification_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "disqualification_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "close_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "closed_page_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "redirect_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "display_survey_results",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "edit_response_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "anonymous_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "allow_multiple_responses",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "date_modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "open",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "password_enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "sender_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "response_limit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "redirect_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.contactLists.copy",
+      "shortPath": "contactLists.copy",
+      "description": "Copy a contact list, optionally under a new name",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.contactLists.create",
+      "shortPath": "contactLists.create",
+      "description": "Create an empty contact list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.contactLists.delete",
+      "shortPath": "contactLists.delete",
+      "description": "Delete a contact list. The contacts on it stay on the account",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_list_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.contactLists.get",
+      "shortPath": "contactLists.get",
+      "description": "Read one contact list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_list_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.contactLists.list",
+      "shortPath": "contactLists.list",
+      "description": "List the contact lists on the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null, first?: string | null, last?: string | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, href?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.contactLists.merge",
+      "shortPath": "contactLists.merge",
+      "description": "Copy every contact from list_id into this list. list_id keeps its contacts",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "source_list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "target_list_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.contactLists.update",
+      "shortPath": "contactLists.update",
+      "description": "Rename a contact list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.contacts.bulkCreate",
+      "shortPath": "contacts.bulkCreate",
+      "description": "Create up to a few hundred contacts in one call, optionally updating existing ones",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ email?: string, first_name: string, last_name: string, phone_number?: string, custom_fields?: Record<string, string>, update_existing?: boolean }[]"
+          },
+          {
+            "key": "update_existing",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "succeeded",
+            "optional": true,
+            "type": "{ id: string, first_name?: string | null, last_name?: string | null, email?: string | null, phone_number?: string | null, status?: string | null, href?: string | null, custom_fields?: Record<string, string> | null }[] | null"
+          },
+          {
+            "key": "invalids",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "existing",
+            "optional": true,
+            "type": "{ id: string, first_name?: string | null, last_name?: string | null, email?: string | null, phone_number?: string | null, status?: string | null, href?: string | null, custom_fields?: Record<string, string> | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a contact with a name and an email or a phone number",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, string>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Delete a contact. It stops receiving invites and leaves every contact list",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Read one contact with its custom fields and status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contacts on the account, filtered by status or a search field",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | optout | bounced"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "ASC | DESC"
+          },
+          {
+            "key": "search_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null, first?: string | null, last?: string | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, first_name?: string | null, last_name?: string | null, email?: string | null, phone_number?: string | null, status?: string | null, href?: string | null, custom_fields?: Record<string, string> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.contacts.listFields",
+      "shortPath": "contacts.listFields",
+      "description": "List the custom contact fields and their labels",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null, first?: string | null, last?: string | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, label?: string | null, type?: string | null, href?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Change a contact name, email, phone number or custom fields",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, string>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.contacts.updateField",
+      "shortPath": "contacts.updateField",
+      "description": "Rename a custom contact field",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_field_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.folders.create",
+      "shortPath": "folders.create",
+      "description": "Create a folder to group surveys in",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.folders.list",
+      "shortPath": "folders.list",
+      "description": "List the survey folders on the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null, first?: string | null, last?: string | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, href?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.messages.create",
+      "shortPath": "messages.create",
+      "description": "Draft an invite or reminder for an email collector. Nothing is sent until send is called",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collector_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "invite | reminder | thank_you"
+          },
+          {
+            "key": "subject",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body_html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_collector_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_message_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_branding_enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date_modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.messages.get",
+      "shortPath": "messages.get",
+      "description": "Read one message subject and body",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collector_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_branding_enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date_modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.messages.list",
+      "shortPath": "messages.list",
+      "description": "List the invite and reminder messages of a collector",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collector_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null, first?: string | null, last?: string | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, status?: string | null, type?: string | null, subject?: string | null, body?: string | null, is_branding_enabled?: boolean | null, date_created?: string | null, date_modified?: string | null, href?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.messages.send",
+      "shortPath": "messages.send",
+      "description": "Send a message to every recipient on it. This mails real people, so check the recipients first",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collector_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "scheduled_date",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "is_scheduled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "scheduled_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "(string | number)[] | null"
+          },
+          {
+            "key": "recipient_status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.messages.update",
+      "shortPath": "messages.update",
+      "description": "Change a message subject, body or type before it is sent",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collector_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "invite | reminder | thank_you"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body_html",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_branding_enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date_modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.pages.create",
+      "shortPath": "pages.create",
+      "description": "Add a page to a survey, optionally at a given position",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "survey_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "question_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "questions",
+            "optional": true,
+            "type": "{ id: string, headings?: { heading?: string | null, description?: string | null }[] | null, family?: string | null, subtype?: string | null, position?: number | null, required?: {} | null, visible?: boolean | null, href?: string | null, answers?: { choices?: { id?: string | null, position?: number | null, visible?: boolean | null, text?: string | null }[] | null, rows?: {}[] | null, other?: {}[] | null, cols?: {}[] | null } | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.pages.delete",
+      "shortPath": "pages.delete",
+      "description": "Delete a page and the questions on it. There is no undo",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "survey_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "survey_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.pages.get",
+      "shortPath": "pages.get",
+      "description": "Read one page of a survey",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "survey_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "question_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "questions",
+            "optional": true,
+            "type": "{ id: string, headings?: { heading?: string | null, description?: string | null }[] | null, family?: string | null, subtype?: string | null, position?: number | null, required?: {} | null, visible?: boolean | null, href?: string | null, answers?: { choices?: { id?: string | null, position?: number | null, visible?: boolean | null, text?: string | null }[] | null, rows?: {}[] | null, other?: {}[] | null, cols?: {}[] | null } | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.pages.list",
+      "shortPath": "pages.list",
+      "description": "List the pages of a survey in their order",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "survey_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null, first?: string | null, last?: string | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, description?: string | null, position?: number | null, question_count?: number | null, href?: string | null, questions?: { id: string, headings?: { heading?: string | null, description?: string | null }[] | null, family?: string | null, subtype?: string | null, position?: number | null, required?: {} | null, visible?: boolean | null, href?: string | null, answers?: { choices?: { id?: string | null, position?: number | null, visible?: boolean | null, text?: string | null }[] | null, rows?: {}[] | null, other?: {}[] | null, cols?: {}[] | null } | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.pages.update",
+      "shortPath": "pages.update",
+      "description": "Change a page title, description or position",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "survey_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "question_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "questions",
+            "optional": true,
+            "type": "{ id: string, headings?: { heading?: string | null, description?: string | null }[] | null, family?: string | null, subtype?: string | null, position?: number | null, required?: {} | null, visible?: boolean | null, href?: string | null, answers?: { choices?: { id?: string | null, position?: number | null, visible?: boolean | null, text?: string | null }[] | null, rows?: {}[] | null, other?: {}[] | null, cols?: {}[] | null } | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.questions.create",
+      "shortPath": "questions.create",
+      "description": "Add a question to a page. The family and subtype decide the question type, and the headings carry the text",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "survey_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "family",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subtype",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "headings",
+            "optional": false,
+            "type": "{ heading: string, description?: string, image?: {} }[]"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "required",
+            "optional": true,
+            "type": "{ text?: string, type?: string, amount?: string }"
+          },
+          {
+            "key": "sorting",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "validation",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "forced_ranking",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "quiz_options",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "display_options",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "answers",
+            "optional": true,
+            "type": "{ choices?: { text?: string, position?: number, weight?: number, image?: {}, quiz_options?: {} }[], rows?: {}[], cols?: {}[], other?: {}[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "headings",
+            "optional": true,
+            "type": "{ heading?: string | null, description?: string | null }[] | null"
+          },
+          {
+            "key": "family",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subtype",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "required",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "visible",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "answers",
+            "optional": true,
+            "type": "{ choices?: { id?: string | null, position?: number | null, visible?: boolean | null, text?: string | null }[] | null, rows?: {}[] | null, other?: {}[] | null, cols?: {}[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.questions.delete",
+      "shortPath": "questions.delete",
+      "description": "Delete a question and the answers recorded for it. There is no undo",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "survey_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "question_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "survey_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "question_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.questions.get",
+      "shortPath": "questions.get",
+      "description": "Read one question with its choices and settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "survey_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "question_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "headings",
+            "optional": true,
+            "type": "{ heading?: string | null, description?: string | null }[] | null"
+          },
+          {
+            "key": "family",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subtype",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "required",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "visible",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "answers",
+            "optional": true,
+            "type": "{ choices?: { id?: string | null, position?: number | null, visible?: boolean | null, text?: string | null }[] | null, rows?: {}[] | null, other?: {}[] | null, cols?: {}[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.questions.list",
+      "shortPath": "questions.list",
+      "description": "List the questions on one page of a survey",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "survey_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null, first?: string | null, last?: string | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, headings?: { heading?: string | null, description?: string | null }[] | null, family?: string | null, subtype?: string | null, position?: number | null, required?: {} | null, visible?: boolean | null, href?: string | null, answers?: { choices?: { id?: string | null, position?: number | null, visible?: boolean | null, text?: string | null }[] | null, rows?: {}[] | null, other?: {}[] | null, cols?: {}[] | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.questions.update",
+      "shortPath": "questions.update",
+      "description": "Change a question heading, position, required rule, visibility or choices",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "survey_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "question_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "headings",
+            "optional": true,
+            "type": "{ heading: string, description?: string }[]"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "required",
+            "optional": true,
+            "type": "{ text?: string, type?: string, amount?: string }"
+          },
+          {
+            "key": "visible",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "answers",
+            "optional": true,
+            "type": "{ choices?: { id?: string, text?: string, position?: number, visible?: boolean, weight?: number, quiz_options?: {} }[], rows?: {}[], cols?: {}[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "headings",
+            "optional": true,
+            "type": "{ heading?: string | null, description?: string | null }[] | null"
+          },
+          {
+            "key": "family",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subtype",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "required",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "visible",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "answers",
+            "optional": true,
+            "type": "{ choices?: { id?: string | null, position?: number | null, visible?: boolean | null, text?: string | null }[] | null, rows?: {}[] | null, other?: {}[] | null, cols?: {}[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.recipients.bulkCreate",
+      "shortPath": "recipients.bulkCreate",
+      "description": "Add up to a few hundred recipients to a message in one call",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collector_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ email: string, first_name?: string, last_name?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "succeeded",
+            "optional": true,
+            "type": "{ id: string, email?: string | null, first_name?: string | null, last_name?: string | null, href?: string | null, survey_response_status?: string | null, mail_status?: string | null }[] | null"
+          },
+          {
+            "key": "invalids",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "existing",
+            "optional": true,
+            "type": "(string | { id: string, email?: string | null, first_name?: string | null, last_name?: string | null, href?: string | null, survey_response_status?: string | null, mail_status?: string | null })[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.recipients.create",
+      "shortPath": "recipients.create",
+      "description": "Add one recipient to a message by email address",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collector_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "survey_response_status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mail_status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.recipients.list",
+      "shortPath": "recipients.list",
+      "description": "List the recipients on one message with their delivery status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collector_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null, first?: string | null, last?: string | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, email?: string | null, first_name?: string | null, last_name?: string | null, href?: string | null, survey_response_status?: string | null, mail_status?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.responses.create",
+      "shortPath": "responses.create",
+      "description": "Record a response through a collector, as data entry. Nothing is mailed to a respondent",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collector_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "response_status",
+            "optional": true,
+            "type": "completed | partial | overquota | disqualified"
+          },
+          {
+            "key": "custom_value",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_variables",
+            "optional": true,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "ip_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recipient_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "{ id: string, questions?: { id: string, variable_id?: string, answers?: { choice_id?: string | null, row_id?: string | null, col_id?: string | null, other_id?: string | null, text?: string | null, download_url?: string | null, human_download_url?: string | null, content_type?: string | null, tag_data?: {} | null }[] }[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "survey_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "collector_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recipient_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "total_time",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "custom_value",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "edit_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "analyze_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ip_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_variables",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "collection_mode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "response_status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date_modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "{ id?: string | null, questions?: { id?: string | null, variable_id?: string | null, answers?: { choice_id?: string | null, row_id?: string | null, col_id?: string | null, other_id?: string | null, text?: string | null, download_url?: string | null, human_download_url?: string | null, content_type?: string | null, tag_data?: {} | null }[] | null }[] | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.responses.delete",
+      "shortPath": "responses.delete",
+      "description": "Delete one response and its answers. The counts on the survey change and there is no undo",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "survey_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "response_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "survey_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "response_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.responses.deleteAll",
+      "shortPath": "responses.deleteAll",
+      "description": "Delete every response a collector gathered. There is no undo, and the collector stays open",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collector_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collector_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.responses.get",
+      "shortPath": "responses.get",
+      "description": "Read one response with its answers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "survey_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "response_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "survey_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "collector_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recipient_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "total_time",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "custom_value",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "edit_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "analyze_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ip_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_variables",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "collection_mode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "response_status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date_modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "{ id?: string | null, questions?: { id?: string | null, variable_id?: string | null, answers?: { choice_id?: string | null, row_id?: string | null, col_id?: string | null, other_id?: string | null, text?: string | null, download_url?: string | null, human_download_url?: string | null, content_type?: string | null, tag_data?: {} | null }[] | null }[] | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.responses.getDetails",
+      "shortPath": "responses.getDetails",
+      "description": "Read one response with its answers and the page and question detail",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "survey_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "response_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "survey_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "collector_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recipient_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "total_time",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "custom_value",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "edit_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "analyze_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ip_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_variables",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "collection_mode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "response_status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date_modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "{ id?: string | null, questions?: { id?: string | null, variable_id?: string | null, answers?: { choice_id?: string | null, row_id?: string | null, col_id?: string | null, other_id?: string | null, text?: string | null, download_url?: string | null, human_download_url?: string | null, content_type?: string | null, tag_data?: {} | null }[] | null }[] | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.responses.list",
+      "shortPath": "responses.list",
+      "description": "List a survey response ids, filtered by date or status. Read one to see the answers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "survey_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start_created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_modified_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_modified_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "completed | partial | overquota | disqualified"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "date_modified | date_created"
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "ASC | DESC"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null, first?: string | null, last?: string | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, href?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.responses.listBulk",
+      "shortPath": "responses.listBulk",
+      "description": "List survey responses with their answers in one call, up to 100 a page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "survey_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start_created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_modified_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_modified_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "completed | partial | overquota | disqualified"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "date_modified | date_created"
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "ASC | DESC"
+          },
+          {
+            "key": "simple",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "collector_ids",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_ids",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "question_ids",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null, first?: string | null, last?: string | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, href?: string | null, survey_id?: string | null, collector_id?: string | null, recipient_id?: string | null, total_time?: number | null, custom_value?: string | null, edit_url?: string | null, analyze_url?: string | null, ip_address?: string | null, language?: string | null, custom_variables?: Record<string, string> | null, collection_mode?: string | null, response_status?: string | null, date_created?: string | null, date_modified?: string | null, pages?: { id?: string | null, questions?: { id?: string | null, variable_id?: string | null, answers?: { choice_id?: string | null, row_id?: string | null, col_id?: string | null, other_id?: string | null, text?: string | null, download_url?: string | null, human_download_url?: string | null, content_type?: string | null, tag_data?: {} | null }[] | null }[] | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.surveys.create",
+      "shortPath": "surveys.create",
+      "description": "Create an empty survey, or a copy of a template or an existing survey",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from_template_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_survey_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "nickname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "question_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "page_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date_modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "buttons_text",
+            "optional": true,
+            "type": "{ next_button?: string | null, prev_button?: string | null, exit_button?: string | null, done_button?: string | null } | null"
+          },
+          {
+            "key": "custom_variables",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "footer",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "edit_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "collect_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "analyze_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "summary_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "response_count",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.surveys.delete",
+      "shortPath": "surveys.delete",
+      "description": "Delete a survey and its responses. There is no undo and the questions go with it",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "survey_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "survey_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.surveys.get",
+      "shortPath": "surveys.get",
+      "description": "Read one survey with its counts, links and response count",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "survey_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "nickname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "question_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "page_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date_modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "buttons_text",
+            "optional": true,
+            "type": "{ next_button?: string | null, prev_button?: string | null, exit_button?: string | null, done_button?: string | null } | null"
+          },
+          {
+            "key": "custom_variables",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "footer",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "edit_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "collect_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "analyze_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "summary_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "response_count",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.surveys.getDetails",
+      "shortPath": "surveys.getDetails",
+      "description": "Read a survey with every page and question, including choice ids and values",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "survey_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "nickname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "question_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "page_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date_modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "buttons_text",
+            "optional": true,
+            "type": "{ next_button?: string | null, prev_button?: string | null, exit_button?: string | null, done_button?: string | null } | null"
+          },
+          {
+            "key": "custom_variables",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "footer",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "edit_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "collect_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "analyze_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "summary_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "response_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "{ id: string, title?: string | null, description?: string | null, position?: number | null, question_count?: number | null, href?: string | null, questions?: { id: string, headings?: { heading?: string | null, description?: string | null }[] | null, family?: string | null, subtype?: string | null, position?: number | null, required?: {} | null, visible?: boolean | null, href?: string | null, answers?: { choices?: { id?: string | null, position?: number | null, visible?: boolean | null, text?: string | null }[] | null, rows?: {}[] | null, other?: {}[] | null, cols?: {}[] | null } | null }[] | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.surveys.list",
+      "shortPath": "surveys.list",
+      "description": "List surveys in last-modified order, filtered by title, folder or modification date",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "title | date_modified | date_created"
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "ASC | DESC"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_modified_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_modified_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null, first?: string | null, last?: string | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, nickname?: string | null, category?: string | null, language?: string | null, question_count?: number | null, page_count?: number | null, date_created?: string | null, date_modified?: string | null, href?: string | null, buttons_text?: { next_button?: string | null, prev_button?: string | null, exit_button?: string | null, done_button?: string | null } | null, custom_variables?: Record<string, string> | null, footer?: boolean | null, folder_id?: string | null, preview?: string | null, edit_url?: string | null, collect_url?: string | null, analyze_url?: string | null, summary_url?: string | null, response_count?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.surveys.listCategories",
+      "shortPath": "surveys.listCategories",
+      "description": "List the survey categories available for the language",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null, first?: string | null, last?: string | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, href?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.surveys.listLanguages",
+      "shortPath": "surveys.listLanguages",
+      "description": "List the languages a survey can be written in",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null, first?: string | null, last?: string | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, href?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.surveys.listTemplates",
+      "shortPath": "surveys.listTemplates",
+      "description": "List the survey templates, optionally filtered by language or category",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null, first?: string | null, last?: string | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, nickname?: string | null, category?: string | null, language?: string | null, question_count?: number | null, page_count?: number | null, date_created?: string | null, date_modified?: string | null, href?: string | null, buttons_text?: { next_button?: string | null, prev_button?: string | null, exit_button?: string | null, done_button?: string | null } | null, custom_variables?: Record<string, string> | null, footer?: boolean | null, folder_id?: string | null, preview?: string | null, edit_url?: string | null, collect_url?: string | null, analyze_url?: string | null, summary_url?: string | null, response_count?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.surveys.replace",
+      "shortPath": "surveys.replace",
+      "description": "Replace a survey wholesale. Fields left out reset to their defaults, so prefer update",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "survey_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nickname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "buttons_text",
+            "optional": true,
+            "type": "{ next_button?: string | null, prev_button?: string | null, exit_button?: string | null, done_button?: string | null }"
+          },
+          {
+            "key": "custom_variables",
+            "optional": true,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "footer",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "nickname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "question_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "page_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date_modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "buttons_text",
+            "optional": true,
+            "type": "{ next_button?: string | null, prev_button?: string | null, exit_button?: string | null, done_button?: string | null } | null"
+          },
+          {
+            "key": "custom_variables",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "footer",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "edit_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "collect_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "analyze_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "summary_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "response_count",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.surveys.update",
+      "shortPath": "surveys.update",
+      "description": "Change a survey title, nickname, language, button text, variables or folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "survey_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nickname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "buttons_text",
+            "optional": true,
+            "type": "{ next_button?: string | null, prev_button?: string | null, exit_button?: string | null, done_button?: string | null }"
+          },
+          {
+            "key": "custom_variables",
+            "optional": true,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "footer",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "nickname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "question_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "page_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date_modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "buttons_text",
+            "optional": true,
+            "type": "{ next_button?: string | null, prev_button?: string | null, exit_button?: string | null, done_button?: string | null } | null"
+          },
+          {
+            "key": "custom_variables",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "footer",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "edit_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "collect_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "analyze_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "summary_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "response_count",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.users.getMe",
+      "shortPath": "users.getMe",
+      "description": "Read the account the token belongs to, which is the cheapest connection check",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "account_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Subscribe a URL to an event on a survey or collector. SurveyMonkey then POSTs to it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event_type",
+            "optional": false,
+            "type": "response_completed | response_updated | response_created | response_deleted | response_disqualified | response_overquota | collector_created | collector_updated | collector_deleted | survey_created | survey_updated | survey_deleted"
+          },
+          {
+            "key": "object_type",
+            "optional": true,
+            "type": "survey | collector"
+          },
+          {
+            "key": "object_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "subscription_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "authorization",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "event_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object_ids",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "subscription_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "authorization",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a webhook subscription. The URL stops receiving events",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.webhooks.get",
+      "shortPath": "webhooks.get",
+      "description": "Read one webhook subscription",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "event_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object_ids",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "subscription_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "authorization",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List the webhooks on the account and what they subscribe to",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ self?: string | null, next?: string | null, prev?: string | null, first?: string | null, last?: string | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, event_type?: string | null, object_type?: string | null, object_ids?: string[] | null, subscription_url?: string | null, authorization?: string | null, href?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "surveymonkey.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Change a webhook event, target objects or subscription URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_type",
+            "optional": true,
+            "type": "response_completed | response_updated | response_created | response_deleted | response_disqualified | response_overquota | collector_created | collector_updated | collector_deleted | survey_created | survey_updated | survey_deleted"
+          },
+          {
+            "key": "object_type",
+            "optional": true,
+            "type": "survey | collector"
+          },
+          {
+            "key": "object_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "subscription_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "authorization",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "event_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "object_ids",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "subscription_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "authorization",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
