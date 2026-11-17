@@ -1,0 +1,155 @@
+---
+title: "SignWell plugin"
+sidebarTitle: "Overview"
+description: "E-signatures through SignWell - send documents and templates for signature, follow each recipient's progress, remind, update or cancel a request, read a completed PDF by download URL, and receive document events on a webhook."
+---
+
+Use **SignWell** through Corsair: one client, typed API calls, and incoming webhooks.
+
+Create an API token in SignWell under Settings, then API. Pass it as the plugin's `key` option or store it on the account. SignWell reads it from the `X-Api-Key` header.
+
+Things to know before you send:
+
+- **Sending notifies real people.** `documents.create` and `documents.createFromTemplate` notify every recipient unless you set `draft: true`. `bulkSends.create` has no draft or test mode: it sends every row as soon as it is created. Test mode keeps a document out of billing and makes it non-binding, but the notifications still go out.
+- **Test mode does not follow a draft.** SignWell documents that a document created in test mode is not automatically sent in test mode. The document routes (`documents.create`, `documents.createFromTemplate`, `documents.send`) accept `test_mode`, and the plugin also sets `X-TestMode-Enabled` so the two never disagree.
+- **Recipient ids change meaning.** At creation, `recipients[].id` is the number you assign to attach fields. After the document exists, the id comes from `documents.get`, and `documents.updateRecipients` needs that one.
+- **Only unsigned recipients can change.** Updating a recipient or their passcode fails with a 409 once that recipient has started signing.
+- **Completed files come back as a URL.** SignWell returns a PDF or ZIP body by default, which this plugin cannot hand back intact, so `documents.getCompletedPdf` and `documents.getNom151Certificate` ask for `url_only` and return `file_url`.
+- **Webhooks.** Register a URL with `webhooks.create`, then give the returned id to the plugin as `webhookSecret` (or store it as the account's webhook signature). SignWell signs each delivery with HMAC-SHA256 over `event.type@event.time`, keyed with that id; a delivery whose hash does not match is refused.
+- **What the signature covers.** The hash covers the event type and its timestamp, not the document body, so it stops an unsigned sender but not a replay of a genuine envelope. Treat a delivery as a notification to go read the document, not as the document's final state.
+- **Paging.** `bulkSends.list` and `bulkSends.getDocuments` page by number and report `next_page`. `webhooks.list` does not page.
+
+**What you get:**
+
+- 28 typed API operations
+- 10 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/signwell better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/signwell better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/signwell better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/signwell better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { signwell } from '@corsair-dev/signwell';
+
+export const corsair = createCorsair({
+	plugins: [
+		signwell(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the SignWell API key before the first call: `pnpm corsair setup --plugin=signwell --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+signwell()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'signwell',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read a document and its recipients**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.signwell.api.documents.get({ id: 'a692e1ce-9929-4541-adc7-61932bab39d3' });
+```
+
+
+**Send a PDF for signature**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.signwell.api.documents.create({
+	files: [{ name: 'offer.pdf', file_url: 'https://acme.example/offer.pdf' }],
+	recipients: [{ id: '1', name: 'Jordan Lee', email: 'jordan@acme-logistics.com' }],
+	with_signature_page: true,
+	subject: 'Please sign the offer',
+});
+```
+
+
+See the full list on the [API](/plugins/signwell/api) page.
+
+## Webhooks
+
+This plugin registers **10** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/signwell/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/signwell/api">
+    Every `signwell.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/signwell/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
