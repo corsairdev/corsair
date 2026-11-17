@@ -1,19 +1,83 @@
 displayName: Echtpost
-description: List saved Echtpost postcard templates. The API key is sent in the X-Api-Key header.
+description: Send real printed postcards with EchtPost. Manage contacts and groups, pick motives and templates, create, list and cancel cards, and check the credit balance.
 domain: echtpost.de
 recommendedAuth: api_key
 overviewNote: |
-  GET /v2/templates with an empty X-Api-Key returned HTTP 401, title Authentication required. The detail says to send X-Api-Key or Authorization Bearer. This plugin sends X-Api-Key. Query keys are not accepted. Card creation is not a catalog operation and is not implemented. Template text is stored and is not written to the event.
+  Create an API key in the EchtPost web app under Account > API keys; the plugin sends it in the `X-Api-Key` header. A key starting `ep_live_` sends real cards. A key starting `ep_test_` is a sandbox key: its cards, contacts and groups are stored apart and are never printed or billed, so use one while building.
+
+  Things to know:
+
+  - **Creating a card sends a postcard and costs money.** `cards.create` and `cards.createFromTemplate` print and post a card to every recipient and bill the account per card, so they are `destructive`; with a permissions mode such as `permissions: { mode: 'cautious' }` they wait for approval. Check `account.credits` first.
+  - **Recipients.** Pass saved contacts in `recipient_ids`, whole groups in `group_ids`, or new postal addresses in `recipients`. `{anrede}` in the text becomes each recipient's salutation (see `greeting_style` on a contact).
+  - **Motives.** A motive is the front design. `motives.get` says which text fields it allows (`content_available`, `content_ps_available`, `vertical_text_available`); text the motive does not allow is refused with 422.
+  - **Check the text first.** `cards.previewFit` says whether the text fits at a font and size, and suggests a size when it does not. It creates nothing.
+  - **Delivery.** `deliver_at` takes `YYYY-MM-DD`, `today`, `asap`, `tomorrow` or `N-days-from-now`, at most 90 days out; weekends and printer holidays move to the next print date unless `move_to_next_print_date` is false.
+  - **Cancelling.** `cards.cancel` works while the card is still `cancelable`; it runs asynchronously and cannot be undone.
+  - **Errors** are RFC 7807 problem details; a failed call drops its request body (names, addresses) from the error. Events log ids only.
 examples:
   read:
-    path: templates.list
-    title: List templates
+    path: cards.list
+    title: List scheduled cards
     args:
-      page: 1
-      per_page: 50
+      status: scheduled
+      per_page: 20
+  write:
+    path: contacts.create
+    title: Add a recipient
+    args:
+      first_name: Max
+      last_name: Mustermann
+      street: Hauptstr. 1
+      zip: '10115'
+      city: Berlin
+      country_code: DE
 apiNotes:
   templates.list: |
     GET /templates. The body is a JSON array. A row is stored only when id is a number. source is stored as a string so a new enum value does not fail the parse.
+  account.credits: Balance in EUR, cards left at the regular and foreign price, and the price per card.
+  contacts.list: '`search` matches first name, last name, company or city. `include: "groups"` adds `group_ids` to each contact.'
+  cards.create: 'Prints, posts and bills a real card per recipient with a live key. `motive_id` is required; `content` is required when the motive allows text.'
+  cards.createFromTemplate: Same as cards.create, using a saved template's motive, text and font.
+  cards.cancel: Only while `cancelable` is true; answers with the new status.
 apiExamples:
+  account.get: {}
+  account.credits: {}
+  contacts.list:
+    call: "{ search: 'Mustermann', per_page: 50 }"
+  contacts.get:
+    call: "{ id: 101 }"
+  contacts.create:
+    call: "{ first_name: 'Max', last_name: 'Mustermann', street: 'Hauptstr. 1', zip: '10115', city: 'Berlin', country_code: 'DE' }"
+  contacts.update:
+    call: "{ id: 101, city: 'Hamburg' }"
+  contacts.delete:
+    call: "{ id: 101 }"
+  groups.list: {}
+  groups.get:
+    call: "{ id: 7 }"
+  groups.create:
+    call: "{ name: 'Customers' }"
+  groups.update:
+    call: "{ id: 7, name: 'VIP customers' }"
+  groups.delete:
+    call: "{ id: 7 }"
   templates.list:
     call: "{ page: 1, per_page: 50 }"
+  templates.get:
+    call: "{ id: 12 }"
+  motives.list:
+    call: "{ search: 'birthday' }"
+  motives.get:
+    call: "{ id: 42 }"
+  cards.list:
+    call: "{ status: 'scheduled' }"
+  cards.get:
+    call: "{ id: '0b9e3c1e-2a4f-4b8a-9f00-1c2d3e4f5a6b' }"
+  cards.create:
+    call: "{ motive_id: 42, content: '{anrede}, thank you for your order!', recipient_ids: [101], deliver_at: 'tomorrow' }"
+  cards.createFromTemplate:
+    call: "{ template_id: 12, group_ids: [7] }"
+  cards.previewFit:
+    call: "{ content: 'Thank you for your order!', font: { family: 'architects_daughter', size: 13 } }"
+  cards.cancel:
+    call: "{ id: '0b9e3c1e-2a4f-4b8a-9f00-1c2d3e4f5a6b' }"
