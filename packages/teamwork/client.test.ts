@@ -15,6 +15,31 @@ beforeEach(() => {
 });
 
 describe('Teamwork HTTP client', () => {
+	it('passes core ApiError through unchanged, so status and Retry-After stay readable', async () => {
+		const apiError = new ApiError(
+			{ method: 'GET', url: '/projects/api/v3/projects.json' },
+			{
+				url: 'https://acme.teamwork.com/projects/api/v3/projects.json',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: { message: 'rate limited' },
+			},
+			'Too Many Requests',
+		);
+		mockedRequest.mockRejectedValue(apiError);
+		await expect(
+			client.makeTeamworkRequest({
+				apiKey: 'secret-key',
+				siteName: 'acme',
+				method: 'GET',
+				path: '/projects/api/v3/projects.json',
+				pathParameters: {},
+				query: {},
+			}),
+		).rejects.toBe(apiError);
+	});
+
 	it('uses tenant host, documented route, and Basic API-key authentication', async () => {
 		mockedRequest.mockResolvedValue({ projects: [] });
 		await client.makeTeamworkRequest({
