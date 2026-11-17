@@ -8722,5 +8722,32 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/docparser",
+    "dir": "packages/docparser",
+    "name": "Docparser",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/emailable",
+    "dir": "packages/emailable",
+    "name": "Emailable",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/linkup",
+    "dir": "packages/linkup",
+    "name": "Linkup",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
