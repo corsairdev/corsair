@@ -19,6 +19,7 @@ export async function globalpingRequest<T>(
 	apiKey: string | undefined,
 	method: 'GET' | 'POST',
 	url: string,
+	// unknown: any JSON-serialisable request body; each endpoint builds it from parsed input.
 	body?: unknown,
 ): Promise<T> {
 	const headers: Record<string, string> = { Accept: 'application/json' };
@@ -36,6 +37,7 @@ export async function globalpingRequest<T>(
 	});
 }
 
+// Responses arrive as untyped JSON; callers narrow each field before use.
 export function asRecord(value: unknown): Record<string, unknown> | undefined {
 	return value && typeof value === 'object'
 		? (value as Record<string, unknown>)

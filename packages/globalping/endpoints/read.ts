@@ -17,12 +17,22 @@ import type {
 	ProbeListResponse,
 	ProbeResult,
 } from './types';
-import { CreateInputSchema, GetInputSchema, ProbeResultSchema } from './types';
+import {
+	CreateInputSchema,
+	GetInputSchema,
+	HealthResponseSchema,
+	LimitResponseSchema,
+	MeasurementResponseSchema,
+	ProbeListResponseSchema,
+	ProbeResultSchema,
+} from './types';
 
+// unknown: a raw JSON field; this narrows it to a non-empty string.
 function text(value: unknown): string | undefined {
 	return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
 
+// unknown: a raw JSON field; this keeps finite numbers only.
 function num(value: unknown): number | undefined {
 	return typeof value === 'number' && Number.isFinite(value)
 		? value
@@ -92,7 +102,7 @@ export const listProbes: CorsairEndpoint<
 		{ count: probes.length },
 		'completed',
 	);
-	return { probes };
+	return ProbeListResponseSchema.parse({ probes });
 };
 
 export const getLimits: CorsairEndpoint<
@@ -125,7 +135,7 @@ export const getLimits: CorsairEndpoint<
 		{ count: 1 },
 		'completed',
 	);
-	return { limit };
+	return LimitResponseSchema.parse({ limit });
 };
 
 export const getHealth: CorsairEndpoint<
@@ -151,7 +161,7 @@ export const getHealth: CorsairEndpoint<
 		{ count: 1 },
 		'completed',
 	);
-	return { health };
+	return HealthResponseSchema.parse({ health });
 };
 
 export const createMeasurement: CorsairEndpoint<
@@ -202,7 +212,7 @@ export const createMeasurement: CorsairEndpoint<
 		{ count: 1 },
 		'completed',
 	);
-	return { measurement: measurement.data };
+	return MeasurementResponseSchema.parse({ measurement: measurement.data });
 };
 
 export const getMeasurement: CorsairEndpoint<
@@ -242,11 +252,11 @@ export const getMeasurement: CorsairEndpoint<
 		{ count: 1 },
 		'completed',
 	);
-	return {
+	return MeasurementResponseSchema.parse({
 		measurement: measurement.data,
 		target: text(row?.target),
 		createdAt: text(row?.createdAt),
 		updatedAt: text(row?.updatedAt),
 		results: resultsFrom(row?.results),
-	};
+	});
 };
