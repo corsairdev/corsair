@@ -1,6 +1,8 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 
+// ApiError.body is whatever the provider sent, so it is narrowed here before
+// reading PostOnce's { error: { code } } envelope.
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);
 }

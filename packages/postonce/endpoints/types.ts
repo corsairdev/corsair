@@ -43,6 +43,8 @@ const PostTargetInputSchema = z.object({
 		.nullable()
 		.optional()
 		.describe('Text for this account instead of the shared content'),
+	// Options differ per platform (YouTube title, TikTok ai_generated, ...) and
+	// PostOnce documents them per platform, not as one schema.
 	platform_options: z
 		.record(z.string(), z.unknown())
 		.nullable()

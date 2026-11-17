@@ -57,6 +57,8 @@ export const PostOnceMediaRequirements = z
 			.loose()
 			.nullable()
 			.optional(),
+		// These four objects vary by platform and PostOnce does not publish their
+		// fields, so they stay open records.
 		file_constraints: z.record(z.string(), z.unknown()).nullable().optional(),
 		required_media: z.record(z.string(), z.unknown()).nullable().optional(),
 		max_hashtags: N,
