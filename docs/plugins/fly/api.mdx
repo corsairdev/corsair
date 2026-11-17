@@ -1,0 +1,3116 @@
+---
+title: "Fly.io API reference"
+sidebarTitle: "API"
+description: "API reference for the Fly.io plugin in Corsair: every `fly.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Apps
+
+### create
+
+`apps.create`
+
+Create an app in an organization. The app costs nothing until it has Machines or volumes.
+
+**Risk:** `write`
+
+```ts
+await corsair.fly.api.apps.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Globally unique app name |
+| `org_slug` | `string` | Yes | Organization slug, or 'personal' for your personal organization |
+| `network` | `string` | No | Private network to attach the app to; defaults to the org default |
+| `enable_subdomains` | `boolean` | No | — |
+| `idempotency_key` | `string` | No | Makes a retry of the same create return the same app |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `created_at` | `number \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`apps.delete`
+
+Permanently delete an app with its Machines, volumes, secrets, certificates and IP addresses
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.fly.api.apps.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | — |
+| `accepted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`apps.get`
+
+Get an app by name
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.apps.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `internal_numeric_id` | `number \| null` | No | — |
+| `machine_count` | `number \| null` | No | — |
+| `volume_count` | `number \| null` | No | — |
+| `network` | `string \| null` | No | — |
+| `network_cidr` | `string \| null` | No | — |
+| `cname_target` | `string \| null` | No | — |
+| `app_role` | `string \| null` | No | — |
+| `status` | `pending \| deployed \| suspended \| string \| null` | No | — |
+| `organization` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="organization full type">
+
+```ts
+{
+  name?: string | null,
+  slug?: string | null,
+  internal_numeric_id?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`apps.list`
+
+List the apps in an organization. Pass limit to page through results with next_cursor.
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.apps.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_slug` | `string` | Yes | Organization slug, or 'personal' for your personal organization |
+| `app_role` | `string` | No | Only apps with this role |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | next_cursor from the previous page; requires limit |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apps` | `object[]` | Yes | — |
+| `next_cursor` | `string \| null` | No | — |
+| `total_apps` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="apps full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  internal_numeric_id?: number | null,
+  machine_count?: number | null,
+  volume_count?: number | null,
+  network?: string | null,
+  network_cidr?: string | null,
+  cname_target?: string | null,
+  app_role?: string | null,
+  status?: pending | deployed | suspended | string | null,
+  organization?: {
+    name?: string | null,
+    slug?: string | null,
+    internal_numeric_id?: number | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Certificates
+
+### check
+
+`certificates.check`
+
+Look up a hostname's DNS now and re-validate its certificate
+
+**Risk:** `write`
+
+```ts
+await corsair.fly.api.certificates.check({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `hostname` | `string` | Yes | Hostname, such as example.com or *.example.com |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hostname` | `string` | Yes | — |
+| `status` | `string \| null` | No | — |
+| `configured` | `boolean \| null` | No | — |
+| `acme_requested` | `boolean \| null` | No | — |
+| `dns_provider` | `string \| null` | No | — |
+| `rate_limited_until` | `string \| null` | No | — |
+| `certificates` | `object[] \| null` | No | — |
+| `dns_requirements` | `object \| null` | No | — |
+| `validation` | `object \| null` | No | — |
+| `validation_errors` | `object[] \| null` | No | — |
+| `dns_records` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="certificates full type">
+
+```ts
+{
+  source?: custom | fly | string | null,
+  status?: string | null,
+  created_at?: string | null,
+  expires_at?: string | null,
+  issuer?: string | null,
+  issued?: {
+    certificate_authority?: string | null,
+    expires_at?: string | null,
+    type?: string | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="dns_requirements full type">
+
+```ts
+{
+  a?: string[] | null,
+  aaaa?: string[] | null,
+  cname?: string | null,
+  acme_challenge?: {
+    name?: string | null,
+    target?: string | null
+  } | null,
+  ownership?: {
+    name?: string | null,
+    app_value?: string | null,
+    org_value?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="validation full type">
+
+```ts
+{
+  alpn_configured?: boolean | null,
+  dns_configured?: boolean | null,
+  http_configured?: boolean | null,
+  ownership_txt_configured?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="validation_errors full type">
+
+```ts
+{
+  code?: string | null,
+  message?: string | null,
+  remediation?: string | null,
+  timestamp?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="dns_records full type">
+
+```ts
+{
+  a?: string[] | null,
+  aaaa?: string[] | null,
+  cname?: string[] | null,
+  acme_challenge_cname?: string | null,
+  ownership_txt?: string | null,
+  resolved_addresses?: string[] | null,
+  soa?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`certificates.delete`
+
+Remove a hostname and all its certificates from an app
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.fly.api.certificates.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `hostname` | `string` | Yes | Hostname, such as example.com or *.example.com |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hostname` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`certificates.get`
+
+Get a certificate with the DNS records to create and its validation state
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.certificates.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `hostname` | `string` | Yes | Hostname, such as example.com or *.example.com |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hostname` | `string` | Yes | — |
+| `status` | `string \| null` | No | — |
+| `configured` | `boolean \| null` | No | — |
+| `acme_requested` | `boolean \| null` | No | — |
+| `dns_provider` | `string \| null` | No | — |
+| `rate_limited_until` | `string \| null` | No | — |
+| `certificates` | `object[] \| null` | No | — |
+| `dns_requirements` | `object \| null` | No | — |
+| `validation` | `object \| null` | No | — |
+| `validation_errors` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="certificates full type">
+
+```ts
+{
+  source?: custom | fly | string | null,
+  status?: string | null,
+  created_at?: string | null,
+  expires_at?: string | null,
+  issuer?: string | null,
+  issued?: {
+    certificate_authority?: string | null,
+    expires_at?: string | null,
+    type?: string | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="dns_requirements full type">
+
+```ts
+{
+  a?: string[] | null,
+  aaaa?: string[] | null,
+  cname?: string | null,
+  acme_challenge?: {
+    name?: string | null,
+    target?: string | null
+  } | null,
+  ownership?: {
+    name?: string | null,
+    app_value?: string | null,
+    org_value?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="validation full type">
+
+```ts
+{
+  alpn_configured?: boolean | null,
+  dns_configured?: boolean | null,
+  http_configured?: boolean | null,
+  ownership_txt_configured?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="validation_errors full type">
+
+```ts
+{
+  code?: string | null,
+  message?: string | null,
+  remediation?: string | null,
+  timestamp?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`certificates.list`
+
+List an app's custom-domain certificates
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.certificates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `filter` | `string` | No | Hostname substring |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `certificates` | `object[]` | Yes | — |
+| `next_cursor` | `string \| null` | No | — |
+| `total_count` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="certificates full type">
+
+```ts
+{
+  hostname: string,
+  status?: string | null,
+  configured?: boolean | null,
+  acme_requested?: boolean | null,
+  acme_alpn_configured?: boolean | null,
+  acme_dns_configured?: boolean | null,
+  acme_http_configured?: boolean | null,
+  ownership_txt_configured?: boolean | null,
+  has_custom_certificate?: boolean | null,
+  has_fly_certificate?: boolean | null,
+  dns_provider?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### request
+
+`certificates.request`
+
+Add a hostname to an app and request Fly-issued (ACME) certificates for it. Fly bills certificates beyond the free allowance.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fly.api.certificates.request({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `hostname` | `string` | Yes | Hostname, such as example.com or *.example.com |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hostname` | `string` | Yes | — |
+| `status` | `string \| null` | No | — |
+| `configured` | `boolean \| null` | No | — |
+| `acme_requested` | `boolean \| null` | No | — |
+| `dns_provider` | `string \| null` | No | — |
+| `rate_limited_until` | `string \| null` | No | — |
+| `certificates` | `object[] \| null` | No | — |
+| `dns_requirements` | `object \| null` | No | — |
+| `validation` | `object \| null` | No | — |
+| `validation_errors` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="certificates full type">
+
+```ts
+{
+  source?: custom | fly | string | null,
+  status?: string | null,
+  created_at?: string | null,
+  expires_at?: string | null,
+  issuer?: string | null,
+  issued?: {
+    certificate_authority?: string | null,
+    expires_at?: string | null,
+    type?: string | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="dns_requirements full type">
+
+```ts
+{
+  a?: string[] | null,
+  aaaa?: string[] | null,
+  cname?: string | null,
+  acme_challenge?: {
+    name?: string | null,
+    target?: string | null
+  } | null,
+  ownership?: {
+    name?: string | null,
+    app_value?: string | null,
+    org_value?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="validation full type">
+
+```ts
+{
+  alpn_configured?: boolean | null,
+  dns_configured?: boolean | null,
+  http_configured?: boolean | null,
+  ownership_txt_configured?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="validation_errors full type">
+
+```ts
+{
+  code?: string | null,
+  message?: string | null,
+  remediation?: string | null,
+  timestamp?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ip Assignments
+
+### create
+
+`ipAssignments.create`
+
+Assign an IP address to an app. Dedicated IPv4 and egress addresses are billed monthly; shared_v4, v6 and private_v6 are free.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fly.api.ipAssignments.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `type` | `v4 \| v6 \| shared_v4 \| private_v6 \| egress_v4 \| egress_v6 \| egress_pair` | Yes | — |
+| `region` | `string` | No | Required for egress types; v4 and v6 default to global |
+| `service_name` | `string` | No | — |
+| `network` | `string` | No | Only for private_v6 |
+| `org_slug` | `string` | No | Only for private_v6 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `service_name` | `string \| null` | No | — |
+| `shared` | `boolean \| null` | No | — |
+| `egress` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `network` | `object \| null` | No | — |
+| `ip_pair` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="network full type">
+
+```ts
+{
+  name?: string | null,
+  org_slug?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="ip_pair full type">
+
+```ts
+{
+  v4?: string | null,
+  v6?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`ipAssignments.delete`
+
+Release an IP address from an app. A released address cannot be got back.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.fly.api.ipAssignments.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `ip` | `string` | Yes | IP address |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string` | Yes | — |
+| `released` | `true` | Yes | — |
+
+
+
+---
+
+### list
+
+`ipAssignments.list`
+
+List an app's IP addresses, including its shared IPv4 and egress addresses
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.ipAssignments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ips` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="ips full type">
+
+```ts
+{
+  ip?: string | null,
+  region?: string | null,
+  service_name?: string | null,
+  shared?: boolean | null,
+  egress?: boolean | null,
+  created_at?: string | null,
+  network?: {
+    name?: string | null,
+    org_slug?: string | null
+  } | null,
+  ip_pair?: {
+    v4?: string | null,
+    v6?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Machines
+
+### cordon
+
+`machines.cordon`
+
+Cordon a Machine so Fly Proxy stops routing requests to it
+
+**Risk:** `write`
+
+```ts
+await corsair.fly.api.machines.cordon({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `machine_id` | `string` | Yes | Machine ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+
+
+
+---
+
+### create
+
+`machines.create`
+
+Create (and by default start) a Machine. Fly bills it while it runs and for its root filesystem.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fly.api.machines.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `name` | `string` | No | — |
+| `region` | `string` | No | Region code such as iad, or a region group such as eu |
+| `config` | `object` | Yes | — |
+| `min_secrets_version` | `number` | No | — |
+| `skip_launch` | `boolean` | No | Create it stopped |
+| `skip_secrets` | `boolean` | No | — |
+| `lease_ttl` | `number` | No | Take a lease for this many seconds; the nonce comes back in nonce |
+| `skip_service_registration` | `boolean` | No | Create it cordoned |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+  image?: string,
+  containers?: Record<string, any>[],
+  guest?: {
+    cpu_kind?: shared | performance,
+    cpus?: number,
+    memory_mb?: number,
+    max_memory_mb?: number,
+    kernel_args?: string[],
+    host_dedication_id?: string,
+    required_host_features?: string[]
+  },
+  env?: Record<string, string>,
+  metadata?: Record<string, string>,
+  services?: {
+    protocol?: tcp | udp,
+    internal_port?: number,
+    ports?: {
+      port?: number,
+      start_port?: number,
+      end_port?: number,
+      handlers?: string[],
+      force_https?: boolean
+    }[],
+    autostart?: boolean,
+    autostop?: boolean | off | stop | suspend,
+    min_machines_running?: number
+  }[],
+  mounts?: {
+    volume: string,
+    path: string
+  }[],
+  restart?: {
+    policy?: no | always | on-failure | spot-price,
+    max_retries?: number
+  },
+  auto_destroy?: boolean,
+  schedule?: hourly | daily | weekly | monthly,
+  stop_config?: {
+    signal?: SIGHUP | SIGINT | SIGQUIT | SIGKILL | SIGUSR1 | SIGUSR2 | SIGTERM,
+    timeout?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `instance_id` | `string \| null` | No | — |
+| `version` | `string \| null` | No | — |
+| `private_ip` | `string \| null` | No | — |
+| `cordoned` | `boolean \| null` | No | — |
+| `host_status` | `ok \| unknown \| unreachable \| string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `config` | `object \| null` | No | — |
+| `incomplete_config` | `object \| null` | No | — |
+| `image_ref` | `object \| null` | No | — |
+| `events` | `object[] \| null` | No | — |
+| `checks` | `object[] \| null` | No | — |
+| `lease` | `object \| null` | No | — |
+| `nonce` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+  image?: string | null,
+  guest?: {
+    cpu_kind?: string | null,
+    cpus?: number | null,
+    memory_mb?: number | null,
+    max_memory_mb?: number | null
+  } | null,
+  env?: Record<string, string> | null,
+  metadata?: Record<string, string> | null,
+  auto_destroy?: boolean | null,
+  schedule?: string | null,
+  restart?: {
+    policy?: string | null,
+    max_retries?: number | null
+  } | null,
+  mounts?: {
+    volume?: string | null,
+    path?: string | null,
+    name?: string | null,
+    size_gb?: number | null
+  }[] | null,
+  services?: Record<string, any>[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="incomplete_config full type">
+
+```ts
+{
+  image?: string | null,
+  guest?: {
+    cpu_kind?: string | null,
+    cpus?: number | null,
+    memory_mb?: number | null,
+    max_memory_mb?: number | null
+  } | null,
+  env?: Record<string, string> | null,
+  metadata?: Record<string, string> | null,
+  auto_destroy?: boolean | null,
+  schedule?: string | null,
+  restart?: {
+    policy?: string | null,
+    max_retries?: number | null
+  } | null,
+  mounts?: {
+    volume?: string | null,
+    path?: string | null,
+    name?: string | null,
+    size_gb?: number | null
+  }[] | null,
+  services?: Record<string, any>[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="image_ref full type">
+
+```ts
+{
+  registry?: string | null,
+  repository?: string | null,
+  tag?: string | null,
+  digest?: string | null,
+  labels?: Record<string, string> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="events full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  status?: string | null,
+  source?: string | null,
+  timestamp?: number | null,
+  request?: Record<string, any> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="checks full type">
+
+```ts
+{
+  name?: string | null,
+  status?: passing | warning | critical | string | null,
+  output?: string | null,
+  updated_at?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="lease full type">
+
+```ts
+{
+  owner?: string | null,
+  description?: string | null,
+  expires_at?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createLease
+
+`machines.createLease`
+
+Take (or, with lease_nonce, refresh) an exclusive lease on a Machine
+
+**Risk:** `write`
+
+```ts
+await corsair.fly.api.machines.createLease({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `machine_id` | `string` | Yes | Machine ID |
+| `ttl` | `number` | No | Seconds; defaults to 60 |
+| `description` | `string` | No | — |
+| `lease_nonce` | `string` | No | Nonce of a lease you hold on the Machine (sent as fly-machine-lease-nonce) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  nonce?: string | null,
+  owner?: string | null,
+  description?: string | null,
+  expires_at?: number | null,
+  version?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`machines.delete`
+
+Permanently destroy a Machine. It must be stopped unless force is true.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.fly.api.machines.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `machine_id` | `string` | Yes | Machine ID |
+| `force` | `boolean` | No | Kill it first if it is running |
+| `lease_nonce` | `string` | No | Nonce of a lease you hold on the Machine (sent as fly-machine-lease-nonce) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteMetadataKey
+
+`machines.deleteMetadataKey`
+
+Delete one metadata key from a Machine
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.fly.api.machines.deleteMetadataKey({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `machine_id` | `string` | Yes | Machine ID |
+| `key` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `string` | Yes | — |
+
+
+
+---
+
+### exec
+
+`machines.exec`
+
+Run a command inside a running Machine and return its stdout, stderr and exit code
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fly.api.machines.exec({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `machine_id` | `string` | Yes | Machine ID |
+| `command` | `string[]` | Yes | Program and its arguments; run directly, not through a shell |
+| `stdin` | `string` | No | — |
+| `container` | `string` | No | — |
+| `timeout` | `number` | No | Seconds; defaults to 10 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stdout` | `string \| null` | No | — |
+| `stderr` | `string \| null` | No | — |
+| `exit_code` | `number \| null` | No | — |
+| `exit_signal` | `number \| null` | No | — |
+
+
+
+---
+
+### get
+
+`machines.get`
+
+Get a Machine
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.machines.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `machine_id` | `string` | Yes | Machine ID |
+| `version` | `string` | No | Return this older version of the Machine |
+| `include_leases` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `instance_id` | `string \| null` | No | — |
+| `version` | `string \| null` | No | — |
+| `private_ip` | `string \| null` | No | — |
+| `cordoned` | `boolean \| null` | No | — |
+| `host_status` | `ok \| unknown \| unreachable \| string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `config` | `object \| null` | No | — |
+| `incomplete_config` | `object \| null` | No | — |
+| `image_ref` | `object \| null` | No | — |
+| `events` | `object[] \| null` | No | — |
+| `checks` | `object[] \| null` | No | — |
+| `lease` | `object \| null` | No | — |
+| `nonce` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+  image?: string | null,
+  guest?: {
+    cpu_kind?: string | null,
+    cpus?: number | null,
+    memory_mb?: number | null,
+    max_memory_mb?: number | null
+  } | null,
+  env?: Record<string, string> | null,
+  metadata?: Record<string, string> | null,
+  auto_destroy?: boolean | null,
+  schedule?: string | null,
+  restart?: {
+    policy?: string | null,
+    max_retries?: number | null
+  } | null,
+  mounts?: {
+    volume?: string | null,
+    path?: string | null,
+    name?: string | null,
+    size_gb?: number | null
+  }[] | null,
+  services?: Record<string, any>[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="incomplete_config full type">
+
+```ts
+{
+  image?: string | null,
+  guest?: {
+    cpu_kind?: string | null,
+    cpus?: number | null,
+    memory_mb?: number | null,
+    max_memory_mb?: number | null
+  } | null,
+  env?: Record<string, string> | null,
+  metadata?: Record<string, string> | null,
+  auto_destroy?: boolean | null,
+  schedule?: string | null,
+  restart?: {
+    policy?: string | null,
+    max_retries?: number | null
+  } | null,
+  mounts?: {
+    volume?: string | null,
+    path?: string | null,
+    name?: string | null,
+    size_gb?: number | null
+  }[] | null,
+  services?: Record<string, any>[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="image_ref full type">
+
+```ts
+{
+  registry?: string | null,
+  repository?: string | null,
+  tag?: string | null,
+  digest?: string | null,
+  labels?: Record<string, string> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="events full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  status?: string | null,
+  source?: string | null,
+  timestamp?: number | null,
+  request?: Record<string, any> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="checks full type">
+
+```ts
+{
+  name?: string | null,
+  status?: passing | warning | critical | string | null,
+  output?: string | null,
+  updated_at?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="lease full type">
+
+```ts
+{
+  owner?: string | null,
+  description?: string | null,
+  expires_at?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getLease
+
+`machines.getLease`
+
+Get the lease currently held on a Machine
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.machines.getLease({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `machine_id` | `string` | Yes | Machine ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  nonce?: string | null,
+  owner?: string | null,
+  description?: string | null,
+  expires_at?: number | null,
+  version?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getMetadata
+
+`machines.getMetadata`
+
+Get a Machine's metadata key/value pairs
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.machines.getMetadata({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `machine_id` | `string` | Yes | Machine ID |
+
+
+
+**Output:** `Record<string, string>`
+
+
+---
+
+### getMetadataKey
+
+`machines.getMetadataKey`
+
+Get one metadata value of a Machine
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.machines.getMetadataKey({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `machine_id` | `string` | Yes | Machine ID |
+| `key` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`machines.list`
+
+List an app's Machines (all of them; use listForOrg to page through an organization)
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.machines.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `include_deleted` | `boolean` | No | — |
+| `region` | `string` | No | — |
+| `state` | `(created \| started \| stopped \| suspended)[]` | No | Only Machines in these states |
+| `summary` | `boolean` | No | Omit config, checks and events |
+| `metadata` | `Record<string, string>` | No | Only Machines whose metadata has these exact key/value pairs |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  state?: string | null,
+  region?: string | null,
+  instance_id?: string | null,
+  version?: string | null,
+  private_ip?: string | null,
+  cordoned?: boolean | null,
+  host_status?: ok | unknown | unreachable | string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  config?: {
+    image?: string | null,
+    guest?: {
+      cpu_kind?: string | null,
+      cpus?: number | null,
+      memory_mb?: number | null,
+      max_memory_mb?: number | null
+    } | null,
+    env?: Record<string, string> | null,
+    metadata?: Record<string, string> | null,
+    auto_destroy?: boolean | null,
+    schedule?: string | null,
+    restart?: {
+      policy?: string | null,
+      max_retries?: number | null
+    } | null,
+    mounts?: {
+      volume?: string | null,
+      path?: string | null,
+      name?: string | null,
+      size_gb?: number | null
+    }[] | null,
+    services?: Record<string, any>[] | null
+  } | null,
+  incomplete_config?: {
+    image?: string | null,
+    guest?: {
+      cpu_kind?: string | null,
+      cpus?: number | null,
+      memory_mb?: number | null,
+      max_memory_mb?: number | null
+    } | null,
+    env?: Record<string, string> | null,
+    metadata?: Record<string, string> | null,
+    auto_destroy?: boolean | null,
+    schedule?: string | null,
+    restart?: {
+      policy?: string | null,
+      max_retries?: number | null
+    } | null,
+    mounts?: {
+      volume?: string | null,
+      path?: string | null,
+      name?: string | null,
+      size_gb?: number | null
+    }[] | null,
+    services?: Record<string, any>[] | null
+  } | null,
+  image_ref?: {
+    registry?: string | null,
+    repository?: string | null,
+    tag?: string | null,
+    digest?: string | null,
+    labels?: Record<string, string> | null
+  } | null,
+  events?: {
+    id?: string | null,
+    type?: string | null,
+    status?: string | null,
+    source?: string | null,
+    timestamp?: number | null,
+    request?: Record<string, any> | null
+  }[] | null,
+  checks?: {
+    name?: string | null,
+    status?: passing | warning | critical | string | null,
+    output?: string | null,
+    updated_at?: string | null
+  }[] | null,
+  lease?: {
+    owner?: string | null,
+    description?: string | null,
+    expires_at?: number | null
+  } | null,
+  nonce?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listEvents
+
+`machines.listEvents`
+
+List a Machine's recent events, newest first
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.machines.listEvents({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `machine_id` | `string` | Yes | Machine ID |
+| `limit` | `number` | No | Defaults to 20 |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  status?: string | null,
+  source?: string | null,
+  timestamp?: number | null,
+  request?: Record<string, any> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listForOrg
+
+`machines.listForOrg`
+
+List the Machines of every app in an organization, page by page with next_cursor. Pass region: on 2026-11-16 Fly answered 400 "misfired replay" without it whenever the org had a Machine.
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.machines.listForOrg({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_slug` | `string` | Yes | Organization slug, or 'personal' for your personal organization |
+| `include_deleted` | `boolean` | No | — |
+| `region` | `string` | No | — |
+| `state` | `(created \| started \| stopped \| suspended)[]` | No | Only Machines in these states |
+| `summary` | `boolean` | No | — |
+| `updated_after` | `string` | No | RFC 3339 timestamp |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `machines` | `object[]` | Yes | — |
+| `next_cursor` | `string \| null` | No | — |
+| `last_machine_id` | `string \| null` | No | — |
+| `last_updated_at` | `string \| null` | No | — |
+| `error_regions` | `string[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="machines full type">
+
+```ts
+{
+  id: string,
+  app_name?: string | null,
+  name?: string | null,
+  state?: string | null,
+  region?: string | null,
+  version?: string | null,
+  private_ip?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  config?: {
+    image?: string | null,
+    guest?: {
+      cpu_kind?: string | null,
+      cpus?: number | null,
+      memory_mb?: number | null,
+      max_memory_mb?: number | null
+    } | null,
+    metadata?: Record<string, string> | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listProcesses
+
+`machines.listProcesses`
+
+List the processes running on a started Machine
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.machines.listProcesses({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `machine_id` | `string` | Yes | Machine ID |
+| `sort_by` | `cpu \| pid \| stime \| rtime` | No | — |
+| `order` | `asc \| desc` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  pid?: number | null,
+  command?: string | null,
+  directory?: string | null,
+  cpu?: number | null,
+  rss?: number | null,
+  rtime?: number | null,
+  stime?: number | null,
+  listen_sockets?: {
+    address?: string | null,
+    proto?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listVersions
+
+`machines.listVersions`
+
+List a Machine's configuration versions
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.machines.listVersions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `machine_id` | `string` | Yes | Machine ID |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  version: string,
+  user_config?: Record<string, any> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### releaseLease
+
+`machines.releaseLease`
+
+Release a lease you hold on a Machine
+
+**Risk:** `write`
+
+```ts
+await corsair.fly.api.machines.releaseLease({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `machine_id` | `string` | Yes | Machine ID |
+| `lease_nonce` | `string` | Yes | Nonce of a lease you hold on the Machine (sent as fly-machine-lease-nonce) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ok: boolean
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### restart
+
+`machines.restart`
+
+Restart a Machine
+
+**Risk:** `write`
+
+```ts
+await corsair.fly.api.machines.restart({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `machine_id` | `string` | Yes | Machine ID |
+| `signal` | `SIGHUP \| SIGINT \| SIGQUIT \| SIGKILL \| SIGUSR1 \| SIGUSR2 \| SIGTERM` | No | — |
+| `timeout` | `string` | No | Go duration or seconds to wait before killing it |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+
+
+
+---
+
+### setMetadataKey
+
+`machines.setMetadataKey`
+
+Set one metadata key on a Machine
+
+**Risk:** `write`
+
+```ts
+await corsair.fly.api.machines.setMetadataKey({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `machine_id` | `string` | Yes | Machine ID |
+| `key` | `string` | Yes | — |
+| `value` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | — |
+| `value` | `string` | Yes | — |
+
+
+
+---
+
+### signal
+
+`machines.signal`
+
+Send a Unix signal to a Machine's main process
+
+**Risk:** `write`
+
+```ts
+await corsair.fly.api.machines.signal({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `machine_id` | `string` | Yes | Machine ID |
+| `signal` | `SIGABRT \| SIGALRM \| SIGFPE \| SIGHUP \| SIGILL \| SIGINT \| SIGKILL \| SIGPIPE \| SIGQUIT \| SIGSEGV \| SIGTERM \| SIGTRAP \| SIGUSR1 \| SIGUSR2` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+
+
+
+---
+
+### start
+
+`machines.start`
+
+Start a stopped or suspended Machine. Fly bills CPU and memory while it runs.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fly.api.machines.start({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `machine_id` | `string` | Yes | Machine ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `previous_state` | `string \| null` | No | — |
+| `migrated` | `boolean \| null` | No | — |
+| `new_host` | `string \| null` | No | — |
+
+
+
+---
+
+### stop
+
+`machines.stop`
+
+Stop a Machine, optionally with a signal and timeout
+
+**Risk:** `write`
+
+```ts
+await corsair.fly.api.machines.stop({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `machine_id` | `string` | Yes | Machine ID |
+| `signal` | `SIGHUP \| SIGINT \| SIGQUIT \| SIGKILL \| SIGUSR1 \| SIGUSR2 \| SIGTERM` | No | — |
+| `timeout` | `string` | No | Go duration to wait before killing it, such as 10s |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+
+
+
+---
+
+### suspend
+
+`machines.suspend`
+
+Suspend a Machine so the next start can resume it from a memory snapshot
+
+**Risk:** `write`
+
+```ts
+await corsair.fly.api.machines.suspend({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `machine_id` | `string` | Yes | Machine ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+
+
+
+---
+
+### uncordon
+
+`machines.uncordon`
+
+Uncordon a Machine so Fly Proxy routes requests to it again
+
+**Risk:** `write`
+
+```ts
+await corsair.fly.api.machines.uncordon({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `machine_id` | `string` | Yes | Machine ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+
+
+
+---
+
+### update
+
+`machines.update`
+
+Replace a Machine's whole configuration (image, size, services…). A larger size bills more.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fly.api.machines.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `machine_id` | `string` | Yes | Machine ID |
+| `config` | `object` | Yes | — |
+| `min_secrets_version` | `number` | No | — |
+| `skip_launch` | `boolean` | No | Create it stopped |
+| `skip_secrets` | `boolean` | No | — |
+| `current_version` | `string` | No | Reject the update if the Machine changed since this version |
+| `lease_nonce` | `string` | No | Nonce of a lease you hold on the Machine (sent as fly-machine-lease-nonce) |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+  image?: string,
+  containers?: Record<string, any>[],
+  guest?: {
+    cpu_kind?: shared | performance,
+    cpus?: number,
+    memory_mb?: number,
+    max_memory_mb?: number,
+    kernel_args?: string[],
+    host_dedication_id?: string,
+    required_host_features?: string[]
+  },
+  env?: Record<string, string>,
+  metadata?: Record<string, string>,
+  services?: {
+    protocol?: tcp | udp,
+    internal_port?: number,
+    ports?: {
+      port?: number,
+      start_port?: number,
+      end_port?: number,
+      handlers?: string[],
+      force_https?: boolean
+    }[],
+    autostart?: boolean,
+    autostop?: boolean | off | stop | suspend,
+    min_machines_running?: number
+  }[],
+  mounts?: {
+    volume: string,
+    path: string
+  }[],
+  restart?: {
+    policy?: no | always | on-failure | spot-price,
+    max_retries?: number
+  },
+  auto_destroy?: boolean,
+  schedule?: hourly | daily | weekly | monthly,
+  stop_config?: {
+    signal?: SIGHUP | SIGINT | SIGQUIT | SIGKILL | SIGUSR1 | SIGUSR2 | SIGTERM,
+    timeout?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `instance_id` | `string \| null` | No | — |
+| `version` | `string \| null` | No | — |
+| `private_ip` | `string \| null` | No | — |
+| `cordoned` | `boolean \| null` | No | — |
+| `host_status` | `ok \| unknown \| unreachable \| string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `config` | `object \| null` | No | — |
+| `incomplete_config` | `object \| null` | No | — |
+| `image_ref` | `object \| null` | No | — |
+| `events` | `object[] \| null` | No | — |
+| `checks` | `object[] \| null` | No | — |
+| `lease` | `object \| null` | No | — |
+| `nonce` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+  image?: string | null,
+  guest?: {
+    cpu_kind?: string | null,
+    cpus?: number | null,
+    memory_mb?: number | null,
+    max_memory_mb?: number | null
+  } | null,
+  env?: Record<string, string> | null,
+  metadata?: Record<string, string> | null,
+  auto_destroy?: boolean | null,
+  schedule?: string | null,
+  restart?: {
+    policy?: string | null,
+    max_retries?: number | null
+  } | null,
+  mounts?: {
+    volume?: string | null,
+    path?: string | null,
+    name?: string | null,
+    size_gb?: number | null
+  }[] | null,
+  services?: Record<string, any>[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="incomplete_config full type">
+
+```ts
+{
+  image?: string | null,
+  guest?: {
+    cpu_kind?: string | null,
+    cpus?: number | null,
+    memory_mb?: number | null,
+    max_memory_mb?: number | null
+  } | null,
+  env?: Record<string, string> | null,
+  metadata?: Record<string, string> | null,
+  auto_destroy?: boolean | null,
+  schedule?: string | null,
+  restart?: {
+    policy?: string | null,
+    max_retries?: number | null
+  } | null,
+  mounts?: {
+    volume?: string | null,
+    path?: string | null,
+    name?: string | null,
+    size_gb?: number | null
+  }[] | null,
+  services?: Record<string, any>[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="image_ref full type">
+
+```ts
+{
+  registry?: string | null,
+  repository?: string | null,
+  tag?: string | null,
+  digest?: string | null,
+  labels?: Record<string, string> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="events full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  status?: string | null,
+  source?: string | null,
+  timestamp?: number | null,
+  request?: Record<string, any> | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="checks full type">
+
+```ts
+{
+  name?: string | null,
+  status?: passing | warning | critical | string | null,
+  output?: string | null,
+  updated_at?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="lease full type">
+
+```ts
+{
+  owner?: string | null,
+  description?: string | null,
+  expires_at?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateMetadata
+
+`machines.updateMetadata`
+
+Set several metadata keys at once; an empty string removes a key. Keys not listed stay as they are.
+
+**Risk:** `write`
+
+```ts
+await corsair.fly.api.machines.updateMetadata({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `machine_id` | `string` | Yes | Machine ID |
+| `metadata` | `Record<string, string>` | Yes | — |
+| `machine_version` | `string` | No | Only apply if this is still the current version |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `updated` | `string[]` | Yes | — |
+
+
+
+---
+
+### wait
+
+`machines.wait`
+
+Wait (up to 60 seconds) for a Machine to reach a state, such as started or stopped
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.machines.wait({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `machine_id` | `string` | Yes | Machine ID |
+| `state` | `(started \| stopped \| suspended \| destroyed \| failed \| archived \| settled)[]` | No | Defaults to started |
+| `timeout` | `number` | No | Seconds |
+| `version` | `string` | No | — |
+| `from_event_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `event_id` | `string \| null` | No | — |
+| `version` | `string \| null` | No | — |
+
+
+
+---
+
+## Platform
+
+### regions
+
+`platform.regions`
+
+List Fly regions with their location, capacity and whether they need a paid plan
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.platform.regions({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Regions` | `object[]` | Yes | — |
+| `nearest` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="Regions full type">
+
+```ts
+{
+  code: string,
+  name?: string | null,
+  latitude?: number | null,
+  longitude?: number | null,
+  gateway_available?: boolean | null,
+  mpg_available?: boolean | null,
+  requires_paid_plan?: boolean | null,
+  deprecated?: boolean | null,
+  geo_region?: string | null,
+  capacity?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Secrets
+
+### delete
+
+`secrets.delete`
+
+Delete one secret. Running Machines keep the old values until they are updated with min_secrets_version set to the returned version.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.fly.api.secrets.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `name` | `string` | Yes | Secret name |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `version` | `number \| null` | No | — |
+
+
+
+---
+
+### get
+
+`secrets.get`
+
+Get one secret's name and digest (not its value)
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.secrets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `name` | `string` | Yes | Secret name |
+| `min_version` | `string` | No | Read at least this secrets version (from a set or delete) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `digest` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`secrets.list`
+
+List an app's secrets: names and digests, never values
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.secrets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `min_version` | `string` | No | Read at least this secrets version (from a set or delete) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `secrets` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="secrets full type">
+
+```ts
+{
+  name: string,
+  digest?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### set
+
+`secrets.set`
+
+Create or overwrite one secret. An overwritten value cannot be recovered. Running Machines keep the old values until they are updated with min_secrets_version set to the returned version.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fly.api.secrets.set({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `name` | `string` | Yes | Secret name |
+| `value` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `digest` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `version` | `number \| null` | No | — |
+
+
+
+---
+
+### update
+
+`secrets.update`
+
+Set and delete several secrets at once: a string sets one, null deletes it. Running Machines keep the old values until they are updated with min_secrets_version set to the returned version.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fly.api.secrets.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `values` | `Record<string, string \| null>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `secrets` | `object[] \| null` | No | — |
+| `version` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="secrets full type">
+
+```ts
+{
+  name: string,
+  digest?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tokens
+
+### current
+
+`tokens.current`
+
+Show which organization, apps and Machine the stored token is scoped to
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.tokens.current({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tokens` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tokens full type">
+
+```ts
+{
+  token_id?: string | null,
+  organization?: string | null,
+  org_slug?: string | null,
+  apps?: string[] | null,
+  restricted_to_machine?: string | null,
+  user?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Volumes
+
+### create
+
+`volumes.create`
+
+Create a volume, empty or restored from a snapshot or another volume. Fly bills it by size.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fly.api.volumes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `name` | `string` | Yes | — |
+| `size_gb` | `number` | No | Required unless source_volume_id is set |
+| `region` | `string` | No | — |
+| `encrypted` | `boolean` | No | — |
+| `fstype` | `ext4 \| raw` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `source_volume_id` | `string` | No | — |
+| `snapshot_retention` | `number` | No | — |
+| `auto_backup_enabled` | `boolean` | No | — |
+| `require_unique_zone` | `boolean` | No | — |
+| `unique_zone_app_wide` | `boolean` | No | — |
+| `compute` | `object` | No | Size of the Machine that will mount it, for placement |
+
+<AccordionGroup>
+<Accordion title="compute full type">
+
+```ts
+{
+  cpu_kind?: shared | performance,
+  cpus?: number,
+  memory_mb?: number,
+  host_dedication_id?: string,
+  required_host_features?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `zone` | `string \| null` | No | — |
+| `size_gb` | `number \| null` | No | — |
+| `encrypted` | `boolean \| null` | No | — |
+| `fstype` | `string \| null` | No | — |
+| `type` | `local \| cache \| string \| null` | No | — |
+| `attached_machine_id` | `string \| null` | No | — |
+| `attached_alloc_id` | `string \| null` | No | — |
+| `auto_backup_enabled` | `boolean \| null` | No | — |
+| `snapshot_retention` | `number \| null` | No | — |
+| `block_size` | `number \| null` | No | — |
+| `blocks` | `number \| null` | No | — |
+| `blocks_avail` | `number \| null` | No | — |
+| `blocks_free` | `number \| null` | No | — |
+| `bytes_total` | `number \| null` | No | — |
+| `bytes_used` | `number \| null` | No | — |
+| `host_status` | `ok \| unknown \| unreachable \| string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `required_host_features` | `string[] \| null` | No | — |
+
+
+
+---
+
+### createSnapshot
+
+`volumes.createSnapshot`
+
+Take a snapshot of a volume now. Fly bills snapshot storage beyond the free allowance.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fly.api.volumes.createSnapshot({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `volume_id` | `string` | Yes | Volume ID, such as vol_1234567890abcdef |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `volume_id` | `string` | Yes | — |
+| `snapshot_id` | `string \| null` | Yes | — |
+| `state` | `string \| null` | Yes | — |
+
+
+
+---
+
+### delete
+
+`volumes.delete`
+
+Permanently destroy a volume and its data
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.fly.api.volumes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `volume_id` | `string` | Yes | Volume ID, such as vol_1234567890abcdef |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `zone` | `string \| null` | No | — |
+| `size_gb` | `number \| null` | No | — |
+| `encrypted` | `boolean \| null` | No | — |
+| `fstype` | `string \| null` | No | — |
+| `type` | `local \| cache \| string \| null` | No | — |
+| `attached_machine_id` | `string \| null` | No | — |
+| `attached_alloc_id` | `string \| null` | No | — |
+| `auto_backup_enabled` | `boolean \| null` | No | — |
+| `snapshot_retention` | `number \| null` | No | — |
+| `block_size` | `number \| null` | No | — |
+| `blocks` | `number \| null` | No | — |
+| `blocks_avail` | `number \| null` | No | — |
+| `blocks_free` | `number \| null` | No | — |
+| `bytes_total` | `number \| null` | No | — |
+| `bytes_used` | `number \| null` | No | — |
+| `host_status` | `ok \| unknown \| unreachable \| string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `required_host_features` | `string[] \| null` | No | — |
+
+
+
+---
+
+### extend
+
+`volumes.extend`
+
+Grow a volume to a larger size. Volumes cannot shrink, and Fly bills the new size.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fly.api.volumes.extend({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `volume_id` | `string` | Yes | Volume ID, such as vol_1234567890abcdef |
+| `size_gb` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `volume` | `object` | Yes | — |
+| `needs_restart` | `boolean \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="volume full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  state?: string | null,
+  region?: string | null,
+  zone?: string | null,
+  size_gb?: number | null,
+  encrypted?: boolean | null,
+  fstype?: string | null,
+  type?: local | cache | string | null,
+  attached_machine_id?: string | null,
+  attached_alloc_id?: string | null,
+  auto_backup_enabled?: boolean | null,
+  snapshot_retention?: number | null,
+  block_size?: number | null,
+  blocks?: number | null,
+  blocks_avail?: number | null,
+  blocks_free?: number | null,
+  bytes_total?: number | null,
+  bytes_used?: number | null,
+  host_status?: ok | unknown | unreachable | string | null,
+  created_at?: string | null,
+  required_host_features?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`volumes.get`
+
+Get a volume
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.volumes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `volume_id` | `string` | Yes | Volume ID, such as vol_1234567890abcdef |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `zone` | `string \| null` | No | — |
+| `size_gb` | `number \| null` | No | — |
+| `encrypted` | `boolean \| null` | No | — |
+| `fstype` | `string \| null` | No | — |
+| `type` | `local \| cache \| string \| null` | No | — |
+| `attached_machine_id` | `string \| null` | No | — |
+| `attached_alloc_id` | `string \| null` | No | — |
+| `auto_backup_enabled` | `boolean \| null` | No | — |
+| `snapshot_retention` | `number \| null` | No | — |
+| `block_size` | `number \| null` | No | — |
+| `blocks` | `number \| null` | No | — |
+| `blocks_avail` | `number \| null` | No | — |
+| `blocks_free` | `number \| null` | No | — |
+| `bytes_total` | `number \| null` | No | — |
+| `bytes_used` | `number \| null` | No | — |
+| `host_status` | `ok \| unknown \| unreachable \| string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `required_host_features` | `string[] \| null` | No | — |
+
+
+
+---
+
+### list
+
+`volumes.list`
+
+List an app's volumes (all of them; use listForOrg to page through an organization)
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.volumes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `summary` | `boolean` | No | Omit block and size details |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  state?: string | null,
+  region?: string | null,
+  zone?: string | null,
+  size_gb?: number | null,
+  encrypted?: boolean | null,
+  fstype?: string | null,
+  type?: local | cache | string | null,
+  attached_machine_id?: string | null,
+  attached_alloc_id?: string | null,
+  auto_backup_enabled?: boolean | null,
+  snapshot_retention?: number | null,
+  block_size?: number | null,
+  blocks?: number | null,
+  blocks_avail?: number | null,
+  blocks_free?: number | null,
+  bytes_total?: number | null,
+  bytes_used?: number | null,
+  host_status?: ok | unknown | unreachable | string | null,
+  created_at?: string | null,
+  required_host_features?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listForOrg
+
+`volumes.listForOrg`
+
+List the volumes of every app in an organization, page by page with next_cursor
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.volumes.listForOrg({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_slug` | `string` | Yes | Organization slug, or 'personal' for your personal organization |
+| `include_deleted` | `boolean` | No | — |
+| `region` | `string` | No | — |
+| `state` | `string` | No | Comma-separated volume states, such as created |
+| `summary` | `boolean` | No | — |
+| `updated_after` | `string` | No | RFC 3339 timestamp |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `volumes` | `object[]` | Yes | — |
+| `next_cursor` | `string \| null` | No | — |
+| `last_volume_id` | `string \| null` | No | — |
+| `last_updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="volumes full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  state?: string | null,
+  region?: string | null,
+  zone?: string | null,
+  size_gb?: number | null,
+  encrypted?: boolean | null,
+  fstype?: string | null,
+  type?: local | cache | string | null,
+  attached_machine_id?: string | null,
+  attached_alloc_id?: string | null,
+  auto_backup_enabled?: boolean | null,
+  snapshot_retention?: number | null,
+  block_size?: number | null,
+  blocks?: number | null,
+  blocks_avail?: number | null,
+  blocks_free?: number | null,
+  bytes_total?: number | null,
+  bytes_used?: number | null,
+  host_status?: ok | unknown | unreachable | string | null,
+  created_at?: string | null,
+  required_host_features?: string[] | null,
+  app_name?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSnapshots
+
+`volumes.listSnapshots`
+
+List a volume's snapshots
+
+**Risk:** `read`
+
+```ts
+await corsair.fly.api.volumes.listSnapshots({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `volume_id` | `string` | Yes | Volume ID, such as vol_1234567890abcdef |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  status?: string | null,
+  digest?: string | null,
+  size?: number | null,
+  volume_size?: number | null,
+  retention_days?: number | null,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`volumes.update`
+
+Change a volume's automatic snapshots and their retention. More snapshots kept means more billed snapshot storage.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fly.api.volumes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_name` | `string` | Yes | Fly app name |
+| `volume_id` | `string` | Yes | Volume ID, such as vol_1234567890abcdef |
+| `auto_backup_enabled` | `boolean` | No | — |
+| `snapshot_retention` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `zone` | `string \| null` | No | — |
+| `size_gb` | `number \| null` | No | — |
+| `encrypted` | `boolean \| null` | No | — |
+| `fstype` | `string \| null` | No | — |
+| `type` | `local \| cache \| string \| null` | No | — |
+| `attached_machine_id` | `string \| null` | No | — |
+| `attached_alloc_id` | `string \| null` | No | — |
+| `auto_backup_enabled` | `boolean \| null` | No | — |
+| `snapshot_retention` | `number \| null` | No | — |
+| `block_size` | `number \| null` | No | — |
+| `blocks` | `number \| null` | No | — |
+| `blocks_avail` | `number \| null` | No | — |
+| `blocks_free` | `number \| null` | No | — |
+| `bytes_total` | `number \| null` | No | — |
+| `bytes_used` | `number \| null` | No | — |
+| `host_status` | `ok \| unknown \| unreachable \| string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `required_host_features` | `string[] \| null` | No | — |
+
+
+
+---
+
