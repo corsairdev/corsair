@@ -290,3 +290,50 @@ describe('ocr', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 });
+
+describe('failed reads', () => {
+	beforeEach(() => {
+		jest.clearAllMocks();
+	});
+
+	it('strips the image, image URL and camera id from a failed request', async () => {
+		mockRequest.mockRejectedValue(
+			new ApiError(
+				{
+					method: 'POST',
+					url: '/v1/plate-reader/',
+					formData: {
+						upload: 'aW1hZ2U=',
+						camera_id: 'gate-3',
+						regions: ['us-ca'],
+					},
+				},
+				{
+					url: 'https://api.platerecognizer.com/v1/plate-reader/',
+					ok: false,
+					status: 429,
+					statusText: 'Too Many Requests',
+					body: { detail: 'Request was throttled.' },
+				},
+				'Too Many Requests',
+				{ retryAfter: 1 },
+			),
+		);
+		const error = await readPlate(context('tok_test'), {
+			upload: 'aW1hZ2U=',
+			cameraId: 'gate-3',
+			regions: ['us-ca'],
+		}).catch((e: unknown) => e);
+		expect(error).toBeInstanceOf(ApiError);
+		const apiError = error as ApiError;
+		expect(apiError.status).toBe(429);
+		expect(apiError.retryAfter).toBe(1);
+		expect(apiError.body).toEqual({ detail: 'Request was throttled.' });
+		expect(apiError.request.formData).toEqual({
+			upload: '[REDACTED]',
+			camera_id: '[REDACTED]',
+			regions: ['us-ca'],
+		});
+		expect(JSON.stringify(apiError)).not.toContain('aW1hZ2U=');
+	});
+});

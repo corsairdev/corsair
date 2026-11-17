@@ -3,7 +3,7 @@ import type {
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export const PLATE_API_BASE = 'https://api.platerecognizer.com';
 
@@ -50,7 +50,46 @@ export async function platePostForm<T>(
 		url,
 		formData,
 	};
-	return await request<T>(config(apiKey, timeoutMs), requestOptions, {
-		rateLimitConfig: NO_TRANSPORT_RETRIES,
-	});
+	try {
+		return await request<T>(config(apiKey, timeoutMs), requestOptions, {
+			rateLimitConfig: NO_TRANSPORT_RETRIES,
+		});
+	} catch (error) {
+		throw withoutImageData(error);
+	}
+}
+
+/** Form fields that carry the customer's image, where it lives, or which camera took it. */
+const PRIVATE_FIELDS = ['upload', 'upload_url', 'camera_id'] as const;
+
+/**
+ * Core's ApiError keeps `request.formData`, which here holds the whole base64
+ * image. Rebuild it with those fields redacted; status, body, URL and rate-limit
+ * fields stay the same, so the error handlers still match it.
+ */
+export function withoutImageData(error: unknown): unknown {
+	if (!(error instanceof ApiError) || !error.request.formData) return error;
+	const formData = { ...error.request.formData };
+	for (const field of PRIVATE_FIELDS) {
+		if (formData[field] !== undefined) formData[field] = '[REDACTED]';
+	}
+	const rebuilt = new ApiError(
+		{ ...error.request, formData },
+		{
+			url: error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		error.message,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+	rebuilt.stack = error.stack;
+	return rebuilt;
 }
