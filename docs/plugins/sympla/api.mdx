@@ -10,31 +10,102 @@ description: "API reference for the Sympla plugin in Corsair: every `sympla.api.
 
 ## Events
 
-### list
+### get
 
-`events.list`
+`events.get`
 
-List events for the authenticated organizer.
+Get one event: dates, address, host, category and publication status.
 
 **Risk:** `read`
 
 ```ts
-await corsair.sympla.api.events.list({ page: 1 });
+await corsair.sympla.api.events.get({ event_id: 'abc123def456' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `page` | `number` | No | Page number. |
-| `page_size` | `number` | No | Page size. |
-| `published` | `boolean` | No | Limit the list to published events. |
-| `from` | `string` | No | Start date filter. |
-| `to` | `string` | No | End date filter. |
-| `field_sort` | `string` | No | Field used to sort the list. |
-| `sort` | `ASC \| DESC` | No | ASC or DESC. |
+| `event_id` | `string` | Yes | Event id hash, the `id` from events.list. |
+| `timezone` | `string` | No | IANA timezone for dates in and out. Sympla default: America/Sao_Paulo. |
+| `fields` | `string` | No | Comma-separated snake_case fields to return. Omit for all. |
 
-Page starts at 1 when you set it. sort is ASC or DESC. Omit a filter to take the service default.
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: {
+    id: string | number,
+    reference_id?: number | null,
+    name?: string | null,
+    detail?: string | null,
+    start_date?: string | null,
+    end_date?: string | null,
+    private_event?: boolean | number | null,
+    published?: boolean | number | null,
+    cancelled?: boolean | number | null,
+    image?: string | null,
+    url?: string | null,
+    address?: Record<string, any> | null,
+    host?: Record<string, any> | null,
+    category_prim?: Record<string, any> | null,
+    category_sec?: Record<string, any> | null
+  }
+} | {
+  id: string | number,
+  reference_id?: number | null,
+  name?: string | null,
+  detail?: string | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  private_event?: boolean | number | null,
+  published?: boolean | number | null,
+  cancelled?: boolean | number | null,
+  image?: string | null,
+  url?: string | null,
+  address?: Record<string, any> | null,
+  host?: Record<string, any> | null,
+  category_prim?: Record<string, any> | null,
+  category_sec?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`events.list`
+
+List the events of the Sympla organizer, with cursor pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.sympla.api.events.list({ published: 'all', page_size: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `published` | `published \| not_published \| all` | No | Publication filter. Sympla default: published. |
+| `from` | `string` | No | Start of the date range, local ISO-8601, e.g. 2025-09-08T00:00:00. |
+| `timezone` | `string` | No | IANA timezone for dates in and out. Sympla default: America/Sao_Paulo. |
+| `sort` | `asc \| desc` | No | Sort direction. |
+| `field_sort` | `start_date \| end_date \| name` | No | Sort field. Sympla default: start_date. |
+| `page_size` | `number` | No | Items per page, 1 to 200. Sympla default 100. |
+| `cursor` | `string` | No | pagination.next_cursor from the previous page. |
+| `fields` | `string` | No | Comma-separated snake_case fields to return. Omit for all. |
+
+`published` is published (Sympla default), not_published or all. Pass `pagination.next_cursor` as `cursor` for the next page.
 
 
 
@@ -43,13 +114,29 @@ Page starts at 1 when you set it. sort is ASC or DESC. Omit a filter to take the
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `pagination` | `object` | Yes | — |
+| `pagination` | `object` | No | — |
+| `sort` | `object` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
+  id: string | number,
+  reference_id?: number | null,
+  name?: string | null,
+  detail?: string | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  private_event?: boolean | number | null,
+  published?: boolean | number | null,
+  cancelled?: boolean | number | null,
+  image?: string | null,
+  url?: string | null,
+  address?: Record<string, any> | null,
+  host?: Record<string, any> | null,
+  category_prim?: Record<string, any> | null,
+  category_sec?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -58,6 +145,1000 @@ Page starts at 1 when you set it. sort is ASC or DESC. Omit a filter to take the
 
 ```ts
 {
+  next_cursor?: string | null,
+  page_size?: number | null,
+  quantity?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="sort full type">
+
+```ts
+{
+  field_sort?: string | null,
+  sort?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Orders
+
+### get
+
+`orders.get`
+
+Get one order of an event.
+
+**Risk:** `read`
+
+```ts
+await corsair.sympla.api.orders.get({ event_id: 'abc123def456', order_id: 'ORD123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string` | Yes | Event id hash, the `id` from events.list. |
+| `order_id` | `string` | Yes | Order id from orders.list. |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: {
+    id: string | number,
+    event_id?: string | number | null,
+    presentation_id?: string | number | null,
+    order_date?: string | null,
+    order_status?: string | null,
+    updated_date?: string | null,
+    approved_date?: string | null,
+    discount_code?: string | null,
+    transaction_type?: string | null,
+    order_total_sale_price?: number | null,
+    order_total_net_value?: number | null,
+    buyer_first_name?: string | null,
+    buyer_last_name?: string | null,
+    buyer_email?: string | null,
+    invoice_info?: Record<string, any> | null,
+    utm?: Record<string, any> | null
+  }
+} | {
+  id: string | number,
+  event_id?: string | number | null,
+  presentation_id?: string | number | null,
+  order_date?: string | null,
+  order_status?: string | null,
+  updated_date?: string | null,
+  approved_date?: string | null,
+  discount_code?: string | null,
+  transaction_type?: string | null,
+  order_total_sale_price?: number | null,
+  order_total_net_value?: number | null,
+  buyer_first_name?: string | null,
+  buyer_last_name?: string | null,
+  buyer_email?: string | null,
+  invoice_info?: Record<string, any> | null,
+  utm?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`orders.list`
+
+List the orders of an event, filterable by date, buyer email and cancelled status.
+
+**Risk:** `read`
+
+```ts
+await corsair.sympla.api.orders.list({ event_id: 'abc123def456', from: '2025-09-08T00:00:00', to: '2025-09-09T23:59:59' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string` | Yes | Event id hash, the `id` from events.list. |
+| `timezone` | `string` | No | IANA timezone for dates in and out. Sympla default: America/Sao_Paulo. |
+| `from` | `string` | No | Start of the date range, local ISO-8601, e.g. 2025-09-08T00:00:00. |
+| `to` | `string` | No | End of the date range, local ISO-8601, e.g. 2025-09-09T23:59:59. |
+| `fields` | `string` | No | Comma-separated snake_case fields to return. Omit for all. |
+| `cancelled_filter` | `none \| include \| only` | No | Cancelled records: none (default), include or only. |
+| `buyer_email` | `string` | No | Only orders by this buyer email (exact match). |
+| `page_size` | `number` | No | Items per page, 1 to 200. Sympla default 100. |
+| `cursor` | `string` | No | pagination.next_cursor from the previous page. |
+| `field_sort` | `order_date \| updated_date \| approved_date \| buyer_email \| status \| id` | No | Sort field. Sympla default: order_date. |
+| `sort` | `asc \| desc` | No | Sort direction. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+| `sort` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number,
+  event_id?: string | number | null,
+  presentation_id?: string | number | null,
+  order_date?: string | null,
+  order_status?: string | null,
+  updated_date?: string | null,
+  approved_date?: string | null,
+  discount_code?: string | null,
+  transaction_type?: string | null,
+  order_total_sale_price?: number | null,
+  order_total_net_value?: number | null,
+  buyer_first_name?: string | null,
+  buyer_last_name?: string | null,
+  buyer_email?: string | null,
+  invoice_info?: Record<string, any> | null,
+  utm?: Record<string, any> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_cursor?: string | null,
+  page_size?: number | null,
+  quantity?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="sort full type">
+
+```ts
+{
+  field_sort?: string | null,
+  sort?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listByPresentation
+
+`orders.listByPresentation`
+
+List the orders of one presentation of an event.
+
+**Risk:** `read`
+
+```ts
+await corsair.sympla.api.orders.listByPresentation({ event_id: 'abc123def456', presentation_id: 12345 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string` | Yes | Event id hash, the `id` from events.list. |
+| `presentation_id` | `number \| string` | Yes | Presentation (session) id from presentations.list. |
+| `timezone` | `string` | No | IANA timezone for dates in and out. Sympla default: America/Sao_Paulo. |
+| `from` | `string` | No | Start of the date range, local ISO-8601, e.g. 2025-09-08T00:00:00. |
+| `to` | `string` | No | End of the date range, local ISO-8601, e.g. 2025-09-09T23:59:59. |
+| `fields` | `string` | No | Comma-separated snake_case fields to return. Omit for all. |
+| `cancelled_filter` | `none \| include \| only` | No | Cancelled records: none (default), include or only. |
+| `buyer_email` | `string` | No | Only orders by this buyer email (exact match). |
+| `page_size` | `number` | No | Items per page, 1 to 200. Sympla default 100. |
+| `cursor` | `string` | No | pagination.next_cursor from the previous page. |
+| `field_sort` | `order_date \| updated_date \| approved_date \| buyer_email \| status \| id` | No | Sort field. Sympla default: order_date. |
+| `sort` | `asc \| desc` | No | Sort direction. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+| `sort` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number,
+  event_id?: string | number | null,
+  presentation_id?: string | number | null,
+  order_date?: string | null,
+  order_status?: string | null,
+  updated_date?: string | null,
+  approved_date?: string | null,
+  discount_code?: string | null,
+  transaction_type?: string | null,
+  order_total_sale_price?: number | null,
+  order_total_net_value?: number | null,
+  buyer_first_name?: string | null,
+  buyer_last_name?: string | null,
+  buyer_email?: string | null,
+  invoice_info?: Record<string, any> | null,
+  utm?: Record<string, any> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_cursor?: string | null,
+  page_size?: number | null,
+  quantity?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="sort full type">
+
+```ts
+{
+  field_sort?: string | null,
+  sort?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Participants
+
+### checkIn
+
+`participants.checkIn`
+
+Check a participant in by participant id. The API has no way to undo a check-in.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.sympla.api.participants.checkIn({ event_id: 'abc123def456', participant_id: 12345 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string` | Yes | Event id hash, the `id` from events.list. |
+| `participant_id` | `number \| string` | Yes | Participant id from participants.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  check_in?: boolean | null,
+  check_in_date?: string | null,
+  check_in_id?: string | number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### checkInByQrCode
+
+`participants.checkInByQrCode`
+
+Check a participant in with the fields of a scanned ticket QR code. The API has no way to undo a check-in.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.sympla.api.participants.checkInByQrCode({
+	event_id: 'abc123def456',
+	itemId: 'item-1',
+	walletId: 'wallet-1',
+	signature: '<130-132 character signature from the QR code>',
+	timestamp: 1698770407738,
+	version: 1,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string` | Yes | Event id hash, the `id` from events.list. |
+| `itemId` | `string` | Yes | itemId from the scanned QR code payload. |
+| `walletId` | `string` | Yes | walletId from the scanned QR code payload. |
+| `signature` | `string` | Yes | signature from the scanned QR code payload. |
+| `timestamp` | `number` | Yes | timestamp from the scanned QR code payload. |
+| `version` | `number` | Yes | version from the scanned QR code payload. |
+
+Pass the fields of the decoded ticket QR code (`itemId`, `walletId`, `signature`, `timestamp`, `version`). An expired code answers HTTP 410.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  check_in?: boolean | null,
+  check_in_date?: string | null,
+  check_in_id?: string | number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### checkInByTicketNumber
+
+`participants.checkInByTicketNumber`
+
+Check a participant in by ticket number. The API has no way to undo a check-in.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.sympla.api.participants.checkInByTicketNumber({ event_id: 'abc123def456', ticket_number: '94461180000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string` | Yes | Event id hash, the `id` from events.list. |
+| `ticket_number` | `string` | Yes | Ticket number printed on the ticket, e.g. 94461180000001. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  check_in?: boolean | null,
+  check_in_date?: string | null,
+  check_in_id?: string | number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`participants.get`
+
+Get one participant of an event by participant id.
+
+**Risk:** `read`
+
+```ts
+await corsair.sympla.api.participants.get({ event_id: 'abc123def456', participant_id: 12345 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string` | Yes | Event id hash, the `id` from events.list. |
+| `participant_id` | `number \| string` | Yes | Participant id from participants.list. |
+| `timezone` | `string` | No | IANA timezone for dates in and out. Sympla default: America/Sao_Paulo. |
+| `fields` | `string` | No | Comma-separated snake_case fields to return. Omit for all. |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: {
+    id: string | number,
+    event_id?: string | number | null,
+    presentation_id?: string | number | null,
+    order_id?: string | number | null,
+    order_status?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    email?: string | null,
+    ticket_number?: string | null,
+    ticket_num_qr_code?: string | null,
+    ticket_name?: string | null,
+    ticket_status?: string | null,
+    ticket_sale_price?: number | null,
+    ticket_net_value?: number | null,
+    sector_name?: string | null,
+    checkin?: Record<string, any> | null,
+    custom_form?: any[] | Record<string, any> | null
+  }
+} | {
+  id: string | number,
+  event_id?: string | number | null,
+  presentation_id?: string | number | null,
+  order_id?: string | number | null,
+  order_status?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  ticket_number?: string | null,
+  ticket_num_qr_code?: string | null,
+  ticket_name?: string | null,
+  ticket_status?: string | null,
+  ticket_sale_price?: number | null,
+  ticket_net_value?: number | null,
+  sector_name?: string | null,
+  checkin?: Record<string, any> | null,
+  custom_form?: any[] | Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getByTicketNumber
+
+`participants.getByTicketNumber`
+
+Get one participant of an event by ticket number.
+
+**Risk:** `read`
+
+```ts
+await corsair.sympla.api.participants.getByTicketNumber({ event_id: 'abc123def456', ticket_number: '94461180000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string` | Yes | Event id hash, the `id` from events.list. |
+| `ticket_number` | `string` | Yes | Ticket number printed on the ticket, e.g. 94461180000001. |
+| `timezone` | `string` | No | IANA timezone for dates in and out. Sympla default: America/Sao_Paulo. |
+| `fields` | `string` | No | Comma-separated snake_case fields to return. Omit for all. |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: {
+    id: string | number,
+    event_id?: string | number | null,
+    presentation_id?: string | number | null,
+    order_id?: string | number | null,
+    order_status?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    email?: string | null,
+    ticket_number?: string | null,
+    ticket_num_qr_code?: string | null,
+    ticket_name?: string | null,
+    ticket_status?: string | null,
+    ticket_sale_price?: number | null,
+    ticket_net_value?: number | null,
+    sector_name?: string | null,
+    checkin?: Record<string, any> | null,
+    custom_form?: any[] | Record<string, any> | null
+  }
+} | {
+  id: string | number,
+  event_id?: string | number | null,
+  presentation_id?: string | number | null,
+  order_id?: string | number | null,
+  order_status?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  ticket_number?: string | null,
+  ticket_num_qr_code?: string | null,
+  ticket_name?: string | null,
+  ticket_status?: string | null,
+  ticket_sale_price?: number | null,
+  ticket_net_value?: number | null,
+  sector_name?: string | null,
+  checkin?: Record<string, any> | null,
+  custom_form?: any[] | Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`participants.list`
+
+List the participants (tickets) of an event, with check-in status.
+
+**Risk:** `read`
+
+```ts
+await corsair.sympla.api.participants.list({ event_id: 'abc123def456', page_size: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string` | Yes | Event id hash, the `id` from events.list. |
+| `timezone` | `string` | No | IANA timezone for dates in and out. Sympla default: America/Sao_Paulo. |
+| `from` | `string` | No | Start of the ticket_updated_at range, local ISO-8601. |
+| `to` | `string` | No | End of the ticket_updated_at range, local ISO-8601. |
+| `fields` | `string` | No | Comma-separated snake_case fields to return. Omit for all. |
+| `cancelled_filter` | `none \| include \| only` | No | Cancelled records: none (default), include or only. |
+| `participant_email` | `string` | No | Only participants with this email (exact match). |
+| `page_size` | `number` | No | Items per page, 1 to 500. Sympla default 100. |
+| `cursor` | `string` | No | pagination.next_cursor from the previous page. |
+| `field_sort` | `ticket_created_at \| ticket_updated_at` | No | Sort field. Sympla default: ticket_created_at. |
+| `sort` | `asc \| desc` | No | Sort direction. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+| `sort` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number,
+  event_id?: string | number | null,
+  presentation_id?: string | number | null,
+  order_id?: string | number | null,
+  order_status?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  ticket_number?: string | null,
+  ticket_num_qr_code?: string | null,
+  ticket_name?: string | null,
+  ticket_status?: string | null,
+  ticket_sale_price?: number | null,
+  ticket_net_value?: number | null,
+  sector_name?: string | null,
+  checkin?: Record<string, any> | null,
+  custom_form?: any[] | Record<string, any> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_cursor?: string | null,
+  page_size?: number | null,
+  quantity?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="sort full type">
+
+```ts
+{
+  field_sort?: string | null,
+  sort?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listByOrder
+
+`participants.listByOrder`
+
+List the participants (tickets) in one order.
+
+**Risk:** `read`
+
+```ts
+await corsair.sympla.api.participants.listByOrder({ event_id: 'abc123def456', order_id: 'ORD123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string` | Yes | Event id hash, the `id` from events.list. |
+| `order_id` | `string` | Yes | Order id from orders.list. |
+| `fields` | `string` | No | Comma-separated snake_case fields to return. Omit for all. |
+| `timezone` | `string` | No | IANA timezone for dates in and out. Sympla default: America/Sao_Paulo. |
+| `cancelled_filter` | `none \| include \| only` | No | Cancelled records: none (default), include or only. |
+| `page_size` | `number` | No | Items per page, 1 to 500. Sympla default 100. |
+| `cursor` | `string` | No | pagination.next_cursor from the previous page. |
+| `field_sort` | `ticket_created_at \| ticket_updated_at` | No | Sort field. Sympla default: ticket_created_at. |
+| `sort` | `asc \| desc` | No | Sort direction. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+| `sort` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number,
+  event_id?: string | number | null,
+  presentation_id?: string | number | null,
+  order_id?: string | number | null,
+  order_status?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  ticket_number?: string | null,
+  ticket_num_qr_code?: string | null,
+  ticket_name?: string | null,
+  ticket_status?: string | null,
+  ticket_sale_price?: number | null,
+  ticket_net_value?: number | null,
+  sector_name?: string | null,
+  checkin?: Record<string, any> | null,
+  custom_form?: any[] | Record<string, any> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_cursor?: string | null,
+  page_size?: number | null,
+  quantity?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="sort full type">
+
+```ts
+{
+  field_sort?: string | null,
+  sort?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listByPresentation
+
+`participants.listByPresentation`
+
+List the participants (tickets) of one presentation.
+
+**Risk:** `read`
+
+```ts
+await corsair.sympla.api.participants.listByPresentation({ event_id: 'abc123def456', presentation_id: 12345 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string` | Yes | Event id hash, the `id` from events.list. |
+| `presentation_id` | `number \| string` | Yes | Presentation (session) id from presentations.list. |
+| `timezone` | `string` | No | IANA timezone for dates in and out. Sympla default: America/Sao_Paulo. |
+| `from` | `string` | No | Start of the ticket_updated_at range, local ISO-8601. |
+| `to` | `string` | No | End of the ticket_updated_at range, local ISO-8601. |
+| `fields` | `string` | No | Comma-separated snake_case fields to return. Omit for all. |
+| `cancelled_filter` | `none \| include \| only` | No | Cancelled records: none (default), include or only. |
+| `participant_email` | `string` | No | Only participants with this email (exact match). |
+| `page_size` | `number` | No | Items per page, 1 to 500. Sympla default 100. |
+| `cursor` | `string` | No | pagination.next_cursor from the previous page. |
+| `field_sort` | `ticket_created_at \| ticket_updated_at` | No | Sort field. Sympla default: ticket_created_at. |
+| `sort` | `asc \| desc` | No | Sort direction. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+| `sort` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number,
+  event_id?: string | number | null,
+  presentation_id?: string | number | null,
+  order_id?: string | number | null,
+  order_status?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  ticket_number?: string | null,
+  ticket_num_qr_code?: string | null,
+  ticket_name?: string | null,
+  ticket_status?: string | null,
+  ticket_sale_price?: number | null,
+  ticket_net_value?: number | null,
+  sector_name?: string | null,
+  checkin?: Record<string, any> | null,
+  custom_form?: any[] | Record<string, any> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_cursor?: string | null,
+  page_size?: number | null,
+  quantity?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="sort full type">
+
+```ts
+{
+  field_sort?: string | null,
+  sort?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Presentations
+
+### get
+
+`presentations.get`
+
+Get one presentation of an event, with its sectors.
+
+**Risk:** `read`
+
+```ts
+await corsair.sympla.api.presentations.get({ event_id: 'abc123def456', presentation_id: 12345 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string` | Yes | Event id hash, the `id` from events.list. |
+| `presentation_id` | `number \| string` | Yes | Presentation (session) id from presentations.list. |
+| `timezone` | `string` | No | IANA timezone for dates in and out. Sympla default: America/Sao_Paulo. |
+| `fields` | `string` | No | Comma-separated snake_case fields to return. Omit for all. |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: {
+    id: string | number,
+    event_id?: string | number | null,
+    presentation_url?: string | null,
+    closed?: boolean | number | null,
+    enabled?: boolean | number | null,
+    private_presentation?: boolean | number | null,
+    published?: boolean | number | null,
+    start_date?: string | null,
+    end_date?: string | null,
+    start_date_utc?: string | null,
+    end_date_utc?: string | null,
+    sectors?: {
+      id?: string | number | null,
+      name?: string | null,
+      has_online_sale_available?: boolean | number | null
+    }[] | null
+  }
+} | {
+  id: string | number,
+  event_id?: string | number | null,
+  presentation_url?: string | null,
+  closed?: boolean | number | null,
+  enabled?: boolean | number | null,
+  private_presentation?: boolean | number | null,
+  published?: boolean | number | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  start_date_utc?: string | null,
+  end_date_utc?: string | null,
+  sectors?: {
+    id?: string | number | null,
+    name?: string | null,
+    has_online_sale_available?: boolean | number | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`presentations.list`
+
+List the presentations (sessions or dates) of an event.
+
+**Risk:** `read`
+
+```ts
+await corsair.sympla.api.presentations.list({ event_id: 'abc123def456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string` | Yes | Event id hash, the `id` from events.list. |
+| `published` | `boolean` | No | Only published presentations. Sympla default: true. |
+| `from` | `string` | No | Start of the date range, local ISO-8601, e.g. 2025-09-08T00:00:00. |
+| `timezone` | `string` | No | IANA timezone for dates in and out. Sympla default: America/Sao_Paulo. |
+| `sort` | `asc \| desc` | No | Sort direction. |
+| `field_sort` | `start_date` | No | Sort field: start_date. |
+| `filter_online_sector` | `boolean` | No | Only sectors sold online. Sympla default: true. |
+| `page_size` | `number` | No | Items per page, 1 to 200. Sympla default 100. |
+| `cursor` | `string` | No | pagination.next_cursor from the previous page. |
+| `fields` | `string` | No | Comma-separated snake_case fields to return. Omit for all. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+| `sort` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number,
+  event_id?: string | number | null,
+  presentation_url?: string | null,
+  closed?: boolean | number | null,
+  enabled?: boolean | number | null,
+  private_presentation?: boolean | number | null,
+  published?: boolean | number | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  start_date_utc?: string | null,
+  end_date_utc?: string | null,
+  sectors?: {
+    id?: string | number | null,
+    name?: string | null,
+    has_online_sale_available?: boolean | number | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  next_cursor?: string | null,
+  page_size?: number | null,
+  quantity?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="sort full type">
+
+```ts
+{
+  field_sort?: string | null,
+  sort?: string | null
 }
 ```
 </Accordion>

@@ -1,16 +1,23 @@
 ---
 title: "Sympla plugin"
 sidebarTitle: "Overview"
-description: "List events for a Sympla organizer. The key is sent in the s_token header."
+description: "Read a Sympla organizer's events, presentations, orders and participants, and check participants in."
 ---
 
 Use **Sympla** through Corsair: one client, typed API calls, local DB sync.
 
-An empty token comes back as HTTP 401 with code 100. The client does not send a bearer token.
+Things to know before you call:
+
+- **The token goes in the `s_token` header.** Create it in Sympla under Minha Conta > Integrações > Chave de acesso da API. With no token stored, Corsair raises `AuthMissingError` before any request; a token Sympla rejects comes back as HTTP 401 ("Invalid Token!").
+- **This is Sympla's v1.6.0 Public API.** Lists page with a cursor: pass `pagination.next_cursor` back as `cursor` until it is empty. `page_size` goes up to 200 (500 for participants).
+- **Ids.** `event_id` is the event id hash from `events.list`. Presentations are an event's sessions or dates; orders and participants can be read per event, per presentation or per order.
+- **Dates use a timezone.** `from`, `to` and returned dates are local to `timezone` (Sympla default America/Sao_Paulo). Null fields may be left out of replies.
+- **Personal data.** Orders and participants include buyer and participant names and emails. Corsair keeps them out of its event log; it stores only event ids and names.
+- **Check-ins can't be undone through the API**, so the three check-in operations are `destructive`. A second check-in of the same ticket answers HTTP 400 "Participant has already checked-in."
 
 **What you get:**
 
-- 1 typed API operations
+- 15 typed API operations
 - 1 synced entity (`events`) for fast `.search()` / `.list()`
 
 ## Setup
@@ -97,17 +104,20 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**List Sympla events**
+**List the participants of an event**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.sympla.api.events.list({ page: 1 });
+await tenant.sympla.api.participants.list({ event_id: 'abc123def456', page_size: 100 });
 ```
 
 
-**Write**
+**Check a participant in by ticket number**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/sympla/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.sympla.api.participants.checkInByTicketNumber({ event_id: 'abc123def456', ticket_number: '94461180000001' });
+```
 
 
 See the full list on the [API](/plugins/sympla/api) page.
