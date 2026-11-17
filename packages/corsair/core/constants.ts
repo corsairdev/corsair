@@ -207,6 +207,7 @@ export const BaseProviders = [
 	'datadog',
 	'dataforseo',
 	'datarobot',
+	'deepline',
 	'deepseek',
 	'demio',
 	'deployhq',
@@ -915,6 +916,7 @@ export const ProviderDisplayNames = {
 	datadog: 'Datadog',
 	dataforseo: 'DataForSEO',
 	datarobot: 'DataRobot',
+	deepline: 'Deepline',
 	deepseek: 'DeepSeek',
 	demio: 'Demio',
 	deployhq: 'DeployHQ',
@@ -1630,6 +1632,7 @@ export type AllProviders =
 	| 'datadog'
 	| 'dataforseo'
 	| 'datarobot'
+	| 'deepline'
 	| 'deepseek'
 	| 'demio'
 	| 'deployhq'

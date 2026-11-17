@@ -162,6 +162,10 @@
     "from": "https://dovetail.com/favicon.svg",
     "note": "the brand site's own SVG icon; its dark-mode stylesheet dropped (the light colours are also inline fills)"
   },
+  "draftable": {
+    "from": "https://media.brand.dev/e7222453-0ab7-4dd7-ae71-7176ae35655a.svg",
+    "note": "found with the context.dev Brand API for draftable.com"
+  },
   "dropbox": {
     "from": "https://svgl.app/library/dropbox.svg"
   },
@@ -262,6 +266,10 @@
     "from": "https://media.brand.dev/5d89b105-20d6-49f1-a7da-aab4efc80df8.svg",
     "note": "found with the context.dev Brand API for gleap.io"
   },
+  "globalping": {
+    "from": "https://media.brand.dev/a03c0789-a0e6-49d7-9c73-b0f856fa12c6.svg",
+    "note": "found with the context.dev Brand API for globalping.io"
+  },
   "gmail": {
     "from": "https://svgl.app/library/gmail.svg"
   },
@@ -338,6 +346,14 @@
   "intercom": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/intercom.svg"
   },
+  "ip2proxy": {
+    "from": "https://media.brand.dev/6cbfe82a-5ced-43f6-a2cf-dca7fc54ea4c.svg",
+    "note": "found with the context.dev Brand API for ip2location.com"
+  },
+  "ip2whois": {
+    "from": "https://media.brand.dev/a5234b28-860d-416f-9362-91af9458e32e.svg",
+    "note": "found with the context.dev Brand API for ip2whois.com"
+  },
   "jotform": {
     "from": "https://media.brand.dev/d75df6e1-8f5f-41f1-a93c-4b47ac0f01cb.svg",
     "note": "found with the context.dev Brand API for jotform.com"
@@ -356,6 +372,10 @@
   },
   "linkedin": {
     "from": "https://svgl.app/library/linkedin.svg"
+  },
+  "logodev": {
+    "from": "https://media.brand.dev/99d0f2c0-1997-40b1-a627-719822039b0c.svg",
+    "note": "found with the context.dev Brand API for logo.dev"
   },
   "loyverse": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/loyverse.svg"
@@ -384,6 +404,10 @@
   },
   "neon": {
     "from": "https://svgl.app/library/neon.svg"
+  },
+  "newsapi": {
+    "from": "https://media.brand.dev/165fd9e1-c7d2-4e13-992d-b1507dbcd925.svg",
+    "note": "found with the context.dev Brand API for newsapi.org"
   },
   "nextdns": {
     "from": "https://cdn.jsdelivr.net/npm/simple-icons@16.36.0/icons/nextdns.svg",
@@ -500,6 +524,10 @@
   "scrapedo": {
     "from": "https://media.brand.dev/2308b1d5-5c3d-41d7-9766-96edf92f8cb2.svg",
     "note": "found with the context.dev Brand API for scrape.do"
+  },
+  "searchapi": {
+    "from": "https://media.brand.dev/e3a59537-9c5e-41ef-b778-5ddf03e9a33e.svg",
+    "note": "found with the context.dev Brand API for searchapi.io"
   },
   "semanticscholar": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/semanticscholar.svg"
