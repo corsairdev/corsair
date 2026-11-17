@@ -1,0 +1,155 @@
+---
+title: "Truvera plugin"
+sidebarTitle: "Overview"
+description: "Create DIDs, issue and revoke verifiable credentials, manage schemas and revocation registries, and verify credentials."
+---
+
+Use **Truvera** through Corsair: one client, typed API calls.
+
+Create an API key in Truvera Workspace. The key travels as a Bearer token. A production key works against `https://api.truvera.io`, the default. A test-mode key only works against the sandbox host `https://api-testnet.truvera.io`, which uses test data: pass `sandbox: true` when you create the plugin (`truvera({ sandbox: true })`) to send every call there.
+
+Things to know:
+
+- **Issuing signs a real credential.** A credential cannot be edited after it is issued, only revoked and replaced. Issue onto the testnet until the schema, the subject fields and the revocation link are right.
+- **The issuer must be a DID you control.** Truvera rejects a signing request whose `credential.issuer` belongs to another account, which the input schema cannot know, so it surfaces as a 400 with the field path in the error.
+- **Persisting needs a password.** `persist: true` stores an encrypted copy and requires `password`; the plugin checks this before sending. Persisting a credential holding personal data has regulatory consequences.
+- **Distribution needs a recipient.** `distribute: true` needs `recipient_email`, `recipient_did`, or the holder DID in `credential.subject.id`, which the plugin also checks first. Email distribution sends the holder an email.
+- **Issuing, revoking and on-chain creates are destructive.** `credentials.issue` signs a permanent credential and can email the holder; `credentials.revoke`, `credentials.unrevoke` and `registries.revoke` change what every verifier sees; `dids.create`, `schemas.create` and `registries.create` are blockchain transactions that count against the plan's transaction allowance in production.
+- **Creates answer a job.** `schemas.create` and `registries.create` return `{ id, data }`: `id` is the job to poll with `jobs.get`, the registry id is `data.id`, and the schema id is `data.schema.$id`.
+- **Registries are add-only unless you say otherwise.** Without `add_only: false`, Truvera refuses to unrevoke a credential in the registry or to delete the registry.
+- **Profiles need a name.** `profiles.create` and `profiles.update` both require `name`, even when it does not change.
+- **Lists page by offset.** `dids.list`, `profiles.list`, `schemas.list` and `registries.list` take `offset` and `limit` (at most 64).
+- **Errors.** HTTP failures are core's `ApiError`. `truveraErrorDetails(error)` reads the field errors, and an API key Truvera echoes back in a 401 is masked.
+- **Revoking is not deleting.** `credentials.revoke` makes every verification of that credential fail. `credentials.delete` only removes the metadata record and leaves the credential valid, so revoke before deleting.
+- **Deleting a registry is permanent.** `registries.delete` removes the status of every credential in it, so revocations recorded there are lost.
+- **A 402 is the plan limit.** The account's transaction allowance is used up; nothing is charged and no retry helps.
+- **Not included.** Trust registries, teams, sub-accounts, OpenID issuers, DIDComm messaging, webhooks and proof templates have their own routes and are not part of this plugin.
+
+**What you get:**
+
+- 28 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/truvera better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/truvera better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/truvera better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/truvera better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { truvera } from '@corsair-dev/truvera';
+
+export const corsair = createCorsair({
+	plugins: [
+		truvera(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Truvera API key before the first call: `pnpm corsair setup --plugin=truvera --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+truvera()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'truvera',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List your credential metadata**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.truvera.api.credentials.list({ limit: 25 });
+```
+
+
+**Issue a credential into a holder wallet**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.truvera.api.credentials.issue({
+	credential: {
+		issuer: 'did:cheqd:mainnet:ac2b9027-ec1a-4ee2-aad1-1e316e7d6f59',
+		name: 'Basic Credential',
+		type: ['BasicCredential'],
+		subject: { id: 'did:key:z6MkqBcwvYurNSSqyBkxavv4fkaq2iu3v3YGMbdyfa4bVNxD', name: 'A. Holder' },
+	},
+	distribute: true,
+	revocable: true,
+});
+```
+
+
+See the full list on the [API](/plugins/truvera/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/truvera/api">
+    Every `truvera.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

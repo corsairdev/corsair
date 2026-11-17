@@ -1,0 +1,787 @@
+{
+  "id": "sensibo",
+  "displayName": "Sensibo",
+  "description": "Read and control Sensibo smart AC controllers (pods), their schedules, timers, Climate React and sensor history.",
+  "npmPackageName": "@corsair-dev/sensibo",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 19,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "sensibo.api.acStates.list",
+      "shortPath": "acStates.list",
+      "description": "List the current and recent AC states of a pod, newest first.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deviceId",
+            "optional": false,
+            "type": "string",
+            "description": "Pod (device) id from devices.list."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "How many recent states to return (1 to 20)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string, status?: string | null, reason?: string | null, acState?: { on?: boolean | null, mode?: string | null, fanLevel?: string | null, targetTemperature?: number | null, temperatureUnit?: string | null, swing?: string | null, horizontalSwing?: string | null, light?: string | null } | null, changedProperties?: string[] | null, failureReason?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sensibo.api.acStates.set",
+      "shortPath": "acStates.set",
+      "description": "Set the AC state of a pod (on/off, mode, fan level, target temperature, swing).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deviceId",
+            "optional": false,
+            "type": "string",
+            "description": "Pod (device) id from devices.list."
+          },
+          {
+            "key": "acState",
+            "optional": false,
+            "type": "{ on?: boolean, mode?: string, fanLevel?: string, targetTemperature?: number, temperatureUnit?: C | F, swing?: string, horizontalSwing?: string, light?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string, status?: string | null, reason?: string | null, acState?: { on?: boolean | null, mode?: string | null, fanLevel?: string | null, targetTemperature?: number | null, temperatureUnit?: string | null, swing?: string | null, horizontalSwing?: string | null, light?: string | null } | null, changedProperties?: string[] | null, failureReason?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sensibo.api.acStates.setProperty",
+      "shortPath": "acStates.setProperty",
+      "description": "Change one property of the AC state of a pod, such as on or targetTemperature.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deviceId",
+            "optional": false,
+            "type": "string",
+            "description": "Pod (device) id from devices.list."
+          },
+          {
+            "key": "property",
+            "optional": false,
+            "type": "on | mode | fanLevel | targetTemperature | temperatureUnit | swing | horizontalSwing | light",
+            "description": "The one AC state property to change."
+          },
+          {
+            "key": "newValue",
+            "optional": false,
+            "type": "string | number | boolean",
+            "description": "The new value, e.g. true for on, 22 for targetTemperature."
+          },
+          {
+            "key": "currentAcState",
+            "optional": true,
+            "type": "{ on?: boolean, mode?: string, fanLevel?: string, targetTemperature?: number, temperatureUnit?: C | F, swing?: string, horizontalSwing?: string, light?: string }",
+            "description": "The current AC state, which Sensibo uses to fill in the other properties."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string, status?: string | null, reason?: string | null, acState?: { on?: boolean | null, mode?: string | null, fanLevel?: string | null, targetTemperature?: number | null, temperatureUnit?: string | null, swing?: string | null, horizontalSwing?: string | null, light?: string | null } | null, changedProperties?: string[] | null, failureReason?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sensibo.api.climateReact.configure",
+      "shortPath": "climateReact.configure",
+      "description": "Set the Climate React thresholds and the AC states it applies; replaces the current Climate React settings.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deviceId",
+            "optional": false,
+            "type": "string",
+            "description": "Pod (device) id from devices.list."
+          },
+          {
+            "key": "enabled",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether Climate React runs."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string",
+            "description": "What the thresholds measure, e.g. temperature, humidity, feelsLike."
+          },
+          {
+            "key": "lowTemperatureThreshold",
+            "optional": false,
+            "type": "number",
+            "description": "Low threshold that triggers lowTemperatureState."
+          },
+          {
+            "key": "lowTemperatureState",
+            "optional": false,
+            "type": "{ on?: boolean, mode?: string, fanLevel?: string, targetTemperature?: number, temperatureUnit?: C | F, swing?: string, horizontalSwing?: string, light?: string }",
+            "description": "AC state applied when the reading drops below the low threshold."
+          },
+          {
+            "key": "highTemperatureThreshold",
+            "optional": false,
+            "type": "number",
+            "description": "High threshold that triggers highTemperatureState."
+          },
+          {
+            "key": "highTemperatureState",
+            "optional": false,
+            "type": "{ on?: boolean, mode?: string, fanLevel?: string, targetTemperature?: number, temperatureUnit?: C | F, swing?: string, horizontalSwing?: string, light?: string }",
+            "description": "AC state applied when the reading rises above the high threshold."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{ enabled?: boolean | null, type?: string | null, lowTemperatureThreshold?: number | null, lowTemperatureState?: { on?: boolean | null, mode?: string | null, fanLevel?: string | null, targetTemperature?: number | null, temperatureUnit?: string | null, swing?: string | null, horizontalSwing?: string | null, light?: string | null } | null, highTemperatureThreshold?: number | null, highTemperatureState?: { on?: boolean | null, mode?: string | null, fanLevel?: string | null, targetTemperature?: number | null, temperatureUnit?: string | null, swing?: string | null, horizontalSwing?: string | null, light?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sensibo.api.climateReact.get",
+      "shortPath": "climateReact.get",
+      "description": "Get the Climate React (smart mode) settings of a pod.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deviceId",
+            "optional": false,
+            "type": "string",
+            "description": "Pod (device) id from devices.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ enabled?: boolean | null, type?: string | null, lowTemperatureThreshold?: number | null, lowTemperatureState?: { on?: boolean | null, mode?: string | null, fanLevel?: string | null, targetTemperature?: number | null, temperatureUnit?: string | null, swing?: string | null, horizontalSwing?: string | null, light?: string | null } | null, highTemperatureThreshold?: number | null, highTemperatureState?: { on?: boolean | null, mode?: string | null, fanLevel?: string | null, targetTemperature?: number | null, temperatureUnit?: string | null, swing?: string | null, horizontalSwing?: string | null, light?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sensibo.api.climateReact.setEnabled",
+      "shortPath": "climateReact.setEnabled",
+      "description": "Turn Climate React on or off for a pod.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deviceId",
+            "optional": false,
+            "type": "string",
+            "description": "Pod (device) id from devices.list."
+          },
+          {
+            "key": "enabled",
+            "optional": false,
+            "type": "boolean",
+            "description": "true enables Climate React, false disables it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{ enabled?: boolean | null, type?: string | null, lowTemperatureThreshold?: number | null, lowTemperatureState?: { on?: boolean | null, mode?: string | null, fanLevel?: string | null, targetTemperature?: number | null, temperatureUnit?: string | null, swing?: string | null, horizontalSwing?: string | null, light?: string | null } | null, highTemperatureThreshold?: number | null, highTemperatureState?: { on?: boolean | null, mode?: string | null, fanLevel?: string | null, targetTemperature?: number | null, temperatureUnit?: string | null, swing?: string | null, horizontalSwing?: string | null, light?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sensibo.api.devices.get",
+      "shortPath": "devices.get",
+      "description": "Get one pod: room, AC state, measurements and remote capabilities.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deviceId",
+            "optional": false,
+            "type": "string",
+            "description": "Pod (device) id from devices.list."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated pod fields to return, or \"*\" for all. Sensibo returns only ids when it is omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string, room?: { uid?: string | null, name?: string | null } | null, acState?: { on?: boolean | null, mode?: string | null, fanLevel?: string | null, targetTemperature?: number | null, temperatureUnit?: string | null, swing?: string | null, horizontalSwing?: string | null, light?: string | null } | null, productModel?: string | null, measurements?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sensibo.api.devices.list",
+      "shortPath": "devices.list",
+      "description": "List the Sensibo pods (AC controllers) on the account. Pass fields=\"*\" for full pod details.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated pod fields to return, or \"*\" for all. Sensibo returns only ids when it is omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string, room?: { uid?: string | null, name?: string | null } | null, acState?: { on?: boolean | null, mode?: string | null, fanLevel?: string | null, targetTemperature?: number | null, temperatureUnit?: string | null, swing?: string | null, horizontalSwing?: string | null, light?: string | null } | null, productModel?: string | null, measurements?: Record<string, any> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sensibo.api.doorSensors.listEvents",
+      "shortPath": "doorSensors.listEvents",
+      "description": "List the open and close events of a door sensor.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sensorId",
+            "optional": false,
+            "type": "string",
+            "description": "Door sensor id (starts with ds_)."
+          },
+          {
+            "key": "days",
+            "optional": true,
+            "type": "number",
+            "description": "Number of days of history to analyse (Sensibo default 1)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ status: string, result: { timestamp?: string | null, event?: string | null }[] } | { timestamp?: string | null, event?: string | null }[]"
+      }
+    },
+    {
+      "path": "sensibo.api.events.list",
+      "shortPath": "events.list",
+      "description": "List the events of a pod: AC state changes, schedule and Climate React changes, motion and geofence events.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deviceId",
+            "optional": false,
+            "type": "string",
+            "description": "Pod (device) id from devices.list."
+          },
+          {
+            "key": "daysBackwards",
+            "optional": true,
+            "type": "number",
+            "description": "Number of days back to return (Sensibo default 1)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ status: string, result: { event_id?: number | null, timestamp?: string | null, event_kind?: string | null, event_description?: string | null, details?: Record<string, any> | null, object_id?: string | null, object_kind?: string | null }[] } | { event_id?: number | null, timestamp?: string | null, event_kind?: string | null, event_description?: string | null, details?: Record<string, any> | null, object_id?: string | null, object_kind?: string | null }[]"
+      }
+    },
+    {
+      "path": "sensibo.api.measurements.history",
+      "shortPath": "measurements.history",
+      "description": "Get the temperature and humidity readings of a pod for the last few days.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deviceId",
+            "optional": false,
+            "type": "string",
+            "description": "Pod (device) id from devices.list."
+          },
+          {
+            "key": "days",
+            "optional": true,
+            "type": "number",
+            "description": "Number of days back to return (Sensibo default 1)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ temperature?: { time?: string | null, value?: number | null }[] | null, humidity?: { time?: string | null, value?: number | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sensibo.api.schedules.create",
+      "shortPath": "schedules.create",
+      "description": "Create a schedule that applies an AC state at a local time, once or on chosen weekdays.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deviceId",
+            "optional": false,
+            "type": "string",
+            "description": "Pod (device) id from devices.list."
+          },
+          {
+            "key": "targetTimeLocal",
+            "optional": false,
+            "type": "string",
+            "description": "Local time in 24-hour HH:MM, e.g. 22:15."
+          },
+          {
+            "key": "timezone",
+            "optional": false,
+            "type": "string",
+            "description": "IANA timezone the time is in, e.g. Europe/Oslo."
+          },
+          {
+            "key": "acState",
+            "optional": false,
+            "type": "{ on: nonoptional, mode: nonoptional, fanLevel: nonoptional, targetTemperature: nonoptional, temperatureUnit?: C | F, swing?: string, horizontalSwing?: string, light?: string }",
+            "description": "AC state applied at that time (on, mode, fanLevel and targetTemperature required)."
+          },
+          {
+            "key": "recurOnDaysOfWeek",
+            "optional": false,
+            "type": "(sunday | monday | tuesday | wednesday | thursday | friday | saturday)[]",
+            "description": "Days the schedule repeats on; an empty list runs it once."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{ id?: string | null, isEnabled?: boolean | null, acState?: { on?: boolean | null, mode?: string | null, fanLevel?: string | null, targetTemperature?: number | null, temperatureUnit?: string | null, swing?: string | null, horizontalSwing?: string | null, light?: string | null } | null, targetTimeLocal?: string | null, timezone?: string | null, recurringDays?: string[] | null, nextTime?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sensibo.api.schedules.delete",
+      "shortPath": "schedules.delete",
+      "description": "Delete one schedule of a pod.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deviceId",
+            "optional": false,
+            "type": "string",
+            "description": "Pod (device) id from devices.list."
+          },
+          {
+            "key": "scheduleId",
+            "optional": false,
+            "type": "string",
+            "description": "Schedule id from schedules.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sensibo.api.schedules.get",
+      "shortPath": "schedules.get",
+      "description": "Get one schedule of a pod.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deviceId",
+            "optional": false,
+            "type": "string",
+            "description": "Pod (device) id from devices.list."
+          },
+          {
+            "key": "scheduleId",
+            "optional": false,
+            "type": "string",
+            "description": "Schedule id from schedules.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string | null, isEnabled?: boolean | null, acState?: { on?: boolean | null, mode?: string | null, fanLevel?: string | null, targetTemperature?: number | null, temperatureUnit?: string | null, swing?: string | null, horizontalSwing?: string | null, light?: string | null } | null, targetTimeLocal?: string | null, timezone?: string | null, recurringDays?: string[] | null, nextTime?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sensibo.api.schedules.list",
+      "shortPath": "schedules.list",
+      "description": "List the schedules of a pod.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deviceId",
+            "optional": false,
+            "type": "string",
+            "description": "Pod (device) id from devices.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string | null, isEnabled?: boolean | null, acState?: { on?: boolean | null, mode?: string | null, fanLevel?: string | null, targetTemperature?: number | null, temperatureUnit?: string | null, swing?: string | null, horizontalSwing?: string | null, light?: string | null } | null, targetTimeLocal?: string | null, timezone?: string | null, recurringDays?: string[] | null, nextTime?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sensibo.api.schedules.setEnabled",
+      "shortPath": "schedules.setEnabled",
+      "description": "Enable or pause one schedule of a pod.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deviceId",
+            "optional": false,
+            "type": "string",
+            "description": "Pod (device) id from devices.list."
+          },
+          {
+            "key": "scheduleId",
+            "optional": false,
+            "type": "string",
+            "description": "Schedule id from schedules.list."
+          },
+          {
+            "key": "isEnabled",
+            "optional": false,
+            "type": "boolean",
+            "description": "true enables the schedule, false pauses it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{ id?: string | null, isEnabled?: boolean | null, acState?: { on?: boolean | null, mode?: string | null, fanLevel?: string | null, targetTemperature?: number | null, temperatureUnit?: string | null, swing?: string | null, horizontalSwing?: string | null, light?: string | null } | null, targetTimeLocal?: string | null, timezone?: string | null, recurringDays?: string[] | null, nextTime?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sensibo.api.timer.delete",
+      "shortPath": "timer.delete",
+      "description": "Delete the timer on a pod.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deviceId",
+            "optional": false,
+            "type": "string",
+            "description": "Pod (device) id from devices.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sensibo.api.timer.get",
+      "shortPath": "timer.get",
+      "description": "Get the timer set on a pod, if any.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deviceId",
+            "optional": false,
+            "type": "string",
+            "description": "Pod (device) id from devices.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string | null, isEnabled?: boolean | null, acState?: { on?: boolean | null, mode?: string | null, fanLevel?: string | null, targetTemperature?: number | null, temperatureUnit?: string | null, swing?: string | null, horizontalSwing?: string | null, light?: string | null } | null, targetTime?: string | null, secondsRemaining?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sensibo.api.timer.set",
+      "shortPath": "timer.set",
+      "description": "Set a timer that applies an AC state a number of minutes from now; replaces any current timer.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deviceId",
+            "optional": false,
+            "type": "string",
+            "description": "Pod (device) id from devices.list."
+          },
+          {
+            "key": "minutesFromNow",
+            "optional": false,
+            "type": "number",
+            "description": "Minutes from now when the timer fires."
+          },
+          {
+            "key": "acState",
+            "optional": false,
+            "type": "{ on: nonoptional, mode: nonoptional, fanLevel: nonoptional, targetTemperature: nonoptional, temperatureUnit?: C | F, swing?: string, horizontalSwing?: string, light?: string }",
+            "description": "AC state applied when the timer fires (on, mode, fanLevel and targetTemperature required)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{ id?: string | null, isEnabled?: boolean | null, acState?: { on?: boolean | null, mode?: string | null, fanLevel?: string | null, targetTemperature?: number | null, temperatureUnit?: string | null, swing?: string | null, horizontalSwing?: string | null, light?: string | null } | null, targetTime?: string | null, secondsRemaining?: number | null } | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "sensibo.db.pods.search",
+      "entityName": "pods",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "roomName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

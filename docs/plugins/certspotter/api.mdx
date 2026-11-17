@@ -1,0 +1,161 @@
+---
+title: "SSLMate Cert Spotter API reference"
+sidebarTitle: "API"
+description: "API reference for SSLMate Cert Spotter: every `certspotter.api.*` operation with input and output types."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Firehose
+
+### list
+
+`firehose.list`
+
+Read the continuous stream of new issuances across every log; requires a Firehose subscription and a cursor to continue from
+
+**Risk:** `read`
+
+```ts
+await corsair.certspotter.api.firehose.list({ after: '17433446883' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `after` | `string` | No | Return issuances discovered after this ID; omit to start from about an hour ago |
+| `expand` | `(dns_names \| issuer \| issuer.website \| issuer.caa_domains \| issuer.operator \| issuer.pubkey_der \| issuer.name_der \| pubkey \| pubkey_der \| revocation \| problem_reporting \| cert_der)[]` | No | — |
+
+Requires a Firehose subscription. An empty array means you have caught up; wait about 5 minutes before the next call. Omit `after` to start from about the last hour; a `lagging_client` error means restart without it.
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  tbs_sha256: string,
+  cert_sha256: string,
+  pubkey_sha256: string,
+  not_before: string,
+  not_after: string,
+  revoked?: boolean | null,
+  dns_names?: string[] | null,
+  pubkey_der?: string | null,
+  pubkey?: {
+    type?: string | null,
+    bit_length?: number | null,
+    curve?: string | null
+  } | null,
+  issuer?: {
+    friendly_name?: string | null,
+    website?: string | null,
+    caa_domains?: string[] | null,
+    operator?: {
+      name?: string | null,
+      website?: string | null
+    } | null,
+    pubkey_sha256?: string | null,
+    pubkey_der?: string | null,
+    name?: string | null,
+    name_der?: string | null
+  } | null,
+  revocation?: {
+    time?: string | null,
+    reason?: number | null,
+    checked_at?: string | null
+  } | null,
+  problem_reporting?: string | null,
+  cert_der?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Issuances
+
+### list
+
+`issuances.list`
+
+List the unexpired certificate issuances for a domain, newest last, with an `after` cursor for paging
+
+**Risk:** `read`
+
+```ts
+await corsair.certspotter.api.issuances.list({ domain: 'example.com', include_subdomains: true, expand: ['dns_names', 'issuer', 'revocation'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | Registered domain or a name under it, e.g. "example.com" or "www.example.com"; a bare TLD is rejected |
+| `include_subdomains` | `boolean` | No | Also return issuances valid for sub-domains; default false |
+| `match_wildcards` | `boolean` | No | Also return wildcard matches, e.g. *.example.com; default false |
+| `after` | `string` | No | Return issuances discovered after this ID; take `id` from the last result of the previous page |
+| `expand` | `(dns_names \| issuer \| issuer.website \| issuer.caa_domains \| issuer.operator \| issuer.pubkey_der \| issuer.name_der \| pubkey \| pubkey_der \| revocation \| problem_reporting \| cert_der)[]` | No | Extra fields to include; repeated as one `expand` per value |
+
+Take `id` from the last issuance and pass it as `after` to page. An empty array means you have caught up; wait a few minutes before asking again with the same cursor.
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  tbs_sha256: string,
+  cert_sha256: string,
+  pubkey_sha256: string,
+  not_before: string,
+  not_after: string,
+  revoked?: boolean | null,
+  dns_names?: string[] | null,
+  pubkey_der?: string | null,
+  pubkey?: {
+    type?: string | null,
+    bit_length?: number | null,
+    curve?: string | null
+  } | null,
+  issuer?: {
+    friendly_name?: string | null,
+    website?: string | null,
+    caa_domains?: string[] | null,
+    operator?: {
+      name?: string | null,
+      website?: string | null
+    } | null,
+    pubkey_sha256?: string | null,
+    pubkey_der?: string | null,
+    name?: string | null,
+    name_der?: string | null
+  } | null,
+  revocation?: {
+    time?: string | null,
+    reason?: number | null,
+    checked_at?: string | null
+  } | null,
+  problem_reporting?: string | null,
+  cert_der?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

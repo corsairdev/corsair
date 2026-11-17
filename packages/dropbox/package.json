@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/dropbox",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Dropbox plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
@@ -19,7 +19,7 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "corsair": ">=0.1.120",
+    "corsair": ">=0.1.202",
     "zod": "^4.1.13"
   },
   "devDependencies": {

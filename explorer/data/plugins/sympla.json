@@ -1,0 +1,1001 @@
+{
+  "id": "sympla",
+  "displayName": "Sympla",
+  "description": "Read a Sympla organizer's events, presentations, orders and participants, and check participants in.",
+  "npmPackageName": "@corsair-dev/sympla",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 15,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "sympla.api.events.get",
+      "shortPath": "events.get",
+      "description": "Get one event: dates, address, host, category and publication status.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string",
+            "description": "Event id hash, the `id` from events.list."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "IANA timezone for dates in and out. Sympla default: America/Sao_Paulo."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated snake_case fields to return. Omit for all."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ data: { id: string | number, reference_id?: number | null, name?: string | null, detail?: string | null, start_date?: string | null, end_date?: string | null, private_event?: boolean | number | null, published?: boolean | number | null, cancelled?: boolean | number | null, image?: string | null, url?: string | null, address?: Record<string, any> | null, host?: Record<string, any> | null, category_prim?: Record<string, any> | null, category_sec?: Record<string, any> | null } } | { id: string | number, reference_id?: number | null, name?: string | null, detail?: string | null, start_date?: string | null, end_date?: string | null, private_event?: boolean | number | null, published?: boolean | number | null, cancelled?: boolean | number | null, image?: string | null, url?: string | null, address?: Record<string, any> | null, host?: Record<string, any> | null, category_prim?: Record<string, any> | null, category_sec?: Record<string, any> | null }"
+      }
+    },
+    {
+      "path": "sympla.api.events.list",
+      "shortPath": "events.list",
+      "description": "List the events of the Sympla organizer, with cursor pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "published",
+            "optional": true,
+            "type": "published | not_published | all",
+            "description": "Publication filter. Sympla default: published."
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "Start of the date range, local ISO-8601, e.g. 2025-09-08T00:00:00."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "IANA timezone for dates in and out. Sympla default: America/Sao_Paulo."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Sort direction."
+          },
+          {
+            "key": "field_sort",
+            "optional": true,
+            "type": "start_date | end_date | name",
+            "description": "Sort field. Sympla default: start_date."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 200. Sympla default 100."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "pagination.next_cursor from the previous page."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated snake_case fields to return. Omit for all."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string | number, reference_id?: number | null, name?: string | null, detail?: string | null, start_date?: string | null, end_date?: string | null, private_event?: boolean | number | null, published?: boolean | number | null, cancelled?: boolean | number | null, image?: string | null, url?: string | null, address?: Record<string, any> | null, host?: Record<string, any> | null, category_prim?: Record<string, any> | null, category_sec?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_cursor?: string | null, page_size?: number | null, quantity?: number | null }"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "{ field_sort?: string | null, sort?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sympla.api.orders.get",
+      "shortPath": "orders.get",
+      "description": "Get one order of an event.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string",
+            "description": "Event id hash, the `id` from events.list."
+          },
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "string",
+            "description": "Order id from orders.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ data: { id: string | number, event_id?: string | number | null, presentation_id?: string | number | null, order_date?: string | null, order_status?: string | null, updated_date?: string | null, approved_date?: string | null, discount_code?: string | null, transaction_type?: string | null, order_total_sale_price?: number | null, order_total_net_value?: number | null, buyer_first_name?: string | null, buyer_last_name?: string | null, buyer_email?: string | null, invoice_info?: Record<string, any> | null, utm?: Record<string, any> | null } } | { id: string | number, event_id?: string | number | null, presentation_id?: string | number | null, order_date?: string | null, order_status?: string | null, updated_date?: string | null, approved_date?: string | null, discount_code?: string | null, transaction_type?: string | null, order_total_sale_price?: number | null, order_total_net_value?: number | null, buyer_first_name?: string | null, buyer_last_name?: string | null, buyer_email?: string | null, invoice_info?: Record<string, any> | null, utm?: Record<string, any> | null }"
+      }
+    },
+    {
+      "path": "sympla.api.orders.list",
+      "shortPath": "orders.list",
+      "description": "List the orders of an event, filterable by date, buyer email and cancelled status.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string",
+            "description": "Event id hash, the `id` from events.list."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "IANA timezone for dates in and out. Sympla default: America/Sao_Paulo."
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "Start of the date range, local ISO-8601, e.g. 2025-09-08T00:00:00."
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "End of the date range, local ISO-8601, e.g. 2025-09-09T23:59:59."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated snake_case fields to return. Omit for all."
+          },
+          {
+            "key": "cancelled_filter",
+            "optional": true,
+            "type": "none | include | only",
+            "description": "Cancelled records: none (default), include or only."
+          },
+          {
+            "key": "buyer_email",
+            "optional": true,
+            "type": "string",
+            "description": "Only orders by this buyer email (exact match)."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 200. Sympla default 100."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "pagination.next_cursor from the previous page."
+          },
+          {
+            "key": "field_sort",
+            "optional": true,
+            "type": "order_date | updated_date | approved_date | buyer_email | status | id",
+            "description": "Sort field. Sympla default: order_date."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Sort direction."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string | number, event_id?: string | number | null, presentation_id?: string | number | null, order_date?: string | null, order_status?: string | null, updated_date?: string | null, approved_date?: string | null, discount_code?: string | null, transaction_type?: string | null, order_total_sale_price?: number | null, order_total_net_value?: number | null, buyer_first_name?: string | null, buyer_last_name?: string | null, buyer_email?: string | null, invoice_info?: Record<string, any> | null, utm?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_cursor?: string | null, page_size?: number | null, quantity?: number | null }"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "{ field_sort?: string | null, sort?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sympla.api.orders.listByPresentation",
+      "shortPath": "orders.listByPresentation",
+      "description": "List the orders of one presentation of an event.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string",
+            "description": "Event id hash, the `id` from events.list."
+          },
+          {
+            "key": "presentation_id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Presentation (session) id from presentations.list."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "IANA timezone for dates in and out. Sympla default: America/Sao_Paulo."
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "Start of the date range, local ISO-8601, e.g. 2025-09-08T00:00:00."
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "End of the date range, local ISO-8601, e.g. 2025-09-09T23:59:59."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated snake_case fields to return. Omit for all."
+          },
+          {
+            "key": "cancelled_filter",
+            "optional": true,
+            "type": "none | include | only",
+            "description": "Cancelled records: none (default), include or only."
+          },
+          {
+            "key": "buyer_email",
+            "optional": true,
+            "type": "string",
+            "description": "Only orders by this buyer email (exact match)."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 200. Sympla default 100."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "pagination.next_cursor from the previous page."
+          },
+          {
+            "key": "field_sort",
+            "optional": true,
+            "type": "order_date | updated_date | approved_date | buyer_email | status | id",
+            "description": "Sort field. Sympla default: order_date."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Sort direction."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string | number, event_id?: string | number | null, presentation_id?: string | number | null, order_date?: string | null, order_status?: string | null, updated_date?: string | null, approved_date?: string | null, discount_code?: string | null, transaction_type?: string | null, order_total_sale_price?: number | null, order_total_net_value?: number | null, buyer_first_name?: string | null, buyer_last_name?: string | null, buyer_email?: string | null, invoice_info?: Record<string, any> | null, utm?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_cursor?: string | null, page_size?: number | null, quantity?: number | null }"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "{ field_sort?: string | null, sort?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sympla.api.participants.checkIn",
+      "shortPath": "participants.checkIn",
+      "description": "Check a participant in by participant id. The API has no way to undo a check-in.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string",
+            "description": "Event id hash, the `id` from events.list."
+          },
+          {
+            "key": "participant_id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Participant id from participants.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ check_in?: boolean | null, check_in_date?: string | null, check_in_id?: string | number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sympla.api.participants.checkInByQrCode",
+      "shortPath": "participants.checkInByQrCode",
+      "description": "Check a participant in with the fields of a scanned ticket QR code. The API has no way to undo a check-in.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string",
+            "description": "Event id hash, the `id` from events.list."
+          },
+          {
+            "key": "itemId",
+            "optional": false,
+            "type": "string",
+            "description": "itemId from the scanned QR code payload."
+          },
+          {
+            "key": "walletId",
+            "optional": false,
+            "type": "string",
+            "description": "walletId from the scanned QR code payload."
+          },
+          {
+            "key": "signature",
+            "optional": false,
+            "type": "string",
+            "description": "signature from the scanned QR code payload."
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "number",
+            "description": "timestamp from the scanned QR code payload."
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "number",
+            "description": "version from the scanned QR code payload."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ check_in?: boolean | null, check_in_date?: string | null, check_in_id?: string | number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sympla.api.participants.checkInByTicketNumber",
+      "shortPath": "participants.checkInByTicketNumber",
+      "description": "Check a participant in by ticket number. The API has no way to undo a check-in.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string",
+            "description": "Event id hash, the `id` from events.list."
+          },
+          {
+            "key": "ticket_number",
+            "optional": false,
+            "type": "string",
+            "description": "Ticket number printed on the ticket, e.g. 94461180000001."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ check_in?: boolean | null, check_in_date?: string | null, check_in_id?: string | number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sympla.api.participants.get",
+      "shortPath": "participants.get",
+      "description": "Get one participant of an event by participant id.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string",
+            "description": "Event id hash, the `id` from events.list."
+          },
+          {
+            "key": "participant_id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Participant id from participants.list."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "IANA timezone for dates in and out. Sympla default: America/Sao_Paulo."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated snake_case fields to return. Omit for all."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ data: { id: string | number, event_id?: string | number | null, presentation_id?: string | number | null, order_id?: string | number | null, order_status?: string | null, first_name?: string | null, last_name?: string | null, email?: string | null, ticket_number?: string | null, ticket_num_qr_code?: string | null, ticket_name?: string | null, ticket_status?: string | null, ticket_sale_price?: number | null, ticket_net_value?: number | null, sector_name?: string | null, checkin?: Record<string, any> | null, custom_form?: any[] | Record<string, any> | null } } | { id: string | number, event_id?: string | number | null, presentation_id?: string | number | null, order_id?: string | number | null, order_status?: string | null, first_name?: string | null, last_name?: string | null, email?: string | null, ticket_number?: string | null, ticket_num_qr_code?: string | null, ticket_name?: string | null, ticket_status?: string | null, ticket_sale_price?: number | null, ticket_net_value?: number | null, sector_name?: string | null, checkin?: Record<string, any> | null, custom_form?: any[] | Record<string, any> | null }"
+      }
+    },
+    {
+      "path": "sympla.api.participants.getByTicketNumber",
+      "shortPath": "participants.getByTicketNumber",
+      "description": "Get one participant of an event by ticket number.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string",
+            "description": "Event id hash, the `id` from events.list."
+          },
+          {
+            "key": "ticket_number",
+            "optional": false,
+            "type": "string",
+            "description": "Ticket number printed on the ticket, e.g. 94461180000001."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "IANA timezone for dates in and out. Sympla default: America/Sao_Paulo."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated snake_case fields to return. Omit for all."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ data: { id: string | number, event_id?: string | number | null, presentation_id?: string | number | null, order_id?: string | number | null, order_status?: string | null, first_name?: string | null, last_name?: string | null, email?: string | null, ticket_number?: string | null, ticket_num_qr_code?: string | null, ticket_name?: string | null, ticket_status?: string | null, ticket_sale_price?: number | null, ticket_net_value?: number | null, sector_name?: string | null, checkin?: Record<string, any> | null, custom_form?: any[] | Record<string, any> | null } } | { id: string | number, event_id?: string | number | null, presentation_id?: string | number | null, order_id?: string | number | null, order_status?: string | null, first_name?: string | null, last_name?: string | null, email?: string | null, ticket_number?: string | null, ticket_num_qr_code?: string | null, ticket_name?: string | null, ticket_status?: string | null, ticket_sale_price?: number | null, ticket_net_value?: number | null, sector_name?: string | null, checkin?: Record<string, any> | null, custom_form?: any[] | Record<string, any> | null }"
+      }
+    },
+    {
+      "path": "sympla.api.participants.list",
+      "shortPath": "participants.list",
+      "description": "List the participants (tickets) of an event, with check-in status.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string",
+            "description": "Event id hash, the `id` from events.list."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "IANA timezone for dates in and out. Sympla default: America/Sao_Paulo."
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "Start of the ticket_updated_at range, local ISO-8601."
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "End of the ticket_updated_at range, local ISO-8601."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated snake_case fields to return. Omit for all."
+          },
+          {
+            "key": "cancelled_filter",
+            "optional": true,
+            "type": "none | include | only",
+            "description": "Cancelled records: none (default), include or only."
+          },
+          {
+            "key": "participant_email",
+            "optional": true,
+            "type": "string",
+            "description": "Only participants with this email (exact match)."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 500. Sympla default 100."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "pagination.next_cursor from the previous page."
+          },
+          {
+            "key": "field_sort",
+            "optional": true,
+            "type": "ticket_created_at | ticket_updated_at",
+            "description": "Sort field. Sympla default: ticket_created_at."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Sort direction."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string | number, event_id?: string | number | null, presentation_id?: string | number | null, order_id?: string | number | null, order_status?: string | null, first_name?: string | null, last_name?: string | null, email?: string | null, ticket_number?: string | null, ticket_num_qr_code?: string | null, ticket_name?: string | null, ticket_status?: string | null, ticket_sale_price?: number | null, ticket_net_value?: number | null, sector_name?: string | null, checkin?: Record<string, any> | null, custom_form?: any[] | Record<string, any> | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_cursor?: string | null, page_size?: number | null, quantity?: number | null }"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "{ field_sort?: string | null, sort?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sympla.api.participants.listByOrder",
+      "shortPath": "participants.listByOrder",
+      "description": "List the participants (tickets) in one order.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string",
+            "description": "Event id hash, the `id` from events.list."
+          },
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "string",
+            "description": "Order id from orders.list."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated snake_case fields to return. Omit for all."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "IANA timezone for dates in and out. Sympla default: America/Sao_Paulo."
+          },
+          {
+            "key": "cancelled_filter",
+            "optional": true,
+            "type": "none | include | only",
+            "description": "Cancelled records: none (default), include or only."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 500. Sympla default 100."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "pagination.next_cursor from the previous page."
+          },
+          {
+            "key": "field_sort",
+            "optional": true,
+            "type": "ticket_created_at | ticket_updated_at",
+            "description": "Sort field. Sympla default: ticket_created_at."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Sort direction."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string | number, event_id?: string | number | null, presentation_id?: string | number | null, order_id?: string | number | null, order_status?: string | null, first_name?: string | null, last_name?: string | null, email?: string | null, ticket_number?: string | null, ticket_num_qr_code?: string | null, ticket_name?: string | null, ticket_status?: string | null, ticket_sale_price?: number | null, ticket_net_value?: number | null, sector_name?: string | null, checkin?: Record<string, any> | null, custom_form?: any[] | Record<string, any> | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_cursor?: string | null, page_size?: number | null, quantity?: number | null }"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "{ field_sort?: string | null, sort?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sympla.api.participants.listByPresentation",
+      "shortPath": "participants.listByPresentation",
+      "description": "List the participants (tickets) of one presentation.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string",
+            "description": "Event id hash, the `id` from events.list."
+          },
+          {
+            "key": "presentation_id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Presentation (session) id from presentations.list."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "IANA timezone for dates in and out. Sympla default: America/Sao_Paulo."
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "Start of the ticket_updated_at range, local ISO-8601."
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "End of the ticket_updated_at range, local ISO-8601."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated snake_case fields to return. Omit for all."
+          },
+          {
+            "key": "cancelled_filter",
+            "optional": true,
+            "type": "none | include | only",
+            "description": "Cancelled records: none (default), include or only."
+          },
+          {
+            "key": "participant_email",
+            "optional": true,
+            "type": "string",
+            "description": "Only participants with this email (exact match)."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 500. Sympla default 100."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "pagination.next_cursor from the previous page."
+          },
+          {
+            "key": "field_sort",
+            "optional": true,
+            "type": "ticket_created_at | ticket_updated_at",
+            "description": "Sort field. Sympla default: ticket_created_at."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Sort direction."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string | number, event_id?: string | number | null, presentation_id?: string | number | null, order_id?: string | number | null, order_status?: string | null, first_name?: string | null, last_name?: string | null, email?: string | null, ticket_number?: string | null, ticket_num_qr_code?: string | null, ticket_name?: string | null, ticket_status?: string | null, ticket_sale_price?: number | null, ticket_net_value?: number | null, sector_name?: string | null, checkin?: Record<string, any> | null, custom_form?: any[] | Record<string, any> | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_cursor?: string | null, page_size?: number | null, quantity?: number | null }"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "{ field_sort?: string | null, sort?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sympla.api.presentations.get",
+      "shortPath": "presentations.get",
+      "description": "Get one presentation of an event, with its sectors.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string",
+            "description": "Event id hash, the `id` from events.list."
+          },
+          {
+            "key": "presentation_id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Presentation (session) id from presentations.list."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "IANA timezone for dates in and out. Sympla default: America/Sao_Paulo."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated snake_case fields to return. Omit for all."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ data: { id: string | number, event_id?: string | number | null, presentation_url?: string | null, closed?: boolean | number | null, enabled?: boolean | number | null, private_presentation?: boolean | number | null, published?: boolean | number | null, start_date?: string | null, end_date?: string | null, start_date_utc?: string | null, end_date_utc?: string | null, sectors?: { id?: string | number | null, name?: string | null, has_online_sale_available?: boolean | number | null }[] | null } } | { id: string | number, event_id?: string | number | null, presentation_url?: string | null, closed?: boolean | number | null, enabled?: boolean | number | null, private_presentation?: boolean | number | null, published?: boolean | number | null, start_date?: string | null, end_date?: string | null, start_date_utc?: string | null, end_date_utc?: string | null, sectors?: { id?: string | number | null, name?: string | null, has_online_sale_available?: boolean | number | null }[] | null }"
+      }
+    },
+    {
+      "path": "sympla.api.presentations.list",
+      "shortPath": "presentations.list",
+      "description": "List the presentations (sessions or dates) of an event.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string",
+            "description": "Event id hash, the `id` from events.list."
+          },
+          {
+            "key": "published",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only published presentations. Sympla default: true."
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "Start of the date range, local ISO-8601, e.g. 2025-09-08T00:00:00."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "IANA timezone for dates in and out. Sympla default: America/Sao_Paulo."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Sort direction."
+          },
+          {
+            "key": "field_sort",
+            "optional": true,
+            "type": "start_date",
+            "description": "Sort field: start_date."
+          },
+          {
+            "key": "filter_online_sector",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only sectors sold online. Sympla default: true."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 200. Sympla default 100."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "pagination.next_cursor from the previous page."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated snake_case fields to return. Omit for all."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string | number, event_id?: string | number | null, presentation_url?: string | null, closed?: boolean | number | null, enabled?: boolean | number | null, private_presentation?: boolean | number | null, published?: boolean | number | null, start_date?: string | null, end_date?: string | null, start_date_utc?: string | null, end_date_utc?: string | null, sectors?: { id?: string | number | null, name?: string | null, has_online_sale_available?: boolean | number | null }[] | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_cursor?: string | null, page_size?: number | null, quantity?: number | null }"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "{ field_sort?: string | null, sort?: string | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "sympla.db.events.search",
+      "entityName": "events",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

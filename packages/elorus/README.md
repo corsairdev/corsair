@@ -38,6 +38,17 @@ PDF and attachment-file operations return
 to 25 MiB. Elorus's documented list responses use page-number pagination; this
 plugin does not automatically request later pages.
 
+Response schemas follow what the live API returns where it differs from the
+OpenAPI documents. Optional response fields accept `null`. Organization and
+user references (`organization`, `assignee`, `member`) arrive as 19-digit
+strings and are kept as strings. Request-side length limits such as
+`taric_code` are not applied to responses. A few computed fields have different
+types from the documents: `is_billed`, `project_active`, `task_active` and
+`manager` are booleans; project hour totals and sequence `in_use` counts are
+numbers. Sequence lists (document types and goods receipts) return a
+`{ count, results }` object rather than an array. Request schemas still follow
+the documents.
+
 Deletes, document voiding and email sending (`*_email_create`,
 `*_email_from_template`) are marked destructive. Other mutations and
 billing-state changes are writes. The official references do not
