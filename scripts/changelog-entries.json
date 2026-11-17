@@ -8063,5 +8063,23 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/ecologi",
+    "dir": "packages/ecologi",
+    "name": "Ecologi",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/sympla",
+    "dir": "packages/sympla",
+    "name": "Sympla",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
