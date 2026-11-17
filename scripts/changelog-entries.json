@@ -7607,5 +7607,23 @@
         "title": "Send the request body on DELETE so playlists.removeItem works"
       }
     ]
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/d2lbrightspace",
+    "dir": "packages/d2lbrightspace",
+    "name": "D2L Brightspace",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/smsalert",
+    "dir": "packages/smsalert",
+    "name": "SMS Alert",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
