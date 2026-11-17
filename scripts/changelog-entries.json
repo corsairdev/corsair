@@ -8036,5 +8036,32 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/parsehub",
+    "dir": "packages/parsehub",
+    "name": "ParseHub",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/sensibo",
+    "dir": "packages/sensibo",
+    "name": "Sensibo",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/teamwork",
+    "dir": "packages/teamwork",
+    "name": "Teamwork",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
