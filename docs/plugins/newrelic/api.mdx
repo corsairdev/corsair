@@ -143,7 +143,7 @@ await corsair.newrelic.api.alerts.createNrqlCondition({ policyId: 41534, conditi
   runbook_url?: string,
   terms: {
     duration: string,
-    operator: above | below | equal,
+    operator: above | above_or_equals | below | below_or_equals | equal | not_equals,
     priority?: critical | warning,
     threshold: string,
     time_function: all | any
@@ -506,7 +506,7 @@ Send the whole condition; a partial body answers 400.
   runbook_url?: string,
   terms: {
     duration: string,
-    operator: above | below | equal,
+    operator: above | above_or_equals | below | below_or_equals | equal | not_equals,
     priority?: critical | warning,
     threshold: string,
     time_function: all | any
@@ -779,7 +779,7 @@ health_status is green, orange, red or unknown; orange is the REST spelling of t
 
 Record a deployment marker (version, commit, changelog) on an entity; markers cannot be deleted
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.newrelic.api.changeTracking.createDeployment({ entityGuid: 'MTIzNDU2N3xBUE18QVBQTElDQVRJT058MTEyOTA4Mg', version: '1.4.2', commit: 'a1b2c3d' });
