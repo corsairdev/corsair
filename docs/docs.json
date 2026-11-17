@@ -5388,6 +5388,14 @@
                 ]
               },
               {
+                "group": "2Captcha",
+                "pages": [
+                  "plugins/twocaptcha/overview",
+                  "plugins/twocaptcha/api",
+                  "plugins/twocaptcha/database"
+                ]
+              },
+              {
                 "group": "Typeform",
                 "pages": [
                   "plugins/typeform/overview",
