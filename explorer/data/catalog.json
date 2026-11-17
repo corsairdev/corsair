@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-16T07:44:56.547Z",
-  "corsairVersion": "0.1.200",
+  "generatedAt": "2026-11-17T00:02:03.119Z",
+  "corsairVersion": "0.1.202",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -8742,14 +8742,15 @@
     {
       "id": "vercel",
       "displayName": "Vercel",
-      "description": "Frontend cloud platform for deploying sites, serverless functions, and edge web applications.",
+      "description": "Manage Vercel projects, deployments, environment variables, domains, DNS, aliases, teams, webhooks and Edge Config.",
       "npmPackageName": "@corsair-dev/vercel",
       "authTypes": [
-        "api_key"
+        "api_key",
+        "oauth_2"
       ],
       "defaultAuthType": "api_key",
       "counts": {
-        "api": 14,
+        "api": 55,
         "webhooks": 4,
         "db": 6
       }
@@ -33197,7 +33198,7 @@
       "pluginId": "box",
       "kind": "api",
       "shortPath": "files.download",
-      "haystack": "files.download box.api.files.download download the content of a box file read"
+      "haystack": "files.download box.api.files.download download a file. a text file comes back as text, any other file as base64, up to about 700 kb; size and type are always returned. read"
     },
     {
       "pluginId": "box",
@@ -66635,7 +66636,7 @@
       "pluginId": "dropbox",
       "kind": "api",
       "shortPath": "files.download",
-      "haystack": "files.download dropbox.api.files.download download a file read"
+      "haystack": "files.download dropbox.api.files.download download a file. a text file comes back as text, any other file as base64, up to about 700 kb; size and type are always returned. read"
     },
     {
       "pluginId": "dropbox",
@@ -88445,7 +88446,7 @@
       "pluginId": "googledrive",
       "kind": "api",
       "shortPath": "files.download",
-      "haystack": "files.download googledrive.api.files.download download the content of a file read"
+      "haystack": "files.download googledrive.api.files.download download a file. a text file comes back as text, any other file as base64, up to about 700 kb; size and type are always returned. google docs, sheets and slides cannot be downloaded this way. read"
     },
     {
       "pluginId": "googledrive",
@@ -113267,25 +113268,25 @@
       "pluginId": "onedrive",
       "kind": "api",
       "shortPath": "items.download",
-      "haystack": "items.download onedrive.api.items.download download a file read"
+      "haystack": "items.download onedrive.api.items.download download a file. a text file comes back as text, any other file as base64, up to about 700 kb; size and type are always returned. read"
     },
     {
       "pluginId": "onedrive",
       "kind": "api",
       "shortPath": "items.downloadAsFormat",
-      "haystack": "items.downloadasformat onedrive.api.items.downloadasformat download a file converted to a different format read"
+      "haystack": "items.downloadasformat onedrive.api.items.downloadasformat download a file converted to a different format. a text file comes back as text, any other file as base64, up to about 700 kb; size and type are always returned. read"
     },
     {
       "pluginId": "onedrive",
       "kind": "api",
       "shortPath": "items.downloadByPath",
-      "haystack": "items.downloadbypath onedrive.api.items.downloadbypath download a file by path read"
+      "haystack": "items.downloadbypath onedrive.api.items.downloadbypath download a file by path. a text file comes back as text, any other file as base64, up to about 700 kb; size and type are always returned. read"
     },
     {
       "pluginId": "onedrive",
       "kind": "api",
       "shortPath": "items.downloadVersion",
-      "haystack": "items.downloadversion onedrive.api.items.downloadversion download a specific version of a file read"
+      "haystack": "items.downloadversion onedrive.api.items.downloadversion download a specific version of a file. a text file comes back as text, any other file as base64, up to about 700 kb; size and type are always returned. read"
     },
     {
       "pluginId": "onedrive",
@@ -146453,85 +146454,331 @@
       "pluginId": "vercel",
       "kind": "api",
       "shortPath": "aliases.assignAlias",
-      "haystack": "aliases.assignalias vercel.api.aliases.assignalias assign an alias write"
+      "haystack": "aliases.assignalias vercel.api.aliases.assignalias point a hostname at a deployment. if the hostname already serves another deployment it moves, so live traffic switches; the response names the old deployment so it can be moved back. write"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "aliases.deleteAlias",
+      "haystack": "aliases.deletealias vercel.api.aliases.deletealias remove an alias by id or hostname. the hostname stops serving the deployment until it is assigned again, and share links on it are lost. destructive"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "aliases.getAlias",
+      "haystack": "aliases.getalias vercel.api.aliases.getalias get one alias by id or hostname: the deployment and project it points at, redirect settings and creator. read"
     },
     {
       "pluginId": "vercel",
       "kind": "api",
       "shortPath": "aliases.getAliases",
-      "haystack": "aliases.getaliases vercel.api.aliases.getaliases get all aliases read"
+      "haystack": "aliases.getaliases vercel.api.aliases.getaliases list aliases (hostnames pointing at deployments), newest first, filtered by domain or project. page with until = pagination.next. read"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "aliases.getDeploymentAliases",
+      "haystack": "aliases.getdeploymentaliases vercel.api.aliases.getdeploymentaliases list the aliases (hostnames) currently pointing at a deployment. read"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "deployments.cancelDeployment",
+      "haystack": "deployments.canceldeployment vercel.api.deployments.canceldeployment stop a deployment that is still queued or building. fails with 400 once it is ready, error or already canceled. redeploy to build it again. write"
     },
     {
       "pluginId": "vercel",
       "kind": "api",
       "shortPath": "deployments.createDeployment",
-      "haystack": "deployments.createdeployment vercel.api.deployments.createdeployment create a deployment write"
+      "haystack": "deployments.createdeployment vercel.api.deployments.createdeployment start a deployment from a git ref, from inline files, or as a redeploy of an existing deployment. it builds in the background: follow readystate with getdeployment. target production replaces the live site once ready. destructive"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "deployments.deleteDeployment",
+      "haystack": "deployments.deletedeployment vercel.api.deployments.deletedeployment delete a deployment by id or hostname. its url stops serving and its build output and logs are gone. cannot be undone. destructive"
     },
     {
       "pluginId": "vercel",
       "kind": "api",
       "shortPath": "deployments.getDeployment",
-      "haystack": "deployments.getdeployment vercel.api.deployments.getdeployment get deployment details read"
+      "haystack": "deployments.getdeployment vercel.api.deployments.getdeployment get one deployment by id or hostname: readystate (queued, building, ready, error, canceled), url, aliases, creator, git metadata and error details. read"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "deployments.getDeploymentEvents",
+      "haystack": "deployments.getdeploymentevents vercel.api.deployments.getdeploymentevents read the build logs of a deployment: stdout/stderr lines and state changes, oldest first by default. returns what has been logged so far; it does not wait for new lines. read"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "deployments.getDeploymentFiles",
+      "haystack": "deployments.getdeploymentfiles vercel.api.deployments.getdeploymentfiles get the source file tree of a deployment made with the cli or the api files field. git deployments have no file tree and return 404. read"
     },
     {
       "pluginId": "vercel",
       "kind": "api",
       "shortPath": "deployments.getDeployments",
-      "haystack": "deployments.getdeployments vercel.api.deployments.getdeployments get all deployments read"
+      "haystack": "deployments.getdeployments vercel.api.deployments.getdeployments list deployments, newest first, filtered by project, environment, state, branch, commit or creator. page with until = pagination.next. read"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "dns.createRecord",
+      "haystack": "dns.createrecord vercel.api.dns.createrecord add a dns record to a domain whose dns is on vercel. fields depend on type: a, aaaa, alias, caa, cname, txt and ns take value; mx takes value and mxpriority; srv takes srv; https takes https. takes effect on live traffic and email. write"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "dns.deleteRecord",
+      "haystack": "dns.deleterecord vercel.api.dns.deleterecord delete a dns record from a domain. takes effect on live traffic and email, and the record cannot be restored, only recreated with a new id. destructive"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "dns.getRecords",
+      "haystack": "dns.getrecords vercel.api.dns.getrecords list the dns records in a domain's vercel dns zone, 20 per page by default. empty when the domain's dns is hosted elsewhere (check servicetype with domains.getdomain). for the next page pass pagination.next as until. read"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "dns.updateRecord",
+      "haystack": "dns.updaterecord vercel.api.dns.updaterecord change an existing dns record by id (from getrecords): name, value, type, ttl, mx priority, srv or https data, comment. takes effect on live traffic and email; read the record first to be able to restore it. write"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "domains.addDomain",
+      "haystack": "domains.adddomain vercel.api.domains.adddomain add a domain you already own to the account. no purchase or transfer. it may need ownership verification through dns before it serves; zone: true creates a vercel dns zone (use when its nameservers point at vercel). to serve it from a project, also call addprojectdomain. write"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "domains.addProjectDomain",
+      "haystack": "domains.addprojectdomain vercel.api.domains.addprojectdomain assign a domain to a project, optionally as a redirect or tied to a git branch or custom environment. if verified comes back false, set the record listed in verification, then call verifyprojectdomain. errors if the domain is already on the project. write"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "domains.deleteDomain",
+      "haystack": "domains.deletedomain vercel.api.domains.deletedomain remove a domain from the account. also removes its aliases and every dns record in its vercel dns zone; the records cannot be recovered. does not cancel a registration held at another registrar. destructive"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "domains.getDomain",
+      "haystack": "domains.getdomain vercel.api.domains.getdomain get one account domain by name: whether ownership is verified, current and intended nameservers, whether vercel serves its dns (servicetype), and purchase/expiry dates when bought through vercel. read"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "domains.getDomainConfig",
+      "haystack": "domains.getdomainconfig vercel.api.domains.getdomainconfig check whether a domain's dns points at vercel: misconfigured, configuredby (a, cname, http or null) and the recommended a and cname values to set at the dns provider. pass projectidorname for a domain not on a project yet. read"
     },
     {
       "pluginId": "vercel",
       "kind": "api",
       "shortPath": "domains.getDomains",
-      "haystack": "domains.getdomains vercel.api.domains.getdomains get all domains read"
+      "haystack": "domains.getdomains vercel.api.domains.getdomains list the domains in the account or team (apex domains, not per-project assignments), newest first, 20 per page by default. for the next page pass pagination.next as until. read"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "domains.getProjectDomain",
+      "haystack": "domains.getprojectdomain vercel.api.domains.getprojectdomain get one domain on a project, including the verification challenge (the dns record to set) when verified is false. read"
     },
     {
       "pluginId": "vercel",
       "kind": "api",
       "shortPath": "domains.getProjectDomains",
-      "haystack": "domains.getprojectdomains vercel.api.domains.getprojectdomains get project domains read"
+      "haystack": "domains.getprojectdomains vercel.api.domains.getprojectdomains list the domains assigned to a project (custom domains and *.vercel.app) with their redirect, git branch and verification state. filters: production, target, gitbranch, verified, redirects, redirect, customenvironmentid. read"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "domains.removeProjectDomain",
+      "haystack": "domains.removeprojectdomain vercel.api.domains.removeprojectdomain unassign a domain from a project; it stops serving that project immediately. the domain stays in the account and can be added back, though it may need verifying again. removeredirects: true also removes the project domains that redirect to it. destructive"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "domains.updateProjectDomain",
+      "haystack": "domains.updateprojectdomain vercel.api.domains.updateprojectdomain change a project domain's git branch or redirect (target domain and status code). pass null to clear a field. write"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "domains.verifyProjectDomain",
+      "haystack": "domains.verifyprojectdomain vercel.api.domains.verifyprojectdomain re-check an unverified project domain's verification challenge and mark it verified once the dns record is in place. errors if the challenge isn't satisfied yet. write"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "edgeConfig.getEdgeConfig",
+      "haystack": "edgeconfig.getedgeconfig vercel.api.edgeconfig.getedgeconfig get one edge config (global config) by id: slug, item count, size and digest. read"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "edgeConfig.getEdgeConfigItem",
+      "haystack": "edgeconfig.getedgeconfigitem vercel.api.edgeconfig.getedgeconfigitem read one edge config (global config) item by key. returns found: false when the key does not exist. read"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "edgeConfig.getEdgeConfigItems",
+      "haystack": "edgeconfig.getedgeconfigitems vercel.api.edgeconfig.getedgeconfigitems list every item (key, json value, description) stored in an edge config (global config). read"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "edgeConfig.getEdgeConfigs",
+      "haystack": "edgeconfig.getedgeconfigs vercel.api.edgeconfig.getedgeconfigs list the team’s edge configs (called global config in vercel’s api): id, slug, item count and size. read"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "edgeConfig.updateEdgeConfigItems",
+      "haystack": "edgeconfig.updateedgeconfigitems vercel.api.edgeconfig.updateedgeconfigitems change several edge config (global config) items in one request: create, update, upsert or delete items by key. a delete removes the item and its value for good. write"
     },
     {
       "pluginId": "vercel",
       "kind": "api",
       "shortPath": "envs.createEnvVariable",
-      "haystack": "envs.createenvvariable vercel.api.envs.createenvvariable create an environment variable for a project (supports plain, secret, encrypted, and sensitive types) write"
+      "haystack": "envs.createenvvariable vercel.api.envs.createenvvariable add one or several environment variables to a project (key, value, type, target environments, optional git branch). variables that already exist are listed under failed unless upsert is true. takes effect on the next deployment. write"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "envs.deleteEnvVariable",
+      "haystack": "envs.deleteenvvariable vercel.api.envs.deleteenvvariable delete an environment variable by id. its value is gone for good; deployments built after this no longer get it. destructive"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "envs.getEnvVariable",
+      "haystack": "envs.getenvvariable vercel.api.envs.getenvvariable get one environment variable by id, including its decrypted value (the secret itself) for encrypted and plain variables. sensitive variables never return a value. read"
     },
     {
       "pluginId": "vercel",
       "kind": "api",
       "shortPath": "envs.getEnvVariables",
-      "haystack": "envs.getenvvariables vercel.api.envs.getenvvariables get environment variables for a project (may include secret/sensitive values) read"
+      "haystack": "envs.getenvvariables vercel.api.envs.getenvvariables list a project’s environment variables: key, type, targets, git branch and id. values of encrypted and sensitive variables come back encrypted (plain ones as is); use getenvvariable to read one decrypted value. read"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "envs.updateEnvVariable",
+      "haystack": "envs.updateenvvariable vercel.api.envs.updateenvvariable change an environment variable by id: its value, key, type, targets, git branch or comment. takes effect on the next deployment. write"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "projects.createProject",
+      "haystack": "projects.createproject vercel.api.projects.createproject create a project, optionally connected to a git repo and with initial environment variables. write"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "projects.deleteProject",
+      "haystack": "projects.deleteproject vercel.api.projects.deleteproject delete a project with all its deployments, domains and environment variables. cannot be undone. destructive"
     },
     {
       "pluginId": "vercel",
       "kind": "api",
       "shortPath": "projects.getProject",
-      "haystack": "projects.getproject vercel.api.projects.getproject get project details read"
+      "haystack": "projects.getproject vercel.api.projects.getproject get a project by id or name, with its settings and latest deployments. read"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "projects.getProjectMembers",
+      "haystack": "projects.getprojectmembers vercel.api.projects.getprojectmembers list the members of a project and their project roles. read"
     },
     {
       "pluginId": "vercel",
       "kind": "api",
       "shortPath": "projects.getProjects",
-      "haystack": "projects.getprojects vercel.api.projects.getprojects get all projects read"
+      "haystack": "projects.getprojects vercel.api.projects.getprojects list projects in the team, newest first, with optional search and repo filters. read"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "projects.pauseProject",
+      "haystack": "projects.pauseproject vercel.api.projects.pauseproject pause a project: its production deployment stops serving until unpaused. write"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "projects.promoteDeployment",
+      "haystack": "projects.promotedeployment vercel.api.projects.promotedeployment make an existing production build (an earlier or staged production deployment) the live production deployment, without rebuilding. vercel refuses preview deployments (422); redeploy those with target production instead. runs in the background: getproject with rollbackinfo shows its jobstatus. write"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "projects.rollbackDeployment",
+      "haystack": "projects.rollbackdeployment vercel.api.projects.rollbackdeployment roll production back to an earlier deployment (instant rollback). write"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "projects.unpauseProject",
+      "haystack": "projects.unpauseproject vercel.api.projects.unpauseproject unpause a paused project so production serves again. write"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "projects.updateProject",
+      "haystack": "projects.updateproject vercel.api.projects.updateproject update project settings: name, framework, build/dev/install commands, node version, protection. write"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "teams.getTeam",
+      "haystack": "teams.getteam vercel.api.teams.getteam get a team by id or slug (default: the connected team): name, slug, plan, creation date and the user’s membership. read"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "teams.getTeamMembers",
+      "haystack": "teams.getteammembers vercel.api.teams.getteammembers list a team’s members (default: the connected team) with their role, username and email. filter by role or search by name, username or email. read"
     },
     {
       "pluginId": "vercel",
       "kind": "api",
       "shortPath": "teams.getTeams",
-      "haystack": "teams.getteams vercel.api.teams.getteams get all teams read"
+      "haystack": "teams.getteams vercel.api.teams.getteams list the teams the token’s user belongs to, with each team’s id, slug, name and the user’s role. read"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "user.getUser",
+      "haystack": "user.getuser vercel.api.user.getuser get the user the token belongs to: id, username, name, email and default team id. read"
     },
     {
       "pluginId": "vercel",
       "kind": "api",
       "shortPath": "webhooks.createWebhook",
-      "haystack": "webhooks.createwebhook vercel.api.webhooks.createwebhook create a webhook write"
+      "haystack": "webhooks.createwebhook vercel.api.webhooks.createwebhook register a url to receive vercel events (deployments, projects, domains, env vars and more), for all projects or chosen ones. returns the signing secret used to verify deliveries; it is shown only once, so store it. write"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "webhooks.deleteWebhook",
+      "haystack": "webhooks.deletewebhook vercel.api.webhooks.deletewebhook delete a webhook: vercel stops sending events to its url. a replacement gets a new id and signing secret. destructive"
+    },
+    {
+      "pluginId": "vercel",
+      "kind": "api",
+      "shortPath": "webhooks.getWebhook",
+      "haystack": "webhooks.getwebhook vercel.api.webhooks.getwebhook get one webhook by id: url, events and projects. read"
     },
     {
       "pluginId": "vercel",
       "kind": "api",
       "shortPath": "webhooks.getWebhooks",
-      "haystack": "webhooks.getwebhooks vercel.api.webhooks.getwebhooks get all webhooks read"
+      "haystack": "webhooks.getwebhooks vercel.api.webhooks.getwebhooks list the team’s webhooks: url, subscribed events and the projects each covers. filter by project. read"
     },
     {
       "pluginId": "vercel",
