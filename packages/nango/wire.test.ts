@@ -710,6 +710,22 @@ describe('nango inputs', () => {
 		).toBe(false);
 	});
 
+	it('requires a variant when a sync is given as an object', () => {
+		const trigger = nangoEndpointSchemas['syncs.trigger'].input;
+		expect(
+			trigger.safeParse({
+				provider_config_key: 'p',
+				syncs: [{ name: 'forms' }],
+			}).success,
+		).toBe(false);
+		expect(
+			trigger.safeParse({
+				provider_config_key: 'p',
+				syncs: [{ name: 'forms', variant: 'base' }],
+			}).success,
+		).toBe(true);
+	});
+
 	it('takes the key only from the stored credentials, never from input', () => {
 		const secretNames = ['api_key', 'apiKey', 'secret_key', 'session_token'];
 		for (const schema of Object.values(nangoEndpointSchemas)) {
@@ -778,6 +794,31 @@ describe('nango responses and errors', () => {
 		});
 		expect(serialized).not.toContain('third-party-secret');
 		expect(serialized).not.toContain('environment-key');
+	});
+
+	it('reports the first validation error Nango lists', async () => {
+		// Real body from POST /sync/trigger with a sync object that has no variant.
+		mockFetch(
+			{
+				error: {
+					code: 'invalid_body',
+					errors: [
+						{
+							code: 'invalid_union',
+							message:
+								'Each sync must be either a string or a { name: string, variant: string } object',
+							path: ['syncs', '0'],
+						},
+					],
+				},
+			},
+			400,
+		);
+		await expect(
+			api.syncs.trigger({ provider_config_key: 'p', syncs: ['forms'] }),
+		).rejects.toThrow(
+			'Nango 400 invalid_body: syncs.0: Each sync must be either a string or a { name: string, variant: string } object',
+		);
 	});
 
 	it('lets core retry a 429 and honour Retry-After', async () => {

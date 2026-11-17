@@ -32,6 +32,21 @@ function readString(
 }
 
 /**
+ * Nango's `invalid_body` / `invalid_query_params` errors carry no message, only
+ * `errors: [{ code, message, path }]`; the first one says what to fix.
+ */
+// unknown: the errors list is untrusted error JSON.
+function validationDetail(errors: unknown): string | undefined {
+	if (!Array.isArray(errors) || errors.length === 0) return undefined;
+	const first = asRecord(errors[0]);
+	const message = readString(first, 'message');
+	if (!message) return undefined;
+	const path = Array.isArray(first?.path) ? first.path.join('.') : '';
+	const more = errors.length > 1 ? ` (+${errors.length - 1} more)` : '';
+	return `${path ? `${path}: ` : ''}${message}${more}`;
+}
+
+/**
  * Reads Nango's `{ error: { code, message } }` envelope. Older routes answer
  * `{ error: "text" }` or `{ message }`; a proxied upstream error can be any
  * body, so only these fields are kept.
@@ -49,7 +64,10 @@ export function readNangoError(body: unknown): {
 	const nested = asRecord(error);
 	return {
 		code: readString(nested, 'code'),
-		message: readString(nested, 'message') ?? readString(record, 'message'),
+		message:
+			readString(nested, 'message') ??
+			readString(record, 'message') ??
+			validationDetail(nested?.errors),
 	};
 }
 

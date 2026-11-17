@@ -435,14 +435,18 @@ const GetProviderInput = z.object({
 const SyncSelector = z
 	.union([
 		z.array(z.string()),
+		// Nango refuses an object without a variant (live 11-18), although its
+		// reference marks variant optional; the default variant is "base".
 		z.array(
 			z.object({
 				name: z.string(),
-				variant: z.string().optional(),
+				variant: z.string().min(1),
 			}),
 		),
 	])
-	.describe('Sync names, or { name, variant } objects.');
+	.describe(
+		'Sync names, or { name, variant } objects (variant is required; the default is "base").',
+	);
 const SyncScope = {
 	provider_config_key: ProviderConfigKey,
 	connection_id: z
