@@ -47,9 +47,8 @@ function idText(value: unknown): string | undefined {
 }
 
 async function save<T extends { id: string }>(
-	table:
-		| { upsertByEntityId: (id: string, row: T) => Promise<unknown> }
-		| undefined,
+	table: // unknown: only completion matters; the ORM's return value is not used.
+	{ upsertByEntityId: (id: string, row: T) => Promise<unknown> } | undefined,
 	row: T,
 	label: string,
 ) {
@@ -99,6 +98,7 @@ function sectionsOf(body: unknown): Record<string, unknown> {
 	);
 }
 
+// unknown: the raw response body; only search_metadata and search_parameters are read.
 function searchRow(body: unknown) {
 	const metadata = asRecord(asRecord(body)?.search_metadata);
 	const parameters = asRecord(asRecord(body)?.search_parameters);
@@ -115,6 +115,7 @@ export const getAccount: CorsairEndpoint<
 	AccountResponse
 > = async (ctx, input) => {
 	EmptyInputSchema.parse(input ?? {});
+	// unknown: raw JSON (or HTML text); the helpers above narrow it field by field.
 	const body = await searchApiGet<unknown>(ctx.key, '/api/v1/me');
 	const accountRow = asRecord(asRecord(body)?.account);
 	const usage = asRecord(asRecord(body)?.api_usage);
@@ -149,6 +150,7 @@ export const listLocations: CorsairEndpoint<
 	LocationListResponse
 > = async (ctx, input) => {
 	const parsed = LocationInputSchema.parse(input ?? {});
+	// unknown: raw JSON (or HTML text); the helpers above narrow it field by field.
 	const body = await searchApiGet<unknown>(ctx.key, '/api/v1/locations', {
 		q: parsed.q,
 		limit: parsed.limit,
@@ -186,6 +188,7 @@ export const runSearch: CorsairEndpoint<
 > = async (ctx, input) => {
 	const parsed = SearchInputSchema.parse(input ?? {});
 	const { params, ...named } = parsed;
+	// unknown: raw JSON (or HTML text); the helpers above narrow it field by field.
 	const body = await searchApiGet<unknown>(ctx.key, '/api/v1/search', {
 		...params,
 		...named,
@@ -213,6 +216,7 @@ export const getSearch: CorsairEndpoint<
 	SearchResponse
 > = async (ctx, input) => {
 	const parsed = IdInputSchema.parse(input ?? {});
+	// unknown: raw JSON (or HTML text); the helpers above narrow it field by field.
 	const body = await searchApiGet<unknown>(
 		ctx.key,
 		`/api/v1/searches/${encodeURIComponent(parsed.id)}`,
@@ -240,6 +244,7 @@ export const getSearchHtml: CorsairEndpoint<
 	HtmlResponse
 > = async (ctx, input) => {
 	const parsed = IdInputSchema.parse(input ?? {});
+	// unknown: raw JSON (or HTML text); the helpers above narrow it field by field.
 	const body = await searchApiGet<unknown>(
 		ctx.key,
 		`/api/v1/searches/${encodeURIComponent(parsed.id)}.html`,
