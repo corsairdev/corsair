@@ -70,7 +70,13 @@ export const availableDates: NasaEndpoints['epicAvailableDates'] = (
 					const date = (entry as { date?: unknown } | null)?.date; // unknown: narrowed
 					return typeof date === 'string' ? date : entry;
 				});
-				return { dates };
+				// /available answers oldest first; sorting keeps that order for the
+				// object form too. YYYY-MM-DD strings sort by date; anything else is
+				// left for the output schema to reject.
+				const sorted = dates.every((date) => typeof date === 'string')
+					? [...dates].sort()
+					: dates;
+				return { dates: sorted };
 			},
 			log: (_, result) => ({ count: result.dates.length }),
 		},
