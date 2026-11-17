@@ -6,7 +6,7 @@ description: "Sanity's Content Lake from an agent. Query documents with GROQ, cr
 
 Use **Sanity** through Corsair: one client, typed API calls, and incoming webhooks.
 
-Connect with an API token from sanity.io/manage under API > Tokens, plus the project id and the dataset you use most. A Viewer token can read. Writing documents needs Editor. Datasets and webhooks need a token with the Administrator or Developer role. Each call can name another dataset with `dataset`.
+Connect with an API token from sanity.io/manage under API &gt; Tokens, plus the project id and the dataset you use most. A Viewer token can read. Writing documents needs Editor. Datasets and webhooks need a token with the Administrator or Developer role. Each call can name another dataset with `dataset`.
 
 Writes follow the Studio's draft model. `documents.create` and `documents.edit` change the draft (`drafts.<id>`), and readers of published content see nothing until `documents.publish`. Pass `publish: true` to do both in one transaction. `documents.patch` and `documents.mutate` write the exact ids you give them, so a published id changes the live document at once.
 
