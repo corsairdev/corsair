@@ -1,21 +1,12 @@
-import type {
-	ApiRequestOptions,
-	OpenAPIConfig,
-	RateLimitConfig,
-} from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export const PLATE_API_BASE = 'https://api.platerecognizer.com';
 
-const NO_TRANSPORT_RETRIES: RateLimitConfig = {
-	enabled: true,
-	maxRetries: 0,
-	initialRetryDelay: 0,
-	backoffMultiplier: 1,
-	headerNames: {
-		retryAfter: 'retry-after',
-	},
-};
+// No rateLimitConfig override: core's default retries a 429 up to three times
+// with backoff. Snapshot's free plan allows one call a second and answers a
+// burst with 429 ("Expected available in 1 second"); an exhausted monthly
+// allowance is a 403, which is not retried.
 
 function config(apiKey: string, timeoutMs?: number): OpenAPIConfig {
 	return {
@@ -33,9 +24,7 @@ function config(apiKey: string, timeoutMs?: number): OpenAPIConfig {
 
 export async function plateGet<T>(apiKey: string, url: string): Promise<T> {
 	const requestOptions: ApiRequestOptions = { method: 'GET', url };
-	return await request<T>(config(apiKey), requestOptions, {
-		rateLimitConfig: NO_TRANSPORT_RETRIES,
-	});
+	return await request<T>(config(apiKey), requestOptions);
 }
 
 export async function platePostForm<T>(
@@ -51,9 +40,7 @@ export async function platePostForm<T>(
 		formData,
 	};
 	try {
-		return await request<T>(config(apiKey, timeoutMs), requestOptions, {
-			rateLimitConfig: NO_TRANSPORT_RETRIES,
-		});
+		return await request<T>(config(apiKey, timeoutMs), requestOptions);
 	} catch (error) {
 		throw withoutImageData(error);
 	}

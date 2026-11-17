@@ -188,6 +188,12 @@ describe('plates.read', () => {
 		expect(result.results[1]?.plate).toBeNull();
 	});
 
+	it("leaves core's 429 retry on, since the free plan allows one call a second", async () => {
+		mockRequest.mockResolvedValue({ results: [] });
+		await readPlate(context('tok_test'), { upload: 'aW1hZ2U=' });
+		expect(mockRequest.mock.calls[0]?.[2]?.rateLimitConfig).toBeUndefined();
+	});
+
 	it('refuses both or neither of upload and uploadUrl before any request', async () => {
 		await expect(readPlate(context('tok_test'), {})).rejects.toThrow(
 			/exactly one/,
