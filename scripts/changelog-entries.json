@@ -8677,5 +8677,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-17",
+    "package": "@corsair-dev/newrelic",
+    "dir": "packages/newrelic",
+    "name": "New Relic",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
