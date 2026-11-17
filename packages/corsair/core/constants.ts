@@ -612,6 +612,7 @@ export const BaseProviders = [
 	'textcortex',
 	'teamcamp',
 	'teams',
+	'teamwork',
 	'telegram',
 	'textit',
 	'textrazor',
@@ -1308,6 +1309,7 @@ export const ProviderDisplayNames = {
 	textcortex: 'TextCortex',
 	teamcamp: 'Teamcamp',
 	teams: 'Teams',
+	teamwork: 'Teamwork',
 	telegram: 'Telegram',
 	textit: 'TextIt',
 	textrazor: 'TextRazor',
@@ -2011,6 +2013,7 @@ export type AllProviders =
 	| 'textcortex'
 	| 'teamcamp'
 	| 'teams'
+	| 'teamwork'
 	| 'telegram'
 	| 'textit'
 	| 'textrazor'

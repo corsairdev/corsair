@@ -5008,6 +5008,14 @@
                 ]
               },
               {
+                "group": "Teamwork",
+                "pages": [
+                  "plugins/teamwork/overview",
+                  "plugins/teamwork/api",
+                  "plugins/teamwork/database"
+                ]
+              },
+              {
                 "group": "Telegram",
                 "pages": [
                   "plugins/telegram/overview",
