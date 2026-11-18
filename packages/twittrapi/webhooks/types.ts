@@ -67,7 +67,9 @@ export function headerValue(
 	if (typeof direct === 'string') return direct;
 	if (Array.isArray(direct)) return direct[0];
 	const wanted = name.toLowerCase();
-	const key = Object.keys(headers).find((k) => k.toLowerCase() === wanted);
+	const key = Object.keys(headers).find(
+		(k) => k.toLowerCase() === wanted && headers[k] !== undefined,
+	);
 	const value = key === undefined ? undefined : headers[key];
 	if (typeof value === 'string') return value;
 	if (Array.isArray(value)) return value[0];
