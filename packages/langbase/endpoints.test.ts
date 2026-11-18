@@ -58,7 +58,9 @@ describe('Langbase endpoints', () => {
 		});
 
 		it('pipes.get calls GET /pipes/:name', async () => {
-			mockFetchResponse({ pipe: { name: 'support-agent', model: 'openai:gpt-4o' } });
+			mockFetchResponse({
+				pipe: { name: 'support-agent', model: 'openai:gpt-4o' },
+			});
 			const res = await pipes.get({ name: 'support-agent' }, 'test-key');
 			expect(capturedMethod).toBe('GET');
 			expect(capturedUrl).toContain('/v1/pipes/support-agent');

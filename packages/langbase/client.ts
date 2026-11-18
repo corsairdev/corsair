@@ -64,6 +64,8 @@ export async function makeLangbaseRequest<T>(
 		if (error instanceof Error) {
 			throw error;
 		}
-		throw new LangbaseAPIError('Unknown error occurred during Langbase request');
+		throw new LangbaseAPIError(
+			'Unknown error occurred during Langbase request',
+		);
 	}
 }

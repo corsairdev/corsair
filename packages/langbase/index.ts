@@ -1,4 +1,3 @@
-import { AuthMissingError } from 'corsair/core';
 import type {
 	AuthTypes,
 	BindEndpoints,
@@ -13,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { memory, pipes, tools } from './endpoints';
 import type {
 	LangbaseEndpointInputs,
@@ -45,11 +45,12 @@ export type LangbaseBoundEndpoints = BindEndpoints<
 	typeof langbaseEndpointsNested
 >;
 
-type LangbaseEndpoint<K extends keyof LangbaseEndpointOutputs> = CorsairEndpoint<
-	LangbaseContext,
-	LangbaseEndpointInputs[K],
-	LangbaseEndpointOutputs[K]
->;
+type LangbaseEndpoint<K extends keyof LangbaseEndpointOutputs> =
+	CorsairEndpoint<
+		LangbaseContext,
+		LangbaseEndpointInputs[K],
+		LangbaseEndpointOutputs[K]
+	>;
 
 export type LangbaseEndpoints = {
 	'pipes.run': LangbaseEndpoint<'pipes.run'>;

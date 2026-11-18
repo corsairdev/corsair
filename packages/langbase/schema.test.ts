@@ -110,9 +110,9 @@ describe('Langbase endpoint schemas', () => {
 			true,
 		);
 
-		expect(GetMemoryInputSchema.safeParse({ name: 'docs-memory' }).success).toBe(
-			true,
-		);
+		expect(
+			GetMemoryInputSchema.safeParse({ name: 'docs-memory' }).success,
+		).toBe(true);
 		expect(GetMemoryInputSchema.safeParse({ name: '' }).success).toBe(false);
 		expect(
 			GetMemoryOutputSchema.safeParse({
@@ -133,9 +133,9 @@ describe('Langbase endpoint schemas', () => {
 			}).success,
 		).toBe(true);
 
-		expect(DeleteMemoryInputSchema.safeParse({ name: 'old-memory' }).success).toBe(
-			true,
-		);
+		expect(
+			DeleteMemoryInputSchema.safeParse({ name: 'old-memory' }).success,
+		).toBe(true);
 		expect(
 			DeleteMemoryOutputSchema.safeParse({
 				success: true,

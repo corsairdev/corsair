@@ -23,10 +23,7 @@ import {
 } from './types';
 
 export const pipes = {
-	run: async (
-		input: RunPipeInput,
-		apiKey?: string,
-	): Promise<RunPipeOutput> => {
+	run: async (input: RunPipeInput, apiKey?: string): Promise<RunPipeOutput> => {
 		const raw = await makeLangbaseRequest<unknown>('/pipes/run', apiKey, {
 			method: 'POST',
 			body: input as Record<string, unknown>,
