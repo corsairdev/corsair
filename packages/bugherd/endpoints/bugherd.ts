@@ -15,6 +15,10 @@ import type {
 	BugherdUserRecord,
 	BugherdWebhookRecord,
 } from './types';
+import {
+	BugherdEndpointInputSchemas,
+	BugherdEndpointOutputSchemas,
+} from './types';
 
 type Endpoint<K extends keyof BugherdEndpointOutputs> = CorsairEndpoint<
 	BugherdContext,
@@ -35,8 +39,19 @@ function store(ctx: BugherdContext) {
 type Table<T> = {
 	upsertByEntityId: (id: string, row: T) => Promise<unknown>;
 	deleteByEntityId: (id: string) => Promise<unknown>;
+	findByEntityId: (id: string) => Promise<{ data: unknown } | null>;
+	search: (options: {
+		data: Record<string, string | number>;
+		limit?: number;
+	}) => Promise<Array<{ entity_id: string }>>;
 };
 
+/**
+ * Upserts rows, keeping fields a shorter response leaves out. BugHerd's list
+ * routes return fewer fields than its detail routes (projects.list has no
+ * is_active), and an upsert alone would replace the saved row with the
+ * shorter one.
+ */
 async function save<T extends { id: string }>(
 	table: Table<T> | undefined,
 	rows: T[],
@@ -45,7 +60,15 @@ async function save<T extends { id: string }>(
 	if (!table) return;
 	for (const row of rows) {
 		try {
-			await table.upsertByEntityId(row.id, row);
+			const given = Object.fromEntries(
+				Object.entries(row).filter(([, value]) => value !== undefined),
+			);
+			const existing = await table.findByEntityId(row.id);
+			const saved =
+				existing?.data && typeof existing.data === 'object'
+					? (existing.data as Partial<T>)
+					: {};
+			await table.upsertByEntityId(row.id, { ...saved, ...given } as T);
 		} catch {
 			console.warn(`Failed to save BugHerd ${label}`);
 		}
@@ -54,7 +77,7 @@ async function save<T extends { id: string }>(
 
 async function drop(
 	table: Pick<Table<never>, 'deleteByEntityId'> | undefined,
-	id: number,
+	id: number | string,
 	label: string,
 ) {
 	if (!table) return;
@@ -63,6 +86,30 @@ async function drop(
 	} catch {
 		console.warn(`Failed to remove BugHerd ${label}`);
 	}
+}
+
+/** Removes every local row whose data matches `where` (e.g. a task's comments). */
+async function dropWhere(
+	table: Pick<Table<never>, 'deleteByEntityId' | 'search'> | undefined,
+	where: Record<string, string | number>,
+	label: string,
+): Promise<string[]> {
+	if (!table) return [];
+	try {
+		const rows = await table.search({ data: where, limit: 1000 });
+		for (const row of rows) await drop(table, row.entity_id, label);
+		return rows.map((row) => row.entity_id);
+	} catch {
+		console.warn(`Failed to remove BugHerd ${label}s`);
+		return [];
+	}
+}
+
+/** A deleted task takes its saved comments and attachments with it. */
+async function dropTaskChildren(ctx: BugherdContext, taskId: number | string) {
+	const db = store(ctx);
+	await dropWhere(db?.comments, { task_id: Number(taskId) }, 'comment');
+	await dropWhere(db?.attachments, { task_id: Number(taskId) }, 'attachment');
 }
 
 const projectRow = (p: BugherdProjectRecord) => ({
@@ -135,6 +182,7 @@ const userRow = (u: BugherdUserRecord) => ({
  * Projects carry the project's widget key (`api_key`), which lets anyone post
  * feedback into the project. It is a credential, so it never leaves the plugin.
  */
+// Projects are loose objects: BugHerd adds fields the schema doesn't list.
 function withoutWidgetKey<T extends Record<string, unknown>>(project: T): T {
 	if (!project || typeof project !== 'object' || !('api_key' in project))
 		return project;
@@ -152,6 +200,7 @@ function cleanProject<T extends { project: BugherdProjectRecord }>(body: T): T {
 	return { ...body, project: withoutWidgetKey(body.project) };
 }
 
+// Input fields that are zod-checked strings, numbers or booleans.
 function query(values: Record<string, unknown>): BugherdQuery | undefined {
 	const out: BugherdQuery = {};
 	for (const [key, value] of Object.entries(values)) {
@@ -161,6 +210,7 @@ function query(values: Record<string, unknown>): BugherdQuery | undefined {
 	return Object.keys(out).length ? out : undefined;
 }
 
+// Zod-checked input fields, passed through to a JSON body.
 function defined(values: Record<string, unknown>): Record<string, unknown> {
 	return Object.fromEntries(
 		Object.entries(values).filter(([, value]) => value !== undefined),
@@ -377,7 +427,15 @@ export const deleteProject: Endpoint<'deleteProject'> = async (ctx, input) => {
 	const result = await makeBugherdRequest<
 		BugherdEndpointOutputs['deleteProject']
 	>(`${projectPath(input.project_id)}.json`, ctx.key, { method: 'DELETE' });
-	await drop(store(ctx)?.projects, input.project_id, 'project');
+	const db = store(ctx);
+	await drop(db?.projects, input.project_id, 'project');
+	await dropWhere(db?.columns, { project_id: input.project_id }, 'column');
+	for (const taskId of await dropWhere(
+		db?.tasks,
+		{ project_id: input.project_id },
+		'task',
+	))
+		await dropTaskChildren(ctx, taskId);
 	await logEventFromContext(
 		ctx,
 		'bugherd.projects.delete',
@@ -436,6 +494,7 @@ export const addGuestToProject: Endpoint<'addGuestToProject'> = async (
 async function listTaskRoute(
 	ctx: BugherdContext,
 	path: string,
+	// Zod-checked filters for the query string.
 	params: Record<string, unknown>,
 	event: string,
 	projectId: number,
@@ -498,6 +557,7 @@ async function oneTask(
 	path: string,
 	event: string,
 	method: 'GET' | 'POST' | 'PUT' = 'GET',
+	// Zod-checked input, wrapped as BugHerd expects ({ task: ... }).
 	body?: Record<string, unknown>,
 ): Promise<BugherdEndpointOutputs['showTask']> {
 	const result = await makeBugherdRequest<BugherdEndpointOutputs['showTask']>(
@@ -563,6 +623,7 @@ export const deleteTask: Endpoint<'deleteTask'> = async (ctx, input) => {
 		{ method: 'DELETE' },
 	);
 	await drop(store(ctx)?.tasks, input.task_id, 'task');
+	await dropTaskChildren(ctx, input.task_id);
 	await logEventFromContext(
 		ctx,
 		'bugherd.tasks.delete',
@@ -579,6 +640,13 @@ export const moveTasks: Endpoint<'moveTasks'> = async (ctx, input) => {
 		ctx.key,
 		{ method: 'POST', body: { destination_project_id, task_ids } },
 	);
+	// Saved rows still name the old project; the next read re-saves them.
+	for (const localId of task_ids)
+		await dropWhere(
+			store(ctx)?.tasks,
+			{ project_id, local_task_id: localId },
+			'task',
+		);
 	await logEventFromContext(
 		ctx,
 		'bugherd.tasks.move',
@@ -724,7 +792,7 @@ export const uploadAttachment: Endpoint<'uploadAttachment'> = async (
 		{
 			method: 'POST',
 			query: { file_name: file.filename },
-			file: { data: file.file, contentType: file.contentType },
+			file: file.file,
 		},
 	);
 };
@@ -771,6 +839,7 @@ async function oneColumn(
 	path: string,
 	event: string,
 	method: 'GET' | 'POST' | 'PUT' = 'GET',
+	// Zod-checked input, wrapped as BugHerd expects ({ task: ... }).
 	body?: Record<string, unknown>,
 ): Promise<BugherdEndpointOutputs['showColumn']> {
 	const result = await makeBugherdRequest<BugherdEndpointOutputs['showColumn']>(
@@ -875,3 +944,23 @@ export const deleteWebhook: Endpoint<'deleteWebhook'> = async (ctx, input) => {
 	);
 	return result;
 };
+
+// ── Validation ────────────────────────────────────────────────────────────────
+
+/**
+ * Core hands the input to the handler as given and doesn't run
+ * endpointSchemas, so each endpoint checks its input (ids, enums, the
+ * user_id-or-email rule) before calling BugHerd, and its response after.
+ */
+export function validated<K extends keyof BugherdEndpointOutputs>(
+	name: K,
+	handler: Endpoint<K>,
+): Endpoint<K> {
+	return async (ctx, input) => {
+		const parsed = BugherdEndpointInputSchemas[name].parse(input ?? {});
+		const result = await handler(ctx, parsed as BugherdEndpointInputs[K]);
+		return BugherdEndpointOutputSchemas[name].parse(
+			result,
+		) as BugherdEndpointOutputs[K];
+	};
+}
