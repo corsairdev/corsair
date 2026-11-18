@@ -441,6 +441,7 @@ export const BaseProviders = [
 	'moonclerk',
 	'motion',
 	'mrscraper',
+	'nango',
 	'nanonets',
 	'nasa',
 	'nasdaq',
@@ -1168,6 +1169,7 @@ export const ProviderDisplayNames = {
 	moonclerk: 'MoonClerk',
 	motion: 'Motion',
 	mrscraper: 'MrScraper',
+	nango: 'Nango',
 	nanonets: 'Nanonets',
 	nasa: 'NASA',
 	nasdaq: 'Nasdaq Data Link',
@@ -1902,6 +1904,7 @@ export type AllProviders =
 	| 'moonclerk'
 	| 'motion'
 	| 'mrscraper'
+	| 'nango'
 	| 'nanonets'
 	| 'nasa'
 	| 'nasdaq'

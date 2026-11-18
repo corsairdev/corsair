@@ -1,0 +1,64 @@
+displayName: Nango
+description: Manage Nango integrations, connections, Connect sessions, syncs and synced records, call tools, and proxy requests to your end users' APIs.
+domain: nango.dev
+overviewNote: |
+  The [Nango API](https://nango.dev/docs/reference/api) authenticates with an environment secret key (Environment settings > API keys). Use the key of the environment you want the agent to work in (dev or prod); a scoped key limits which operations succeed.
+
+  The plugin covers integrations, connections, Connect sessions, functions, syncs and records, tool calls, legacy actions, providers, environment variables and the proxy (GET, POST, PUT, PATCH, DELETE).
+
+  **Secrets.** `connections.get` drops the connection's third-party credentials unless you pass `include_credentials: true`, and `connections.import` never returns the credentials it sent. `integrations.get` with `include: ["credentials"]` and `environment.getVariables` return secrets in plain text. Errors never carry the request body or the environment key.
+
+  **Risk.** Proxy writes, tool calls and legacy actions act on your end customer's third-party account, so they are `destructive`, as are deletes, `connections.setMetadata` (replaces all metadata) and `connections.import` (can overwrite a connection's credentials).
+
+  Not included: environment and API-key administration, webhook signing-key rotation, function compile/deploy, sync variants, record pruning and inbound webhooks.
+examples:
+  read:
+    path: connections.list
+    args: { tags: { end_user_id: user-123 }, limit: 20 }
+  write:
+    path: sessions.create
+    args: { tags: { end_user_id: user-123 }, allowed_integrations: [github] }
+apiExamples:
+  connections.import: { provider_config_key: my-api, connection_id: user-123, credentials: { type: API_KEY, apiKey: placeholder } }
+  connections.list: { tags: { end_user_id: user-123 } }
+  connections.get: { connectionId: user-123, provider_config_key: github }
+  connections.patch: { connectionId: user-123, provider_config_key: github, body: { tags: { plan: pro } } }
+  connections.setMetadata: { connection_id: user-123, provider_config_key: github, metadata: { team: core } }
+  connections.updateMetadata: { connection_id: user-123, provider_config_key: github, metadata: { team: core } }
+  connections.delete: { connectionId: user-123, provider_config_key: github }
+  sessions.create: { tags: { end_user_id: user-123 }, allowed_integrations: [github] }
+  sessions.reconnect: { connection_id: user-123, integration_id: github }
+  integrations.list: {}
+  integrations.get: { uniqueKey: github }
+  integrations.create: { unique_key: github, provider: github, credentials: { type: OAUTH2, client_id: placeholder, client_secret: placeholder, scopes: "repo,read:user" } }
+  integrations.update: { uniqueKey: github, display_name: GitHub }
+  integrations.delete: { uniqueKey: github }
+  functions.list: { uniqueKey: github, search: issue, limit: 20 }
+  functions.get: { uniqueKey: github, name: issues }
+  functions.getCode: { uniqueKey: github, name: create-issue }
+  functions.delete: { uniqueKey: github, name: issues }
+  scripts.getConfig: {}
+  providers.list: { search: github }
+  providers.get: { provider: github }
+  syncs.trigger: { provider_config_key: github, connection_id: user-123, syncs: [issues] }
+  syncs.start: { provider_config_key: github, connection_id: user-123, syncs: [issues] }
+  syncs.pause: { provider_config_key: github, connection_id: user-123, syncs: [issues] }
+  syncs.status: { provider_config_key: github, connection_id: user-123, syncs: "*" }
+  syncs.updateFrequency: { provider_config_key: github, connection_id: user-123, sync_name: issues, frequency: every 2 hours }
+  records.list: { provider_config_key: github, connection_id: user-123, model: GithubIssue, limit: 100 }
+  tools.call: { connectionId: user-123, name: list-repos, provider_config_key: github, input: {} }
+  actions.trigger: { connection_id: user-123, provider_config_key: github, action_name: create-issue, input: { title: Bug } }
+  environment.getVariables: {}
+  proxy.get: { connection_id: user-123, provider_config_key: github, path: /user/repos, query: { per_page: 10 } }
+  proxy.post: { connection_id: user-123, provider_config_key: github, path: /repos/acme/app/issues, body: { title: Bug } }
+  proxy.put: { connection_id: user-123, provider_config_key: github, path: /user/starred/acme/app }
+  proxy.patch: { connection_id: user-123, provider_config_key: github, path: /repos/acme/app/issues/1, body: { state: closed } }
+  proxy.delete: { connection_id: user-123, provider_config_key: github, path: /user/starred/acme/app }
+apiNotes:
+  functions.delete: 'Also pass the required `type`: `action`, `sync`, `tool` or `function` (e.g. `type: "sync"`).'
+  scripts.getConfig: '`format: "openai"` returns the functions as OpenAI tool definitions.'
+  sessions.create: Either `tags` or `end_user` is required; Nango recommends tags. Give the returned `connect_link` to the end user.
+  connections.get: 'Credentials are dropped unless `include_credentials` is true. Pass `refresh_token: true` as well to also get the refresh token.'
+  syncs.trigger: '`syncs` takes names, or `{ name, variant }` objects where `variant` is required (the default variant is `base`).'
+  records.list: Page with `next_cursor` until it is null; a page can hold fewer than `limit` records.
+  proxy.get: '`path` is relative to the provider''s base URL. Headers in `headers` are sent on as `Nango-Proxy-<name>`.'
