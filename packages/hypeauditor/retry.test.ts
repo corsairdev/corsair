@@ -7,7 +7,7 @@ import { hypeauditor } from './index';
 type HypeAuditorTestKeys = {
 	issue_new_dek: () => Promise<void>;
 	set_client_id: (value: string) => Promise<void>;
-	set_access_token: (value: string) => Promise<void>;
+	set_api_key: (value: string) => Promise<void>;
 };
 
 /**
@@ -37,7 +37,7 @@ async function createClient() {
 	const keys = corsair.hypeauditor.keys as unknown as HypeAuditorTestKeys;
 	await keys.issue_new_dek();
 	await keys.set_client_id('client-123');
-	await keys.set_access_token('token-secret');
+	await keys.set_api_key('token-secret');
 	return { corsair, testDb };
 }
 

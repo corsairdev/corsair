@@ -41,9 +41,11 @@ describe('hypeauditor live smoke', () => {
 	// unknown: a stand-in for a context whose type brings the whole key manager.
 	const ctx = {
 		authType: 'api_key',
+		// The key builder's output: the pair packed as `<clientId>:<token>`.
+		key: `${CLIENT_ID}:${TOKEN}`,
 		keys: {
 			get_client_id: async () => CLIENT_ID,
-			get_access_token: async () => TOKEN,
+			get_api_key: async () => TOKEN,
 		},
 		$getAccountId: async () => 'live',
 	} as unknown as HypeAuditorContext; // unknown: fixture, see above

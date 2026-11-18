@@ -12,7 +12,11 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { asHypeAuditorKeys } from './client';
+import {
+	asHypeAuditorKeys,
+	packCredentials,
+	resolveCredentials,
+} from './client';
 import { Account, Discovery, Lists, Media, Reports } from './endpoints';
 import type {
 	HypeAuditorEndpointInputs,
@@ -27,13 +31,6 @@ import { HypeAuditorSchema } from './schema';
 
 export type HypeAuditorPluginOptions = {
 	authType?: PickAuth<'api_key'>;
-	/**
-	 * The pair HypeAuditor issues for an API subscription: a Client ID and an
-	 * API token. Both are required on every request, so a caller passing them
-	 * inline passes both.
-	 */
-	clientId?: string;
-	apiToken?: string;
 	hooks?: InternalHypeAuditorPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof hypeauditorEndpointsNested>;
@@ -246,49 +243,50 @@ export const hypeauditorEndpointSchemas = {
 const defaultAuthType = 'api_key' as const;
 
 /**
- * Both credentials are account fields, not integration fields: an `api_key`
- * account only builds getters for its own `account` list, so the pair is
- * declared there and read with `get_client_id` and `get_access_token`.
+ * The API token is the account's base `api_key` field, so a connect form asks
+ * for it as the key; the Client ID is the one extra account field. Both are
+ * read with the getters core generates (`get_api_key`, `get_client_id`).
  */
 export const hypeauditorAuthConfig = {
 	api_key: {
-		account: ['client_id', 'access_token'] as const,
+		account: ['client_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
 /**
- * A report read and a discovery page both spend credits on the first request,
- * which no other operation here does, so those are writes and the rest are
- * reads. None of them deletes anything, so nothing is irreversible.
+ * A report read and a discovery page spend a credit on the first request, but
+ * they only return data: metered reads stay `read`, as in the Ahrefs plugin
+ * (R8's `destructive` covers sends, purchases, paid generation jobs and
+ * irreversible changes). The descriptions say which calls spend credits.
  */
 export const hypeauditorEndpointMeta = {
 	'reports.instagram': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description:
 			'Read the Instagram report by username or user ID; the first request for a creator spends a credit, and a 202 answer carries `retryTtl`',
 	},
 	'reports.youtube': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description:
 			'Read the YouTube report by channel ID or username; the first request for a creator spends a credit, and a 202 answer carries `retryTtl`',
 	},
 	'reports.tiktok': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description:
 			'Read the TikTok report by username or user ID; the first request for a creator spends a credit, and a 202 answer carries `retryTtl`',
 	},
 	'reports.twitch': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description:
 			'Read the Twitch report by username; the first request for a creator spends a credit, and a 202 answer carries `retryTtl`',
 	},
 	'reports.twitter': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description:
 			'Read the Twitter report by username; the first request for a creator spends a credit, and a 202 answer carries `retryTtl`',
 	},
 	'reports.snapchat': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description:
 			'Read the Snapchat report by username; the first request for a creator spends a credit, and a 202 answer carries `retryTtl`',
 	},
@@ -343,7 +341,7 @@ export const hypeauditorEndpointMeta = {
 			'Read the brands a TikTok account’s videos mention, which is free and safe to repeat',
 	},
 	'discovery.search': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description:
 			'Search creators with the documented filters, 20 per page; each page costs one discovery call, and `sandbox` answers sample data without spending one',
 	},
@@ -437,14 +435,11 @@ export function hypeauditor<const T extends HypeAuditorPluginOptions>(
 				throw new AuthMissingError('hypeauditor', 'api_key');
 			}
 
-			// Inline credentials win over the stored pair, and either both are
-			// present or the stored account is used. The key returned here is the
-			// API token; the Client ID is read beside it, because the binder
-			// resolves one string.
-			if (options.apiToken) return options.apiToken;
-			const token = await asHypeAuditorKeys(ctx.keys).get_access_token();
-			if (token) return token;
-			throw new AuthMissingError('hypeauditor', ctx.authType ?? 'api_key');
+			// Credentials come only from the stored account (R8), packed into the
+			// one key string the binder hands endpoints as `ctx.key`.
+			return packCredentials(
+				await resolveCredentials(asHypeAuditorKeys(ctx.keys), 'hypeauditor'),
+			);
 		},
 	} satisfies InternalHypeAuditorPlugin;
 }

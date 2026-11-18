@@ -23,9 +23,11 @@ function makeContext() {
 	// which these endpoints never read.
 	const ctx = {
 		authType: 'api_key',
+		// The key builder's output: the pair packed as `<clientId>:<token>`.
+		key: `${CLIENT_ID}:${TOKEN}`,
 		keys: {
 			get_client_id: async () => CLIENT_ID,
-			get_access_token: async () => TOKEN,
+			get_api_key: async () => TOKEN,
 		},
 		$getAccountId: jest.fn(async () => 'account-1'),
 	};
@@ -529,7 +531,7 @@ describe('error translation', () => {
 			authType: 'api_key',
 			keys: {
 				get_client_id: async () => CLIENT_ID,
-				get_access_token: async () => undefined,
+				get_api_key: async () => undefined,
 			},
 			$getAccountId: async () => 'a',
 		} as unknown as HypeAuditorContext; // unknown: fixture, see makeContext

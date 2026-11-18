@@ -8,9 +8,12 @@ import {
 	HypeAuditorAPIError,
 	HypeAuditorTransportError,
 	makeHypeAuditorRequest,
+	packCredentials,
 	readErrorBody,
 	segment,
+	unpackCredentials,
 } from './client';
+import { ReportOrPendingSchema } from './endpoints/types';
 import { rejection } from './test-helpers';
 
 const CREDENTIALS = { clientId: 'client-123', apiToken: 'token-secret' };
@@ -135,6 +138,47 @@ describe('makeHypeAuditorRequest', () => {
 		)) as HypeAuditorAPIError;
 
 		expect([charged.replayable, free.replayable]).toEqual([false, true]);
+	});
+
+	it('hands core an ApiError without the creator the caller asked about', async () => {
+		respond({ error: { code: 4, description: 'Invalid token' } }, 403);
+
+		const error = (await rejection(
+			makeHypeAuditorRequest(CREDENTIALS, {
+				method: 'GET',
+				action: 'auditor.report/',
+				query: { username: 'some.creator' },
+			}),
+		)) as HypeAuditorAPIError;
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error.status).toBe(403);
+		expect(error.code).toBe(4);
+		expect(error.url).toBe(`${HYPEAUDITOR_API_BASE}/auditor.report/`);
+		expect(JSON.stringify(error)).not.toContain('some.creator');
+		expect(require('node:util').inspect(error)).not.toContain('some.creator');
+	});
+
+	it('packs and unpacks the credential pair through one key', () => {
+		const key = packCredentials(CREDENTIALS);
+		expect(unpackCredentials(key, 'hypeauditor')).toEqual(CREDENTIALS);
+		expect(
+			unpackCredentials('42:token:with:colons', 'hypeauditor').apiToken,
+		).toBe('token:with:colons');
+		for (const bad of [undefined, '', 'no-colon', ':token', '42:']) {
+			expect(() => unpackCredentials(bad, 'hypeauditor')).toThrow();
+		}
+	});
+
+	it('reads a 202 body as the pending notice and checks retryTtl', () => {
+		const pending = ReportOrPendingSchema.safeParse({
+			result: { retryTtl: 30, restTokens: 5 },
+		});
+		expect(pending.success && 'retryTtl' in pending.data.result).toBe(true);
+		const report = ReportOrPendingSchema.parse({
+			result: { report_state: 'READY' },
+		});
+		expect('retryTtl' in report.result).toBe(false);
 	});
 
 	it('does not put either credential in the error', async () => {

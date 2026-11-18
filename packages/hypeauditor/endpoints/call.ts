@@ -2,19 +2,15 @@ import { logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { HypeAuditorContext } from '..';
 import type { HypeAuditorRequest } from '../client';
-import {
-	asHypeAuditorKeys,
-	makeHypeAuditorRequest,
-	resolveCredentials,
-} from '../client';
+import { makeHypeAuditorRequest, unpackCredentials } from '../client';
 
 type LogFields = Record<string, string | number | boolean | undefined>;
 
 /**
  * Validates the input, sends the request and parses the response.
  *
- * The credentials are read on every call, because both the Client ID and the
- * token live on the account and either can be replaced between calls.
+ * The credentials come from `ctx.key`, which the key builder packed from the
+ * stored account (R8: endpoints read the key the binder resolved).
  *
  * Inputs are not logged: a report request names a creator's account, and the
  * docs describe those as personal data, so `log` picks the fields to keep.
@@ -35,10 +31,7 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
-	const credentials = await resolveCredentials(
-		asHypeAuditorKeys(ctx.keys),
-		'hypeauditor',
-	);
+	const credentials = unpackCredentials(ctx.key, 'hypeauditor');
 	const request_ = toRequest(parsed);
 
 	// The body is untyped until the output schema below parses it.

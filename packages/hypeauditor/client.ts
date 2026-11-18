@@ -127,17 +127,14 @@ export function readErrorBody(
 }
 
 /**
- * A provider failure. The status, the numeric code and the message are kept
- * because they are what the handlers and the caller read. The body is dropped:
- * it can echo the channel a caller asked about, and the rest of it is the
- * envelope this type already describes.
+ * A provider failure. It is core's `ApiError` (R8: core and the 429 handler read
+ * `status` and `retryAfter` from it), rebuilt without the request query, the URL
+ * query and the response body: those can echo the creator a caller asked about.
+ * `code` and `replayable` are added for this plugin's handlers.
  */
-export class HypeAuditorAPIError extends Error {
+export class HypeAuditorAPIError extends ApiError {
 	/** The `error.code` the provider sent, when the body carried one. */
 	readonly code?: number;
-	readonly status?: number;
-	/** Milliseconds from `Retry-After`, when a gateway sent one. */
-	readonly retryAfter?: number;
 	readonly method: string;
 	/** Whether replaying this exact request is safe. */
 	readonly replayable: boolean;
@@ -150,13 +147,26 @@ export class HypeAuditorAPIError extends Error {
 			retryAfter?: number;
 			method: string;
 			replayable: boolean;
+			/** The action path, without its query. */
+			url?: string;
+			statusText?: string;
 		},
 	) {
-		super(message);
+		const url = options.url ?? HYPEAUDITOR_API_BASE;
+		super(
+			{ method: options.method as ApiRequestOptions['method'], url },
+			{
+				url,
+				ok: false,
+				status: options.status ?? 0,
+				statusText: options.statusText ?? '',
+				body: undefined,
+			},
+			message,
+			{ retryAfter: options.retryAfter },
+		);
 		this.name = 'HypeAuditorAPIError';
-		this.status = options.status;
 		this.code = options.code;
-		this.retryAfter = options.retryAfter;
 		this.method = options.method;
 		this.replayable = options.replayable;
 	}
@@ -243,10 +253,12 @@ export async function makeHypeAuditorRequest(
 				describeFailure(error.status, body, error.statusText || error.message),
 				{
 					status: error.status,
+					statusText: error.statusText,
 					code: body.code,
 					retryAfter: error.retryAfter,
 					method: request_.method,
 					replayable,
+					url: `${HYPEAUDITOR_API_BASE}/${request_.action}`,
 				},
 			);
 		}
@@ -279,24 +291,40 @@ export function asHypeAuditorKeys(keys: object): HypeAuditorKeyManager {
 export type HypeAuditorKeyManager = {
 	/** The Client ID, from the account's `client_id` field. */
 	get_client_id: () => Promise<string | null | undefined>;
-	/** The API token, from the account's `access_token` field. */
-	get_access_token: () => Promise<string | null | undefined>;
+	/** The API token, from the account's base `api_key` field. */
+	get_api_key: () => Promise<string | null | undefined>;
 };
 
 /**
- * Reads the two credentials. Both are account fields, not integration fields:
- * an `api_key` account only builds getters for its own `authConfig.account`
- * list (core's `createFieldAccessors`), so a pair declared under `integration`
- * would have no getter for this auth type.
- *
- * Either one missing is reported as missing auth, because neither works alone.
+ * The binder resolves one key string, so the key builder packs the pair as
+ * `<clientId>:<apiToken>` and endpoints unpack `ctx.key`. A Client ID is
+ * numeric, so the first colon always separates the two.
+ */
+export function packCredentials(credentials: HypeAuditorCredentials): string {
+	return `${credentials.clientId}:${credentials.apiToken}`;
+}
+
+export function unpackCredentials(
+	key: string | undefined,
+	pluginId: string,
+): HypeAuditorCredentials {
+	const at = key?.indexOf(':') ?? -1;
+	if (!key || at <= 0 || at === key.length - 1) {
+		throw new AuthMissingError(pluginId, 'api_key');
+	}
+	return { clientId: key.slice(0, at), apiToken: key.slice(at + 1) };
+}
+
+/**
+ * Reads the stored pair. Either one missing is reported as missing auth,
+ * because neither works alone.
  */
 export async function resolveCredentials(
 	keys: HypeAuditorKeyManager,
 	pluginId: string,
 ): Promise<HypeAuditorCredentials> {
 	const clientId = await keys.get_client_id();
-	const apiToken = await keys.get_access_token();
+	const apiToken = await keys.get_api_key();
 	if (!clientId || !apiToken) {
 		throw new AuthMissingError(pluginId, 'api_key');
 	}

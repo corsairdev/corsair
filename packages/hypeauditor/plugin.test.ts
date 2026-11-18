@@ -66,7 +66,7 @@ describe('hypeauditor plugin', () => {
 			authType: 'api_key',
 			keys: {
 				get_client_id: async () => options.clientId,
-				get_access_token: async () => options.token,
+				get_api_key: async () => options.token,
 			},
 		}) as unknown as HypeAuditorKeyBuilderContext; // unknown: fixture, see above
 
@@ -97,32 +97,37 @@ describe('hypeauditor plugin', () => {
 	});
 
 	/**
-	 * A report read and a discovery page each spend a credit on the first
-	 * request. Both are writes for that reason, even though a report read is a
-	 * GET and the discovery page spends only a call rather than a credit.
+	 * Only the list edits change anything. A report read and a discovery page
+	 * spend a credit on the first request, but they only return data, and
+	 * metered reads stay `read` (R8, as in the Ahrefs plugin).
 	 */
-	it('marks the credit-spending operations as writes', () => {
+	it('marks only the list edits as writes', () => {
 		const writes = OPERATIONS.filter(
 			(operation) => metaOf(operation).riskLevel === 'write',
 		);
-		expect(writes).toEqual([
+		expect(writes).toEqual(['lists.add', 'lists.remove']);
+	});
+
+	it('says which reads spend credits', () => {
+		for (const operation of OPERATIONS.filter((o) =>
+			o.startsWith('reports.'),
+		)) {
+			expect(metaOf(operation).description).toMatch(/spends a credit/);
+		}
+		expect(metaOf('discovery.search').description).toMatch(/costs one/);
+	});
+
+	it('marks everything else as reads', () => {
+		const reads = OPERATIONS.filter(
+			(operation) => metaOf(operation).riskLevel === 'read',
+		);
+		expect(reads).toEqual([
 			'reports.instagram',
 			'reports.youtube',
 			'reports.tiktok',
 			'reports.twitch',
 			'reports.twitter',
 			'reports.snapchat',
-			'discovery.search',
-			'lists.add',
-			'lists.remove',
-		]);
-	});
-
-	it('marks the free reads as reads', () => {
-		const reads = OPERATIONS.filter(
-			(operation) => metaOf(operation).riskLevel === 'read',
-		);
-		expect(reads).toEqual([
 			'media.instagram',
 			'media.youtube',
 			'media.tiktok',
@@ -133,6 +138,7 @@ describe('hypeauditor plugin', () => {
 			'history.twitter',
 			'mentions.youtube',
 			'mentions.tiktok',
+			'discovery.search',
 			'discovery.keywords',
 			'lists.list',
 			'lists.items',
@@ -155,15 +161,11 @@ describe('hypeauditor plugin', () => {
 	});
 
 	/**
-	 * Both credentials are account fields. An `api_key` account only builds
-	 * getters for its own `account` list, so a pair declared under `integration`
-	 * would have no getter at all.
+	 * The token is the account's base `api_key` field, which every api_key
+	 * account has; the Client ID is the one extra account field.
 	 */
-	it('declares both credentials as account fields', () => {
-		expect(hypeauditorAuthConfig.api_key.account).toEqual([
-			'client_id',
-			'access_token',
-		]);
+	it('adds the Client ID as the only extra account field', () => {
+		expect(hypeauditorAuthConfig.api_key.account).toEqual(['client_id']);
 		expect('integration' in hypeauditorAuthConfig.api_key).toBe(false);
 	});
 
@@ -174,20 +176,19 @@ describe('hypeauditor plugin', () => {
 	});
 
 	describe('keyBuilder', () => {
-		it('returns an inline API token', async () => {
-			const configured = hypeauditor({ apiToken: 'inline-token' });
-			await expect(
-				keyBuilderOf(configured)(keyContext(), 'endpoint'),
-			).resolves.toBe('inline-token');
-		});
-
-		it('falls back to the stored token', async () => {
+		it('packs the stored Client ID and token into one key', async () => {
 			await expect(
 				keyBuilderOf(plugin)(
-					keyContext({ clientId: 'c', token: 'stored-token' }),
+					keyContext({ clientId: '123', token: 'stored-token' }),
 					'endpoint',
 				),
-			).resolves.toBe('stored-token');
+			).resolves.toBe('123:stored-token');
+		});
+
+		it('throws AuthMissingError when the Client ID is missing', async () => {
+			await expect(
+				keyBuilderOf(plugin)(keyContext({ token: 't' }), 'endpoint'),
+			).rejects.toBeInstanceOf(AuthMissingError);
 		});
 
 		// Failing open would send an empty header and surface the provider's
