@@ -1,7 +1,6 @@
 import { AuthMissingError } from 'corsair/core';
 import type {
 	ApiRequestOptions,
-	ApiResult,
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
@@ -101,26 +100,33 @@ export function redactSensitiveData(value: unknown): unknown {
 	return value;
 }
 
-export function sanitizeApiError(error: ApiError): ApiError {
-	const sanitizedRequest: ApiRequestOptions = {
-		...error.request,
-		body: error.request?.body
-			? redactSensitiveData(error.request.body)
-			: undefined,
-	};
-	const sanitizedResponse: ApiResult = {
-		status: error.status,
-		statusText: error.statusText,
-		url: error.url,
-		ok: error.status >= 200 && error.status < 300,
-		body: error.body ? redactSensitiveData(error.body) : undefined,
-	};
-	return new ApiError(sanitizedRequest, sanitizedResponse, error.message, {
-		retryAfter: error.retryAfter,
-		rateLimitReset: error.rateLimitReset,
-		rateLimitRemaining: error.rateLimitRemaining,
-		rateLimitLimit: error.rateLimitLimit,
-	});
+// `unknown` because untrusted error is checked at runtime
+export function sanitizeApiError<T>(error: T): T {
+	if (!(error instanceof ApiError)) return error;
+
+	if (error.request) {
+		const requestUpdates: {
+			headers?: unknown;
+			query?: unknown;
+			body?: unknown;
+		} = {};
+		if (error.request.headers) {
+			requestUpdates.headers = redactSensitiveData(error.request.headers);
+		}
+		if (error.request.query) {
+			requestUpdates.query = redactSensitiveData(error.request.query);
+		}
+		if (error.request.body) {
+			requestUpdates.body = redactSensitiveData(error.request.body);
+		}
+		Object.assign(error.request, requestUpdates);
+	}
+
+	if (error.body) {
+		Object.assign(error, { body: redactSensitiveData(error.body) });
+	}
+
+	return error;
 }
 
 export type LexofficeRequestOptions = {

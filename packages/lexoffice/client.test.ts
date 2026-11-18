@@ -115,7 +115,7 @@ describe('makeLexofficeRequest', () => {
 			(err: unknown) => err,
 		);
 
-		expect(caught).toBeInstanceOf(ApiError);
+		expect(caught).toBe(rateLimited);
 		if (caught instanceof ApiError) {
 			expect(caught.status).toBe(429);
 			expect(caught.retryAfter).toBe(2000);
@@ -156,6 +156,8 @@ describe('makeLexofficeRequest', () => {
 			{
 				method: 'POST',
 				url: '/contacts',
+				headers: { authorization: 'Bearer secret-token' },
+				query: { apikey: 'secret-key' },
 				body: { apiKey: 'secret', name: 'Acme' },
 			},
 			{
@@ -169,14 +171,24 @@ describe('makeLexofficeRequest', () => {
 		);
 
 		const sanitized = sanitizeApiError(err);
-		expect(sanitized.request.body).toEqual({
+		expect(sanitized).toBe(err);
+		expect(err.request.headers).toEqual({
+			authorization: '[redacted]',
+		});
+		expect(err.request.query).toEqual({
+			apikey: '[redacted]',
+		});
+		expect(err.request.body).toEqual({
 			apiKey: '[redacted]',
 			name: 'Acme',
 		});
-		expect(sanitized.body).toEqual({
+		expect(err.body).toEqual({
 			token: '[redacted]',
 			message: 'invalid',
 		});
+
+		const plainError = new Error('regular error');
+		expect(sanitizeApiError(plainError)).toBe(plainError);
 	});
 
 	it('preserves retryAfter from HTTP response in real transport', async () => {

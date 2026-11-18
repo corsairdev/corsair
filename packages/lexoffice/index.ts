@@ -191,7 +191,7 @@ const lexofficeEndpointMeta = {
 		description: 'Retrieve invoice details by ID',
 	},
 	'invoices.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Create an invoice in draft or finalized state',
 	},
 	'invoices.render': {

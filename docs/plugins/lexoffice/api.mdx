@@ -789,7 +789,7 @@ await corsair.lexoffice.api.creditNotes.list({ page: 0, size: 25 });
 
 Create an invoice in draft or finalized state
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.lexoffice.api.invoices.create({ voucherDate: '2026-01-01', address: { name: 'Acme Corp' }, lineItems: [{ type: 'custom', name: 'Consulting', unitPrice: { currency: 'EUR', netAmount: 100, taxRatePercentage: 19 } }], totalPrice: { currency: 'EUR' }, taxConditions: { taxType: 'net' } });

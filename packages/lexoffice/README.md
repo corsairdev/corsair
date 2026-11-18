@@ -18,7 +18,7 @@ pnpm add @corsair-dev/lexoffice
 | `contacts.update` | `lexoffice.api.contacts.update` | `write` | Update an existing contact in Lexoffice |
 | `invoices.list` | `lexoffice.api.invoices.list` | `read` | List outgoing invoices with pagination |
 | `invoices.get` | `lexoffice.api.invoices.get` | `read` | Retrieve invoice details by ID |
-| `invoices.create` | `lexoffice.api.invoices.create` | `write` | Create an invoice in draft or finalized state |
+| `invoices.create` | `lexoffice.api.invoices.create` | `destructive` | Create an invoice in draft or finalized state |
 | `invoices.render` | `lexoffice.api.invoices.render` | `read` | Render an invoice PDF and retrieve its document file ID |
 | `vouchers.list` | `lexoffice.api.vouchers.list` | `read` | List bookkeeping vouchers with optional voucher number filter |
 | `vouchers.get` | `lexoffice.api.vouchers.get` | `read` | Retrieve voucher details by ID |

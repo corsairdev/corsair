@@ -21,6 +21,11 @@ import {
 } from './endpoints/types';
 
 const LIVE_KEY = process.env.LEXOFFICE_API_KEY ?? '';
+if (LIVE_KEY.length === 0) {
+	console.warn(
+		'Skipping live Lexoffice API tests because LEXOFFICE_API_KEY is not set. Set LEXOFFICE_API_KEY to run live tests.',
+	);
+}
 const describeLive = LIVE_KEY.length > 0 ? describe : describe.skip;
 
 describeLive('lexoffice live API (env-gated)', () => {
