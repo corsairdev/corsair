@@ -231,7 +231,9 @@ const ContactsDeletePhotoInputSchema = z.object({
  * serves this restricted field set for them.
  */
 const OtherContactsReadMaskSchema = z
-	.array(z.enum(['emailAddresses', 'metadata', 'names', 'phoneNumbers']))
+	.array(
+		z.enum(['emailAddresses', 'metadata', 'names', 'phoneNumbers', 'photos']),
+	)
 	.optional();
 
 const OtherContactsListInputSchema = z.object({

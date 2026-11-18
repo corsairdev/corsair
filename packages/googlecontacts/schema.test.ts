@@ -24,6 +24,14 @@ describe('GoogleContacts schema', () => {
 		expect(list.safeParse({ personFields: ['names'] }).success).toBe(true);
 		expect(list.safeParse({}).success).toBe(true);
 	});
+
+	it('accepts photos in the otherContacts read mask, as the live API does', () => {
+		const other = GoogleContactsEndpointInputSchemas.otherContactsList;
+		expect(other.safeParse({ readMask: ['names', 'photos'] }).success).toBe(
+			true,
+		);
+		expect(other.safeParse({ readMask: ['addresses'] }).success).toBe(false);
+	});
 });
 
 // Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
