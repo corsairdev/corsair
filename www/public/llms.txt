@@ -96,6 +96,7 @@ The full agent index lives at [docs.corsair.dev/llms.txt](https://docs.corsair.d
 - [REST API](https://docs.corsair.dev/hub/rest-api): Use Hub from any language over plain HTTP, no SDK required.
 
 ### Use with AI
+- [Agent door](https://corsair.dev/agent.txt): AI agents ask Corsair through the Concierge Agent Protocol.
 - [MCP adapters](https://docs.corsair.dev/mcp-adapters/mcp-adapters): Anthropic, OpenAI, Vercel AI SDK, Mastra, and coding agents over MCP.
 
 ### Plugins & integrations

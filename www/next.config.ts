@@ -16,6 +16,19 @@ const nextConfig: NextConfig = {
 			},
 		],
 	},
+	async headers() {
+		return [
+			{
+				source: '/',
+				headers: [
+					{
+						key: 'Link',
+						value: '<https://corsair.dev/agent.txt>; rel="agent"',
+					},
+				],
+			},
+		];
+	},
 	async redirects() {
 		return [
 			{
