@@ -1,3 +1,4 @@
+import { redactUrl } from './endpoints/monitors';
 import {
 	TwittrApiEndpointInputSchemas,
 	TwittrApiEndpointOutputSchemas,
@@ -393,5 +394,29 @@ describe('TwittrAPI output schemas (offline fixtures)', () => {
 				tweetId: 'not-a-number!!',
 			}),
 		).toThrow();
+	});
+
+	it('accepts a missing community or list as null (live: unknown community ID)', () => {
+		expect(
+			TwittrApiEndpointOutputSchemas.communitiesGetById.parse({ data: null })
+				.data,
+		).toBeNull();
+		expect(
+			TwittrApiEndpointOutputSchemas.listsGetDetails.parse({ data: null }).data,
+		).toBeNull();
+	});
+
+	it('accepts one-letter handles such as @X', () => {
+		expect(
+			TwittrApiEndpointInputSchemas.usersGetByUsername.parse({ username: '@X' })
+				.username,
+		).toBe('@X');
+	});
+
+	it('keeps receiver URL credentials out of event logs', () => {
+		expect(redactUrl('https://user:pw@hooks.example.com/tw?token=abc#x')).toBe(
+			'https://hooks.example.com/tw',
+		);
+		expect(redactUrl('not a url')).toBe('[invalid url]');
 	});
 });

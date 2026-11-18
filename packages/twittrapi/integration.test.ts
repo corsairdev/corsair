@@ -8,7 +8,12 @@ const TEST_USERNAME = process.env.TEST_TWITTER_USERNAME || 'XDevelopers';
 
 async function createTwittrApiClient() {
 	const apiKey = process.env.TWITTRAPI_API_KEY;
-	if (!apiKey) return null;
+	if (!apiKey) {
+		console.warn(
+			'[twittrapi] TWITTRAPI_API_KEY not set: integration test skipped, no request is sent.',
+		);
+		return null;
+	}
 
 	const testDb = createTestDatabase();
 	await createIntegrationAndAccount(testDb.db, 'twittrapi');

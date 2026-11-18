@@ -10,6 +10,12 @@ const TEST_TWEET_ID =
 const TEST_LIST_ID = process.env.TEST_TWITTER_LIST_ID || '';
 const TEST_COMMUNITY_ID = process.env.TEST_TWITTER_COMMUNITY_ID || '';
 
+if (!TEST_API_KEY) {
+	console.warn(
+		'[twittrapi] TWITTRAPI_API_KEY not set: live API tests are skipped, no request is sent.',
+	);
+}
+
 describe('TwittrAPI live API (requires TWITTRAPI_API_KEY)', () => {
 	it('balanceGet returns the key balance (free)', async () => {
 		if (!TEST_API_KEY) return;
