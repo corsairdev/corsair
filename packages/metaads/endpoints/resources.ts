@@ -108,6 +108,29 @@ function normalizePaging(value: unknown): unknown {
 const form = (value: Record<string, unknown>): RequestShape => ({
 	body: value,
 });
+const previewRequest = (input: {
+	adFormat: string;
+	creativeFeature?: string;
+	dynamicAssetLabel?: string;
+	productItemIds?: string[];
+	startDate?: string;
+	endDate?: string;
+	width?: number;
+	height?: number;
+}): RequestShape => ({
+	query: {
+		ad_format: input.adFormat,
+		creative_feature: input.creativeFeature,
+		dynamic_asset_label: input.dynamicAssetLabel,
+		product_item_ids: input.productItemIds
+			? JSON.stringify(input.productItemIds)
+			: undefined,
+		start_date: input.startDate,
+		end_date: input.endDate,
+		width: input.width,
+		height: input.height,
+	},
+});
 // `unknown` is needed for documented nested JSON such as targeting and creative references.
 const keyedForm = (
 	value: Record<string, unknown>,
@@ -142,6 +165,186 @@ export const accountsUsersList = operation({
 	request: (input) => ({
 		query: { limit: input.limit, after: input.after, before: input.before },
 	}),
+});
+export const accountsActivitiesList = operation({
+	name: 'accounts.activitiesList',
+	method: 'GET',
+	path: (input) => `${accountPath(input.accountId)}/activities`,
+	input: MetaAdsEndpointInputSchemas.accountsActivitiesList,
+	output: MetaAdsEndpointOutputSchemas.accountsActivitiesList,
+	request: emptyRequest,
+});
+export const accountsImpactingAdStudiesList = operation({
+	name: 'accounts.impactingAdStudiesList',
+	method: 'GET',
+	path: (input) => `${accountPath(input.accountId)}/impacting_ad_studies`,
+	input: MetaAdsEndpointInputSchemas.accountsImpactingAdStudiesList,
+	output: MetaAdsEndpointOutputSchemas.accountsImpactingAdStudiesList,
+	request: emptyRequest,
+});
+export const accountsAdRulesLibraryList = operation({
+	name: 'accounts.adRulesLibraryList',
+	method: 'GET',
+	path: (input) => `${accountPath(input.accountId)}/adrules_library`,
+	input: MetaAdsEndpointInputSchemas.accountsAdRulesLibraryList,
+	output: MetaAdsEndpointOutputSchemas.accountsAdRulesLibraryList,
+	request: emptyRequest,
+});
+export const accountsActiveAdRulesList = operation({
+	name: 'accounts.activeAdRulesList',
+	method: 'GET',
+	path: (input) => `${accountPath(input.accountId)}/active_adrules`,
+	input: MetaAdsEndpointInputSchemas.accountsActiveAdRulesList,
+	output: MetaAdsEndpointOutputSchemas.accountsActiveAdRulesList,
+	request: (input) => ({
+		query: {
+			selected_ids: JSON.stringify(input.selectedIds),
+			pass_evaluation: input.passEvaluation,
+		},
+	}),
+});
+export const accountsGeneratePreviews = operation({
+	name: 'accounts.generatePreviews',
+	method: 'GET',
+	path: (input) => `${accountPath(input.accountId)}/generatepreviews`,
+	input: MetaAdsEndpointInputSchemas.accountsGeneratePreviews,
+	output: MetaAdsEndpointOutputSchemas.accountsGeneratePreviews,
+	request: (input) => ({
+		query: {
+			ad_format: input.adFormat,
+			creative: JSON.stringify({
+				object_story_spec: input.creativeSpec.objectStorySpec,
+			}),
+		},
+	}),
+});
+export const accountsBroadTargetingCategoriesList = operation({
+	name: 'accounts.broadTargetingCategoriesList',
+	method: 'GET',
+	path: (input) => `${accountPath(input.accountId)}/broadtargetingcategories`,
+	input: MetaAdsEndpointInputSchemas.accountsBroadTargetingCategoriesList,
+	output: MetaAdsEndpointOutputSchemas.accountsBroadTargetingCategoriesList,
+	request: (input) => ({
+		query: { custom_categories_only: input.customCategoriesOnly },
+	}),
+});
+
+export const labelsList = operation({
+	name: 'labels.list',
+	method: 'GET',
+	path: (input) => `${accountPath(input.accountId)}/adlabels`,
+	input: MetaAdsEndpointInputSchemas.labelsList,
+	output: MetaAdsEndpointOutputSchemas.labelsList,
+	request: emptyRequest,
+});
+export const labelsGet = operation({
+	name: 'labels.get',
+	method: 'GET',
+	path: (input) => idPath(input.labelId),
+	input: MetaAdsEndpointInputSchemas.labelsGet,
+	output: MetaAdsEndpointOutputSchemas.labelsGet,
+	request: (input) => ({ query: { fields: input.fields } }),
+});
+export const labelsCreate = operation({
+	name: 'labels.create',
+	method: 'POST',
+	path: (input) => `${accountPath(input.accountId)}/adlabels`,
+	input: MetaAdsEndpointInputSchemas.labelsCreate,
+	output: MetaAdsEndpointOutputSchemas.labelsCreate,
+	request: (input) => form({ name: input.name }),
+});
+export const labelsUpdate = operation({
+	name: 'labels.update',
+	method: 'POST',
+	path: (input) => idPath(input.labelId),
+	input: MetaAdsEndpointInputSchemas.labelsUpdate,
+	output: MetaAdsEndpointOutputSchemas.labelsUpdate,
+	request: (input) => form({ name: input.name }),
+});
+export const labelsDelete = operation({
+	name: 'labels.delete',
+	method: 'DELETE',
+	path: (input) => idPath(input.labelId),
+	input: MetaAdsEndpointInputSchemas.labelsDelete,
+	output: MetaAdsEndpointOutputSchemas.labelsDelete,
+	request: emptyRequest,
+});
+export const labelsAdsList = operation({
+	name: 'labels.adsList',
+	method: 'GET',
+	path: (input) => `${idPath(input.labelId)}/ads`,
+	input: MetaAdsEndpointInputSchemas.labelsAdsList,
+	output: MetaAdsEndpointOutputSchemas.labelsAdsList,
+	request: emptyRequest,
+});
+export const labelsAdSetsList = operation({
+	name: 'labels.adSetsList',
+	method: 'GET',
+	path: (input) => `${idPath(input.labelId)}/adsets`,
+	input: MetaAdsEndpointInputSchemas.labelsAdSetsList,
+	output: MetaAdsEndpointOutputSchemas.labelsAdSetsList,
+	request: emptyRequest,
+});
+export const labelsCampaignsList = operation({
+	name: 'labels.campaignsList',
+	method: 'GET',
+	path: (input) => `${idPath(input.labelId)}/campaigns`,
+	input: MetaAdsEndpointInputSchemas.labelsCampaignsList,
+	output: MetaAdsEndpointOutputSchemas.labelsCampaignsList,
+	request: emptyRequest,
+});
+export const labelsCreativesList = operation({
+	name: 'labels.creativesList',
+	method: 'GET',
+	path: (input) => `${idPath(input.labelId)}/adcreatives`,
+	input: MetaAdsEndpointInputSchemas.labelsCreativesList,
+	output: MetaAdsEndpointOutputSchemas.labelsCreativesList,
+	request: emptyRequest,
+});
+
+const labelAssociationRequest = (input: {
+	adlabels: MetaAdsEndpointInputs['campaignsLabelsAdd']['adlabels'];
+	executionOptions?: 'validate_only'[];
+}): RequestShape => ({
+	body: {
+		adlabels: JSON.stringify(input.adlabels),
+		execution_options: input.executionOptions
+			? JSON.stringify(input.executionOptions)
+			: undefined,
+	},
+});
+export const campaignsLabelsAdd = operation({
+	name: 'campaigns.labelsAdd',
+	method: 'POST',
+	path: (input) => `${idPath(input.campaignId)}/adlabels`,
+	input: MetaAdsEndpointInputSchemas.campaignsLabelsAdd,
+	output: MetaAdsEndpointOutputSchemas.campaignsLabelsAdd,
+	request: labelAssociationRequest,
+});
+export const adsLabelsAdd = operation({
+	name: 'ads.labelsAdd',
+	method: 'POST',
+	path: (input) => `${idPath(input.adId)}/adlabels`,
+	input: MetaAdsEndpointInputSchemas.adsLabelsAdd,
+	output: MetaAdsEndpointOutputSchemas.adsLabelsAdd,
+	request: labelAssociationRequest,
+});
+export const creativesLabelsAdd = operation({
+	name: 'creatives.labelsAdd',
+	method: 'POST',
+	path: (input) => `${idPath(input.creativeId)}/adlabels`,
+	input: MetaAdsEndpointInputSchemas.creativesLabelsAdd,
+	output: MetaAdsEndpointOutputSchemas.creativesLabelsAdd,
+	request: labelAssociationRequest,
+});
+
+export const videosDelete = operation({
+	name: 'videos.delete',
+	method: 'DELETE',
+	path: (input) => `${accountPath(input.accountId)}/advideos`,
+	input: MetaAdsEndpointInputSchemas.videosDelete,
+	output: MetaAdsEndpointOutputSchemas.videosDelete,
+	request: (input) => ({ query: { video_id: input.videoId } }),
 });
 export const imagesList = operation({
 	name: 'images.list',
@@ -244,6 +447,59 @@ export const campaignsCopy = operation({
 				: {}),
 		},
 	}),
+});
+export const campaignsBudgetSchedulesList = operation({
+	name: 'campaigns.budgetSchedulesList',
+	method: 'GET',
+	path: (input) => `${idPath(input.campaignId)}/budget_schedules`,
+	input: MetaAdsEndpointInputSchemas.campaignsBudgetSchedulesList,
+	output: MetaAdsEndpointOutputSchemas.campaignsBudgetSchedulesList,
+	request: (input) => ({
+		query: {
+			...pageParams(input),
+			time_start: input.timeStart,
+			time_stop: input.timeStop,
+		},
+	}),
+});
+export const campaignsBudgetScheduleCreate = operation({
+	name: 'campaigns.budgetScheduleCreate',
+	method: 'POST',
+	path: (input) => `${idPath(input.campaignId)}/budget_schedules`,
+	input: MetaAdsEndpointInputSchemas.campaignsBudgetScheduleCreate,
+	output: MetaAdsEndpointOutputSchemas.campaignsBudgetScheduleCreate,
+	request: (input) => ({
+		body: {
+			budget_value: input.budgetValue,
+			budget_value_type: input.budgetValueType,
+			time_start: input.timeStart,
+			time_end: input.timeEnd,
+		},
+	}),
+});
+export const campaignsAdStudiesList = operation({
+	name: 'campaigns.adStudiesList',
+	method: 'GET',
+	path: (input) => `${idPath(input.campaignId)}/ad_studies`,
+	input: MetaAdsEndpointInputSchemas.campaignsAdStudiesList,
+	output: MetaAdsEndpointOutputSchemas.campaignsAdStudiesList,
+	request: emptyRequest,
+});
+export const campaignsAdRulesGovernedList = operation({
+	name: 'campaigns.adRulesGovernedList',
+	method: 'GET',
+	path: (input) => `${idPath(input.campaignId)}/adrules_governed`,
+	input: MetaAdsEndpointInputSchemas.campaignsAdRulesGovernedList,
+	output: MetaAdsEndpointOutputSchemas.campaignsAdRulesGovernedList,
+	request: (input) => ({ query: { pass_evaluation: input.passEvaluation } }),
+});
+export const highDemandPeriodsGet = operation({
+	name: 'highDemandPeriods.get',
+	method: 'GET',
+	path: (input) => idPath(input.periodId),
+	input: MetaAdsEndpointInputSchemas.highDemandPeriodsGet,
+	output: MetaAdsEndpointOutputSchemas.highDemandPeriodsGet,
+	request: (input) => ({ query: { fields: input.fields } }),
 });
 export const campaignsGet = operation({
 	name: 'campaigns.get',
@@ -353,6 +609,69 @@ export const adSetsCopy = operation({
 		},
 	}),
 });
+export const adSetsBudgetSchedulesList = operation({
+	name: 'adSets.budgetSchedulesList',
+	method: 'GET',
+	path: (input) => `${idPath(input.adSetId)}/budget_schedules`,
+	input: MetaAdsEndpointInputSchemas.adSetsBudgetSchedulesList,
+	output: MetaAdsEndpointOutputSchemas.adSetsBudgetSchedulesList,
+	request: (input) => ({
+		query: {
+			...pageParams(input),
+			time_start: input.timeStart,
+			time_stop: input.timeStop,
+		},
+	}),
+});
+export const adSetsBudgetScheduleCreate = operation({
+	name: 'adSets.budgetScheduleCreate',
+	method: 'POST',
+	path: (input) => `${idPath(input.adSetId)}/budget_schedules`,
+	input: MetaAdsEndpointInputSchemas.adSetsBudgetScheduleCreate,
+	output: MetaAdsEndpointOutputSchemas.adSetsBudgetScheduleCreate,
+	request: (input) => ({
+		body: {
+			budget_value: input.budgetValue,
+			budget_value_type: input.budgetValueType,
+			time_start: input.timeStart,
+			time_end: input.timeEnd,
+		},
+	}),
+});
+export const adSetsActivitiesList = operation({
+	name: 'adSets.activitiesList',
+	method: 'GET',
+	path: (input) => `${idPath(input.adSetId)}/activities`,
+	input: MetaAdsEndpointInputSchemas.adSetsActivitiesList,
+	output: MetaAdsEndpointOutputSchemas.adSetsActivitiesList,
+	request: (input) => ({
+		query: {
+			after: input.after,
+			business_id: input.businessId,
+			category: input.category,
+			limit: input.limit,
+			since: input.since,
+			uid: input.uid,
+			until: input.until,
+		},
+	}),
+});
+export const adSetsAdStudiesList = operation({
+	name: 'adSets.adStudiesList',
+	method: 'GET',
+	path: (input) => `${idPath(input.adSetId)}/ad_studies`,
+	input: MetaAdsEndpointInputSchemas.adSetsAdStudiesList,
+	output: MetaAdsEndpointOutputSchemas.adSetsAdStudiesList,
+	request: emptyRequest,
+});
+export const adSetsAdRulesGovernedList = operation({
+	name: 'adSets.adRulesGovernedList',
+	method: 'GET',
+	path: (input) => `${idPath(input.adSetId)}/adrules_governed`,
+	input: MetaAdsEndpointInputSchemas.adSetsAdRulesGovernedList,
+	output: MetaAdsEndpointOutputSchemas.adSetsAdRulesGovernedList,
+	request: (input) => ({ query: { pass_evaluation: input.passEvaluation } }),
+});
 export const adSetsGet = operation({
 	name: 'adSets.get',
 	method: 'GET',
@@ -425,6 +744,30 @@ export const adsAdCreativesList = operation({
 	input: MetaAdsEndpointInputSchemas.adsAdCreativesList,
 	output: MetaAdsListSchema,
 	request: emptyRequest,
+});
+export const adsAdStudiesList = operation({
+	name: 'ads.adStudiesList',
+	method: 'GET',
+	path: (input) => `${idPath(input.adId)}/ad_studies`,
+	input: MetaAdsEndpointInputSchemas.adsAdStudiesList,
+	output: MetaAdsEndpointOutputSchemas.adsAdStudiesList,
+	request: emptyRequest,
+});
+export const adsAdRulesGovernedList = operation({
+	name: 'ads.adRulesGovernedList',
+	method: 'GET',
+	path: (input) => `${idPath(input.adId)}/adrules_governed`,
+	input: MetaAdsEndpointInputSchemas.adsAdRulesGovernedList,
+	output: MetaAdsEndpointOutputSchemas.adsAdRulesGovernedList,
+	request: (input) => ({ query: { pass_evaluation: input.passEvaluation } }),
+});
+export const adsPreviewsList = operation({
+	name: 'ads.previewsList',
+	method: 'GET',
+	path: (input) => `${idPath(input.adId)}/previews`,
+	input: MetaAdsEndpointInputSchemas.adsPreviewsList,
+	output: MetaAdsEndpointOutputSchemas.adsPreviewsList,
+	request: previewRequest,
 });
 export const adsCopiesList = operation({
 	name: 'ads.copiesList',
@@ -562,6 +905,22 @@ export const creativesDelete = operation({
 	output: MetaAdsDeleteSchema,
 	request: emptyRequest,
 });
+export const creativesInsightsList = operation({
+	name: 'creatives.insightsList',
+	method: 'GET',
+	path: (input) => `${idPath(input.creativeId)}/creative_insights`,
+	input: MetaAdsEndpointInputSchemas.creativesInsightsList,
+	output: MetaAdsEndpointOutputSchemas.creativesInsightsList,
+	request: emptyRequest,
+});
+export const creativesPreviewsList = operation({
+	name: 'creatives.previewsList',
+	method: 'GET',
+	path: (input) => `${idPath(input.creativeId)}/previews`,
+	input: MetaAdsEndpointInputSchemas.creativesPreviewsList,
+	output: MetaAdsEndpointOutputSchemas.creativesPreviewsList,
+	request: previewRequest,
+});
 
 export const audiencesList = operation({
 	name: 'audiences.list',
@@ -578,6 +937,19 @@ export const audiencesAdsList = operation({
 	input: MetaAdsEndpointInputSchemas.audiencesAdsList,
 	output: MetaAdsListSchema,
 	request: (input) => ({ query: pageParams(input) }),
+});
+export const audiencesAdAccountsList = operation({
+	name: 'audiences.adAccountsList',
+	method: 'GET',
+	path: (input) => `${idPath(input.audienceId)}/adaccounts`,
+	input: MetaAdsEndpointInputSchemas.audiencesAdAccountsList,
+	output: MetaAdsEndpointOutputSchemas.audiencesAdAccountsList,
+	request: (input) => ({
+		query: {
+			permissions: input.permissions,
+			...pageParams(input),
+		},
+	}),
 });
 export const audiencesGet = operation({
 	name: 'audiences.get',
@@ -669,6 +1041,117 @@ export const audiencesUsersRemove = operation({
 		redactBodyOnError: true,
 		sensitiveValues: input.hashes,
 	}),
+});
+export const audiencesUsersReplace = operation({
+	name: 'audiences.usersReplace',
+	method: 'POST',
+	path: (input) => `${idPath(input.audienceId)}/usersreplace`,
+	input: MetaAdsEndpointInputSchemas.audiencesUsersReplace,
+	output: MetaAdsEndpointOutputSchemas.audiencesUsersReplace,
+	request: (input) => ({
+		body: {
+			session: {
+				session_id: input.sessionId,
+				batch_seq: input.batchSequence,
+				last_batch_flag: input.lastBatch,
+				estimated_num_total: input.estimatedTotal,
+			},
+			payload: {
+				schema: input.schema,
+				data: input.hashes.map((hash) => [hash]),
+			},
+		},
+		redactBodyOnError: true,
+		sensitiveValues: input.hashes,
+	}),
+});
+export const audiencesAdAccountsShare = operation({
+	name: 'audiences.adAccountsShare',
+	method: 'POST',
+	path: (input) => `${idPath(input.audienceId)}/ad_accounts`,
+	input: MetaAdsEndpointInputSchemas.audiencesAdAccountsShare,
+	output: MetaAdsEndpointOutputSchemas.audiencesAdAccountsShare,
+	request: (input) => ({
+		body: {
+			adaccounts: JSON.stringify(input.adAccountIds),
+			permissions: input.permissions,
+			replace: input.replace,
+		},
+	}),
+});
+export const audiencesAdAccountsUnshare = operation({
+	name: 'audiences.adAccountsUnshare',
+	method: 'DELETE',
+	path: (input) => `${idPath(input.audienceId)}/ad_accounts`,
+	input: MetaAdsEndpointInputSchemas.audiencesAdAccountsUnshare,
+	output: MetaAdsEndpointOutputSchemas.audiencesAdAccountsUnshare,
+	request: (input) => ({
+		encodedBody: new URLSearchParams({
+			adaccounts: JSON.stringify(input.adAccountIds),
+		}).toString(),
+	}),
+});
+export const studiesGet = operation({
+	name: 'studies.get',
+	method: 'GET',
+	path: (input) => idPath(input.studyId),
+	input: MetaAdsEndpointInputSchemas.studiesGet,
+	output: MetaAdsEndpointOutputSchemas.studiesGet,
+	request: (input) => ({ query: { fields: input.fields } }),
+});
+export const studiesCreate = operation({
+	name: 'studies.create',
+	method: 'POST',
+	path: (input) => `${idPath(input.businessId)}/ad_studies`,
+	input: MetaAdsEndpointInputSchemas.studiesCreate,
+	output: MetaAdsEndpointOutputSchemas.studiesCreate,
+	request: (input) => ({
+		body: {
+			name: input.name,
+			description: input.description,
+			start_time: input.startTime,
+			end_time: input.endTime,
+			type: input.type,
+			cells: JSON.stringify(
+				input.cells.map((cell) => ({
+					name: cell.name,
+					treatment_percentage: cell.treatmentPercentage,
+					control_percentage: cell.controlPercentage,
+					adsets: cell.adSetIds,
+				})),
+			),
+		},
+	}),
+});
+export const studiesUpdate = operation({
+	name: 'studies.update',
+	method: 'POST',
+	path: (input) => idPath(input.studyId),
+	input: MetaAdsEndpointInputSchemas.studiesUpdate,
+	output: MetaAdsEndpointOutputSchemas.studiesUpdate,
+	request: (input) => ({
+		body: {
+			name: input.name,
+			description: input.description,
+			end_time: input.endTime,
+		},
+	}),
+});
+export const studiesRelatedAccountsList = operation({
+	name: 'studies.relatedAccountsList',
+	method: 'GET',
+	path: (input) => `${idPath(input.studyId)}/related_ad_accounts`,
+	input: MetaAdsEndpointInputSchemas.studiesRelatedAccountsList,
+	output: MetaAdsEndpointOutputSchemas.studiesRelatedAccountsList,
+	request: emptyRequest,
+});
+export const studiesViewersList = operation({
+	name: 'studies.viewersList',
+	method: 'GET',
+	path: (input) => `${idPath(input.studyId)}/viewers`,
+	input: MetaAdsEndpointInputSchemas.studiesViewersList,
+	output: MetaAdsEndpointOutputSchemas.studiesViewersList,
+	request: emptyRequest,
 });
 
 type InsightParamsInput = Omit<
@@ -814,6 +1297,23 @@ export const Accounts = {
 	list: accountsList,
 	get: accountsGet,
 	usersList: accountsUsersList,
+	activitiesList: accountsActivitiesList,
+	impactingAdStudiesList: accountsImpactingAdStudiesList,
+	adRulesLibraryList: accountsAdRulesLibraryList,
+	activeAdRulesList: accountsActiveAdRulesList,
+	generatePreviews: accountsGeneratePreviews,
+	broadTargetingCategoriesList: accountsBroadTargetingCategoriesList,
+};
+export const Labels = {
+	list: labelsList,
+	get: labelsGet,
+	create: labelsCreate,
+	update: labelsUpdate,
+	delete: labelsDelete,
+	adsList: labelsAdsList,
+	adSetsList: labelsAdSetsList,
+	campaignsList: labelsCampaignsList,
+	creativesList: labelsCreativesList,
 };
 export const Images = {
 	list: imagesList,
@@ -826,17 +1326,28 @@ export const Campaigns = {
 	adsList: campaignsAdsList,
 	copiesList: campaignsCopiesList,
 	copy: campaignsCopy,
+	labelsAdd: campaignsLabelsAdd,
+	budgetSchedulesList: campaignsBudgetSchedulesList,
+	budgetScheduleCreate: campaignsBudgetScheduleCreate,
+	adStudiesList: campaignsAdStudiesList,
+	adRulesGovernedList: campaignsAdRulesGovernedList,
 	get: campaignsGet,
 	create: campaignsCreate,
 	update: campaignsUpdate,
 	delete: campaignsDelete,
 };
+export const HighDemandPeriods = { get: highDemandPeriodsGet };
 export const AdSets = {
 	list: adSetsList,
 	adsList: adSetsAdsList,
 	adCreativesList: adSetsAdCreativesList,
 	copiesList: adSetsCopiesList,
 	copy: adSetsCopy,
+	budgetSchedulesList: adSetsBudgetSchedulesList,
+	budgetScheduleCreate: adSetsBudgetScheduleCreate,
+	activitiesList: adSetsActivitiesList,
+	adStudiesList: adSetsAdStudiesList,
+	adRulesGovernedList: adSetsAdRulesGovernedList,
 	get: adSetsGet,
 	create: adSetsCreate,
 	update: adSetsUpdate,
@@ -845,8 +1356,12 @@ export const AdSets = {
 export const Ads = {
 	list: adsList,
 	adCreativesList: adsAdCreativesList,
+	adStudiesList: adsAdStudiesList,
+	adRulesGovernedList: adsAdRulesGovernedList,
+	previewsList: adsPreviewsList,
 	copiesList: adsCopiesList,
 	copy: adsCopy,
+	labelsAdd: adsLabelsAdd,
 	get: adsGet,
 	create: adsCreate,
 	update: adsUpdate,
@@ -858,10 +1373,14 @@ export const Creatives = {
 	create: creativesCreate,
 	update: creativesUpdate,
 	delete: creativesDelete,
+	labelsAdd: creativesLabelsAdd,
+	insightsList: creativesInsightsList,
+	previewsList: creativesPreviewsList,
 };
 export const Audiences = {
 	list: audiencesList,
 	adsList: audiencesAdsList,
+	adAccountsList: audiencesAdAccountsList,
 	get: audiencesGet,
 	create: audiencesCreate,
 	update: audiencesUpdate,
@@ -869,7 +1388,18 @@ export const Audiences = {
 	sessionsList: audiencesSessionsList,
 	usersAdd: audiencesUsersAdd,
 	usersRemove: audiencesUsersRemove,
+	usersReplace: audiencesUsersReplace,
+	adAccountsShare: audiencesAdAccountsShare,
+	adAccountsUnshare: audiencesAdAccountsUnshare,
 };
+export const Studies = {
+	get: studiesGet,
+	create: studiesCreate,
+	update: studiesUpdate,
+	relatedAccountsList: studiesRelatedAccountsList,
+	viewersList: studiesViewersList,
+};
+export const Videos = { delete: videosDelete };
 export const Insights = {
 	list: insightsList,
 	listForCampaign: insightsListForCampaign,

@@ -38,6 +38,87 @@ export const MetaAdsListSchema = z.object({
 	paging: MetaAdsPagingSchema.optional(),
 });
 
+const StudyActorSchema = z
+	.object({ id: z.string(), name: z.string().optional() })
+	.passthrough();
+const AdRuleSchema = z
+	.object({
+		id: z.string(),
+		account_id: z.string().optional(),
+		created_by: StudyActorSchema.optional(),
+		created_time: z.string().optional(),
+		disable_error_code: z.number().int().optional(),
+		name: z.string().optional(),
+		status: z.string().optional(),
+		updated_time: z.string().optional(),
+	})
+	.passthrough();
+const AdRuleListSchema = z.object({
+	data: z.array(AdRuleSchema),
+	paging: MetaAdsListSchema.shape.paging.optional(),
+});
+const AdStudySchema = z
+	.object({
+		id: z.string(),
+		business: StudyActorSchema.nullable().optional(),
+		canceled_time: z.string().nullable().optional(),
+		cooldown_start_time: z.string().nullable().optional(),
+		created_by: StudyActorSchema.nullable().optional(),
+		created_time: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		end_time: z.string().nullable().optional(),
+		name: z.string().nullable().optional(),
+		observation_end_time: z.string().nullable().optional(),
+		results_first_available_date: z.string().nullable().optional(),
+		start_time: z.string().nullable().optional(),
+		type: z.string().nullable().optional(),
+		updated_by: StudyActorSchema.nullable().optional(),
+		updated_time: z.string().nullable().optional(),
+	})
+	.passthrough();
+const AdStudyListSchema = z.object({
+	data: z.array(AdStudySchema),
+	paging: MetaAdsListSchema.shape.paging.optional(),
+});
+const StudyViewersListSchema = z.object({
+	data: z.array(StudyActorSchema),
+	paging: MetaAdsListSchema.shape.paging.optional(),
+});
+const AdPreviewSchema = z.object({ body: z.string() }).strict();
+const AdPreviewsListSchema = z.object({
+	data: z.array(AdPreviewSchema),
+	paging: MetaAdsListSchema.shape.paging.optional(),
+});
+const CreativeInsightValueSchema = z
+	.object({ key: z.string(), value: z.string() })
+	.passthrough();
+const CreativeInsightsSchema = z
+	.object({ aesthetics: z.array(CreativeInsightValueSchema).optional() })
+	.passthrough();
+const CreativeInsightsListSchema = z.object({
+	data: z.array(CreativeInsightsSchema),
+	paging: MetaAdsListSchema.shape.paging.optional(),
+});
+const AudienceAdAccountSchema = z.object({ id: z.string() }).strict();
+const AudienceAdAccountsListSchema = z.object({
+	data: z.array(AudienceAdAccountSchema),
+	paging: MetaAdsListSchema.shape.paging.optional(),
+});
+const StudyCreateSchema = z
+	.object({
+		id: z.string(),
+		cell_ids: z.array(z.string()).optional(),
+		objective_ids: z.array(z.string()).optional(),
+	})
+	.passthrough();
+const StudyUpdateSchema = z
+	.object({
+		success: z.boolean(),
+		cell_ids: z.array(z.string()).optional(),
+		objective_ids: z.array(z.string()).optional(),
+	})
+	.passthrough();
+
 export const MetaAdsMutationSchema = z
 	.object({ id: z.string().optional(), success: z.boolean().optional() })
 	.refine((value) => value.id !== undefined || value.success !== undefined);
@@ -147,6 +228,88 @@ const accountGetOutput = AccountSchema;
 const accountUsersListInput = z
 	.object({ accountId: id, limit: pageSize, after: cursor, before: cursor })
 	.strict();
+const accountActivitiesListInput = z.object({ accountId: id }).strict();
+// Meta documents an evolving event_type catalog; event records retain only documented fields plus forward-compatible JSON.
+const AccountActivitySchema = z
+	.object({
+		actor_id: z.string().optional(),
+		actor_name: z.string().optional(),
+		application_id: z.string().optional(),
+		application_name: z.string().optional(),
+		date_time_in_timezone: z.string().optional(),
+		event_time: z.string().optional(),
+		event_type: z.string(),
+		extra_data: z.string().optional(),
+		object_id: z.string().optional(),
+		object_name: z.string().optional(),
+		object_type: z.string().optional(),
+		translated_event_type: z.string().optional(),
+	})
+	.passthrough();
+export const AccountActivitiesListSchema = z.object({
+	data: z.array(AccountActivitySchema),
+	paging: MetaAdsListSchema.shape.paging.optional(),
+});
+const BroadTargetingCategoriesListSchema = z.object({
+	data: z.array(
+		z.object({
+			id: z.union([z.string(), z.number().int()]),
+			name: z.string(),
+			parent_category: z.string().optional(),
+			size_lower_bound: z.number().int().optional(),
+			size_upper_bound: z.number().int().optional(),
+			type: z.number().int().optional(),
+			type_name: z.string().optional(),
+		}),
+	),
+	paging: MetaAdsListSchema.shape.paging.optional(),
+});
+const videosDeleteInput = z.object({ accountId: id, videoId: id }).strict();
+
+const adLabelListInput = z.object({ accountId: id }).strict();
+const adLabelGetInput = z.object({ labelId: id, fields }).strict();
+const adLabelCreateInput = z
+	.object({ accountId: id, name: z.string().min(1) })
+	.strict();
+const adLabelUpdateInput = z
+	.object({ labelId: id, name: z.string().min(1) })
+	.strict();
+const adLabelDeleteInput = z.object({ labelId: id }).strict();
+const adLabelReferenceInput = z.union([
+	z.object({ id }).strict(),
+	z.object({ name: z.string().min(1) }).strict(),
+]);
+const labelAssociationFields = {
+	adlabels: z.array(adLabelReferenceInput).min(1).max(50),
+	executionOptions: z.array(z.literal('validate_only')).optional(),
+};
+const campaignLabelsAddInput = z
+	.object({ campaignId: id, ...labelAssociationFields })
+	.strict();
+const adLabelsAddInput = z
+	.object({ adId: id, ...labelAssociationFields })
+	.strict();
+const creativeLabelsAddInput = z
+	.object({ creativeId: id, adlabels: labelAssociationFields.adlabels })
+	.strict();
+const adLabelCampaignsListInput = z.object({ labelId: id }).strict();
+const adLabelAdSetsListInput = z.object({ labelId: id }).strict();
+const adLabelAdsListInput = z.object({ labelId: id }).strict();
+const adLabelCreativesListInput = z.object({ labelId: id }).strict();
+const AdLabelAssociationSchema = z.object({ success: z.boolean() });
+const AdLabelSchema = z
+	.object({
+		id: id,
+		name: z.string().optional(),
+		created_time: z.string().optional(),
+		updated_time: z.string().optional(),
+	})
+	.passthrough();
+const AdLabelsListSchema = z.object({
+	data: z.array(AdLabelSchema),
+	paging: MetaAdsListSchema.shape.paging.optional(),
+	summary: z.object({ total_count: z.number().int().optional() }).optional(),
+});
 
 const campaignListInput = z.object({ accountId: id, ...listOptions }).strict();
 const campaignAdSetsListInput = z
@@ -170,7 +333,101 @@ const renameOptionsInput = z
 const campaignCopyInput = z
 	.object({ campaignId: id, renameOptions: renameOptionsInput.optional() })
 	.strict();
+const budgetScheduleRange = z.union([
+	z.number().int().positive(),
+	z.string().min(1),
+]);
+const campaignBudgetSchedulesListInput = z
+	.object({
+		campaignId: id,
+		timeStart: budgetScheduleRange.optional(),
+		timeStop: budgetScheduleRange.optional(),
+		limit: pageSize,
+		after: cursor,
+		before: cursor,
+	})
+	.strict();
+const campaignBudgetScheduleCreateInput = z
+	.object({
+		campaignId: id,
+		budgetValue: z.number().int().positive().max(Number.MAX_SAFE_INTEGER),
+		budgetValueType: z.enum(['ABSOLUTE', 'MULTIPLIER']),
+		timeStart: z.number().int().positive().max(Number.MAX_SAFE_INTEGER),
+		timeEnd: z.number().int().positive().max(Number.MAX_SAFE_INTEGER),
+	})
+	.strict()
+	.refine((value) => value.timeEnd > value.timeStart)
+	.refine((value) => value.timeEnd - value.timeStart >= 10_800);
 const campaignGetInput = z.object({ campaignId: id, fields }).strict();
+const campaignAdStudiesListInput = z.object({ campaignId: id }).strict();
+const accountImpactingAdStudiesListInput = z.object({ accountId: id }).strict();
+const accountAdRulesLibraryListInput = z.object({ accountId: id }).strict();
+const accountActiveAdRulesListInput = z
+	.object({
+		accountId: id,
+		selectedIds: z.array(id).min(1),
+		passEvaluation: z.boolean().optional(),
+	})
+	.strict();
+const accountBroadTargetingCategoriesListInput = z
+	.object({ accountId: id, customCategoriesOnly: z.boolean().optional() })
+	.strict();
+const campaignAdRulesGovernedListInput = z
+	.object({ campaignId: id, passEvaluation: z.boolean().optional() })
+	.strict();
+const adSetAdRulesGovernedListInput = z
+	.object({ adSetId: id, passEvaluation: z.boolean().optional() })
+	.strict();
+const studyGetInput = z.object({ studyId: id, fields }).strict();
+const studyRelatedAccountsListInput = z.object({ studyId: id }).strict();
+const studyViewersListInput = z.object({ studyId: id }).strict();
+const studyCellInput = z
+	.object({
+		name: z.string().min(1),
+		treatmentPercentage: z.number().min(10).max(100),
+		controlPercentage: z.number().min(0).max(100).optional(),
+		adSetIds: z.array(id).min(1),
+	})
+	.strict();
+const studyCreateInput = z
+	.object({
+		businessId: id,
+		name: z.string().min(1),
+		description: z.string().optional(),
+		startTime: z.number().int().positive().max(Number.MAX_SAFE_INTEGER),
+		endTime: z.number().int().positive().max(Number.MAX_SAFE_INTEGER),
+		type: z.literal('SPLIT_TEST'),
+		cells: z.array(studyCellInput).min(2),
+	})
+	.strict()
+	.refine((value) => value.endTime > value.startTime)
+	.refine(
+		(value) =>
+			value.cells.reduce(
+				(total, cell) => total + cell.treatmentPercentage,
+				0,
+			) <= 100,
+	);
+const studyUpdateInput = z
+	.object({
+		studyId: id,
+		name: z.string().min(1).optional(),
+		description: z.string().optional(),
+		endTime: z
+			.number()
+			.int()
+			.positive()
+			.max(Number.MAX_SAFE_INTEGER)
+			.optional(),
+	})
+	.strict()
+	.refine(
+		(value) =>
+			value.name !== undefined ||
+			value.description !== undefined ||
+			value.endTime !== undefined,
+	);
+const budgetScheduleGetInput = z.object({ periodId: id, fields }).strict();
 const campaignCreateInput = z
 	.object({
 		accountId: id,
@@ -237,7 +494,55 @@ const adSetCopyInput = z
 		renameOptions: renameOptionsInput.optional(),
 	})
 	.strict();
+const adSetBudgetSchedulesListInput = z
+	.object({
+		adSetId: id,
+		timeStart: budgetScheduleRange.optional(),
+		timeStop: budgetScheduleRange.optional(),
+		limit: pageSize,
+		after: cursor,
+		before: cursor,
+	})
+	.strict();
+const adSetBudgetScheduleCreateInput = z
+	.object({
+		adSetId: id,
+		budgetValue: z.number().int().positive().max(Number.MAX_SAFE_INTEGER),
+		budgetValueType: z.enum(['ABSOLUTE', 'MULTIPLIER']),
+		timeStart: z.number().int().positive().max(Number.MAX_SAFE_INTEGER),
+		timeEnd: z.number().int().positive().max(Number.MAX_SAFE_INTEGER),
+	})
+	.strict()
+	.refine((value) => value.timeEnd > value.timeStart)
+	.refine((value) => value.timeEnd - value.timeStart >= 10_800);
 const adSetGetInput = z.object({ adSetId: id, fields }).strict();
+const adSetActivitiesListInput = z
+	.object({
+		adSetId: id,
+		after: cursor,
+		businessId: id.optional(),
+		category: z
+			.enum([
+				'ACCOUNT',
+				'AD',
+				'AD_KEYWORDS',
+				'AD_SET',
+				'AUDIENCE',
+				'BID',
+				'BUDGET',
+				'CAMPAIGN',
+				'DATE',
+				'STATUS',
+				'TARGETING',
+			])
+			.optional(),
+		limit: pageSize,
+		since: z.string().min(1).optional(),
+		uid: z.number().int().positive().optional(),
+		until: z.string().min(1).optional(),
+	})
+	.strict();
+const adSetAdStudiesListInput = z.object({ adSetId: id }).strict();
 // `unknown` is necessary because targeting contains provider-defined nested, versioned JSON keys.
 const targeting = z.record(z.string(), z.unknown());
 const adSetCreateInput = z
@@ -336,6 +641,10 @@ const adCopyInput = z
 	})
 	.strict();
 const adGetInput = z.object({ adId: id, fields }).strict();
+const adAdStudiesListInput = z.object({ adId: id }).strict();
+const adAdRulesGovernedListInput = z
+	.object({ adId: id, passEvaluation: z.boolean().optional() })
+	.strict();
 // Nested content fields are provider-defined JSON objects with versioned documented subfields.
 const creativeStoryContent = z.record(z.string(), z.unknown());
 const creativeObjectStorySpec = z
@@ -420,8 +729,82 @@ const creativeUpdateInput = z
 	.object({ creativeId: id, name: z.string().min(1).max(100) })
 	.strict();
 const creativeDeleteInput = z.object({ creativeId: id }).strict();
+const creativeInsightsListInput = z.object({ creativeId: id }).strict();
+const previewAdFormat = z.enum([
+	'DESKTOP_FEED_STANDARD',
+	'MOBILE_FEED_STANDARD',
+	'RIGHT_COLUMN_STANDARD',
+	'INSTAGRAM_STANDARD',
+	'INSTAGRAM_STORY',
+	'FACEBOOK_STORY_MOBILE',
+	'INSTAGRAM_REELS',
+]);
+const accountGeneratePreviewsInput = z
+	.object({
+		accountId: id,
+		adFormat: previewAdFormat,
+		creativeSpec: z
+			.object({ objectStorySpec: creativeObjectStorySpec })
+			.strict(),
+	})
+	.strict();
+const creativePreviewsListInput = z
+	.object({
+		creativeId: id,
+		adFormat: previewAdFormat,
+		creativeFeature: z
+			.enum([
+				'ig_video_native_subtitle',
+				'image_animation',
+				'product_browsing',
+				'product_metadata_automation',
+				'profile_card',
+				'standard_enhancements_catalog',
+				'text_overlay_translation',
+			])
+			.optional(),
+		dynamicAssetLabel: z.string().min(1).optional(),
+		productItemIds: z.array(id).min(1).optional(),
+		startDate: z.string().datetime().optional(),
+		endDate: z.string().datetime().optional(),
+		width: z.number().int().positive().optional(),
+		height: z.number().int().positive().optional(),
+	})
+	.strict();
+const adsPreviewsListInput = z
+	.object({
+		adId: id,
+		adFormat: previewAdFormat,
+		creativeFeature: z
+			.enum([
+				'ig_video_native_subtitle',
+				'image_animation',
+				'product_browsing',
+				'product_metadata_automation',
+				'profile_card',
+				'standard_enhancements_catalog',
+				'text_overlay_translation',
+			])
+			.optional(),
+		dynamicAssetLabel: z.string().min(1).optional(),
+		productItemIds: z.array(id).min(1).optional(),
+		startDate: z.string().datetime().optional(),
+		endDate: z.string().datetime().optional(),
+		width: z.number().int().positive().optional(),
+		height: z.number().int().positive().optional(),
+	})
+	.strict();
 
 const audienceListInput = z.object({ accountId: id, ...listOptions }).strict();
+const audienceAdAccountsListInput = z
+	.object({
+		audienceId: id,
+		permissions: z.enum(['targeting', 'targeting_and_insights']).optional(),
+		limit: pageSize,
+		after: cursor,
+		before: cursor,
+	})
+	.strict();
 const audienceAdsListInput = z
 	.object({ audienceId: id, ...listOptions })
 	.strict();
@@ -452,6 +835,28 @@ const audienceUpdateInput = z
 		(value) => value.name !== undefined || value.description !== undefined,
 	);
 const audienceDeleteInput = z.object({ audienceId: id }).strict();
+const audienceAccountsShareInput = z
+	.object({
+		audienceId: id,
+		adAccountIds: z.array(id).min(1),
+		permissions: z.enum(['targeting', 'targeting_and_insights']),
+		replace: z.boolean().optional(),
+	})
+	.strict();
+const audienceAccountsUnshareInput = z
+	.object({ audienceId: id, adAccountIds: z.array(id).min(1) })
+	.strict();
+const AudienceSharingSchema = z.object({
+	success: z.boolean(),
+	sharing_data: z.array(
+		z.object({
+			ad_acct_id: z.string(),
+			business_id: z.union([z.string(), z.number().int()]).optional(),
+			audience_share_status: z.string().optional(),
+			errors: z.array(z.string()).optional(),
+		}),
+	),
+});
 const audienceSessionsListInput = z
 	.object({
 		audienceId: id,
@@ -479,6 +884,17 @@ const audienceSessionsListOutput = z.object({
 const audienceMemberSchema = z.enum(['EMAIL_SHA256', 'PHONE_SHA256']);
 const sha256Hash = z.string().regex(/^[a-f0-9]{64}$/);
 const audienceUsersAddInput = z
+	.object({
+		audienceId: id,
+		schema: audienceMemberSchema,
+		hashes: z.array(sha256Hash).min(1).max(10_000),
+		sessionId: z.number().int().positive().max(Number.MAX_SAFE_INTEGER),
+		batchSequence: z.number().int().positive(),
+		lastBatch: z.boolean(),
+		estimatedTotal: z.number().int().nonnegative().optional(),
+	})
+	.strict();
+const audienceUsersReplaceInput = z
 	.object({
 		audienceId: id,
 		schema: audienceMemberSchema,
@@ -864,6 +1280,21 @@ const adSetCopyOutputSchema = z
 	})
 	.passthrough();
 const adCopyOutputSchema = z.object({ copied_ad_id: id }).passthrough();
+const HighDemandPeriodSchema = z
+	.object({
+		id: z.string(),
+		budget_value: z.union([z.number(), z.string()]).optional(),
+		budget_value_type: z.enum(['ABSOLUTE', 'MULTIPLIER']).optional(),
+		recurrence_type: z.string().optional(),
+		time_end: z.union([z.string(), z.number()]).optional(),
+		time_start: z.union([z.string(), z.number()]).optional(),
+	})
+	.passthrough();
+const HighDemandPeriodsListSchema = z.object({
+	data: z.array(HighDemandPeriodSchema),
+	paging: MetaAdsListSchema.shape.paging.optional(),
+});
+const HighDemandPeriodCreateSchema = z.object({ id });
 const InsightsFeatureName = z.enum([
 	'comscore',
 	'impression_device',
@@ -944,6 +1375,25 @@ export type MetaAdsEndpointInputs = {
 	accountsList: z.infer<typeof accountListInput>;
 	accountsGet: z.infer<typeof accountGetInput>;
 	accountsUsersList: z.infer<typeof accountUsersListInput>;
+	accountsActivitiesList: z.infer<typeof accountActivitiesListInput>;
+	accountsImpactingAdStudiesList: z.infer<
+		typeof accountImpactingAdStudiesListInput
+	>;
+	accountsAdRulesLibraryList: z.infer<typeof accountAdRulesLibraryListInput>;
+	accountsActiveAdRulesList: z.infer<typeof accountActiveAdRulesListInput>;
+	accountsGeneratePreviews: z.infer<typeof accountGeneratePreviewsInput>;
+	accountsBroadTargetingCategoriesList: z.infer<
+		typeof accountBroadTargetingCategoriesListInput
+	>;
+	labelsList: z.infer<typeof adLabelListInput>;
+	labelsGet: z.infer<typeof adLabelGetInput>;
+	labelsCreate: z.infer<typeof adLabelCreateInput>;
+	labelsUpdate: z.infer<typeof adLabelUpdateInput>;
+	labelsDelete: z.infer<typeof adLabelDeleteInput>;
+	labelsAdsList: z.infer<typeof adLabelAdsListInput>;
+	labelsAdSetsList: z.infer<typeof adLabelAdSetsListInput>;
+	labelsCampaignsList: z.infer<typeof adLabelCampaignsListInput>;
+	labelsCreativesList: z.infer<typeof adLabelCreativesListInput>;
 	imagesList: z.infer<typeof AdImageListInput>;
 	imagesUpload: z.infer<typeof AdImageUploadInput>;
 	imagesDelete: z.infer<typeof AdImageDeleteInput>;
@@ -952,6 +1402,18 @@ export type MetaAdsEndpointInputs = {
 	campaignsAdsList: z.infer<typeof campaignAdsListInput>;
 	campaignsCopiesList: z.infer<typeof campaignCopiesListInput>;
 	campaignsCopy: z.infer<typeof campaignCopyInput>;
+	campaignsLabelsAdd: z.infer<typeof campaignLabelsAddInput>;
+	campaignsBudgetSchedulesList: z.infer<
+		typeof campaignBudgetSchedulesListInput
+	>;
+	campaignsBudgetScheduleCreate: z.infer<
+		typeof campaignBudgetScheduleCreateInput
+	>;
+	campaignsAdStudiesList: z.infer<typeof campaignAdStudiesListInput>;
+	campaignsAdRulesGovernedList: z.infer<
+		typeof campaignAdRulesGovernedListInput
+	>;
+	highDemandPeriodsGet: z.infer<typeof budgetScheduleGetInput>;
 	campaignsGet: z.infer<typeof campaignGetInput>;
 	campaignsCreate: z.infer<typeof campaignCreateInput>;
 	campaignsUpdate: z.infer<typeof campaignUpdateInput>;
@@ -961,6 +1423,11 @@ export type MetaAdsEndpointInputs = {
 	adSetsAdCreativesList: z.infer<typeof adSetAdCreativesListInput>;
 	adSetsCopiesList: z.infer<typeof adSetCopiesListInput>;
 	adSetsCopy: z.infer<typeof adSetCopyInput>;
+	adSetsBudgetSchedulesList: z.infer<typeof adSetBudgetSchedulesListInput>;
+	adSetsBudgetScheduleCreate: z.infer<typeof adSetBudgetScheduleCreateInput>;
+	adSetsActivitiesList: z.infer<typeof adSetActivitiesListInput>;
+	adSetsAdStudiesList: z.infer<typeof adSetAdStudiesListInput>;
+	adSetsAdRulesGovernedList: z.infer<typeof adSetAdRulesGovernedListInput>;
 	adSetsGet: z.infer<typeof adSetGetInput>;
 	adSetsCreate: z.infer<typeof adSetCreateInput>;
 	adSetsUpdate: z.infer<typeof adSetUpdateInput>;
@@ -969,6 +1436,10 @@ export type MetaAdsEndpointInputs = {
 	adsAdCreativesList: z.infer<typeof adAdCreativesListInput>;
 	adsCopiesList: z.infer<typeof adCopiesListInput>;
 	adsCopy: z.infer<typeof adCopyInput>;
+	adsLabelsAdd: z.infer<typeof adLabelsAddInput>;
+	adsAdStudiesList: z.infer<typeof adAdStudiesListInput>;
+	adsAdRulesGovernedList: z.infer<typeof adAdRulesGovernedListInput>;
+	adsPreviewsList: z.infer<typeof adsPreviewsListInput>;
 	adsGet: z.infer<typeof adGetInput>;
 	adsCreate: z.infer<typeof adCreateInput>;
 	adsUpdate: z.infer<typeof adUpdateInput>;
@@ -978,7 +1449,11 @@ export type MetaAdsEndpointInputs = {
 	creativesCreate: z.infer<typeof creativeCreateInput>;
 	creativesUpdate: z.infer<typeof creativeUpdateInput>;
 	creativesDelete: z.infer<typeof creativeDeleteInput>;
+	creativesLabelsAdd: z.infer<typeof creativeLabelsAddInput>;
+	creativesInsightsList: z.infer<typeof creativeInsightsListInput>;
+	creativesPreviewsList: z.infer<typeof creativePreviewsListInput>;
 	audiencesList: z.infer<typeof audienceListInput>;
+	audiencesAdAccountsList: z.infer<typeof audienceAdAccountsListInput>;
 	audiencesAdsList: z.infer<typeof audienceAdsListInput>;
 	audiencesGet: z.infer<typeof audienceGetInput>;
 	audiencesCreate: z.input<typeof audienceCreateInput>;
@@ -987,6 +1462,15 @@ export type MetaAdsEndpointInputs = {
 	audiencesSessionsList: z.infer<typeof audienceSessionsListInput>;
 	audiencesUsersAdd: z.infer<typeof audienceUsersAddInput>;
 	audiencesUsersRemove: z.infer<typeof audienceUsersRemoveInput>;
+	audiencesUsersReplace: z.infer<typeof audienceUsersReplaceInput>;
+	audiencesAdAccountsShare: z.infer<typeof audienceAccountsShareInput>;
+	audiencesAdAccountsUnshare: z.infer<typeof audienceAccountsUnshareInput>;
+	studiesGet: z.infer<typeof studyGetInput>;
+	studiesCreate: z.infer<typeof studyCreateInput>;
+	studiesUpdate: z.infer<typeof studyUpdateInput>;
+	studiesRelatedAccountsList: z.infer<typeof studyRelatedAccountsListInput>;
+	studiesViewersList: z.infer<typeof studyViewersListInput>;
+	videosDelete: z.infer<typeof videosDeleteInput>;
 	insightsList: z.infer<typeof insightsInput>;
 	insightsListForCampaign: z.infer<typeof insightsForCampaignInput>;
 	insightsListForAdSet: z.infer<typeof insightsForAdSetInput>;
@@ -1003,6 +1487,23 @@ export type MetaAdsEndpointOutputs = {
 	accountsList: z.infer<typeof accountListOutput>;
 	accountsGet: z.infer<typeof accountGetOutput>;
 	accountsUsersList: z.infer<typeof AccountUsersListSchema>;
+	accountsActivitiesList: z.infer<typeof AccountActivitiesListSchema>;
+	accountsImpactingAdStudiesList: z.infer<typeof AdStudyListSchema>;
+	accountsAdRulesLibraryList: z.infer<typeof AdRuleListSchema>;
+	accountsActiveAdRulesList: z.infer<typeof AdRuleListSchema>;
+	accountsGeneratePreviews: z.infer<typeof AdPreviewsListSchema>;
+	accountsBroadTargetingCategoriesList: z.infer<
+		typeof BroadTargetingCategoriesListSchema
+	>;
+	labelsList: z.infer<typeof AdLabelsListSchema>;
+	labelsGet: z.infer<typeof AdLabelSchema>;
+	labelsCreate: z.infer<typeof MetaAdsMutationSchema>;
+	labelsUpdate: z.infer<typeof AdLabelAssociationSchema>;
+	labelsDelete: z.infer<typeof MetaAdsDeleteSchema>;
+	labelsAdsList: z.infer<typeof MetaAdsListSchema>;
+	labelsAdSetsList: z.infer<typeof MetaAdsListSchema>;
+	labelsCampaignsList: z.infer<typeof MetaAdsListSchema>;
+	labelsCreativesList: z.infer<typeof MetaAdsListSchema>;
 	imagesList: z.infer<typeof AdImagesListSchema>;
 	imagesUpload: z.infer<typeof AdImageUploadSchema>;
 	imagesDelete: z.infer<typeof MetaAdsDeleteSchema>;
@@ -1011,6 +1512,12 @@ export type MetaAdsEndpointOutputs = {
 	campaignsAdsList: z.infer<typeof MetaAdsListSchema>;
 	campaignsCopiesList: z.infer<typeof MetaAdsListSchema>;
 	campaignsCopy: z.infer<typeof campaignCopyOutputSchema>;
+	campaignsLabelsAdd: z.infer<typeof AdLabelAssociationSchema>;
+	campaignsBudgetSchedulesList: z.infer<typeof HighDemandPeriodsListSchema>;
+	campaignsBudgetScheduleCreate: z.infer<typeof HighDemandPeriodCreateSchema>;
+	campaignsAdStudiesList: z.infer<typeof AdStudyListSchema>;
+	campaignsAdRulesGovernedList: z.infer<typeof AdRuleListSchema>;
+	highDemandPeriodsGet: z.infer<typeof HighDemandPeriodSchema>;
 	campaignsGet: z.infer<typeof MetaAdsObjectSchema>;
 	campaignsCreate: z.infer<typeof MetaAdsMutationSchema>;
 	campaignsUpdate: { success: boolean };
@@ -1020,6 +1527,11 @@ export type MetaAdsEndpointOutputs = {
 	adSetsAdCreativesList: z.infer<typeof MetaAdsListSchema>;
 	adSetsCopiesList: z.infer<typeof MetaAdsListSchema>;
 	adSetsCopy: z.infer<typeof adSetCopyOutputSchema>;
+	adSetsBudgetSchedulesList: z.infer<typeof HighDemandPeriodsListSchema>;
+	adSetsBudgetScheduleCreate: z.infer<typeof HighDemandPeriodCreateSchema>;
+	adSetsActivitiesList: z.infer<typeof AccountActivitiesListSchema>;
+	adSetsAdStudiesList: z.infer<typeof AdStudyListSchema>;
+	adSetsAdRulesGovernedList: z.infer<typeof AdRuleListSchema>;
 	adSetsGet: z.infer<typeof MetaAdsObjectSchema>;
 	adSetsCreate: z.infer<typeof MetaAdsMutationSchema>;
 	adSetsUpdate: { success: boolean };
@@ -1028,6 +1540,10 @@ export type MetaAdsEndpointOutputs = {
 	adsAdCreativesList: z.infer<typeof MetaAdsListSchema>;
 	adsCopiesList: z.infer<typeof MetaAdsListSchema>;
 	adsCopy: z.infer<typeof adCopyOutputSchema>;
+	adsLabelsAdd: z.infer<typeof AdLabelAssociationSchema>;
+	adsAdStudiesList: z.infer<typeof AdStudyListSchema>;
+	adsAdRulesGovernedList: z.infer<typeof AdRuleListSchema>;
+	adsPreviewsList: z.infer<typeof AdPreviewsListSchema>;
 	adsGet: z.infer<typeof MetaAdsObjectSchema>;
 	adsCreate: z.infer<typeof MetaAdsMutationSchema>;
 	adsUpdate: { success: boolean };
@@ -1037,7 +1553,11 @@ export type MetaAdsEndpointOutputs = {
 	creativesCreate: z.infer<typeof MetaAdsMutationSchema>;
 	creativesUpdate: z.infer<typeof MetaAdsDeleteSchema>;
 	creativesDelete: z.infer<typeof MetaAdsDeleteSchema>;
+	creativesLabelsAdd: z.infer<typeof AdLabelAssociationSchema>;
+	creativesInsightsList: z.infer<typeof CreativeInsightsListSchema>;
+	creativesPreviewsList: z.infer<typeof AdPreviewsListSchema>;
 	audiencesList: z.infer<typeof MetaAdsListSchema>;
+	audiencesAdAccountsList: z.infer<typeof AudienceAdAccountsListSchema>;
 	audiencesAdsList: z.infer<typeof MetaAdsListSchema>;
 	audiencesGet: z.infer<typeof MetaAdsObjectSchema>;
 	audiencesCreate: z.infer<typeof MetaAdsMutationSchema>;
@@ -1046,6 +1566,15 @@ export type MetaAdsEndpointOutputs = {
 	audiencesSessionsList: z.infer<typeof audienceSessionsListOutput>;
 	audiencesUsersAdd: z.infer<typeof audienceUsersResultSchema>;
 	audiencesUsersRemove: z.infer<typeof audienceUsersResultSchema>;
+	audiencesUsersReplace: z.infer<typeof audienceUsersResultSchema>;
+	audiencesAdAccountsShare: z.infer<typeof AudienceSharingSchema>;
+	audiencesAdAccountsUnshare: z.infer<typeof MetaAdsDeleteSchema>;
+	studiesGet: z.infer<typeof AdStudySchema>;
+	studiesCreate: z.infer<typeof StudyCreateSchema>;
+	studiesUpdate: z.infer<typeof StudyUpdateSchema>;
+	studiesRelatedAccountsList: z.infer<typeof MetaAdsListSchema>;
+	studiesViewersList: z.infer<typeof StudyViewersListSchema>;
+	videosDelete: z.infer<typeof MetaAdsDeleteSchema>;
 	insightsList: z.infer<typeof InsightsListSchema>;
 	insightsListForCampaign: z.infer<typeof InsightsListSchema>;
 	insightsListForAdSet: z.infer<typeof InsightsListSchema>;
@@ -1064,6 +1593,22 @@ export const MetaAdsEndpointInputSchemas = {
 	accountsList: accountListInput,
 	accountsGet: accountGetInput,
 	accountsUsersList: accountUsersListInput,
+	accountsActivitiesList: accountActivitiesListInput,
+	accountsImpactingAdStudiesList: accountImpactingAdStudiesListInput,
+	accountsAdRulesLibraryList: accountAdRulesLibraryListInput,
+	accountsActiveAdRulesList: accountActiveAdRulesListInput,
+	accountsGeneratePreviews: accountGeneratePreviewsInput,
+	accountsBroadTargetingCategoriesList:
+		accountBroadTargetingCategoriesListInput,
+	labelsList: adLabelListInput,
+	labelsGet: adLabelGetInput,
+	labelsCreate: adLabelCreateInput,
+	labelsUpdate: adLabelUpdateInput,
+	labelsDelete: adLabelDeleteInput,
+	labelsAdsList: adLabelAdsListInput,
+	labelsAdSetsList: adLabelAdSetsListInput,
+	labelsCampaignsList: adLabelCampaignsListInput,
+	labelsCreativesList: adLabelCreativesListInput,
 	imagesList: AdImageListInput,
 	imagesUpload: AdImageUploadInput,
 	imagesDelete: AdImageDeleteInput,
@@ -1072,6 +1617,12 @@ export const MetaAdsEndpointInputSchemas = {
 	campaignsAdsList: campaignAdsListInput,
 	campaignsCopiesList: campaignCopiesListInput,
 	campaignsCopy: campaignCopyInput,
+	campaignsLabelsAdd: campaignLabelsAddInput,
+	campaignsBudgetSchedulesList: campaignBudgetSchedulesListInput,
+	campaignsBudgetScheduleCreate: campaignBudgetScheduleCreateInput,
+	campaignsAdStudiesList: campaignAdStudiesListInput,
+	campaignsAdRulesGovernedList: campaignAdRulesGovernedListInput,
+	highDemandPeriodsGet: budgetScheduleGetInput,
 	campaignsGet: campaignGetInput,
 	campaignsCreate: campaignCreateInput,
 	campaignsUpdate: campaignUpdateInput,
@@ -1081,6 +1632,11 @@ export const MetaAdsEndpointInputSchemas = {
 	adSetsAdCreativesList: adSetAdCreativesListInput,
 	adSetsCopiesList: adSetCopiesListInput,
 	adSetsCopy: adSetCopyInput,
+	adSetsBudgetSchedulesList: adSetBudgetSchedulesListInput,
+	adSetsBudgetScheduleCreate: adSetBudgetScheduleCreateInput,
+	adSetsActivitiesList: adSetActivitiesListInput,
+	adSetsAdStudiesList: adSetAdStudiesListInput,
+	adSetsAdRulesGovernedList: adSetAdRulesGovernedListInput,
 	adSetsGet: adSetGetInput,
 	adSetsCreate: adSetCreateInput,
 	adSetsUpdate: adSetUpdateInput,
@@ -1089,6 +1645,10 @@ export const MetaAdsEndpointInputSchemas = {
 	adsAdCreativesList: adAdCreativesListInput,
 	adsCopiesList: adCopiesListInput,
 	adsCopy: adCopyInput,
+	adsLabelsAdd: adLabelsAddInput,
+	adsAdStudiesList: adAdStudiesListInput,
+	adsAdRulesGovernedList: adAdRulesGovernedListInput,
+	adsPreviewsList: adsPreviewsListInput,
 	adsGet: adGetInput,
 	adsCreate: adCreateInput,
 	adsUpdate: adUpdateInput,
@@ -1098,7 +1658,11 @@ export const MetaAdsEndpointInputSchemas = {
 	creativesCreate: creativeCreateInput,
 	creativesUpdate: creativeUpdateInput,
 	creativesDelete: creativeDeleteInput,
+	creativesLabelsAdd: creativeLabelsAddInput,
+	creativesInsightsList: creativeInsightsListInput,
+	creativesPreviewsList: creativePreviewsListInput,
 	audiencesList: audienceListInput,
+	audiencesAdAccountsList: audienceAdAccountsListInput,
 	audiencesAdsList: audienceAdsListInput,
 	audiencesGet: audienceGetInput,
 	audiencesCreate: audienceCreateInput,
@@ -1107,6 +1671,15 @@ export const MetaAdsEndpointInputSchemas = {
 	audiencesSessionsList: audienceSessionsListInput,
 	audiencesUsersAdd: audienceUsersAddInput,
 	audiencesUsersRemove: audienceUsersRemoveInput,
+	audiencesUsersReplace: audienceUsersReplaceInput,
+	audiencesAdAccountsShare: audienceAccountsShareInput,
+	audiencesAdAccountsUnshare: audienceAccountsUnshareInput,
+	studiesGet: studyGetInput,
+	studiesCreate: studyCreateInput,
+	studiesUpdate: studyUpdateInput,
+	studiesRelatedAccountsList: studyRelatedAccountsListInput,
+	studiesViewersList: studyViewersListInput,
+	videosDelete: videosDeleteInput,
 	insightsList: insightsInput,
 	insightsListForCampaign: insightsForCampaignInput,
 	insightsListForAdSet: insightsForAdSetInput,
@@ -1123,6 +1696,21 @@ export const MetaAdsEndpointOutputSchemas = {
 	accountsList: accountListOutput,
 	accountsGet: accountGetOutput,
 	accountsUsersList: AccountUsersListSchema,
+	accountsActivitiesList: AccountActivitiesListSchema,
+	accountsImpactingAdStudiesList: AdStudyListSchema,
+	accountsAdRulesLibraryList: AdRuleListSchema,
+	accountsActiveAdRulesList: AdRuleListSchema,
+	accountsGeneratePreviews: AdPreviewsListSchema,
+	accountsBroadTargetingCategoriesList: BroadTargetingCategoriesListSchema,
+	labelsList: AdLabelsListSchema,
+	labelsGet: AdLabelSchema,
+	labelsCreate: MetaAdsMutationSchema,
+	labelsUpdate: AdLabelAssociationSchema,
+	labelsDelete: MetaAdsDeleteSchema,
+	labelsAdsList: MetaAdsListSchema,
+	labelsAdSetsList: MetaAdsListSchema,
+	labelsCampaignsList: MetaAdsListSchema,
+	labelsCreativesList: MetaAdsListSchema,
 	imagesList: AdImagesListSchema,
 	imagesUpload: AdImageUploadSchema,
 	imagesDelete: MetaAdsDeleteSchema,
@@ -1131,6 +1719,12 @@ export const MetaAdsEndpointOutputSchemas = {
 	campaignsAdsList: MetaAdsListSchema,
 	campaignsCopiesList: MetaAdsListSchema,
 	campaignsCopy: campaignCopyOutputSchema,
+	campaignsLabelsAdd: AdLabelAssociationSchema,
+	campaignsBudgetSchedulesList: HighDemandPeriodsListSchema,
+	campaignsBudgetScheduleCreate: HighDemandPeriodCreateSchema,
+	campaignsAdStudiesList: AdStudyListSchema,
+	campaignsAdRulesGovernedList: AdRuleListSchema,
+	highDemandPeriodsGet: HighDemandPeriodSchema,
 	campaignsGet: MetaAdsObjectSchema,
 	campaignsCreate: MetaAdsMutationSchema,
 	campaignsUpdate: MetaAdsDeleteSchema,
@@ -1140,6 +1734,11 @@ export const MetaAdsEndpointOutputSchemas = {
 	adSetsAdCreativesList: MetaAdsListSchema,
 	adSetsCopiesList: MetaAdsListSchema,
 	adSetsCopy: adSetCopyOutputSchema,
+	adSetsBudgetSchedulesList: HighDemandPeriodsListSchema,
+	adSetsBudgetScheduleCreate: HighDemandPeriodCreateSchema,
+	adSetsActivitiesList: AccountActivitiesListSchema,
+	adSetsAdStudiesList: AdStudyListSchema,
+	adSetsAdRulesGovernedList: AdRuleListSchema,
 	adSetsGet: MetaAdsObjectSchema,
 	adSetsCreate: MetaAdsMutationSchema,
 	adSetsUpdate: MetaAdsDeleteSchema,
@@ -1148,6 +1747,10 @@ export const MetaAdsEndpointOutputSchemas = {
 	adsAdCreativesList: MetaAdsListSchema,
 	adsCopiesList: MetaAdsListSchema,
 	adsCopy: adCopyOutputSchema,
+	adsLabelsAdd: AdLabelAssociationSchema,
+	adsAdStudiesList: AdStudyListSchema,
+	adsAdRulesGovernedList: AdRuleListSchema,
+	adsPreviewsList: AdPreviewsListSchema,
 	adsGet: MetaAdsObjectSchema,
 	adsCreate: MetaAdsMutationSchema,
 	adsUpdate: MetaAdsDeleteSchema,
@@ -1157,7 +1760,11 @@ export const MetaAdsEndpointOutputSchemas = {
 	creativesCreate: MetaAdsMutationSchema,
 	creativesUpdate: MetaAdsDeleteSchema,
 	creativesDelete: MetaAdsDeleteSchema,
+	creativesLabelsAdd: AdLabelAssociationSchema,
+	creativesInsightsList: CreativeInsightsListSchema,
+	creativesPreviewsList: AdPreviewsListSchema,
 	audiencesList: MetaAdsListSchema,
+	audiencesAdAccountsList: AudienceAdAccountsListSchema,
 	audiencesAdsList: MetaAdsListSchema,
 	audiencesGet: MetaAdsObjectSchema,
 	audiencesCreate: MetaAdsMutationSchema,
@@ -1166,6 +1773,15 @@ export const MetaAdsEndpointOutputSchemas = {
 	audiencesSessionsList: audienceSessionsListOutput,
 	audiencesUsersAdd: audienceUsersResultSchema,
 	audiencesUsersRemove: audienceUsersResultSchema,
+	audiencesUsersReplace: audienceUsersResultSchema,
+	audiencesAdAccountsShare: AudienceSharingSchema,
+	audiencesAdAccountsUnshare: MetaAdsDeleteSchema,
+	studiesGet: AdStudySchema,
+	studiesCreate: StudyCreateSchema,
+	studiesUpdate: StudyUpdateSchema,
+	studiesRelatedAccountsList: MetaAdsListSchema,
+	studiesViewersList: StudyViewersListSchema,
+	videosDelete: MetaAdsDeleteSchema,
 	insightsList: InsightsListSchema,
 	insightsListForCampaign: InsightsListSchema,
 	insightsListForAdSet: InsightsListSchema,

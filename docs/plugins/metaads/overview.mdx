@@ -1,7 +1,7 @@
 ---
 title: "Meta Ads plugin"
 sidebarTitle: "Overview"
-description: "Read ad accounts and their app-scoped users, manage campaigns and delivery objects, inspect custom-audience metadata and upload sessions, and query synchronous or asynchronous Ads Insights through Meta Marketing API v27.0."
+description: "Read ad accounts and activity, manage campaign and delivery objects, labels, budget schedules, ad studies, custom-audience memberships and sharing, previews, and synchronous or asynchronous Ads Insights through Meta Marketing API v27.0."
 ---
 
 Use **Meta Ads** through Corsair: one client, typed API calls.
@@ -10,7 +10,7 @@ Supply an OAuth access token with ads_read for reporting or ads_management for m
 
 **What you get:**
 
-- 56 typed API operations
+- 99 typed API operations
 
 ## Setup
 
@@ -96,19 +96,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`accounts.get`**
+**List ad accounts**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.metaads.api.accounts.get({});
+await tenant.metaads.api.accounts.list({});
 ```
 
 
-**`ads.copy`**
+**Create an ad label**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.metaads.api.ads.copy({});
+await tenant.metaads.api.labels.create({ accountId: '1234567890', name: 'Spring promotion' });
 ```
 
 

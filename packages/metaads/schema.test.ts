@@ -22,9 +22,9 @@ describe('Meta Ads schemas and registry', () => {
 				return `${group}${action?.[0]?.toUpperCase()}${action?.slice(1)}`;
 			})
 			.sort();
-		expect(inputKeys).toHaveLength(56);
+		expect(inputKeys).toHaveLength(99);
 		expect(outputKeys).toEqual(inputKeys);
-		expect(registeredKeys).toHaveLength(56);
+		expect(registeredKeys).toHaveLength(99);
 		expect(registeredKeys).toEqual(inputKeys);
 		for (const schema of Object.values(MetaAdsEndpointInputSchemas)) {
 			expect(schema.safeParse({ undocumented: true }).success).toBe(false);
@@ -110,6 +110,38 @@ describe('Meta Ads schemas and registry', () => {
 				invalid_entry_samples: ['hashed-or-raw-provider-sample'],
 			}),
 		).not.toHaveProperty('invalid_entry_samples');
+	});
+
+	it('bounds split-test creation to documented ad-set cells and treatment shares', () => {
+		const study = {
+			businessId: 'business-1',
+			name: 'Simple split test',
+			startTime: 1_800_000_000,
+			endTime: 1_800_086_400,
+			type: 'SPLIT_TEST',
+			cells: [
+				{ name: 'Control', treatmentPercentage: 50, adSetIds: ['adset-1'] },
+				{ name: 'Variant', treatmentPercentage: 50, adSetIds: ['adset-2'] },
+			],
+		};
+		expect(
+			MetaAdsEndpointInputSchemas.studiesCreate.safeParse(study).success,
+		).toBe(true);
+		expect(
+			MetaAdsEndpointInputSchemas.studiesCreate.safeParse({
+				...study,
+				cells: [
+					{ name: 'Control', treatmentPercentage: 60, adSetIds: ['adset-1'] },
+					{ name: 'Variant', treatmentPercentage: 50, adSetIds: ['adset-2'] },
+				],
+			}).success,
+		).toBe(false);
+		expect(
+			MetaAdsEndpointInputSchemas.studiesCreate.safeParse({
+				...study,
+				cells: [{ name: 'Only cell', treatmentPercentage: 100, adSetIds: [] }],
+			}).success,
+		).toBe(false);
 	});
 
 	it('validates documented Insights filters, breakdowns, and report inputs', () => {
