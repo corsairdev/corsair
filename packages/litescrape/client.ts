@@ -48,11 +48,15 @@ export async function tryGetStoredKey(
 }
 
 /**
- * LiteScrape REST gateway. Every endpoint is a `GET` under `/api` and takes
+ * LiteScrape REST gateway. Every data endpoint takes a `GET` query or a JSON `POST` body under `/api` and takes
  * `Authorization: Bearer <key>` (keys look like `ls_live_...`). Reference:
  * https://litescrape.com/docs/reference and https://litescrape.com/docs.
  */
 export const LITESCRAPE_API_BASE = 'https://api.litescrape.com';
+
+/** The longest `timeout` the API accepts, in seconds. */
+export const LITESCRAPE_MAX_BUDGET_SECONDS = 90;
+const CLIENT_TIMEOUT_MARGIN_SECONDS = 5;
 
 /**
  * The transport's own retry loop is disabled (`maxRetries: 0`) so the plugin's
@@ -84,9 +88,11 @@ export async function makeLitescrapeRequest<T>(
 		// over a JSON record instead of a closed per-endpoint union.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
+		/** Litescrape's own budget for the call, in seconds (the `timeout` query field). */
+		budgetSeconds?: number;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, budgetSeconds } = options;
 
 	// LiteScrape authenticates every public endpoint with a bearer key
 	// (https://litescrape.com/docs/reference). An empty key means no
@@ -103,6 +109,13 @@ export async function makeLitescrapeRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
+		// Scrapes routinely take longer than the transport's 20 s default; the
+		// API stops a call at its `timeout` (90 s at most), so wait that long
+		// plus a margin for the response to arrive.
+		TIMEOUT:
+			((budgetSeconds ?? LITESCRAPE_MAX_BUDGET_SECONDS) +
+				CLIENT_TIMEOUT_MARGIN_SECONDS) *
+			1000,
 		HEADERS: {
 			'Content-Type': 'application/json',
 			Authorization: `Bearer ${apiKey}`,
