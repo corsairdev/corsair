@@ -546,7 +546,7 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 				.executeTakeFirst();
 
 			if (existing?.id) {
-				await db
+				const updated = await db
 					.updateTable('corsair_entities')
 					.set({
 						version,
@@ -554,17 +554,13 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 						updated_at: now,
 					})
 					.where('id', '=', existing.id)
-					.execute();
-				const updated = await db
-					.selectFrom('corsair_entities')
-					.selectAll()
-					.where('id', '=', existing.id)
-					.executeTakeFirst();
-				return parseRow(updated!);
+					.returningAll()
+					.executeTakeFirstOrThrow();
+				return parseRow(updated);
 			}
 
 			const id = generateUUID();
-			await db
+			const inserted = await db
 				.insertInto('corsair_entities')
 				.values({
 					id,
@@ -576,14 +572,9 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 					version,
 					data: dataToStore,
 				})
-				.execute();
-
-			const inserted = await db
-				.selectFrom('corsair_entities')
-				.selectAll()
-				.where('id', '=', id)
-				.executeTakeFirst();
-			return parseRow(inserted!);
+				.returningAll()
+				.executeTakeFirstOrThrow();
+			return parseRow(inserted);
 		},
 
 		deleteById: async (id) => {
