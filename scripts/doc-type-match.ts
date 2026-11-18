@@ -40,15 +40,12 @@ export function valueMatchesDocType(value: unknown, typeStr: string): boolean {
 		return true;
 	}
 	// Enum members render unquoted (`newestFirst | ratingHigh | null`), so a
-	// scalar that equals one of the members matches. Primitive type names are
-	// left to the checks below: the string "number" is not a number.
-	if (
-		(typeof value === 'string' ||
-			typeof value === 'number' ||
-			typeof value === 'boolean') &&
-		!PRIMITIVE_TYPE_NAMES.has(String(value)) &&
-		topLevelUnionMembers(t).includes(String(value))
-	) {
+	// scalar that equals one of the members matches, but only a member of its
+	// own kind: a string matches word members, a number matches numeric ones,
+	// a boolean `true`/`false`. So "10" doesn't match `10 | 25` and "false"
+	// doesn't match `false`. Type names and structural members (`JsonValue[]`,
+	// `{ … }`) never match a scalar.
+	if (enumMemberMatches(value, topLevelUnionMembers(t))) {
 		return true;
 	}
 	if (value === null) {
@@ -76,4 +73,27 @@ export function valueMatchesDocType(value: unknown, typeStr: string): boolean {
 		);
 	}
 	return false;
+}
+
+const NUMERIC_MEMBER = /^-?\d+(\.\d+)?$/;
+const STRUCTURAL_MEMBER = /[[\]{}()<>]/;
+
+// unknown: yaml example values are any JSON-like value; only scalars can match a member.
+function enumMemberMatches(value: unknown, members: string[]): boolean {
+	if (typeof value === 'number') {
+		return members.some(
+			(member) => NUMERIC_MEMBER.test(member) && Number(member) === value,
+		);
+	}
+	if (typeof value === 'boolean') {
+		return members.includes(String(value));
+	}
+	if (typeof value !== 'string') return false;
+	if (PRIMITIVE_TYPE_NAMES.has(value)) return false;
+	if (NUMERIC_MEMBER.test(value) || value === 'true' || value === 'false') {
+		return false;
+	}
+	return members.some(
+		(member) => member === value && !STRUCTURAL_MEMBER.test(member),
+	);
 }

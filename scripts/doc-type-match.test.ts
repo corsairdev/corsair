@@ -36,3 +36,18 @@ test('keeps the primitive, array and object checks', () => {
 	assert.equal(valueMatchesDocType({ a: 1 }, 'JsonValue'), true);
 	assert.equal(valueMatchesDocType('x', 'JsonValue[]'), false);
 });
+
+test('matches an enum member only with a value of its own kind', () => {
+	// Review on #2626 (CodeRabbit, Greptile): quoted numbers and booleans.
+	assert.equal(valueMatchesDocType('10', '10 | 25 | 50 | 100'), false);
+	assert.equal(valueMatchesDocType('false', 'false'), false);
+	assert.equal(valueMatchesDocType('true', 'true | null'), false);
+	assert.equal(valueMatchesDocType(false, 'false'), true);
+	assert.equal(valueMatchesDocType(1.5, '1.5 | 2'), true);
+});
+
+test('never matches a string against a structural type', () => {
+	assert.equal(valueMatchesDocType('JsonValue[]', 'JsonValue[]'), false);
+	assert.equal(valueMatchesDocType('number[]', 'number[]'), false);
+	assert.equal(valueMatchesDocType([1, 2], 'number[]'), true);
+});
