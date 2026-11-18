@@ -32,6 +32,9 @@ await corsair.metaads.api.accounts.activeAdRulesList({
 | `accountId` | `string` | Yes | — |
 | `selectedIds` | `string[]` | Yes | — |
 | `passEvaluation` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
 
 Requires selectedIds and accepts an optional passEvaluation filter; it does not execute or change rules.
 
@@ -167,6 +170,9 @@ await corsair.metaads.api.accounts.adRulesLibraryList({ accountId: '1234567890' 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `accountId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
 
 Lists account ad rules only; rule creation and editing are not exposed by this operation.
 
@@ -420,6 +426,9 @@ await corsair.metaads.api.accounts.impactingAdStudiesList({ accountId: '12345678
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `accountId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
 
 Lists documented ad studies affecting the account or descendant ad objects.
 
@@ -692,6 +701,9 @@ await corsair.metaads.api.ads.adRulesGovernedList({ adId: '120000000000003', pas
 |------|------|----------|-------------|
 | `adId` | `string` | Yes | — |
 | `passEvaluation` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
 
 Lists rules that govern the ad; passEvaluation is an optional documented filter.
 
@@ -759,6 +771,9 @@ await corsair.metaads.api.ads.adStudiesList({ adId: '120000000000003' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `adId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
 
 Lists ad studies containing this ad.
 
@@ -1430,6 +1445,9 @@ await corsair.metaads.api.adSets.adRulesGovernedList({ adSetId: '120000000000002
 |------|------|----------|-------------|
 | `adSetId` | `string` | Yes | — |
 | `passEvaluation` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
 
 Lists rules that govern the ad set; passEvaluation is an optional documented filter.
 
@@ -1563,6 +1581,9 @@ await corsair.metaads.api.adSets.adStudiesList({ adSetId: '120000000000002' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `adSetId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
 
 Lists ad studies associated with this ad set.
 
@@ -2718,6 +2739,9 @@ await corsair.metaads.api.campaigns.adRulesGovernedList({ campaignId: '120000000
 |------|------|----------|-------------|
 | `campaignId` | `string` | Yes | — |
 | `passEvaluation` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
 
 Lists rules that govern the campaign; passEvaluation is an optional documented filter.
 
@@ -2917,6 +2941,9 @@ await corsair.metaads.api.campaigns.adStudiesList({ campaignId: '120000000000001
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `campaignId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
 
 Lists ad studies associated with this campaign.
 
@@ -4990,6 +5017,9 @@ await corsair.metaads.api.labels.adSetsList({ labelId: '120000000000010' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `labelId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
 
 
 
@@ -5050,6 +5080,9 @@ await corsair.metaads.api.labels.adsList({ labelId: '120000000000010' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `labelId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
 
 
 
@@ -5110,6 +5143,9 @@ await corsair.metaads.api.labels.campaignsList({ labelId: '120000000000010' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `labelId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
 
 
 
@@ -5202,6 +5238,9 @@ await corsair.metaads.api.labels.creativesList({ labelId: '120000000000010' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `labelId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
 
 
 
@@ -5326,6 +5365,9 @@ await corsair.metaads.api.labels.list({ accountId: '1234567890' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `accountId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
 
 
 

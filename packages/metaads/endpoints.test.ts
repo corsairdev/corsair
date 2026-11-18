@@ -124,28 +124,45 @@ const cases: Case[] = [
 		name: 'accounts.impactingAdStudiesList',
 		path: '/act_123/impacting_ad_studies',
 		method: 'GET',
+		query: { limit: 5, after: 'study-cursor' },
 		call: async () => {
-			await Accounts.impactingAdStudiesList(ctx, { accountId: '123' });
+			await Accounts.impactingAdStudiesList(ctx, {
+				accountId: '123',
+				limit: 5,
+				after: 'study-cursor',
+			});
 		},
 	},
 	{
 		name: 'accounts.adRulesLibraryList',
 		path: '/act_123/adrules_library',
 		method: 'GET',
+		query: { limit: 3, before: 'rule-cursor' },
 		call: async () => {
-			await Accounts.adRulesLibraryList(ctx, { accountId: '123' });
+			await Accounts.adRulesLibraryList(ctx, {
+				accountId: '123',
+				limit: 3,
+				before: 'rule-cursor',
+			});
 		},
 	},
 	{
 		name: 'accounts.activeAdRulesList',
 		path: '/act_123/active_adrules',
 		method: 'GET',
-		query: { selected_ids: '["campaign-1","adset-1"]', pass_evaluation: true },
+		query: {
+			selected_ids: '["campaign-1","adset-1"]',
+			pass_evaluation: true,
+			limit: 10,
+			after: 'rule-cursor',
+		},
 		call: async () => {
 			await Accounts.activeAdRulesList(ctx, {
 				accountId: '123',
 				selectedIds: ['campaign-1', 'adset-1'],
 				passEvaluation: true,
+				limit: 10,
+				after: 'rule-cursor',
 			});
 		},
 	},
@@ -190,8 +207,13 @@ const cases: Case[] = [
 		name: 'labels.list',
 		path: '/act_123/adlabels',
 		method: 'GET',
+		query: { limit: 5, after: 'label-cursor' },
 		call: async () => {
-			await Labels.list(ctx, { accountId: '123' });
+			await Labels.list(ctx, {
+				accountId: '123',
+				limit: 5,
+				after: 'label-cursor',
+			});
 		},
 	},
 	{
@@ -236,32 +258,52 @@ const cases: Case[] = [
 		name: 'labels.adsList',
 		path: '/label-1/ads',
 		method: 'GET',
+		query: { limit: 4, after: 'ad-cursor' },
 		call: async () => {
-			await Labels.adsList(ctx, { labelId: 'label-1' });
+			await Labels.adsList(ctx, {
+				labelId: 'label-1',
+				limit: 4,
+				after: 'ad-cursor',
+			});
 		},
 	},
 	{
 		name: 'labels.adSetsList',
 		path: '/label-1/adsets',
 		method: 'GET',
+		query: { limit: 4, before: 'adset-cursor' },
 		call: async () => {
-			await Labels.adSetsList(ctx, { labelId: 'label-1' });
+			await Labels.adSetsList(ctx, {
+				labelId: 'label-1',
+				limit: 4,
+				before: 'adset-cursor',
+			});
 		},
 	},
 	{
 		name: 'labels.campaignsList',
 		path: '/label-1/campaigns',
 		method: 'GET',
+		query: { limit: 6, after: 'campaign-cursor' },
 		call: async () => {
-			await Labels.campaignsList(ctx, { labelId: 'label-1' });
+			await Labels.campaignsList(ctx, {
+				labelId: 'label-1',
+				limit: 6,
+				after: 'campaign-cursor',
+			});
 		},
 	},
 	{
 		name: 'labels.creativesList',
 		path: '/label-1/adcreatives',
 		method: 'GET',
+		query: { limit: 2, after: 'creative-cursor' },
 		call: async () => {
-			await Labels.creativesList(ctx, { labelId: 'label-1' });
+			await Labels.creativesList(ctx, {
+				labelId: 'label-1',
+				limit: 2,
+				after: 'creative-cursor',
+			});
 		},
 	},
 	{
@@ -443,19 +485,26 @@ const cases: Case[] = [
 		name: 'campaigns.adStudiesList',
 		path: '/campaign-1/ad_studies',
 		method: 'GET',
+		query: { limit: 5, after: 'study-cursor' },
 		call: async () => {
-			await Campaigns.adStudiesList(ctx, { campaignId: 'campaign-1' });
+			await Campaigns.adStudiesList(ctx, {
+				campaignId: 'campaign-1',
+				limit: 5,
+				after: 'study-cursor',
+			});
 		},
 	},
 	{
 		name: 'campaigns.adRulesGovernedList',
 		path: '/campaign-1/adrules_governed',
 		method: 'GET',
-		query: { pass_evaluation: false },
+		query: { pass_evaluation: false, limit: 3, after: 'rule-cursor' },
 		call: async () => {
 			await Campaigns.adRulesGovernedList(ctx, {
 				campaignId: 'campaign-1',
 				passEvaluation: false,
+				limit: 3,
+				after: 'rule-cursor',
 			});
 		},
 	},
@@ -635,19 +684,26 @@ const cases: Case[] = [
 		name: 'adSets.adStudiesList',
 		path: '/adset-1/ad_studies',
 		method: 'GET',
+		query: { limit: 5, after: 'study-cursor' },
 		call: async () => {
-			await AdSets.adStudiesList(ctx, { adSetId: 'adset-1' });
+			await AdSets.adStudiesList(ctx, {
+				adSetId: 'adset-1',
+				limit: 5,
+				after: 'study-cursor',
+			});
 		},
 	},
 	{
 		name: 'adSets.adRulesGovernedList',
 		path: '/adset-1/adrules_governed',
 		method: 'GET',
-		query: { pass_evaluation: true },
+		query: { pass_evaluation: true, limit: 4, before: 'rule-cursor' },
 		call: async () => {
 			await AdSets.adRulesGovernedList(ctx, {
 				adSetId: 'adset-1',
 				passEvaluation: true,
+				limit: 4,
+				before: 'rule-cursor',
 			});
 		},
 	},
@@ -741,19 +797,26 @@ const cases: Case[] = [
 		name: 'ads.adStudiesList',
 		path: '/ad-1/ad_studies',
 		method: 'GET',
+		query: { limit: 5, after: 'study-cursor' },
 		call: async () => {
-			await Ads.adStudiesList(ctx, { adId: 'ad-1' });
+			await Ads.adStudiesList(ctx, {
+				adId: 'ad-1',
+				limit: 5,
+				after: 'study-cursor',
+			});
 		},
 	},
 	{
 		name: 'ads.adRulesGovernedList',
 		path: '/ad-1/adrules_governed',
 		method: 'GET',
-		query: { pass_evaluation: true },
+		query: { pass_evaluation: true, limit: 3, after: 'rule-cursor' },
 		call: async () => {
 			await Ads.adRulesGovernedList(ctx, {
 				adId: 'ad-1',
 				passEvaluation: true,
+				limit: 3,
+				after: 'rule-cursor',
 			});
 		},
 	},
@@ -1500,6 +1563,7 @@ describe('Meta Ads operations', () => {
 				'ads.labelsAdd',
 				'creatives.labelsAdd',
 			].includes(testCase.name);
+			// `unknown` is needed because this table covers distinct mocked response envelopes; each branch assigns the operation-specific fixture before schema validation.
 			let response: Record<string, unknown>;
 			if (testCase.name === 'campaigns.copy') {
 				response = { copied_campaign_id: 'campaign-copy-1' };

@@ -10,6 +10,7 @@ const listOptions = {
 	after: cursor,
 	before: cursor,
 };
+const cursorOptions = { limit: pageSize, after: cursor, before: cursor };
 const status = z.enum(['ACTIVE', 'PAUSED', 'DELETED', 'ARCHIVED']);
 const budget = z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER);
 
@@ -266,7 +267,7 @@ const BroadTargetingCategoriesListSchema = z.object({
 });
 const videosDeleteInput = z.object({ accountId: id, videoId: id }).strict();
 
-const adLabelListInput = z.object({ accountId: id }).strict();
+const adLabelListInput = z.object({ accountId: id, ...cursorOptions }).strict();
 const adLabelGetInput = z.object({ labelId: id, fields }).strict();
 const adLabelCreateInput = z
 	.object({ accountId: id, name: z.string().min(1) })
@@ -292,10 +293,18 @@ const adLabelsAddInput = z
 const creativeLabelsAddInput = z
 	.object({ creativeId: id, adlabels: labelAssociationFields.adlabels })
 	.strict();
-const adLabelCampaignsListInput = z.object({ labelId: id }).strict();
-const adLabelAdSetsListInput = z.object({ labelId: id }).strict();
-const adLabelAdsListInput = z.object({ labelId: id }).strict();
-const adLabelCreativesListInput = z.object({ labelId: id }).strict();
+const adLabelCampaignsListInput = z
+	.object({ labelId: id, ...cursorOptions })
+	.strict();
+const adLabelAdSetsListInput = z
+	.object({ labelId: id, ...cursorOptions })
+	.strict();
+const adLabelAdsListInput = z
+	.object({ labelId: id, ...cursorOptions })
+	.strict();
+const adLabelCreativesListInput = z
+	.object({ labelId: id, ...cursorOptions })
+	.strict();
 const AdLabelAssociationSchema = z.object({ success: z.boolean() });
 const AdLabelSchema = z
 	.object({
@@ -359,24 +368,39 @@ const campaignBudgetScheduleCreateInput = z
 	.refine((value) => value.timeEnd > value.timeStart)
 	.refine((value) => value.timeEnd - value.timeStart >= 10_800);
 const campaignGetInput = z.object({ campaignId: id, fields }).strict();
-const campaignAdStudiesListInput = z.object({ campaignId: id }).strict();
-const accountImpactingAdStudiesListInput = z.object({ accountId: id }).strict();
-const accountAdRulesLibraryListInput = z.object({ accountId: id }).strict();
+const campaignAdStudiesListInput = z
+	.object({ campaignId: id, ...cursorOptions })
+	.strict();
+const accountImpactingAdStudiesListInput = z
+	.object({ accountId: id, ...cursorOptions })
+	.strict();
+const accountAdRulesLibraryListInput = z
+	.object({ accountId: id, ...cursorOptions })
+	.strict();
 const accountActiveAdRulesListInput = z
 	.object({
 		accountId: id,
 		selectedIds: z.array(id).min(1),
 		passEvaluation: z.boolean().optional(),
+		...cursorOptions,
 	})
 	.strict();
 const accountBroadTargetingCategoriesListInput = z
 	.object({ accountId: id, customCategoriesOnly: z.boolean().optional() })
 	.strict();
 const campaignAdRulesGovernedListInput = z
-	.object({ campaignId: id, passEvaluation: z.boolean().optional() })
+	.object({
+		campaignId: id,
+		passEvaluation: z.boolean().optional(),
+		...cursorOptions,
+	})
 	.strict();
 const adSetAdRulesGovernedListInput = z
-	.object({ adSetId: id, passEvaluation: z.boolean().optional() })
+	.object({
+		adSetId: id,
+		passEvaluation: z.boolean().optional(),
+		...cursorOptions,
+	})
 	.strict();
 const studyGetInput = z.object({ studyId: id, fields }).strict();
 const studyRelatedAccountsListInput = z.object({ studyId: id }).strict();
@@ -542,7 +566,9 @@ const adSetActivitiesListInput = z
 		until: z.string().min(1).optional(),
 	})
 	.strict();
-const adSetAdStudiesListInput = z.object({ adSetId: id }).strict();
+const adSetAdStudiesListInput = z
+	.object({ adSetId: id, ...cursorOptions })
+	.strict();
 // `unknown` is necessary because targeting contains provider-defined nested, versioned JSON keys.
 const targeting = z.record(z.string(), z.unknown());
 const adSetCreateInput = z
@@ -641,9 +667,13 @@ const adCopyInput = z
 	})
 	.strict();
 const adGetInput = z.object({ adId: id, fields }).strict();
-const adAdStudiesListInput = z.object({ adId: id }).strict();
+const adAdStudiesListInput = z.object({ adId: id, ...cursorOptions }).strict();
 const adAdRulesGovernedListInput = z
-	.object({ adId: id, passEvaluation: z.boolean().optional() })
+	.object({
+		adId: id,
+		passEvaluation: z.boolean().optional(),
+		...cursorOptions,
+	})
 	.strict();
 // Nested content fields are provider-defined JSON objects with versioned documented subfields.
 const creativeStoryContent = z.record(z.string(), z.unknown());

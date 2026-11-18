@@ -74,6 +74,15 @@ const pageParams = (input: {
 	after: input.after,
 	before: input.before,
 });
+const cursorParams = (input: {
+	limit?: number;
+	after?: string;
+	before?: string;
+}) => ({
+	limit: input.limit,
+	after: input.after,
+	before: input.before,
+});
 
 // `unknown` because Graph response values are untrusted until the output schema validates them.
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -180,7 +189,7 @@ export const accountsImpactingAdStudiesList = operation({
 	path: (input) => `${accountPath(input.accountId)}/impacting_ad_studies`,
 	input: MetaAdsEndpointInputSchemas.accountsImpactingAdStudiesList,
 	output: MetaAdsEndpointOutputSchemas.accountsImpactingAdStudiesList,
-	request: emptyRequest,
+	request: (input) => ({ query: cursorParams(input) }),
 });
 export const accountsAdRulesLibraryList = operation({
 	name: 'accounts.adRulesLibraryList',
@@ -188,7 +197,7 @@ export const accountsAdRulesLibraryList = operation({
 	path: (input) => `${accountPath(input.accountId)}/adrules_library`,
 	input: MetaAdsEndpointInputSchemas.accountsAdRulesLibraryList,
 	output: MetaAdsEndpointOutputSchemas.accountsAdRulesLibraryList,
-	request: emptyRequest,
+	request: (input) => ({ query: cursorParams(input) }),
 });
 export const accountsActiveAdRulesList = operation({
 	name: 'accounts.activeAdRulesList',
@@ -200,6 +209,7 @@ export const accountsActiveAdRulesList = operation({
 		query: {
 			selected_ids: JSON.stringify(input.selectedIds),
 			pass_evaluation: input.passEvaluation,
+			...cursorParams(input),
 		},
 	}),
 });
@@ -235,7 +245,7 @@ export const labelsList = operation({
 	path: (input) => `${accountPath(input.accountId)}/adlabels`,
 	input: MetaAdsEndpointInputSchemas.labelsList,
 	output: MetaAdsEndpointOutputSchemas.labelsList,
-	request: emptyRequest,
+	request: (input) => ({ query: cursorParams(input) }),
 });
 export const labelsGet = operation({
 	name: 'labels.get',
@@ -275,7 +285,7 @@ export const labelsAdsList = operation({
 	path: (input) => `${idPath(input.labelId)}/ads`,
 	input: MetaAdsEndpointInputSchemas.labelsAdsList,
 	output: MetaAdsEndpointOutputSchemas.labelsAdsList,
-	request: emptyRequest,
+	request: (input) => ({ query: cursorParams(input) }),
 });
 export const labelsAdSetsList = operation({
 	name: 'labels.adSetsList',
@@ -283,7 +293,7 @@ export const labelsAdSetsList = operation({
 	path: (input) => `${idPath(input.labelId)}/adsets`,
 	input: MetaAdsEndpointInputSchemas.labelsAdSetsList,
 	output: MetaAdsEndpointOutputSchemas.labelsAdSetsList,
-	request: emptyRequest,
+	request: (input) => ({ query: cursorParams(input) }),
 });
 export const labelsCampaignsList = operation({
 	name: 'labels.campaignsList',
@@ -291,7 +301,7 @@ export const labelsCampaignsList = operation({
 	path: (input) => `${idPath(input.labelId)}/campaigns`,
 	input: MetaAdsEndpointInputSchemas.labelsCampaignsList,
 	output: MetaAdsEndpointOutputSchemas.labelsCampaignsList,
-	request: emptyRequest,
+	request: (input) => ({ query: cursorParams(input) }),
 });
 export const labelsCreativesList = operation({
 	name: 'labels.creativesList',
@@ -299,7 +309,7 @@ export const labelsCreativesList = operation({
 	path: (input) => `${idPath(input.labelId)}/adcreatives`,
 	input: MetaAdsEndpointInputSchemas.labelsCreativesList,
 	output: MetaAdsEndpointOutputSchemas.labelsCreativesList,
-	request: emptyRequest,
+	request: (input) => ({ query: cursorParams(input) }),
 });
 
 const labelAssociationRequest = (input: {
@@ -483,7 +493,7 @@ export const campaignsAdStudiesList = operation({
 	path: (input) => `${idPath(input.campaignId)}/ad_studies`,
 	input: MetaAdsEndpointInputSchemas.campaignsAdStudiesList,
 	output: MetaAdsEndpointOutputSchemas.campaignsAdStudiesList,
-	request: emptyRequest,
+	request: (input) => ({ query: cursorParams(input) }),
 });
 export const campaignsAdRulesGovernedList = operation({
 	name: 'campaigns.adRulesGovernedList',
@@ -491,7 +501,12 @@ export const campaignsAdRulesGovernedList = operation({
 	path: (input) => `${idPath(input.campaignId)}/adrules_governed`,
 	input: MetaAdsEndpointInputSchemas.campaignsAdRulesGovernedList,
 	output: MetaAdsEndpointOutputSchemas.campaignsAdRulesGovernedList,
-	request: (input) => ({ query: { pass_evaluation: input.passEvaluation } }),
+	request: (input) => ({
+		query: {
+			pass_evaluation: input.passEvaluation,
+			...cursorParams(input),
+		},
+	}),
 });
 export const highDemandPeriodsGet = operation({
 	name: 'highDemandPeriods.get',
@@ -662,7 +677,7 @@ export const adSetsAdStudiesList = operation({
 	path: (input) => `${idPath(input.adSetId)}/ad_studies`,
 	input: MetaAdsEndpointInputSchemas.adSetsAdStudiesList,
 	output: MetaAdsEndpointOutputSchemas.adSetsAdStudiesList,
-	request: emptyRequest,
+	request: (input) => ({ query: cursorParams(input) }),
 });
 export const adSetsAdRulesGovernedList = operation({
 	name: 'adSets.adRulesGovernedList',
@@ -670,7 +685,12 @@ export const adSetsAdRulesGovernedList = operation({
 	path: (input) => `${idPath(input.adSetId)}/adrules_governed`,
 	input: MetaAdsEndpointInputSchemas.adSetsAdRulesGovernedList,
 	output: MetaAdsEndpointOutputSchemas.adSetsAdRulesGovernedList,
-	request: (input) => ({ query: { pass_evaluation: input.passEvaluation } }),
+	request: (input) => ({
+		query: {
+			pass_evaluation: input.passEvaluation,
+			...cursorParams(input),
+		},
+	}),
 });
 export const adSetsGet = operation({
 	name: 'adSets.get',
@@ -751,7 +771,7 @@ export const adsAdStudiesList = operation({
 	path: (input) => `${idPath(input.adId)}/ad_studies`,
 	input: MetaAdsEndpointInputSchemas.adsAdStudiesList,
 	output: MetaAdsEndpointOutputSchemas.adsAdStudiesList,
-	request: emptyRequest,
+	request: (input) => ({ query: cursorParams(input) }),
 });
 export const adsAdRulesGovernedList = operation({
 	name: 'ads.adRulesGovernedList',
@@ -759,7 +779,12 @@ export const adsAdRulesGovernedList = operation({
 	path: (input) => `${idPath(input.adId)}/adrules_governed`,
 	input: MetaAdsEndpointInputSchemas.adsAdRulesGovernedList,
 	output: MetaAdsEndpointOutputSchemas.adsAdRulesGovernedList,
-	request: (input) => ({ query: { pass_evaluation: input.passEvaluation } }),
+	request: (input) => ({
+		query: {
+			pass_evaluation: input.passEvaluation,
+			...cursorParams(input),
+		},
+	}),
 });
 export const adsPreviewsList = operation({
 	name: 'ads.previewsList',
