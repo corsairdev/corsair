@@ -5573,6 +5573,15 @@
                 ]
               },
               {
+                "group": "TwittrAPI",
+                "pages": [
+                  "plugins/twittrapi/overview",
+                  "plugins/twittrapi/api",
+                  "plugins/twittrapi/database",
+                  "plugins/twittrapi/webhooks"
+                ]
+              },
+              {
                 "group": "TwoChat",
                 "pages": [
                   "plugins/twochat/overview",
