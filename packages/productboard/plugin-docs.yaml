@@ -1,12 +1,12 @@
 displayName: Productboard
-description: Read and manage Productboard notes, entities, relationships, field options, teams, members, Jira connections, and Plugin Integrations through Public REST API v2.
+description: Read and manage Productboard notes, entities, relationships, field options, teams, members, Jira connections, Plugin Integrations, and webhook subscriptions through Public REST API v2.
 recommendedAuth: api_key
 overviewNote: |
   Configure a Productboard personal access token in Corsair. Productboard requires `Authorization: Bearer <token>` and `Accept: application/json`; personal access tokens are available on Pro plans and above. This plugin supports API-token authentication only. OAuth login, token issuance, and refresh are unavailable because Productboard's detailed OAuth guide and v2 per-route OpenAPI security sections disagree on authorization/token URLs and scopes; OAuth access-token compatibility is not claimed.
 
   Productboard uses opaque cursor pagination (`pageCursor`) with `links.next`; its documented default rate limit is 50 requests per second per token. On 429 responses the shared transport preserves `Retry-After` and the plugin avoids duplicate retries.
 
-  Entity and note field names and values are workspace-configurable. The plugin strictly validates operation-level inputs and accepts JSON for provider-native request envelopes, query structures, and dynamic field maps. PII may be redacted by Productboard without `members:pii:read`. The customer-score operation is beta. Webhook subscriptions and inbound webhook/action callback handlers are not included; plugin-integration control-plane REST operations are available. Documents operations are intentionally excluded: first-party entity references establish opaque document IDs, route paths and PBFM semantics, but not complete standalone auth, request, and response contracts.
+  Entity and note field names and values are workspace-configurable. The plugin strictly validates operation-level inputs and accepts JSON for provider-native request envelopes, query structures, and dynamic field maps. PII may be redacted by Productboard without `members:pii:read`. The customer-score operation is beta. All four documented webhook subscription-management routes are available, but inbound webhook/action callback handlers are not included. Documents operations are intentionally excluded: first-party entity references establish opaque document IDs, route paths and PBFM semantics, but not complete standalone auth, request, and response contracts. OAuth routes remain excluded because Productboard's OAuth guides and v2 OpenAPI security definitions disagree on URLs and scopes.
 examples:
   read:
     path: teams.list
@@ -33,6 +33,8 @@ references:
     url: https://developer.productboard.com/reference/pagination
   - title: Rate limits
     url: https://developer.productboard.com/reference/rate-limits
+  - title: Webhook subscriptions
+    url: https://developer.productboard.com/reference/listwebhooks
 apiExamples:
   notes.list: { args: { query: { archived: false } } }
   notes.search: { args: { body: { data: { search: { query: onboarding } } } } }
@@ -132,6 +134,20 @@ apiExamples:
     args:
       integrationId: 00000000-0000-4000-8000-000000000010
       entityId: 00000000-0000-4000-8000-000000000004
+  webhooks.list: {}
+  webhooks.create:
+    args:
+      body:
+        data:
+          fields:
+            name: Synthetic feature update subscription
+            events:
+              - eventType: feature.updated
+            notification:
+              url: https://receiver.example/productboard
+              version: 1
+  webhooks.get: { args: { webhookId: 00000000-0000-4000-8000-000000000011 } }
+  webhooks.delete: { args: { webhookId: 00000000-0000-4000-8000-000000000011 } }
 apiNotes:
   entities.fieldValues.create: 'Productboard only supports creating values for SINGLE_SELECT, MULTI_SELECT, and TAG fields here; STATUS values are managed separately.'
   entities.fieldValues.update: 'Productboard does not support updating STATUS values through this operation.'
@@ -144,3 +160,5 @@ apiNotes:
   pluginIntegrations.connections.list: 'List responses exclude connections in the initial state; follow the cursor in `links.next`.'
   pluginIntegrations.connections.get: 'If no connection exists, Productboard returns the initial state instead of 404.'
   pluginIntegrations.connections.update: 'The operation is an upsert. State `initial` resets the connection, equivalent to delete.'
+  webhooks.create: 'The notification URL must be a publicly reachable HTTPS endpoint. Its optional authorization header is write-only and is never logged or returned.'
+  webhooks.delete: 'Deleting a subscription is permanent and stops future notifications; the inbound notification receiver remains the caller''s responsibility.'

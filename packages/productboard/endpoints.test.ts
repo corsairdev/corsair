@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { logEventFromContext } from 'corsair/core';
 import * as client from './client';
 import type {
@@ -11,6 +13,7 @@ import {
 import type {
 	ProductboardJsonObject,
 	ProductboardOperationInput,
+	ProductboardOutput,
 } from './endpoints/types';
 import type { ProductboardContext, ProductboardEndpoints } from './index';
 
@@ -26,6 +29,10 @@ jest.mock('./client', () => {
 
 const mockedRequest = jest.mocked(client.makeProductboardRequest);
 const mockedLogEvent = jest.mocked(logEventFromContext);
+const README_ROUTE_ROWS = readFileSync(
+	join(__dirname, 'README.md'),
+	'utf8',
+).split(/\r?\n/);
 
 // Literal method/path expectations are maintained independently of the
 // operation registry and cross-checked against the official route pages:
@@ -145,6 +152,10 @@ const EXPECTED_PRODUCTBOARD_ROUTES = [
 		'DELETE',
 		'/plugin-integrations/{integrationId}/connections/{entityId}',
 	],
+	['webhooks.list', 'GET', '/webhooks'],
+	['webhooks.create', 'POST', '/webhooks'],
+	['webhooks.get', 'GET', '/webhooks/{webhookId}'],
+	['webhooks.delete', 'DELETE', '/webhooks/{webhookId}'],
 ] as const satisfies readonly (readonly [
 	ProductboardOperationName,
 	ProductboardOperation['method'],
@@ -234,6 +245,7 @@ function inputFor(
 				input = { ...input, integrationId: 'integration-id' };
 			if (field === 'entityId') input = { ...input, entityId: 'entity-id' };
 			if (field === 'id') input = { ...input, id: 'resource-id' };
+			if (field === 'webhookId') input = { ...input, webhookId: 'webhook-id' };
 		}
 	}
 	if ('query' in operation && operation.query)
@@ -289,12 +301,60 @@ function inputFor(
 			data = { filter: { state: ['connected'] } };
 		if (operation.name === 'pluginIntegrations.connections.update')
 			data = { fields: { connection: { state: 'initial' } } };
+		if (operation.name === 'webhooks.create')
+			data = {
+				fields: {
+					name: 'Synthetic webhook',
+					events: [{ eventType: 'feature.updated' }],
+					notification: {
+						url: 'https://receiver.example/productboard',
+						version: 1,
+						headers: { authorization: 'Bearer synthetic-webhook-secret' },
+					},
+				},
+			};
 		input = {
 			...input,
 			body: { data },
 		};
 	}
 	return input;
+}
+
+function expectedResponseFor(
+	operation: ProductboardOperation,
+): ProductboardOutput {
+	const webhookSelfUrl =
+		'https://api.productboard.com/v2/webhooks/550e8400-e29b-41d4-a716-446655440000';
+	if (operation.name === 'webhooks.list')
+		return { data: [], links: { next: null } };
+	if (operation.name === 'webhooks.create')
+		return {
+			data: {
+				id: '550e8400-e29b-41d4-a716-446655440000',
+				type: 'webhook',
+				links: { self: webhookSelfUrl },
+			},
+		};
+	if (operation.name === 'webhooks.get')
+		return {
+			data: {
+				id: '550e8400-e29b-41d4-a716-446655440000',
+				type: 'webhook',
+				createdAt: '2024-01-15T10:30:00.000Z',
+				fields: {
+					name: 'Synthetic webhook',
+					events: [{ eventType: 'feature.updated' }],
+					notification: {
+						url: 'https://receiver.example/productboard',
+						version: 1,
+					},
+				},
+				links: { self: webhookSelfUrl },
+			},
+		};
+	if (operation.name === 'webhooks.delete') return null;
+	return { data: [] };
 }
 
 function expectedPath(
@@ -320,7 +380,7 @@ beforeEach(() => {
 });
 
 describe('Productboard operations', () => {
-	it('matches independent official method and path expectations for all 54 routes', () => {
+	it('matches independent official method and path expectations for all 58 routes', () => {
 		expect(EXPECTED_PRODUCTBOARD_ROUTES.map(([name]) => name).sort()).toEqual(
 			Object.keys(ProductboardOperations).sort(),
 		);
@@ -331,13 +391,25 @@ describe('Productboard operations', () => {
 		}
 	});
 
+	it('documents every implemented route with its official source URL', () => {
+		for (const [name, method, path] of EXPECTED_PRODUCTBOARD_ROUTES) {
+			const row = README_ROUTE_ROWS.find((line) =>
+				line.startsWith(`| \`${name}\` |`),
+			);
+			expect(row).toContain(`\`${method} ${path}\``);
+			expect(row).toContain(`(${ProductboardOperations[name].doc})`);
+		}
+	});
+
 	for (const operation of Object.values(ProductboardOperations)) {
 		it(`${operation.name} sends the documented method, path, query, and body`, async () => {
 			const endpoint = createTestEndpoint(operation);
 			const input = inputFor(operation);
+			const response = expectedResponseFor(operation);
+			mockedRequest.mockResolvedValueOnce(response);
 			const result = await endpoint(ctx, input);
 
-			expect(result).toEqual({ data: [] });
+			expect(result).toEqual(response);
 			expect(mockedRequest).toHaveBeenCalledWith(
 				expectedPath(operation, input),
 				'test-productboard-token',

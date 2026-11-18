@@ -4,6 +4,8 @@ import {
 	ProductboardOperationInputSchema,
 	ProductboardOutputSchema,
 	ProductboardRequestBodySchema,
+	ProductboardWebhookCreateBodySchema,
+	ProductboardWebhookGetOutputSchema,
 } from './endpoints/types';
 import { productboardEndpointSchemas } from './index';
 import { ProductboardSchema } from './schema';
@@ -40,6 +42,78 @@ describe('Productboard plugin schema', () => {
 				body: { data: { filter: { state: ['connected'] } } },
 			}).success,
 		).toBe(true);
+	});
+
+	it('validates webhook subscriptions against the documented contract', () => {
+		const validBody = {
+			data: {
+				fields: {
+					name: 'Feature updates',
+					events: [{ eventType: 'feature.updated' }],
+					notification: {
+						url: 'https://receiver.example/productboard',
+						version: 1,
+						headers: { authorization: 'Bearer test-secret' },
+					},
+				},
+			},
+		};
+		expect(
+			ProductboardWebhookCreateBodySchema.safeParse(validBody).success,
+		).toBe(true);
+		expect(
+			ProductboardWebhookCreateBodySchema.safeParse({
+				...validBody,
+				data: {
+					fields: {
+						...validBody.data.fields,
+						events: [
+							{ eventType: 'feature.updated' },
+							{ eventType: 'feature.updated' },
+						],
+					},
+				},
+			}).success,
+		).toBe(false);
+		expect(
+			ProductboardWebhookCreateBodySchema.safeParse({
+				...validBody,
+				data: {
+					fields: {
+						...validBody.data.fields,
+						notification: {
+							url: 'http://receiver.example/productboard',
+							version: 1,
+						},
+					},
+				},
+			}).success,
+		).toBe(false);
+
+		const responseWithUnexpectedSecret =
+			ProductboardWebhookGetOutputSchema.parse({
+				data: {
+					id: '550e8400-e29b-41d4-a716-446655440000',
+					type: 'webhook',
+					createdAt: '2024-01-15T10:30:00.000Z',
+					fields: {
+						name: 'Feature updates',
+						events: [{ eventType: 'feature.updated' }],
+						notification: {
+							url: 'https://receiver.example/productboard',
+							version: 1,
+							headers: { authorization: 'unexpected-secret' },
+						},
+					},
+					links: {
+						self: 'https://api.productboard.com/v2/webhooks/550e8400-e29b-41d4-a716-446655440000',
+					},
+				},
+			});
+		expect(responseWithUnexpectedSecret.data.fields.notification).toEqual({
+			url: 'https://receiver.example/productboard',
+			version: 1,
+		});
 	});
 
 	it('keeps operation inputs strict while accepting documented JSON query/body values', () => {
@@ -97,6 +171,6 @@ describe('Productboard plugin schema', () => {
 				operation.method,
 			);
 		}
-		expect(Object.keys(ProductboardOperations)).toHaveLength(54);
+		expect(Object.keys(ProductboardOperations)).toHaveLength(58);
 	});
 });

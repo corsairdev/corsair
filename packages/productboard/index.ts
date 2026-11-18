@@ -19,13 +19,20 @@ import {
 	Notes,
 	PluginIntegrations,
 	Teams,
+	Webhooks,
 } from './endpoints';
 import {
 	ProductboardOperations,
 	productboardOperationInputSchema,
 } from './endpoints/operations';
 import type { ProductboardOutput } from './endpoints/types';
-import { ProductboardOutputSchema } from './endpoints/types';
+import {
+	ProductboardOutputSchema,
+	ProductboardWebhookCreateOutputSchema,
+	ProductboardWebhookDeleteOutputSchema,
+	ProductboardWebhookGetOutputSchema,
+	ProductboardWebhookListOutputSchema,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { ProductboardSchema } from './schema';
 
@@ -59,6 +66,7 @@ const productboardEndpointsNested = {
 	teams: Teams,
 	jiraIntegrations: JiraIntegrations,
 	pluginIntegrations: PluginIntegrations,
+	webhooks: Webhooks,
 } as const;
 
 export const productboardEndpointSchemas = {
@@ -386,6 +394,30 @@ export const productboardEndpointSchemas = {
 		),
 		output: ProductboardOutputSchema,
 	},
+	'webhooks.list': {
+		input: productboardOperationInputSchema(
+			ProductboardOperations['webhooks.list'],
+		),
+		output: ProductboardWebhookListOutputSchema,
+	},
+	'webhooks.create': {
+		input: productboardOperationInputSchema(
+			ProductboardOperations['webhooks.create'],
+		),
+		output: ProductboardWebhookCreateOutputSchema,
+	},
+	'webhooks.get': {
+		input: productboardOperationInputSchema(
+			ProductboardOperations['webhooks.get'],
+		),
+		output: ProductboardWebhookGetOutputSchema,
+	},
+	'webhooks.delete': {
+		input: productboardOperationInputSchema(
+			ProductboardOperations['webhooks.delete'],
+		),
+		output: ProductboardWebhookDeleteOutputSchema,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof productboardEndpointsNested
 >;
@@ -599,6 +631,23 @@ const productboardEndpointMeta = {
 	'pluginIntegrations.connections.delete': {
 		riskLevel: 'write',
 		description: 'Reset a connection to its initial state.',
+	},
+	'webhooks.list': {
+		riskLevel: 'read',
+		description: 'List webhook subscriptions with cursor pagination.',
+	},
+	'webhooks.create': {
+		riskLevel: 'write',
+		description:
+			'Create a webhook subscription at a public HTTPS notification URL.',
+	},
+	'webhooks.get': {
+		riskLevel: 'read',
+		description: 'Get a webhook subscription by UUID.',
+	},
+	'webhooks.delete': {
+		riskLevel: 'destructive',
+		description: 'Permanently delete a webhook subscription.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof productboardEndpointsNested

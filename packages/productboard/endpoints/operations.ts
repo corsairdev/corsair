@@ -12,6 +12,11 @@ import {
 	ProductboardJsonObjectSchema,
 	ProductboardOutputSchema,
 	ProductboardRequestBodySchema,
+	ProductboardWebhookCreateBodySchema,
+	ProductboardWebhookCreateOutputSchema,
+	ProductboardWebhookDeleteOutputSchema,
+	ProductboardWebhookGetOutputSchema,
+	ProductboardWebhookListOutputSchema,
 } from './types';
 
 type PathField =
@@ -22,7 +27,8 @@ type PathField =
 	| 'fieldId'
 	| 'valueId'
 	| 'integrationId'
-	| 'entityId';
+	| 'entityId'
+	| 'webhookId';
 
 export type ProductboardOperation = {
 	name: string;
@@ -33,6 +39,8 @@ export type ProductboardOperation = {
 	query?: boolean;
 	body?: boolean;
 	bodyDataFields?: readonly string[];
+	bodySchema?: z.ZodType<NonNullable<ProductboardOperationInput['body']>>;
+	outputSchema?: z.ZodType<ProductboardOutput>;
 	riskLevel: 'read' | 'write' | 'destructive';
 	description: string;
 };
@@ -68,8 +76,9 @@ export function productboardOperationInputSchema(
 		schema = schema.extend({ query: ProductboardJsonObjectSchema.optional() });
 	}
 	if (operation.body) {
-		const bodySchema = ProductboardRequestBodySchema.superRefine(
-			(body, context) => {
+		let bodySchema = operation.bodySchema ?? ProductboardRequestBodySchema;
+		if (operation.bodyDataFields) {
+			bodySchema = bodySchema.superRefine((body, context) => {
 				if (!operation.bodyDataFields) return;
 				for (const field of Object.keys(body.data)) {
 					if (!operation.bodyDataFields.includes(field)) {
@@ -80,8 +89,8 @@ export function productboardOperationInputSchema(
 						});
 					}
 				}
-			},
-		);
+			});
+		}
 		schema = schema.extend({ body: bodySchema });
 	}
 	return schema;
@@ -627,6 +636,49 @@ const operationDefinitions = {
 		riskLevel: 'write',
 		description: 'Reset a connection to its initial state.',
 	},
+	'webhooks.list': {
+		name: 'webhooks.list',
+		method: 'GET',
+		path: '/webhooks',
+		doc: `${READ_API}listwebhooks`,
+		query: true,
+		outputSchema: ProductboardWebhookListOutputSchema,
+		riskLevel: 'read',
+		description: 'List webhook subscriptions with cursor pagination.',
+	},
+	'webhooks.create': {
+		name: 'webhooks.create',
+		method: 'POST',
+		path: '/webhooks',
+		doc: `${READ_API}createwebhook`,
+		body: true,
+		bodyDataFields: ['fields'],
+		bodySchema: ProductboardWebhookCreateBodySchema,
+		outputSchema: ProductboardWebhookCreateOutputSchema,
+		riskLevel: 'write',
+		description:
+			'Create a webhook subscription at a public HTTPS notification URL.',
+	},
+	'webhooks.get': {
+		name: 'webhooks.get',
+		method: 'GET',
+		path: '/webhooks/{webhookId}',
+		doc: `${READ_API}getwebhook`,
+		pathFields: ['webhookId'],
+		outputSchema: ProductboardWebhookGetOutputSchema,
+		riskLevel: 'read',
+		description: 'Get a webhook subscription by UUID.',
+	},
+	'webhooks.delete': {
+		name: 'webhooks.delete',
+		method: 'DELETE',
+		path: '/webhooks/{webhookId}',
+		doc: `${READ_API}deletewebhook`,
+		pathFields: ['webhookId'],
+		outputSchema: ProductboardWebhookDeleteOutputSchema,
+		riskLevel: 'destructive',
+		description: 'Permanently delete a webhook subscription.',
+	},
 } satisfies Record<string, ProductboardOperation>;
 
 export const ProductboardOperations = operationDefinitions;
@@ -664,7 +716,9 @@ export function createProductboardEndpoint<
 			query: operation.query ? parsedInput.query : undefined,
 			body: operation.body ? parsedInput.body : undefined,
 		});
-		const response = ProductboardOutputSchema.parse(rawResponse ?? null);
+		const response = (operation.outputSchema ?? ProductboardOutputSchema).parse(
+			rawResponse ?? null,
+		);
 		await logEventFromContext(
 			ctx,
 			`productboard.${operation.name}`,

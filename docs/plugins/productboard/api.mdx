@@ -3,7 +3,6 @@ title: "Productboard API reference"
 sidebarTitle: "API"
 description: "API reference for the Productboard plugin in Corsair: every `productboard.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
@@ -2455,6 +2454,239 @@ await corsair.productboard.api.teams.update({
 ```
 </Accordion>
 </AccordionGroup>
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Create a webhook subscription at a public HTTPS notification URL.
+
+**Risk:** `write`
+
+```ts
+await corsair.productboard.api.webhooks.create({
+	body: {
+		data: {
+			fields: {
+				name: 'Synthetic feature update subscription',
+				events: [{ eventType: 'feature.updated' }],
+				notification: { url: 'https://receiver.example/productboard', version: 1 },
+			},
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+The notification URL must be a publicly reachable HTTPS endpoint. Its optional authorization header is write-only and is never logged or returned.
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  data: {
+    fields: {
+      name: string,
+      events: {
+        eventType: feature.created | feature.updated | feature.deleted | component.created | component.updated | product.created | product.updated | release.created | release.updated | release.deleted | feature-release-assignment.updated | hierarchy-entity.custom-field-value.updated | note.created | note.updated | note.deleted | insight.created | insight.deleted | key-result.created | key-result.updated | key-result.deleted | objective.created | objective.updated | objective.deleted | initiative.created | initiative.updated | initiative.deleted
+      }[],
+      notification: {
+        url: string,
+        version: 1,
+        headers?: {
+          authorization?: string
+        }
+      }
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: webhook,
+  links: {
+    self: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Permanently delete a webhook subscription.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.productboard.api.webhooks.delete({ webhookId: '00000000-0000-4000-8000-000000000011' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | — |
+
+Deleting a subscription is permanent and stops future notifications; the inbound notification receiver remains the caller's responsibility.
+
+
+
+**Output:** `null`
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Get a webhook subscription by UUID.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.webhooks.get({ webhookId: '00000000-0000-4000-8000-000000000011' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: webhook,
+  createdAt: string,
+  fields: {
+    name: string,
+    events: {
+      eventType: feature.created | feature.updated | feature.deleted | component.created | component.updated | product.created | product.updated | release.created | release.updated | release.deleted | feature-release-assignment.updated | hierarchy-entity.custom-field-value.updated | note.created | note.updated | note.deleted | insight.created | insight.deleted | key-result.created | key-result.updated | key-result.deleted | objective.created | objective.updated | objective.deleted | initiative.created | initiative.updated | initiative.deleted
+    }[],
+    notification: {
+      url: string,
+      version: 1
+    }
+  },
+  links: {
+    self: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List webhook subscriptions with cursor pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: webhook,
+  createdAt: string,
+  fields: {
+    name: string,
+    events: {
+      eventType: feature.created | feature.updated | feature.deleted | component.created | component.updated | product.created | product.updated | release.created | release.updated | release.deleted | feature-release-assignment.updated | hierarchy-entity.custom-field-value.updated | note.created | note.updated | note.deleted | insight.created | insight.deleted | key-result.created | key-result.updated | key-result.deleted | objective.created | objective.updated | objective.deleted | initiative.created | initiative.updated | initiative.deleted
+    }[],
+    notification: {
+      url: string,
+      version: 1
+    }
+  },
+  links: {
+    self: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  next: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---

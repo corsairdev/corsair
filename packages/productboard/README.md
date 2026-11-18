@@ -1,6 +1,6 @@
 # @corsair-dev/productboard
 
-Productboard Public REST API v2 integration for Corsair. The plugin covers notes, workspace-configured entities and their relationships, entity field values, member activity, members, teams, Jira integration reads, and Plugin Integrations.
+Productboard Public REST API v2 integration for Corsair. The plugin covers all 58 REST operations in Productboard's published Notes, Entities, Analytics, Members, Teams, Jira Integrations, Plugin Integrations, and Webhooks API references. The Webhooks API coverage manages subscriptions; it does not implement the external notification receiver.
 
 ## Install and authenticate
 
@@ -14,7 +14,7 @@ Productboard also documents OAuth server-to-server JWT and OAuth for MCP clients
 
 ## Operation matrix
 
-All routes use `https://api.productboard.com/v2`. For operations with query parameters, pass the documented Productboard query keys (including array values such as `type[]`) in `query`. For write operations, pass the documented JSON request envelope in `body`. Path arguments are named in braces below. See each official reference for the complete filters, request fields, OAuth scopes, and response fields.
+All 58 supported operations use `https://api.productboard.com/v2`. For operations with query parameters, pass the documented Productboard query keys (including array values such as `type[]`) in `query`. For write operations, pass the documented JSON request envelope in `body`. Path arguments are named in braces below. See each official reference for the complete filters, request fields, OAuth scopes, and response fields.
 
 | Corsair operation | Method and path | Official reference |
 | --- | --- | --- |
@@ -72,8 +72,20 @@ All routes use `https://api.productboard.com/v2`. For operations with query para
 | `pluginIntegrations.connections.get` | `GET /plugin-integrations/{integrationId}/connections/{entityId}` | [Get plugin integration connection](https://developer.productboard.com/reference/getpluginintegrationconnection) |
 | `pluginIntegrations.connections.update` | `PUT /plugin-integrations/{integrationId}/connections/{entityId}` | [Update plugin integration connection state](https://developer.productboard.com/reference/updatepluginintegrationconnectionstate) |
 | `pluginIntegrations.connections.delete` | `DELETE /plugin-integrations/{integrationId}/connections/{entityId}` | [Delete plugin integration connection](https://developer.productboard.com/reference/deletepluginintegrationconnection) |
+| `webhooks.list` | `GET /webhooks` | [List webhook subscriptions](https://developer.productboard.com/reference/listwebhooks) |
+| `webhooks.create` | `POST /webhooks` | [Create webhook subscription](https://developer.productboard.com/reference/createwebhook) |
+| `webhooks.get` | `GET /webhooks/{webhookId}` | [Get webhook subscription](https://developer.productboard.com/reference/getwebhook) |
+| `webhooks.delete` | `DELETE /webhooks/{webhookId}` | [Delete webhook subscription](https://developer.productboard.com/reference/deletewebhook) |
 
-**Documents API is intentionally not exposed yet.** The entity OpenAPI's [`DocumentReferenceFieldValue`](https://developer.productboard.com/reference/listentities) and the [October 8 changelog](https://developer.productboard.com/changelog/2026-10-08.md) identify opaque document IDs, `GET /v2/documents/{documentId}`, `PUT /v2/documents/{documentId}/content`, PBFM content, and possible 404s for unsupported fields/types. The available first-party references do not provide standalone Documents operation contracts with complete authentication/access requirements, request schema, and response schema. Do not rely on these routes through this plugin until Productboard publishes or confirms those contracts.
+The official reference index currently lists these 58 operations across the eight API groups: Notes (12), Entities (17), Analytics (1), Members (3), Teams (7), Jira Integrations (4), Plugin Integrations (10), and Webhooks (4). The method/path test keeps an independent copy of the complete inventory, and a README test checks that every implemented operation has its own matrix row and first-party URL.
+
+## Excluded routes and surfaces
+
+| Surface | First-party reference | Why it is not an implemented operation |
+| --- | --- | --- |
+| Documents: `GET /v2/documents/{documentId}` and `PUT /v2/documents/{documentId}/content` | [Entity reference](https://developer.productboard.com/reference/listentities); [October 8 changelog](https://developer.productboard.com/changelog/2026-10-08.md); [published OpenAPI groups](https://developer.productboard.com/reference/explore-with-postman) | The entity reference and changelog establish opaque document IDs, these paths, PBFM content, and possible 404s, but Productboard publishes no Documents OpenAPI group or complete standalone auth/access, request, and response contracts. They remain excluded until Productboard publishes or confirms those contracts. |
+| OAuth setup: `GET /oauth2/authorize`, `POST /oauth2/token`, `GET /oauth2/token/info`, `POST /oauth2/revoke`; server-to-server `POST {APP_DEFAULT_URL}/oauth2/token` | [Authorization-code guide](https://developer.productboard.com/reference/oauth-authorization-code); [server-to-server guide](https://developer.productboard.com/reference/oauth-server-to-server); [OAuth for MCP clients](https://developer.productboard.com/reference/oauth-public-client); [v2 route security definitions](https://developer.productboard.com/v2/openapi/notes.yaml) | These are authentication setup routes, not Public API v2 resource operations. The guides use `/oauth2/authorize` and `/oauth2/token`, while v2 OpenAPI security definitions use `/oauth/authorize` and `/oauth/token`; the documented scope models also differ. The specialized JWT and MCP DCR flows have separate application/token lifecycles. This plugin therefore supports Productboard personal access tokens only and does not claim OAuth compatibility. |
+| Webhook notification callback `POST {notification.url}` | [Create webhook OpenAPI](https://developer.productboard.com/reference/createwebhook) | This is a callback to the customer-configured external HTTPS receiver, not a Productboard route under `/v2`. The issue does not request an inbound receiver. The four subscription-management routes are implemented above. |
 
 ## Pagination, limits, and caveats
 
@@ -84,14 +96,9 @@ All routes use `https://api.productboard.com/v2`. For operations with query para
 - `entities.customerScore` is explicitly marked beta by Productboard. Field-value mutations apply to select/tag fields only; STATUS values are not managed by those routes. Deleting a field value can unset or reassign values according to the documented `force`/`replaceWith` query options.
 - Writes are not automatically replayed on 5xx or timeout. Deletes are marked destructive.
 
-## Excluded routes
+Plugin-integration REST management, webhook subscription management, and connection-state routes are included. Productboard may issue a probe when a plugin integration is created or an enabled action URL is updated; the plugin does not implement the configured external action callback receiver or webhook delivery. Webhook creation accepts only documented event types and a public HTTPS notification URL. The write-only plugin-action and webhook notification authorization values are never logged or included in propagated API errors; webhook response validation strips any authorization header because Productboard documents it as omitted from responses.
 
-- All webhook subscription management routes (`/webhooks`): webhook delivery/receivers are outside this plugin's scope.
-- Authentication/token issuance endpoints and the specialized server-to-server JWT / MCP DCR flows: credentials are supplied through Corsair rather than issued by API operations.
-
-Plugin-integration REST management and connection-state routes are included. Productboard may issue a probe when a plugin integration is created or an enabled action URL is updated; the plugin does not implement the configured external action callback receiver or webhook delivery. The write-only `action.headers.authorization` secret is never returned, logged, or included in propagated API errors.
-
-No database entities are persisted and no webhooks are registered.
+No database entities are persisted and no inbound webhook receiver is registered.
 
 ## Reference
 
@@ -99,6 +106,8 @@ No database entities are persisted and no webhooks are registered.
 - [Authentication](https://developer.productboard.com/reference/authentication)
 - [Pagination](https://developer.productboard.com/reference/pagination)
 - [Rate limits](https://developer.productboard.com/reference/rate-limits)
+- [Webhook subscriptions](https://developer.productboard.com/reference/listwebhooks)
+- [Productboard API OpenAPI groups](https://developer.productboard.com/reference/explore-with-postman)
 
 ## License
 

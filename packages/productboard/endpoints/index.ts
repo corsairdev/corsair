@@ -94,5 +94,12 @@ export const PluginIntegrations = {
 	},
 } as const;
 
+export const Webhooks = {
+	list: endpoint('webhooks.list'),
+	create: endpoint('webhooks.create'),
+	get: endpoint('webhooks.get'),
+	delete: endpoint('webhooks.delete'),
+} as const;
+
 export * from './operations';
 export * from './types';

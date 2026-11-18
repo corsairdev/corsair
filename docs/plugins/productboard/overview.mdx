@@ -1,7 +1,7 @@
 ---
 title: "Productboard plugin"
 sidebarTitle: "Overview"
-description: "Read and manage Productboard notes, entities, relationships, field options, teams, members, Jira connections, and Plugin Integrations through Public REST API v2."
+description: "Read and manage Productboard notes, entities, relationships, field options, teams, members, Jira connections, Plugin Integrations, and webhook subscriptions through Public REST API v2."
 ---
 
 Use **Productboard** through Corsair: one client, typed API calls.
@@ -10,11 +10,11 @@ Configure a Productboard personal access token in Corsair. Productboard requires
 
 Productboard uses opaque cursor pagination (`pageCursor`) with `links.next`; its documented default rate limit is 50 requests per second per token. On 429 responses the shared transport preserves `Retry-After` and the plugin avoids duplicate retries.
 
-Entity and note field names and values are workspace-configurable. The plugin strictly validates operation-level inputs and accepts JSON for provider-native request envelopes, query structures, and dynamic field maps. PII may be redacted by Productboard without `members:pii:read`. The customer-score operation is beta. Webhook subscriptions and inbound webhook/action callback handlers are not included; plugin-integration control-plane REST operations are available. Documents operations are intentionally excluded: first-party entity references establish opaque document IDs, route paths and PBFM semantics, but not complete standalone auth, request, and response contracts.
+Entity and note field names and values are workspace-configurable. The plugin strictly validates operation-level inputs and accepts JSON for provider-native request envelopes, query structures, and dynamic field maps. PII may be redacted by Productboard without `members:pii:read`. The customer-score operation is beta. All four documented webhook subscription-management routes are available, but inbound webhook/action callback handlers are not included. Documents operations are intentionally excluded: first-party entity references establish opaque document IDs, route paths and PBFM semantics, but not complete standalone auth, request, and response contracts. OAuth routes remain excluded because Productboard's OAuth guides and v2 OpenAPI security definitions disagree on URLs and scopes.
 
 **What you get:**
 
-- 54 typed API operations
+- 58 typed API operations
 
 ## Setup
 
