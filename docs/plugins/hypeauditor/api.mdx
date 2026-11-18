@@ -124,7 +124,7 @@ await corsair.hypeauditor.api.discovery.keywords({ socialNetwork: 'instagram', c
 
 Search creators with the documented filters, 20 per page; each page costs one discovery call, and `sandbox` answers sample data without spending one
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
 await corsair.hypeauditor.api.discovery.search({ social_network: 'instagram', filters: { search: ['nasa'], subscribers_count: { from: 10000, to: 100000 } }, page: 1 });
@@ -510,7 +510,7 @@ await corsair.hypeauditor.api.media.tiktok({ channel: '1234567' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `channel` | `string` | Yes | The account identifier from its URL: a username for TikTok, Twitch, Twitter and Snapchat, and a channel ID or username for YouTube. |
+| `channel` | `string` | Yes | The numeric TikTok user ID (`result.report.basic.id` in the TikTok report), sent as `channelId`. Not the username. |
 
 
 
@@ -627,7 +627,7 @@ await corsair.hypeauditor.api.mentions.youtube({ channel: 'NASA' });
 
 Read the Instagram report by username or user ID; the first request for a creator spends a credit, and a 202 answer carries `retryTtl`
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
 await corsair.hypeauditor.api.reports.instagram({ username: 'nasa' });
@@ -654,6 +654,11 @@ Send exactly one of `username` or `user_id`; they are two separate actions.
 ```ts
 {
   result: {
+    retryTtl: number,
+    restTokens?: number | null
+  }
+} | {
+  result: {
     report_state?: string | null,
     user?: {
       id?: string | number | null,
@@ -669,11 +674,6 @@ Send exactly one of `username` or `user_id`; they are two separate actions.
     restTokens?: number | null,
     _report_quality?: string | null
   }
-} | {
-  result: {
-    retryTtl: number,
-    restTokens?: number | null
-  }
 }
 ```
 </Accordion>
@@ -688,7 +688,7 @@ Send exactly one of `username` or `user_id`; they are two separate actions.
 
 Read the Snapchat report by username; the first request for a creator spends a credit, and a 202 answer carries `retryTtl`
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
 await corsair.hypeauditor.api.reports.snapchat({ channel: 'nasa' });
@@ -711,6 +711,11 @@ await corsair.hypeauditor.api.reports.snapchat({ channel: 'nasa' });
 ```ts
 {
   result: {
+    retryTtl: number,
+    restTokens?: number | null
+  }
+} | {
+  result: {
     report_state?: string | null,
     user?: {
       id?: string | number | null,
@@ -726,11 +731,6 @@ await corsair.hypeauditor.api.reports.snapchat({ channel: 'nasa' });
     restTokens?: number | null,
     _report_quality?: string | null
   }
-} | {
-  result: {
-    retryTtl: number,
-    restTokens?: number | null
-  }
 }
 ```
 </Accordion>
@@ -745,7 +745,7 @@ await corsair.hypeauditor.api.reports.snapchat({ channel: 'nasa' });
 
 Read the TikTok report by username or user ID; the first request for a creator spends a credit, and a 202 answer carries `retryTtl`
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
 await corsair.hypeauditor.api.reports.tiktok({ channel: 'littlebig' });
@@ -771,6 +771,11 @@ Send exactly one of `channel` or `user_id`, for the same reason.
 ```ts
 {
   result: {
+    retryTtl: number,
+    restTokens?: number | null
+  }
+} | {
+  result: {
     report_state?: string | null,
     user?: {
       id?: string | number | null,
@@ -786,11 +791,6 @@ Send exactly one of `channel` or `user_id`, for the same reason.
     restTokens?: number | null,
     _report_quality?: string | null
   }
-} | {
-  result: {
-    retryTtl: number,
-    restTokens?: number | null
-  }
 }
 ```
 </Accordion>
@@ -805,7 +805,7 @@ Send exactly one of `channel` or `user_id`, for the same reason.
 
 Read the Twitch report by username; the first request for a creator spends a credit, and a 202 answer carries `retryTtl`
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
 await corsair.hypeauditor.api.reports.twitch({ channel: 'nasa' });
@@ -828,6 +828,11 @@ await corsair.hypeauditor.api.reports.twitch({ channel: 'nasa' });
 ```ts
 {
   result: {
+    retryTtl: number,
+    restTokens?: number | null
+  }
+} | {
+  result: {
     report_state?: string | null,
     user?: {
       id?: string | number | null,
@@ -843,11 +848,6 @@ await corsair.hypeauditor.api.reports.twitch({ channel: 'nasa' });
     restTokens?: number | null,
     _report_quality?: string | null
   }
-} | {
-  result: {
-    retryTtl: number,
-    restTokens?: number | null
-  }
 }
 ```
 </Accordion>
@@ -862,7 +862,7 @@ await corsair.hypeauditor.api.reports.twitch({ channel: 'nasa' });
 
 Read the Twitter report by username; the first request for a creator spends a credit, and a 202 answer carries `retryTtl`
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
 await corsair.hypeauditor.api.reports.twitter({ channel: 'nasa' });
@@ -885,6 +885,11 @@ await corsair.hypeauditor.api.reports.twitter({ channel: 'nasa' });
 ```ts
 {
   result: {
+    retryTtl: number,
+    restTokens?: number | null
+  }
+} | {
+  result: {
     report_state?: string | null,
     user?: {
       id?: string | number | null,
@@ -900,11 +905,6 @@ await corsair.hypeauditor.api.reports.twitter({ channel: 'nasa' });
     restTokens?: number | null,
     _report_quality?: string | null
   }
-} | {
-  result: {
-    retryTtl: number,
-    restTokens?: number | null
-  }
 }
 ```
 </Accordion>
@@ -919,7 +919,7 @@ await corsair.hypeauditor.api.reports.twitter({ channel: 'nasa' });
 
 Read the YouTube report by channel ID or username; the first request for a creator spends a credit, and a 202 answer carries `retryTtl`
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
 await corsair.hypeauditor.api.reports.youtube({ channel: 'NASA', type: 'report' });
@@ -943,6 +943,11 @@ await corsair.hypeauditor.api.reports.youtube({ channel: 'NASA', type: 'report' 
 ```ts
 {
   result: {
+    retryTtl: number,
+    restTokens?: number | null
+  }
+} | {
+  result: {
     report_state?: string | null,
     user?: {
       id?: string | number | null,
@@ -957,11 +962,6 @@ await corsair.hypeauditor.api.reports.youtube({ channel: 'NASA', type: 'report' 
     validUntil?: number | null,
     restTokens?: number | null,
     _report_quality?: string | null
-  }
-} | {
-  result: {
-    retryTtl: number,
-    restTokens?: number | null
   }
 }
 ```
