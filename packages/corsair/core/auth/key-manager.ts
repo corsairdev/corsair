@@ -444,6 +444,8 @@ export function createAccountKeyManager<T extends AuthTypes>(
 				})
 				.where('id', '=', account.id)
 				.execute();
+			// A read already in flight started before this write.
+			accountRead = undefined;
 		},
 	};
 

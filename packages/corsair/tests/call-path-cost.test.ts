@@ -144,7 +144,7 @@ describe('bound-account call path cost', () => {
 		);
 		expect({ token, upsert, event }).toEqual({
 			token: { queries: 1, scrypt: 0 },
-			upsert: { queries: 6, scrypt: 0 },
+			upsert: { queries: 5, scrypt: 0 },
 			event: { queries: 3, scrypt: 0 },
 		});
 	});
@@ -155,7 +155,7 @@ describe('bound-account call path cost', () => {
 		const three = await cost(() =>
 			Promise.all([t.demo.api.note(), t.demo.api.note(), t.demo.api.note()]),
 		);
-		expect(three.queries).toBe(13);
+		expect(three.queries).toBe(10);
 	});
 
 	it('a settled read is never reused: a rotated token is seen by the next call', async () => {
