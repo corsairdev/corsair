@@ -40,6 +40,11 @@ function redactErrorValue(value: unknown, sensitiveValues: string[]): unknown {
 	return value;
 }
 
+function redactUrlQuery(url: string): string {
+	const queryStart = url.indexOf('?');
+	return queryStart < 0 ? url : url.slice(0, queryStart);
+}
+
 // Request payloads stay generic because each strict endpoint schema defines its own JSON/form fields.
 // `unknown` is returned because Graph responses are untrusted until the operation output schema validates them.
 export async function makeMetaAdsRequest(
@@ -126,7 +131,12 @@ export async function makeMetaAdsRequest(
 		throw new ApiError(
 			safeRequest,
 			{
-				url: String(redactErrorValue(error.url, sensitiveValues)),
+				url: String(
+					redactErrorValue(
+						options.redactQueryOnError ? redactUrlQuery(error.url) : error.url,
+						sensitiveValues,
+					),
+				),
 				ok: false,
 				status: error.status,
 				statusText: error.statusText,

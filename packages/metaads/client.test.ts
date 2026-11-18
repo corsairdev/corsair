@@ -114,7 +114,7 @@ describe('Meta Ads Graph API client', () => {
 				query: { access_token: token, targeting_spec: 'sensitive-targeting' },
 			},
 			{
-				url: `https://graph.facebook.com/v27.0/me/adaccounts?access_token=${token}`,
+				url: `https://graph.facebook.com/v27.0/me/adaccounts?access_token=${token}&targeting_spec=sensitive-targeting`,
 				ok: false,
 				status: 403,
 				statusText: 'Forbidden',
@@ -136,6 +136,7 @@ describe('Meta Ads Graph API client', () => {
 			throw new Error('Expected sanitized core ApiError');
 		expect(result).not.toBe(providerError);
 		expect(result.request.query).toBeUndefined();
+		expect(result.url).toBe('https://graph.facebook.com/v27.0/me/adaccounts');
 		expect(JSON.stringify(result)).not.toContain(token);
 		expect(JSON.stringify(result)).not.toContain('sensitive-targeting');
 		expect(result.status).toBe(403);
