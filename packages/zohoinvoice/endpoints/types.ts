@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
 const id = z.union([z.string().min(1), z.number()]);
+// A reference in a response. Zoho sends "" when it is unset (tax_id on an
+// untaxed item), so it can't require a non-empty id.
+const ref = z.union([z.string(), z.number()]);
 const organization = z.object({
 	organizationId: z
 		.string()
@@ -34,7 +37,7 @@ const AddressSchema = z
 
 const CustomFieldSchema = z
 	.object({
-		customfield_id: id.optional(),
+		customfield_id: ref.optional(),
 		label: z.string().optional(),
 		value: z.unknown().optional(),
 	})
@@ -50,13 +53,13 @@ const ContactPersonSchema = z
 	.loose();
 const LineItemSchema = z
 	.object({
-		item_id: id.optional(),
+		item_id: ref.optional(),
 		name: z.string().optional(),
 		description: z.string().optional(),
 		rate: z.number().optional(),
 		quantity: z.number().optional(),
 		unit: z.string().optional(),
-		tax_id: id.optional(),
+		tax_id: ref.optional(),
 		discount: z.union([z.string(), z.number()]).optional(),
 	})
 	.loose();
@@ -85,7 +88,7 @@ const InvoiceSchema = z
 	.object({
 		invoice_id: id,
 		invoice_number: z.string().optional(),
-		customer_id: id.optional(),
+		customer_id: ref.optional(),
 		customer_name: z.string().optional(),
 		status: z.string().optional(),
 		date: z.string().optional(),
@@ -109,7 +112,7 @@ const ItemSchema = z
 		sku: z.string().optional(),
 		// goods or service; left open for values Zoho adds.
 		product_type: z.string().optional(),
-		tax_id: id.optional(),
+		tax_id: ref.optional(),
 		custom_fields: z.array(CustomFieldSchema).optional(),
 	})
 	.loose();
@@ -120,7 +123,7 @@ const PaymentSchema = z
 		amount: z.union([z.string(), z.number()]).optional(),
 		date: z.string().optional(),
 		status: z.string().optional(),
-		customer_id: id.optional(),
+		customer_id: ref.optional(),
 		customer_name: z.string().optional(),
 		reference_number: z.string().optional(),
 		invoices: z.array(z.record(z.string(), z.unknown())).optional(),
@@ -130,7 +133,7 @@ const EstimateSchema = z
 	.object({
 		estimate_id: id,
 		estimate_number: z.string().optional(),
-		customer_id: id.optional(),
+		customer_id: ref.optional(),
 		customer_name: z.string().optional(),
 		status: z.string().optional(),
 		date: z.string().optional(),

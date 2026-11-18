@@ -653,3 +653,21 @@ describe('oauth tenant link', () => {
 		).resolves.toBeNull();
 	});
 });
+
+describe('live response shapes', () => {
+	it('accepts an item whose tax_id is empty, as Zoho sends it', () => {
+		// Live run 11-18: items.create returned tax_id "" on an untaxed item.
+		expect(
+			ZohoInvoiceEndpointOutputSchemas.itemsCreate.safeParse({
+				code: 0,
+				message: 'The item has been added.',
+				item: {
+					item_id: '3519',
+					name: 'corsair-plugin-test',
+					rate: 100,
+					tax_id: '',
+				},
+			}).success,
+		).toBe(true);
+	});
+});
