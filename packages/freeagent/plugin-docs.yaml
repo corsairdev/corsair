@@ -1088,7 +1088,7 @@ overviewNote: >-
   remains partial and is not a claim of full API coverage. The Tasks resource's
   published delete path is unresolved, and Timeslips batch-create is withheld
   because its response is undocumented. The Bills and Expenses docs omit Monthly
-  from their recurring enums, although the Recurring Invoices docs include it; the
-  schemas accept Monthly, but route-specific support is not confirmed. The
-  Accountancy Practice API requires practice-enabled OAuth and X-Subdomain client
-  scoping and is excluded.
+  from their recurring enums, so their input schemas enforce only those published
+  values and do not claim Monthly support. The separate Recurring Invoices resource
+  documents Monthly. The Accountancy Practice API requires practice-enabled OAuth
+  and X-Subdomain client scoping and is excluded.
