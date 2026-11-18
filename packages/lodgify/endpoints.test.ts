@@ -298,7 +298,7 @@ describe('availability endpoints', () => {
 			ctx.key,
 			{
 				method: 'GET',
-				query: { from: '2026-06-01', to: '2026-06-10' },
+				query: { start: '2026-06-01', end: '2026-06-10' },
 			},
 		);
 		expect(mockedLogEvent).toHaveBeenCalledWith(

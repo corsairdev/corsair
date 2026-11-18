@@ -23,7 +23,7 @@ pnpm add @corsair-dev/lodgify
 | `availability.get` | `lodgify.availability.get` | `read` | GET | `/v2/availability/{propertyId}` | Get availability calendar periods for a property |
 | `quotes.calculate` | `lodgify.quotes.calculate` | `read` | POST | `/v2/quote` | Calculate quote and pricing for a stay |
 | `messages.list` | `lodgify.messages.list` | `read` | GET | `/v2/messages` | List guest messaging threads or messages |
-| `messages.send` | `lodgify.messages.send` | `write` | POST | `/v2/messages` | Send a message to a guest or thread |
+| `messages.send` | `lodgify.messages.send` | `destructive` | POST | `/v2/messages` | Send a message to a guest or thread |
 
 ## Auth
 
@@ -45,7 +45,7 @@ The Lodgify plugin delegates 429 rate limit retries to Corsair's rate limit hand
 
 ## Reference
 
-- [Lodgify Developer Portal](https://developer.lodgify.com)
+- [Lodgify Documentation](https://docs.lodgify.com/docs/getting-started-1)
 - Full docs, types, and examples: https://docs.corsair.dev/plugins/lodgify
 
 ## License

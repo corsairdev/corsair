@@ -177,7 +177,7 @@ export const lodgifyEndpointMeta = {
 		description: 'List guest messaging threads or messages',
 	},
 	'messages.send': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Send a message to a guest or thread',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof lodgifyEndpointsNested>;

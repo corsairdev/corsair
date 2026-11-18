@@ -12,6 +12,11 @@ import {
 } from './endpoints/types';
 
 const LIVE_KEY = process.env.LODGIFY_API_KEY ?? '';
+if (LIVE_KEY.length === 0) {
+	console.warn(
+		'Skipping live Lodgify API tests because LODGIFY_API_KEY is not set. Set LODGIFY_API_KEY to run live tests.',
+	);
+}
 const describeLive = LIVE_KEY.length > 0 ? describe : describe.skip;
 
 describeLive('Lodgify live API (env-gated)', () => {

@@ -10,8 +10,8 @@ export const get: LodgifyEndpoints['availability.get'] = async (ctx, input) => {
 	const parsedInput =
 		LodgifyEndpointInputSchemas['availability.get'].parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {};
-	if (parsedInput.from !== undefined) query.from = parsedInput.from;
-	if (parsedInput.to !== undefined) query.to = parsedInput.to;
+	if (parsedInput.from !== undefined) query.start = parsedInput.from;
+	if (parsedInput.to !== undefined) query.end = parsedInput.to;
 
 	// `unknown` because provider API response is untrusted until parsed by Zod schema
 	const response: unknown = await makeLodgifyRequest(

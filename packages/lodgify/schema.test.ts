@@ -176,7 +176,7 @@ describe('Lodgify reservations schemas', () => {
 				last_name: 'Doe',
 				email: 'jane@example.com',
 			},
-			roomTypes: [{ id: 201, people: 2 }],
+			room_types: [{ id: 201, people: 2 }],
 			total_amount: 1200,
 		};
 		expect(

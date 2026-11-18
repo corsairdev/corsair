@@ -115,7 +115,7 @@ Retrieves guest messaging threads and conversations.
 
 Send a message to a guest or thread
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.lodgify.api.messages.send({ message: 'Welcome to your stay! Check-in instructions have been sent.', thread_id: 'thread-123', subject: 'Check-in instructions' });
@@ -411,7 +411,7 @@ await corsair.lodgify.api.reservations.create({
 	arrival: '2026-06-01',
 	departure: '2026-06-07',
 	guest: { first_name: 'Jane', last_name: 'Doe', email: 'jane@example.com' },
-	roomTypes: [{ id: 201, people: 2 }],
+	room_types: [{ id: 201, people: 2 }],
 	total_amount: 1200,
 });
 ```
@@ -424,7 +424,7 @@ await corsair.lodgify.api.reservations.create({
 | `arrival` | `string` | Yes | — |
 | `departure` | `string` | Yes | — |
 | `guest` | `object` | No | — |
-| `roomTypes` | `object[]` | No | — |
+| `room_types` | `object[]` | No | — |
 | `total_amount` | `number` | No | — |
 | `source` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -444,7 +444,7 @@ Creates a new reservation or booking on the specified property.
 ```
 </Accordion>
 
-<Accordion title="roomTypes full type">
+<Accordion title="room_types full type">
 
 ```ts
 {

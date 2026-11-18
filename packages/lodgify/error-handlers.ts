@@ -4,7 +4,7 @@ import { ApiError } from 'corsair/http';
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
+			if (error instanceof ApiError) return error.status === 429;
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('too many requests') ||
@@ -23,11 +23,9 @@ export const errorHandlers = {
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (
-				error instanceof ApiError &&
-				(error.status === 401 || error.status === 403)
-			)
-				return true;
+			if (error instanceof ApiError) {
+				return error.status === 401 || error.status === 403;
+			}
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('unauthorized') ||
@@ -42,11 +40,9 @@ export const errorHandlers = {
 	},
 	BAD_REQUEST_ERROR: {
 		match: (error: Error) => {
-			if (
-				error instanceof ApiError &&
-				(error.status === 400 || error.status === 422)
-			)
-				return true;
+			if (error instanceof ApiError) {
+				return error.status === 400 || error.status === 422;
+			}
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('bad request') ||
@@ -59,7 +55,7 @@ export const errorHandlers = {
 	},
 	NOT_FOUND_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 404) return true;
+			if (error instanceof ApiError) return error.status === 404;
 			const msg = error.message.toLowerCase();
 			return msg.includes('not found') || msg.includes('404');
 		},

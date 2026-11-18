@@ -123,7 +123,7 @@ export const LodgifyReservationsCreateInputSchema = z
 		arrival: z.string().min(1),
 		departure: z.string().min(1),
 		guest: LodgifyGuestSchema.optional(),
-		roomTypes: z
+		room_types: z
 			.array(
 				z
 					.object({
