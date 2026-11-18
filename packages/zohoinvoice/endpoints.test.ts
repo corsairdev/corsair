@@ -5,7 +5,6 @@ import {
 } from './endpoints/types';
 import { zohoinvoice } from './index';
 import { resolveZohoInvoiceOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { verifyZohoInvoiceWebhookSignature } from './webhooks/types';
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
@@ -63,20 +62,51 @@ describe('Zoho Invoice endpoint contracts', () => {
 		).toBe(false);
 	});
 
-	it('registers oauth_2 by default with 19 resource operations', () => {
+	it('registers oauth_2 by default with 34 resource operations', () => {
 		const plugin = zohoinvoice();
 		expect(plugin.options?.authType).toBe('oauth_2');
-		expect(Object.keys(plugin.endpointMeta ?? {})).toHaveLength(19);
+		expect(Object.keys(plugin.endpointMeta ?? {})).toHaveLength(34);
 		expect(Object.keys(plugin.webhooks ?? {})).toHaveLength(0);
 		expect(ZohoInvoiceEndpointOutputSchemas.invoicesGet).toBeDefined();
 	});
 
-	it('does not claim unsupported webhook signature verification', () => {
-		const result = verifyZohoInvoiceWebhookSignature(
-			{ body: {}, headers: {} } as never,
-			'test-secret',
+	it('asks Zoho for comma-separated scopes, settings scopes for items', () => {
+		const scopes = zohoinvoice().oauthConfig?.scopes ?? [];
+		// Core joins the array with spaces; Zoho wants commas.
+		expect(scopes).toHaveLength(1);
+		const list = String(scopes[0]).split(',');
+		expect(list).toContain('ZohoInvoice.settings.READ');
+		expect(list).toContain('ZohoInvoice.settings.CREATE');
+		expect(list.some((scope) => scope.startsWith('ZohoInvoice.items.'))).toBe(
+			false,
 		);
-		expect(result.valid).toBe(false);
+	});
+
+	it('uses accounts.zohocloud.ca for Canada sign-in', () => {
+		expect(zohoinvoice({ region: 'ca' }).oauthConfig?.tokenUrl).toBe(
+			'https://accounts.zohocloud.ca/oauth/v2/token',
+		);
+	});
+
+	it('marks sends, voids and deletes destructive', () => {
+		const meta = zohoinvoice().endpointMeta as Record<
+			string,
+			{ riskLevel: string }
+		>;
+		for (const path of [
+			'invoices.email',
+			'invoices.remind',
+			'estimates.email',
+			'invoices.void',
+			'invoices.delete',
+			'customers.delete',
+			'items.delete',
+			'payments.delete',
+			'estimates.delete',
+		])
+			expect(meta[path]?.riskLevel).toBe('destructive');
+		expect(meta['invoices.markSent']?.riskLevel).toBe('write');
+		expect(meta['payments.create']?.riskLevel).toBe('write');
 	});
 });
 
@@ -272,6 +302,135 @@ describe('Zoho Invoice endpoint handlers', () => {
 			{ estimate: { estimate_id: 'e1' } },
 			{ organizationId, estimateId: 'e1', body: { status: 'sent' } },
 		],
+		[
+			'customers.delete',
+			'customersDelete',
+			() => zohoinvoice().endpoints!.customers.delete,
+			'/contacts/c1',
+			'DELETE',
+			{ code: 0, message: 'The contact has been deleted.' },
+			{ organizationId, contactId: 'c1' },
+		],
+		[
+			'invoices.markSent',
+			'invoicesMarkSent',
+			() => zohoinvoice().endpoints!.invoices.markSent,
+			'/invoices/i1/status/sent',
+			'POST',
+			{ code: 0, message: 'Invoice status has been changed to Sent.' },
+			{ organizationId, invoiceId: 'i1' },
+		],
+		[
+			'invoices.void',
+			'invoicesVoid',
+			() => zohoinvoice().endpoints!.invoices.void,
+			'/invoices/i1/status/void',
+			'POST',
+			{ code: 0, message: 'Invoice status has been changed to Void.' },
+			{ organizationId, invoiceId: 'i1' },
+		],
+		[
+			'invoices.email',
+			'invoicesEmail',
+			() => zohoinvoice().endpoints!.invoices.email,
+			'/invoices/i1/email',
+			'POST',
+			{ code: 0, message: 'Your invoice has been sent.' },
+			{ organizationId, invoiceId: 'i1' },
+		],
+		[
+			'invoices.remind',
+			'invoicesRemind',
+			() => zohoinvoice().endpoints!.invoices.remind,
+			'/invoices/i1/paymentreminder',
+			'POST',
+			{ code: 0, message: 'Your payment reminder has been sent.' },
+			{ organizationId, invoiceId: 'i1' },
+		],
+		[
+			'invoices.listPayments',
+			'invoicesListPayments',
+			() => zohoinvoice().endpoints!.invoices.listPayments,
+			'/invoices/i1/payments',
+			'GET',
+			{ payments: [{ payment_id: 'p1' }] },
+			{ organizationId, invoiceId: 'i1' },
+		],
+		[
+			'items.delete',
+			'itemsDelete',
+			() => zohoinvoice().endpoints!.items.delete,
+			'/items/it1',
+			'DELETE',
+			{ code: 0, message: 'The item has been deleted.' },
+			{ organizationId, itemId: 'it1' },
+		],
+		[
+			'payments.create',
+			'paymentsCreate',
+			() => zohoinvoice().endpoints!.payments.create,
+			'/customerpayments',
+			'POST',
+			{ payment: { payment_id: 'p1' } },
+			{
+				organizationId,
+				body: { customer_id: 'c1', amount: 10, payment_mode: 'cash' },
+			},
+		],
+		[
+			'payments.delete',
+			'paymentsDelete',
+			() => zohoinvoice().endpoints!.payments.delete,
+			'/customerpayments/p1',
+			'DELETE',
+			{ code: 0, message: 'The payment has been deleted.' },
+			{ organizationId, paymentId: 'p1' },
+		],
+		[
+			'estimates.delete',
+			'estimatesDelete',
+			() => zohoinvoice().endpoints!.estimates.delete,
+			'/estimates/e1',
+			'DELETE',
+			{ code: 0, message: 'The estimate has been deleted.' },
+			{ organizationId, estimateId: 'e1' },
+		],
+		[
+			'estimates.markSent',
+			'estimatesMarkSent',
+			() => zohoinvoice().endpoints!.estimates.markSent,
+			'/estimates/e1/status/sent',
+			'POST',
+			{ code: 0, message: 'Estimate status has been changed to Sent.' },
+			{ organizationId, estimateId: 'e1' },
+		],
+		[
+			'estimates.markAccepted',
+			'estimatesMarkAccepted',
+			() => zohoinvoice().endpoints!.estimates.markAccepted,
+			'/estimates/e1/status/accepted',
+			'POST',
+			{ code: 0, message: 'Estimate status has been changed to Accepted.' },
+			{ organizationId, estimateId: 'e1' },
+		],
+		[
+			'estimates.markDeclined',
+			'estimatesMarkDeclined',
+			() => zohoinvoice().endpoints!.estimates.markDeclined,
+			'/estimates/e1/status/declined',
+			'POST',
+			{ code: 0, message: 'Estimate status has been changed to Declined.' },
+			{ organizationId, estimateId: 'e1' },
+		],
+		[
+			'estimates.email',
+			'estimatesEmail',
+			() => zohoinvoice().endpoints!.estimates.email,
+			'/estimates/e1/email',
+			'POST',
+			{ code: 0, message: 'Your estimate has been sent.' },
+			{ organizationId, estimateId: 'e1' },
+		],
 	])(
 		'%s calls %s with the expected route',
 		async (_label, eventName, getEndpoint, path, method, response, input) => {
@@ -322,6 +481,91 @@ describe('Zoho Invoice endpoint handlers', () => {
 			'test-token',
 			expect.any(Object),
 		);
+	});
+
+	it('organizations.list sends no organization header', async () => {
+		requestSpy.mockResolvedValue({
+			organizations: [{ organization_id: '60096700553', name: 'Acme' }],
+		});
+		await zohoinvoice().endpoints!.organizations.list(makeCtx() as never, {});
+		expect(requestSpy).toHaveBeenCalledWith(
+			'/organizations',
+			'test-token',
+			expect.objectContaining({ organizationId: undefined }),
+		);
+	});
+
+	it('uses the saved organization when the input has none', async () => {
+		requestSpy.mockResolvedValue({ contacts: [] });
+		const ctx = {
+			...makeCtx(),
+			keys: { get_organization_id: jest.fn().mockResolvedValue('saved-org') },
+		};
+		await zohoinvoice().endpoints!.customers.list(ctx as never, {});
+		expect(requestSpy.mock.calls[0]?.[2]?.organizationId).toBe('saved-org');
+	});
+
+	it('looks up and saves the only organization when none is saved', async () => {
+		requestSpy
+			.mockResolvedValueOnce({ organizations: [{ organization_id: 'only' }] })
+			.mockResolvedValueOnce({ contacts: [] });
+		const set = jest.fn().mockResolvedValue(undefined);
+		const ctx = {
+			...makeCtx(),
+			keys: {
+				get_organization_id: jest.fn().mockResolvedValue(null),
+				set_organization_id: set,
+			},
+		};
+		await zohoinvoice().endpoints!.customers.list(ctx as never, {});
+		expect(requestSpy.mock.calls[0]?.[0]).toBe('/organizations');
+		expect(requestSpy.mock.calls[1]?.[2]?.organizationId).toBe('only');
+		expect(set).toHaveBeenCalledWith('only');
+	});
+
+	it('asks for organizationId when the account has several', async () => {
+		requestSpy.mockResolvedValueOnce({
+			organizations: [{ organization_id: 'a' }, { organization_id: 'b' }],
+		});
+		await expect(
+			zohoinvoice().endpoints!.customers.list(makeCtx() as never, {}),
+		).rejects.toThrow(/organizationId/);
+		expect(requestSpy).toHaveBeenCalledTimes(1);
+	});
+
+	it('accepts a contact with an empty email, as Zoho sends it', async () => {
+		requestSpy.mockResolvedValue({
+			contacts: [{ contact_id: '1', contact_name: 'Acme', email: '' }],
+		});
+		await expect(
+			zohoinvoice().endpoints!.customers.list(makeCtx() as never, {
+				organizationId,
+			}),
+		).resolves.toBeDefined();
+	});
+
+	it('stores records and removes them after a delete', async () => {
+		const tableMock = {
+			upsertByEntityId: jest.fn().mockResolvedValue(undefined),
+			deleteByEntityId: jest.fn().mockResolvedValue(true),
+		};
+		const ctx = { ...makeCtx(), db: { invoices: tableMock } };
+		requestSpy.mockResolvedValueOnce({
+			invoices: [{ invoice_id: 'i1', status: 'draft' }],
+		});
+		await zohoinvoice().endpoints!.invoices.list(ctx as never, {
+			organizationId,
+		});
+		expect(tableMock.upsertByEntityId).toHaveBeenCalledWith('i1', {
+			id: 'i1',
+			data: { invoice_id: 'i1', status: 'draft' },
+		});
+		requestSpy.mockResolvedValueOnce({ code: 0, message: 'deleted' });
+		await zohoinvoice().endpoints!.invoices.delete(ctx as never, {
+			organizationId,
+			invoiceId: 'i1',
+		});
+		expect(tableMock.deleteByEntityId).toHaveBeenCalledWith('i1');
 	});
 
 	it('rejects malformed provider responses at the endpoint boundary', async () => {

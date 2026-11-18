@@ -1,70 +1,34 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { ZohoInvoiceAPIError } from './client';
+import { ApiError } from 'corsair/http';
 
 function statusOf(error: Error): number | undefined {
-	const status = (error as { status?: unknown }).status;
-	return typeof status === 'number' ? status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => {
-			if (statusOf(error) === 429) return true;
-			const msg = error.message.toLowerCase();
-			return (
-				msg.includes('rate_limited') ||
-				msg.includes('rate limit') ||
-				msg.includes('429')
-			);
-		},
-		handler: async (error: Error) => {
-			let retryAfterMs: number | undefined;
-			if (
-				error instanceof ZohoInvoiceAPIError &&
-				error.retryAfter !== undefined
-			) {
-				retryAfterMs = error.retryAfter;
-			}
-			return {
-				maxRetries: 5,
-				headersRetryAfterMs: retryAfterMs,
-			};
-		},
+		match: (error: Error) => statusOf(error) === 429,
+		// Core's request() already retried this 429, honouring Retry-After.
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	AUTH_ERROR: {
-		match: (error: Error) => {
-			if (statusOf(error) === 401) return true;
-			const msg = error.message.toLowerCase();
-			return (
-				msg.includes('unauthorized') ||
-				msg.includes('invalid_auth') ||
-				msg.includes('invalid_oauthtoken')
-			);
-		},
+		// 401: expired or revoked token (core refreshes OAuth tokens on it).
+		match: (error: Error) => statusOf(error) === 401,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	PERMISSION_ERROR: {
-		match: (error: Error) =>
-			statusOf(error) === 403 ||
-			error.message.toLowerCase().includes('forbidden'),
+		// 403: a scope the connection wasn't granted, or a plan limit.
+		match: (error: Error) => statusOf(error) === 403,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	NOT_FOUND_ERROR: {
-		match: (error: Error) =>
-			statusOf(error) === 404 ||
-			error.message.toLowerCase().includes('not found'),
+		match: (error: Error) => statusOf(error) === 404,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	BAD_REQUEST_ERROR: {
+		// Zoho's own code and message are on error.body.
 		match: (error: Error) => statusOf(error) === 400,
 		handler: async () => ({ maxRetries: 0 }),
-	},
-	SERVER_ERROR: {
-		match: (error: Error) => {
-			const status = statusOf(error);
-			return status !== undefined && status >= 500;
-		},
-		handler: async () => ({ maxRetries: 2 }),
 	},
 	DEFAULT: {
 		match: () => true,

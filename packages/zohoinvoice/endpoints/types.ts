@@ -1,7 +1,15 @@
 import { z } from 'zod';
 
 const id = z.union([z.string().min(1), z.number()]);
-const organization = z.object({ organizationId: z.string().min(1) });
+const organization = z.object({
+	organizationId: z
+		.string()
+		.min(1)
+		.optional()
+		.describe(
+			'Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them.',
+		),
+});
 const page = z.object({
 	page: z.number().int().min(1).optional(),
 	perPage: z.number().int().min(1).max(200).optional(),
@@ -35,7 +43,7 @@ const ContactPersonSchema = z
 	.object({
 		first_name: z.string().optional(),
 		last_name: z.string().optional(),
-		email: z.string().email().optional(),
+		email: z.string().optional(),
 		phone: z.string().optional(),
 		mobile: z.string().optional(),
 	})
@@ -46,7 +54,7 @@ const LineItemSchema = z
 		name: z.string().optional(),
 		description: z.string().optional(),
 		rate: z.number().optional(),
-		quantity: z.number().positive().optional(),
+		quantity: z.number().optional(),
 		unit: z.string().optional(),
 		tax_id: id.optional(),
 		discount: z.union([z.string(), z.number()]).optional(),
@@ -60,7 +68,8 @@ const ContactSchema = z
 		company_name: z.string().optional(),
 		contact_type: z.string().optional(),
 		status: z.string().optional(),
-		email: z.string().email().optional(),
+		// Zoho sends "" when a contact has no email.
+		email: z.string().optional(),
 		phone: z.string().optional(),
 		currency_code: z.string().optional(),
 		payment_terms: z.number().optional(),
@@ -95,10 +104,11 @@ const ItemSchema = z
 		name: z.string(),
 		status: z.string().optional(),
 		description: z.string().optional(),
-		rate: z.number().optional(),
+		rate: z.union([z.string(), z.number()]).optional(),
 		unit: z.string().optional(),
 		sku: z.string().optional(),
-		product_type: z.enum(['goods', 'service']).optional(),
+		// goods or service; left open for values Zoho adds.
+		product_type: z.string().optional(),
 		tax_id: id.optional(),
 		custom_fields: z.array(CustomFieldSchema).optional(),
 	})
@@ -107,7 +117,7 @@ const PaymentSchema = z
 	.object({
 		payment_id: id,
 		payment_mode: z.string().optional(),
-		amount: z.number().optional(),
+		amount: z.union([z.string(), z.number()]).optional(),
 		date: z.string().optional(),
 		status: z.string().optional(),
 		customer_id: id.optional(),
@@ -125,12 +135,31 @@ const EstimateSchema = z
 		status: z.string().optional(),
 		date: z.string().optional(),
 		expiry_date: z.string().optional(),
-		total: z.number().optional(),
+		total: z.union([z.string(), z.number()]).optional(),
 		line_items: z.array(LineItemSchema).optional(),
 	})
 	.loose();
 
+const OrganizationSchema = z
+	.object({
+		organization_id: id,
+		name: z.string().optional(),
+		is_default_org: z.boolean().optional(),
+		currency_code: z.string().optional(),
+		country: z.string().optional(),
+	})
+	.loose();
+
+// Zoho's resource fields, passed through as the JSON body.
 const body = z.record(z.string(), z.unknown());
+// Email options (to_mail_ids, cc_mail_ids, subject, body). Left out, Zoho
+// mails the customer's contact persons with the default template.
+const emailBody = body
+	.optional()
+	.describe(
+		'Optional: to_mail_ids, cc_mail_ids, subject, body. Without it Zoho emails the customer contacts with the default template.',
+	);
+const status = z.object({ code: z.number(), message: z.string() }).loose();
 const list = (key: string, schema: z.ZodType) =>
 	z.object({ [key]: z.array(schema) }).loose();
 const single = (key: string, schema: z.ZodType) =>
@@ -183,6 +212,28 @@ export const ZohoInvoiceEndpointInputSchemas = {
 		),
 	}),
 	estimatesUpdate: organization.extend({ estimateId: id, body }),
+	organizationsList: z.object({}),
+	customersDelete: organization.extend({ contactId: id }),
+	invoicesMarkSent: organization.extend({ invoiceId: id }),
+	invoicesVoid: organization.extend({ invoiceId: id }),
+	invoicesEmail: organization.extend({ invoiceId: id, body: emailBody }),
+	invoicesRemind: organization.extend({ invoiceId: id, body: emailBody }),
+	invoicesListPayments: organization.extend({ invoiceId: id }),
+	itemsDelete: organization.extend({ itemId: id }),
+	paymentsCreate: organization.extend({
+		body: body.refine(
+			(value) =>
+				typeof value.customer_id !== 'undefined' &&
+				typeof value.amount === 'number',
+			'customer_id and amount are required',
+		),
+	}),
+	paymentsDelete: organization.extend({ paymentId: id }),
+	estimatesDelete: organization.extend({ estimateId: id }),
+	estimatesMarkSent: organization.extend({ estimateId: id }),
+	estimatesMarkAccepted: organization.extend({ estimateId: id }),
+	estimatesMarkDeclined: organization.extend({ estimateId: id }),
+	estimatesEmail: organization.extend({ estimateId: id, body: emailBody }),
 } as const;
 
 export const ZohoInvoiceEndpointOutputSchemas = {
@@ -194,7 +245,7 @@ export const ZohoInvoiceEndpointOutputSchemas = {
 	invoicesGet: single('invoice', InvoiceSchema),
 	invoicesCreate: single('invoice', InvoiceSchema),
 	invoicesUpdate: single('invoice', InvoiceSchema),
-	invoicesDelete: z.object({ code: z.number(), message: z.string() }).loose(),
+	invoicesDelete: status,
 	itemsList: list('items', ItemSchema),
 	itemsGet: single('item', ItemSchema),
 	itemsCreate: single('item', ItemSchema),
@@ -205,6 +256,21 @@ export const ZohoInvoiceEndpointOutputSchemas = {
 	estimatesGet: single('estimate', EstimateSchema),
 	estimatesCreate: single('estimate', EstimateSchema),
 	estimatesUpdate: single('estimate', EstimateSchema),
+	organizationsList: list('organizations', OrganizationSchema),
+	customersDelete: status,
+	invoicesMarkSent: status,
+	invoicesVoid: status,
+	invoicesEmail: status,
+	invoicesRemind: status,
+	invoicesListPayments: list('payments', PaymentSchema),
+	itemsDelete: status,
+	paymentsCreate: single('payment', PaymentSchema),
+	paymentsDelete: status,
+	estimatesDelete: status,
+	estimatesMarkSent: status,
+	estimatesMarkAccepted: status,
+	estimatesMarkDeclined: status,
+	estimatesEmail: status,
 } as const;
 
 export type ZohoInvoiceEndpointInputs = {

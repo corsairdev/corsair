@@ -1,7 +1,6 @@
 import { ApiError } from 'corsair/http';
 import {
 	makeZohoInvoiceRequest,
-	ZohoInvoiceAPIError,
 	zohoInvoiceApiBase,
 	zohoInvoiceOAuthAuthUrl,
 	zohoInvoiceOAuthTokenUrl,
@@ -41,7 +40,7 @@ describe('Zoho Invoice client errors', () => {
 		request.mockReset();
 	});
 
-	it('forwards retryAfter from ApiError', async () => {
+	it('lets ApiError through unchanged', async () => {
 		request.mockRejectedValue(
 			new ApiError(
 				{ method: 'GET', url: '/contacts' },
@@ -61,13 +60,18 @@ describe('Zoho Invoice client errors', () => {
 			makeZohoInvoiceRequest('/contacts', 'tok', {
 				organizationId: 'org-1',
 			}),
-		).rejects.toMatchObject({ retryAfter: 3000 });
+		).rejects.toBeInstanceOf(ApiError);
 	});
 
-	it('exposes retryAfter to the rate-limit handler', async () => {
-		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(
-			new ZohoInvoiceAPIError('slow down', 429, 44, 2500),
+	it('leaves 429 retries to core', async () => {
+		const result = await errorHandlers.RATE_LIMIT_ERROR.handler();
+		expect(result.maxRetries).toBe(0);
+	});
+
+	it('uses accounts.zohocloud.ca for Canada and zohoapis.ca for its API', () => {
+		expect(zohoInvoiceOAuthAuthUrl('ca')).toBe(
+			'https://accounts.zohocloud.ca/oauth/v2/auth',
 		);
-		expect(result.headersRetryAfterMs).toBe(2500);
+		expect(zohoInvoiceApiBase('ca')).toBe('https://www.zohoapis.ca/invoice/v3');
 	});
 });

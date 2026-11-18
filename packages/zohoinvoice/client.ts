@@ -1,17 +1,5 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
-
-export class ZohoInvoiceAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly status?: number,
-		public readonly code?: string | number,
-		public readonly retryAfter?: number,
-	) {
-		super(message);
-		this.name = 'ZohoInvoiceAPIError';
-	}
-}
+import { request } from 'corsair/http';
 
 export type ZohoInvoiceRegion =
 	| 'us'
@@ -42,100 +30,66 @@ export function zohoInvoiceApiBase(region?: ZohoInvoiceRegion): string {
 	return `https://www.zohoapis.${regionTld(region)}/invoice/v3`;
 }
 
+// Zoho's Canada data center signs in on zohocloud.ca; its API stays on
+// www.zohoapis.ca.
+function accountsHost(region: ZohoInvoiceRegion = 'us'): string {
+	return region === 'ca'
+		? 'accounts.zohocloud.ca'
+		: `accounts.zoho.${regionTld(region)}`;
+}
+
 export function zohoInvoiceOAuthAuthUrl(region?: ZohoInvoiceRegion): string {
-	return `https://accounts.zoho.${regionTld(region)}/oauth/v2/auth`;
+	return `https://${accountsHost(region)}/oauth/v2/auth`;
 }
 
 export function zohoInvoiceOAuthTokenUrl(region?: ZohoInvoiceRegion): string {
-	return `https://accounts.zoho.${regionTld(region)}/oauth/v2/token`;
+	return `https://${accountsHost(region)}/oauth/v2/token`;
 }
 
 export type ZohoInvoiceRequestOptions = {
-	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+	method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+	// Caller-built JSON body; Zoho takes free-form resource fields.
 	body?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
 	region?: ZohoInvoiceRegion;
-	organizationId: string;
+	/** Sent as X-com-zoho-invoice-organizationid. Left out for GET /organizations. */
+	organizationId?: string;
 };
 
-function wrapError(error: unknown): never {
-	if (error instanceof ZohoInvoiceAPIError) throw error;
-	if (error instanceof ApiError) {
-		let message = error.message;
-		let zohoCode: string | number | undefined;
-		if (error.body && typeof error.body === 'object') {
-			const errorBody = error.body as Record<string, unknown>;
-			if (typeof errorBody.message === 'string') message = errorBody.message;
-			if (
-				typeof errorBody.code === 'number' ||
-				typeof errorBody.code === 'string'
-			) {
-				zohoCode = errorBody.code;
-			}
-		}
-		throw new ZohoInvoiceAPIError(
-			message,
-			error.status,
-			zohoCode,
-			error.retryAfter,
-		);
-	}
-	if (error instanceof Error) {
-		const status =
-			'status' in error && typeof error.status === 'number'
-				? error.status
-				: undefined;
-		const code =
-			'body' in error &&
-			typeof error.body === 'object' &&
-			error.body !== null &&
-			'code' in error.body &&
-			(typeof error.body.code === 'string' ||
-				typeof error.body.code === 'number')
-				? error.body.code
-				: undefined;
-		throw new ZohoInvoiceAPIError(error.message, status, code);
-	}
-	throw new ZohoInvoiceAPIError('Unknown Zoho Invoice API error');
-}
-
+/**
+ * One call to the Zoho Invoice API. Core's ApiError passes through unchanged:
+ * its status and Retry-After are what the error handlers and core's OAuth
+ * refresh read. Zoho's own error `code` and `message` stay on `error.body`.
+ */
 export async function makeZohoInvoiceRequest<T>(
 	endpoint: string,
 	token: string,
 	options: ZohoInvoiceRequestOptions,
 ): Promise<T> {
 	const { method = 'GET', body, query, region, organizationId } = options;
-	if (!organizationId) {
-		throw new ZohoInvoiceAPIError('Zoho Invoice organizationId is required');
-	}
 
 	const config: OpenAPIConfig = {
 		BASE: zohoInvoiceApiBase(region),
-		VERSION: '1.0.0',
+		VERSION: '3',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: undefined,
 		HEADERS: {
-			'Content-Type': 'application/json',
 			Authorization: `Zoho-oauthtoken ${token}`,
-			'X-com-zoho-invoice-organizationid': organizationId,
+			...(organizationId
+				? { 'X-com-zoho-invoice-organizationid': organizationId }
+				: {}),
 		},
 	};
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
-		mediaType: 'application/json; charset=utf-8',
 		query,
+		...(body && (method === 'POST' || method === 'PUT')
+			? { body, mediaType: 'application/json' }
+			: {}),
 	};
 
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		wrapError(error);
-	}
+	return request<T>(config, requestOptions);
 }
