@@ -199,7 +199,7 @@ describe('TwittrAPI output schemas (offline fixtures)', () => {
 		const result = TwittrApiEndpointOutputSchemas.listsGetDetails.parse({
 			data: list,
 		});
-		expect(result.data.id).toBe('123');
+		expect(result.data?.id).toBe('123');
 	});
 
 	it('parses community results', () => {
@@ -220,7 +220,7 @@ describe('TwittrAPI output schemas (offline fixtures)', () => {
 		const byId = TwittrApiEndpointOutputSchemas.communitiesGetById.parse({
 			data: community,
 		});
-		expect(byId.data.id).toBe('456');
+		expect(byId.data?.id).toBe('456');
 		const search = TwittrApiEndpointOutputSchemas.communitiesSearch.parse({
 			data: [community],
 			nextCursor: null,

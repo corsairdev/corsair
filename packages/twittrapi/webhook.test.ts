@@ -359,7 +359,7 @@ describe('TwittrAPI webhooks', () => {
 		it('reads the raw header spelling too', () => {
 			const t = String(Math.floor(Date.now() / 1000));
 			const request = requestWith(tweetBody, '');
-			delete request.headers['x-twittrapi-signature'];
+			request.headers['x-twittrapi-signature'] = undefined;
 			request.headers['X-TwittrAPI-Signature'] = sign(t, tweetBody);
 			expect(verifyTwittrApiWebhookSignature(request, SECRET).valid).toBe(true);
 		});
