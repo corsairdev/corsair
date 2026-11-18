@@ -159,7 +159,7 @@ Each page costs one discovery call and returns 20 rows; the last page is 500. `s
 
 `history.instagram`
 
-Read the Instagram metrics history for a username, which is free and safe to repeat
+Read the Instagram metrics history for a username. HypeAuditor unlocks the creator’s report on this call, so the first request for a creator spends a credit; repeating it is free
 
 **Risk:** `read`
 
@@ -189,7 +189,7 @@ await corsair.hypeauditor.api.history.instagram({ channel: 'nasa' });
 
 `history.tiktok`
 
-Read the TikTok metrics history for a channel, which is free and safe to repeat
+Read the TikTok metrics history for a channel. HypeAuditor unlocks the creator’s report on this call, so the first request for a creator spends a credit; repeating it is free
 
 **Risk:** `read`
 
@@ -219,7 +219,7 @@ await corsair.hypeauditor.api.history.tiktok({ channel: 'littlebig' });
 
 `history.twitch`
 
-Read the Twitch metrics history for a channel, which is free and safe to repeat
+Read the Twitch metrics history for a channel. HypeAuditor unlocks the creator’s report on this call, so the first request for a creator spends a credit; repeating it is free
 
 **Risk:** `read`
 
@@ -249,7 +249,7 @@ await corsair.hypeauditor.api.history.twitch({ channel: 'nasa' });
 
 `history.twitter`
 
-Read the Twitter metrics history for a channel, which is free and safe to repeat
+Read the Twitter metrics history for a channel. HypeAuditor unlocks the creator’s report on this call, so the first request for a creator spends a credit; repeating it is free
 
 **Risk:** `read`
 
@@ -279,7 +279,7 @@ await corsair.hypeauditor.api.history.twitter({ channel: 'nasa' });
 
 `history.youtube`
 
-Read the YouTube metrics history for a channel, which is free and safe to repeat
+Read the YouTube metrics history for a channel. HypeAuditor documents that history calls unlock the creator’s report on the other networks, so treat the first request as spending a credit; repeating it is free
 
 **Risk:** `read`
 
@@ -987,8 +987,8 @@ await corsair.hypeauditor.api.suggester.get({ search: 'nas' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `search` | `string` | Yes | The name to look for. |
-| `st` | `string` | No | A social network code to restrict the suggestion to. |
-| `exclSt` | `string` | No | A social network code to leave out of the suggestion. |
+| `st` | `string` | No | A network title to restrict the suggestion to: instagram, youtube, twitter, tiktok, twitch or snapchat. |
+| `exclSt` | `string` | No | Comma-separated network titles to leave out, e.g. `instagram,twitter`. |
 
 
 
