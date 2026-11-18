@@ -69,11 +69,12 @@ export function sentHeader(name: string): string | null {
 }
 
 export const sentBody = (): Record<string, unknown> => {
+	// unknown: parsed JSON.
 	const body = lastCall().init.body; // unknown: parsed JSON, read by key.
 	if (typeof body !== 'string') {
 		throw new Error('expected a JSON string body');
 	}
-	return JSON.parse(body) as Record<string, unknown>;
+	return JSON.parse(body) as Record<string, unknown>; // unknown: parsed JSON.
 };
 
 export const endpoints = googlephotos().endpoints!;

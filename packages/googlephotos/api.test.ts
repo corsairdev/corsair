@@ -10,7 +10,6 @@
  * runs, because an upload writes to the user's library and counts toward their
  * storage.
  */
-import { logEventFromContext } from 'corsair/core';
 import { list as albumsList } from './endpoints/albums';
 import { list as mediaItemsList } from './endpoints/media-items';
 import { GooglePhotosEndpointOutputSchemas } from './endpoints/types';

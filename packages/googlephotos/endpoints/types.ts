@@ -194,7 +194,7 @@ const StatusSchema = z
 			.nullish()
 			.describe('Absent on success; any set value is the failure code'),
 		message: z.string().nullish(),
-		details: z.array(z.record(z.string(), z.unknown())).nullish(),
+		details: z.array(z.record(z.string(), z.unknown())).nullish(), // unknown: open.
 	})
 	.loose();
 
