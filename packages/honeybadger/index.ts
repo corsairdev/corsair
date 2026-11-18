@@ -70,8 +70,10 @@ export type HoneybadgerContext = CorsairPluginContext<
 	typeof honeybadgerAuthConfig
 >;
 
-export type HoneybadgerKeyBuilderContext =
-	KeyBuilderContext<HoneybadgerPluginOptions>;
+export type HoneybadgerKeyBuilderContext = KeyBuilderContext<
+	HoneybadgerPluginOptions,
+	typeof honeybadgerAuthConfig
+>;
 
 export type HoneybadgerBoundEndpoints = BindEndpoints<
 	typeof honeybadgerEndpointsNested
