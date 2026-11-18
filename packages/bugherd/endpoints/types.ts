@@ -342,11 +342,12 @@ export const UpdateTaskInputSchema = z.object({
 		.describe(
 			'Column name, or `feedback` to move it back to the Feedback panel.',
 		),
-	assigned_to_id: Id.nullable()
-		.optional()
-		.describe('Assignee id, or null to unassign everyone.'),
+	assigned_to_id: Id.optional().describe(
+		'Assign this project member. Use unassign_user to remove one.',
+	),
 	assigned_to_email: z.string().email().optional(),
-	unassign_user: Id.optional().describe('Remove this one assignee.'),
+	// Live 11-18: assigned_to_id null is ignored; unassign_user works.
+	unassign_user: Id.optional().describe('Remove this assignee from the task.'),
 	tag_names: z.array(z.string()).optional(),
 	external_id: z.string().optional(),
 	site: z.string().optional(),

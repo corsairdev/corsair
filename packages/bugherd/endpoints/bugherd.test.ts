@@ -9,6 +9,7 @@ import {
 	BugherdEndpointOutputSchemas,
 	CreateWebhookInputSchema,
 	ListTasksInputSchema,
+	UpdateTaskInputSchema,
 } from './types';
 
 jest.mock('corsair/core', () => {
@@ -503,19 +504,29 @@ describe('tasks', () => {
 		);
 	});
 
-	it('tasks.update sends null to unassign', async () => {
+	it('tasks.update unassigns with unassign_user', async () => {
 		mockRequest.mockResolvedValue({ task: TASK });
 		await B.updateTask(context(), {
 			project_id: 552668,
 			task_id: 98765,
 			status: 'doing',
-			assigned_to_id: null,
+			unassign_user: 634824,
 		});
 		expect(call()).toMatchObject({
 			method: 'PUT',
 			url: '/projects/552668/tasks/98765.json',
-			body: { task: { status: 'doing', assigned_to_id: null } },
+			body: { task: { status: 'doing', unassign_user: 634824 } },
 		});
+	});
+
+	it('tasks.update does not offer assigned_to_id null, which BugHerd ignores', () => {
+		expect(
+			UpdateTaskInputSchema.safeParse({
+				project_id: 1,
+				task_id: 2,
+				assigned_to_id: null,
+			}).success,
+		).toBe(false);
 	});
 
 	it('tasks.delete removes the local row', async () => {
