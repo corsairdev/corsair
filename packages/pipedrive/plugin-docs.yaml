@@ -1,7 +1,7 @@
 # Display copy for the docs, the catalog, corsair.dev and Hub.
 displayName: "Pipedrive"
-description: "Manage selected Pipedrive v2 deals, contacts, activities, tasks, and product catalog operations with validated requests, responses, and cursor pagination."
-overviewNote: "This deliberately partial implementation covers selected list, get, create, update, delete, search, product-variation, image, and follower operations for deals, persons, organizations, activities, tasks, and products. Configure an API token or OAuth 2.0 credentials before making calls. API tokens use the x-api-token header. OAuth access tokens refresh automatically using Pipedrive's documented token endpoint; the app must have the requested resource :full scopes configured in Pipedrive. Product image upload/update accept a runtime Blob or File as data and send the documented multipart field. Pipedrive marks the v2 Tasks routes as beta. Contact-sync-only person fields may be rejected with 403 when contact sync is disabled."
+description: "Access the complete documented Pipedrive v1 and v2 business API with strict schemas, OAuth, and pagination."
+overviewNote: "Exposes all 365 business operations in the published Pipedrive v1 and v2 OpenAPI contracts; excludes only the three webhook operations (not requested) and the three OAuth lifecycle routes (handled by Corsair). Use apiV1 and apiV2 namespaces for version-specific operations. Authenticate with an API token or OAuth 2.0; OAuth requests the complete set of documented scopes for full coverage, which is intentionally broad. Multipart uploads use documented Blob/File fields. File downloads return content_type, base64, and byte_length and are limited to 20 MiB per response."
 examples:
   read:
     path: deals.get
@@ -83,6 +83,327 @@ apiNotes:
   products.followers.create: "OAuth requires products:full. The request body requires the user_id of the user to add as a follower. The documented API token cost is 5 tokens."
   products.followers.changelog: "OAuth requires products:read or products:full. The maximum page size is 500; pass additional_data.next_cursor as cursor. The documented API token cost is 10 tokens."
   products.followers.delete: "OAuth requires products:full. follower_id identifies the following user in the path. The documented API token cost is 3 tokens."
+  "apiV1.activityFields.getActivityFields": "GET https://api.pipedrive.com/v1/activityFields. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): activities:read, activities:full. See https://developers.pipedrive.com/docs/api/v1/ActivityFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.activityTypes.getActivityTypes": "GET https://api.pipedrive.com/v1/activityTypes. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): activities:read, activities:full, admin. See https://developers.pipedrive.com/docs/api/v1/ActivityTypes. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.activityTypes.addActivityType": "POST https://api.pipedrive.com/v1/activityTypes. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/ActivityTypes. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.activityTypes.deleteActivityType": "DELETE https://api.pipedrive.com/v1/activityTypes/{id}. The official OpenAPI x-token-cost is 6 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/ActivityTypes. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.activityTypes.updateActivityType": "PUT https://api.pipedrive.com/v1/activityTypes/{id}. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/ActivityTypes. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.billing.getCompanyAddons": "GET https://api.pipedrive.com/v1/billing/subscriptions/addons. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): users:read. See https://developers.pipedrive.com/docs/api/v1/Billing. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.callLogs.addCallLog": "POST https://api.pipedrive.com/v1/callLogs. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): phone-integration. See https://developers.pipedrive.com/docs/api/v1/CallLogs. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.callLogs.getUserCallLogs": "GET https://api.pipedrive.com/v1/callLogs. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): phone-integration. See https://developers.pipedrive.com/docs/api/v1/CallLogs. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.callLogs.deleteCallLog": "DELETE https://api.pipedrive.com/v1/callLogs/{id}. The official OpenAPI x-token-cost is 6 API tokens. OAuth scope(s): phone-integration. See https://developers.pipedrive.com/docs/api/v1/CallLogs. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.callLogs.getCallLog": "GET https://api.pipedrive.com/v1/callLogs/{id}. The official OpenAPI x-token-cost is 2 API tokens. OAuth scope(s): phone-integration. See https://developers.pipedrive.com/docs/api/v1/CallLogs. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.callLogs.addCallLogAudioFile": "POST https://api.pipedrive.com/v1/callLogs/{id}/recordings. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): phone-integration. See https://developers.pipedrive.com/docs/api/v1/CallLogs. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.channels.addChannel": "POST https://api.pipedrive.com/v1/channels. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): messengers-integration. See https://developers.pipedrive.com/docs/api/v1/Channels. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.channels.deleteChannel": "DELETE https://api.pipedrive.com/v1/channels/{id}. The official OpenAPI x-token-cost is 6 API tokens. OAuth scope(s): messengers-integration. See https://developers.pipedrive.com/docs/api/v1/Channels. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.channels.receiveMessage": "POST https://api.pipedrive.com/v1/channels/messages/receive. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): messengers-integration. See https://developers.pipedrive.com/docs/api/v1/Channels. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.channels.deleteConversation": "DELETE https://api.pipedrive.com/v1/channels/{channel-id}/conversations/{conversation-id}. The official OpenAPI x-token-cost is 6 API tokens. OAuth scope(s): messengers-integration. See https://developers.pipedrive.com/docs/api/v1/Channels. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.currencies.getCurrencies": "GET https://api.pipedrive.com/v1/currencies. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): base. See https://developers.pipedrive.com/docs/api/v1/Currencies. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.deals.getArchivedDeals": "GET https://api.pipedrive.com/v1/deals/archived. The official OpenAPI x-token-cost is 40 API tokens. OAuth scope(s): deals:read, deals:full. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.deals.getDealsSummary": "GET https://api.pipedrive.com/v1/deals/summary. The official OpenAPI x-token-cost is 40 API tokens. OAuth scope(s): deals:read, deals:full. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.deals.getArchivedDealsSummary": "GET https://api.pipedrive.com/v1/deals/summary/archived. The official OpenAPI x-token-cost is 80 API tokens. OAuth scope(s): deals:read, deals:full. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.deals.getDealsTimeline": "GET https://api.pipedrive.com/v1/deals/timeline. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): deals:read, deals:full. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.deals.getArchivedDealsTimeline": "GET https://api.pipedrive.com/v1/deals/timeline/archived. The official OpenAPI x-token-cost is 40 API tokens. OAuth scope(s): deals:read, deals:full. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.deals.getDealChangelog": "GET https://api.pipedrive.com/v1/deals/{id}/changelog. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): recents:read. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.deals.duplicateDeal": "POST https://api.pipedrive.com/v1/deals/{id}/duplicate. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deals:full. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.deals.getDealFiles": "GET https://api.pipedrive.com/v1/deals/{id}/files. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): deals:read, deals:full. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.deals.getDealUpdates": "GET https://api.pipedrive.com/v1/deals/{id}/flow. The official OpenAPI x-token-cost is 40 API tokens. OAuth scope(s): recents:read. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.deals.getDealParticipantsChangelog": "GET https://api.pipedrive.com/v1/deals/{id}/participantsChangelog. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deals:read, deals:full. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.deals.getDealFollowers": "GET https://api.pipedrive.com/v1/deals/{id}/followers. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): deals:read, deals:full. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.deals.addDealFollower": "POST https://api.pipedrive.com/v1/deals/{id}/followers. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deals:full. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.deals.deleteDealFollower": "DELETE https://api.pipedrive.com/v1/deals/{id}/followers/{follower_id}. The official OpenAPI x-token-cost is 6 API tokens. OAuth scope(s): deals:full. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.deals.getDealMailMessages": "GET https://api.pipedrive.com/v1/deals/{id}/mailMessages. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): mail:read, mail:full. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.deals.mergeDeals": "PUT https://api.pipedrive.com/v1/deals/{id}/merge. The official OpenAPI x-token-cost is 40 API tokens. OAuth scope(s): deals:full. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.deals.getDealParticipants": "GET https://api.pipedrive.com/v1/deals/{id}/participants. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deals:read, deals:full. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.deals.addDealParticipant": "POST https://api.pipedrive.com/v1/deals/{id}/participants. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deals:full. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.deals.deleteDealParticipant": "DELETE https://api.pipedrive.com/v1/deals/{id}/participants/{deal_participant_id}. The official OpenAPI x-token-cost is 6 API tokens. OAuth scope(s): deals:full. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.deals.getDealUsers": "GET https://api.pipedrive.com/v1/deals/{id}/permittedUsers. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deals:read, deals:full. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.dealFields.getDealFields": "GET https://api.pipedrive.com/v1/dealFields. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): deals:read, deals:full, deal-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/DealFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.dealFields.addDealField": "POST https://api.pipedrive.com/v1/dealFields. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deal-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/DealFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.dealFields.deleteDealFields": "DELETE https://api.pipedrive.com/v1/dealFields. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deal-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/DealFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.dealFields.getDealField": "GET https://api.pipedrive.com/v1/dealFields/{id}. The official OpenAPI x-token-cost is 2 API tokens. OAuth scope(s): deals:read, deals:full, deal-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/DealFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.dealFields.deleteDealField": "DELETE https://api.pipedrive.com/v1/dealFields/{id}. The official OpenAPI x-token-cost is 6 API tokens. OAuth scope(s): deal-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/DealFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.dealFields.updateDealField": "PUT https://api.pipedrive.com/v1/dealFields/{id}. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deal-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/DealFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.files.getFiles": "GET https://api.pipedrive.com/v1/files. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): deals:read, deals:full, activities:read, activities:full, contacts:read, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Files. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.files.addFile": "POST https://api.pipedrive.com/v1/files. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deals:full, activities:full, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Files. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.files.addFileAndLinkIt": "POST https://api.pipedrive.com/v1/files/remote. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deals:full, activities:full, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Files. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.files.linkFileToItem": "POST https://api.pipedrive.com/v1/files/remoteLink. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deals:full, activities:full, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Files. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.files.deleteFile": "DELETE https://api.pipedrive.com/v1/files/{id}. The official OpenAPI x-token-cost is 6 API tokens. OAuth scope(s): deals:full, activities:full, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Files. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.files.getFile": "GET https://api.pipedrive.com/v1/files/{id}. The official OpenAPI x-token-cost is 2 API tokens. OAuth scope(s): deals:read, deals:full, activities:read, activities:full, contacts:read, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Files. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.files.updateFile": "PUT https://api.pipedrive.com/v1/files/{id}. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deals:full, activities:full, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Files. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.files.downloadFile": "GET https://api.pipedrive.com/v1/files/{id}/download. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): deals:read, deals:full, activities:read, activities:full, contacts:read, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Files. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.filters.deleteFilters": "DELETE https://api.pipedrive.com/v1/filters. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deals:full, activities:full, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Filters. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.filters.getFilters": "GET https://api.pipedrive.com/v1/filters. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): deals:read, deals:full, activities:read, activities:full, contacts:read, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Filters. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.filters.addFilter": "POST https://api.pipedrive.com/v1/filters. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deals:full, activities:full, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Filters. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.filters.getFilterHelpers": "GET https://api.pipedrive.com/v1/filters/helpers. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): deals:read, deals:full, activities:read, activities:full, contacts:read, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Filters. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.filters.deleteFilter": "DELETE https://api.pipedrive.com/v1/filters/{id}. The official OpenAPI x-token-cost is 6 API tokens. OAuth scope(s): deals:full, activities:full, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Filters. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.filters.getFilter": "GET https://api.pipedrive.com/v1/filters/{id}. The official OpenAPI x-token-cost is 2 API tokens. OAuth scope(s): deals:read, deals:full, activities:read, activities:full, contacts:read, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Filters. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.filters.updateFilter": "PUT https://api.pipedrive.com/v1/filters/{id}. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deals:full, activities:full, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Filters. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.goals.addGoal": "POST https://api.pipedrive.com/v1/goals. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): goals:full. See https://developers.pipedrive.com/docs/api/v1/Goals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.goals.getGoals": "GET https://api.pipedrive.com/v1/goals/find. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): goals:read, goals:full. See https://developers.pipedrive.com/docs/api/v1/Goals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.goals.updateGoal": "PUT https://api.pipedrive.com/v1/goals/{id}. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): goals:full. See https://developers.pipedrive.com/docs/api/v1/Goals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.goals.deleteGoal": "DELETE https://api.pipedrive.com/v1/goals/{id}. The official OpenAPI x-token-cost is 6 API tokens. OAuth scope(s): goals:full. See https://developers.pipedrive.com/docs/api/v1/Goals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.goals.getGoalResult": "GET https://api.pipedrive.com/v1/goals/{id}/results. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): goals:read, goals:full. See https://developers.pipedrive.com/docs/api/v1/Goals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.leads.getLeads": "GET https://api.pipedrive.com/v1/leads. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): leads:read, leads:full. See https://developers.pipedrive.com/docs/api/v1/Leads. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.leads.addLead": "POST https://api.pipedrive.com/v1/leads. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): leads:full. See https://developers.pipedrive.com/docs/api/v1/Leads. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.leads.getArchivedLeads": "GET https://api.pipedrive.com/v1/leads/archived. The official OpenAPI x-token-cost is 40 API tokens. OAuth scope(s): leads:read, leads:full. See https://developers.pipedrive.com/docs/api/v1/Leads. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.leads.getLead": "GET https://api.pipedrive.com/v1/leads/{id}. The official OpenAPI x-token-cost is 2 API tokens. OAuth scope(s): leads:read, leads:full. See https://developers.pipedrive.com/docs/api/v1/Leads. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.leads.updateLead": "PATCH https://api.pipedrive.com/v1/leads/{id}. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): leads:full. See https://developers.pipedrive.com/docs/api/v1/Leads. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.leads.deleteLead": "DELETE https://api.pipedrive.com/v1/leads/{id}. The official OpenAPI x-token-cost is 6 API tokens. OAuth scope(s): leads:full. See https://developers.pipedrive.com/docs/api/v1/Leads. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.leads.getLeadUsers": "GET https://api.pipedrive.com/v1/leads/{id}/permittedUsers. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): leads:read, leads:full. See https://developers.pipedrive.com/docs/api/v1/Leads. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.leads.searchLeads": "GET https://api.pipedrive.com/v1/leads/search. The official OpenAPI x-token-cost is 40 API tokens. OAuth scope(s): leads:read, leads:full, search:read. See https://developers.pipedrive.com/docs/api/v1/Leads. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.leadFields.getLeadFields": "GET https://api.pipedrive.com/v1/leadFields. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): leads:read, leads:full, admin. See https://developers.pipedrive.com/docs/api/v1/LeadFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.leadLabels.getLeadLabels": "GET https://api.pipedrive.com/v1/leadLabels. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): leads:read, leads:full. See https://developers.pipedrive.com/docs/api/v1/LeadLabels. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.leadLabels.addLeadLabel": "POST https://api.pipedrive.com/v1/leadLabels. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): leads:full. See https://developers.pipedrive.com/docs/api/v1/LeadLabels. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.leadLabels.updateLeadLabel": "PATCH https://api.pipedrive.com/v1/leadLabels/{id}. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): leads:full. See https://developers.pipedrive.com/docs/api/v1/LeadLabels. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.leadLabels.deleteLeadLabel": "DELETE https://api.pipedrive.com/v1/leadLabels/{id}. The official OpenAPI x-token-cost is 6 API tokens. OAuth scope(s): leads:full. See https://developers.pipedrive.com/docs/api/v1/LeadLabels. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.leadSources.getLeadSources": "GET https://api.pipedrive.com/v1/leadSources. The official OpenAPI x-token-cost is 2 API tokens. OAuth scope(s): leads:read, leads:full. See https://developers.pipedrive.com/docs/api/v1/LeadSources. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.legacyTeams.getTeams": "GET https://api.pipedrive.com/v1/legacyTeams. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): users:read. See https://developers.pipedrive.com/docs/api/v1/LegacyTeams. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.legacyTeams.addTeam": "POST https://api.pipedrive.com/v1/legacyTeams. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/LegacyTeams. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.legacyTeams.getTeam": "GET https://api.pipedrive.com/v1/legacyTeams/{id}. The official OpenAPI x-token-cost is 2 API tokens. OAuth scope(s): users:read. See https://developers.pipedrive.com/docs/api/v1/LegacyTeams. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.legacyTeams.updateTeam": "PUT https://api.pipedrive.com/v1/legacyTeams/{id}. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/LegacyTeams. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.legacyTeams.getTeamUsers": "GET https://api.pipedrive.com/v1/legacyTeams/{id}/users. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): users:read. See https://developers.pipedrive.com/docs/api/v1/LegacyTeams. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.legacyTeams.addTeamUser": "POST https://api.pipedrive.com/v1/legacyTeams/{id}/users. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/LegacyTeams. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.legacyTeams.deleteTeamUser": "DELETE https://api.pipedrive.com/v1/legacyTeams/{id}/users. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/LegacyTeams. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.legacyTeams.getUserTeams": "GET https://api.pipedrive.com/v1/legacyTeams/user/{id}. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): users:read. See https://developers.pipedrive.com/docs/api/v1/LegacyTeams. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.mailbox.getMailMessage": "GET https://api.pipedrive.com/v1/mailbox/mailMessages/{id}. The official OpenAPI x-token-cost is 2 API tokens. OAuth scope(s): mail:read, mail:full. See https://developers.pipedrive.com/docs/api/v1/Mailbox. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.mailbox.getMailThreads": "GET https://api.pipedrive.com/v1/mailbox/mailThreads. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): mail:read, mail:full. See https://developers.pipedrive.com/docs/api/v1/Mailbox. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.mailbox.deleteMailThread": "DELETE https://api.pipedrive.com/v1/mailbox/mailThreads/{id}. The official OpenAPI x-token-cost is 6 API tokens. OAuth scope(s): mail:full. See https://developers.pipedrive.com/docs/api/v1/Mailbox. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.mailbox.getMailThread": "GET https://api.pipedrive.com/v1/mailbox/mailThreads/{id}. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): mail:read, mail:full. See https://developers.pipedrive.com/docs/api/v1/Mailbox. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.mailbox.updateMailThreadDetails": "PUT https://api.pipedrive.com/v1/mailbox/mailThreads/{id}. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): mail:full. See https://developers.pipedrive.com/docs/api/v1/Mailbox. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.mailbox.getMailThreadMessages": "GET https://api.pipedrive.com/v1/mailbox/mailThreads/{id}/mailMessages. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): mail:read, mail:full. See https://developers.pipedrive.com/docs/api/v1/Mailbox. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.meetings.saveUserProviderLink": "POST https://api.pipedrive.com/v1/meetings/userProviderLinks. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): video-calls. See https://developers.pipedrive.com/docs/api/v1/Meetings. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.meetings.deleteUserProviderLink": "DELETE https://api.pipedrive.com/v1/meetings/userProviderLinks/{id}. The official OpenAPI x-token-cost is 6 API tokens. OAuth scope(s): video-calls. See https://developers.pipedrive.com/docs/api/v1/Meetings. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.notes.getNotes": "GET https://api.pipedrive.com/v1/notes. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): deals:read, deals:full, contacts:read, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Notes. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.notes.addNote": "POST https://api.pipedrive.com/v1/notes. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deals:full, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Notes. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.notes.deleteNote": "DELETE https://api.pipedrive.com/v1/notes/{id}. The official OpenAPI x-token-cost is 6 API tokens. OAuth scope(s): deals:full, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Notes. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.notes.getNote": "GET https://api.pipedrive.com/v1/notes/{id}. The official OpenAPI x-token-cost is 2 API tokens. OAuth scope(s): deals:read, deals:full, contacts:read, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Notes. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.notes.updateNote": "PUT https://api.pipedrive.com/v1/notes/{id}. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deals:full, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Notes. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.notes.getNoteComments": "GET https://api.pipedrive.com/v1/notes/{id}/comments. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): deals:read, deals:full, contacts:read, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Notes. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.notes.addNoteComment": "POST https://api.pipedrive.com/v1/notes/{id}/comments. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deals:full, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Notes. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.notes.getComment": "GET https://api.pipedrive.com/v1/notes/{id}/comments/{commentId}. The official OpenAPI x-token-cost is 2 API tokens. OAuth scope(s): deals:read, deals:full, contacts:read, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Notes. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.notes.updateCommentForNote": "PUT https://api.pipedrive.com/v1/notes/{id}/comments/{commentId}. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deals:full, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Notes. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.notes.deleteComment": "DELETE https://api.pipedrive.com/v1/notes/{id}/comments/{commentId}. The official OpenAPI x-token-cost is 6 API tokens. OAuth scope(s): deals:full, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Notes. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.noteFields.getNoteFields": "GET https://api.pipedrive.com/v1/noteFields. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): deals:read, deals:full, contacts:read, contacts:full. See https://developers.pipedrive.com/docs/api/v1/NoteFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.organizations.getOrganizationChangelog": "GET https://api.pipedrive.com/v1/organizations/{id}/changelog. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): recents:read. See https://developers.pipedrive.com/docs/api/v1/Organizations. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.organizations.getOrganizationFiles": "GET https://api.pipedrive.com/v1/organizations/{id}/files. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): contacts:read, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Organizations. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.organizations.getOrganizationUpdates": "GET https://api.pipedrive.com/v1/organizations/{id}/flow. The official OpenAPI x-token-cost is 40 API tokens. OAuth scope(s): recents:read. See https://developers.pipedrive.com/docs/api/v1/Organizations. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.organizations.getOrganizationFollowers": "GET https://api.pipedrive.com/v1/organizations/{id}/followers. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): contacts:read, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Organizations. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.organizations.addOrganizationFollower": "POST https://api.pipedrive.com/v1/organizations/{id}/followers. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): contacts:full. See https://developers.pipedrive.com/docs/api/v1/Organizations. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.organizations.deleteOrganizationFollower": "DELETE https://api.pipedrive.com/v1/organizations/{id}/followers/{follower_id}. The official OpenAPI x-token-cost is 6 API tokens. OAuth scope(s): contacts:full. See https://developers.pipedrive.com/docs/api/v1/Organizations. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.organizations.getOrganizationMailMessages": "GET https://api.pipedrive.com/v1/organizations/{id}/mailMessages. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): mail:read, mail:full. See https://developers.pipedrive.com/docs/api/v1/Organizations. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.organizations.mergeOrganizations": "PUT https://api.pipedrive.com/v1/organizations/{id}/merge. The official OpenAPI x-token-cost is 40 API tokens. OAuth scope(s): contacts:full. See https://developers.pipedrive.com/docs/api/v1/Organizations. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.organizations.getOrganizationUsers": "GET https://api.pipedrive.com/v1/organizations/{id}/permittedUsers. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): contacts:read, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Organizations. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.organizationFields.getOrganizationFields": "GET https://api.pipedrive.com/v1/organizationFields. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): contacts:read, contacts:full, contact-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/OrganizationFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.organizationFields.addOrganizationField": "POST https://api.pipedrive.com/v1/organizationFields. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): contact-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/OrganizationFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.organizationFields.deleteOrganizationFields": "DELETE https://api.pipedrive.com/v1/organizationFields. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): contact-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/OrganizationFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.organizationFields.getOrganizationField": "GET https://api.pipedrive.com/v1/organizationFields/{id}. The official OpenAPI x-token-cost is 2 API tokens. OAuth scope(s): contacts:read, contacts:full, contact-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/OrganizationFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.organizationFields.deleteOrganizationField": "DELETE https://api.pipedrive.com/v1/organizationFields/{id}. The official OpenAPI x-token-cost is 6 API tokens. OAuth scope(s): contact-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/OrganizationFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.organizationFields.updateOrganizationField": "PUT https://api.pipedrive.com/v1/organizationFields/{id}. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): contact-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/OrganizationFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.organizationRelationships.getOrganizationRelationships": "GET https://api.pipedrive.com/v1/organizationRelationships. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): contacts:read, contacts:full. See https://developers.pipedrive.com/docs/api/v1/OrganizationRelationships. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.organizationRelationships.addOrganizationRelationship": "POST https://api.pipedrive.com/v1/organizationRelationships. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): contacts:full. See https://developers.pipedrive.com/docs/api/v1/OrganizationRelationships. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.organizationRelationships.deleteOrganizationRelationship": "DELETE https://api.pipedrive.com/v1/organizationRelationships/{id}. The official OpenAPI x-token-cost is 6 API tokens. OAuth scope(s): contacts:full. See https://developers.pipedrive.com/docs/api/v1/OrganizationRelationships. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.organizationRelationships.getOrganizationRelationship": "GET https://api.pipedrive.com/v1/organizationRelationships/{id}. The official OpenAPI x-token-cost is 2 API tokens. OAuth scope(s): contacts:read, contacts:full. See https://developers.pipedrive.com/docs/api/v1/OrganizationRelationships. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.organizationRelationships.updateOrganizationRelationship": "PUT https://api.pipedrive.com/v1/organizationRelationships/{id}. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): contacts:full. See https://developers.pipedrive.com/docs/api/v1/OrganizationRelationships. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.permissionSets.getPermissionSets": "GET https://api.pipedrive.com/v1/permissionSets. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/PermissionSets. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.permissionSets.getPermissionSet": "GET https://api.pipedrive.com/v1/permissionSets/{id}. The official OpenAPI x-token-cost is 2 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/PermissionSets. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.permissionSets.getPermissionSetAssignments": "GET https://api.pipedrive.com/v1/permissionSets/{id}/assignments. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/PermissionSets. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.persons.getPersonChangelog": "GET https://api.pipedrive.com/v1/persons/{id}/changelog. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): recents:read. See https://developers.pipedrive.com/docs/api/v1/Persons. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.persons.getPersonFiles": "GET https://api.pipedrive.com/v1/persons/{id}/files. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): contacts:read, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Persons. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.persons.getPersonUpdates": "GET https://api.pipedrive.com/v1/persons/{id}/flow. The official OpenAPI x-token-cost is 40 API tokens. OAuth scope(s): recents:read. See https://developers.pipedrive.com/docs/api/v1/Persons. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.persons.getPersonFollowers": "GET https://api.pipedrive.com/v1/persons/{id}/followers. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): contacts:read, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Persons. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.persons.addPersonFollower": "POST https://api.pipedrive.com/v1/persons/{id}/followers. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): contacts:full. See https://developers.pipedrive.com/docs/api/v1/Persons. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.persons.deletePersonFollower": "DELETE https://api.pipedrive.com/v1/persons/{id}/followers/{follower_id}. The official OpenAPI x-token-cost is 6 API tokens. OAuth scope(s): contacts:full. See https://developers.pipedrive.com/docs/api/v1/Persons. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.persons.getPersonMailMessages": "GET https://api.pipedrive.com/v1/persons/{id}/mailMessages. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): mail:read, mail:full. See https://developers.pipedrive.com/docs/api/v1/Persons. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.persons.mergePersons": "PUT https://api.pipedrive.com/v1/persons/{id}/merge. The official OpenAPI x-token-cost is 40 API tokens. OAuth scope(s): contacts:full. See https://developers.pipedrive.com/docs/api/v1/Persons. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.persons.getPersonUsers": "GET https://api.pipedrive.com/v1/persons/{id}/permittedUsers. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): contacts:read, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Persons. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.persons.deletePersonPicture": "DELETE https://api.pipedrive.com/v1/persons/{id}/picture. The official OpenAPI x-token-cost is 6 API tokens. OAuth scope(s): contacts:full. See https://developers.pipedrive.com/docs/api/v1/Persons. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.persons.addPersonPicture": "POST https://api.pipedrive.com/v1/persons/{id}/picture. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): contacts:full. See https://developers.pipedrive.com/docs/api/v1/Persons. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.persons.getPersonProducts": "GET https://api.pipedrive.com/v1/persons/{id}/products. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): contacts:read, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Persons. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.personFields.getPersonFields": "GET https://api.pipedrive.com/v1/personFields. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): contacts:read, contacts:full, contact-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/PersonFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.personFields.addPersonField": "POST https://api.pipedrive.com/v1/personFields. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): contact-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/PersonFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.personFields.deletePersonFields": "DELETE https://api.pipedrive.com/v1/personFields. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): contact-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/PersonFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.personFields.getPersonField": "GET https://api.pipedrive.com/v1/personFields/{id}. The official OpenAPI x-token-cost is 2 API tokens. OAuth scope(s): contacts:read, contacts:full, contact-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/PersonFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.personFields.deletePersonField": "DELETE https://api.pipedrive.com/v1/personFields/{id}. The official OpenAPI x-token-cost is 6 API tokens. OAuth scope(s): contact-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/PersonFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.personFields.updatePersonField": "PUT https://api.pipedrive.com/v1/personFields/{id}. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): contact-fields:full, admin. See https://developers.pipedrive.com/docs/api/v1/PersonFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.pipelines.getPipelineConversionStatistics": "GET https://api.pipedrive.com/v1/pipelines/{id}/conversion_statistics. The official OpenAPI x-token-cost is 40 API tokens. OAuth scope(s): deals:read, deals:full. See https://developers.pipedrive.com/docs/api/v1/Pipelines. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.pipelines.getPipelineDeals": "GET https://api.pipedrive.com/v1/pipelines/{id}/deals. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): deals:read, deals:full. See https://developers.pipedrive.com/docs/api/v1/Pipelines. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.pipelines.getPipelineMovementStatistics": "GET https://api.pipedrive.com/v1/pipelines/{id}/movement_statistics. The official OpenAPI x-token-cost is 40 API tokens. OAuth scope(s): deals:read, deals:full. See https://developers.pipedrive.com/docs/api/v1/Pipelines. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.products.getProductDeals": "GET https://api.pipedrive.com/v1/products/{id}/deals. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): deals:read, deals:full. See https://developers.pipedrive.com/docs/api/v1/Products. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.products.getProductFiles": "GET https://api.pipedrive.com/v1/products/{id}/files. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): products:read, products:full. See https://developers.pipedrive.com/docs/api/v1/Products. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.products.getProductFollowers": "GET https://api.pipedrive.com/v1/products/{id}/followers. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): products:read, products:full. See https://developers.pipedrive.com/docs/api/v1/Products. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.products.addProductFollower": "POST https://api.pipedrive.com/v1/products/{id}/followers. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): products:full. See https://developers.pipedrive.com/docs/api/v1/Products. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.products.deleteProductFollower": "DELETE https://api.pipedrive.com/v1/products/{id}/followers/{follower_id}. The official OpenAPI x-token-cost is 6 API tokens. OAuth scope(s): products:full. See https://developers.pipedrive.com/docs/api/v1/Products. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.products.getProductUsers": "GET https://api.pipedrive.com/v1/products/{id}/permittedUsers. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): products:read, products:full. See https://developers.pipedrive.com/docs/api/v1/Products. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.productFields.deleteProductFields": "DELETE https://api.pipedrive.com/v1/productFields. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): product-fields:full, products:full. See https://developers.pipedrive.com/docs/api/v1/ProductFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.productFields.getProductFields": "GET https://api.pipedrive.com/v1/productFields. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): products:read, product-fields:full, products:full. See https://developers.pipedrive.com/docs/api/v1/ProductFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.productFields.addProductField": "POST https://api.pipedrive.com/v1/productFields. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): product-fields:full, products:full. See https://developers.pipedrive.com/docs/api/v1/ProductFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.productFields.deleteProductField": "DELETE https://api.pipedrive.com/v1/productFields/{id}. The official OpenAPI x-token-cost is 6 API tokens. OAuth scope(s): product-fields:full, products:full. See https://developers.pipedrive.com/docs/api/v1/ProductFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.productFields.getProductField": "GET https://api.pipedrive.com/v1/productFields/{id}. The official OpenAPI x-token-cost is 2 API tokens. OAuth scope(s): products:read, product-fields:full, products:full. See https://developers.pipedrive.com/docs/api/v1/ProductFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.productFields.updateProductField": "PUT https://api.pipedrive.com/v1/productFields/{id}. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): product-fields:full, products:full. See https://developers.pipedrive.com/docs/api/v1/ProductFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.projects.getProjects": "GET https://api.pipedrive.com/v1/projects. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): projects:read, projects:full. See https://developers.pipedrive.com/docs/api/v1/Projects. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.projects.addProject": "POST https://api.pipedrive.com/v1/projects. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): projects:full. See https://developers.pipedrive.com/docs/api/v1/Projects. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.projects.getProject": "GET https://api.pipedrive.com/v1/projects/{id}. The official OpenAPI x-token-cost is 2 API tokens. OAuth scope(s): projects:read, projects:full. See https://developers.pipedrive.com/docs/api/v1/Projects. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.projects.updateProject": "PUT https://api.pipedrive.com/v1/projects/{id}. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): projects:full. See https://developers.pipedrive.com/docs/api/v1/Projects. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.projects.deleteProject": "DELETE https://api.pipedrive.com/v1/projects/{id}. The official OpenAPI x-token-cost is 6 API tokens. OAuth scope(s): projects:full. See https://developers.pipedrive.com/docs/api/v1/Projects. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.projects.archiveProject": "POST https://api.pipedrive.com/v1/projects/{id}/archive. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): projects:full. See https://developers.pipedrive.com/docs/api/v1/Projects. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.projects.getProjectPlan": "GET https://api.pipedrive.com/v1/projects/{id}/plan. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): projects:read, projects:full. See https://developers.pipedrive.com/docs/api/v1/Projects. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.projects.putProjectPlanActivity": "PUT https://api.pipedrive.com/v1/projects/{id}/plan/activities/{activityId}. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): projects:full. See https://developers.pipedrive.com/docs/api/v1/Projects. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.projects.putProjectPlanTask": "PUT https://api.pipedrive.com/v1/projects/{id}/plan/tasks/{taskId}. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): projects:full. See https://developers.pipedrive.com/docs/api/v1/Projects. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.projects.getProjectGroups": "GET https://api.pipedrive.com/v1/projects/{id}/groups. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): projects:read, projects:full. See https://developers.pipedrive.com/docs/api/v1/Projects. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.projects.getProjectTasks": "GET https://api.pipedrive.com/v1/projects/{id}/tasks. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): projects:read, projects:full. See https://developers.pipedrive.com/docs/api/v1/Projects. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.projects.getProjectActivities": "GET https://api.pipedrive.com/v1/projects/{id}/activities. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): projects:read, projects:full. See https://developers.pipedrive.com/docs/api/v1/Projects. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.projectBoards.getProjectsBoards": "GET https://api.pipedrive.com/v1/projects/boards. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): projects:read, projects:full. See https://developers.pipedrive.com/docs/api/v1/ProjectBoards. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.projectBoards.getProjectsBoard": "GET https://api.pipedrive.com/v1/projects/boards/{id}. The official OpenAPI x-token-cost is 2 API tokens. OAuth scope(s): projects:read, projects:full. See https://developers.pipedrive.com/docs/api/v1/ProjectBoards. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.projectPhases.getProjectsPhases": "GET https://api.pipedrive.com/v1/projects/phases. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): projects:read, projects:full. See https://developers.pipedrive.com/docs/api/v1/ProjectPhases. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.projectPhases.getProjectsPhase": "GET https://api.pipedrive.com/v1/projects/phases/{id}. The official OpenAPI x-token-cost is 2 API tokens. OAuth scope(s): projects:read. See https://developers.pipedrive.com/docs/api/v1/ProjectPhases. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.projectTemplates.getProjectTemplates": "GET https://api.pipedrive.com/v1/projectTemplates. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): projects:read, projects:full. See https://developers.pipedrive.com/docs/api/v1/ProjectTemplates. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.projectTemplates.getProjectTemplate": "GET https://api.pipedrive.com/v1/projectTemplates/{id}. The official OpenAPI x-token-cost is 2 API tokens. OAuth scope(s): projects:read, projects:full. See https://developers.pipedrive.com/docs/api/v1/ProjectTemplates. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.recents.getRecents": "GET https://api.pipedrive.com/v1/recents. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): recents:read, search:read. See https://developers.pipedrive.com/docs/api/v1/Recents. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.roles.getRoles": "GET https://api.pipedrive.com/v1/roles. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/Roles. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.roles.addRole": "POST https://api.pipedrive.com/v1/roles. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/Roles. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.roles.deleteRole": "DELETE https://api.pipedrive.com/v1/roles/{id}. The official OpenAPI x-token-cost is 6 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/Roles. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.roles.getRole": "GET https://api.pipedrive.com/v1/roles/{id}. The official OpenAPI x-token-cost is 2 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/Roles. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.roles.updateRole": "PUT https://api.pipedrive.com/v1/roles/{id}. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/Roles. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.roles.deleteRoleAssignment": "DELETE https://api.pipedrive.com/v1/roles/{id}/assignments. The official OpenAPI x-token-cost is 6 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/Roles. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.roles.getRoleAssignments": "GET https://api.pipedrive.com/v1/roles/{id}/assignments. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/Roles. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.roles.addRoleAssignment": "POST https://api.pipedrive.com/v1/roles/{id}/assignments. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/Roles. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.roles.getRoleSettings": "GET https://api.pipedrive.com/v1/roles/{id}/settings. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/Roles. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.roles.addOrUpdateRoleSetting": "POST https://api.pipedrive.com/v1/roles/{id}/settings. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/Roles. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.roles.getRolePipelines": "GET https://api.pipedrive.com/v1/roles/{id}/pipelines. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/Roles. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.roles.updateRolePipelines": "PUT https://api.pipedrive.com/v1/roles/{id}/pipelines. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/Roles. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.stages.getStageDeals": "GET https://api.pipedrive.com/v1/stages/{id}/deals. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): deals:read, deals:full. See https://developers.pipedrive.com/docs/api/v1/Stages. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.tasks.getTasks": "GET https://api.pipedrive.com/v1/tasks. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): projects:read, projects:full. See https://developers.pipedrive.com/docs/api/v1/Tasks. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.tasks.addTask": "POST https://api.pipedrive.com/v1/tasks. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): projects:full. See https://developers.pipedrive.com/docs/api/v1/Tasks. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.tasks.getTask": "GET https://api.pipedrive.com/v1/tasks/{id}. The official OpenAPI x-token-cost is 2 API tokens. OAuth scope(s): projects:read, projects:full. See https://developers.pipedrive.com/docs/api/v1/Tasks. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.tasks.updateTask": "PUT https://api.pipedrive.com/v1/tasks/{id}. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): projects:full. See https://developers.pipedrive.com/docs/api/v1/Tasks. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.tasks.deleteTask": "DELETE https://api.pipedrive.com/v1/tasks/{id}. The official OpenAPI x-token-cost is 6 API tokens. OAuth scope(s): projects:full. See https://developers.pipedrive.com/docs/api/v1/Tasks. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.users.getUsers": "GET https://api.pipedrive.com/v1/users. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): users:read. See https://developers.pipedrive.com/docs/api/v1/Users. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.users.addUser": "POST https://api.pipedrive.com/v1/users. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/Users. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.users.findUsersByName": "GET https://api.pipedrive.com/v1/users/find. The official OpenAPI x-token-cost is 40 API tokens. OAuth scope(s): users:read. See https://developers.pipedrive.com/docs/api/v1/Users. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.users.getCurrentUser": "GET https://api.pipedrive.com/v1/users/me. The official OpenAPI x-token-cost is 2 API tokens. OAuth scope(s): base. See https://developers.pipedrive.com/docs/api/v1/Users. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.users.getUser": "GET https://api.pipedrive.com/v1/users/{id}. The official OpenAPI x-token-cost is 2 API tokens. OAuth scope(s): users:read. See https://developers.pipedrive.com/docs/api/v1/Users. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.users.updateUser": "PUT https://api.pipedrive.com/v1/users/{id}. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/Users. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.users.getUserFollowers": "GET https://api.pipedrive.com/v1/users/{id}/followers. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): users:read. See https://developers.pipedrive.com/docs/api/v1/Users. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.users.getUserPermissions": "GET https://api.pipedrive.com/v1/users/{id}/permissions. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): users:read. See https://developers.pipedrive.com/docs/api/v1/Users. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.users.getUserRoleAssignments": "GET https://api.pipedrive.com/v1/users/{id}/roleAssignments. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): users:read. See https://developers.pipedrive.com/docs/api/v1/Users. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.users.getUserRoleSettings": "GET https://api.pipedrive.com/v1/users/{id}/roleSettings. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): users:read. See https://developers.pipedrive.com/docs/api/v1/Users. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.userConnections.getUserConnections": "GET https://api.pipedrive.com/v1/userConnections. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): base. See https://developers.pipedrive.com/docs/api/v1/UserConnections. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV1.userSettings.getUserSettings": "GET https://api.pipedrive.com/v1/userSettings. The official OpenAPI x-token-cost is 2 API tokens. OAuth scope(s): base. See https://developers.pipedrive.com/docs/api/v1/UserSettings. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.activityFields.getActivityFields": "GET https://api.pipedrive.com/api/v2/activityFields. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/ActivityFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.activityFields.getActivityField": "GET https://api.pipedrive.com/api/v2/activityFields/{field_code}. The official OpenAPI x-token-cost is 1 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/ActivityFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.deals.getArchivedDeals": "GET https://api.pipedrive.com/api/v2/deals/archived. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): deals:read, deals:full. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.deals.getDealFollowers": "GET https://api.pipedrive.com/api/v2/deals/{id}/followers. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deals:read, deals:full. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.deals.addDealFollower": "POST https://api.pipedrive.com/api/v2/deals/{id}/followers. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): deals:full. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.deals.getDealFollowersChangelog": "GET https://api.pipedrive.com/api/v2/deals/{id}/followers/changelog. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deals:read, deals:full. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.deals.deleteDealFollower": "DELETE https://api.pipedrive.com/api/v2/deals/{id}/followers/{follower_id}. The official OpenAPI x-token-cost is 3 API tokens. OAuth scope(s): deals:full. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.dealProducts.getDealsProducts": "GET https://api.pipedrive.com/api/v2/deals/products. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): products:read, products:full, deals:read, deals:full. See https://developers.pipedrive.com/docs/api/v1/DealProducts. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.deals.searchDeals": "GET https://api.pipedrive.com/api/v2/deals/search. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): deals:read, deals:full, search:read. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.dealProducts.getDealProducts": "GET https://api.pipedrive.com/api/v2/deals/{id}/products. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): products:read, products:full, deals:read, deals:full. See https://developers.pipedrive.com/docs/api/v1/DealProducts. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.dealProducts.addDealProduct": "POST https://api.pipedrive.com/api/v2/deals/{id}/products. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): products:full, deals:full. See https://developers.pipedrive.com/docs/api/v1/DealProducts. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.dealProducts.deleteManyDealProducts": "DELETE https://api.pipedrive.com/api/v2/deals/{id}/products. The official OpenAPI x-token-cost is 15 API tokens. OAuth scope(s): products:full, deals:full. See https://developers.pipedrive.com/docs/api/v1/DealProducts. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.dealProducts.updateDealProduct": "PATCH https://api.pipedrive.com/api/v2/deals/{id}/products/{product_attachment_id}. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): products:full, deals:full. See https://developers.pipedrive.com/docs/api/v1/DealProducts. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.dealProducts.deleteDealProduct": "DELETE https://api.pipedrive.com/api/v2/deals/{id}/products/{product_attachment_id}. The official OpenAPI x-token-cost is 3 API tokens. OAuth scope(s): deals:full, products:full. See https://developers.pipedrive.com/docs/api/v1/DealProducts. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.dealProducts.addManyDealProducts": "POST https://api.pipedrive.com/api/v2/deals/{id}/products/bulk. The official OpenAPI x-token-cost is 25 API tokens. OAuth scope(s): products:full, deals:full. See https://developers.pipedrive.com/docs/api/v1/DealProducts. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.deals.getAdditionalDiscounts": "GET https://api.pipedrive.com/api/v2/deals/{id}/discounts. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deals:read, deals:full. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.deals.postAdditionalDiscount": "POST https://api.pipedrive.com/api/v2/deals/{id}/discounts. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): deals:full. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.deals.updateAdditionalDiscount": "PATCH https://api.pipedrive.com/api/v2/deals/{id}/discounts/{discount_id}. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): deals:full. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.deals.deleteAdditionalDiscount": "DELETE https://api.pipedrive.com/api/v2/deals/{id}/discounts/{discount_id}. The official OpenAPI x-token-cost is 3 API tokens. OAuth scope(s): deals:full. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.dealInstallments.getInstallments": "GET https://api.pipedrive.com/api/v2/deals/installments. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deals:read, deals:full. See https://developers.pipedrive.com/docs/api/v1/DealInstallments. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.dealInstallments.postInstallment": "POST https://api.pipedrive.com/api/v2/deals/{id}/installments. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): deals:full. See https://developers.pipedrive.com/docs/api/v1/DealInstallments. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.dealInstallments.updateInstallment": "PATCH https://api.pipedrive.com/api/v2/deals/{id}/installments/{installment_id}. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): deals:full. See https://developers.pipedrive.com/docs/api/v1/DealInstallments. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.dealInstallments.deleteInstallment": "DELETE https://api.pipedrive.com/api/v2/deals/{id}/installments/{installment_id}. The official OpenAPI x-token-cost is 3 API tokens. OAuth scope(s): deals:full. See https://developers.pipedrive.com/docs/api/v1/DealInstallments. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.deals.convertDealToLead": "POST https://api.pipedrive.com/api/v2/deals/{id}/convert/lead. The official OpenAPI x-token-cost is 40 API tokens. OAuth scope(s): deals:full. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.dealFields.getDealFields": "GET https://api.pipedrive.com/api/v2/dealFields. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): deals:read, deals:full, admin, deal-fields:full. See https://developers.pipedrive.com/docs/api/v1/DealFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.dealFields.addDealField": "POST https://api.pipedrive.com/api/v2/dealFields. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): admin, deal-fields:full. See https://developers.pipedrive.com/docs/api/v1/DealFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.dealFields.getDealField": "GET https://api.pipedrive.com/api/v2/dealFields/{field_code}. The official OpenAPI x-token-cost is 1 API tokens. OAuth scope(s): deals:read, deals:full, admin, deal-fields:full. See https://developers.pipedrive.com/docs/api/v1/DealFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.dealFields.updateDealField": "PATCH https://api.pipedrive.com/api/v2/dealFields/{field_code}. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): deals:full, admin, deal-fields:full. See https://developers.pipedrive.com/docs/api/v1/DealFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.dealFields.deleteDealField": "DELETE https://api.pipedrive.com/api/v2/dealFields/{field_code}. The official OpenAPI x-token-cost is 3 API tokens. OAuth scope(s): admin, deal-fields:full. See https://developers.pipedrive.com/docs/api/v1/DealFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.dealFields.addDealFieldOptions": "POST https://api.pipedrive.com/api/v2/dealFields/{field_code}/options. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): deals:full, admin, deal-fields:full. See https://developers.pipedrive.com/docs/api/v1/DealFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.dealFields.deleteDealFieldOptions": "DELETE https://api.pipedrive.com/api/v2/dealFields/{field_code}/options. The official OpenAPI x-token-cost is 3 API tokens. OAuth scope(s): deals:full, admin, deal-fields:full. See https://developers.pipedrive.com/docs/api/v1/DealFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.dealFields.updateDealFieldOptions": "PATCH https://api.pipedrive.com/api/v2/dealFields/{field_code}/options. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): deals:full, admin, deal-fields:full. See https://developers.pipedrive.com/docs/api/v1/DealFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.deals.getDealConversionStatus": "GET https://api.pipedrive.com/api/v2/deals/{id}/convert/status/{conversion_id}. The official OpenAPI x-token-cost is 1 API tokens. OAuth scope(s): deals:full, deals:read. See https://developers.pipedrive.com/docs/api/v1/Deals. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.persons.getPersonFollowers": "GET https://api.pipedrive.com/api/v2/persons/{id}/followers. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): contacts:read, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Persons. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.persons.addPersonFollower": "POST https://api.pipedrive.com/api/v2/persons/{id}/followers. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): contacts:full. See https://developers.pipedrive.com/docs/api/v1/Persons. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.persons.getPersonFollowersChangelog": "GET https://api.pipedrive.com/api/v2/persons/{id}/followers/changelog. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): contacts:read, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Persons. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.persons.deletePersonFollower": "DELETE https://api.pipedrive.com/api/v2/persons/{id}/followers/{follower_id}. The official OpenAPI x-token-cost is 3 API tokens. OAuth scope(s): contacts:full. See https://developers.pipedrive.com/docs/api/v1/Persons. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.persons.getPersonPicture": "GET https://api.pipedrive.com/api/v2/persons/{id}/picture. The official OpenAPI x-token-cost is 1 API tokens. OAuth scope(s): contacts:read, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Persons. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.personFields.getPersonFields": "GET https://api.pipedrive.com/api/v2/personFields. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): contacts:read, contacts:full, admin, contact-fields:full. See https://developers.pipedrive.com/docs/api/v1/PersonFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.personFields.addPersonField": "POST https://api.pipedrive.com/api/v2/personFields. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): admin, contact-fields:full. See https://developers.pipedrive.com/docs/api/v1/PersonFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.personFields.getPersonField": "GET https://api.pipedrive.com/api/v2/personFields/{field_code}. The official OpenAPI x-token-cost is 1 API tokens. OAuth scope(s): contacts:read, contacts:full, admin, contact-fields:full. See https://developers.pipedrive.com/docs/api/v1/PersonFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.personFields.updatePersonField": "PATCH https://api.pipedrive.com/api/v2/personFields/{field_code}. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): contacts:full, admin, contact-fields:full. See https://developers.pipedrive.com/docs/api/v1/PersonFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.personFields.deletePersonField": "DELETE https://api.pipedrive.com/api/v2/personFields/{field_code}. The official OpenAPI x-token-cost is 3 API tokens. OAuth scope(s): admin, contact-fields:full. See https://developers.pipedrive.com/docs/api/v1/PersonFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.personFields.addPersonFieldOptions": "POST https://api.pipedrive.com/api/v2/personFields/{field_code}/options. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): contacts:full, admin, contact-fields:full. See https://developers.pipedrive.com/docs/api/v1/PersonFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.personFields.deletePersonFieldOptions": "DELETE https://api.pipedrive.com/api/v2/personFields/{field_code}/options. The official OpenAPI x-token-cost is 3 API tokens. OAuth scope(s): contacts:full, admin, contact-fields:full. See https://developers.pipedrive.com/docs/api/v1/PersonFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.personFields.updatePersonFieldOptions": "PATCH https://api.pipedrive.com/api/v2/personFields/{field_code}/options. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): contacts:full, admin, contact-fields:full. See https://developers.pipedrive.com/docs/api/v1/PersonFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.organizations.getOrganizationFollowers": "GET https://api.pipedrive.com/api/v2/organizations/{id}/followers. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): contacts:read, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Organizations. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.organizations.addOrganizationFollower": "POST https://api.pipedrive.com/api/v2/organizations/{id}/followers. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): contacts:full. See https://developers.pipedrive.com/docs/api/v1/Organizations. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.organizations.getOrganizationFollowersChangelog": "GET https://api.pipedrive.com/api/v2/organizations/{id}/followers/changelog. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): contacts:read, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Organizations. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.organizations.deleteOrganizationFollower": "DELETE https://api.pipedrive.com/api/v2/organizations/{id}/followers/{follower_id}. The official OpenAPI x-token-cost is 3 API tokens. OAuth scope(s): contacts:full. See https://developers.pipedrive.com/docs/api/v1/Organizations. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.organizationFields.getOrganizationFields": "GET https://api.pipedrive.com/api/v2/organizationFields. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): contacts:read, contacts:full, admin, contact-fields:full. See https://developers.pipedrive.com/docs/api/v1/OrganizationFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.organizationFields.addOrganizationField": "POST https://api.pipedrive.com/api/v2/organizationFields. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): admin, contact-fields:full. See https://developers.pipedrive.com/docs/api/v1/OrganizationFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.organizationFields.getOrganizationField": "GET https://api.pipedrive.com/api/v2/organizationFields/{field_code}. The official OpenAPI x-token-cost is 1 API tokens. OAuth scope(s): contacts:read, contacts:full, admin, contact-fields:full. See https://developers.pipedrive.com/docs/api/v1/OrganizationFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.organizationFields.updateOrganizationField": "PATCH https://api.pipedrive.com/api/v2/organizationFields/{field_code}. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): contacts:full, admin, contact-fields:full. See https://developers.pipedrive.com/docs/api/v1/OrganizationFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.organizationFields.deleteOrganizationField": "DELETE https://api.pipedrive.com/api/v2/organizationFields/{field_code}. The official OpenAPI x-token-cost is 3 API tokens. OAuth scope(s): admin, contact-fields:full. See https://developers.pipedrive.com/docs/api/v1/OrganizationFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.organizationFields.addOrganizationFieldOptions": "POST https://api.pipedrive.com/api/v2/organizationFields/{field_code}/options. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): contacts:full, admin, contact-fields:full. See https://developers.pipedrive.com/docs/api/v1/OrganizationFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.organizationFields.deleteOrganizationFieldOptions": "DELETE https://api.pipedrive.com/api/v2/organizationFields/{field_code}/options. The official OpenAPI x-token-cost is 3 API tokens. OAuth scope(s): contacts:full, admin, contact-fields:full. See https://developers.pipedrive.com/docs/api/v1/OrganizationFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.organizationFields.updateOrganizationFieldOptions": "PATCH https://api.pipedrive.com/api/v2/organizationFields/{field_code}/options. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): contacts:full, admin, contact-fields:full. See https://developers.pipedrive.com/docs/api/v1/OrganizationFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.productFields.getProductFields": "GET https://api.pipedrive.com/api/v2/productFields. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): products:read, products:full, product-fields:full. See https://developers.pipedrive.com/docs/api/v1/ProductFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.productFields.addProductField": "POST https://api.pipedrive.com/api/v2/productFields. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): products:full, product-fields:full. See https://developers.pipedrive.com/docs/api/v1/ProductFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.productFields.getProductField": "GET https://api.pipedrive.com/api/v2/productFields/{field_code}. The official OpenAPI x-token-cost is 1 API tokens. OAuth scope(s): products:read, products:full, product-fields:full. See https://developers.pipedrive.com/docs/api/v1/ProductFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.productFields.updateProductField": "PATCH https://api.pipedrive.com/api/v2/productFields/{field_code}. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): products:full, product-fields:full. See https://developers.pipedrive.com/docs/api/v1/ProductFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.productFields.deleteProductField": "DELETE https://api.pipedrive.com/api/v2/productFields/{field_code}. The official OpenAPI x-token-cost is 3 API tokens. OAuth scope(s): products:full, product-fields:full. See https://developers.pipedrive.com/docs/api/v1/ProductFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.productFields.addProductFieldOptions": "POST https://api.pipedrive.com/api/v2/productFields/{field_code}/options. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): products:full, product-fields:full. See https://developers.pipedrive.com/docs/api/v1/ProductFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.productFields.deleteProductFieldOptions": "DELETE https://api.pipedrive.com/api/v2/productFields/{field_code}/options. The official OpenAPI x-token-cost is 3 API tokens. OAuth scope(s): products:full, product-fields:full. See https://developers.pipedrive.com/docs/api/v1/ProductFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.productFields.updateProductFieldOptions": "PATCH https://api.pipedrive.com/api/v2/productFields/{field_code}/options. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): products:full, product-fields:full. See https://developers.pipedrive.com/docs/api/v1/ProductFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.leads.searchLeads": "GET https://api.pipedrive.com/api/v2/leads/search. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): leads:read, leads:full, search:read. See https://developers.pipedrive.com/docs/api/v1/Leads. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.leads.convertLeadToDeal": "POST https://api.pipedrive.com/api/v2/leads/{id}/convert/deal. The official OpenAPI x-token-cost is 40 API tokens. OAuth scope(s): leads:full. See https://developers.pipedrive.com/docs/api/v1/Leads. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.leads.getLeadConversionStatus": "GET https://api.pipedrive.com/api/v2/leads/{id}/convert/status/{conversion_id}. The official OpenAPI x-token-cost is 1 API tokens. OAuth scope(s): leads:full, leads:read. See https://developers.pipedrive.com/docs/api/v1/Leads. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.organizations.searchOrganization": "GET https://api.pipedrive.com/api/v2/organizations/search. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): contacts:read, contacts:full, search:read. See https://developers.pipedrive.com/docs/api/v1/Organizations. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.persons.searchPersons": "GET https://api.pipedrive.com/api/v2/persons/search. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): contacts:read, contacts:full, search:read. See https://developers.pipedrive.com/docs/api/v1/Persons. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.itemSearch.searchItem": "GET https://api.pipedrive.com/api/v2/itemSearch. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): search:read. See https://developers.pipedrive.com/docs/api/v1/ItemSearch. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.itemSearch.searchItemByField": "GET https://api.pipedrive.com/api/v2/itemSearch/field. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): search:read. See https://developers.pipedrive.com/docs/api/v1/ItemSearch. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.stages.getStages": "GET https://api.pipedrive.com/api/v2/stages. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): deals:read, deals:full, admin. See https://developers.pipedrive.com/docs/api/v1/Stages. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.stages.addStage": "POST https://api.pipedrive.com/api/v2/stages. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/Stages. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.stages.deleteStage": "DELETE https://api.pipedrive.com/api/v2/stages/{id}. The official OpenAPI x-token-cost is 3 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/Stages. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.stages.getStage": "GET https://api.pipedrive.com/api/v2/stages/{id}. The official OpenAPI x-token-cost is 1 API tokens. OAuth scope(s): deals:read, deals:full, admin. See https://developers.pipedrive.com/docs/api/v1/Stages. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.stages.updateStage": "PATCH https://api.pipedrive.com/api/v2/stages/{id}. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/Stages. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.pipelines.getPipelines": "GET https://api.pipedrive.com/api/v2/pipelines. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): deals:read, deals:full, admin. See https://developers.pipedrive.com/docs/api/v1/Pipelines. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.pipelines.addPipeline": "POST https://api.pipedrive.com/api/v2/pipelines. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/Pipelines. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.pipelines.deletePipeline": "DELETE https://api.pipedrive.com/api/v2/pipelines/{id}. The official OpenAPI x-token-cost is 3 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/Pipelines. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.pipelines.getPipeline": "GET https://api.pipedrive.com/api/v2/pipelines/{id}. The official OpenAPI x-token-cost is 1 API tokens. OAuth scope(s): deals:read, deals:full, admin. See https://developers.pipedrive.com/docs/api/v1/Pipelines. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.pipelines.updatePipeline": "PATCH https://api.pipedrive.com/api/v2/pipelines/{id}. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): admin. See https://developers.pipedrive.com/docs/api/v1/Pipelines. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projectFields.getProjectFields": "GET https://api.pipedrive.com/api/v2/projectFields. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): projects:read, projects:full, project-fields:full. See https://developers.pipedrive.com/docs/api/v1/ProjectFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projectFields.addProjectField": "POST https://api.pipedrive.com/api/v2/projectFields. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): project-fields:full. See https://developers.pipedrive.com/docs/api/v1/ProjectFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projectFields.getProjectField": "GET https://api.pipedrive.com/api/v2/projectFields/{field_code}. The official OpenAPI x-token-cost is 1 API tokens. OAuth scope(s): projects:read, projects:full, project-fields:full. See https://developers.pipedrive.com/docs/api/v1/ProjectFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projectFields.updateProjectField": "PATCH https://api.pipedrive.com/api/v2/projectFields/{field_code}. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): project-fields:full. See https://developers.pipedrive.com/docs/api/v1/ProjectFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projectFields.deleteProjectField": "DELETE https://api.pipedrive.com/api/v2/projectFields/{field_code}. The official OpenAPI x-token-cost is 3 API tokens. OAuth scope(s): project-fields:full. See https://developers.pipedrive.com/docs/api/v1/ProjectFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projectFields.addProjectFieldOptions": "POST https://api.pipedrive.com/api/v2/projectFields/{field_code}/options. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): project-fields:full. See https://developers.pipedrive.com/docs/api/v1/ProjectFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projectFields.deleteProjectFieldOptions": "DELETE https://api.pipedrive.com/api/v2/projectFields/{field_code}/options. The official OpenAPI x-token-cost is 3 API tokens. OAuth scope(s): project-fields:full. See https://developers.pipedrive.com/docs/api/v1/ProjectFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projectFields.updateProjectFieldOptions": "PATCH https://api.pipedrive.com/api/v2/projectFields/{field_code}/options. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): project-fields:full. See https://developers.pipedrive.com/docs/api/v1/ProjectFields. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projects.getProjects": "GET https://api.pipedrive.com/api/v2/projects. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): projects:read, projects:full. See https://developers.pipedrive.com/docs/api/v1/Projects. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projects.addProject": "POST https://api.pipedrive.com/api/v2/projects. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): projects:full. See https://developers.pipedrive.com/docs/api/v1/Projects. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projects.getArchivedProjects": "GET https://api.pipedrive.com/api/v2/projects/archived. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): projects:read, projects:full. See https://developers.pipedrive.com/docs/api/v1/Projects. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projects.getProject": "GET https://api.pipedrive.com/api/v2/projects/{id}. The official OpenAPI x-token-cost is 1 API tokens. OAuth scope(s): projects:read, projects:full. See https://developers.pipedrive.com/docs/api/v1/Projects. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projects.updateProject": "PATCH https://api.pipedrive.com/api/v2/projects/{id}. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): projects:full. See https://developers.pipedrive.com/docs/api/v1/Projects. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projects.deleteProject": "DELETE https://api.pipedrive.com/api/v2/projects/{id}. The official OpenAPI x-token-cost is 3 API tokens. OAuth scope(s): projects:full. See https://developers.pipedrive.com/docs/api/v1/Projects. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projectTemplates.getProjectTemplates": "GET https://api.pipedrive.com/api/v2/projectTemplates. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): projects:read, projects:full. See https://developers.pipedrive.com/docs/api/v1/ProjectTemplates. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projectTemplates.getProjectTemplate": "GET https://api.pipedrive.com/api/v2/projectTemplates/{id}. The official OpenAPI x-token-cost is 1 API tokens. OAuth scope(s): projects:read, projects:full. See https://developers.pipedrive.com/docs/api/v1/ProjectTemplates. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projects.searchProjects": "GET https://api.pipedrive.com/api/v2/projects/search. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): projects:read, projects:full, search:read. See https://developers.pipedrive.com/docs/api/v1/Projects. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projects.archiveProject": "POST https://api.pipedrive.com/api/v2/projects/{id}/archive. The official OpenAPI x-token-cost is 3 API tokens. OAuth scope(s): projects:full. See https://developers.pipedrive.com/docs/api/v1/Projects. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projects.getProjectUsers": "GET https://api.pipedrive.com/api/v2/projects/{id}/permittedUsers. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): projects:read, projects:full. See https://developers.pipedrive.com/docs/api/v1/Projects. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projects.getProjectChangelog": "GET https://api.pipedrive.com/api/v2/projects/{id}/changelog. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): projects:read, projects:full. See https://developers.pipedrive.com/docs/api/v1/Projects. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projectBoards.getProjectsBoards": "GET https://api.pipedrive.com/api/v2/boards. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): projects:read, projects:full. See https://developers.pipedrive.com/docs/api/v1/ProjectBoards. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projectBoards.addProjectBoard": "POST https://api.pipedrive.com/api/v2/boards. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): projects:full. See https://developers.pipedrive.com/docs/api/v1/ProjectBoards. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projectBoards.getProjectsBoard": "GET https://api.pipedrive.com/api/v2/boards/{id}. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): projects:read, projects:full. See https://developers.pipedrive.com/docs/api/v1/ProjectBoards. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projectBoards.updateProjectBoard": "PATCH https://api.pipedrive.com/api/v2/boards/{id}. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): projects:full. See https://developers.pipedrive.com/docs/api/v1/ProjectBoards. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projectBoards.deleteProjectBoard": "DELETE https://api.pipedrive.com/api/v2/boards/{id}. The official OpenAPI x-token-cost is 3 API tokens. OAuth scope(s): projects:full. See https://developers.pipedrive.com/docs/api/v1/ProjectBoards. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projectPhases.getProjectsPhases": "GET https://api.pipedrive.com/api/v2/phases. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): projects:read, projects:full. See https://developers.pipedrive.com/docs/api/v1/ProjectPhases. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projectPhases.addProjectPhase": "POST https://api.pipedrive.com/api/v2/phases. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): projects:full. See https://developers.pipedrive.com/docs/api/v1/ProjectPhases. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projectPhases.getProjectsPhase": "GET https://api.pipedrive.com/api/v2/phases/{id}. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): projects:read, projects:full. See https://developers.pipedrive.com/docs/api/v1/ProjectPhases. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projectPhases.updateProjectPhase": "PATCH https://api.pipedrive.com/api/v2/phases/{id}. The official OpenAPI x-token-cost is 5 API tokens. OAuth scope(s): projects:full. See https://developers.pipedrive.com/docs/api/v1/ProjectPhases. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.projectPhases.deleteProjectPhase": "DELETE https://api.pipedrive.com/api/v2/phases/{id}. The official OpenAPI x-token-cost is 3 API tokens. OAuth scope(s): projects:full. See https://developers.pipedrive.com/docs/api/v1/ProjectPhases. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
+  "apiV2.users.getUserFollowers": "GET https://api.pipedrive.com/api/v2/users/{id}/followers. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): users:read. See https://developers.pipedrive.com/docs/api/v1/Users. API tokens use x-api-token; OAuth access tokens use Bearer authorization."
 apiExamples:
   deals.list:
     call: "{}"
@@ -172,3 +493,646 @@ apiExamples:
     call: "{ id: 1, limit: 100 }"
   products.followers.delete:
     call: "{ id: 1, follower_id: 2 }"
+
+  "apiV1.activityFields.getActivityFields":
+    call: "{  }"
+  "apiV1.activityTypes.getActivityTypes":
+    call: "{  }"
+  "apiV1.activityTypes.addActivityType":
+    call: "{ body: { \"name\": \"x\", \"icon_key\": \"task\" } }"
+  "apiV1.activityTypes.deleteActivityType":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.activityTypes.updateActivityType":
+    call: "{ path: { \"id\": 1 }, body: {  } }"
+  "apiV1.billing.getCompanyAddons":
+    call: "{  }"
+  "apiV1.callLogs.addCallLog":
+    call: "{ body: { \"to_phone_number\": \"x\", \"outcome\": \"connected\", \"start_time\": \"2026-01-01T00:00:00Z\", \"end_time\": \"2026-01-01T00:00:00Z\" } }"
+  "apiV1.callLogs.getUserCallLogs":
+    call: "{ query: { \"start\": 1, \"limit\": 1 } }"
+  "apiV1.callLogs.deleteCallLog":
+    call: "{ path: { \"id\": \"x\" } }"
+  "apiV1.callLogs.getCallLog":
+    call: "{ path: { \"id\": \"x\" } }"
+  "apiV1.callLogs.addCallLogAudioFile":
+    call: "{ path: { \"id\": \"x\" }, body: { \"file\": new Blob(['synthetic file bytes'], { type: 'application/octet-stream' }) } }"
+  "apiV1.channels.addChannel":
+    call: "{ body: { \"name\": \"x\", \"provider_channel_id\": \"x\" } }"
+  "apiV1.channels.deleteChannel":
+    call: "{ path: { \"id\": \"x\" } }"
+  "apiV1.channels.receiveMessage":
+    call: "{ body: { \"id\": \"x\", \"channel_id\": \"x\", \"sender_id\": \"x\", \"conversation_id\": \"x\", \"message\": \"x\", \"status\": \"sent\", \"created_at\": \"2026-01-01T00:00:00Z\" } }"
+  "apiV1.channels.deleteConversation":
+    call: "{ path: { \"channel-id\": \"x\", \"conversation-id\": \"x\" } }"
+  "apiV1.currencies.getCurrencies":
+    call: "{ query: { \"term\": \"x\" } }"
+  "apiV1.deals.getArchivedDeals":
+    call: "{ query: { \"user_id\": 1, \"filter_id\": 1, \"person_id\": 1, \"org_id\": 1, \"product_id\": 1, \"pipeline_id\": 1, \"stage_id\": 1, \"status\": \"open\", \"start\": 1, \"limit\": 1, \"sort\": \"x\", \"owned_by_you\": 0 } }"
+  "apiV1.deals.getDealsSummary":
+    call: "{ query: { \"status\": \"open\", \"filter_id\": 1, \"user_id\": 1, \"pipeline_id\": 1, \"stage_id\": 1 } }"
+  "apiV1.deals.getArchivedDealsSummary":
+    call: "{ query: { \"status\": \"open\", \"filter_id\": 1, \"user_id\": 1, \"pipeline_id\": 1, \"stage_id\": 1 } }"
+  "apiV1.deals.getDealsTimeline":
+    call: "{ query: { \"start_date\": \"2026-01-01\", \"interval\": \"day\", \"amount\": 1, \"field_key\": \"x\", \"user_id\": 1, \"pipeline_id\": 1, \"filter_id\": 1, \"exclude_deals\": 0, \"totals_convert_currency\": \"x\" } }"
+  "apiV1.deals.getArchivedDealsTimeline":
+    call: "{ query: { \"start_date\": \"2026-01-01\", \"interval\": \"day\", \"amount\": 1, \"field_key\": \"x\", \"user_id\": 1, \"pipeline_id\": 1, \"filter_id\": 1, \"exclude_deals\": 0, \"totals_convert_currency\": \"x\" } }"
+  "apiV1.deals.getDealChangelog":
+    call: "{ path: { \"id\": 1 }, query: { \"cursor\": \"x\", \"limit\": 1 } }"
+  "apiV1.deals.duplicateDeal":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.deals.getDealFiles":
+    call: "{ path: { \"id\": 1 }, query: { \"start\": 1, \"limit\": 1, \"sort\": \"x\" } }"
+  "apiV1.deals.getDealUpdates":
+    call: "{ path: { \"id\": 1 }, query: { \"start\": 1, \"limit\": 1, \"all_changes\": \"x\", \"items\": [\"x\"] } }"
+  "apiV1.deals.getDealParticipantsChangelog":
+    call: "{ path: { \"id\": 1 }, query: { \"limit\": 1, \"cursor\": \"x\" } }"
+  "apiV1.deals.getDealFollowers":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.deals.addDealFollower":
+    call: "{ path: { \"id\": 1 }, body: { \"user_id\": 1 } }"
+  "apiV1.deals.deleteDealFollower":
+    call: "{ path: { \"id\": 1, \"follower_id\": 1 } }"
+  "apiV1.deals.getDealMailMessages":
+    call: "{ path: { \"id\": 1 }, query: { \"start\": 1, \"limit\": 1, \"include_body\": 0 } }"
+  "apiV1.deals.mergeDeals":
+    call: "{ path: { \"id\": 1 }, body: { \"merge_with_id\": 1 } }"
+  "apiV1.deals.getDealParticipants":
+    call: "{ path: { \"id\": 1 }, query: { \"start\": 1, \"limit\": 1 } }"
+  "apiV1.deals.addDealParticipant":
+    call: "{ path: { \"id\": 1 }, body: { \"person_id\": 1 } }"
+  "apiV1.deals.deleteDealParticipant":
+    call: "{ path: { \"id\": 1, \"deal_participant_id\": 1 } }"
+  "apiV1.deals.getDealUsers":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.dealFields.getDealFields":
+    call: "{ query: { \"start\": 1, \"limit\": 1 } }"
+  "apiV1.dealFields.addDealField":
+    call: "{ body: { \"name\": \"x\", \"field_type\": \"address\" } }"
+  "apiV1.dealFields.deleteDealFields":
+    call: "{ query: { \"ids\": [1] } }"
+  "apiV1.dealFields.getDealField":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.dealFields.deleteDealField":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.dealFields.updateDealField":
+    call: "{ path: { \"id\": 1 }, body: {  } }"
+  "apiV1.files.getFiles":
+    call: "{ query: { \"start\": 1, \"limit\": 1, \"sort\": \"x\" } }"
+  "apiV1.files.addFile":
+    call: "{ body: { \"file\": new Blob(['synthetic file bytes'], { type: 'application/octet-stream' }) } }"
+  "apiV1.files.addFileAndLinkIt":
+    call: "{ body: { \"file_type\": \"gdoc\", \"title\": \"x\", \"item_type\": \"deal\", \"item_id\": 1, \"remote_location\": \"googledrive\" } }"
+  "apiV1.files.linkFileToItem":
+    call: "{ body: { \"item_type\": \"deal\", \"item_id\": 1, \"remote_id\": \"x\", \"remote_location\": \"googledrive\" } }"
+  "apiV1.files.deleteFile":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.files.getFile":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.files.updateFile":
+    call: "{ path: { \"id\": 1 }, body: {  } }"
+  "apiV1.files.downloadFile":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.filters.deleteFilters":
+    call: "{ query: { \"ids\": [1] } }"
+  "apiV1.filters.getFilters":
+    call: "{ query: { \"type\": \"deals\" } }"
+  "apiV1.filters.addFilter":
+    call: "{ query: { \"include_field_code\": false }, body: { \"name\": \"x\", \"conditions\": {  }, \"type\": \"deals\" } }"
+  "apiV1.filters.getFilterHelpers":
+    call: "{  }"
+  "apiV1.filters.deleteFilter":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.filters.getFilter":
+    call: "{ path: { \"id\": 1 }, query: { \"include_field_code\": false } }"
+  "apiV1.filters.updateFilter":
+    call: "{ path: { \"id\": 1 }, query: { \"include_field_code\": false }, body: { \"conditions\": {  } } }"
+  "apiV1.goals.addGoal":
+    call: "{ body: { \"type\": {  }, \"assignee\": {  }, \"expected_outcome\": {  }, \"duration\": {  }, \"interval\": \"weekly\" } }"
+  "apiV1.goals.getGoals":
+    call: "{ query: { \"type.name\": \"deals_won\", \"title\": \"x\", \"is_active\": false, \"assignee.id\": 1, \"assignee.type\": \"person\", \"expected_outcome.target\": 1, \"expected_outcome.tracking_metric\": \"quantity\", \"expected_outcome.currency_id\": 1, \"type.params.pipeline_id\": [1], \"type.params.stage_id\": 1, \"type.params.activity_type_id\": [1], \"period.start\": \"2026-01-01\", \"period.end\": \"2026-01-01\" } }"
+  "apiV1.goals.updateGoal":
+    call: "{ path: { \"id\": \"x\" }, body: {  } }"
+  "apiV1.goals.deleteGoal":
+    call: "{ path: { \"id\": \"x\" } }"
+  "apiV1.goals.getGoalResult":
+    call: "{ path: { \"id\": \"x\" }, query: { \"period.start\": \"2026-01-01\", \"period.end\": \"2026-01-01\", \"timezone\": \"x\" } }"
+  "apiV1.leads.getLeads":
+    call: "{ query: { \"limit\": 1, \"start\": 1, \"owner_id\": 1, \"person_id\": 1, \"organization_id\": 1, \"filter_id\": 1, \"updated_since\": \"x\", \"sort\": \"x\" } }"
+  "apiV1.leads.addLead":
+    call: "{ body: { \"title\": \"x\" } }"
+  "apiV1.leads.getArchivedLeads":
+    call: "{ query: { \"limit\": 1, \"start\": 1, \"owner_id\": 1, \"person_id\": 1, \"organization_id\": 1, \"filter_id\": 1, \"sort\": \"id\" } }"
+  "apiV1.leads.getLead":
+    call: "{ path: { \"id\": \"x\" } }"
+  "apiV1.leads.updateLead":
+    call: "{ path: { \"id\": \"x\" }, body: {  } }"
+  "apiV1.leads.deleteLead":
+    call: "{ path: { \"id\": \"x\" } }"
+  "apiV1.leads.getLeadUsers":
+    call: "{ path: { \"id\": \"x\" } }"
+  "apiV1.leads.searchLeads":
+    call: "{ query: { \"term\": \"x\", \"fields\": [\"custom_fields\"], \"exact_match\": false, \"person_id\": 1, \"organization_id\": 1, \"include_fields\": [\"lead.was_seen\"], \"start\": 1, \"limit\": 1 } }"
+  "apiV1.leadFields.getLeadFields":
+    call: "{ query: { \"start\": 1, \"limit\": 1 } }"
+  "apiV1.leadLabels.getLeadLabels":
+    call: "{  }"
+  "apiV1.leadLabels.addLeadLabel":
+    call: "{ body: { \"name\": \"x\", \"color\": \"blue\" } }"
+  "apiV1.leadLabels.updateLeadLabel":
+    call: "{ path: { \"id\": \"x\" }, body: {  } }"
+  "apiV1.leadLabels.deleteLeadLabel":
+    call: "{ path: { \"id\": \"x\" } }"
+  "apiV1.leadSources.getLeadSources":
+    call: "{  }"
+  "apiV1.legacyTeams.getTeams":
+    call: "{ query: { \"order_by\": \"id\", \"skip_users\": 0 } }"
+  "apiV1.legacyTeams.addTeam":
+    call: "{ body: { \"name\": \"x\", \"manager_id\": 1 } }"
+  "apiV1.legacyTeams.getTeam":
+    call: "{ path: { \"id\": 1 }, query: { \"skip_users\": 0 } }"
+  "apiV1.legacyTeams.updateTeam":
+    call: "{ path: { \"id\": 1 }, body: {  } }"
+  "apiV1.legacyTeams.getTeamUsers":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.legacyTeams.addTeamUser":
+    call: "{ path: { \"id\": 1 }, body: { \"users\": [1] } }"
+  "apiV1.legacyTeams.deleteTeamUser":
+    call: "{ path: { \"id\": 1 }, body: { \"users\": [1] } }"
+  "apiV1.legacyTeams.getUserTeams":
+    call: "{ path: { \"id\": 1 }, query: { \"order_by\": \"id\", \"skip_users\": 0 } }"
+  "apiV1.mailbox.getMailMessage":
+    call: "{ path: { \"id\": 1 }, query: { \"include_body\": 0 } }"
+  "apiV1.mailbox.getMailThreads":
+    call: "{ query: { \"folder\": \"inbox\", \"start\": 1, \"limit\": 1 } }"
+  "apiV1.mailbox.deleteMailThread":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.mailbox.getMailThread":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.mailbox.updateMailThreadDetails":
+    call: "{ path: { \"id\": 1 }, body: {  } }"
+  "apiV1.mailbox.getMailThreadMessages":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.meetings.saveUserProviderLink":
+    call: "{ body: { \"user_provider_id\": \"x\", \"user_id\": 1, \"company_id\": 1, \"marketplace_client_id\": \"x\" } }"
+  "apiV1.meetings.deleteUserProviderLink":
+    call: "{ path: { \"id\": \"x\" } }"
+  "apiV1.notes.getNotes":
+    call: "{ query: { \"user_id\": 1, \"lead_id\": \"x\", \"deal_id\": 1, \"person_id\": 1, \"org_id\": 1, \"project_id\": 1, \"task_id\": 1, \"start\": 1, \"limit\": 1, \"sort\": \"x\", \"start_date\": \"2026-01-01\", \"end_date\": \"2026-01-01\", \"updated_since\": \"2026-01-01T00:00:00Z\", \"pinned_to_lead_flag\": 0, \"pinned_to_deal_flag\": 0, \"pinned_to_organization_flag\": 0, \"pinned_to_person_flag\": 0, \"pinned_to_project_flag\": 0, \"pinned_to_task_flag\": 0 } }"
+  "apiV1.notes.addNote":
+    call: "{ body: { \"content\": \"x\" } }"
+  "apiV1.notes.deleteNote":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.notes.getNote":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.notes.updateNote":
+    call: "{ path: { \"id\": 1 }, body: {  } }"
+  "apiV1.notes.getNoteComments":
+    call: "{ path: { \"id\": 1 }, query: { \"start\": 1, \"limit\": 1 } }"
+  "apiV1.notes.addNoteComment":
+    call: "{ path: { \"id\": 1 }, body: { \"content\": \"x\" } }"
+  "apiV1.notes.getComment":
+    call: "{ path: { \"id\": 1, \"commentId\": \"x\" } }"
+  "apiV1.notes.updateCommentForNote":
+    call: "{ path: { \"id\": 1, \"commentId\": \"x\" }, body: { \"content\": \"x\" } }"
+  "apiV1.notes.deleteComment":
+    call: "{ path: { \"id\": 1, \"commentId\": \"x\" } }"
+  "apiV1.noteFields.getNoteFields":
+    call: "{  }"
+  "apiV1.organizations.getOrganizationChangelog":
+    call: "{ path: { \"id\": 1 }, query: { \"cursor\": \"x\", \"limit\": 1 } }"
+  "apiV1.organizations.getOrganizationFiles":
+    call: "{ path: { \"id\": 1 }, query: { \"start\": 1, \"limit\": 1, \"sort\": \"x\" } }"
+  "apiV1.organizations.getOrganizationUpdates":
+    call: "{ path: { \"id\": 1 }, query: { \"start\": 1, \"limit\": 1, \"all_changes\": \"x\", \"items\": [\"x\"] } }"
+  "apiV1.organizations.getOrganizationFollowers":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.organizations.addOrganizationFollower":
+    call: "{ path: { \"id\": 1 }, body: { \"user_id\": 1 } }"
+  "apiV1.organizations.deleteOrganizationFollower":
+    call: "{ path: { \"id\": 1, \"follower_id\": 1 } }"
+  "apiV1.organizations.getOrganizationMailMessages":
+    call: "{ path: { \"id\": 1 }, query: { \"start\": 1, \"limit\": 1, \"include_body\": 0 } }"
+  "apiV1.organizations.mergeOrganizations":
+    call: "{ path: { \"id\": 1 }, body: { \"merge_with_id\": 1 } }"
+  "apiV1.organizations.getOrganizationUsers":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.organizationFields.getOrganizationFields":
+    call: "{ query: { \"start\": 1, \"limit\": 1 } }"
+  "apiV1.organizationFields.addOrganizationField":
+    call: "{ body: { \"name\": \"x\", \"field_type\": \"address\" } }"
+  "apiV1.organizationFields.deleteOrganizationFields":
+    call: "{ query: { \"ids\": [1] } }"
+  "apiV1.organizationFields.getOrganizationField":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.organizationFields.deleteOrganizationField":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.organizationFields.updateOrganizationField":
+    call: "{ path: { \"id\": 1 }, body: {  } }"
+  "apiV1.organizationRelationships.getOrganizationRelationships":
+    call: "{ query: { \"org_id\": 1 } }"
+  "apiV1.organizationRelationships.addOrganizationRelationship":
+    call: "{ body: { \"type\": \"parent\", \"rel_owner_org_id\": 1, \"rel_linked_org_id\": 1 } }"
+  "apiV1.organizationRelationships.deleteOrganizationRelationship":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.organizationRelationships.getOrganizationRelationship":
+    call: "{ path: { \"id\": 1 }, query: { \"org_id\": 1 } }"
+  "apiV1.organizationRelationships.updateOrganizationRelationship":
+    call: "{ path: { \"id\": 1 }, body: {  } }"
+  "apiV1.permissionSets.getPermissionSets":
+    call: "{ query: { \"app\": \"sales\" } }"
+  "apiV1.permissionSets.getPermissionSet":
+    call: "{ path: { \"id\": \"x\" } }"
+  "apiV1.permissionSets.getPermissionSetAssignments":
+    call: "{ path: { \"id\": \"x\" }, query: { \"start\": 1, \"limit\": 1 } }"
+  "apiV1.persons.getPersonChangelog":
+    call: "{ path: { \"id\": 1 }, query: { \"cursor\": \"x\", \"limit\": 1 } }"
+  "apiV1.persons.getPersonFiles":
+    call: "{ path: { \"id\": 1 }, query: { \"start\": 1, \"limit\": 1, \"sort\": \"x\" } }"
+  "apiV1.persons.getPersonUpdates":
+    call: "{ path: { \"id\": 1 }, query: { \"start\": 1, \"limit\": 1, \"all_changes\": \"x\", \"items\": [\"x\"] } }"
+  "apiV1.persons.getPersonFollowers":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.persons.addPersonFollower":
+    call: "{ path: { \"id\": 1 }, body: { \"user_id\": 1 } }"
+  "apiV1.persons.deletePersonFollower":
+    call: "{ path: { \"id\": 1, \"follower_id\": 1 } }"
+  "apiV1.persons.getPersonMailMessages":
+    call: "{ path: { \"id\": 1 }, query: { \"start\": 1, \"limit\": 1, \"include_body\": 0 } }"
+  "apiV1.persons.mergePersons":
+    call: "{ path: { \"id\": 1 }, body: { \"merge_with_id\": 1 } }"
+  "apiV1.persons.getPersonUsers":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.persons.deletePersonPicture":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.persons.addPersonPicture":
+    call: "{ path: { \"id\": 1 }, body: { \"file\": new Blob(['synthetic file bytes'], { type: 'application/octet-stream' }) } }"
+  "apiV1.persons.getPersonProducts":
+    call: "{ path: { \"id\": 1 }, query: { \"start\": 1, \"limit\": 1 } }"
+  "apiV1.personFields.getPersonFields":
+    call: "{ query: { \"start\": 1, \"limit\": 1 } }"
+  "apiV1.personFields.addPersonField":
+    call: "{ body: { \"name\": \"x\", \"field_type\": \"address\" } }"
+  "apiV1.personFields.deletePersonFields":
+    call: "{ query: { \"ids\": [1] } }"
+  "apiV1.personFields.getPersonField":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.personFields.deletePersonField":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.personFields.updatePersonField":
+    call: "{ path: { \"id\": 1 }, body: {  } }"
+  "apiV1.pipelines.getPipelineConversionStatistics":
+    call: "{ path: { \"id\": 1 }, query: { \"start_date\": \"2026-01-01\", \"end_date\": \"2026-01-01\", \"user_id\": 1 } }"
+  "apiV1.pipelines.getPipelineDeals":
+    call: "{ path: { \"id\": 1 }, query: { \"filter_id\": 1, \"user_id\": 1, \"everyone\": 0, \"stage_id\": 1, \"start\": 1, \"limit\": 1, \"get_summary\": 0, \"totals_convert_currency\": \"x\" } }"
+  "apiV1.pipelines.getPipelineMovementStatistics":
+    call: "{ path: { \"id\": 1 }, query: { \"start_date\": \"2026-01-01\", \"end_date\": \"2026-01-01\", \"user_id\": 1 } }"
+  "apiV1.products.getProductDeals":
+    call: "{ path: { \"id\": 1 }, query: { \"start\": 1, \"limit\": 1, \"status\": \"open\" } }"
+  "apiV1.products.getProductFiles":
+    call: "{ path: { \"id\": 1 }, query: { \"start\": 1, \"limit\": 1, \"sort\": \"x\" } }"
+  "apiV1.products.getProductFollowers":
+    call: "{ path: { \"id\": 1 }, query: { \"start\": 1, \"limit\": 1 } }"
+  "apiV1.products.addProductFollower":
+    call: "{ path: { \"id\": 1 }, body: { \"user_id\": 1 } }"
+  "apiV1.products.deleteProductFollower":
+    call: "{ path: { \"id\": 1, \"follower_id\": 1 } }"
+  "apiV1.products.getProductUsers":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.productFields.deleteProductFields":
+    call: "{ query: { \"ids\": [1] } }"
+  "apiV1.productFields.getProductFields":
+    call: "{ query: { \"start\": 1, \"limit\": 1 } }"
+  "apiV1.productFields.addProductField":
+    call: "{ body: { \"name\": \"x\", \"field_type\": \"varchar\" } }"
+  "apiV1.productFields.deleteProductField":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.productFields.getProductField":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.productFields.updateProductField":
+    call: "{ path: { \"id\": 1 }, body: {  } }"
+  "apiV1.projects.getProjects":
+    call: "{ query: { \"cursor\": \"x\", \"limit\": 1, \"filter_id\": 1, \"status\": \"x\", \"phase_id\": 1, \"include_archived\": false } }"
+  "apiV1.projects.addProject":
+    call: "{ body: { \"title\": \"x\" } }"
+  "apiV1.projects.getProject":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.projects.updateProject":
+    call: "{ path: { \"id\": 1 }, body: {  } }"
+  "apiV1.projects.deleteProject":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.projects.archiveProject":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.projects.getProjectPlan":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.projects.putProjectPlanActivity":
+    call: "{ path: { \"id\": 1, \"activityId\": 1 }, body: {  } }"
+  "apiV1.projects.putProjectPlanTask":
+    call: "{ path: { \"id\": 1, \"taskId\": 1 }, body: {  } }"
+  "apiV1.projects.getProjectGroups":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.projects.getProjectTasks":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.projects.getProjectActivities":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.projectBoards.getProjectsBoards":
+    call: "{  }"
+  "apiV1.projectBoards.getProjectsBoard":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.projectPhases.getProjectsPhases":
+    call: "{ query: { \"board_id\": 1 } }"
+  "apiV1.projectPhases.getProjectsPhase":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.projectTemplates.getProjectTemplates":
+    call: "{ query: { \"cursor\": \"x\", \"limit\": 1 } }"
+  "apiV1.projectTemplates.getProjectTemplate":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.recents.getRecents":
+    call: "{ query: { \"since_timestamp\": \"x\", \"items\": \"activity\", \"start\": 1, \"limit\": 1 } }"
+  "apiV1.roles.getRoles":
+    call: "{ query: { \"start\": 1, \"limit\": 1 } }"
+  "apiV1.roles.addRole":
+    call: "{ body: { \"name\": \"x\" } }"
+  "apiV1.roles.deleteRole":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.roles.getRole":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.roles.updateRole":
+    call: "{ path: { \"id\": 1 }, body: {  } }"
+  "apiV1.roles.deleteRoleAssignment":
+    call: "{ path: { \"id\": 1 }, body: { \"user_id\": 1 } }"
+  "apiV1.roles.getRoleAssignments":
+    call: "{ path: { \"id\": 1 }, query: { \"start\": 1, \"limit\": 1 } }"
+  "apiV1.roles.addRoleAssignment":
+    call: "{ path: { \"id\": 1 }, body: { \"user_id\": 1 } }"
+  "apiV1.roles.getRoleSettings":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.roles.addOrUpdateRoleSetting":
+    call: "{ path: { \"id\": 1 }, body: { \"setting_key\": \"deal_default_visibility\", \"value\": 1 } }"
+  "apiV1.roles.getRolePipelines":
+    call: "{ path: { \"id\": 1 }, query: { \"visible\": false } }"
+  "apiV1.roles.updateRolePipelines":
+    call: "{ path: { \"id\": 1 }, body: { \"visible_pipeline_ids\": {  } } }"
+  "apiV1.stages.getStageDeals":
+    call: "{ path: { \"id\": 1 }, query: { \"filter_id\": 1, \"user_id\": 1, \"everyone\": 0, \"start\": 1, \"limit\": 1 } }"
+  "apiV1.tasks.getTasks":
+    call: "{ query: { \"cursor\": \"x\", \"limit\": 1, \"assignee_id\": 1, \"project_id\": 1, \"parent_task_id\": 1, \"done\": 0 } }"
+  "apiV1.tasks.addTask":
+    call: "{ body: { \"title\": \"x\", \"project_id\": 1 } }"
+  "apiV1.tasks.getTask":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.tasks.updateTask":
+    call: "{ path: { \"id\": 1 }, body: {  } }"
+  "apiV1.tasks.deleteTask":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.users.getUsers":
+    call: "{  }"
+  "apiV1.users.addUser":
+    call: "{ body: { \"email\": \"x\" } }"
+  "apiV1.users.findUsersByName":
+    call: "{ query: { \"term\": \"x\", \"search_by_email\": 0 } }"
+  "apiV1.users.getCurrentUser":
+    call: "{  }"
+  "apiV1.users.getUser":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.users.updateUser":
+    call: "{ path: { \"id\": 1 }, body: { \"active_flag\": false } }"
+  "apiV1.users.getUserFollowers":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.users.getUserPermissions":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.users.getUserRoleAssignments":
+    call: "{ path: { \"id\": 1 }, query: { \"start\": 1, \"limit\": 1 } }"
+  "apiV1.users.getUserRoleSettings":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV1.userConnections.getUserConnections":
+    call: "{  }"
+  "apiV1.userSettings.getUserSettings":
+    call: "{  }"
+  "apiV2.activityFields.getActivityFields":
+    call: "{ query: { \"include_fields\": [\"ui_visibility\"], \"limit\": 1, \"cursor\": \"x\" } }"
+  "apiV2.activityFields.getActivityField":
+    call: "{ path: { \"field_code\": \"x\" }, query: { \"include_fields\": [\"ui_visibility\"] } }"
+  "apiV2.deals.getArchivedDeals":
+    call: "{ query: { \"filter_id\": 1, \"ids\": [1], \"owner_id\": 1, \"person_id\": 1, \"org_id\": 1, \"pipeline_id\": 1, \"stage_id\": 1, \"status\": [\"open\"], \"updated_since\": \"x\", \"updated_until\": \"x\", \"sort_by\": \"id\", \"sort_direction\": \"asc\", \"include_fields\": [\"next_activity_id\"], \"custom_fields\": [\"x\"], \"limit\": 1, \"cursor\": \"x\" } }"
+  "apiV2.deals.getDealFollowers":
+    call: "{ path: { \"id\": 1 }, query: { \"limit\": 1, \"cursor\": \"x\" } }"
+  "apiV2.deals.addDealFollower":
+    call: "{ path: { \"id\": 1 }, body: { \"user_id\": 1 } }"
+  "apiV2.deals.getDealFollowersChangelog":
+    call: "{ path: { \"id\": 1 }, query: { \"limit\": 1, \"cursor\": \"x\" } }"
+  "apiV2.deals.deleteDealFollower":
+    call: "{ path: { \"id\": 1, \"follower_id\": 1 } }"
+  "apiV2.dealProducts.getDealsProducts":
+    call: "{ query: { \"deal_ids\": [1], \"cursor\": \"x\", \"limit\": 1, \"sort_by\": \"id\", \"sort_direction\": \"asc\" } }"
+  "apiV2.deals.searchDeals":
+    call: "{ query: { \"term\": \"x\", \"fields\": [\"custom_fields\"], \"exact_match\": false, \"person_id\": 1, \"organization_id\": 1, \"status\": \"open\", \"include_fields\": [\"deal.cc_email\"], \"limit\": 1, \"cursor\": \"x\" } }"
+  "apiV2.dealProducts.getDealProducts":
+    call: "{ path: { \"id\": 1 }, query: { \"cursor\": \"x\", \"limit\": 1, \"sort_by\": \"id\", \"sort_direction\": \"asc\" } }"
+  "apiV2.dealProducts.addDealProduct":
+    call: "{ path: { \"id\": 1 }, body: { \"product_id\": 1, \"item_price\": 1, \"quantity\": 1 } }"
+  "apiV2.dealProducts.deleteManyDealProducts":
+    call: "{ path: { \"id\": 1 }, query: { \"ids\": [1] } }"
+  "apiV2.dealProducts.updateDealProduct":
+    call: "{ path: { \"id\": 1, \"product_attachment_id\": 1 }, body: {  } }"
+  "apiV2.dealProducts.deleteDealProduct":
+    call: "{ path: { \"id\": 1, \"product_attachment_id\": 1 } }"
+  "apiV2.dealProducts.addManyDealProducts":
+    call: "{ path: { \"id\": 1 }, body: { \"data\": [{ \"product_id\": 1, \"item_price\": 1, \"quantity\": 1 }] } }"
+  "apiV2.deals.getAdditionalDiscounts":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV2.deals.postAdditionalDiscount":
+    call: "{ path: { \"id\": 1 }, body: { \"description\": \"x\", \"amount\": 1, \"type\": \"percentage\" } }"
+  "apiV2.deals.updateAdditionalDiscount":
+    call: "{ path: { \"id\": 1, \"discount_id\": \"x\" }, body: {  } }"
+  "apiV2.deals.deleteAdditionalDiscount":
+    call: "{ path: { \"id\": 1, \"discount_id\": \"x\" } }"
+  "apiV2.dealInstallments.getInstallments":
+    call: "{ query: { \"deal_ids\": [1], \"cursor\": \"x\", \"limit\": 1, \"sort_by\": \"id\", \"sort_direction\": \"asc\" } }"
+  "apiV2.dealInstallments.postInstallment":
+    call: "{ path: { \"id\": 1 }, body: { \"description\": \"x\", \"amount\": 1, \"billing_date\": \"x\" } }"
+  "apiV2.dealInstallments.updateInstallment":
+    call: "{ path: { \"id\": 1, \"installment_id\": 1 }, body: {  } }"
+  "apiV2.dealInstallments.deleteInstallment":
+    call: "{ path: { \"id\": 1, \"installment_id\": 1 } }"
+  "apiV2.deals.convertDealToLead":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV2.dealFields.getDealFields":
+    call: "{ query: { \"include_fields\": [\"ui_visibility\"], \"limit\": 1, \"cursor\": \"x\" } }"
+  "apiV2.dealFields.addDealField":
+    call: "{ body: { \"field_name\": \"x\", \"field_type\": \"varchar\" } }"
+  "apiV2.dealFields.getDealField":
+    call: "{ path: { \"field_code\": \"x\" }, query: { \"include_fields\": [\"ui_visibility\"] } }"
+  "apiV2.dealFields.updateDealField":
+    call: "{ path: { \"field_code\": \"x\" }, body: { \"field_name\": \"x\" } }"
+  "apiV2.dealFields.deleteDealField":
+    call: "{ path: { \"field_code\": \"x\" } }"
+  "apiV2.dealFields.addDealFieldOptions":
+    call: "{ path: { \"field_code\": \"x\" }, body: [{ \"label\": \"x\" }] }"
+  "apiV2.dealFields.deleteDealFieldOptions":
+    call: "{ path: { \"field_code\": \"x\" }, body: [{ \"id\": 1 }] }"
+  "apiV2.dealFields.updateDealFieldOptions":
+    call: "{ path: { \"field_code\": \"x\" }, body: [{ \"id\": 1, \"label\": \"x\" }] }"
+  "apiV2.deals.getDealConversionStatus":
+    call: "{ path: { \"id\": 1, \"conversion_id\": \"x\" } }"
+  "apiV2.persons.getPersonFollowers":
+    call: "{ path: { \"id\": 1 }, query: { \"limit\": 1, \"cursor\": \"x\" } }"
+  "apiV2.persons.addPersonFollower":
+    call: "{ path: { \"id\": 1 }, body: { \"user_id\": 1 } }"
+  "apiV2.persons.getPersonFollowersChangelog":
+    call: "{ path: { \"id\": 1 }, query: { \"limit\": 1, \"cursor\": \"x\" } }"
+  "apiV2.persons.deletePersonFollower":
+    call: "{ path: { \"id\": 1, \"follower_id\": 1 } }"
+  "apiV2.persons.getPersonPicture":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV2.personFields.getPersonFields":
+    call: "{ query: { \"include_fields\": [\"ui_visibility\"], \"limit\": 1, \"cursor\": \"x\" } }"
+  "apiV2.personFields.addPersonField":
+    call: "{ body: { \"field_name\": \"x\", \"field_type\": \"varchar\" } }"
+  "apiV2.personFields.getPersonField":
+    call: "{ path: { \"field_code\": \"x\" }, query: { \"include_fields\": [\"ui_visibility\"] } }"
+  "apiV2.personFields.updatePersonField":
+    call: "{ path: { \"field_code\": \"x\" }, body: { \"field_name\": \"x\" } }"
+  "apiV2.personFields.deletePersonField":
+    call: "{ path: { \"field_code\": \"x\" } }"
+  "apiV2.personFields.addPersonFieldOptions":
+    call: "{ path: { \"field_code\": \"x\" }, body: [{ \"label\": \"x\" }] }"
+  "apiV2.personFields.deletePersonFieldOptions":
+    call: "{ path: { \"field_code\": \"x\" }, body: [{ \"id\": 1 }] }"
+  "apiV2.personFields.updatePersonFieldOptions":
+    call: "{ path: { \"field_code\": \"x\" }, body: [{ \"id\": 1, \"label\": \"x\" }] }"
+  "apiV2.organizations.getOrganizationFollowers":
+    call: "{ path: { \"id\": 1 }, query: { \"limit\": 1, \"cursor\": \"x\" } }"
+  "apiV2.organizations.addOrganizationFollower":
+    call: "{ path: { \"id\": 1 }, body: { \"user_id\": 1 } }"
+  "apiV2.organizations.getOrganizationFollowersChangelog":
+    call: "{ path: { \"id\": 1 }, query: { \"limit\": 1, \"cursor\": \"x\" } }"
+  "apiV2.organizations.deleteOrganizationFollower":
+    call: "{ path: { \"id\": 1, \"follower_id\": 1 } }"
+  "apiV2.organizationFields.getOrganizationFields":
+    call: "{ query: { \"include_fields\": [\"ui_visibility\"], \"limit\": 1, \"cursor\": \"x\" } }"
+  "apiV2.organizationFields.addOrganizationField":
+    call: "{ body: { \"field_name\": \"x\", \"field_type\": \"varchar\" } }"
+  "apiV2.organizationFields.getOrganizationField":
+    call: "{ path: { \"field_code\": \"x\" }, query: { \"include_fields\": [\"ui_visibility\"] } }"
+  "apiV2.organizationFields.updateOrganizationField":
+    call: "{ path: { \"field_code\": \"x\" }, body: { \"field_name\": \"x\" } }"
+  "apiV2.organizationFields.deleteOrganizationField":
+    call: "{ path: { \"field_code\": \"x\" } }"
+  "apiV2.organizationFields.addOrganizationFieldOptions":
+    call: "{ path: { \"field_code\": \"x\" }, body: [{ \"label\": \"x\" }] }"
+  "apiV2.organizationFields.deleteOrganizationFieldOptions":
+    call: "{ path: { \"field_code\": \"x\" }, body: [{ \"id\": 1 }] }"
+  "apiV2.organizationFields.updateOrganizationFieldOptions":
+    call: "{ path: { \"field_code\": \"x\" }, body: [{ \"id\": 1, \"label\": \"x\" }] }"
+  "apiV2.productFields.getProductFields":
+    call: "{ query: { \"include_fields\": [\"ui_visibility\"], \"limit\": 1, \"cursor\": \"x\" } }"
+  "apiV2.productFields.addProductField":
+    call: "{ body: { \"field_name\": \"x\", \"field_type\": \"varchar\" } }"
+  "apiV2.productFields.getProductField":
+    call: "{ path: { \"field_code\": \"x\" }, query: { \"include_fields\": [\"ui_visibility\"] } }"
+  "apiV2.productFields.updateProductField":
+    call: "{ path: { \"field_code\": \"x\" }, body: { \"field_name\": \"x\" } }"
+  "apiV2.productFields.deleteProductField":
+    call: "{ path: { \"field_code\": \"x\" } }"
+  "apiV2.productFields.addProductFieldOptions":
+    call: "{ path: { \"field_code\": \"x\" }, body: [{ \"label\": \"x\" }] }"
+  "apiV2.productFields.deleteProductFieldOptions":
+    call: "{ path: { \"field_code\": \"x\" }, body: [{ \"id\": 1 }] }"
+  "apiV2.productFields.updateProductFieldOptions":
+    call: "{ path: { \"field_code\": \"x\" }, body: [{ \"id\": 1, \"label\": \"x\" }] }"
+  "apiV2.leads.searchLeads":
+    call: "{ query: { \"term\": \"x\", \"fields\": [\"custom_fields\"], \"exact_match\": false, \"person_id\": 1, \"organization_id\": 1, \"include_fields\": [\"lead.was_seen\"], \"limit\": 1, \"cursor\": \"x\" } }"
+  "apiV2.leads.convertLeadToDeal":
+    call: "{ path: { \"id\": \"x\" }, body: {  } }"
+  "apiV2.leads.getLeadConversionStatus":
+    call: "{ path: { \"id\": \"x\", \"conversion_id\": \"x\" } }"
+  "apiV2.organizations.searchOrganization":
+    call: "{ query: { \"term\": \"x\", \"fields\": [\"address\"], \"exact_match\": false, \"limit\": 1, \"cursor\": \"x\" } }"
+  "apiV2.persons.searchPersons":
+    call: "{ query: { \"term\": \"x\", \"fields\": [\"custom_fields\"], \"exact_match\": false, \"organization_id\": 1, \"include_fields\": [\"person.picture\"], \"limit\": 1, \"cursor\": \"x\" } }"
+  "apiV2.itemSearch.searchItem":
+    call: "{ query: { \"term\": \"x\", \"item_types\": [\"deal\"], \"fields\": [\"address\"], \"search_for_related_items\": false, \"exact_match\": false, \"include_fields\": [\"deal.cc_email\"], \"limit\": 1, \"cursor\": \"x\" } }"
+  "apiV2.itemSearch.searchItemByField":
+    call: "{ query: { \"term\": \"x\", \"entity_type\": \"deal\", \"match\": \"exact\", \"field\": \"x\", \"limit\": 1, \"cursor\": \"x\" } }"
+  "apiV2.stages.getStages":
+    call: "{ query: { \"pipeline_id\": 1, \"sort_by\": \"id\", \"sort_direction\": \"asc\", \"limit\": 1, \"cursor\": \"x\" } }"
+  "apiV2.stages.addStage":
+    call: "{ body: { \"name\": \"x\", \"pipeline_id\": 1 } }"
+  "apiV2.stages.deleteStage":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV2.stages.getStage":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV2.stages.updateStage":
+    call: "{ path: { \"id\": 1 }, body: {  } }"
+  "apiV2.pipelines.getPipelines":
+    call: "{ query: { \"sort_by\": \"id\", \"sort_direction\": \"asc\", \"limit\": 1, \"cursor\": \"x\" } }"
+  "apiV2.pipelines.addPipeline":
+    call: "{ body: { \"name\": \"x\" } }"
+  "apiV2.pipelines.deletePipeline":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV2.pipelines.getPipeline":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV2.pipelines.updatePipeline":
+    call: "{ path: { \"id\": 1 }, body: {  } }"
+  "apiV2.projectFields.getProjectFields":
+    call: "{ query: { \"limit\": 1, \"cursor\": \"x\" } }"
+  "apiV2.projectFields.addProjectField":
+    call: "{ body: { \"field_name\": \"x\", \"field_type\": \"varchar\" } }"
+  "apiV2.projectFields.getProjectField":
+    call: "{ path: { \"field_code\": \"x\" } }"
+  "apiV2.projectFields.updateProjectField":
+    call: "{ path: { \"field_code\": \"x\" }, body: { \"field_name\": \"x\" } }"
+  "apiV2.projectFields.deleteProjectField":
+    call: "{ path: { \"field_code\": \"x\" } }"
+  "apiV2.projectFields.addProjectFieldOptions":
+    call: "{ path: { \"field_code\": \"x\" }, body: [{ \"label\": \"x\" }] }"
+  "apiV2.projectFields.deleteProjectFieldOptions":
+    call: "{ path: { \"field_code\": \"x\" }, body: [{ \"id\": 1 }] }"
+  "apiV2.projectFields.updateProjectFieldOptions":
+    call: "{ path: { \"field_code\": \"x\" }, body: [{ \"id\": 1, \"label\": \"x\" }] }"
+  "apiV2.projects.getProjects":
+    call: "{ query: { \"filter_id\": 1, \"status\": \"x\", \"phase_id\": 1, \"deal_id\": 1, \"person_id\": 1, \"org_id\": 1, \"limit\": 1, \"cursor\": \"x\" } }"
+  "apiV2.projects.addProject":
+    call: "{ body: { \"title\": \"x\" } }"
+  "apiV2.projects.getArchivedProjects":
+    call: "{ query: { \"filter_id\": 1, \"status\": \"x\", \"phase_id\": 1, \"limit\": 1, \"cursor\": \"x\" } }"
+  "apiV2.projects.getProject":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV2.projects.updateProject":
+    call: "{ path: { \"id\": 1 }, body: {  } }"
+  "apiV2.projects.deleteProject":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV2.projectTemplates.getProjectTemplates":
+    call: "{ query: { \"cursor\": \"x\", \"limit\": 1 } }"
+  "apiV2.projectTemplates.getProjectTemplate":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV2.projects.searchProjects":
+    call: "{ query: { \"term\": \"x\", \"fields\": [\"custom_fields\"], \"exact_match\": false, \"person_id\": 1, \"organization_id\": 1, \"limit\": 1, \"cursor\": \"x\" } }"
+  "apiV2.projects.archiveProject":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV2.projects.getProjectUsers":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV2.projects.getProjectChangelog":
+    call: "{ path: { \"id\": 1 }, query: { \"limit\": 1, \"cursor\": \"x\" } }"
+  "apiV2.projectBoards.getProjectsBoards":
+    call: "{  }"
+  "apiV2.projectBoards.addProjectBoard":
+    call: "{ body: { \"name\": \"x\" } }"
+  "apiV2.projectBoards.getProjectsBoard":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV2.projectBoards.updateProjectBoard":
+    call: "{ path: { \"id\": 1 }, body: {  } }"
+  "apiV2.projectBoards.deleteProjectBoard":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV2.projectPhases.getProjectsPhases":
+    call: "{ query: { \"board_id\": 1 } }"
+  "apiV2.projectPhases.addProjectPhase":
+    call: "{ body: { \"name\": \"x\", \"board_id\": 1 } }"
+  "apiV2.projectPhases.getProjectsPhase":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV2.projectPhases.updateProjectPhase":
+    call: "{ path: { \"id\": 1 }, body: {  } }"
+  "apiV2.projectPhases.deleteProjectPhase":
+    call: "{ path: { \"id\": 1 } }"
+  "apiV2.users.getUserFollowers":
+    call: "{ path: { \"id\": 1 }, query: { \"limit\": 1, \"cursor\": \"x\" } }"

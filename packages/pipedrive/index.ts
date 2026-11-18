@@ -22,6 +22,12 @@ import {
 	Products,
 	Tasks,
 } from './endpoints';
+import type { pipedriveCatalogEndpointFunctions } from './endpoints/catalog-registry';
+import {
+	pipedriveCatalogEndpointMeta,
+	pipedriveCatalogEndpointsNested,
+} from './endpoints/catalog-registry';
+import { PipedriveCatalogEndpointSchemas } from './endpoints/catalog-schemas';
 import type {
 	PipedriveEndpointInputs,
 	PipedriveEndpointOutputs,
@@ -103,7 +109,7 @@ export type PipedriveEndpoints = {
 	productFollowerCreate: PipedriveEndpoint<'productFollowerCreate'>;
 	productFollowerChangelog: PipedriveEndpoint<'productFollowerChangelog'>;
 	productFollowerDelete: PipedriveEndpoint<'productFollowerDelete'>;
-};
+} & typeof pipedriveCatalogEndpointFunctions;
 
 const pipedriveEndpointsNested = {
 	deals: {
@@ -168,6 +174,7 @@ const pipedriveEndpointsNested = {
 			delete: withOAuthRetry(Products.followers.delete),
 		},
 	},
+	...pipedriveCatalogEndpointsNested,
 } as const;
 
 export const pipedriveEndpointSchemas = {
@@ -347,6 +354,7 @@ export const pipedriveEndpointSchemas = {
 		input: PipedriveEndpointInputSchemas.productFollowerDelete,
 		output: PipedriveEndpointOutputSchemas.productFollowerDelete,
 	},
+	...PipedriveCatalogEndpointSchemas,
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof pipedriveEndpointsNested
 >;
@@ -508,6 +516,7 @@ const pipedriveEndpointMeta = {
 		riskLevel: 'destructive',
 		description: 'Remove a product follower',
 	},
+	...pipedriveCatalogEndpointMeta,
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof pipedriveEndpointsNested
 >;
@@ -520,11 +529,34 @@ export const pipedriveAuthConfig = {
 const PIPEDRIVE_OAUTH_AUTH_URL = 'https://oauth.pipedrive.com/oauth/authorize';
 const PIPEDRIVE_OAUTH_TOKEN_URL = 'https://oauth.pipedrive.com/oauth/token';
 const PIPEDRIVE_OAUTH_SCOPES = [
-	'deals:full',
-	'contacts:full',
 	'activities:full',
-	'projects:full',
+	'activities:read',
+	'admin',
+	'base',
+	'contact-fields:full',
+	'contacts:full',
+	'contacts:read',
+	'deal-fields:full',
+	'deals:full',
+	'deals:read',
+	'goals:full',
+	'goals:read',
+	'leads:full',
+	'leads:read',
+	'mail:full',
+	'mail:read',
+	'messengers-integration',
+	'phone-integration',
+	'product-fields:full',
 	'products:full',
+	'products:read',
+	'project-fields:full',
+	'projects:full',
+	'projects:read',
+	'recents:read',
+	'search:read',
+	'users:read',
+	'video-calls',
 ] as const;
 
 const defaultAuthType: AuthTypes = 'api_key';

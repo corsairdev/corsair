@@ -8,6 +8,12 @@ import {
 	Products,
 	Tasks,
 } from './endpoints';
+import { pipedriveCatalogEndpointFunctions } from './endpoints/catalog-registry';
+import { PipedriveCatalog } from './endpoints/catalog-schemas';
+import {
+	PipedriveCatalogOperationKeys,
+	PipedriveCatalogTestCases,
+} from './endpoints/catalog-test-cases';
 import type { PipedriveContext } from './index';
 
 jest.mock('corsair/core', () => {
@@ -16,10 +22,15 @@ jest.mock('corsair/core', () => {
 });
 jest.mock('./client', () => {
 	const actual = jest.requireActual('./client');
-	return { ...actual, makePipedriveRequest: jest.fn() };
+	return {
+		...actual,
+		makePipedriveRequest: jest.fn(),
+		makePipedriveBinaryRequest: jest.fn(),
+	};
 });
 
 const mockedRequest = jest.mocked(client.makePipedriveRequest);
+const mockedBinaryRequest = jest.mocked(client.makePipedriveBinaryRequest);
 const mockedLog = jest.mocked(logEventFromContext);
 type EndpointContext = Parameters<typeof Deals.list>[0];
 
@@ -117,6 +128,7 @@ const productVariation = {
 
 beforeEach(() => {
 	mockedRequest.mockReset();
+	mockedBinaryRequest.mockReset();
 	mockedLog.mockReset();
 });
 
@@ -1087,4 +1099,102 @@ describe('Pipedrive product endpoints', () => {
 			'Confidential product title',
 		);
 	});
+});
+
+// `unknown` is necessary because OpenAPI-generated test cases are checked dynamically by route key.
+function catalogRecord(value: unknown): Record<string, unknown> {
+	if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
+		return Object.fromEntries(Object.entries(value));
+	}
+	return {};
+}
+
+describe('Pipedrive official OpenAPI catalog routes', () => {
+	it.each(PipedriveCatalogOperationKeys)(
+		'%s sends the documented version, method, path, query, and body',
+		async (key) => {
+			const route = PipedriveCatalog[key];
+			const testCase = PipedriveCatalogTestCases[key];
+			const endpoint = pipedriveCatalogEndpointFunctions[key];
+			if (route.isBinary) {
+				mockedBinaryRequest.mockResolvedValueOnce({
+					content_type: 'application/octet-stream',
+					base64: '',
+					byte_length: 0,
+				});
+			} else {
+				mockedRequest.mockResolvedValueOnce(testCase.response);
+			}
+			const result = await Reflect.apply(endpoint, undefined, [
+				ctx,
+				testCase.input,
+			]);
+			expect(result).toEqual(route.output.parse(testCase.response));
+			if (route.isBinary) {
+				expect(mockedBinaryRequest).toHaveBeenCalledWith(
+					testCase.expected.path,
+					'test-api-token',
+					'api_key',
+					expect.objectContaining({
+						method: testCase.expected.method,
+						query: testCase.expected.query,
+						apiVersion: testCase.expected.apiVersion,
+					}),
+				);
+			} else {
+				expect(mockedRequest).toHaveBeenCalledWith(
+					testCase.expected.path,
+					'test-api-token',
+					'api_key',
+					expect.objectContaining({
+						method: testCase.expected.method,
+						query: testCase.expected.query,
+						body:
+							testCase.expected.requestContentType === 'multipart/form-data'
+								? expect.any(FormData)
+								: testCase.expected.body,
+						headers: {},
+						apiVersion: testCase.expected.apiVersion,
+						contentType: testCase.expected.requestContentType || undefined,
+					}),
+				);
+				if (testCase.expected.requestContentType === 'multipart/form-data') {
+					const options = mockedRequest.mock.calls.at(-1)?.[3];
+					const submittedBody = options?.body;
+					const body = catalogRecord(catalogRecord(testCase.input).body);
+					if (submittedBody instanceof FormData) {
+						for (const field of Object.keys(body)) {
+							expect(submittedBody.has(field)).toBe(true);
+						}
+					} else {
+						throw new Error('Expected Pipedrive multipart request body');
+					}
+				}
+			}
+			expect(JSON.stringify(mockedLog.mock.calls)).not.toContain(
+				'synthetic file bytes',
+			);
+		},
+	);
+
+	it.each(PipedriveCatalogOperationKeys)(
+		'%s rejects undocumented top-level inputs before making a request',
+		async (key) => {
+			const route = PipedriveCatalog[key];
+			const testCase = PipedriveCatalogTestCases[key];
+			const invalidInput = {
+				...testCase.input,
+				undocumented_callback: 'not allowed',
+			};
+			expect(route.input.safeParse(invalidInput).success).toBe(false);
+			await expect(
+				Reflect.apply(pipedriveCatalogEndpointFunctions[key], undefined, [
+					ctx,
+					invalidInput,
+				]),
+			).rejects.toThrow();
+			expect(mockedRequest).not.toHaveBeenCalled();
+			expect(mockedBinaryRequest).not.toHaveBeenCalled();
+		},
+	);
 });

@@ -1,16 +1,16 @@
 ---
 title: "Pipedrive plugin"
 sidebarTitle: "Overview"
-description: "Manage selected Pipedrive v2 deals, contacts, activities, tasks, and product catalog operations with validated requests, responses, and cursor pagination."
+description: "Access the complete documented Pipedrive v1 and v2 business API with strict schemas, OAuth, and pagination."
 ---
 
 Use **Pipedrive** through Corsair: one client, typed API calls.
 
-This deliberately partial implementation covers selected list, get, create, update, delete, search, product-variation, image, and follower operations for deals, persons, organizations, activities, tasks, and products. Configure an API token or OAuth 2.0 credentials before making calls. API tokens use the x-api-token header. OAuth access tokens refresh automatically using Pipedrive's documented token endpoint; the app must have the requested resource :full scopes configured in Pipedrive. Product image upload/update accept a runtime Blob or File as data and send the documented multipart field. Pipedrive marks the v2 Tasks routes as beta. Contact-sync-only person fields may be rejected with 403 when contact sync is disabled.
+Exposes all 365 business operations in the published Pipedrive v1 and v2 OpenAPI contracts; excludes only the three webhook operations (not requested) and the three OAuth lifecycle routes (handled by Corsair). Use apiV1 and apiV2 namespaces for version-specific operations. Authenticate with an API token or OAuth 2.0; OAuth requests the complete set of documented scopes for full coverage, which is intentionally broad. Multipart uploads use documented Blob/File fields. File downloads return content_type, base64, and byte_length and are limited to 20 MiB per response.
 
 **What you get:**
 
-- 44 typed API operations
+- 365 typed API operations
 
 ## Setup
 
