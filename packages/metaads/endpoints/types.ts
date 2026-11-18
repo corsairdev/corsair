@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 const id = z.string().min(1);
+const numericId = z.union([id, z.number().int().positive()]);
 const fields = z.string().min(1).optional();
 const cursor = z.string().min(1).optional();
 const pageSize = z.number().int().positive().optional();
@@ -13,6 +14,64 @@ const listOptions = {
 const cursorOptions = { limit: pageSize, after: cursor, before: cursor };
 const status = z.enum(['ACTIVE', 'PAUSED', 'DELETED', 'ARCHIVED']);
 const budget = z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER);
+const suggestionObjective = z.enum([
+	'APP_INSTALLS',
+	'BRAND_AWARENESS',
+	'CONVERSIONS',
+	'EVENT_RESPONSES',
+	'LEAD_GENERATION',
+	'LINK_CLICKS',
+	'LOCAL_AWARENESS',
+	'MESSAGES',
+	'OFFER_CLAIMS',
+	'OUTCOME_APP_PROMOTION',
+	'OUTCOME_AWARENESS',
+	'OUTCOME_ENGAGEMENT',
+	'OUTCOME_LEADS',
+	'OUTCOME_SALES',
+	'OUTCOME_TRAFFIC',
+	'PAGE_LIKES',
+	'POST_ENGAGEMENT',
+	'PRODUCT_CATALOG_SALES',
+	'REACH',
+	'STORE_VISITS',
+	'VIDEO_VIEWS',
+]);
+const suggestionOptimizationGoal = z.enum([
+	'NONE',
+	'APP_INSTALLS',
+	'AD_RECALL_LIFT',
+	'ENGAGED_USERS',
+	'EVENT_RESPONSES',
+	'IMPRESSIONS',
+	'LEAD_GENERATION',
+	'QUALITY_LEAD',
+	'LINK_CLICKS',
+	'OFFSITE_CONVERSIONS',
+	'PAGE_LIKES',
+	'POST_ENGAGEMENT',
+	'QUALITY_CALL',
+	'REACH',
+	'LANDING_PAGE_VIEWS',
+	'VISIT_INSTAGRAM_PROFILE',
+	'ENGAGED_PAGE_VIEWS',
+	'VALUE',
+	'THRUPLAY',
+	'DERIVED_EVENTS',
+	'APP_INSTALLS_AND_OFFSITE_CONVERSIONS',
+	'CONVERSATIONS',
+	'IN_APP_VALUE',
+	'MESSAGING_PURCHASE_CONVERSION',
+	'MESSAGING_DEEP_CONVERSATION_AND_FOLLOW',
+	'SUBSCRIBERS',
+	'REMINDERS_SET',
+	'MEANINGFUL_CALL_ATTEMPT',
+	'PROFILE_VISIT',
+	'PROFILE_AND_PAGE_ENGAGEMENT',
+	'ADVERTISER_SILOED_VALUE',
+	'AUTOMATIC_OBJECTIVE',
+	'MESSAGING_APPOINTMENT_CONVERSION',
+]);
 
 // Meta objects have a large, versioned set of optional fields. `passthrough`
 // keeps documented forward-compatible response fields while validating IDs.
@@ -229,7 +288,257 @@ const accountGetOutput = AccountSchema;
 const accountUsersListInput = z
 	.object({ accountId: id, limit: pageSize, after: cursor, before: cursor })
 	.strict();
-const accountActivitiesListInput = z.object({ accountId: id }).strict();
+const accountActivitiesListInput = z
+	.object({ accountId: id, ...cursorOptions })
+	.strict();
+const accountAssignedUsersListInput = z
+	.object({ accountId: id, businessId: id, ...cursorOptions })
+	.strict();
+const accountAssignUserInput = z
+	.object({
+		accountId: id,
+		userId: id,
+		tasks: z
+			.array(z.enum(['MANAGE', 'ADVERTISE', 'ANALYZE', 'DRAFT', 'AA_ANALYZE']))
+			.optional(),
+	})
+	.strict();
+const accountRemoveUserInput = z.object({ accountId: id, userId: id }).strict();
+const accountControlsCreateInput = z
+	.object({
+		accountId: id,
+		audienceControls: z
+			.object({
+				ageMin: z.number().int().nonnegative(),
+				// Meta defines these as advanced-targeting JSON; its nested catalog is versioned and extensible.
+				geoLocations: z.record(z.string(), z.unknown()).optional(),
+				// `unknown` is needed for Meta's documented nested targeting exclusion structures.
+				excludedGeoLocations: z.record(z.string(), z.unknown()).optional(),
+				// `unknown` is needed for the provider-defined audience-control exclusion JSON.
+				exclusions: z.record(z.string(), z.unknown()).optional(),
+			})
+			.strict(),
+		placementControls: z
+			.object({
+				placementExclusions: z
+					.array(
+						z.enum([
+							'AUDIENCE_NETWORK_CLASSIC',
+							'AUDIENCE_NETWORK_REWARDED_VIDEO',
+							'AUDIENCE_NETWORK_INSTREAM_VIDEO',
+							'FACEBOOK_MARKETPLACE',
+							'FACEBOOK_RIGHT_HAND_COLUMN',
+						]),
+					)
+					.optional(),
+				campaignIdsToSetAp: z.array(id).optional(),
+			})
+			.strict()
+			.optional(),
+	})
+	.strict();
+const accountAgenciesListInput = z
+	.object({ accountId: id, ...cursorOptions })
+	.strict();
+const accountAgencyRemoveInput = z
+	.object({ accountId: id, businessId: id })
+	.strict();
+const accountSubscribedAppInput = z
+	.object({ accountId: id, appId: id.optional() })
+	.strict();
+const accountTrackingCreateInput = z
+	.object({
+		accountId: id,
+		// Meta documents tracking_specs only as a generic Object, with no nested field contract.
+		trackingSpecs: z.record(z.string(), z.unknown()),
+	})
+	.strict();
+const accountPixelCreateInput = z
+	.object({ accountId: id, name: z.string().min(1).optional() })
+	.strict();
+const accountPixelsListInput = z
+	.object({ accountId: id, ...cursorOptions })
+	.strict();
+const pixelFields = z.enum([
+	'id',
+	'automatic_matching_fields',
+	'can_proxy',
+	'code',
+	'config',
+	'creation_time',
+	'data_use_setting',
+	'description',
+	'duplicate_entries',
+	'enable_auto_assign_to_accounts',
+	'enable_automatic_matching',
+	'event_stats',
+	'event_time_max',
+	'event_time_min',
+	'first_party_cookie_status',
+	'has_1p_pixel_event',
+	'is_consolidated_container',
+	'is_created_by_business',
+	'is_crm',
+	'is_mta_use',
+	'is_restricted_use',
+	'is_unavailable',
+	'last_fired_time',
+	'last_upload_app',
+	'last_upload_app_changed_time',
+	'match_rate_approx',
+	'matched_entries',
+	'name',
+	'valid_entries',
+]);
+const pixelGetInput = z
+	.object({ pixelId: id, fields: z.array(pixelFields).min(1).optional() })
+	.strict();
+const pixelSchema = z
+	.object({
+		id,
+		automatic_matching_fields: z.array(z.string()).optional(),
+		can_proxy: z.boolean().optional(),
+		code: z.string().optional(),
+		config: z.string().optional(),
+		creation_time: z.string().optional(),
+		data_use_setting: z.string().optional(),
+		description: z.string().optional(),
+		duplicate_entries: z.number().int().optional(),
+		enable_auto_assign_to_accounts: z.boolean().optional(),
+		enable_automatic_matching: z.boolean().optional(),
+		event_stats: z.string().optional(),
+		event_time_max: z.number().int().optional(),
+		event_time_min: z.number().int().optional(),
+		first_party_cookie_status: z.string().optional(),
+		has_1p_pixel_event: z.boolean().optional(),
+		is_consolidated_container: z.boolean().optional(),
+		is_created_by_business: z.boolean().optional(),
+		is_crm: z.boolean().optional(),
+		is_mta_use: z.boolean().optional(),
+		is_restricted_use: z.boolean().optional(),
+		is_unavailable: z.boolean().optional(),
+		last_fired_time: z.string().optional(),
+		last_upload_app: z.string().optional(),
+		last_upload_app_changed_time: z.number().int().optional(),
+		match_rate_approx: z.number().int().optional(),
+		matched_entries: z.number().int().optional(),
+		name: z.string().optional(),
+		valid_entries: z.number().int().optional(),
+	})
+	.strict();
+const accountPixelsListSchema = z.object({
+	data: z.array(pixelSchema),
+	paging: MetaAdsListSchema.shape.paging.optional(),
+	summary: z
+		.object({ total_count: z.number().int().nonnegative().optional() })
+		.optional(),
+});
+const pixelUpdateInput = z
+	.object({
+		pixelId: id,
+		automaticMatchingFields: z
+			.array(
+				z.enum([
+					'em',
+					'fn',
+					'ln',
+					'ph',
+					'ge',
+					'zp',
+					'ct',
+					'st',
+					'country',
+					'db',
+					'external_id',
+				]),
+			)
+			.optional(),
+		dataUseSetting: z
+			.enum(['EMPTY', 'ADVERTISING_AND_ANALYTICS', 'ANALYTICS_ONLY'])
+			.optional(),
+		enableAutomaticMatching: z.boolean().optional(),
+		firstPartyCookieStatus: z
+			.enum([
+				'EMPTY',
+				'FIRST_PARTY_COOKIE_ENABLED',
+				'FIRST_PARTY_COOKIE_DISABLED',
+			])
+			.optional(),
+		name: z.string().min(1).optional(),
+		serverEventsBusinessIds: z.array(id).optional(),
+		serverEventsBusinessIdsAdd: z.array(id).optional(),
+		serverEventsBusinessIdsRemove: z.array(id).optional(),
+	})
+	.strict()
+	.refine((value) => Object.keys(value).some((key) => key !== 'pixelId'));
+const pixelUpdateOutput = z.object({ success: z.boolean() });
+const publisherBlockListCreateInput = z
+	.object({ accountId: id, name: z.string().min(1).optional() })
+	.strict();
+const accountPlacePageSetsCreateInput = z
+	.object({
+		accountId: id,
+		name: z.string().min(1),
+		parentPageId: id,
+		locationTypes: z.array(z.enum(['recent', 'home'])).optional(),
+	})
+	.strict();
+const customConversionCreateInput = z
+	.object({
+		accountId: id,
+		actionSourceType: z
+			.enum([
+				'app',
+				'chat',
+				'email',
+				'other',
+				'phone_call',
+				'physical_store',
+				'system_generated',
+				'website',
+				'business_messaging',
+			])
+			.optional(),
+		advancedRule: z.string().optional(),
+		customEventType: z
+			.enum([
+				'ADD_PAYMENT_INFO',
+				'ADD_TO_CART',
+				'ADD_TO_WISHLIST',
+				'COMPLETE_REGISTRATION',
+				'CONTENT_VIEW',
+				'INITIATED_CHECKOUT',
+				'LEAD',
+				'PURCHASE',
+				'SEARCH',
+				'CONTACT',
+				'CUSTOMIZE_PRODUCT',
+				'DONATE',
+				'FIND_LOCATION',
+				'SCHEDULE',
+				'START_TRIAL',
+				'SUBMIT_APPLICATION',
+				'SUBSCRIBE',
+				'LISTING_INTERACTION',
+				'FACEBOOK_SELECTED',
+				'OTHER',
+			])
+			.optional(),
+		defaultConversionValue: z.number().finite().optional(),
+		description: z.string().optional(),
+		eventSourceId: numericId.optional(),
+		name: z.string().min(1),
+		rule: z.string().optional(),
+	})
+	.strict();
+const CustomConversionCreateSchema = z.object({
+	id,
+	is_custom_event_type_predicted: z.string(),
+});
+const audienceTermsAcceptInput = z
+	.object({ accountId: id, termsId: id, businessId: id.optional() })
+	.strict();
+const CreatedIdSchema = z.object({ id });
 // Meta documents an evolving event_type catalog; event records retain only documented fields plus forward-compatible JSON.
 const AccountActivitySchema = z
 	.object({
@@ -251,6 +560,39 @@ export const AccountActivitiesListSchema = z.object({
 	data: z.array(AccountActivitySchema),
 	paging: MetaAdsListSchema.shape.paging.optional(),
 });
+const AccountAssignedUsersListSchema = z.object({
+	data: z.array(
+		z.object({
+			id,
+			permitted_tasks: z.array(z.string()).optional(),
+			tasks: z.array(z.string()),
+		}),
+	),
+	paging: MetaAdsListSchema.shape.paging.optional(),
+	summary: z
+		.object({ total_count: z.number().int().nonnegative().optional() })
+		.optional(),
+});
+const AccountAgencySchema = z.object({
+	id,
+	access_requested_time: z.string().optional(),
+	access_status: z.string().optional(),
+	access_updated_time: z.string().optional(),
+	permitted_tasks: z.array(z.string()).optional(),
+});
+const AccountAgenciesListSchema = z.object({
+	data: z.array(AccountAgencySchema),
+	paging: MetaAdsListSchema.shape.paging.optional(),
+});
+const AccountControlCreateSchema = z
+	.object({
+		id: z.string().optional(),
+		success: z.boolean().optional(),
+		error_code: z.string().optional(),
+		error_message: z.string().optional(),
+	})
+	.refine((value) => value.id !== undefined || value.success !== undefined);
+const AccountMutationSchema = z.object({ success: z.boolean() });
 const BroadTargetingCategoriesListSchema = z.object({
 	data: z.array(
 		z.object({
@@ -266,6 +608,118 @@ const BroadTargetingCategoriesListSchema = z.object({
 	paging: MetaAdsListSchema.shape.paging.optional(),
 });
 const videosDeleteInput = z.object({ accountId: id, videoId: id }).strict();
+
+const asyncSetFields = z.enum([
+	'id',
+	'owner_id',
+	'name',
+	'is_completed',
+	'total_count',
+	'initial_count',
+	'in_progress_count',
+	'success_count',
+	'error_count',
+	'canceled_count',
+	'notification_mode',
+]);
+const asyncRequestFields = z.enum(['id', 'scope_object_id', 'status']);
+const asyncRequestStatus = z.enum([
+	'INITIAL',
+	'IN_PROGRESS',
+	'SUCCESS',
+	'ERROR',
+	'CANCELED',
+	'PENDING_DEPENDENCY',
+	'CANCELED_DEPENDENCY',
+	'ERROR_DEPENDENCY',
+	'ERROR_CONFLICTS',
+	'USER_CANCELED',
+	'USER_CANCELED_DEPENDENCY',
+	'PROCESS_BY_EVENT_PROCESSOR',
+	'PROCESS_BY_AD_ASYNC_ENGINE',
+	'Initial',
+	'In_progress',
+	'Success',
+	'Error',
+	'Canceled',
+]);
+const asyncSetListInput = z
+	.object({
+		accountId: id,
+		isCompleted: z.boolean().optional(),
+		...cursorOptions,
+	})
+	.strict();
+const asyncAdSpec = z.record(z.string().min(1), z.string());
+const asyncRequestSetCreateInput = z
+	.object({
+		accountId: id,
+		name: z.string().min(1),
+		adSpecs: z.array(asyncAdSpec).min(1),
+	})
+	.strict();
+const asyncSetGetInput = z
+	.object({
+		requestSetId: id,
+		fields: z.array(asyncSetFields).min(1).optional(),
+	})
+	.strict();
+const asyncSetUpdateInput = z
+	.object({ requestSetId: id, name: z.string().min(1) })
+	.strict();
+const asyncSetCancelInput = z.object({ requestSetId: id }).strict();
+const asyncRequestListInput = z
+	.object({
+		requestSetId: id,
+		status: z.array(asyncRequestStatus).min(1).optional(),
+		fields: z.array(asyncRequestFields).min(1).optional(),
+		...cursorOptions,
+	})
+	.strict();
+const asyncRequestsForAdSetListInput = z
+	.object({
+		adSetId: id,
+		status: z.array(asyncRequestStatus).min(1).optional(),
+		fields: z.array(asyncRequestFields).min(1).optional(),
+		...cursorOptions,
+	})
+	.strict();
+const asyncRequestCancelInput = z.object({ requestId: id }).strict();
+
+const AsyncRequestSetSchema = z
+	.object({
+		id: z.union([z.string(), z.number().int()]),
+		owner_id: z.union([z.string(), z.number().int()]).optional(),
+		name: z.string().optional(),
+		is_completed: z.boolean().optional(),
+		total_count: z.number().int().optional(),
+		initial_count: z.number().int().optional(),
+		in_progress_count: z.number().int().optional(),
+		success_count: z.number().int().optional(),
+		error_count: z.number().int().optional(),
+		canceled_count: z.number().int().optional(),
+		notification_mode: z.enum(['OFF', 'ON_COMPLETE']).optional(),
+	})
+	.strict();
+const AsyncRequestSchema = z
+	.object({
+		id: z.union([z.string(), z.number().int()]),
+		scope_object_id: z.union([z.string(), z.number().int()]).optional(),
+		status: asyncRequestStatus.optional(),
+	})
+	.strict();
+const AsyncRequestSetsListSchema = z.object({
+	data: z.array(AsyncRequestSetSchema),
+	paging: MetaAdsListSchema.shape.paging.optional(),
+});
+const AsyncRequestsListSchema = z.object({
+	data: z.array(AsyncRequestSchema),
+	paging: MetaAdsListSchema.shape.paging.optional(),
+});
+const AsyncRequestSetCreateSchema = z.object({
+	id: z.union([id, z.number().int()]),
+});
+const AsyncRequestSetUpdateSchema = z.literal(true);
 
 const adLabelListInput = z.object({ accountId: id, ...cursorOptions }).strict();
 const adLabelGetInput = z.object({ labelId: id, fields }).strict();
@@ -385,9 +839,525 @@ const accountActiveAdRulesListInput = z
 		...cursorOptions,
 	})
 	.strict();
-const accountBroadTargetingCategoriesListInput = z
-	.object({ accountId: id, customCategoriesOnly: z.boolean().optional() })
+const adRuleComparisonOperator = z.enum([
+	'GREATER_THAN',
+	'LESS_THAN',
+	'EQUAL',
+	'NOT_EQUAL',
+	'IN_RANGE',
+	'NOT_IN_RANGE',
+	'IN',
+	'NOT_IN',
+	'CONTAIN',
+	'NOT_CONTAIN',
+	'ANY',
+	'ALL',
+	'NONE',
+]);
+// `unknown` is needed for documented provider-defined Ad Rule filter and action values, which may be objects.
+const adRuleDynamicValue = z.union([
+	z.string(),
+	z.number(),
+	z.boolean(),
+	z.array(z.union([z.string(), z.number(), z.boolean()])),
+	z.record(z.string(), z.unknown()),
+]);
+const adRuleEvaluationSpec = z
+	.object({
+		evaluationType: z.enum(['SCHEDULE', 'TRIGGER']),
+		filters: z
+			.array(
+				z
+					.object({
+						field: z.string().min(1),
+						value: adRuleDynamicValue,
+						operator: adRuleComparisonOperator,
+					})
+					.strict(),
+			)
+			.min(1),
+		trigger: z
+			.object({
+				type: z.enum([
+					'METADATA_CREATION',
+					'METADATA_UPDATE',
+					'STATS_MILESTONE',
+					'STATS_CHANGE',
+					'DELIVERY_INSIGHTS_CHANGE',
+				]),
+				field: z.string().min(1).optional(),
+				value: adRuleDynamicValue.optional(),
+				operator: adRuleComparisonOperator.optional(),
+			})
+			.strict()
+			.optional(),
+	})
 	.strict();
+const adRuleExecutionSpec = z
+	.object({
+		executionType: z.enum([
+			'DCO',
+			'PAUSE',
+			'REBALANCE_BUDGET',
+			'CHANGE_BUDGET',
+			'CHANGE_BID',
+			'ROTATE',
+			'UNPAUSE',
+			'CHANGE_CAMPAIGN_BUDGET',
+			'ADD_INTEREST_RELAXATION',
+			'ADD_QUESTIONNAIRE_INTERESTS',
+			'INCREASE_RADIUS',
+			'UPDATE_CREATIVE',
+			'UPDATE_LAX_BUDGET',
+			'UPDATE_LAX_DURATION',
+			'AUDIENCE_CONSOLIDATION',
+			'AUDIENCE_CONSOLIDATION_ASK_FIRST',
+			'AD_RECOMMENDATION_APPLY',
+		]),
+		isOnceOff: z.boolean().optional(),
+		executionOptions: z
+			.array(
+				z
+					.object({
+						field: z.string().min(1),
+						value: adRuleDynamicValue,
+						operator: z.enum(['EQUAL', 'IN']),
+					})
+					.strict(),
+			)
+			.optional(),
+	})
+	.strict();
+const adRuleScheduleSpec = z
+	.object({
+		scheduleType: z.enum(['DAILY', 'HOURLY', 'SEMI_HOURLY', 'CUSTOM']),
+		schedule: z
+			.array(
+				z
+					.object({
+						startMinute: z.number().int().optional(),
+						endMinute: z.number().int().optional(),
+						days: z.array(z.number().int()).optional(),
+					})
+					.strict(),
+			)
+			.optional(),
+	})
+	.strict();
+const accountAdRuleCreateInput = z
+	.object({
+		accountId: id,
+		name: z.string().min(1),
+		evaluationSpec: adRuleEvaluationSpec,
+		executionSpec: adRuleExecutionSpec,
+		scheduleSpec: adRuleScheduleSpec.optional(),
+		status: z.enum(['ENABLED', 'DISABLED', 'DELETED', 'HAS_ISSUES']).optional(),
+	})
+	.strict()
+	.refine(
+		(value) =>
+			value.evaluationSpec.evaluationType !== 'TRIGGER' ||
+			value.evaluationSpec.trigger !== undefined,
+	)
+	.refine(
+		(value) =>
+			value.evaluationSpec.evaluationType !== 'SCHEDULE' ||
+			value.scheduleSpec !== undefined,
+	);
+const accountBroadTargetingCategoriesListInput = z
+	.object({
+		accountId: id,
+		customCategoriesOnly: z.boolean().optional(),
+		...cursorOptions,
+	})
+	.strict();
+const accountSmartSuggestedAdsListInput = z
+	.object({
+		accountId: id,
+		objective: suggestionObjective.optional(),
+		optimizationGoal: suggestionOptimizationGoal.optional(),
+		pixelId: id.optional(),
+		productSetId: id.optional(),
+		limit: pageSize,
+		after: cursor,
+		before: cursor,
+	})
+	.strict();
+const accountSuggestedAdsListInput = z
+	.object({
+		accountId: id,
+		applicationId: id.optional(),
+		cmsId: id.optional(),
+		countries: z.array(z.string().min(1)).optional(),
+		objective: z.string().min(1).optional(),
+		optimizationGoal: suggestionOptimizationGoal.optional(),
+		pixelId: id.optional(),
+		promotedObjectPageId: id.optional(),
+		promotedObjectProductSetId: id.optional(),
+		rankBy: z.string().min(1).optional(),
+		useCase: z
+			.enum([
+				'AD_STRATEGIES',
+				'AUTOMATED_APP_ADS',
+				'AUTOMATED_SHOPPING_ADS',
+				'AUTOMATED_SHOPPING_ADS_MDSA',
+				'LEAD_GEN_ASC_ADS',
+				'MANUAL_FLOW_APP_ADS',
+				'MANUAL_FLOW_SHOPS_ADS',
+				'MANUAL_FLOW_WEBSITE_ADS',
+				'MANUAL_FLOW_WEBSITE_AND_APP_ADS',
+				'SALES_WEB_APP_ADS',
+			])
+			.optional(),
+		limit: pageSize,
+		after: cursor,
+		before: cursor,
+	})
+	.strict();
+// `unknown` is needed for nested targeting keys documented by Meta's separate, versioned Targeting contract.
+const reachEstimateTargetingSpec = z
+	.record(z.string(), z.unknown())
+	.refine((value) => {
+		const geoLocations = z
+			.record(z.string(), z.unknown())
+			.safeParse(value.geo_locations);
+		return (
+			geoLocations.success &&
+			z.array(z.string().min(2)).min(1).safeParse(geoLocations.data.countries)
+				.success
+		);
+	});
+const accountReachEstimateInput = z
+	.object({
+		accountId: id,
+		objectStoreUrl: z.string().url().optional(),
+		targetingSpec: reachEstimateTargetingSpec,
+	})
+	.strict();
+const ReachEstimateSchema = z
+	.object({
+		users_lower_bound: z.number().int(),
+		users_upper_bound: z.number().int(),
+	})
+	.strict();
+const ReachEstimateResponseSchema = z
+	.object({
+		data: ReachEstimateSchema,
+		paging: MetaAdsListSchema.shape.paging.optional(),
+	})
+	.strict();
+const reachFrequencyPredictionFields = z.enum([
+	'id',
+	'account_id',
+	'audience_size_lower_bound',
+	'audience_size_upper_bound',
+	'campaign_group_id',
+	'campaign_id',
+	'campaign_time_start',
+	'campaign_time_stop',
+	'curve_budget_reach',
+	'daily_impression_curve',
+	'destination_id',
+	'expiration_time',
+	'external_budget',
+	'external_impression',
+	'external_maximum_budget',
+	'external_maximum_impression',
+	'external_maximum_reach',
+	'external_minimum_budget',
+	'external_minimum_impression',
+	'external_minimum_reach',
+	'external_reach',
+	'frequency_cap',
+	'frequency_distribution_map',
+	'frequency_distribution_map_agg',
+	'grp_dmas_audience_size',
+	'holdout_percentage',
+	'instagram_destination_id',
+	'interval_frequency_cap',
+	'interval_frequency_cap_reset_period',
+	'is_io',
+	'name',
+	'placement_breakdown',
+	'prediction_mode',
+	'prediction_progress',
+	'reservation_status',
+	'status',
+	'story_event_type',
+	'target_spec',
+	'time_created',
+	'time_updated',
+]);
+const reachFrequencyPredictionSchema = z
+	.object({
+		id,
+		account_id: z.union([z.string(), z.number().int()]).optional(),
+		audience_size_lower_bound: z.number().int().nonnegative().optional(),
+		audience_size_upper_bound: z.number().int().nonnegative().optional(),
+		campaign_group_id: numericId.optional(),
+		campaign_id: id.optional(),
+		campaign_time_start: z.string().optional(),
+		campaign_time_stop: z.string().optional(),
+		curve_budget_reach: z.string().optional(),
+		daily_impression_curve: z.array(z.number()).optional(),
+		destination_id: numericId.optional(),
+		expiration_time: z.string().optional(),
+		external_budget: z.number().int().optional(),
+		external_impression: z.number().int().nonnegative().optional(),
+		external_maximum_budget: z.number().int().optional(),
+		external_maximum_impression: z.number().int().nonnegative().optional(),
+		external_maximum_reach: z.number().int().nonnegative().optional(),
+		external_minimum_budget: z.number().int().optional(),
+		external_minimum_impression: z.number().int().nonnegative().optional(),
+		external_minimum_reach: z.number().int().nonnegative().optional(),
+		external_reach: z.number().int().nonnegative().optional(),
+		frequency_cap: z.number().int().nonnegative().optional(),
+		frequency_distribution_map: z
+			.array(
+				z.object({
+					key: z.number().int().nonnegative(),
+					value: z.array(z.number().nonnegative()),
+				}),
+			)
+			.optional(),
+		frequency_distribution_map_agg: z
+			.array(
+				z.object({
+					key: z.number().int().nonnegative(),
+					value: z.array(z.number().int().nonnegative()),
+				}),
+			)
+			.optional(),
+		grp_dmas_audience_size: z.number().nonnegative().optional(),
+		holdout_percentage: z.number().int().min(0).max(100).optional(),
+		instagram_destination_id: id.optional(),
+		interval_frequency_cap: z.number().int().nonnegative().optional(),
+		interval_frequency_cap_reset_period: z.number().int().positive().optional(),
+		is_io: z.boolean().optional(),
+		name: z.string().optional(),
+		placement_breakdown: z
+			.object({
+				msite: z.number().optional(),
+				android: z.number().optional(),
+				ios: z.number().optional(),
+				desktop: z.number().optional(),
+				ig_android: z.number().optional(),
+				ig_ios: z.number().optional(),
+				ig_reels: z.number().optional(),
+				ig_story: z.number().optional(),
+				explore_home: z.number().optional(),
+				ig_others: z.number().optional(),
+				audience_network: z.number().optional(),
+				instant_articles: z.number().optional(),
+				instream_videos: z.number().optional(),
+				suggested_videos: z.number().optional(),
+			})
+			.strict()
+			.optional(),
+		prediction_mode: z.union([z.literal(0), z.literal(1)]).optional(),
+		prediction_progress: z.number().int().min(0).max(100).optional(),
+		reservation_status: z
+			.union([z.literal(0), z.literal(1), z.literal(2)])
+			.optional(),
+		status: z.number().int().optional(),
+		story_event_type: z
+			.union([z.literal(0), z.literal(128), z.literal(256), z.literal(384)])
+			.optional(),
+		target_spec: z.string().optional(),
+		time_created: z.string().optional(),
+		time_updated: z.string().optional(),
+	})
+	.strict();
+const reachFrequencyPredictionsListSchema = z.object({
+	data: z.array(reachFrequencyPredictionSchema),
+	paging: MetaAdsListSchema.shape.paging.optional(),
+});
+const reachFrequencyPredictionGetInput = z
+	.object({
+		predictionId: id,
+		fields: z.array(reachFrequencyPredictionFields).min(1).optional(),
+	})
+	.strict();
+const reachFrequencyPredictionsListInput = z
+	.object({
+		accountId: id,
+		fields: z.array(reachFrequencyPredictionFields).min(1).optional(),
+		...cursorOptions,
+	})
+	.strict();
+const reachFrequencyDayPart = z
+	.object({
+		startMinute: z.number().int().min(0).max(1439),
+		endMinute: z.number().int().min(1).max(1440),
+		days: z.array(z.number().int().min(0).max(6)).min(1),
+		timezoneType: z.enum(['USER', 'ADVERTISER']).optional(),
+	})
+	.strict()
+	.refine((value) => value.endMinute - value.startMinute >= 180);
+const reachFrequencyTopicsSpec = z
+	.object({
+		isAllTrending: z.boolean().optional(),
+		isSpecialBudgetAlloc: z.boolean().optional(),
+		trendingTopics: z
+			.array(
+				z.enum([
+					'TRENDING_ALL',
+					'TRENDING_FASHION',
+					'TRENDING_BEAUTY',
+					'TRENDING_SPORTS',
+					'TRENDING_FOOD',
+					'TRENDING_CARS',
+					'TRENDING_BEAUTY_FASHION',
+					'TRENDING_FITNESS',
+					'TRENDING_MOVIES',
+					'TRENDING_PETS_ANIMALS',
+					'TRENDING_VIDEO_GAMING',
+					'TRENDING_ALL_VERIFIED',
+					'TRENDING_MUSIC',
+					'TRENDING_SUPERBOWL',
+					'TRENDING_NBC_WINTER_OLYMPICS',
+					'TRENDING_BASKETBALL',
+					'TRENDING_TRAVEL',
+					'TRENDING_BUSINESS_FINANCE',
+					'TRENDING_BASKETBALL_NBA_PLAYOFFS',
+					'TRENDING_DISNEY_WOMENS_MARCH_MADNESS_2026',
+					'TRENDING_DISNEY_SPORTS',
+					'TRENDING_VANITY_FAIR_OSCARS_2026',
+					'TRENDING_VANITY_FAIR_ALL',
+					'TRENDING_SOCCER',
+					'TRENDING_ELECTRONICS_TECHNOLOGY',
+					'TRENDING_HEALTH_WELLNESS',
+					'TRENDING_DISNEY_NBA_2026',
+					'TRENDING_VOGUE_METGALA_2026',
+					'TRENDING_CONDE_METGALA_2026',
+					'TRENDING_CONDE_ALL',
+					'TRENDING_FOX_SPORTS',
+					'TRENDING_NBC_LOVE_ISLAND_2026',
+					'TRENDING_PEACOCK_ALL',
+					'TRENDING_BACK_TO_SCHOOL',
+					'TRENDING_CAR_RACING',
+					'TRENDING_SPANISH',
+					'TRENDING_BASKETBALL_PEAK_SEASON',
+					'TRENDING_AGRIBUSINESS',
+					'TRENDING_LIBERTADORES',
+					'TRENDING_FOOTBALL',
+					'TRENDING_TENNIS_US_OPEN',
+					'TRENDING_LIBERTADORES_LALIGA',
+					'POE_SPORTS',
+					'POE_FOOD',
+					'POE_TRAVEL',
+					'POE_MOVIES',
+					'POE_MUSIC',
+					'POE_TOY',
+				]),
+			)
+			.optional(),
+	})
+	.strict();
+// `unknown` is needed for documented nested advanced-targeting keys; size/country limits are enforced at this boundary.
+const reachFrequencyTargetSpec = z
+	.record(z.string(), z.unknown())
+	.refine((value) => {
+		const serialized = JSON.stringify(value);
+		if (typeof serialized !== 'string' || serialized.length > 65_000)
+			return false;
+		const geoLocations = z
+			.record(z.string(), z.unknown())
+			.safeParse(value.geo_locations);
+		if (!geoLocations.success || geoLocations.data.countries === undefined) {
+			return true;
+		}
+		const countries = z
+			.array(z.string())
+			.safeParse(geoLocations.data.countries);
+		return !countries.success || countries.data.length <= 1;
+	});
+const reachFrequencyPredictionCreateInput = z
+	.object({
+		accountId: id,
+		budget: z.number().int().positive().max(Number.MAX_SAFE_INTEGER).optional(),
+		campaignGroupId: numericId.optional(),
+		dayPartingSchedule: z.array(reachFrequencyDayPart).min(1).optional(),
+		dealId: numericId.optional(),
+		destinationId: numericId.optional(),
+		destinationIds: z.array(numericId).min(1).optional(),
+		endTime: z
+			.number()
+			.int()
+			.positive()
+			.max(Number.MAX_SAFE_INTEGER)
+			.optional(),
+		frequencyCap: z.number().int().positive().optional(),
+		instreamPackages: z
+			.array(
+				z.enum([
+					'NORMAL',
+					'PREMIUM',
+					'SPORTS',
+					'ENTERTAINMENT',
+					'BEAUTY',
+					'FOOD',
+					'SPANISH',
+					'REGULAR_ANIMALS_PETS',
+					'REGULAR_FOOD',
+					'REGULAR_GAMES',
+					'REGULAR_POLITICS',
+					'REGULAR_SPORTS',
+					'REGULAR_STYLE',
+					'REGULAR_TV_MOVIES',
+				]),
+			)
+			.optional(),
+		intervalFrequencyCapResetPeriod: z
+			.number()
+			.int()
+			.positive()
+			.multipleOf(24)
+			.optional(),
+		numCurvePoints: z.number().int().positive().max(800).optional(),
+		objective: z
+			.enum([
+				'BRAND_AWARENESS',
+				'LINK_CLICKS',
+				'POST_ENGAGEMENT',
+				'MOBILE_APP_INSTALLS',
+				'WEBSITE_CONVERSIONS',
+				'REACH',
+				'VIDEO_VIEWS',
+			])
+			.optional(),
+		optimizationGoal: z.string().min(1).optional(),
+		predictionMode: z.union([z.literal(0), z.literal(1)]).optional(),
+		reach: z.number().int().positive().optional(),
+		rfPredictionIdToShare: numericId.optional(),
+		startTime: z.number().int().positive().optional(),
+		stopTime: z.number().int().positive().optional(),
+		storyEventType: z
+			.union([z.literal(0), z.literal(128), z.literal(256), z.literal(384)])
+			.optional(),
+		targetSpec: reachFrequencyTargetSpec.optional(),
+		// `unknown` is needed because Meta documents this nested JSON object without a field schema.
+		metaMomentMakerSpec: z.record(z.string(), z.unknown()).optional(),
+		trendingTopicsSpec: reachFrequencyTopicsSpec.optional(),
+	})
+	.strict()
+	.refine(
+		(value) => !(value.endTime !== undefined && value.stopTime !== undefined),
+	)
+	.refine((value) =>
+		value.predictionMode === 0
+			? value.reach !== undefined
+			: value.predictionMode === 1
+				? value.budget !== undefined
+				: (value.reach === undefined) !== (value.budget === undefined),
+	)
+	.refine(
+		(value) =>
+			value.startTime === undefined ||
+			(value.stopTime ?? value.endTime) === undefined ||
+			(value.stopTime ?? value.endTime ?? 0) > value.startTime,
+	);
+const reachFrequencyPredictionCreateOutput = z.object({ id });
 const campaignAdRulesGovernedListInput = z
 	.object({
 		campaignId: id,
@@ -509,7 +1479,9 @@ const campaignUpdateInput = z
 
 const adSetListInput = z.object({ accountId: id, ...listOptions }).strict();
 const adSetAdsListInput = z.object({ adSetId: id, ...listOptions }).strict();
-const adSetAdCreativesListInput = z.object({ adSetId: id }).strict();
+const adSetAdCreativesListInput = z
+	.object({ adSetId: id, ...cursorOptions })
+	.strict();
 const adSetCopiesListInput = z.object({ adSetId: id, ...listOptions }).strict();
 const adSetCopyInput = z
 	.object({
@@ -657,7 +1629,9 @@ const adSetUpdateInput = z
 	.refine((value) => Object.keys(value).some((key) => key !== 'adSetId'));
 
 const adListInput = z.object({ accountId: id, ...listOptions }).strict();
-const adAdCreativesListInput = z.object({ adId: id }).strict();
+const adAdCreativesListInput = z
+	.object({ adId: id, ...cursorOptions })
+	.strict();
 const adCopiesListInput = z.object({ adId: id, ...listOptions }).strict();
 const adCopyInput = z
 	.object({
@@ -701,6 +1675,26 @@ const creativeAuthorizationCategory = z.enum([
 	'POLITICAL',
 	'POLITICAL_WITH_DIGITALLY_CREATED_MEDIA',
 ]);
+const asyncCreativeSpec = z
+	.object({
+		name: z.string().min(1).max(100),
+		objectStoryId: id.optional(),
+		objectStorySpec: creativeObjectStorySpec.optional(),
+		authorizationCategory: creativeAuthorizationCategory.optional(),
+	})
+	.strict()
+	.refine(
+		(value) =>
+			(value.objectStoryId === undefined) !==
+			(value.objectStorySpec === undefined),
+	);
+const asyncCreativeCreateInput = z
+	.object({
+		accountId: id,
+		name: z.string().min(1),
+		creativeSpec: asyncCreativeSpec,
+	})
+	.strict();
 const adCreateInput = z
 	.object({
 		accountId: id,
@@ -759,7 +1753,9 @@ const creativeUpdateInput = z
 	.object({ creativeId: id, name: z.string().min(1).max(100) })
 	.strict();
 const creativeDeleteInput = z.object({ creativeId: id }).strict();
-const creativeInsightsListInput = z.object({ creativeId: id }).strict();
+const creativeInsightsListInput = z
+	.object({ creativeId: id, ...cursorOptions })
+	.strict();
 const previewAdFormat = z.enum([
 	'DESKTOP_FEED_STANDARD',
 	'MOBILE_FEED_STANDARD',
@@ -776,6 +1772,7 @@ const accountGeneratePreviewsInput = z
 		creativeSpec: z
 			.object({ objectStorySpec: creativeObjectStorySpec })
 			.strict(),
+		...cursorOptions,
 	})
 	.strict();
 const creativePreviewsListInput = z
@@ -799,6 +1796,7 @@ const creativePreviewsListInput = z
 		endDate: z.string().datetime().optional(),
 		width: z.number().int().positive().optional(),
 		height: z.number().int().positive().optional(),
+		...cursorOptions,
 	})
 	.strict();
 const adsPreviewsListInput = z
@@ -822,6 +1820,7 @@ const adsPreviewsListInput = z
 		endDate: z.string().datetime().optional(),
 		width: z.number().int().positive().optional(),
 		height: z.number().int().positive().optional(),
+		...cursorOptions,
 	})
 	.strict();
 
@@ -1331,8 +2330,12 @@ const InsightsFeatureName = z.enum([
 	'time_of_day_viewer_tz',
 	'frequency_value',
 ]);
-const InsightsFeaturesListInput = z.object({ accountId: id }).strict();
-const InsightsEnabledFeaturesListInput = z.object({ accountId: id }).strict();
+const InsightsFeaturesListInput = z
+	.object({ accountId: id, ...cursorOptions })
+	.strict();
+const InsightsEnabledFeaturesListInput = z
+	.object({ accountId: id, ...cursorOptions })
+	.strict();
 const InsightsFeaturesListSchema = z.object({
 	data: z.array(
 		z.object({
@@ -1406,14 +2409,45 @@ export type MetaAdsEndpointInputs = {
 	accountsGet: z.infer<typeof accountGetInput>;
 	accountsUsersList: z.infer<typeof accountUsersListInput>;
 	accountsActivitiesList: z.infer<typeof accountActivitiesListInput>;
+	accountsAssignedUsersList: z.infer<typeof accountAssignedUsersListInput>;
+	accountsAssignUser: z.infer<typeof accountAssignUserInput>;
+	accountsRemoveUser: z.infer<typeof accountRemoveUserInput>;
+	accountsControlsCreate: z.infer<typeof accountControlsCreateInput>;
+	accountsAgenciesList: z.infer<typeof accountAgenciesListInput>;
+	accountsAgencyRemove: z.infer<typeof accountAgencyRemoveInput>;
+	accountsSubscribedAppUpdate: z.infer<typeof accountSubscribedAppInput>;
+	accountsSubscribedAppRemove: z.infer<typeof accountSubscribedAppInput>;
+	accountsTrackingCreate: z.infer<typeof accountTrackingCreateInput>;
+	pixelsCreate: z.infer<typeof accountPixelCreateInput>;
+	accountsPixelsList: z.infer<typeof accountPixelsListInput>;
+	pixelsGet: z.infer<typeof pixelGetInput>;
+	pixelsUpdate: z.infer<typeof pixelUpdateInput>;
+	publisherBlockListsCreate: z.infer<typeof publisherBlockListCreateInput>;
 	accountsImpactingAdStudiesList: z.infer<
 		typeof accountImpactingAdStudiesListInput
 	>;
 	accountsAdRulesLibraryList: z.infer<typeof accountAdRulesLibraryListInput>;
+	accountsAdRulesLibraryCreate: z.infer<typeof accountAdRuleCreateInput>;
 	accountsActiveAdRulesList: z.infer<typeof accountActiveAdRulesListInput>;
 	accountsGeneratePreviews: z.infer<typeof accountGeneratePreviewsInput>;
 	accountsBroadTargetingCategoriesList: z.infer<
 		typeof accountBroadTargetingCategoriesListInput
+	>;
+	accountsSmartSuggestedAdsList: z.infer<
+		typeof accountSmartSuggestedAdsListInput
+	>;
+	accountsSuggestedAdsList: z.infer<typeof accountSuggestedAdsListInput>;
+	accountsPlacePageSetsCreate: z.infer<typeof accountPlacePageSetsCreateInput>;
+	accountsReachEstimate: z.infer<typeof accountReachEstimateInput>;
+	customConversionsCreate: z.infer<typeof customConversionCreateInput>;
+	reachFrequencyPredictionsGet: z.infer<
+		typeof reachFrequencyPredictionGetInput
+	>;
+	reachFrequencyPredictionsList: z.infer<
+		typeof reachFrequencyPredictionsListInput
+	>;
+	reachFrequencyPredictionsCreate: z.infer<
+		typeof reachFrequencyPredictionCreateInput
 	>;
 	labelsList: z.infer<typeof adLabelListInput>;
 	labelsGet: z.infer<typeof adLabelGetInput>;
@@ -1487,6 +2521,7 @@ export type MetaAdsEndpointInputs = {
 	audiencesAdsList: z.infer<typeof audienceAdsListInput>;
 	audiencesGet: z.infer<typeof audienceGetInput>;
 	audiencesCreate: z.input<typeof audienceCreateInput>;
+	audiencesAcceptTerms: z.infer<typeof audienceTermsAcceptInput>;
 	audiencesUpdate: z.infer<typeof audienceUpdateInput>;
 	audiencesDelete: z.infer<typeof audienceDeleteInput>;
 	audiencesSessionsList: z.infer<typeof audienceSessionsListInput>;
@@ -1501,6 +2536,16 @@ export type MetaAdsEndpointInputs = {
 	studiesRelatedAccountsList: z.infer<typeof studyRelatedAccountsListInput>;
 	studiesViewersList: z.infer<typeof studyViewersListInput>;
 	videosDelete: z.infer<typeof videosDeleteInput>;
+	asyncCreativesList: z.infer<typeof asyncSetListInput>;
+	asyncCreativesCreate: z.infer<typeof asyncCreativeCreateInput>;
+	asyncRequestSetsList: z.infer<typeof asyncSetListInput>;
+	asyncRequestSetsCreate: z.infer<typeof asyncRequestSetCreateInput>;
+	asyncRequestSetsGet: z.infer<typeof asyncSetGetInput>;
+	asyncRequestSetsUpdate: z.infer<typeof asyncSetUpdateInput>;
+	asyncRequestSetsCancel: z.infer<typeof asyncSetCancelInput>;
+	asyncRequestsListForSet: z.infer<typeof asyncRequestListInput>;
+	asyncRequestsListForAdSet: z.infer<typeof asyncRequestsForAdSetListInput>;
+	asyncRequestsCancel: z.infer<typeof asyncRequestCancelInput>;
 	insightsList: z.infer<typeof insightsInput>;
 	insightsListForCampaign: z.infer<typeof insightsForCampaignInput>;
 	insightsListForAdSet: z.infer<typeof insightsForAdSetInput>;
@@ -1518,12 +2563,39 @@ export type MetaAdsEndpointOutputs = {
 	accountsGet: z.infer<typeof accountGetOutput>;
 	accountsUsersList: z.infer<typeof AccountUsersListSchema>;
 	accountsActivitiesList: z.infer<typeof AccountActivitiesListSchema>;
+	accountsAssignedUsersList: z.infer<typeof AccountAssignedUsersListSchema>;
+	accountsAssignUser: z.infer<typeof AccountMutationSchema>;
+	accountsRemoveUser: z.infer<typeof AccountMutationSchema>;
+	accountsControlsCreate: z.infer<typeof AccountControlCreateSchema>;
+	accountsAgenciesList: z.infer<typeof AccountAgenciesListSchema>;
+	accountsAgencyRemove: z.infer<typeof AccountMutationSchema>;
+	accountsSubscribedAppUpdate: z.infer<typeof AccountMutationSchema>;
+	accountsSubscribedAppRemove: z.infer<typeof AccountMutationSchema>;
+	accountsTrackingCreate: z.infer<typeof AccountMutationSchema>;
+	pixelsCreate: z.infer<typeof CreatedIdSchema>;
+	accountsPixelsList: z.infer<typeof accountPixelsListSchema>;
+	pixelsGet: z.infer<typeof pixelSchema>;
+	pixelsUpdate: z.infer<typeof pixelUpdateOutput>;
+	publisherBlockListsCreate: z.infer<typeof CreatedIdSchema>;
 	accountsImpactingAdStudiesList: z.infer<typeof AdStudyListSchema>;
 	accountsAdRulesLibraryList: z.infer<typeof AdRuleListSchema>;
+	accountsAdRulesLibraryCreate: z.infer<typeof CreatedIdSchema>;
 	accountsActiveAdRulesList: z.infer<typeof AdRuleListSchema>;
 	accountsGeneratePreviews: z.infer<typeof AdPreviewsListSchema>;
 	accountsBroadTargetingCategoriesList: z.infer<
 		typeof BroadTargetingCategoriesListSchema
+	>;
+	accountsSmartSuggestedAdsList: z.infer<typeof MetaAdsListSchema>;
+	accountsSuggestedAdsList: z.infer<typeof MetaAdsListSchema>;
+	accountsPlacePageSetsCreate: z.infer<typeof CreatedIdSchema>;
+	accountsReachEstimate: z.infer<typeof ReachEstimateResponseSchema>;
+	customConversionsCreate: z.infer<typeof CustomConversionCreateSchema>;
+	reachFrequencyPredictionsGet: z.infer<typeof reachFrequencyPredictionSchema>;
+	reachFrequencyPredictionsList: z.infer<
+		typeof reachFrequencyPredictionsListSchema
+	>;
+	reachFrequencyPredictionsCreate: z.infer<
+		typeof reachFrequencyPredictionCreateOutput
 	>;
 	labelsList: z.infer<typeof AdLabelsListSchema>;
 	labelsGet: z.infer<typeof AdLabelSchema>;
@@ -1591,6 +2663,7 @@ export type MetaAdsEndpointOutputs = {
 	audiencesAdsList: z.infer<typeof MetaAdsListSchema>;
 	audiencesGet: z.infer<typeof MetaAdsObjectSchema>;
 	audiencesCreate: z.infer<typeof MetaAdsMutationSchema>;
+	audiencesAcceptTerms: z.infer<typeof AccountMutationSchema>;
 	audiencesUpdate: { success: boolean };
 	audiencesDelete: z.infer<typeof MetaAdsDeleteSchema>;
 	audiencesSessionsList: z.infer<typeof audienceSessionsListOutput>;
@@ -1605,6 +2678,16 @@ export type MetaAdsEndpointOutputs = {
 	studiesRelatedAccountsList: z.infer<typeof MetaAdsListSchema>;
 	studiesViewersList: z.infer<typeof StudyViewersListSchema>;
 	videosDelete: z.infer<typeof MetaAdsDeleteSchema>;
+	asyncCreativesList: z.infer<typeof AsyncRequestSetsListSchema>;
+	asyncCreativesCreate: z.infer<typeof AsyncRequestSetCreateSchema>;
+	asyncRequestSetsList: z.infer<typeof AsyncRequestSetsListSchema>;
+	asyncRequestSetsCreate: z.infer<typeof AsyncRequestSetCreateSchema>;
+	asyncRequestSetsGet: z.infer<typeof AsyncRequestSetSchema>;
+	asyncRequestSetsUpdate: z.infer<typeof AsyncRequestSetUpdateSchema>;
+	asyncRequestSetsCancel: boolean;
+	asyncRequestsListForSet: z.infer<typeof AsyncRequestsListSchema>;
+	asyncRequestsListForAdSet: z.infer<typeof AsyncRequestsListSchema>;
+	asyncRequestsCancel: boolean;
 	insightsList: z.infer<typeof InsightsListSchema>;
 	insightsListForCampaign: z.infer<typeof InsightsListSchema>;
 	insightsListForAdSet: z.infer<typeof InsightsListSchema>;
@@ -1624,12 +2707,35 @@ export const MetaAdsEndpointInputSchemas = {
 	accountsGet: accountGetInput,
 	accountsUsersList: accountUsersListInput,
 	accountsActivitiesList: accountActivitiesListInput,
+	accountsAssignedUsersList: accountAssignedUsersListInput,
+	accountsAssignUser: accountAssignUserInput,
+	accountsRemoveUser: accountRemoveUserInput,
+	accountsControlsCreate: accountControlsCreateInput,
+	accountsAgenciesList: accountAgenciesListInput,
+	accountsAgencyRemove: accountAgencyRemoveInput,
+	accountsSubscribedAppUpdate: accountSubscribedAppInput,
+	accountsSubscribedAppRemove: accountSubscribedAppInput,
+	accountsTrackingCreate: accountTrackingCreateInput,
+	pixelsCreate: accountPixelCreateInput,
+	accountsPixelsList: accountPixelsListInput,
+	pixelsGet: pixelGetInput,
+	pixelsUpdate: pixelUpdateInput,
+	publisherBlockListsCreate: publisherBlockListCreateInput,
 	accountsImpactingAdStudiesList: accountImpactingAdStudiesListInput,
 	accountsAdRulesLibraryList: accountAdRulesLibraryListInput,
+	accountsAdRulesLibraryCreate: accountAdRuleCreateInput,
 	accountsActiveAdRulesList: accountActiveAdRulesListInput,
 	accountsGeneratePreviews: accountGeneratePreviewsInput,
 	accountsBroadTargetingCategoriesList:
 		accountBroadTargetingCategoriesListInput,
+	accountsSmartSuggestedAdsList: accountSmartSuggestedAdsListInput,
+	accountsSuggestedAdsList: accountSuggestedAdsListInput,
+	accountsPlacePageSetsCreate: accountPlacePageSetsCreateInput,
+	accountsReachEstimate: accountReachEstimateInput,
+	customConversionsCreate: customConversionCreateInput,
+	reachFrequencyPredictionsGet: reachFrequencyPredictionGetInput,
+	reachFrequencyPredictionsList: reachFrequencyPredictionsListInput,
+	reachFrequencyPredictionsCreate: reachFrequencyPredictionCreateInput,
 	labelsList: adLabelListInput,
 	labelsGet: adLabelGetInput,
 	labelsCreate: adLabelCreateInput,
@@ -1696,6 +2802,7 @@ export const MetaAdsEndpointInputSchemas = {
 	audiencesAdsList: audienceAdsListInput,
 	audiencesGet: audienceGetInput,
 	audiencesCreate: audienceCreateInput,
+	audiencesAcceptTerms: audienceTermsAcceptInput,
 	audiencesUpdate: audienceUpdateInput,
 	audiencesDelete: audienceDeleteInput,
 	audiencesSessionsList: audienceSessionsListInput,
@@ -1710,6 +2817,16 @@ export const MetaAdsEndpointInputSchemas = {
 	studiesRelatedAccountsList: studyRelatedAccountsListInput,
 	studiesViewersList: studyViewersListInput,
 	videosDelete: videosDeleteInput,
+	asyncCreativesList: asyncSetListInput,
+	asyncCreativesCreate: asyncCreativeCreateInput,
+	asyncRequestSetsList: asyncSetListInput,
+	asyncRequestSetsCreate: asyncRequestSetCreateInput,
+	asyncRequestSetsGet: asyncSetGetInput,
+	asyncRequestSetsUpdate: asyncSetUpdateInput,
+	asyncRequestSetsCancel: asyncSetCancelInput,
+	asyncRequestsListForSet: asyncRequestListInput,
+	asyncRequestsListForAdSet: asyncRequestsForAdSetListInput,
+	asyncRequestsCancel: asyncRequestCancelInput,
 	insightsList: insightsInput,
 	insightsListForCampaign: insightsForCampaignInput,
 	insightsListForAdSet: insightsForAdSetInput,
@@ -1727,11 +2844,34 @@ export const MetaAdsEndpointOutputSchemas = {
 	accountsGet: accountGetOutput,
 	accountsUsersList: AccountUsersListSchema,
 	accountsActivitiesList: AccountActivitiesListSchema,
+	accountsAssignedUsersList: AccountAssignedUsersListSchema,
+	accountsAssignUser: AccountMutationSchema,
+	accountsRemoveUser: AccountMutationSchema,
+	accountsControlsCreate: AccountControlCreateSchema,
+	accountsAgenciesList: AccountAgenciesListSchema,
+	accountsAgencyRemove: AccountMutationSchema,
+	accountsSubscribedAppUpdate: AccountMutationSchema,
+	accountsSubscribedAppRemove: AccountMutationSchema,
+	accountsTrackingCreate: AccountMutationSchema,
+	pixelsCreate: CreatedIdSchema,
+	accountsPixelsList: accountPixelsListSchema,
+	pixelsGet: pixelSchema,
+	pixelsUpdate: pixelUpdateOutput,
+	publisherBlockListsCreate: CreatedIdSchema,
 	accountsImpactingAdStudiesList: AdStudyListSchema,
 	accountsAdRulesLibraryList: AdRuleListSchema,
+	accountsAdRulesLibraryCreate: CreatedIdSchema,
 	accountsActiveAdRulesList: AdRuleListSchema,
 	accountsGeneratePreviews: AdPreviewsListSchema,
 	accountsBroadTargetingCategoriesList: BroadTargetingCategoriesListSchema,
+	accountsSmartSuggestedAdsList: MetaAdsListSchema,
+	accountsSuggestedAdsList: MetaAdsListSchema,
+	accountsPlacePageSetsCreate: CreatedIdSchema,
+	accountsReachEstimate: ReachEstimateResponseSchema,
+	customConversionsCreate: CustomConversionCreateSchema,
+	reachFrequencyPredictionsGet: reachFrequencyPredictionSchema,
+	reachFrequencyPredictionsList: reachFrequencyPredictionsListSchema,
+	reachFrequencyPredictionsCreate: reachFrequencyPredictionCreateOutput,
 	labelsList: AdLabelsListSchema,
 	labelsGet: AdLabelSchema,
 	labelsCreate: MetaAdsMutationSchema,
@@ -1798,6 +2938,7 @@ export const MetaAdsEndpointOutputSchemas = {
 	audiencesAdsList: MetaAdsListSchema,
 	audiencesGet: MetaAdsObjectSchema,
 	audiencesCreate: MetaAdsMutationSchema,
+	audiencesAcceptTerms: AccountMutationSchema,
 	audiencesUpdate: MetaAdsDeleteSchema,
 	audiencesDelete: MetaAdsDeleteSchema,
 	audiencesSessionsList: audienceSessionsListOutput,
@@ -1812,6 +2953,16 @@ export const MetaAdsEndpointOutputSchemas = {
 	studiesRelatedAccountsList: MetaAdsListSchema,
 	studiesViewersList: StudyViewersListSchema,
 	videosDelete: MetaAdsDeleteSchema,
+	asyncCreativesList: AsyncRequestSetsListSchema,
+	asyncCreativesCreate: AsyncRequestSetCreateSchema,
+	asyncRequestSetsList: AsyncRequestSetsListSchema,
+	asyncRequestSetsCreate: AsyncRequestSetCreateSchema,
+	asyncRequestSetsGet: AsyncRequestSetSchema,
+	asyncRequestSetsUpdate: AsyncRequestSetUpdateSchema,
+	asyncRequestSetsCancel: z.literal(true),
+	asyncRequestsListForSet: AsyncRequestsListSchema,
+	asyncRequestsListForAdSet: AsyncRequestsListSchema,
+	asyncRequestsCancel: z.literal(true),
 	insightsList: InsightsListSchema,
 	insightsListForCampaign: InsightsListSchema,
 	insightsListForAdSet: InsightsListSchema,

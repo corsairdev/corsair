@@ -1,5 +1,5 @@
 displayName: Meta Ads
-description: Read ad accounts and activity, manage campaign and delivery objects, labels, budget schedules, ad studies, custom-audience memberships and sharing, previews, and synchronous or asynchronous Ads Insights through Meta Marketing API v27.0.
+description: Read ad accounts and activity, manage campaigns, ads, pixels, access assignments and ad rules, work with custom-audience memberships, and run synchronous or asynchronous Marketing API reports through Meta API v27.0.
 overviewNote: "Supply an OAuth access token with ads_read for reporting or ads_management for management; the token must also have access to the target ad account."
 examples:
   read:
@@ -14,9 +14,24 @@ examples:
 apiNotes:
   accounts.list: "Meta requires access_token as a request parameter. Use a user or system-user access token stored in Corsair's encrypted credential store."
   accounts.usersList: "Lists the documented app-scoped ad-account users and tasks. This edge does not create, update, or remove permissions."
-  accounts.activitiesList: "Reads the recent account activity feed; the reference documents no query parameters on this edge."
+  accounts.activitiesList: "Reads the recent account activity feed; use standard Graph cursor pagination to continue."
+  accounts.assignedUsersList: "Requires businessId and lists only documented task fields; account-user assignment mutations require an explicit user ID."
+  accounts.assignUser: "Grants only the documented account task enum; this changes account access and is marked destructive."
+  accounts.removeUser: "Revokes one explicitly identified business or system user assignment; this is marked destructive."
+  accounts.controlsCreate: "Creates account-wide audience and placement controls; submitted constraints are removed from propagated error metadata."
+  accounts.agenciesList: "Lists documented business access fields and supports cursor pagination."
+  accounts.agencyRemove: "Removes the explicitly named business association from the account; this is marked destructive."
+  accounts.subscribedAppUpdate: "Subscribes an app by optional documented app_id. No callback URL or webhook handler is exposed."
+  accounts.subscribedAppRemove: "Unsubscribes an app by optional documented app_id. No callback URL or webhook handler is exposed."
+  accounts.trackingCreate: "Meta documents tracking_specs only as a generic Object without nested fields; request data is removed from propagated errors."
+  accounts.pixelsList: "Lists account pixels with the documented scalar AdsPixel fields and Graph cursor pagination."
+  accounts.adRulesLibraryCreate: "Creates a potentially consequential automation rule. New rules default to DISABLED; PING_ENDPOINT and NOTIFICATION execution types are excluded because outbound callback lifecycle is not supported."
+  accounts.smartSuggestedAdsList: "Exposes documented objective, optimizationGoal, pixelId and productSetId filters, plus Graph pagination."
+  accounts.suggestedAdsList: "Exposes a bounded documented filter set; unsupported filters are rejected rather than passed through."
+  accounts.placePageSetsCreate: "Creates a place-page set only for a published parent Page; the token must have access to that Page."
+  accounts.reachEstimate: "Requires targetingSpec.geo_locations.countries, accepts at most one country, and may return -1 bounds when a custom audience estimate is unavailable."
   accounts.impactingAdStudiesList: "Lists documented ad studies affecting the account or descendant ad objects."
-  accounts.adRulesLibraryList: "Lists account ad rules only; rule creation and editing are not exposed by this operation."
+  accounts.adRulesLibraryList: "Lists account ad rules. Use adRulesLibraryCreate for documented rule creation; editing/deleting rules is not exposed."
   accounts.activeAdRulesList: "Requires selectedIds and accepts an optional passEvaluation filter; it does not execute or change rules."
   accounts.generatePreviews: "Accepts only an object_story_spec with a documented link_data or other supported single content type, plus a bounded placement enum; returns expiring HTML as inert text."
   accounts.broadTargetingCategoriesList: "Lists the documented broad-targeting category fields; this is separate from the unified targeting browse/search edges whose node contract is pending."
@@ -37,7 +52,7 @@ apiNotes:
   campaigns.update: "Budget and spend-cap edits are consequential writes and aren't automatically retried."
   adSets.list: "Pass returned paging.cursors.after to continue and use paging.hasNextPage to detect continuation; the adapter never returns or follows Meta's paging.next URL because it may contain credentials."
   adSets.adsList: "Lists the documented ads edge for one ad set; use the cursor fields to continue through results."
-  adSets.adCreativesList: "Lists creatives associated with the ad set; Graph returns cursor paging but documents no edge query parameters."
+  adSets.adCreativesList: "Lists creatives associated with the ad set and forwards standard Graph cursors."
   adSets.copiesList: "Lists the documented ad-set copies edge and supports Graph cursor pagination."
   adSets.copy: "Creates a copy with status_option fixed to PAUSED. Deep-copying child ads is not exposed and the non-idempotent write is not retried. EU-targeted copies may require DSA payor and beneficiary settings."
   adSets.activitiesList: "Reads ad-set activity history; businessId may be required by Meta for accounts associated with a business."
@@ -46,7 +61,7 @@ apiNotes:
   ads.adRulesGovernedList: "Lists rules that govern the ad; passEvaluation is an optional documented filter."
   adSets.create: "Supply optimizationGoal (REACH) and billingEvent (IMPRESSIONS), a documented Meta v27 ad-set example. This consequential write is destructive and isn't automatically retried. Budgets use integer smallest-currency units; initial status defaults to PAUSED. Meta v27 can enable cross-device expansion for eligible Sales ad sets unless the documented targeting automation setting is set to 0; EU targeting needs beneficiary/payer account defaults or explicit values."
   ads.create: "Use an existing creative ID or an inline creative with object_story_spec. New ads enter review and can deliver after approval; this consequential write isn't automatically retried."
-  ads.adCreativesList: "Lists creatives attached to the ad; Graph returns cursor paging but documents no edge query parameters."
+  ads.adCreativesList: "Lists creatives attached to the ad and forwards standard Graph cursors."
   ads.adStudiesList: "Lists ad studies containing this ad."
   ads.previewsList: "Returns provider HTML in the body field. Only seven common formats are accepted here; treat preview HTML as untrusted text and note Meta says the iframe is valid for 24 hours."
   ads.copiesList: "Lists the documented ad copies edge and supports Graph cursor pagination."
@@ -55,6 +70,7 @@ apiNotes:
   creatives.insightsList: "Reads the documented aesthetics quality metric; it does not expose a generalized performance-report surface."
   creatives.previewsList: "Returns provider HTML in the body field. Only seven common formats are accepted here; treat preview HTML as untrusted text and note Meta says the iframe is valid for 24 hours."
   audiences.create: "Creates a blank CUSTOM audience. Pass customerFileSource (USER_PROVIDED_ONLY, PARTNER_PROVIDED_ONLY, or BOTH_USER_AND_PARTNER_PROVIDED) for customer-file uploads; the field is optional in the general create reference, though Meta's Customer File guide says to specify it for that workflow. Add or remove members later with usersAdd/usersRemove; only single-key SHA-256 email or phone hashes are accepted, up to 10000 per request. Adds also require upload-session and batch metadata. Raw identifiers and multi-key matching are not exposed. Request payloads are omitted from propagated error metadata and echoed invalid-entry samples are stripped from successful results."
+  audiences.acceptTerms: "Accepts the provider's custom-audience terms for the specified ad account; this legal acceptance is marked destructive."
   audiences.adsList: "Lists ads associated with the custom audience; this is a read-only edge and requires permission to read the audience and its ads."
   audiences.adAccountsList: "Lists shared ad-account IDs and can filter by targeting or targeting_and_insights permission."
   audiences.delete: "Deletion is permanent and ads using the audience stop; they cannot be restarted."
@@ -70,6 +86,24 @@ apiNotes:
   studies.relatedAccountsList: "Lists ad accounts related to the study."
   studies.viewersList: "Lists users who can view the study."
   videos.delete: "Dissociates the specified video from the ad-account library; it does not delete the source video."
+  asyncCreatives.create: "Starts a non-idempotent creative job with notifications fixed to OFF; notification URIs are intentionally unsupported and creative form data is removed from propagated errors."
+  asyncCreatives.list: "Lists safe asynchronous creative job status fields and supports Graph cursor pagination."
+  asyncRequestSets.create: "Starts potentially deliverable ad creation from documented string-valued ad spec maps; notifications are fixed to OFF, request data is removed from propagated errors, and the write is not retried."
+  asyncRequestSets.list: "Lists safe status/count fields and supports Graph cursor pagination."
+  asyncRequestSets.get: "Only documented status/count fields are selectable; notification_uri is omitted to avoid exposing callback URLs."
+  asyncRequestSets.update: "Renames a request set. notification_uri and notification_mode are omitted because outbound callback handling is outside this plugin."
+  asyncRequestSets.cancel: "Cancels a request set only while it remains unprocessed; cancellation is marked destructive."
+  asyncRequests.listForSet: "Only request IDs, parent IDs and statuses can be selected; raw request input and result/error content are excluded."
+  asyncRequests.listForAdSet: "Only request IDs, parent IDs and statuses can be selected; use the documented statuses filter and cursor paging."
+  asyncRequests.cancel: "Cancels one request only while it remains unprocessed; cancellation is marked destructive."
+  reachFrequencyPredictions.list: "Lists safe documented prediction fields and supports cursor pagination; pause_periods is omitted because its item field types are not specified."
+  reachFrequencyPredictions.get: "Reads selected documented prediction fields; pause_periods is omitted because its item field types are not specified."
+  reachFrequencyPredictions.create: "Creates a non-idempotent forecast/reservation. predictionMode 0 requires reach; mode 1 requires budget. Day-part entries require at least three hours. Country and budget thresholds remain provider enforced."
+  pixels.create: "Creates an Ads Pixel for an account; Meta allows at most one pixel per account in the documented error contract."
+  pixels.get: "Only the documented scalar AdsPixel fields are selectable; nested creator, owner-business and usage objects are not exposed."
+  pixels.update: "Updates only documented AdsPixel fields; server_events_business_ids changes access and are marked destructive with the request body removed from propagated errors."
+  publisherBlockLists.create: "Creates a named block list but does not apply it to account delivery."
+  customConversions.create: "Creates a custom conversion definition from documented event-source fields; this operation does not send Conversions API events."
   insights.list: "Synchronous metrics with allow-listed fields, breakdowns, filters, attribution windows, sorting, summary, and time increments. Meta may reject unsupported field/breakdown combinations."
   insights.listForCampaign: "Reads the same typed synchronous Insights fields directly from a campaign node."
   insights.listForAdSet: "Reads the same typed synchronous Insights fields directly from an ad-set node."
@@ -270,6 +304,147 @@ apiExamples:
   accounts.broadTargetingCategoriesList:
     accountId: "1234567890"
     customCategoriesOnly: true
+  accounts.reachEstimate:
+    call: |-
+      {
+        accountId: "1234567890",
+        targetingSpec: { geo_locations: { countries: ["US"] }, age_min: 20, age_max: 40 },
+      }
+  accounts.assignedUsersList:
+    accountId: "1234567890"
+    businessId: "1234567891"
+  accounts.assignUser:
+    call: |-
+      { accountId: "1234567890", userId: "1234567892", tasks: ["ADVERTISE", "ANALYZE"] }
+  accounts.removeUser:
+    accountId: "1234567890"
+    userId: "1234567892"
+  accounts.controlsCreate:
+    call: |-
+      {
+        accountId: "1234567890",
+        audienceControls: { ageMin: 18, geoLocations: { countries: ["US"] } },
+        placementControls: { placementExclusions: ["FACEBOOK_MARKETPLACE"] },
+      }
+  accounts.agenciesList:
+    accountId: "1234567890"
+  accounts.agencyRemove:
+    accountId: "1234567890"
+    businessId: "1234567891"
+  accounts.subscribedAppUpdate:
+    accountId: "1234567890"
+    appId: "1234567893"
+  accounts.subscribedAppRemove:
+    accountId: "1234567890"
+    appId: "1234567893"
+  accounts.trackingCreate:
+    call: |-
+      {
+        accountId: "1234567890",
+        trackingSpecs: { "action.type": ["offsite_conversion"], fb_pixel: ["1234567894"] },
+      }
+  accounts.pixelsList:
+    accountId: "1234567890"
+  accounts.adRulesLibraryCreate:
+    call: |-
+      {
+        accountId: "1234567890",
+        name: "Pause on spend limit",
+        evaluationSpec: {
+          evaluationType: "SCHEDULE",
+          filters: [{ field: "spend", value: 100, operator: "GREATER_THAN" }],
+        },
+        executionSpec: { executionType: "PAUSE" },
+        scheduleSpec: { scheduleType: "DAILY" },
+        status: "DISABLED",
+      }
+  accounts.smartSuggestedAdsList:
+    call: |-
+      { accountId: "1234567890", objective: "OUTCOME_TRAFFIC", optimizationGoal: "LINK_CLICKS" }
+  accounts.suggestedAdsList:
+    call: |-
+      { accountId: "1234567890", countries: ["US"], objective: "OUTCOME_SALES", useCase: "AUTOMATED_SHOPPING_ADS" }
+  accounts.placePageSetsCreate:
+    call: |-
+      { accountId: "1234567890", name: "Store locations", parentPageId: "1234567895", locationTypes: ["recent", "home"] }
+  pixels.create:
+    accountId: "1234567890"
+    name: "Website pixel"
+  pixels.get:
+    pixelId: "1234567894"
+    fields: [id, name, data_use_setting]
+  pixels.update:
+    call: |-
+      { pixelId: "1234567894", name: "Updated pixel", dataUseSetting: "ANALYTICS_ONLY", enableAutomaticMatching: false }
+  publisherBlockLists.create:
+    accountId: "1234567890"
+    name: "Sensitive placements"
+  audiences.acceptTerms:
+    accountId: "1234567890"
+    termsId: "1234567896"
+  asyncCreatives.list:
+    accountId: "1234567890"
+  asyncCreatives.create:
+    call: |-
+      {
+        accountId: "1234567890",
+        name: "Creative job",
+        creativeSpec: { name: "Sample creative", objectStoryId: "1234567895_1234567897" },
+      }
+  asyncRequestSets.list:
+    accountId: "1234567890"
+  asyncRequestSets.create:
+    call: |-
+      {
+        accountId: "1234567890",
+        name: "Ad request set",
+        adSpecs: [{ name: "Paused ad", adset_id: "120000000000002", status: "PAUSED" }],
+      }
+  asyncRequestSets.get:
+    requestSetId: "1234567898"
+    fields: [id, name, is_completed]
+  asyncRequestSets.update:
+    requestSetId: "1234567898"
+    name: "Renamed request set"
+  asyncRequestSets.cancel:
+    requestSetId: "1234567898"
+  asyncRequests.listForSet:
+    requestSetId: "1234567898"
+    status: [SUCCESS, ERROR]
+    fields: [id, scope_object_id, status]
+  asyncRequests.listForAdSet:
+    adSetId: "120000000000002"
+    status: [IN_PROGRESS]
+    fields: [id, scope_object_id, status]
+  asyncRequests.cancel:
+    requestId: "1234567899"
+  reachFrequencyPredictions.list:
+    accountId: "1234567890"
+    fields: [id, name, prediction_mode, prediction_progress]
+  reachFrequencyPredictions.get:
+    predictionId: "1234567900"
+    fields: [id, name, prediction_mode, prediction_progress]
+  reachFrequencyPredictions.create:
+    call: |-
+      {
+        accountId: "1234567890",
+        budget: 500000,
+        predictionMode: 1,
+        startTime: 1800000000,
+        stopTime: 1800086400,
+        dayPartingSchedule: [{ startMinute: 360, endMinute: 1440, days: [0, 1, 2, 3, 4, 5, 6] }],
+        targetSpec: { geo_locations: { countries: ["US"] } },
+      }
+  customConversions.create:
+    call: |-
+      {
+        accountId: "1234567890",
+        name: "Completed checkout",
+        actionSourceType: "website",
+        customEventType: "PURCHASE",
+        eventSourceId: "1234567894",
+        rule: "url contains /checkout",
+      }
   labels.list:
     accountId: "1234567890"
   labels.get:

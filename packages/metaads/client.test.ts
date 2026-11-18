@@ -105,6 +105,42 @@ describe('Meta Ads Graph API client', () => {
 		expect(rateLimit.retryAfter).toBe(4000);
 	});
 
+	it('redacts the OAuth token from propagated ApiError metadata', async () => {
+		const token = 'sensitive-meta-token';
+		const providerError = new ApiError(
+			{
+				method: 'GET',
+				url: '/v27.0/me/adaccounts',
+				query: { access_token: token, targeting_spec: 'sensitive-targeting' },
+			},
+			{
+				url: `https://graph.facebook.com/v27.0/me/adaccounts?access_token=${token}`,
+				ok: false,
+				status: 403,
+				statusText: 'Forbidden',
+				body: { error: { message: `Denied ${token}` } },
+			},
+			`Denied ${token}`,
+		);
+		mockedRequest.mockRejectedValue(providerError);
+
+		// `unknown` because a rejected request has no static error type until narrowed as ApiError.
+		const result = await makeMetaAdsRequest('/me/adaccounts', token, {
+			method: 'GET',
+			query: { targeting_spec: 'sensitive-targeting' },
+			redactQueryOnError: true,
+		}).catch((caught: unknown) => caught);
+
+		expect(result).toBeInstanceOf(ApiError);
+		if (!(result instanceof ApiError))
+			throw new Error('Expected sanitized core ApiError');
+		expect(result).not.toBe(providerError);
+		expect(result.request.query).toBeUndefined();
+		expect(JSON.stringify(result)).not.toContain(token);
+		expect(JSON.stringify(result)).not.toContain('sensitive-targeting');
+		expect(result.status).toBe(403);
+	});
+
 	it('removes audience member data from propagated core request errors', async () => {
 		const submittedHash = 'a'.repeat(64);
 		const providerError = new ApiError(

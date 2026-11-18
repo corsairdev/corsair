@@ -4,13 +4,20 @@ import {
 	Accounts,
 	AdSets,
 	Ads,
+	AsyncCreatives,
+	AsyncRequestSets,
+	AsyncRequests,
 	Audiences,
 	Campaigns,
 	Creatives,
+	CustomConversions,
 	HighDemandPeriods,
 	Images,
 	Insights,
 	Labels,
+	Pixels,
+	PublisherBlockLists,
+	ReachFrequencyPredictions,
 	Studies,
 	Videos,
 } from './endpoints';
@@ -64,6 +71,7 @@ type Case = {
 	body?: Record<string, unknown>;
 	encodedBody?: string;
 	redactBodyOnError?: boolean;
+	redactQueryOnError?: boolean;
 	sensitiveValues?: string[];
 	call: () => Promise<void>;
 };
@@ -75,6 +83,11 @@ const listResponse = {
 const objectResponse = { id: '100', name: 'Test' };
 const createResponse = { id: '100' };
 const successResponse = { success: true };
+
+// `unknown` is needed because expanded Graph edge values are dynamic JSON that must be narrowed before property access.
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
 
 const cases: Case[] = [
 	{
@@ -116,8 +129,204 @@ const cases: Case[] = [
 		name: 'accounts.activitiesList',
 		path: '/act_123/activities',
 		method: 'GET',
+		query: { limit: 3, after: 'activity-cursor' },
 		call: async () => {
-			await Accounts.activitiesList(ctx, { accountId: '123' });
+			await Accounts.activitiesList(ctx, {
+				accountId: '123',
+				limit: 3,
+				after: 'activity-cursor',
+			});
+		},
+	},
+	{
+		name: 'accounts.assignedUsersList',
+		path: '/act_123/assigned_users',
+		method: 'GET',
+		query: { business: 'business-1', limit: 3, after: 'user-cursor' },
+		call: async () => {
+			await Accounts.assignedUsersList(ctx, {
+				accountId: '123',
+				businessId: 'business-1',
+				limit: 3,
+				after: 'user-cursor',
+			});
+		},
+	},
+	{
+		name: 'accounts.assignUser',
+		path: '/act_123/assigned_users',
+		method: 'POST',
+		body: { user: 'user-1', tasks: '["ADVERTISE","ANALYZE"]' },
+		call: async () => {
+			await Accounts.assignUser(ctx, {
+				accountId: '123',
+				userId: 'user-1',
+				tasks: ['ADVERTISE', 'ANALYZE'],
+			});
+		},
+	},
+	{
+		name: 'accounts.removeUser',
+		path: '/act_123/assigned_users',
+		method: 'DELETE',
+		encodedBody: 'user=user-1',
+		call: async () => {
+			await Accounts.removeUser(ctx, { accountId: '123', userId: 'user-1' });
+		},
+	},
+	{
+		name: 'accounts.controlsCreate',
+		path: '/act_123/account_controls',
+		method: 'POST',
+		body: {
+			audience_controls: '{"age_min":18,"geo_locations":{"countries":["US"]}}',
+			placement_controls: '{"placement_exclusions":["FACEBOOK_MARKETPLACE"]}',
+		},
+		redactBodyOnError: true,
+		call: async () => {
+			await Accounts.controlsCreate(ctx, {
+				accountId: '123',
+				audienceControls: {
+					ageMin: 18,
+					geoLocations: { countries: ['US'] },
+				},
+				placementControls: {
+					placementExclusions: ['FACEBOOK_MARKETPLACE'],
+				},
+			});
+		},
+	},
+	{
+		name: 'accounts.agenciesList',
+		path: '/act_123/agencies',
+		method: 'GET',
+		query: { limit: 5, before: 'agency-cursor' },
+		call: async () => {
+			await Accounts.agenciesList(ctx, {
+				accountId: '123',
+				limit: 5,
+				before: 'agency-cursor',
+			});
+		},
+	},
+	{
+		name: 'accounts.agencyRemove',
+		path: '/act_123/agencies',
+		method: 'DELETE',
+		encodedBody: 'business=business-1',
+		call: async () => {
+			await Accounts.agencyRemove(ctx, {
+				accountId: '123',
+				businessId: 'business-1',
+			});
+		},
+	},
+	{
+		name: 'accounts.subscribedAppUpdate',
+		path: '/act_123/subscribed_apps',
+		method: 'POST',
+		body: { app_id: 'app-1' },
+		call: async () => {
+			await Accounts.subscribedAppUpdate(ctx, {
+				accountId: '123',
+				appId: 'app-1',
+			});
+		},
+	},
+	{
+		name: 'accounts.subscribedAppRemove',
+		path: '/act_123/subscribed_apps',
+		method: 'DELETE',
+		encodedBody: 'app_id=app-1',
+		call: async () => {
+			await Accounts.subscribedAppRemove(ctx, {
+				accountId: '123',
+				appId: 'app-1',
+			});
+		},
+	},
+	{
+		name: 'accounts.trackingCreate',
+		path: '/act_123/tracking',
+		method: 'POST',
+		body: {
+			tracking_specs:
+				'{"action.type":["offsite_conversion"],"fb_pixel":["pixel-1"]}',
+		},
+		redactBodyOnError: true,
+		call: async () => {
+			await Accounts.trackingCreate(ctx, {
+				accountId: '123',
+				trackingSpecs: {
+					'action.type': ['offsite_conversion'],
+					fb_pixel: ['pixel-1'],
+				},
+			});
+		},
+	},
+	{
+		name: 'accounts.pixelsList',
+		path: '/act_123/adspixels',
+		method: 'GET',
+		query: { limit: 5, after: 'pixel-cursor' },
+		call: async () => {
+			await Accounts.pixelsList(ctx, {
+				accountId: '123',
+				limit: 5,
+				after: 'pixel-cursor',
+			});
+		},
+	},
+	{
+		name: 'pixels.create',
+		path: '/act_123/adspixels',
+		method: 'POST',
+		body: { name: 'Test pixel' },
+		call: async () => {
+			await Pixels.create(ctx, { accountId: '123', name: 'Test pixel' });
+		},
+	},
+	{
+		name: 'pixels.get',
+		path: '/pixel-1',
+		method: 'GET',
+		query: { fields: 'id,name,data_use_setting' },
+		call: async () => {
+			await Pixels.get(ctx, {
+				pixelId: 'pixel-1',
+				fields: ['id', 'name', 'data_use_setting'],
+			});
+		},
+	},
+	{
+		name: 'pixels.update',
+		path: '/pixel-1',
+		method: 'POST',
+		redactBodyOnError: true,
+		body: {
+			name: 'Updated pixel',
+			data_use_setting: 'ANALYTICS_ONLY',
+			enable_automatic_matching: false,
+		},
+		call: async () => {
+			await Pixels.update(ctx, {
+				pixelId: 'pixel-1',
+				name: 'Updated pixel',
+				dataUseSetting: 'ANALYTICS_ONLY',
+				enableAutomaticMatching: false,
+			});
+		},
+	},
+	{
+		name: 'publisherBlockLists.create',
+		path: '/act_123/publisher_block_lists',
+		method: 'POST',
+		body: { name: 'Test block list' },
+		call: async () => {
+			await PublisherBlockLists.create(ctx, {
+				accountId: '123',
+				name: 'Test block list',
+			});
 		},
 	},
 	{
@@ -147,6 +356,33 @@ const cases: Case[] = [
 		},
 	},
 	{
+		name: 'accounts.adRulesLibraryCreate',
+		path: '/act_123/adrules_library',
+		method: 'POST',
+		redactBodyOnError: true,
+		body: {
+			name: 'Pause on spend limit',
+			evaluation_spec:
+				'{"evaluation_type":"SCHEDULE","filters":[{"field":"spend","value":100,"operator":"GREATER_THAN"}]}',
+			execution_spec: '{"execution_type":"PAUSE","is_once_off":true}',
+			schedule_spec: '{"schedule_type":"DAILY"}',
+			status: 'DISABLED',
+		},
+		call: async () => {
+			await Accounts.adRulesLibraryCreate(ctx, {
+				accountId: '123',
+				name: 'Pause on spend limit',
+				evaluationSpec: {
+					evaluationType: 'SCHEDULE',
+					filters: [{ field: 'spend', value: 100, operator: 'GREATER_THAN' }],
+				},
+				executionSpec: { executionType: 'PAUSE', isOnceOff: true },
+				scheduleSpec: { scheduleType: 'DAILY' },
+				status: 'DISABLED',
+			});
+		},
+	},
+	{
 		name: 'accounts.activeAdRulesList',
 		path: '/act_123/active_adrules',
 		method: 'GET',
@@ -170,10 +406,13 @@ const cases: Case[] = [
 		name: 'accounts.generatePreviews',
 		path: '/act_123/generatepreviews',
 		method: 'GET',
+		redactQueryOnError: true,
 		query: {
 			ad_format: 'DESKTOP_FEED_STANDARD',
 			creative:
 				'{"object_story_spec":{"page_id":"page-1","link_data":{"link":"https://shop.test/landing","message":"Sample"}}}',
+			limit: 2,
+			after: 'preview-cursor',
 		},
 		call: async () => {
 			await Accounts.generatePreviews(ctx, {
@@ -188,6 +427,8 @@ const cases: Case[] = [
 						},
 					},
 				},
+				limit: 2,
+				after: 'preview-cursor',
 			});
 		},
 	},
@@ -195,11 +436,96 @@ const cases: Case[] = [
 		name: 'accounts.broadTargetingCategoriesList',
 		path: '/act_123/broadtargetingcategories',
 		method: 'GET',
-		query: { custom_categories_only: true },
+		query: { custom_categories_only: true, limit: 3, after: 'broad-cursor' },
 		call: async () => {
 			await Accounts.broadTargetingCategoriesList(ctx, {
 				accountId: '123',
 				customCategoriesOnly: true,
+				limit: 3,
+				after: 'broad-cursor',
+			});
+		},
+	},
+	{
+		name: 'accounts.smartSuggestedAdsList',
+		path: '/act_123/smart_suggested_ads',
+		method: 'GET',
+		query: {
+			objective: 'OUTCOME_TRAFFIC',
+			optimization_goal: 'LINK_CLICKS',
+			pixel_id: 'pixel-1',
+			product_set_id: 'product-set-1',
+			limit: 5,
+			after: 'suggestion-cursor',
+		},
+		call: async () => {
+			await Accounts.smartSuggestedAdsList(ctx, {
+				accountId: '123',
+				objective: 'OUTCOME_TRAFFIC',
+				optimizationGoal: 'LINK_CLICKS',
+				pixelId: 'pixel-1',
+				productSetId: 'product-set-1',
+				limit: 5,
+				after: 'suggestion-cursor',
+			});
+		},
+	},
+	{
+		name: 'accounts.suggestedAdsList',
+		path: '/act_123/suggested_ads',
+		method: 'GET',
+		query: {
+			countries: 'US,CA',
+			objective: 'OUTCOME_SALES',
+			optimization_goal: 'OFFSITE_CONVERSIONS',
+			rank_by: 'ads_revenue',
+			use_case: 'AUTOMATED_SHOPPING_ADS',
+			limit: 20,
+		},
+		call: async () => {
+			await Accounts.suggestedAdsList(ctx, {
+				accountId: '123',
+				countries: ['US', 'CA'],
+				objective: 'OUTCOME_SALES',
+				optimizationGoal: 'OFFSITE_CONVERSIONS',
+				rankBy: 'ads_revenue',
+				useCase: 'AUTOMATED_SHOPPING_ADS',
+				limit: 20,
+			});
+		},
+	},
+	{
+		name: 'accounts.placePageSetsCreate',
+		path: '/act_123/ad_place_page_sets',
+		method: 'POST',
+		body: {
+			name: 'Store locations',
+			parent_page: 'page-1',
+			location_types: '["recent","home"]',
+		},
+		call: async () => {
+			await Accounts.placePageSetsCreate(ctx, {
+				accountId: '123',
+				name: 'Store locations',
+				parentPageId: 'page-1',
+				locationTypes: ['recent', 'home'],
+			});
+		},
+	},
+	{
+		name: 'accounts.reachEstimate',
+		path: '/act_123/reachestimate',
+		method: 'GET',
+		redactQueryOnError: true,
+		query: {
+			object_store_url: 'https://store.test/app',
+			targeting_spec: '{"geo_locations":{"countries":["US"]}}',
+		},
+		call: async () => {
+			await Accounts.reachEstimate(ctx, {
+				accountId: '123',
+				objectStoreUrl: 'https://store.test/app',
+				targetingSpec: { geo_locations: { countries: ['US'] } },
 			});
 		},
 	},
@@ -605,8 +931,13 @@ const cases: Case[] = [
 		name: 'adSets.adCreativesList',
 		path: '/adset-1/adcreatives',
 		method: 'GET',
+		query: { limit: 2, after: 'creative-cursor' },
 		call: async () => {
-			await AdSets.adCreativesList(ctx, { adSetId: 'adset-1' });
+			await AdSets.adCreativesList(ctx, {
+				adSetId: 'adset-1',
+				limit: 2,
+				after: 'creative-cursor',
+			});
 		},
 	},
 	{
@@ -789,8 +1120,13 @@ const cases: Case[] = [
 		name: 'ads.adCreativesList',
 		path: '/ad-1/adcreatives',
 		method: 'GET',
+		query: { limit: 2, before: 'creative-cursor' },
 		call: async () => {
-			await Ads.adCreativesList(ctx, { adId: 'ad-1' });
+			await Ads.adCreativesList(ctx, {
+				adId: 'ad-1',
+				limit: 2,
+				before: 'creative-cursor',
+			});
 		},
 	},
 	{
@@ -824,11 +1160,18 @@ const cases: Case[] = [
 		name: 'ads.previewsList',
 		path: '/ad-1/previews',
 		method: 'GET',
-		query: { ad_format: 'DESKTOP_FEED_STANDARD' },
+		query: {
+			ad_format: 'DESKTOP_FEED_STANDARD',
+			limit: 2,
+			after: 'preview-cursor',
+		},
+		redactQueryOnError: true,
 		call: async () => {
 			await Ads.previewsList(ctx, {
 				adId: 'ad-1',
 				adFormat: 'DESKTOP_FEED_STANDARD',
+				limit: 2,
+				after: 'preview-cursor',
 			});
 		},
 	},
@@ -983,21 +1326,35 @@ const cases: Case[] = [
 		name: 'creatives.insightsList',
 		path: '/creative-1/creative_insights',
 		method: 'GET',
+		query: { limit: 3, after: 'insight-cursor' },
 		call: async () => {
-			await Creatives.insightsList(ctx, { creativeId: 'creative-1' });
+			await Creatives.insightsList(ctx, {
+				creativeId: 'creative-1',
+				limit: 3,
+				after: 'insight-cursor',
+			});
 		},
 	},
 	{
 		name: 'creatives.previewsList',
 		path: '/creative-1/previews',
 		method: 'GET',
-		query: { ad_format: 'INSTAGRAM_STANDARD', width: 400, height: 400 },
+		redactQueryOnError: true,
+		query: {
+			ad_format: 'INSTAGRAM_STANDARD',
+			width: 400,
+			height: 400,
+			limit: 2,
+			before: 'preview-cursor',
+		},
 		call: async () => {
 			await Creatives.previewsList(ctx, {
 				creativeId: 'creative-1',
 				adFormat: 'INSTAGRAM_STANDARD',
 				width: 400,
 				height: 400,
+				limit: 2,
+				before: 'preview-cursor',
 			});
 		},
 	},
@@ -1134,6 +1491,19 @@ const cases: Case[] = [
 				name: 'Test audience',
 				customerFileSource: 'USER_PROVIDED_ONLY',
 				subtype: 'CUSTOM',
+			});
+		},
+	},
+	{
+		name: 'audiences.acceptTerms',
+		path: '/act_123/customaudiencestos',
+		method: 'POST',
+		body: { tos_id: 'terms-1', business_id: 'business-1' },
+		call: async () => {
+			await Audiences.acceptTerms(ctx, {
+				accountId: '123',
+				termsId: 'terms-1',
+				businessId: 'business-1',
 			});
 		},
 	},
@@ -1355,6 +1725,229 @@ const cases: Case[] = [
 		},
 	},
 	{
+		name: 'asyncCreatives.list',
+		path: '/act_123/asyncadcreatives',
+		method: 'GET',
+		query: { is_completed: true, limit: 2, after: 'async-creative-cursor' },
+		call: async () => {
+			await AsyncCreatives.list(ctx, {
+				accountId: '123',
+				isCompleted: true,
+				limit: 2,
+				after: 'async-creative-cursor',
+			});
+		},
+	},
+	{
+		name: 'asyncCreatives.create',
+		path: '/act_123/asyncadcreatives',
+		method: 'POST',
+		redactBodyOnError: true,
+		body: {
+			name: 'Creative job',
+			creative_spec: '{"name":"Async creative","object_story_id":"post-1"}',
+			notification_mode: 'OFF',
+		},
+		call: async () => {
+			await AsyncCreatives.create(ctx, {
+				accountId: '123',
+				name: 'Creative job',
+				creativeSpec: { name: 'Async creative', objectStoryId: 'post-1' },
+			});
+		},
+	},
+	{
+		name: 'asyncRequestSets.list',
+		path: '/act_123/asyncadrequestsets',
+		method: 'GET',
+		query: { is_completed: false, limit: 5, before: 'set-cursor' },
+		call: async () => {
+			await AsyncRequestSets.list(ctx, {
+				accountId: '123',
+				isCompleted: false,
+				limit: 5,
+				before: 'set-cursor',
+			});
+		},
+	},
+	{
+		name: 'asyncRequestSets.create',
+		path: '/act_123/asyncadrequestsets',
+		method: 'POST',
+		redactBodyOnError: true,
+		body: {
+			name: 'Ad request job',
+			ad_specs: '[{"name":"Ad 1","adset_id":"adset-1"}]',
+			notification_mode: 'OFF',
+		},
+		call: async () => {
+			await AsyncRequestSets.create(ctx, {
+				accountId: '123',
+				name: 'Ad request job',
+				adSpecs: [{ name: 'Ad 1', adset_id: 'adset-1' }],
+			});
+		},
+	},
+	{
+		name: 'asyncRequestSets.get',
+		path: '/request-set-1',
+		method: 'GET',
+		query: { fields: 'id,name,is_completed,success_count' },
+		call: async () => {
+			await AsyncRequestSets.get(ctx, {
+				requestSetId: 'request-set-1',
+				fields: ['id', 'name', 'is_completed', 'success_count'],
+			});
+		},
+	},
+	{
+		name: 'asyncRequestSets.update',
+		path: '/request-set-1',
+		method: 'POST',
+		body: { name: 'Renamed request job' },
+		call: async () => {
+			await AsyncRequestSets.update(ctx, {
+				requestSetId: 'request-set-1',
+				name: 'Renamed request job',
+			});
+		},
+	},
+	{
+		name: 'asyncRequestSets.cancel',
+		path: '/request-set-1',
+		method: 'DELETE',
+		call: async () => {
+			await AsyncRequestSets.cancel(ctx, { requestSetId: 'request-set-1' });
+		},
+	},
+	{
+		name: 'asyncRequests.listForSet',
+		path: '/request-set-1/requests',
+		method: 'GET',
+		query: {
+			status: 'SUCCESS,ERROR',
+			fields: 'id,status',
+			limit: 10,
+			after: 'request-cursor',
+		},
+		call: async () => {
+			await AsyncRequests.listForSet(ctx, {
+				requestSetId: 'request-set-1',
+				status: ['SUCCESS', 'ERROR'],
+				fields: ['id', 'status'],
+				limit: 10,
+				after: 'request-cursor',
+			});
+		},
+	},
+	{
+		name: 'asyncRequests.listForAdSet',
+		path: '/adset-1/asyncadrequests',
+		method: 'GET',
+		query: { statuses: 'IN_PROGRESS', fields: 'id,scope_object_id,status' },
+		call: async () => {
+			await AsyncRequests.listForAdSet(ctx, {
+				adSetId: 'adset-1',
+				status: ['IN_PROGRESS'],
+				fields: ['id', 'scope_object_id', 'status'],
+			});
+		},
+	},
+	{
+		name: 'asyncRequests.cancel',
+		path: '/request-1',
+		method: 'DELETE',
+		call: async () => {
+			await AsyncRequests.cancel(ctx, { requestId: 'request-1' });
+		},
+	},
+	{
+		name: 'reachFrequencyPredictions.get',
+		path: '/prediction-1',
+		method: 'GET',
+		query: { fields: 'id,prediction_mode,prediction_progress' },
+		call: async () => {
+			await ReachFrequencyPredictions.get(ctx, {
+				predictionId: 'prediction-1',
+				fields: ['id', 'prediction_mode', 'prediction_progress'],
+			});
+		},
+	},
+	{
+		name: 'reachFrequencyPredictions.list',
+		path: '/act_123/reachfrequencypredictions',
+		method: 'GET',
+		query: { fields: 'id,name', limit: 5, after: 'prediction-cursor' },
+		call: async () => {
+			await ReachFrequencyPredictions.list(ctx, {
+				accountId: '123',
+				fields: ['id', 'name'],
+				limit: 5,
+				after: 'prediction-cursor',
+			});
+		},
+	},
+	{
+		name: 'reachFrequencyPredictions.create',
+		path: '/act_123/reachfrequencypredictions',
+		method: 'POST',
+		redactBodyOnError: true,
+		body: {
+			budget: 500000,
+			day_parting_schedule:
+				'[{"start_minute":360,"end_minute":1440,"days":[0,1,2,3,4,5,6],"timezone_type":"ADVERTISER"}]',
+			objective: 'REACH',
+			prediction_mode: 1,
+			start_time: 1800000000,
+			stop_time: 1800086400,
+			target_spec: '{"geo_locations":{"countries":["US"]}}',
+		},
+		call: async () => {
+			await ReachFrequencyPredictions.create(ctx, {
+				accountId: '123',
+				budget: 500000,
+				dayPartingSchedule: [
+					{
+						startMinute: 360,
+						endMinute: 1440,
+						days: [0, 1, 2, 3, 4, 5, 6],
+						timezoneType: 'ADVERTISER',
+					},
+				],
+				objective: 'REACH',
+				predictionMode: 1,
+				startTime: 1_800_000_000,
+				stopTime: 1_800_086_400,
+				targetSpec: { geo_locations: { countries: ['US'] } },
+			});
+		},
+	},
+	{
+		name: 'customConversions.create',
+		path: '/act_123/customconversions',
+		method: 'POST',
+		redactBodyOnError: true,
+		body: {
+			action_source_type: 'website',
+			custom_event_type: 'PURCHASE',
+			default_conversion_value: 0,
+			event_source_id: 'pixel-1',
+			name: 'Completed checkout',
+			rule: 'url contains /checkout',
+		},
+		call: async () => {
+			await CustomConversions.create(ctx, {
+				accountId: '123',
+				actionSourceType: 'website',
+				customEventType: 'PURCHASE',
+				defaultConversionValue: 0,
+				eventSourceId: 'pixel-1',
+				name: 'Completed checkout',
+				rule: 'url contains /checkout',
+			});
+		},
+	},
+	{
 		name: 'insights.list',
 		path: '/act_123/insights',
 		method: 'GET',
@@ -1482,16 +2075,26 @@ const cases: Case[] = [
 		name: 'insights.listFeatures',
 		path: '/act_123/insights/feature-settings/list-features',
 		method: 'GET',
+		query: { limit: 3, after: 'feature-cursor' },
 		call: async () => {
-			await Insights.listFeatures(ctx, { accountId: '123' });
+			await Insights.listFeatures(ctx, {
+				accountId: '123',
+				limit: 3,
+				after: 'feature-cursor',
+			});
 		},
 	},
 	{
 		name: 'insights.listEnabledFeatures',
 		path: '/act_123/insights/feature-settings',
 		method: 'GET',
+		query: { limit: 2, before: 'enabled-feature-cursor' },
 		call: async () => {
-			await Insights.listEnabledFeatures(ctx, { accountId: '123' });
+			await Insights.listEnabledFeatures(ctx, {
+				accountId: '123',
+				limit: 2,
+				before: 'enabled-feature-cursor',
+			});
 		},
 	},
 	{
@@ -1542,6 +2145,9 @@ describe('Meta Ads operations', () => {
 					'labels.get',
 					'studies.get',
 					'highDemandPeriods.get',
+					'asyncRequestSets.get',
+					'accounts.reachEstimate',
+					'reachFrequencyPredictions.get',
 				].includes(testCase.name);
 			const isCreate = [
 				'campaigns.create',
@@ -1556,15 +2162,24 @@ describe('Meta Ads operations', () => {
 				'audiences.create',
 				'studies.create',
 				'labels.create',
+				'accounts.adRulesLibraryCreate',
+				'accounts.adRulesLibraryCreate',
 				'insights.createAsync',
+				'asyncCreatives.create',
+				'asyncRequestSets.create',
+				'pixels.create',
+				'publisherBlockLists.create',
+				'accounts.placePageSetsCreate',
+				'reachFrequencyPredictions.create',
+				'customConversions.create',
 			].includes(testCase.name);
 			const labelAssociations = [
 				'campaigns.labelsAdd',
 				'ads.labelsAdd',
 				'creatives.labelsAdd',
 			].includes(testCase.name);
-			// `unknown` is needed because this table covers distinct mocked response envelopes; each branch assigns the operation-specific fixture before schema validation.
-			let response: Record<string, unknown>;
+			// `unknown` is needed because this table covers distinct mocked response envelopes, including literal boolean responses, before endpoint-specific validation.
+			let response: unknown;
 			if (testCase.name === 'campaigns.copy') {
 				response = { copied_campaign_id: 'campaign-copy-1' };
 			} else if (testCase.name === 'adSets.copy') {
@@ -1655,6 +2270,92 @@ describe('Meta Ads operations', () => {
 				response = {
 					data: [{ id: 'user-1', name: 'Test User', tasks: ['ANALYZE'] }],
 				};
+			} else if (testCase.name === 'accounts.assignedUsersList') {
+				response = {
+					data: [
+						{
+							id: 'user-1',
+							tasks: ['ANALYZE'],
+							permitted_tasks: ['ANALYZE', 'ADVERTISE'],
+						},
+					],
+					summary: { total_count: 1 },
+				};
+			} else if (testCase.name === 'accounts.agenciesList') {
+				response = {
+					data: [
+						{
+							id: 'business-1',
+							access_status: 'APPROVED',
+							permitted_tasks: ['ANALYZE'],
+						},
+					],
+				};
+			} else if (testCase.name === 'accounts.controlsCreate') {
+				response = { id: 'control-1', success: true };
+			} else if (testCase.name === 'pixels.get') {
+				response = {
+					id: 'pixel-1',
+					name: 'Pixel name',
+					data_use_setting: 'ANALYTICS_ONLY',
+				};
+			} else if (testCase.name === 'accounts.reachEstimate') {
+				response = {
+					data: { users_lower_bound: 1000, users_upper_bound: 2000 },
+				};
+			} else if (testCase.name === 'reachFrequencyPredictions.get') {
+				response = {
+					id: 'prediction-1',
+					prediction_mode: 1,
+					prediction_progress: 50,
+				};
+			} else if (testCase.name === 'customConversions.create') {
+				response = {
+					id: 'conversion-1',
+					is_custom_event_type_predicted: '0',
+				};
+			} else if (
+				[
+					'accounts.assignUser',
+					'accounts.removeUser',
+					'accounts.agencyRemove',
+					'accounts.subscribedAppUpdate',
+					'accounts.subscribedAppRemove',
+					'accounts.trackingCreate',
+					'accounts.trackingCreate',
+					'audiences.acceptTerms',
+				].includes(testCase.name)
+			) {
+				response = successResponse;
+			} else if (testCase.name === 'asyncRequestSets.get') {
+				response = {
+					id: 'request-set-1',
+					name: 'Ad request job',
+					is_completed: false,
+					success_count: 0,
+				};
+			} else if (
+				['asyncRequests.listForSet', 'asyncRequests.listForAdSet'].includes(
+					testCase.name,
+				)
+			) {
+				response = {
+					data: [
+						{
+							id: 'request-1',
+							scope_object_id: 'adset-1',
+							status: 'SUCCESS',
+						},
+					],
+				};
+			} else if (
+				[
+					'asyncRequestSets.update',
+					'asyncRequestSets.cancel',
+					'asyncRequests.cancel',
+				].includes(testCase.name)
+			) {
+				response = true;
 			} else if (testCase.name === 'accounts.broadTargetingCategoriesList') {
 				response = {
 					data: [
@@ -1696,6 +2397,7 @@ describe('Meta Ads operations', () => {
 				...(testCase.body ? { body: testCase.body } : {}),
 				...(testCase.encodedBody ? { encodedBody: testCase.encodedBody } : {}),
 				...(testCase.redactBodyOnError ? { redactBodyOnError: true } : {}),
+				...(testCase.redactQueryOnError ? { redactQueryOnError: true } : {}),
 				...(testCase.sensitiveValues
 					? { sensitiveValues: testCase.sensitiveValues }
 					: {}),
@@ -1758,11 +2460,8 @@ describe('Meta Ads operations', () => {
 
 		expect(JSON.stringify(result)).not.toContain(next);
 		expect(JSON.stringify(result)).not.toContain('nested_secret');
-		// `unknown` because expanded edge response shapes are dynamic open records before assertion.
-		const nested = (result as Record<string, unknown>).campaigns as Record<
-			string,
-			unknown
-		>;
+		const nested = result.campaigns;
+		if (!isRecord(nested)) throw new Error('Expected expanded campaign edge');
 		expect(nested.paging).toEqual({
 			cursors: { after: 'cursor-2' },
 			hasNextPage: true,

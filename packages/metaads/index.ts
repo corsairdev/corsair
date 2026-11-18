@@ -17,13 +17,20 @@ import {
 	Accounts,
 	AdSets,
 	Ads,
+	AsyncCreatives,
+	AsyncRequestSets,
+	AsyncRequests,
 	Audiences,
 	Campaigns,
 	Creatives,
+	CustomConversions,
 	HighDemandPeriods,
 	Images,
 	Insights,
 	Labels,
+	Pixels,
+	PublisherBlockLists,
+	ReachFrequencyPredictions,
 	Studies,
 	Videos,
 } from './endpoints';
@@ -70,12 +77,27 @@ const metaAdsEndpointsNested = {
 		list: Accounts.list,
 		get: Accounts.get,
 		usersList: Accounts.usersList,
+		assignedUsersList: Accounts.assignedUsersList,
+		assignUser: Accounts.assignUser,
+		removeUser: Accounts.removeUser,
+		controlsCreate: Accounts.controlsCreate,
+		agenciesList: Accounts.agenciesList,
+		agencyRemove: Accounts.agencyRemove,
+		subscribedAppUpdate: Accounts.subscribedAppUpdate,
+		subscribedAppRemove: Accounts.subscribedAppRemove,
+		trackingCreate: Accounts.trackingCreate,
+		pixelsList: Accounts.pixelsList,
 		activitiesList: Accounts.activitiesList,
 		impactingAdStudiesList: Accounts.impactingAdStudiesList,
 		adRulesLibraryList: Accounts.adRulesLibraryList,
+		adRulesLibraryCreate: Accounts.adRulesLibraryCreate,
 		activeAdRulesList: Accounts.activeAdRulesList,
 		generatePreviews: Accounts.generatePreviews,
 		broadTargetingCategoriesList: Accounts.broadTargetingCategoriesList,
+		smartSuggestedAdsList: Accounts.smartSuggestedAdsList,
+		suggestedAdsList: Accounts.suggestedAdsList,
+		placePageSetsCreate: Accounts.placePageSetsCreate,
+		reachEstimate: Accounts.reachEstimate,
 	},
 	labels: {
 		list: Labels.list,
@@ -88,6 +110,8 @@ const metaAdsEndpointsNested = {
 		campaignsList: Labels.campaignsList,
 		creativesList: Labels.creativesList,
 	},
+	pixels: { create: Pixels.create, get: Pixels.get, update: Pixels.update },
+	publisherBlockLists: { create: PublisherBlockLists.create },
 	highDemandPeriods: { get: HighDemandPeriods.get },
 	images: { list: Images.list, upload: Images.upload, delete: Images.delete },
 	campaigns: {
@@ -146,12 +170,14 @@ const metaAdsEndpointsNested = {
 		insightsList: Creatives.insightsList,
 		previewsList: Creatives.previewsList,
 	},
+	customConversions: { create: CustomConversions.create },
 	audiences: {
 		list: Audiences.list,
 		adsList: Audiences.adsList,
 		adAccountsList: Audiences.adAccountsList,
 		get: Audiences.get,
 		create: Audiences.create,
+		acceptTerms: Audiences.acceptTerms,
 		update: Audiences.update,
 		delete: Audiences.delete,
 		sessionsList: Audiences.sessionsList,
@@ -169,6 +195,27 @@ const metaAdsEndpointsNested = {
 		viewersList: Studies.viewersList,
 	},
 	videos: { delete: Videos.delete },
+	asyncCreatives: {
+		list: AsyncCreatives.list,
+		create: AsyncCreatives.create,
+	},
+	asyncRequestSets: {
+		list: AsyncRequestSets.list,
+		create: AsyncRequestSets.create,
+		get: AsyncRequestSets.get,
+		update: AsyncRequestSets.update,
+		cancel: AsyncRequestSets.cancel,
+	},
+	asyncRequests: {
+		listForSet: AsyncRequests.listForSet,
+		listForAdSet: AsyncRequests.listForAdSet,
+		cancel: AsyncRequests.cancel,
+	},
+	reachFrequencyPredictions: {
+		get: ReachFrequencyPredictions.get,
+		list: ReachFrequencyPredictions.list,
+		create: ReachFrequencyPredictions.create,
+	},
 	insights: {
 		list: Insights.list,
 		listForCampaign: Insights.listForCampaign,
@@ -183,7 +230,9 @@ const metaAdsEndpointsNested = {
 	},
 } as const;
 
-export const metaAdsEndpointSchemas = {
+export const metaAdsEndpointSchemas: RequiredPluginEndpointSchemas<
+	typeof metaAdsEndpointsNested
+> = {
 	'accounts.list': {
 		input: MetaAdsEndpointInputSchemas.accountsList,
 		output: MetaAdsEndpointOutputSchemas.accountsList,
@@ -200,6 +249,62 @@ export const metaAdsEndpointSchemas = {
 		input: MetaAdsEndpointInputSchemas.accountsActivitiesList,
 		output: MetaAdsEndpointOutputSchemas.accountsActivitiesList,
 	},
+	'accounts.assignedUsersList': {
+		input: MetaAdsEndpointInputSchemas.accountsAssignedUsersList,
+		output: MetaAdsEndpointOutputSchemas.accountsAssignedUsersList,
+	},
+	'accounts.assignUser': {
+		input: MetaAdsEndpointInputSchemas.accountsAssignUser,
+		output: MetaAdsEndpointOutputSchemas.accountsAssignUser,
+	},
+	'accounts.removeUser': {
+		input: MetaAdsEndpointInputSchemas.accountsRemoveUser,
+		output: MetaAdsEndpointOutputSchemas.accountsRemoveUser,
+	},
+	'accounts.controlsCreate': {
+		input: MetaAdsEndpointInputSchemas.accountsControlsCreate,
+		output: MetaAdsEndpointOutputSchemas.accountsControlsCreate,
+	},
+	'accounts.agenciesList': {
+		input: MetaAdsEndpointInputSchemas.accountsAgenciesList,
+		output: MetaAdsEndpointOutputSchemas.accountsAgenciesList,
+	},
+	'accounts.agencyRemove': {
+		input: MetaAdsEndpointInputSchemas.accountsAgencyRemove,
+		output: MetaAdsEndpointOutputSchemas.accountsAgencyRemove,
+	},
+	'accounts.subscribedAppUpdate': {
+		input: MetaAdsEndpointInputSchemas.accountsSubscribedAppUpdate,
+		output: MetaAdsEndpointOutputSchemas.accountsSubscribedAppUpdate,
+	},
+	'accounts.subscribedAppRemove': {
+		input: MetaAdsEndpointInputSchemas.accountsSubscribedAppRemove,
+		output: MetaAdsEndpointOutputSchemas.accountsSubscribedAppRemove,
+	},
+	'accounts.trackingCreate': {
+		input: MetaAdsEndpointInputSchemas.accountsTrackingCreate,
+		output: MetaAdsEndpointOutputSchemas.accountsTrackingCreate,
+	},
+	'accounts.pixelsList': {
+		input: MetaAdsEndpointInputSchemas.accountsPixelsList,
+		output: MetaAdsEndpointOutputSchemas.accountsPixelsList,
+	},
+	'pixels.create': {
+		input: MetaAdsEndpointInputSchemas.pixelsCreate,
+		output: MetaAdsEndpointOutputSchemas.pixelsCreate,
+	},
+	'pixels.get': {
+		input: MetaAdsEndpointInputSchemas.pixelsGet,
+		output: MetaAdsEndpointOutputSchemas.pixelsGet,
+	},
+	'pixels.update': {
+		input: MetaAdsEndpointInputSchemas.pixelsUpdate,
+		output: MetaAdsEndpointOutputSchemas.pixelsUpdate,
+	},
+	'publisherBlockLists.create': {
+		input: MetaAdsEndpointInputSchemas.publisherBlockListsCreate,
+		output: MetaAdsEndpointOutputSchemas.publisherBlockListsCreate,
+	},
 	'accounts.impactingAdStudiesList': {
 		input: MetaAdsEndpointInputSchemas.accountsImpactingAdStudiesList,
 		output: MetaAdsEndpointOutputSchemas.accountsImpactingAdStudiesList,
@@ -207,6 +312,10 @@ export const metaAdsEndpointSchemas = {
 	'accounts.adRulesLibraryList': {
 		input: MetaAdsEndpointInputSchemas.accountsAdRulesLibraryList,
 		output: MetaAdsEndpointOutputSchemas.accountsAdRulesLibraryList,
+	},
+	'accounts.adRulesLibraryCreate': {
+		input: MetaAdsEndpointInputSchemas.accountsAdRulesLibraryCreate,
+		output: MetaAdsEndpointOutputSchemas.accountsAdRulesLibraryCreate,
 	},
 	'accounts.activeAdRulesList': {
 		input: MetaAdsEndpointInputSchemas.accountsActiveAdRulesList,
@@ -219,6 +328,38 @@ export const metaAdsEndpointSchemas = {
 	'accounts.broadTargetingCategoriesList': {
 		input: MetaAdsEndpointInputSchemas.accountsBroadTargetingCategoriesList,
 		output: MetaAdsEndpointOutputSchemas.accountsBroadTargetingCategoriesList,
+	},
+	'accounts.smartSuggestedAdsList': {
+		input: MetaAdsEndpointInputSchemas.accountsSmartSuggestedAdsList,
+		output: MetaAdsEndpointOutputSchemas.accountsSmartSuggestedAdsList,
+	},
+	'accounts.suggestedAdsList': {
+		input: MetaAdsEndpointInputSchemas.accountsSuggestedAdsList,
+		output: MetaAdsEndpointOutputSchemas.accountsSuggestedAdsList,
+	},
+	'accounts.placePageSetsCreate': {
+		input: MetaAdsEndpointInputSchemas.accountsPlacePageSetsCreate,
+		output: MetaAdsEndpointOutputSchemas.accountsPlacePageSetsCreate,
+	},
+	'accounts.reachEstimate': {
+		input: MetaAdsEndpointInputSchemas.accountsReachEstimate,
+		output: MetaAdsEndpointOutputSchemas.accountsReachEstimate,
+	},
+	'reachFrequencyPredictions.get': {
+		input: MetaAdsEndpointInputSchemas.reachFrequencyPredictionsGet,
+		output: MetaAdsEndpointOutputSchemas.reachFrequencyPredictionsGet,
+	},
+	'reachFrequencyPredictions.list': {
+		input: MetaAdsEndpointInputSchemas.reachFrequencyPredictionsList,
+		output: MetaAdsEndpointOutputSchemas.reachFrequencyPredictionsList,
+	},
+	'reachFrequencyPredictions.create': {
+		input: MetaAdsEndpointInputSchemas.reachFrequencyPredictionsCreate,
+		output: MetaAdsEndpointOutputSchemas.reachFrequencyPredictionsCreate,
+	},
+	'customConversions.create': {
+		input: MetaAdsEndpointInputSchemas.customConversionsCreate,
+		output: MetaAdsEndpointOutputSchemas.customConversionsCreate,
 	},
 	'labels.list': {
 		input: MetaAdsEndpointInputSchemas.labelsList,
@@ -484,6 +625,10 @@ export const metaAdsEndpointSchemas = {
 		input: MetaAdsEndpointInputSchemas.audiencesCreate,
 		output: MetaAdsEndpointOutputSchemas.audiencesCreate,
 	},
+	'audiences.acceptTerms': {
+		input: MetaAdsEndpointInputSchemas.audiencesAcceptTerms,
+		output: MetaAdsEndpointOutputSchemas.audiencesAcceptTerms,
+	},
 	'audiences.update': {
 		input: MetaAdsEndpointInputSchemas.audiencesUpdate,
 		output: MetaAdsEndpointOutputSchemas.audiencesUpdate,
@@ -540,6 +685,46 @@ export const metaAdsEndpointSchemas = {
 		input: MetaAdsEndpointInputSchemas.videosDelete,
 		output: MetaAdsEndpointOutputSchemas.videosDelete,
 	},
+	'asyncCreatives.list': {
+		input: MetaAdsEndpointInputSchemas.asyncCreativesList,
+		output: MetaAdsEndpointOutputSchemas.asyncCreativesList,
+	},
+	'asyncCreatives.create': {
+		input: MetaAdsEndpointInputSchemas.asyncCreativesCreate,
+		output: MetaAdsEndpointOutputSchemas.asyncCreativesCreate,
+	},
+	'asyncRequestSets.list': {
+		input: MetaAdsEndpointInputSchemas.asyncRequestSetsList,
+		output: MetaAdsEndpointOutputSchemas.asyncRequestSetsList,
+	},
+	'asyncRequestSets.create': {
+		input: MetaAdsEndpointInputSchemas.asyncRequestSetsCreate,
+		output: MetaAdsEndpointOutputSchemas.asyncRequestSetsCreate,
+	},
+	'asyncRequestSets.get': {
+		input: MetaAdsEndpointInputSchemas.asyncRequestSetsGet,
+		output: MetaAdsEndpointOutputSchemas.asyncRequestSetsGet,
+	},
+	'asyncRequestSets.update': {
+		input: MetaAdsEndpointInputSchemas.asyncRequestSetsUpdate,
+		output: MetaAdsEndpointOutputSchemas.asyncRequestSetsUpdate,
+	},
+	'asyncRequestSets.cancel': {
+		input: MetaAdsEndpointInputSchemas.asyncRequestSetsCancel,
+		output: MetaAdsEndpointOutputSchemas.asyncRequestSetsCancel,
+	},
+	'asyncRequests.listForSet': {
+		input: MetaAdsEndpointInputSchemas.asyncRequestsListForSet,
+		output: MetaAdsEndpointOutputSchemas.asyncRequestsListForSet,
+	},
+	'asyncRequests.listForAdSet': {
+		input: MetaAdsEndpointInputSchemas.asyncRequestsListForAdSet,
+		output: MetaAdsEndpointOutputSchemas.asyncRequestsListForAdSet,
+	},
+	'asyncRequests.cancel': {
+		input: MetaAdsEndpointInputSchemas.asyncRequestsCancel,
+		output: MetaAdsEndpointOutputSchemas.asyncRequestsCancel,
+	},
 	'insights.list': {
 		input: MetaAdsEndpointInputSchemas.insightsList,
 		output: MetaAdsEndpointOutputSchemas.insightsList,
@@ -580,9 +765,7 @@ export const metaAdsEndpointSchemas = {
 		input: MetaAdsEndpointInputSchemas.insightsEnableFeature,
 		output: MetaAdsEndpointOutputSchemas.insightsEnableFeature,
 	},
-} as const satisfies RequiredPluginEndpointSchemas<
-	typeof metaAdsEndpointsNested
->;
+};
 
 const defaultAuthType: AuthTypes = 'oauth_2';
 const metaAdsEndpointMeta = {
@@ -602,6 +785,63 @@ const metaAdsEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Read recent account and ad object activity events',
 	},
+	'accounts.assignedUsersList': {
+		riskLevel: 'read',
+		description: 'List business and system users assigned to an ad account',
+	},
+	'accounts.assignUser': {
+		riskLevel: 'destructive',
+		description: 'Grant ad-account tasks to a business or system user',
+	},
+	'accounts.removeUser': {
+		riskLevel: 'destructive',
+		description: 'Revoke a business or system user assignment from an account',
+	},
+	'accounts.controlsCreate': {
+		riskLevel: 'destructive',
+		description: 'Set account-wide audience and placement controls',
+	},
+	'accounts.agenciesList': {
+		riskLevel: 'read',
+		description: 'List businesses associated with an ad account',
+	},
+	'accounts.agencyRemove': {
+		riskLevel: 'destructive',
+		description: 'Remove a business association from an ad account',
+	},
+	'accounts.subscribedAppUpdate': {
+		riskLevel: 'write',
+		description: 'Subscribe an application to an ad account',
+	},
+	'accounts.subscribedAppRemove': {
+		riskLevel: 'write',
+		description: 'Unsubscribe an application from an ad account',
+	},
+	'accounts.trackingCreate': {
+		riskLevel: 'write',
+		description: 'Add account-level tracking specifications',
+	},
+	'accounts.pixelsList': {
+		riskLevel: 'read',
+		description: 'List pixels accessible from an ad account',
+	},
+	'pixels.create': {
+		riskLevel: 'destructive',
+		description: 'Create a pixel measurement asset for an ad account',
+	},
+	'pixels.get': {
+		riskLevel: 'read',
+		description: 'Read documented scalar fields from an ads pixel',
+	},
+	'pixels.update': {
+		riskLevel: 'destructive',
+		description: 'Change pixel data-use, matching, or business-access settings',
+	},
+	'publisherBlockLists.create': {
+		riskLevel: 'write',
+		description:
+			'Create a publisher block list without applying it to delivery',
+	},
 	'accounts.impactingAdStudiesList': {
 		riskLevel: 'read',
 		description: 'List ad studies affecting an account or its child objects',
@@ -609,6 +849,10 @@ const metaAdsEndpointMeta = {
 	'accounts.adRulesLibraryList': {
 		riskLevel: 'read',
 		description: 'List account ad rules without creating or changing rules',
+	},
+	'accounts.adRulesLibraryCreate': {
+		riskLevel: 'destructive',
+		description: 'Create a rule that can change ad delivery, budgets, or bids',
 	},
 	'accounts.activeAdRulesList': {
 		riskLevel: 'read',
@@ -622,6 +866,40 @@ const metaAdsEndpointMeta = {
 	'accounts.broadTargetingCategoriesList': {
 		riskLevel: 'read',
 		description: 'List documented broad-targeting categories for the account',
+	},
+	'accounts.smartSuggestedAdsList': {
+		riskLevel: 'read',
+		description: 'List smart ad suggestions for an account',
+	},
+	'accounts.suggestedAdsList': {
+		riskLevel: 'read',
+		description: 'List ad suggestions using documented account filters',
+	},
+	'accounts.placePageSetsCreate': {
+		riskLevel: 'destructive',
+		description: 'Create a place-page set from a published parent Page',
+	},
+	'accounts.reachEstimate': {
+		riskLevel: 'read',
+		description: 'Estimate an ad-account audience range for a targeting spec',
+	},
+	'reachFrequencyPredictions.get': {
+		riskLevel: 'read',
+		description:
+			'Read documented scalar fields from a reach/frequency prediction',
+	},
+	'reachFrequencyPredictions.list': {
+		riskLevel: 'read',
+		description: 'List reach/frequency predictions with safe documented fields',
+	},
+	'reachFrequencyPredictions.create': {
+		riskLevel: 'destructive',
+		description:
+			'Create a non-idempotent reach/frequency forecast or reservation',
+	},
+	'customConversions.create': {
+		riskLevel: 'destructive',
+		description: 'Create a measurement conversion definition for an ad account',
 	},
 	'labels.list': {
 		riskLevel: 'read',
@@ -876,6 +1154,10 @@ const metaAdsEndpointMeta = {
 		riskLevel: 'destructive',
 		description: 'Create a custom audience object',
 	},
+	'audiences.acceptTerms': {
+		riskLevel: 'destructive',
+		description: 'Accept custom-audience terms for an account or business',
+	},
 	'audiences.update': {
 		riskLevel: 'destructive',
 		description: 'Change custom audience metadata',
@@ -935,6 +1217,48 @@ const metaAdsEndpointMeta = {
 	'videos.delete': {
 		riskLevel: 'destructive',
 		description: 'Dissociate a video from an ad account library',
+	},
+	'asyncCreatives.list': {
+		riskLevel: 'read',
+		description: 'List asynchronous ad creative jobs for an account',
+	},
+	'asyncCreatives.create': {
+		riskLevel: 'write',
+		description: 'Start a non-idempotent asynchronous creative creation job',
+	},
+	'asyncRequestSets.list': {
+		riskLevel: 'read',
+		description: 'List asynchronous ad request sets for an account',
+	},
+	'asyncRequestSets.create': {
+		riskLevel: 'destructive',
+		description:
+			'Start ad creation requests that may lead to delivery and spend',
+	},
+	'asyncRequestSets.get': {
+		riskLevel: 'read',
+		description: 'Read safe status and count fields for an async request set',
+	},
+	'asyncRequestSets.update': {
+		riskLevel: 'write',
+		description: 'Rename an asynchronous ad request set',
+	},
+	'asyncRequestSets.cancel': {
+		riskLevel: 'destructive',
+		description: 'Cancel an asynchronous request set before processing',
+	},
+	'asyncRequests.listForSet': {
+		riskLevel: 'read',
+		description: 'List safe status fields for requests in a set',
+	},
+	'asyncRequests.listForAdSet': {
+		riskLevel: 'read',
+		description:
+			'List safe status fields for requests associated with an ad set',
+	},
+	'asyncRequests.cancel': {
+		riskLevel: 'destructive',
+		description: 'Cancel one asynchronous request before processing',
 	},
 	'insights.list': {
 		riskLevel: 'read',

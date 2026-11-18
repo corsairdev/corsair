@@ -53,6 +53,7 @@ export async function makeMetaAdsRequest(
 		query?: Record<string, string | number | boolean | undefined>;
 		idempotencyKey?: string;
 		redactBodyOnError?: boolean;
+		redactQueryOnError?: boolean;
 		sensitiveValues?: string[];
 	} = {},
 ): Promise<unknown> {
@@ -100,22 +101,38 @@ export async function makeMetaAdsRequest(
 		});
 	} catch (error: unknown) {
 		// `unknown` because caught transport failures are untrusted; only core ApiError has request metadata to sanitize.
-		if (!options.redactBodyOnError || !(error instanceof ApiError)) throw error;
+		if (!(error instanceof ApiError)) throw error;
+		const safeQuery = error.request.query
+			? { ...error.request.query }
+			: undefined;
+		if (safeQuery) safeQuery.access_token = undefined;
+		const sensitiveValues = [apiKey, ...(options.sensitiveValues ?? [])].filter(
+			(value): value is string => typeof value === 'string' && value.length > 0,
+		);
+		if (
+			!options.redactBodyOnError &&
+			!options.redactQueryOnError &&
+			!error.request.query?.access_token
+		) {
+			throw error;
+		}
 		const safeRequest: ApiRequestOptions = {
 			...error.request,
-			body: undefined,
-			formData: undefined,
+			query: options.redactQueryOnError ? undefined : safeQuery,
+			...(options.redactBodyOnError
+				? { body: undefined, formData: undefined }
+				: {}),
 		};
 		throw new ApiError(
 			safeRequest,
 			{
-				url: error.url,
+				url: String(redactErrorValue(error.url, sensitiveValues)),
 				ok: false,
 				status: error.status,
 				statusText: error.statusText,
-				body: redactErrorValue(error.body, options.sensitiveValues ?? []),
+				body: redactErrorValue(error.body, sensitiveValues),
 			},
-			String(redactErrorValue(error.message, options.sensitiveValues ?? [])),
+			String(redactErrorValue(error.message, sensitiveValues)),
 			{
 				retryAfter: error.retryAfter,
 				rateLimitReset: error.rateLimitReset,

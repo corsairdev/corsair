@@ -71,7 +71,11 @@
               },
               {
                 "group": "Clients",
-                "pages": ["clients/python", "clients/go", "clients/swift"]
+                "pages": [
+                  "clients/python",
+                  "clients/go",
+                  "clients/swift"
+                ]
               }
             ]
           },
@@ -144,7 +148,10 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["guides/plugins", "guides/create-your-own-plugin"]
+            "pages": [
+              "guides/plugins",
+              "guides/create-your-own-plugin"
+            ]
           },
           {
             "group": "Plugins",
@@ -155,6 +162,14 @@
                   "plugins/onepassword/overview",
                   "plugins/onepassword/api",
                   "plugins/onepassword/database"
+                ]
+              },
+              {
+                "group": "2Captcha",
+                "pages": [
+                  "plugins/twocaptcha/overview",
+                  "plugins/twocaptcha/api",
+                  "plugins/twocaptcha/database"
                 ]
               },
               {
@@ -1203,19 +1218,19 @@
                 ]
               },
               {
-                "group": "Certifier",
-                "pages": [
-                  "plugins/certifier/overview",
-                  "plugins/certifier/api",
-                  "plugins/certifier/database"
-                ]
-              },
-              {
                 "group": "Cert Spotter",
                 "pages": [
                   "plugins/certspotter/overview",
                   "plugins/certspotter/api",
                   "plugins/certspotter/database"
+                ]
+              },
+              {
+                "group": "Certifier",
+                "pages": [
+                  "plugins/certifier/overview",
+                  "plugins/certifier/api",
+                  "plugins/certifier/database"
                 ]
               },
               {
@@ -2564,43 +2579,19 @@
                 ]
               },
               {
-                "group": "Gigasheet",
-                "pages": [
-                  "plugins/gigasheet/overview",
-                  "plugins/gigasheet/api",
-                  "plugins/gigasheet/database"
-                ]
-              },
-              {
-                "group": "Globalping",
-                "pages": [
-                  "plugins/globalping/overview",
-                  "plugins/globalping/api",
-                  "plugins/globalping/database"
-                ]
-              },
-              {
-                "group": "HypeAuditor",
-                "pages": [
-                  "plugins/hypeauditor/overview",
-                  "plugins/hypeauditor/api",
-                  "plugins/hypeauditor/database"
-                ]
-              },
-              {
-                "group": "Klipfolio",
-                "pages": [
-                  "plugins/klipfolio/overview",
-                  "plugins/klipfolio/api",
-                  "plugins/klipfolio/database"
-                ]
-              },
-              {
                 "group": "Gift Up!",
                 "pages": [
                   "plugins/giftup/overview",
                   "plugins/giftup/api",
                   "plugins/giftup/database"
+                ]
+              },
+              {
+                "group": "Gigasheet",
+                "pages": [
+                  "plugins/gigasheet/overview",
+                  "plugins/gigasheet/api",
+                  "plugins/gigasheet/database"
                 ]
               },
               {
@@ -2652,6 +2643,14 @@
                   "plugins/gleap/overview",
                   "plugins/gleap/api",
                   "plugins/gleap/database"
+                ]
+              },
+              {
+                "group": "Globalping",
+                "pages": [
+                  "plugins/globalping/overview",
+                  "plugins/globalping/api",
+                  "plugins/globalping/database"
                 ]
               },
               {
@@ -2922,19 +2921,19 @@
                 ]
               },
               {
-                "group": "HERE",
-                "pages": [
-                  "plugins/here/overview",
-                  "plugins/here/api",
-                  "plugins/here/database"
-                ]
-              },
-              {
                 "group": "Helpwise",
                 "pages": [
                   "plugins/helpwise/overview",
                   "plugins/helpwise/api",
                   "plugins/helpwise/database"
+                ]
+              },
+              {
+                "group": "HERE",
+                "pages": [
+                  "plugins/here/overview",
+                  "plugins/here/api",
+                  "plugins/here/database"
                 ]
               },
               {
@@ -3042,6 +3041,14 @@
                   "plugins/hunterio/overview",
                   "plugins/hunterio/api",
                   "plugins/hunterio/database"
+                ]
+              },
+              {
+                "group": "HypeAuditor",
+                "pages": [
+                  "plugins/hypeauditor/overview",
+                  "plugins/hypeauditor/api",
+                  "plugins/hypeauditor/database"
                 ]
               },
               {
@@ -3205,19 +3212,19 @@
                 ]
               },
               {
-                "group": "Jungle Scout",
-                "pages": [
-                  "plugins/junglescout/overview",
-                  "plugins/junglescout/api",
-                  "plugins/junglescout/database"
-                ]
-              },
-              {
                 "group": "JumpCloud",
                 "pages": [
                   "plugins/jumpcloud/overview",
                   "plugins/jumpcloud/api",
                   "plugins/jumpcloud/database"
+                ]
+              },
+              {
+                "group": "Jungle Scout",
+                "pages": [
+                  "plugins/junglescout/overview",
+                  "plugins/junglescout/api",
+                  "plugins/junglescout/database"
                 ]
               },
               {
@@ -3322,6 +3329,14 @@
                   "plugins/kling/overview",
                   "plugins/kling/api",
                   "plugins/kling/database"
+                ]
+              },
+              {
+                "group": "Klipfolio",
+                "pages": [
+                  "plugins/klipfolio/overview",
+                  "plugins/klipfolio/api",
+                  "plugins/klipfolio/database"
                 ]
               },
               {
@@ -3748,46 +3763,6 @@
                 ]
               },
               {
-                "group": "Neutrino API",
-                "pages": [
-                  "plugins/neutrino/overview",
-                  "plugins/neutrino/api",
-                  "plugins/neutrino/database"
-                ]
-              },
-              {
-                "group": "New Relic",
-                "pages": [
-                  "plugins/newrelic/overview",
-                  "plugins/newrelic/api",
-                  "plugins/newrelic/database"
-                ]
-              },
-              {
-                "group": "ngrok",
-                "pages": [
-                  "plugins/ngrok/overview",
-                  "plugins/ngrok/api",
-                  "plugins/ngrok/database"
-                ]
-              },
-              {
-                "group": "Ninox",
-                "pages": [
-                  "plugins/ninox/overview",
-                  "plugins/ninox/api",
-                  "plugins/ninox/database"
-                ]
-              },
-              {
-                "group": "NiftyImages",
-                "pages": [
-                  "plugins/niftyimages/overview",
-                  "plugins/niftyimages/api",
-                  "plugins/niftyimages/database"
-                ]
-              },
-              {
                 "group": "Neon",
                 "pages": [
                   "plugins/neon/overview",
@@ -3820,11 +3795,27 @@
                 ]
               },
               {
+                "group": "Neutrino API",
+                "pages": [
+                  "plugins/neutrino/overview",
+                  "plugins/neutrino/api",
+                  "plugins/neutrino/database"
+                ]
+              },
+              {
                 "group": "NeverBounce",
                 "pages": [
                   "plugins/neverbounce/overview",
                   "plugins/neverbounce/api",
                   "plugins/neverbounce/database"
+                ]
+              },
+              {
+                "group": "New Relic",
+                "pages": [
+                  "plugins/newrelic/overview",
+                  "plugins/newrelic/api",
+                  "plugins/newrelic/database"
                 ]
               },
               {
@@ -3841,6 +3832,30 @@
                   "plugins/nextdns/overview",
                   "plugins/nextdns/api",
                   "plugins/nextdns/database"
+                ]
+              },
+              {
+                "group": "ngrok",
+                "pages": [
+                  "plugins/ngrok/overview",
+                  "plugins/ngrok/api",
+                  "plugins/ngrok/database"
+                ]
+              },
+              {
+                "group": "NiftyImages",
+                "pages": [
+                  "plugins/niftyimages/overview",
+                  "plugins/niftyimages/api",
+                  "plugins/niftyimages/database"
+                ]
+              },
+              {
+                "group": "Ninox",
+                "pages": [
+                  "plugins/ninox/overview",
+                  "plugins/ninox/api",
+                  "plugins/ninox/database"
                 ]
               },
               {
@@ -4152,35 +4167,19 @@
                 ]
               },
               {
+                "group": "Polygon OMS",
+                "pages": [
+                  "plugins/polygon/overview",
+                  "plugins/polygon/api",
+                  "plugins/polygon/database"
+                ]
+              },
+              {
                 "group": "Polygon.io",
                 "pages": [
                   "plugins/polygonio/overview",
                   "plugins/polygonio/api",
                   "plugins/polygonio/database"
-                ]
-              },
-              {
-                "group": "Postmark",
-                "pages": [
-                  "plugins/postmark/overview",
-                  "plugins/postmark/api",
-                  "plugins/postmark/database"
-                ]
-              },
-              {
-                "group": "PostOnce",
-                "pages": [
-                  "plugins/postonce/overview",
-                  "plugins/postonce/api",
-                  "plugins/postonce/database"
-                ]
-              },
-              {
-                "group": "Prismic",
-                "pages": [
-                  "plugins/prismic/overview",
-                  "plugins/prismic/api",
-                  "plugins/prismic/database"
                 ]
               },
               {
@@ -4197,14 +4196,6 @@
                   "plugins/postgrid/overview",
                   "plugins/postgrid/api",
                   "plugins/postgrid/database"
-                ]
-              },
-              {
-                "group": "Polygon OMS",
-                "pages": [
-                  "plugins/polygon/overview",
-                  "plugins/polygon/api",
-                  "plugins/polygon/database"
                 ]
               },
               {
@@ -4234,6 +4225,22 @@
                 ]
               },
               {
+                "group": "Postmark",
+                "pages": [
+                  "plugins/postmark/overview",
+                  "plugins/postmark/api",
+                  "plugins/postmark/database"
+                ]
+              },
+              {
+                "group": "PostOnce",
+                "pages": [
+                  "plugins/postonce/overview",
+                  "plugins/postonce/api",
+                  "plugins/postonce/database"
+                ]
+              },
+              {
                 "group": "Prerender",
                 "pages": [
                   "plugins/prerender/overview",
@@ -4247,6 +4254,14 @@
                   "plugins/prisma/overview",
                   "plugins/prisma/api",
                   "plugins/prisma/database"
+                ]
+              },
+              {
+                "group": "Prismic",
+                "pages": [
+                  "plugins/prismic/overview",
+                  "plugins/prismic/api",
+                  "plugins/prismic/database"
                 ]
               },
               {
@@ -4903,6 +4918,22 @@
                 ]
               },
               {
+                "group": "Similarweb",
+                "pages": [
+                  "plugins/similarweb/overview",
+                  "plugins/similarweb/api",
+                  "plugins/similarweb/database"
+                ]
+              },
+              {
+                "group": "Simla.com",
+                "pages": [
+                  "plugins/simlacom/overview",
+                  "plugins/simlacom/api",
+                  "plugins/simlacom/database"
+                ]
+              },
+              {
                 "group": "Simple Analytics",
                 "pages": [
                   "plugins/simpleanalytics/overview",
@@ -4932,22 +4963,6 @@
                   "plugins/simplesat/overview",
                   "plugins/simplesat/api",
                   "plugins/simplesat/database"
-                ]
-              },
-              {
-                "group": "Simla.com",
-                "pages": [
-                  "plugins/simlacom/overview",
-                  "plugins/simlacom/api",
-                  "plugins/simlacom/database"
-                ]
-              },
-              {
-                "group": "Similarweb",
-                "pages": [
-                  "plugins/similarweb/overview",
-                  "plugins/similarweb/api",
-                  "plugins/similarweb/database"
                 ]
               },
               {
@@ -5075,6 +5090,14 @@
                 ]
               },
               {
+                "group": "Storyblok",
+                "pages": [
+                  "plugins/storyblok/overview",
+                  "plugins/storyblok/api",
+                  "plugins/storyblok/database"
+                ]
+              },
+              {
                 "group": "Strava",
                 "pages": [
                   "plugins/strava/overview",
@@ -5102,27 +5125,11 @@
                 ]
               },
               {
-                "group": "Storyblok",
-                "pages": [
-                  "plugins/storyblok/overview",
-                  "plugins/storyblok/api",
-                  "plugins/storyblok/database"
-                ]
-              },
-              {
                 "group": "SuiteDash",
                 "pages": [
                   "plugins/suitedash/overview",
                   "plugins/suitedash/api",
                   "plugins/suitedash/database"
-                ]
-              },
-              {
-                "group": "Superchat",
-                "pages": [
-                  "plugins/superchat/overview",
-                  "plugins/superchat/api",
-                  "plugins/superchat/database"
                 ]
               },
               {
@@ -5140,6 +5147,14 @@
                   "plugins/supadata/overview",
                   "plugins/supadata/api",
                   "plugins/supadata/database"
+                ]
+              },
+              {
+                "group": "Superchat",
+                "pages": [
+                  "plugins/superchat/overview",
+                  "plugins/superchat/api",
+                  "plugins/superchat/database"
                 ]
               },
               {
@@ -5315,6 +5330,14 @@
                 ]
               },
               {
+                "group": "TelTEL",
+                "pages": [
+                  "plugins/teltel/overview",
+                  "plugins/teltel/api",
+                  "plugins/teltel/database"
+                ]
+              },
+              {
                 "group": "Templated",
                 "pages": [
                   "plugins/templated/overview",
@@ -5328,14 +5351,6 @@
                   "plugins/textcortex/overview",
                   "plugins/textcortex/api",
                   "plugins/textcortex/database"
-                ]
-              },
-              {
-                "group": "TelTEL",
-                "pages": [
-                  "plugins/teltel/overview",
-                  "plugins/teltel/api",
-                  "plugins/teltel/database"
                 ]
               },
               {
@@ -5627,14 +5642,6 @@
                   "plugins/twochat/overview",
                   "plugins/twochat/api",
                   "plugins/twochat/database"
-                ]
-              },
-              {
-                "group": "2Captcha",
-                "pages": [
-                  "plugins/twocaptcha/overview",
-                  "plugins/twocaptcha/api",
-                  "plugins/twocaptcha/database"
                 ]
               },
               {
@@ -6167,7 +6174,9 @@
         "groups": [
           {
             "group": "Changelog",
-            "pages": ["changelog"]
+            "pages": [
+              "changelog"
+            ]
           }
         ]
       }
