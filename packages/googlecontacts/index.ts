@@ -29,7 +29,6 @@ import { GoogleContactsSchema } from './schema';
 
 export type GoogleContactsPluginOptions = {
 	authType?: PickAuth<'oauth_2'>;
-	key?: string;
 	hooks?: InternalGoogleContactsPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	/**
@@ -312,19 +311,15 @@ export function googlecontacts<const T extends GoogleContactsPluginOptions>(
 			...errorHandlers,
 			...options.errorHandlers,
 		},
+		// The token always comes from the stored OAuth connection, never from options.
 		keyBuilder: async (ctx: GoogleContactsKeyBuilderContext) => {
-			if (options.key) {
-				return options.key;
+			if (ctx.authType !== 'oauth_2') {
+				throw new AuthMissingError('googlecontacts', 'oauth_2');
 			}
-
-			if (ctx.authType === 'oauth_2') {
-				return getOAuthAccessToken(ctx, {
-					plugin: 'googlecontacts',
-					tokenUrl: 'https://oauth2.googleapis.com/token',
-				});
-			}
-
-			throw new AuthMissingError('googlecontacts', 'oauth_2');
+			return getOAuthAccessToken(ctx, {
+				plugin: 'googlecontacts',
+				tokenUrl: 'https://oauth2.googleapis.com/token',
+			});
 		},
 	} satisfies InternalGoogleContactsPlugin;
 }

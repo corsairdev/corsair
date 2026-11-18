@@ -13,7 +13,8 @@ export const errorHandlers = {
 			if (error instanceof ApiError && error.retryAfter !== undefined) {
 				retryAfterMs = error.retryAfter;
 			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
+			// core's request() already retried this 429 three times (R8).
+			return { maxRetries: 0, headersRetryAfterMs: retryAfterMs };
 		},
 	},
 	AUTH_ERROR: {
