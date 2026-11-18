@@ -134,7 +134,9 @@ describe('TwittrAPI output schemas (offline fixtures)', () => {
 			TwittrApiEndpointOutputSchemas.usersGetVerifiedFollowers.parse(userPage),
 		).toBeDefined();
 		expect(
-			TwittrApiEndpointOutputSchemas.usersResolveIds.parse(userPage),
+			TwittrApiEndpointOutputSchemas.usersResolveIds.parse({
+				data: { userIds: { XDevelopers: '2244994945' } },
+			}),
 		).toBeDefined();
 		expect(
 			TwittrApiEndpointOutputSchemas.listsGetMembers.parse(userPage),

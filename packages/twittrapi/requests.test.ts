@@ -474,6 +474,7 @@ const cases: Case[] = [
 		input: { webhookId: 18 },
 		method: 'POST',
 		path: '/monitors/webhooks/18/test',
+		body: {},
 		reply: { ok: false, statusCode: 405, latencyMs: 90, error: 'HTTP 405' },
 	},
 	{
