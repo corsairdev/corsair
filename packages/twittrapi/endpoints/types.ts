@@ -52,12 +52,14 @@ const UserResultSchema = z.object({
 	data: TwittrApiUser.nullable(),
 });
 
+// Live 11-18: an unknown community ID answers {data: null}; an unknown list ID
+// answers an empty list object. Null is accepted for both.
 const ListResultSchema = z.object({
-	data: TwittrApiList,
+	data: TwittrApiList.nullable(),
 });
 
 const CommunityResultSchema = z.object({
-	data: TwittrApiCommunity,
+	data: TwittrApiCommunity.nullable(),
 });
 
 const FriendshipResultSchema = z.object({
@@ -144,7 +146,7 @@ const UserIdWithUsernameSchema = z.object({
 const UsersGetByUsernameInputSchema = z.object({
 	username: z
 		.string()
-		.regex(/^@?[A-Za-z0-9_]{2,15}$/, 'X handle')
+		.regex(/^@?[A-Za-z0-9_]{1,15}$/, 'X handle')
 		.describe('Handle with or without @'),
 });
 
