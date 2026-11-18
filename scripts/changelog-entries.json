@@ -9140,5 +9140,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-18",
+    "package": "@corsair-dev/hypeauditor",
+    "dir": "packages/hypeauditor",
+    "name": "HypeAuditor",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
