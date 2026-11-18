@@ -64,7 +64,7 @@ await corsair.twittrapi.api.communities.getById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
+| `data` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -90,7 +90,7 @@ await corsair.twittrapi.api.communities.getById({});
     name: string,
     description: string
   }[]
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -702,7 +702,7 @@ await corsair.twittrapi.api.lists.getDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
+| `data` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -721,7 +721,7 @@ await corsair.twittrapi.api.lists.getDetails({});
     id: string,
     username: string
   } | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
