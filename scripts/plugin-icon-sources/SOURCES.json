@@ -340,6 +340,10 @@
   "huggingface": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/hugging_face.svg"
   },
+  "hypeauditor": {
+    "from": "https://media.brand.dev/a17b422f-e87c-4596-ac72-5f36d7d8b9fa.svg",
+    "note": "flame mark cut from hypeauditor.com's logo SVG (context.dev Brand API); wordmark removed"
+  },
   "identitycheck": {
     "from": "https://media.brand.dev/baeb30ed-6c4a-4d66-a5cf-db3df3444426.svg",
     "note": "found with the context.dev Brand API for stackgo.io"

@@ -1,5 +1,6 @@
 displayName: Google Contacts
 description: Read and manage a user's Google contacts, contact groups, and auto-saved "other contacts" through the People API.
+domain: contacts.google.com
 examples:
   read:
     path: contacts.search
