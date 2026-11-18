@@ -1,0 +1,128 @@
+displayName: Google Admin
+description: Manage Google Workspace users, groups, group members, organizational units and domains through the Admin SDK Directory API.
+domain: admin.google.com
+recommendedAuth: oauth_2
+overviewNote: |
+  The Directory API administers a Google Workspace account: users, their aliases and photos, groups and memberships, organizational units, domains and the customer record.
+
+  Calls must be made as a signed-in administrator. A service account needs domain-wide delegation to impersonate one, and the OAuth client needs its scope granted in the Admin console.
+
+  Things to know before you call:
+
+  - **Every list is paginated, and two of them cap page size.** Users accept 1 to 500 per page (default 100). Groups and group members accept 1 to 200, which is also their default. Domain and organizational unit lists take no page size at all. Pass `nextPageToken` back as `pageToken`.
+  - **A page token expires after three days** on the user list. Re-run the first page rather than retrying an expired token.
+  - **`userKey` and `groupKey` are emails, aliases or IDs.** They travel in the URL path, so the plugin encodes them.
+  - **`users.undelete` takes the immutable user ID only**, not an email address. A delete keeps the account recoverable this way, so `users.delete` is destructive but not irreversible.
+  - **A rename can take up to 10 minutes to reach every service.** Changing `primaryEmail` returns success long before every Google product sees the new address.
+  - **A user that was just created can refuse a follow-up call** with a 409 until Google's backends finish propagating. The docs name this as "User creation is not complete"; retrying that call later is the documented fix.
+  - **Rate limits arrive in two shapes.** A 429 is the per-account concurrency limit and cannot be raised. A 403 with reason `userRateLimitExceeded` (2,400 queries per minute per user per project by default) or `quotaExceeded` is a throughput limit, and Google's guidance for both is exponential backoff. A 403 with `dailyLimitExceeded` or `limitExceeded` is an exhausted day quota, which no retry can refill. The plugin retries the first group and reports the second.
+  - **`showDeleted` is a string, not a boolean.** Google types it that way; the plugin keeps Google's type so `true` arrives as `"true"`.
+  - **Updates are patch-style.** `users.update` uses the PUT that Google documents as patch-semantics for users, so absent fields are preserved and a field sent as `null` is cleared. Groups, members and organizational units go through PATCH, which is the method their docs give patch semantics to.
+  - **No inbound webhooks.** The Directory API pushes changes to a callback URL a tenant hosts, so this plugin registers no webhook route.
+references:
+  - title: Users, groups, members, org units, domains and customer reference
+    url: https://developers.google.com/workspace/admin/directory/v1/reference/users
+  - title: Limits and quotas, including the documented page sizes and rate-limit reasons
+    url: https://developers.google.com/workspace/admin/directory/v1/limits
+  - title: Search for users, for the `query` syntax
+    url: https://developers.google.com/workspace/admin/directory/v1/guides/search-users
+examples:
+  read:
+    path: users.list
+    title: List the first 50 users in the account
+    args:
+      customer: my_customer
+      maxResults: 50
+  write:
+    path: members.insert
+    title: Add a user to a group as a plain member, which is the API default role
+    args:
+      groupKey: engineering@example.com
+      email: ada@example.com
+apiExamples:
+  users.list:
+    call: "{ customer: 'my_customer', maxResults: 100 }"
+  users.get:
+    call: "{ userKey: 'ada@example.com' }"
+  users.insert:
+    call: "{ primaryEmail: 'ada@example.com', name: { givenName: 'Ada', familyName: 'Lovelace' }, password: 'change-me-now', orgUnitPath: '/engineering' }"
+  users.update:
+    call: "{ userKey: 'ada@example.com', suspended: true }"
+  users.delete:
+    call: "{ userKey: 'ada@example.com' }"
+  users.undelete:
+    call: "{ userKey: '1029837465', orgUnitPath: '/engineering' }"
+  users.makeAdmin:
+    call: "{ userKey: 'ada@example.com', status: true }"
+  users.signOut:
+    call: "{ userKey: 'ada@example.com' }"
+  users.aliases.list:
+    call: "{ userKey: 'ada@example.com' }"
+  users.aliases.insert:
+    call: "{ userKey: 'ada@example.com', alias: 'ada.l@example.com' }"
+  users.aliases.delete:
+    call: "{ userKey: 'ada@example.com', alias: 'ada.l@example.com' }"
+  users.photos.get:
+    call: "{ userKey: 'ada@example.com' }"
+  users.photos.update:
+    call: "{ userKey: 'ada@example.com', photoData: 'iVBORw0KGgo=', mimeType: 'image/png' }"
+  users.photos.delete:
+    call: "{ userKey: 'ada@example.com' }"
+  groups.list:
+    call: "{ customer: 'my_customer', maxResults: 200 }"
+  groups.get:
+    call: "{ groupKey: 'engineering@example.com' }"
+  groups.insert:
+    call: "{ email: 'engineering@example.com', name: 'Engineering' }"
+  groups.update:
+    call: "{ groupKey: 'engineering@example.com', description: 'Platform team' }"
+  groups.delete:
+    call: "{ groupKey: 'engineering@example.com' }"
+  groups.aliases.list:
+    call: "{ groupKey: 'engineering@example.com' }"
+  groups.aliases.insert:
+    call: "{ groupKey: 'engineering@example.com', alias: 'eng@example.com' }"
+  groups.aliases.delete:
+    call: "{ groupKey: 'engineering@example.com', alias: 'eng@example.com' }"
+  members.list:
+    call: "{ groupKey: 'engineering@example.com', maxResults: 200 }"
+  members.get:
+    call: "{ groupKey: 'engineering@example.com', memberKey: 'ada@example.com' }"
+  members.hasMember:
+    call: "{ groupKey: 'engineering@example.com', memberKey: 'ada@example.com' }"
+  members.insert:
+    call: "{ groupKey: 'engineering@example.com', email: 'ada@example.com', role: 'MEMBER' }"
+  members.update:
+    call: "{ groupKey: 'engineering@example.com', memberKey: 'ada@example.com', role: 'OWNER' }"
+  members.delete:
+    call: "{ groupKey: 'engineering@example.com', memberKey: 'ada@example.com' }"
+  orgUnits.list:
+    call: "{ customerId: 'my_customer', type: 'children' }"
+  orgUnits.get:
+    call: "{ customerId: 'my_customer', orgUnitPath: 'engineering/apps' }"
+  orgUnits.insert:
+    call: "{ customerId: 'my_customer', name: 'apps', parentOrgUnitPath: '/engineering' }"
+  orgUnits.update:
+    call: "{ customerId: 'my_customer', orgUnitPath: 'engineering/apps', description: 'Client apps' }"
+  orgUnits.delete:
+    call: "{ customerId: 'my_customer', orgUnitPath: 'engineering/apps' }"
+  domains.list:
+    call: "{ customer: 'my_customer' }"
+  domains.get:
+    call: "{ customer: 'my_customer', domainName: 'example.com' }"
+  domains.aliases.list:
+    call: "{ customer: 'my_customer', parentDomainName: 'example.com' }"
+  customers.get:
+    call: "{ customerKey: 'my_customer' }"
+apiNotes:
+  users.list: 'Send `customer` or `domain`; `my_customer` names the caller''s own account.'
+  users.get: 'A `customFieldMask` is only read when `projection` is `custom`.'
+  users.update: 'Absent fields keep their value; a field sent as null is cleared.'
+  groups.update: 'Sends PATCH, so an omitted field keeps its value.'
+  members.update: 'Sends PATCH, so an omitted delivery preference keeps its value.'
+  users.undelete: 'Takes the immutable user ID. An email address answers 404.'
+  users.makeAdmin: 'A caller cannot revoke its own last super admin right.'
+  members.list: '`roles` takes a comma-separated subset of `OWNER`, `MANAGER` and `MEMBER`.'
+  orgUnits.get: 'The path is the full one without a leading slash, e.g. `engineering/apps`.'
+  orgUnits.insert: 'Send `parentOrgUnitPath` or `parentOrgUnitId`; one of them is required.'
+  domains.aliases.list: 'The API caps an account at 20 domain aliases.'
