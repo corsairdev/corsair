@@ -12,6 +12,7 @@ if (!productboardApiKey) {
 const liveTest = productboardApiKey ? it : it.skip;
 
 liveTest('lists Productboard teams with a read-only request', async () => {
+	// The live provider response is untrusted until the runtime team schema narrows it.
 	const response = await makeProductboardRequest<unknown>(
 		'/teams',
 		productboardApiKey ?? '',

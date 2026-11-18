@@ -157,7 +157,7 @@ apiNotes:
   entities.customerScore: 'This Productboard customer-score API is documented as beta and may change or be removed.'
   notes.search: 'Structured filter groups use the documented relationship semantics. `pageCursor` is passed as a query parameter.'
   entities.search: 'Entity types and available fields are workspace-configured. Only documented AND filter semantics are supported.'
-  pluginIntegrations.create: 'This example creates the integration disabled, which skips Productboard’s endpoint probe. Enabled creation requires a publicly reachable action URL that can answer the probe; the plugin validates URL syntax, length, and the HTTPS prefix but cannot verify public reachability. `action.headers.authorization` is write-only and is never returned.'
+  pluginIntegrations.create: 'This example creates the integration disabled, which skips Productboard’s endpoint probe. Enabled creation requires a publicly reachable action URL that can answer the probe. The plugin passes `action` as provider-native JSON and does not locally validate its URL syntax or reachability; Productboard validates the request and probes enabled endpoints. `action.headers.authorization` is write-only and is never returned.'
   pluginIntegrations.update: 'Changing an enabled integration action URL triggers a Productboard probe. The action authorization secret is write-only.'
   pluginIntegrations.connections.list: 'List responses exclude connections in the initial state; follow the cursor in `links.next`.'
   pluginIntegrations.connections.get: 'If no connection exists, Productboard returns the initial state instead of 404.'

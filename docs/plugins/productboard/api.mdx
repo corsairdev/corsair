@@ -1643,7 +1643,7 @@ await corsair.productboard.api.pluginIntegrations.create({
 |------|------|----------|-------------|
 | `body` | `object` | Yes | — |
 
-This example creates the integration disabled, which skips Productboard’s endpoint probe. Enabled creation requires a publicly reachable action URL that can answer the probe; the plugin validates URL syntax, length, and the HTTPS prefix but cannot verify public reachability. `action.headers.authorization` is write-only and is never returned.
+This example creates the integration disabled, which skips Productboard’s endpoint probe. Enabled creation requires a publicly reachable action URL that can answer the probe. The plugin passes `action` as provider-native JSON and does not locally validate its URL syntax or reachability; Productboard validates the request and probes enabled endpoints. `action.headers.authorization` is write-only and is never returned.
 
 <AccordionGroup>
 <Accordion title="body full type">
