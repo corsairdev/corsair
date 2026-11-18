@@ -2353,7 +2353,7 @@ await corsair.googleadmin.api.users.update({ userKey: 'ada@example.com', suspend
 |------|------|----------|-------------|
 | `userKey` | `string` | Yes | Primary email, alias email, or unique user ID |
 | `primaryEmail` | `string \| null` | No | Renaming can take up to 10 minutes to propagate |
-| `name` | `object \| null` | No | — |
+| `name` | `object \| null` | No | Required in full when set: Google requires both givenName and familyName, so a partial name is refused rather than clearing one |
 | `password` | `string \| null` | No | Optional on update. Setting it changes the password |
 | `hashFunction` | `MD5 \| SHA-1 \| crypt \| null` | No | — |
 | `orgUnitPath` | `string \| null` | No | — |
@@ -2388,8 +2388,8 @@ Absent fields keep their value; a field sent as null is cleared.
 
 ```ts
 {
-  givenName?: string,
-  familyName?: string
+  givenName: string,
+  familyName: string
 } | null
 ```
 </Accordion>

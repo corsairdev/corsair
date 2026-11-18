@@ -596,6 +596,10 @@ const UsersInsertInputSchema = z
  * users.update is a PUT with patch semantics: absent fields are preserved and a
  * field set to null is cleared. Google recommends it over users.patch, which it
  * documents as the slower method with the same behaviour.
+ *
+ * Repeated fields cannot be patched piecemeal: the docs say every item in an
+ * array must be supplied with the value it should end up with, so sending one
+ * email address replaces the whole list.
  */
 const UsersUpdateInputSchema = z
 	.object({
@@ -606,7 +610,9 @@ const UsersUpdateInputSchema = z
 			.string()
 			.nullish()
 			.describe('Renaming can take up to 10 minutes to propagate'),
-		name: UserNameInputSchema.partial().nullish(),
+		name: UserNameInputSchema.nullish().describe(
+			'Required in full when set: Google requires both givenName and familyName, so a partial name is refused rather than clearing one',
+		),
 		password: z
 			.string()
 			.min(8)

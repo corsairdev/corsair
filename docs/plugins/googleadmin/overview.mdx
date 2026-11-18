@@ -21,6 +21,7 @@ Things to know before you call:
 - **Rate limits arrive in two shapes.** A 429 is the per-account concurrency limit and cannot be raised. A 403 with reason `userRateLimitExceeded` (2,400 queries per minute per user per project by default) or `quotaExceeded` is a throughput limit, and Google's guidance for both is exponential backoff. A 403 with `dailyLimitExceeded` or `limitExceeded` is an exhausted day quota, which no retry can refill. The plugin retries the first group and reports the second.
 - **`showDeleted` is a string, not a boolean.** Google types it that way; the plugin keeps Google's type so `true` arrives as `"true"`.
 - **Updates are patch-style.** `users.update` uses the PUT that Google documents as patch-semantics for users, so absent fields are preserved and a field sent as `null` is cleared. Groups, members and organizational units go through PATCH, which is the method their docs give patch semantics to.
+- **Repeated fields are replaced, not merged.** For a user's `emails`, `phones` or `organizations`, send every item with the value it should end up with. Sending one email address leaves exactly that one.
 - **No inbound webhooks.** The Directory API pushes changes to a callback URL a tenant hosts, so this plugin registers no webhook route.
 
 **What you get:**
