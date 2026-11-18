@@ -31,6 +31,8 @@ const PERSON = {
 };
 
 describe('Google Contacts plugin', () => {
+	// any: the tests call endpoints with a partial ctx and read plugin fields
+	// (authConfig, keyBuilder) that the public plugin type keeps generic.
 	const plugin = googlecontacts() as any;
 	const upsertContact = jest.fn();
 	const deleteContact = jest.fn();
@@ -52,6 +54,7 @@ describe('Google Contacts plugin', () => {
 				findByEntityId: findGroup,
 			},
 		},
+		// any: a stub ctx with only key and the two entity stores the endpoints use.
 	} as any;
 
 	beforeEach(() => {
@@ -66,10 +69,12 @@ describe('Google Contacts plugin', () => {
 	});
 
 	function lastCall() {
+		// any: request options as the endpoint built them; each test reads the fields it checks.
 		return mockRequest.mock.calls[0]?.[1] as any;
 	}
 
 	function lastBase() {
+		// any: the OpenAPI config the client built; only BASE is read.
 		return (mockRequest.mock.calls[0]?.[0] as any).BASE;
 	}
 
@@ -384,6 +389,7 @@ describe('Google Contacts plugin', () => {
 				deleteContacts: true,
 			});
 
+			// any: request options, as in lastCall().
 			const call = mockRequest.mock.calls[1]?.[1] as any;
 			expect(call.method).toBe('DELETE');
 			expect(call.query.deleteContacts).toBe(true);
@@ -688,6 +694,7 @@ describe('Google Contacts plugin', () => {
 				deleteContacts: true,
 			});
 
+			// any: request options, as in lastCall().
 			expect((mockRequest.mock.calls[0]?.[1] as any).method).toBe('GET');
 			expect((mockRequest.mock.calls[1]?.[1] as any).method).toBe('DELETE');
 			expect(deleteContact).toHaveBeenCalledWith('people/c1');
