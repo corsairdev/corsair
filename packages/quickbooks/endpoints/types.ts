@@ -1,4 +1,12 @@
 import { z } from 'zod';
+import type {
+	QuickBooksCatalogEndpointInputs,
+	QuickBooksCatalogEndpointOutputs,
+} from './catalog';
+import type {
+	QuickBooksSpecialEndpointInputs,
+	QuickBooksSpecialEndpointOutputs,
+} from './special';
 
 const RealmIdSchema = z
 	.string()
@@ -342,7 +350,7 @@ export const QuickBooksEndpointOutputSchemas = {
 	companyList: CompanyListOutputSchema,
 } as const;
 
-export type QuickBooksEndpointInputs = {
+type QuickBooksLegacyEndpointInputs = {
 	accountsCreate: z.infer<typeof AccountCreateInputSchema>;
 	accountsGet: z.infer<typeof AccountGetInputSchema>;
 	accountsList: z.infer<typeof AccountListInputSchema>;
@@ -350,10 +358,18 @@ export type QuickBooksEndpointInputs = {
 	companyList: z.infer<typeof CompanyListInputSchema>;
 };
 
-export type QuickBooksEndpointOutputs = {
+type QuickBooksLegacyEndpointOutputs = {
 	accountsCreate: z.infer<typeof AccountCreateOutputSchema>;
 	accountsGet: z.infer<typeof AccountGetOutputSchema>;
 	accountsList: z.infer<typeof AccountListOutputSchema>;
 	companyGet: z.infer<typeof CompanyGetOutputSchema>;
 	companyList: z.infer<typeof CompanyListOutputSchema>;
 };
+
+export type QuickBooksEndpointInputs = QuickBooksLegacyEndpointInputs &
+	QuickBooksCatalogEndpointInputs &
+	QuickBooksSpecialEndpointInputs;
+
+export type QuickBooksEndpointOutputs = QuickBooksLegacyEndpointOutputs &
+	QuickBooksCatalogEndpointOutputs &
+	QuickBooksSpecialEndpointOutputs;

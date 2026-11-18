@@ -1,6 +1,7 @@
 import type { OpenAPIConfig, RateLimitConfig } from 'corsair/http';
 import { ApiError } from 'corsair/http';
 import {
+	makeAuthenticatedQuickBooksRequest,
 	makeQuickBooksRequest,
 	QUICKBOOKS_RATE_LIMIT_CONFIG,
 	quickBooksApiBase,
@@ -62,6 +63,41 @@ describe('QuickBooks HTTP client', () => {
 			'application/json',
 		);
 		expect(call[1]?.body).toBe('{"Name":"Operating Checking"}');
+	});
+
+	it('omits attachment bytes from propagated upload errors', async () => {
+		fetchMock.mockResolvedValue(
+			new Response(
+				JSON.stringify({ Fault: { Error: [{ Message: 'rejected' }] } }),
+				{
+					status: 500,
+					statusText: 'Internal Server Error',
+					headers: { 'Content-Type': 'application/json' },
+				},
+			),
+		);
+		// unknown because rejected promises may carry arbitrary values; instanceof narrows the provider error.
+		const failure = await makeAuthenticatedQuickBooksRequest(
+			{ key: 'access-token' },
+			'company/123/upload',
+			{
+				method: 'POST',
+				formData: {
+					file_content_01: new Blob(['private attachment bytes'], {
+						type: 'application/pdf',
+					}),
+				},
+			},
+			'sandbox',
+		).catch((caught: unknown) => caught);
+
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		expect(failure).toBeInstanceOf(ApiError);
+		if (!(failure instanceof ApiError)) {
+			throw new Error('Expected the provider HTTP error');
+		}
+		expect(failure.status).toBe(500);
+		expect(failure.request.formData).toBeUndefined();
 	});
 
 	it('refreshes OAuth access tokens through Intuit with HTTP Basic client auth', async () => {

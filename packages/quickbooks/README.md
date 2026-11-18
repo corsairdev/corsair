@@ -4,121 +4,106 @@ QuickBooks Online Accounting API operations for Corsair.
 
 ## Verified implementation coverage
 
-This is a deliberately partial integration, **not full QuickBooks API coverage**.
-The official Intuit route catalog currently contains 74 Accounting resources and
-237 resource-operation entries (154 distinct operation-route definition
-strings). This package implements 5 of those entries; 232 catalogued entries
-are verified but pending implementation. The catalogued entries have official
-route definitions; the source inventory has 0 route entries classified as
-unverifiable. The official catalog does not count webhooks, GraphQL, or the
-separate QuickBooks Payments API, which are excluded here.
+Intuit's first-party Accounting entity route catalog contains **74 resources, 237 resource-operation entries, and 154 distinct route-definition strings**. This package registers **236 of 237 entries**. Every registered operation has its own strict Zod request/response contract and a mocked request test. Route variants with distinct paths, query/body semantics, or response types have distinct operation IDs. There is no live API verification claim.
+
+The one unregistered entry is `Entitlements.READ`; its source-verified blocker is recorded under [Explicit exclusions](#explicit-exclusions). Webhooks, QuickBooks Payments, and GraphQL are not part of these 237 Accounting REST entries.
+
+### Representative operation contracts
+
+These original account/company examples are followed by the complete per-resource operation inventory.
 
 | Corsair operation | Provider request | Required input | Response envelope | Official contract |
 | --- | --- | --- | --- | --- |
-| `accounts.create` | `POST /v3/company/{realmId}/account` | `realmId`, `name`, and either `accountType` or `accountSubType`; optional `acctNum`, `taxCodeRef` | `{ Account, time }` | [Account](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/account) |
+| `accounts.create` | `POST /v3/company/{realmId}/account` | `realmId`, `name`, and either `accountType` or `accountSubType` | `{ Account, time }` | [Account](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/account) |
 | `accounts.get` | `GET /v3/company/{realmId}/account/{accountId}` | `realmId`, `accountId` | `{ Account, time }` | [Account](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/account) |
-| `accounts.list` | `GET /v3/company/{realmId}/query?query=...` | `realmId`; optional `startPosition`, `maxResults` | `{ QueryResponse: { Account?, startPosition?, maxResults?, totalCount? }, time }` | [Account](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/account), [query syntax and pagination](https://static.developer.intuit.com/output_html/qbo/docs/learn/explore-the-quickbooks-online-api/data-queries.html) |
+| `accounts.list` | `GET /v3/company/{realmId}/query?query=...` | `realmId`; optional pagination | `{ QueryResponse: { Account? }, time }` | [Account](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/account), [query syntax](https://static.developer.intuit.com/output_html/qbo/docs/learn/explore-the-quickbooks-online-api/data-queries.html) |
 | `company.get` | `GET /v3/company/{realmId}/companyinfo/{realmId}` | `realmId` | `{ CompanyInfo, time }` | [CompanyInfo](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/companyinfo) |
-| `company.list` | `GET /v3/company/{realmId}/query?query=SELECT * FROM CompanyInfo` | `realmId` | `{ QueryResponse: { CompanyInfo?, startPosition?, maxResults?, totalCount? }, time }` | [CompanyInfo](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/companyinfo), [query syntax](https://static.developer.intuit.com/output_html/qbo/docs/learn/explore-the-quickbooks-online-api/data-queries.html) |
+| `company.list` | `GET /v3/company/{realmId}/query?query=SELECT * FROM CompanyInfo` | `realmId` | `{ QueryResponse: { CompanyInfo? }, time }` | [CompanyInfo](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/companyinfo) |
 
-The operation schemas reject undocumented input properties and validate
-provider responses. `accounts.list` builds only `SELECT * FROM Account`; it does
-not expose an arbitrary query-language input. The account create schema follows
-Intuit's v75 XSD enum for `AccountType` and excludes `Non-Posting`, which the
-XSD says QBO does not support.
+The account create contract follows Intuit's v75 XSD `AccountType` enum and excludes unsupported `Non-Posting`. Account list builds only the documented `SELECT * FROM Account` query with provider pagination; it does not accept arbitrary SQL.
 
-### Verified but pending operation inventory
+### Per-resource catalog reconciliation
 
-The following inventory is from Intuit's first-party
-[Accounting entity route catalog](https://static.developer.intuit.com/JSONObjects/EntityJsonObject_v1.json).
-Each linked entity reference gives its operation-specific paths, required body
-models, examples, and response details. Common route forms and their envelopes
-are summarized below; special operations may have multiple variants documented
-on the entity page.
+Catalog counts include each operation variant separately (including distinct full/sparse updates, delete/void, and item/tax-classification variants). Operation IDs are the exported Corsair operations.
 
-| Resource | Catalogued operations | Implemented | Source |
-| --- | --- | --- | --- |
-| Account | CREATE, QUERY, READ, UPDATE | CREATE, QUERY, READ | [Account](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/account) |
-| AccountListDetail | QUERY | — | [AccountListDetail](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/accountlistdetail) |
-| APAgingDetail | QUERY | — | [APAgingDetail](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/apagingdetail) |
-| APAgingSummary | QUERY | — | [APAgingSummary](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/apagingsummary) |
-| ARAgingDetail | QUERY | — | [ARAgingDetail](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/aragingdetail) |
-| ARAgingSummary | QUERY | — | [ARAgingSummary](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/aragingsummary) |
-| Attachable | CREATE, DELETE, DOWNLOAD, QUERY, READ, UPDATE, UPLOAD | — | [Attachable](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/attachable) |
-| BalanceSheet | QUERY | — | [BalanceSheet](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/balancesheet) |
-| Batch | DEFAULT | — | [Batch](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/batch) |
-| Bill | CREATE, DELETE, QUERY, READ, UPDATE | — | [Bill](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/bill) |
-| BillPayment | CREATE, DELETE, QUERY, READ, UPDATE | — | [BillPayment](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/billpayment) |
-| Budget | CREATE, DELETE, QUERY, READ, UPDATE | — | [Budget](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/budget) |
-| CashFlow | QUERY | — | [CashFlow](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/cashflow) |
-| ChangeDataCapture | DEFAULT | — | [ChangeDataCapture](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/changedatacapture) |
-| ChangeOrder | CREATE, DELETE, READ, UPDATE | — | [ChangeOrder](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/changeorder) |
-| Class | CREATE, QUERY, READ, UPDATE | — | [Class](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/class) |
-| CompanyCurrency | CREATE, QUERY, READ, UPDATE | — | [CompanyCurrency](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/companycurrency) |
-| CompanyInfo | QUERY, READ, UPDATE | QUERY, READ | [CompanyInfo](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/companyinfo) |
-| CreditCardPayment | CREATE, DELETE, QUERY, READ, UPDATE | — | [CreditCardPayment](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/creditcardpayment) |
-| CreditMemo | CREATE, DELETE, PDF, QUERY, READ, SEND, UPDATE | — | [CreditMemo](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/creditmemo) |
-| Customer | CREATE, QUERY, READ, UPDATE | — | [Customer](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/customer) |
-| CustomerBalance | QUERY | — | [CustomerBalance](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/customerbalance) |
-| CustomerBalanceDetail | QUERY | — | [CustomerBalanceDetail](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/customerbalancedetail) |
-| CustomerIncome | QUERY | — | [CustomerIncome](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/customerincome) |
-| CustomerType | QUERY, READ | — | [CustomerType](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/customertype) |
-| Department | CREATE, QUERY, READ, UPDATE | — | [Department](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/department) |
-| Deposit | CREATE, DELETE, QUERY, READ, UPDATE | — | [Deposit](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/deposit) |
-| Employee | CREATE, QUERY, READ, UPDATE | — | [Employee](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/employee) |
-| Entitlements | READ | — | [Entitlements](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/entitlements) |
-| Estimate | CREATE, DELETE, PDF, QUERY, READ, SEND, UPDATE | — | [Estimate](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/estimate) |
-| Exchangerate | QUERY, UPDATE | — | [Exchangerate](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/exchangerate) |
-| GeneralLedger | QUERY | — | [GeneralLedger](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/generalledger) |
-| InventoryAdjustment | CREATE, DELETE, READ, UPDATE | — | [InventoryAdjustment](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/inventoryadjustment) |
-| InventoryValuationDetail | QUERY | — | [InventoryValuationDetail](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/inventoryvaluationdetail) |
-| InventoryValuationSummary | QUERY | — | [InventoryValuationSummary](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/inventoryvaluationsummary) |
-| Invoice | CREATE, DELETE, PDF, QUERY, READ, SEND, UPDATE | — | [Invoice](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/invoice) |
-| Item | CREATE, QUERY, READ, UPDATE | — | [Item](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/item) |
-| JournalEntry | CREATE, DELETE, QUERY, READ, UPDATE | — | [JournalEntry](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/journalentry) |
-| JournalReport | QUERY | — | [JournalReport](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/journalreport) |
-| Payment | CREATE, DELETE, PDF, QUERY, READ, SEND, UPDATE | — | [Payment](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/payment) |
-| PaymentMethod | CREATE, QUERY, READ, UPDATE | — | [PaymentMethod](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/paymentmethod) |
-| Preferences | QUERY, READ, UPDATE | — | [Preferences](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/preferences) |
-| ProfitAndLoss | QUERY | — | [ProfitAndLoss](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/profitandloss) |
-| ProfitAndLossDetail | QUERY | — | [ProfitAndLossDetail](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/profitandlossdetail) |
-| Purchase | CREATE, DELETE, QUERY, READ, UPDATE | — | [Purchase](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/purchase) |
-| PurchaseOrder | CREATE, DELETE, PDF, QUERY, READ, SEND, UPDATE | — | [PurchaseOrder](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/purchaseorder) |
-| RecurringTransaction | CREATE, DELETE, QUERY, READ | — | [RecurringTransaction](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/recurringtransaction) |
-| RefundReceipt | CREATE, DELETE, PDF, QUERY, READ, SEND, UPDATE | — | [RefundReceipt](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/refundreceipt) |
-| ReimburseCharge | QUERY, READ | — | [ReimburseCharge](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/reimbursecharge) |
-| SalesByClassSummary | QUERY | — | [SalesByClassSummary](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/salesbyclasssummary) |
-| SalesByCustomer | QUERY | — | [SalesByCustomer](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/salesbycustomer) |
-| SalesByDepartment | QUERY | — | [SalesByDepartment](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/salesbydepartment) |
-| SalesByProduct | QUERY | — | [SalesByProduct](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/salesbyproduct) |
-| SalesReceipt | CREATE, DELETE, PDF, QUERY, READ, SEND, UPDATE | — | [SalesReceipt](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/salesreceipt) |
-| TaxAgency | CREATE, QUERY, READ | — | [TaxAgency](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/taxagency) |
-| TaxClassification | READ | — | [TaxClassification](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/taxclassification) |
-| TaxCode | QUERY, READ | — | [TaxCode](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/taxcode) |
-| TaxPayment | QUERY, READ | — | [TaxPayment](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/taxpayment) |
-| TaxRate | QUERY, READ | — | [TaxRate](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/taxrate) |
-| TaxService | CREATE | — | [TaxService](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/taxservice) |
-| TaxSummary | QUERY | — | [TaxSummary](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/taxsummary) |
-| Term | CREATE, QUERY, READ, UPDATE | — | [Term](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/term) |
-| TimeActivity | CREATE, DELETE, QUERY, READ, UPDATE | — | [TimeActivity](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/timeactivity) |
-| TransactionList | QUERY | — | [TransactionList](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/transactionlist) |
-| TransactionListByCustomer | QUERY | — | [TransactionListByCustomer](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/transactionlistbycustomer) |
-| TransactionListByVendor | QUERY | — | [TransactionListByVendor](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/transactionlistbyvendor) |
-| TransactionListWithSplits | QUERY | — | [TransactionListWithSplits](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/transactionlistwithsplits) |
-| Transfer | CREATE, DELETE, QUERY, READ, UPDATE | — | [Transfer](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/transfer) |
-| TrialBalance | QUERY | — | [TrialBalance](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/trialbalance) |
-| Vendor | CREATE, QUERY, READ, UPDATE | — | [Vendor](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/vendor) |
-| VendorBalance | QUERY | — | [VendorBalance](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/vendorbalance) |
-| VendorBalanceDetail | QUERY | — | [VendorBalanceDetail](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/vendorbalancedetail) |
-| VendorCredit | CREATE, DELETE, QUERY, READ, UPDATE | — | [VendorCredit](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/vendorcredit) |
-| VendorExpenses | QUERY | — | [VendorExpenses](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/vendorexpenses) |
+| Resource | Catalog entries | Registered Corsair operation IDs | Status | Official source |
+| --- | ---: | --- | --- | --- |
+| APAgingDetail | 1 | `apAgingDetail.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/apagingdetail) |
+| APAgingSummary | 1 | `apAgingSummary.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/apagingsummary) |
+| ARAgingDetail | 1 | `arAgingDetail.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/aragingdetail) |
+| ARAgingSummary | 1 | `arAgingSummary.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/aragingsummary) |
+| Account | 4 | `accounts.create`, `accounts.get`, `accounts.list`, `accounts.update` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/account) |
+| AccountListDetail | 1 | `accountListDetail.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/accountlistdetail) |
+| Attachable | 7 | `attachable.create`, `attachable.delete`, `attachable.download`, `attachable.get`, `attachable.list`, `attachable.update`, `attachable.upload` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/attachable) |
+| BalanceSheet | 1 | `balanceSheet.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/balancesheet) |
+| Batch | 1 | `batch.execute` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/batch) |
+| Bill | 5 | `bill.create`, `bill.delete`, `bill.get`, `bill.list`, `bill.update` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/bill) |
+| BillPayment | 6 | `billPayment.create`, `billPayment.delete`, `billPayment.get`, `billPayment.list`, `billPayment.update`, `billPayment.void` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/billpayment) |
+| Budget | 5 | `budget.create`, `budget.delete`, `budget.get`, `budget.list`, `budget.update` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/budget) |
+| CashFlow | 1 | `cashFlow.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/cashflow) |
+| ChangeDataCapture | 1 | `changeDataCapture.changes` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/changedatacapture) |
+| ChangeOrder | 4 | `changeOrder.create`, `changeOrder.delete`, `changeOrder.get`, `changeOrder.update` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/changeorder) |
+| Class | 4 | `class.create`, `class.get`, `class.list`, `class.update` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/class) |
+| CompanyCurrency | 4 | `companyCurrency.create`, `companyCurrency.get`, `companyCurrency.list`, `companyCurrency.update` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/companycurrency) |
+| CompanyInfo | 4 | `company.get`, `company.list`, `company.sparseUpdate`, `company.update` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/companyinfo) |
+| CreditCardPayment | 6 | `creditCardPayment.create`, `creditCardPayment.delete`, `creditCardPayment.get`, `creditCardPayment.list`, `creditCardPayment.sparseUpdate`, `creditCardPayment.update` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/creditcardpayment) |
+| CreditMemo | 7 | `creditMemo.create`, `creditMemo.delete`, `creditMemo.get`, `creditMemo.getPdf`, `creditMemo.list`, `creditMemo.send`, `creditMemo.update` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/creditmemo) |
+| Customer | 5 | `customer.create`, `customer.get`, `customer.list`, `customer.sparseUpdate`, `customer.update` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/customer) |
+| CustomerBalance | 1 | `customerBalance.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/customerbalance) |
+| CustomerBalanceDetail | 1 | `customerBalanceDetail.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/customerbalancedetail) |
+| CustomerIncome | 1 | `customerIncome.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/customerincome) |
+| CustomerType | 2 | `customerType.get`, `customerType.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/customertype) |
+| Department | 4 | `department.create`, `department.get`, `department.list`, `department.update` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/department) |
+| Deposit | 6 | `deposit.create`, `deposit.delete`, `deposit.get`, `deposit.list`, `deposit.sparseUpdate`, `deposit.update` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/deposit) |
+| Employee | 4 | `employee.create`, `employee.get`, `employee.list`, `employee.update` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/employee) |
+| Entitlements | 1 | — | Blocked | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/entitlements) |
+| Estimate | 8 | `estimate.create`, `estimate.delete`, `estimate.get`, `estimate.getPdf`, `estimate.list`, `estimate.send`, `estimate.sparseUpdate`, `estimate.update` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/estimate) |
+| Exchangerate | 3 | `exchangerate.get`, `exchangerate.list`, `exchangerate.update` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/exchangerate) |
+| GeneralLedger | 1 | `generalLedger.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/generalledger) |
+| InventoryAdjustment | 4 | `inventoryAdjustment.create`, `inventoryAdjustment.delete`, `inventoryAdjustment.get`, `inventoryAdjustment.sparseUpdate` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/inventoryadjustment) |
+| InventoryValuationDetail | 1 | `inventoryValuationDetail.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/inventoryvaluationdetail) |
+| InventoryValuationSummary | 1 | `inventoryValuationSummary.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/inventoryvaluationsummary) |
+| Invoice | 9 | `invoice.create`, `invoice.delete`, `invoice.get`, `invoice.getPdf`, `invoice.list`, `invoice.send`, `invoice.sparseUpdate`, `invoice.update`, `invoice.void` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/invoice) |
+| Item | 10 | `item.create`, `item.createCategory`, `item.getBundle`, `item.getCategory`, `item.getItem`, `item.listBundles`, `item.listCategories`, `item.listItems`, `item.update`, `item.updateCategory` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/item) |
+| JournalEntry | 6 | `journalEntry.create`, `journalEntry.delete`, `journalEntry.get`, `journalEntry.list`, `journalEntry.sparseUpdate`, `journalEntry.update` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/journalentry) |
+| JournalReport | 1 | `journalReport.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/journalreport) |
+| Payment | 8 | `payment.create`, `payment.delete`, `payment.get`, `payment.getPdf`, `payment.list`, `payment.send`, `payment.update`, `payment.void` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/payment) |
+| PaymentMethod | 4 | `paymentMethod.create`, `paymentMethod.get`, `paymentMethod.list`, `paymentMethod.update` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/paymentmethod) |
+| Preferences | 3 | `preferences.get`, `preferences.list`, `preferences.update` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/preferences) |
+| ProfitAndLoss | 1 | `profitAndLoss.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/profitandloss) |
+| ProfitAndLossDetail | 1 | `profitAndLossDetail.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/profitandlossdetail) |
+| Purchase | 5 | `purchase.create`, `purchase.delete`, `purchase.get`, `purchase.list`, `purchase.update` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/purchase) |
+| PurchaseOrder | 7 | `purchaseOrder.create`, `purchaseOrder.delete`, `purchaseOrder.get`, `purchaseOrder.getPdf`, `purchaseOrder.list`, `purchaseOrder.send`, `purchaseOrder.update` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/purchaseorder) |
+| RecurringTransaction | 4 | `recurringTransaction.create`, `recurringTransaction.delete`, `recurringTransaction.get`, `recurringTransaction.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/recurringtransaction) |
+| RefundReceipt | 8 | `refundReceipt.create`, `refundReceipt.delete`, `refundReceipt.get`, `refundReceipt.getPdf`, `refundReceipt.list`, `refundReceipt.send`, `refundReceipt.sparseUpdate`, `refundReceipt.update` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/refundreceipt) |
+| ReimburseCharge | 2 | `reimburseCharge.get`, `reimburseCharge.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/reimbursecharge) |
+| SalesByClassSummary | 1 | `salesByClassSummary.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/salesbyclasssummary) |
+| SalesByCustomer | 1 | `salesByCustomer.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/salesbycustomer) |
+| SalesByDepartment | 1 | `salesByDepartment.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/salesbydepartment) |
+| SalesByProduct | 1 | `salesByProduct.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/salesbyproduct) |
+| SalesReceipt | 9 | `salesReceipt.create`, `salesReceipt.delete`, `salesReceipt.get`, `salesReceipt.getPdf`, `salesReceipt.list`, `salesReceipt.send`, `salesReceipt.sparseUpdate`, `salesReceipt.update`, `salesReceipt.void` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/salesreceipt) |
+| TaxAgency | 3 | `taxAgency.create`, `taxAgency.get`, `taxAgency.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/taxagency) |
+| TaxClassification | 4 | `taxClassification.get`, `taxClassification.list`, `taxClassification.listByLevel`, `taxClassification.listChildren` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/taxclassification) |
+| TaxCode | 2 | `taxCode.get`, `taxCode.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/taxcode) |
+| TaxPayment | 2 | `taxPayment.get`, `taxPayment.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/taxpayment) |
+| TaxRate | 2 | `taxRate.get`, `taxRate.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/taxrate) |
+| TaxService | 1 | `taxService.create` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/taxservice) |
+| TaxSummary | 1 | `taxSummary.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/taxsummary) |
+| Term | 4 | `term.create`, `term.get`, `term.list`, `term.update` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/term) |
+| TimeActivity | 5 | `timeActivity.create`, `timeActivity.delete`, `timeActivity.get`, `timeActivity.list`, `timeActivity.update` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/timeactivity) |
+| TransactionList | 1 | `transactionList.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/transactionlist) |
+| TransactionListByCustomer | 1 | `transactionListByCustomer.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/transactionlistbycustomer) |
+| TransactionListByVendor | 1 | `transactionListByVendor.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/transactionlistbyvendor) |
+| TransactionListWithSplits | 1 | `transactionListWithSplits.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/transactionlistwithsplits) |
+| Transfer | 6 | `transfer.create`, `transfer.delete`, `transfer.get`, `transfer.list`, `transfer.sparseUpdate`, `transfer.update` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/transfer) |
+| TrialBalance | 1 | `trialBalance.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/trialbalance) |
+| Vendor | 4 | `vendor.create`, `vendor.get`, `vendor.list`, `vendor.update` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/vendor) |
+| VendorBalance | 1 | `vendorBalance.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/vendorbalance) |
+| VendorBalanceDetail | 1 | `vendorBalanceDetail.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/vendorbalancedetail) |
+| VendorCredit | 5 | `vendorCredit.create`, `vendorCredit.delete`, `vendorCredit.get`, `vendorCredit.list`, `vendorCredit.update` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/vendorcredit) |
+| VendorExpenses | 1 | `vendorExpenses.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/vendorexpenses) |
 
-All 232 unimplemented operation entries above are **verified but pending**, not
-unsupported. The matrix lists each resource's catalogued operation kinds; an
-entity page gives exact variants where an operation kind has multiple paths or
-request models. In particular, Account UPDATE is documented as a full update:
-omitted writable fields are set to null, so it is intentionally pending until a
-complete safe update contract is implemented. No unverified route is exposed.
+Coverage: **236 registered, 1 source-verified blocker**. Static TypeScript/Zod schemas were generated from Intuit's first-party route and model metadata; no generator or source catalog is shipped in this package.
 
 ## Shared Accounting API contract
 
@@ -135,12 +120,9 @@ complete safe update contract is implemented. No unverified route is exposed.
 | Generic query | `GET /v3/company/{realmId}/query?query={selectStatement}`; envelope is `{ QueryResponse: { Resource: [...] }, time }`. Query pagination uses `STARTPOSITION` and `MAXRESULTS`; response maximum is 1,000 (default 100) ([query syntax](https://static.developer.intuit.com/output_html/qbo/docs/learn/explore-the-quickbooks-online-api/data-queries.html)) |
 | Rate limits | 500 requests/minute per realm and 10 requests/second per realm+app; HTTP 429 means wait 60 seconds ([limits and throttles](https://static.developer.intuit.com/output_html/qbo/docs/learn/limits-and-throttles.html)). The shared Corsair transport honors `Retry-After`, otherwise waits 60 seconds for one retry; endpoint handlers add no second retry layer. |
 
-Some resources have special forms instead of the generic routes: reports use
-`GET /v3/company/{realmId}/reports/{reportName}`; Account updates, deletes,
-invoice send/PDF, attachment upload/download, batch, and CDC have their own
-documented variants. See the linked resource reference for each exact method,
-path, required request model, and response. These variants remain pending unless
-listed in the implemented table.
+Special forms are represented explicitly in the registered operations: reports use report-specific paths and query schemas; PDFs use binary responses; attachment upload is multipart and attachment download returns the documented temporary URL; Batch is capped at 30 items; CDC uses the provider-supported entity list and its heterogeneous response envelope.
+
+Operations named `.update` use the corresponding provider update model; for full-update routes, omitted writable fields become null. Operations documented as sparse updates are separately named `.sparseUpdate` and require `sparse: true`, `Id`, and the current `SyncToken`. `.void` operations are distinct from `.delete` and use the provider's documented void route/body.
 
 ## Realm ID input
 
@@ -182,14 +164,9 @@ Install with `pnpm add @corsair-dev/quickbooks`.
 
 ## Explicit exclusions
 
-- 232 documented Accounting operation entries are verified but not implemented;
-  no full API coverage is claimed.
-- Account full update is pending because Intuit says omitted writable fields
-  become null; unsafe partial update semantics are not exposed.
-- Webhooks remain `{}`. Signature verification and event handling are outside
-  this slice.
-- QuickBooks Payments, GraphQL, reports, attachments/binary operations, send/PDF,
-  batch, CDC, and all other non-listed operations are not exposed.
+- `Entitlements.READ` is the only one of the 237 catalog entries not exposed. The [first-party catalog](https://static.developer.intuit.com/JSONObjects/EntityJsonObject_v1.json) documents its separate `/manage/entitlements/v3/{realmID}` route and explicitly says it does not accept `Accept: application/json`; it requires XML. The catalog model also conflicts about the `Entitlement` shape (a collection with documented id/name/term fields and a TelephoneNumber reference). This package has no verified XML response contract/parser, so exposing it would bypass output validation or invent a shape.
+- Webhooks are not among the 237 REST operations and remain `{}`; no callback contract is registered.
+- QuickBooks Payments is a separate API, and GraphQL is outside the Accounting REST route catalog.
 
 ## Local test evidence
 

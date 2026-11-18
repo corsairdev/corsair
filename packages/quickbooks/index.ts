@@ -11,8 +11,21 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
+import type { ZodType } from 'zod';
 import type { QuickBooksEnvironment } from './client';
-import { AccountsEndpoints, CompanyEndpoints } from './endpoints';
+import {
+	AccountsEndpoints,
+	CatalogEndpoints,
+	CompanyEndpoints,
+} from './endpoints';
+import {
+	QuickBooksCatalogEndpointMeta,
+	QuickBooksCatalogEndpointSchemas,
+} from './endpoints/catalog';
+import {
+	QuickBooksSpecialEndpointMeta,
+	QuickBooksSpecialEndpointSchemas,
+} from './endpoints/special';
 import type {
 	QuickBooksEndpointInputs,
 	QuickBooksEndpointOutputs,
@@ -27,9 +40,13 @@ import { QuickBooksSchema } from './schema';
 const quickBooksEndpointsNested = {
 	accounts: AccountsEndpoints,
 	company: CompanyEndpoints,
+	...CatalogEndpoints,
 } as const;
 
-export const quickbooksEndpointSchemas = {
+export const quickbooksEndpointSchemas: Record<
+	string,
+	{ input: ZodType; output: ZodType }
+> = {
 	'accounts.create': {
 		input: QuickBooksEndpointInputSchemas.accountsCreate,
 		output: QuickBooksEndpointOutputSchemas.accountsCreate,
@@ -50,6 +67,8 @@ export const quickbooksEndpointSchemas = {
 		input: QuickBooksEndpointInputSchemas.companyList,
 		output: QuickBooksEndpointOutputSchemas.companyList,
 	},
+	...QuickBooksCatalogEndpointSchemas,
+	...QuickBooksSpecialEndpointSchemas,
 } as const;
 
 export type QuickBooksContext = CorsairPluginContext<
@@ -68,13 +87,9 @@ type QuickBooksEndpoint<K extends keyof QuickBooksEndpointInputs> =
 		QuickBooksEndpointOutputs[K]
 	>;
 
-export type QuickBooksEndpoints = {
-	accountsCreate: QuickBooksEndpoint<'accountsCreate'>;
-	accountsGet: QuickBooksEndpoint<'accountsGet'>;
-	accountsList: QuickBooksEndpoint<'accountsList'>;
-	companyGet: QuickBooksEndpoint<'companyGet'>;
-	companyList: QuickBooksEndpoint<'companyList'>;
-};
+export type QuickBooksEndpoints = BindEndpoints<
+	typeof quickBooksEndpointsNested
+>;
 
 export type QuickBooksBoundEndpoints = BindEndpoints<
 	typeof quickBooksEndpointsNested
@@ -114,6 +129,8 @@ const quickBooksEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Query the CompanyInfo resource for a realm',
 	},
+	...QuickBooksCatalogEndpointMeta,
+	...QuickBooksSpecialEndpointMeta,
 } satisfies RequiredPluginEndpointMeta<typeof quickBooksEndpointsNested>;
 
 export type BaseQuickBooksPlugin<T extends QuickBooksPluginOptions> =

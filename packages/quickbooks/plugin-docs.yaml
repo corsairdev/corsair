@@ -1,15 +1,8 @@
 # Display copy for the docs, the catalog, corsair.dev and Hub.
 displayName: "QuickBooks"
-description: "Create and read QuickBooks Online accounts, query accounts and company information, and read company details through verified Accounting API routes."
+description: "QuickBooks Online Accounting operations for all catalogued resources, including reports, transactions, attachments, batch, and change-data capture."
 overviewNote: >-
-  This plugin implements five verified operations, not the full QuickBooks
-  Accounting API. The OAuth redirect returns a realmId, which must be supplied
-  as an input to each operation because Corsair's generic callback does not
-  persist provider callback query parameters. Intuit's current default minor
-  version is 75; this plugin does not pin an obsolete version. The first-party
-  route and model catalogs list 237 operation entries across 74 resources;
-  232 are verified but pending implementation. See the package README for the
-  complete resource-operation inventory and exclusions.
+  This plugin registers 236 of the 237 operations in Intuit’s first-party Accounting route catalog. The remaining Entitlements.READ operation requires an XML response contract that the package cannot validate; details are in the package README. Supply the realmId returned by Intuit’s OAuth redirect to each operation. The default minor version is 75.
 apiNotes:
   accounts.create: >-
     POST /v3/company/{realmId}/account. Name must be unique, at most 100
@@ -31,6 +24,36 @@ apiNotes:
   company.list: >-
     GET /v3/company/{realmId}/query with SELECT * FROM CompanyInfo. Source:
     https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/companyinfo
+  accounts.update: >-
+    This is Intuit's full update operation, not a patch. Include the latest Id
+    and SyncToken and every writable field that should be preserved; writable
+    fields omitted from the request are set to null. Source:
+    https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/account
+  company.update: >-
+    Full update: omitted writable CompanyInfo fields are set to null. Use
+    company.sparseUpdate for documented sparse semantics. Source:
+    https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/companyinfo
+  batch.execute: >-
+    Submit 1–30 strictly modelled create, update, delete, or Query batch items.
+    Use optionsData: void with update for supported void transactions. Execution
+    order is not guaranteed. Source:
+    https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/batch
+  changeDataCapture.changes: >-
+    changedSince must be within the previous 30 days. JournalCode, TaxAgency,
+    TimeActivity, TaxCode, and TaxRate are not supported. Source:
+    https://static.developer.intuit.com/output_html/qbo/docs/learn/explore-the-quickbooks-online-api/change-data-capture.html
+  trialBalance.list: >-
+    Select locale FR for the TrialBalanceFR route; other locales use TrialBalance.
+    Parameters follow the first-party trialbalancequery model. Source:
+    https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/trialbalance
+  attachable.upload: >-
+    Upload one base64-encoded file as multipart form data; a request is limited
+    to 100 MB total. Source:
+    https://developer.intuit.com/docs/0100_quickbooks_online/0200_dev_guides/accounting/0050_attach_images_and_notes
+  attachable.download: >-
+    Returns the temporary download URL as text/plain. Intuit states that it
+    expires after 15 minutes. Source:
+    https://developer.intuit.com/docs/0100_quickbooks_online/0200_dev_guides/accounting/0050_attach_images_and_notes
 examples:
   read:
     path: accounts.list
@@ -47,13 +70,475 @@ examples:
       name: Operating Receivables
       accountSubType: "AccountsReceivable"
 apiExamples:
+  accountListDetail.list:
+    call: '{"realmId":"12345678","params":{}}'
   accounts.create:
-    call: "{ realmId: '12345678', name: 'Operating Checking', accountType: 'Bank' }"
+    call: '{"realmId":"12345678","name":"Operating Checking","accountType":"Bank"}'
   accounts.get:
-    call: "{ realmId: '12345678', accountId: '35' }"
+    call: '{"realmId":"12345678","accountId":"35"}'
   accounts.list:
-    call: "{ realmId: '12345678', startPosition: 1, maxResults: 50 }"
+    call: '{"realmId":"12345678","startPosition":1,"maxResults":50}'
+  accounts.update:
+    call: '{"realmId":"12345678","body":{"Id":"35","Name":"sample","SyncToken":"0"}}'
+  apAgingDetail.list:
+    call: '{"realmId":"12345678","params":{}}'
+  apAgingSummary.list:
+    call: '{"realmId":"12345678","params":{}}'
+  arAgingDetail.list:
+    call: '{"realmId":"12345678","params":{}}'
+  arAgingSummary.list:
+    call: '{"realmId":"12345678","params":{}}'
+  attachable.create:
+    call: '{"realmId":"12345678","body":{}}'
+  attachable.delete:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
+  attachable.download:
+    call: '{"realmId":"12345678","attachableId":"35"}'
+  attachable.get:
+    call: '{"realmId":"12345678","attachableId":"35"}'
+  attachable.list:
+    call: '{"realmId":"12345678"}'
+  attachable.update:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
+  attachable.upload:
+    call: '{"realmId":"12345678","fileName":"receipt.pdf","contentType":"application/pdf","base64Content":"JVBERg==","metadata":{}}'
+  balanceSheet.list:
+    call: '{"realmId":"12345678","params":{}}'
+  batch.execute:
+    call: '{"realmId":"12345678","items":[{"bId":"batch-1","Query":"SELECT * FROM Account"}]}'
+  bill.create:
+    call: '{"realmId":"12345678","body":{"VendorRef":{"value":"sample"},"Line":[]}}'
+  bill.delete:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
+  bill.get:
+    call: '{"realmId":"12345678","billId":"35"}'
+  bill.list:
+    call: '{"realmId":"12345678"}'
+  bill.update:
+    call: '{"realmId":"12345678","body":{"VendorRef":{"value":"sample"},"Line":[],"Id":"35","SyncToken":"0"}}'
+  billPayment.create:
+    call: '{"realmId":"12345678","body":{"VendorRef":{"value":"sample"},"TotalAmt":1,"Line":[],"PayType":"Check"}}'
+  billPayment.delete:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
+  billPayment.get:
+    call: '{"realmId":"12345678","billpaymentId":"35"}'
+  billPayment.list:
+    call: '{"realmId":"12345678"}'
+  billPayment.update:
+    call: '{"realmId":"12345678","body":{"VendorRef":{"value":"sample"},"Line":[],"TotalAmt":1,"PayType":"Check","Id":"35","SyncToken":"0"}}'
+  billPayment.void:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0","sparse":true}}'
+  budget.create:
+    call: '{"realmId":"12345678","body":{"EndDate":"sample","StartDate":"sample"}}'
+  budget.delete:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
+  budget.get:
+    call: '{"realmId":"12345678","budgetId":"35"}'
+  budget.list:
+    call: '{"realmId":"12345678"}'
+  budget.update:
+    call: '{"realmId":"12345678","body":{"EndDate":"sample","StartDate":"sample","Id":"35","SyncToken":"0"}}'
+  cashFlow.list:
+    call: '{"realmId":"12345678","params":{}}'
+  changeDataCapture.changes:
+    call: '{"realmId":"12345678","entities":["Customer"],"changedSince":"2026-11-18T12:00:00Z"}'
+  changeOrder.create:
+    call: '{"realmId":"12345678","body":{"ProjectRef":{"value":"sample"},"Line":{"DetailType":"PaymentLineDetail","SalesItemLineDetail":{},"Amount":1,"Id":"1"},"CustomerRef":{"value":"sample"}}}'
+  changeOrder.delete:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
+  changeOrder.get:
+    call: '{"realmId":"12345678","changeorderId":"35"}'
+  changeOrder.update:
+    call: '{"realmId":"12345678","body":{"LinkedTxn":[],"Line":[],"ProjectRef":{"value":"sample"},"CustomerRef":{"value":"sample"},"Id":"35","SyncToken":"0"}}'
+  class.create:
+    call: '{"realmId":"12345678","body":{"Name":"sample"}}'
+  class.get:
+    call: '{"realmId":"12345678","classId":"35"}'
+  class.list:
+    call: '{"realmId":"12345678"}'
+  class.update:
+    call: '{"realmId":"12345678","body":{"Name":"sample","Id":"35","SyncToken":"0"}}'
   company.get:
-    call: "{ realmId: '12345678' }"
+    call: '{"realmId":"12345678"}'
   company.list:
-    call: "{ realmId: '12345678' }"
+    call: '{"realmId":"12345678"}'
+  company.sparseUpdate:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0","sparse":true}}'
+  company.update:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
+  companyCurrency.create:
+    call: '{"realmId":"12345678","body":{"Code":"sample"}}'
+  companyCurrency.get:
+    call: '{"realmId":"12345678","companycurrencyId":"35"}'
+  companyCurrency.list:
+    call: '{"realmId":"12345678"}'
+  companyCurrency.update:
+    call: '{"realmId":"12345678","body":{"Code":"sample","Id":"35","SyncToken":"0"}}'
+  creditCardPayment.create:
+    call: '{"realmId":"12345678","body":{"TxnDate":"sample","Amount":1,"BankAccountRef":{"value":"sample"},"CreditCardAccountRef":{"value":"sample"}}}'
+  creditCardPayment.delete:
+    call: '{"realmId":"12345678","body":{"CreditCardAccountRef":{"value":"sample"},"Amount":1,"BankAccountRef":{"value":"sample"},"Id":"35","SyncToken":"0"}}'
+  creditCardPayment.get:
+    call: '{"realmId":"12345678","creditcardpaymentId":"35"}'
+  creditCardPayment.list:
+    call: '{"realmId":"12345678"}'
+  creditCardPayment.sparseUpdate:
+    call: '{"realmId":"12345678","body":{"TxnDate":"sample","Amount":1,"BankAccountRef":{"value":"sample"},"CreditCardAccountRef":{"value":"sample"},"Id":"35","SyncToken":"0","sparse":true}}'
+  creditCardPayment.update:
+    call: '{"realmId":"12345678","body":{"TxnDate":"sample","Amount":1,"BankAccountRef":{"value":"sample"},"CreditCardAccountRef":{"value":"sample"},"Id":"35","SyncToken":"0"}}'
+  creditMemo.create:
+    call: '{"realmId":"12345678","body":{"Line":{"DetailType":"PaymentLineDetail","SalesItemLineDetail":{},"Amount":1,"Id":"1"},"CustomerRef":{"value":"sample"}}}'
+  creditMemo.delete:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
+  creditMemo.get:
+    call: '{"realmId":"12345678","creditmemoId":"35"}'
+  creditMemo.getPdf:
+    call: '{"realmId":"12345678","creditmemoId":"35"}'
+  creditMemo.list:
+    call: '{"realmId":"12345678"}'
+  creditMemo.send:
+    call: '{"realmId":"12345678","creditmemoId":"35","sendTo":"billing@example.test"}'
+  creditMemo.update:
+    call: '{"realmId":"12345678","body":{"Line":[],"CustomerRef":{"value":"sample"},"Id":"35","SyncToken":"0"}}'
+  customer.create:
+    call: '{"realmId":"12345678","body":{}}'
+  customer.get:
+    call: '{"realmId":"12345678","customerId":"35"}'
+  customer.list:
+    call: '{"realmId":"12345678"}'
+  customer.sparseUpdate:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0","sparse":true}}'
+  customer.update:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
+  customerBalance.list:
+    call: '{"realmId":"12345678","params":{}}'
+  customerBalanceDetail.list:
+    call: '{"realmId":"12345678","params":{}}'
+  customerIncome.list:
+    call: '{"realmId":"12345678","params":{}}'
+  customerType.get:
+    call: '{"realmId":"12345678","id":"35"}'
+  customerType.list:
+    call: '{"realmId":"12345678"}'
+  department.create:
+    call: '{"realmId":"12345678","body":{"Name":"sample"}}'
+  department.get:
+    call: '{"realmId":"12345678","departmentId":"35"}'
+  department.list:
+    call: '{"realmId":"12345678"}'
+  department.update:
+    call: '{"realmId":"12345678","body":{"Name":"sample","Id":"35","SyncToken":"0"}}'
+  deposit.create:
+    call: '{"realmId":"12345678","body":{}}'
+  deposit.delete:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
+  deposit.get:
+    call: '{"realmId":"12345678","depositId":"35"}'
+  deposit.list:
+    call: '{"realmId":"12345678"}'
+  deposit.sparseUpdate:
+    call: '{"realmId":"12345678","body":{"DepositToAccountRef":{"value":"sample"},"Line":[],"Id":"35","SyncToken":"0","sparse":true}}'
+  deposit.update:
+    call: '{"realmId":"12345678","body":{"DepositToAccountRef":{"value":"sample"},"Line":[],"Id":"35","SyncToken":"0"}}'
+  employee.create:
+    call: '{"realmId":"12345678","body":{}}'
+  employee.get:
+    call: '{"realmId":"12345678","employeeId":"35"}'
+  employee.list:
+    call: '{"realmId":"12345678"}'
+  employee.update:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
+  estimate.create:
+    call: '{"realmId":"12345678","body":{"Line":{"DetailType":"PaymentLineDetail","SalesItemLineDetail":{},"Amount":1,"Id":"1"},"CustomerRef":{"value":"sample"}}}'
+  estimate.delete:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
+  estimate.get:
+    call: '{"realmId":"12345678","estimateId":"35"}'
+  estimate.getPdf:
+    call: '{"realmId":"12345678","estimateId":"35"}'
+  estimate.list:
+    call: '{"realmId":"12345678"}'
+  estimate.send:
+    call: '{"realmId":"12345678","estimateId":"35","sendTo":"billing@example.test"}'
+  estimate.sparseUpdate:
+    call: '{"realmId":"12345678","body":{"CustomerRef":{"value":"sample"},"Id":"35","SyncToken":"0","sparse":true}}'
+  estimate.update:
+    call: '{"realmId":"12345678","body":{"CustomerRef":{"value":"sample"},"Id":"35","SyncToken":"0"}}'
+  exchangerate.get:
+    call: '{"realmId":"12345678","currencyCode":"USD","asOfDate":"2026-11-18"}'
+  exchangerate.list:
+    call: '{"realmId":"12345678"}'
+  exchangerate.update:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
+  generalLedger.list:
+    call: '{"realmId":"12345678","params":{}}'
+  inventoryAdjustment.create:
+    call: '{"realmId":"12345678","body":{"DocNumber":"sample","AdjustAccountRef":{"value":"sample"},"Line":[],"TxnDate":"sample"}}'
+  inventoryAdjustment.delete:
+    call: '{"realmId":"12345678","body":{"SyncToken":"0","id":"1","Id":"35"}}'
+  inventoryAdjustment.get:
+    call: '{"realmId":"12345678","inventoryadjustmentId":"35"}'
+  inventoryAdjustment.sparseUpdate:
+    call: '{"realmId":"12345678","body":{"AdjustAccountRef":{"value":"sample"},"Line":[],"TxnDate":"sample","Id":"35","SyncToken":"0","sparse":true}}'
+  inventoryValuationDetail.list:
+    call: '{"realmId":"12345678","params":{}}'
+  inventoryValuationSummary.list:
+    call: '{"realmId":"12345678","params":{}}'
+  invoice.create:
+    call: '{"realmId":"12345678","body":{"CustomerRef":{"value":"sample"},"Line":[]}}'
+  invoice.delete:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
+  invoice.get:
+    call: '{"realmId":"12345678","invoiceId":"35"}'
+  invoice.getPdf:
+    call: '{"realmId":"12345678","invoiceId":"35"}'
+  invoice.list:
+    call: '{"realmId":"12345678"}'
+  invoice.send:
+    call: '{"realmId":"12345678","invoiceId":"35","sendTo":"billing@example.test"}'
+  invoice.sparseUpdate:
+    call: '{"realmId":"12345678","body":{"Line":[],"CustomerRef":{"value":"sample"},"Id":"35","SyncToken":"0","sparse":true}}'
+  invoice.update:
+    call: '{"realmId":"12345678","body":{"CustomerRef":{"value":"sample"},"Line":[],"Id":"35","SyncToken":"0"}}'
+  invoice.void:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0","sparse":true}}'
+  item.create:
+    call: '{"realmId":"12345678","body":{"Name":"sample"}}'
+  item.createCategory:
+    call: '{"realmId":"12345678","body":{"Type":"sample","Name":"sample"}}'
+  item.getBundle:
+    call: '{"realmId":"12345678","itemId":"35"}'
+  item.getCategory:
+    call: '{"realmId":"12345678","itemId":"35"}'
+  item.getItem:
+    call: '{"realmId":"12345678","itemId":"35"}'
+  item.listBundles:
+    call: '{"realmId":"12345678","startPosition":1,"maxResults":10}'
+  item.listCategories:
+    call: '{"realmId":"12345678","startPosition":1,"maxResults":10}'
+  item.listItems:
+    call: '{"realmId":"12345678","startPosition":1,"maxResults":10}'
+  item.update:
+    call: '{"realmId":"12345678","body":{"Name":"sample","Id":"35","SyncToken":"0"}}'
+  item.updateCategory:
+    call: '{"realmId":"12345678","body":{"Name":"sample","Type":"sample","Id":"35","SyncToken":"0"}}'
+  journalEntry.create:
+    call: '{"realmId":"12345678","body":{"Line":[]}}'
+  journalEntry.delete:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
+  journalEntry.get:
+    call: '{"realmId":"12345678","journalentryId":"35"}'
+  journalEntry.list:
+    call: '{"realmId":"12345678"}'
+  journalEntry.sparseUpdate:
+    call: '{"realmId":"12345678","body":{"Id":"35","Line":[],"SyncToken":"0","sparse":true}}'
+  journalEntry.update:
+    call: '{"realmId":"12345678","body":{"Id":"35","Line":[],"SyncToken":"0"}}'
+  journalReport.list:
+    call: '{"realmId":"12345678","params":{}}'
+  payment.create:
+    call: '{"realmId":"12345678","body":{"TotalAmt":1,"CustomerRef":{"value":"sample"}}}'
+  payment.delete:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
+  payment.get:
+    call: '{"realmId":"12345678","paymentId":"35"}'
+  payment.getPdf:
+    call: '{"realmId":"12345678","paymentId":"35"}'
+  payment.list:
+    call: '{"realmId":"12345678"}'
+  payment.send:
+    call: '{"realmId":"12345678","paymentId":"35","sendTo":"billing@example.test"}'
+  payment.update:
+    call: '{"realmId":"12345678","body":{"TotalAmt":1,"CustomerRef":{"value":"sample"},"Id":"35","SyncToken":"0"}}'
+  payment.void:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0","sparse":true}}'
+  paymentMethod.create:
+    call: '{"realmId":"12345678","body":{"Name":"sample"}}'
+  paymentMethod.get:
+    call: '{"realmId":"12345678","paymentmethodId":"35"}'
+  paymentMethod.list:
+    call: '{"realmId":"12345678"}'
+  paymentMethod.update:
+    call: '{"realmId":"12345678","body":{"Name":"sample","Id":"35","SyncToken":"0"}}'
+  preferences.get:
+    call: '{"realmId":"12345678"}'
+  preferences.list:
+    call: '{"realmId":"12345678"}'
+  preferences.update:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
+  profitAndLoss.list:
+    call: '{"realmId":"12345678","params":{}}'
+  profitAndLossDetail.list:
+    call: '{"realmId":"12345678","params":{}}'
+  purchase.create:
+    call: '{"realmId":"12345678","body":{"PaymentType":"sample","AccountRef":{"value":"sample"},"Line":[]}}'
+  purchase.delete:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
+  purchase.get:
+    call: '{"realmId":"12345678","purchaseId":"35"}'
+  purchase.list:
+    call: '{"realmId":"12345678"}'
+  purchase.update:
+    call: '{"realmId":"12345678","body":{"Line":[],"PaymentType":"sample","AccountRef":{"value":"sample"},"Id":"35","SyncToken":"0"}}'
+  purchaseOrder.create:
+    call: '{"realmId":"12345678","body":{"APAccountRef":{"value":"sample"},"VendorRef":{"value":"sample"},"Line":[]}}'
+  purchaseOrder.delete:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
+  purchaseOrder.get:
+    call: '{"realmId":"12345678","purchaseorderId":"35"}'
+  purchaseOrder.getPdf:
+    call: '{"realmId":"12345678","purchaseorderId":"35"}'
+  purchaseOrder.list:
+    call: '{"realmId":"12345678"}'
+  purchaseOrder.send:
+    call: '{"realmId":"12345678","purchaseorderId":"35","sendTo":"billing@example.test"}'
+  purchaseOrder.update:
+    call: '{"realmId":"12345678","body":{"APAccountRef":{"value":"sample"},"VendorRef":{"value":"sample"},"Line":[],"Id":"35","SyncToken":"0"}}'
+  recurringTransaction.create:
+    call: '{"realmId":"12345678","body":{"RecurringInfo":{}}}'
+  recurringTransaction.delete:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
+  recurringTransaction.get:
+    call: '{"realmId":"12345678","recurringtransactionId":"35"}'
+  recurringTransaction.list:
+    call: '{"realmId":"12345678"}'
+  refundReceipt.create:
+    call: '{"realmId":"12345678","body":{"DepositToAccountRef":{"value":"sample"},"Line":[]}}'
+  refundReceipt.delete:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
+  refundReceipt.get:
+    call: '{"realmId":"12345678","refundreceiptId":"35"}'
+  refundReceipt.getPdf:
+    call: '{"realmId":"12345678","refundreceiptId":"35"}'
+  refundReceipt.list:
+    call: '{"realmId":"12345678"}'
+  refundReceipt.send:
+    call: '{"realmId":"12345678","refundreceiptId":"35","sendTo":"billing@example.test"}'
+  refundReceipt.sparseUpdate:
+    call: '{"realmId":"12345678","body":{"DepositToAccountRef":{"value":"sample"},"Line":[],"Id":"35","SyncToken":"0","sparse":true}}'
+  refundReceipt.update:
+    call: '{"realmId":"12345678","body":{"DepositToAccountRef":{"value":"sample"},"Line":[],"Id":"35","SyncToken":"0"}}'
+  reimburseCharge.get:
+    call: '{"realmId":"12345678","taxrateId":"35"}'
+  reimburseCharge.list:
+    call: '{"realmId":"12345678"}'
+  salesByClassSummary.list:
+    call: '{"realmId":"12345678","params":{}}'
+  salesByCustomer.list:
+    call: '{"realmId":"12345678","params":{}}'
+  salesByDepartment.list:
+    call: '{"realmId":"12345678","params":{}}'
+  salesByProduct.list:
+    call: '{"realmId":"12345678","params":{}}'
+  salesReceipt.create:
+    call: '{"realmId":"12345678","body":{"Line":[]}}'
+  salesReceipt.delete:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
+  salesReceipt.get:
+    call: '{"realmId":"12345678","salesreceiptId":"35"}'
+  salesReceipt.getPdf:
+    call: '{"realmId":"12345678","salesreceiptId":"35"}'
+  salesReceipt.list:
+    call: '{"realmId":"12345678"}'
+  salesReceipt.send:
+    call: '{"realmId":"12345678","salesreceiptId":"35","sendTo":"billing@example.test"}'
+  salesReceipt.sparseUpdate:
+    call: '{"realmId":"12345678","body":{"Line":[],"CustomerRef":{"value":"sample"},"Id":"35","SyncToken":"0","sparse":true}}'
+  salesReceipt.update:
+    call: '{"realmId":"12345678","body":{"Line":[],"CustomerRef":{"value":"sample"},"Id":"35","SyncToken":"0"}}'
+  salesReceipt.void:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0","sparse":true}}'
+  taxAgency.create:
+    call: '{"realmId":"12345678","body":{"DisplayName":"sample"}}'
+  taxAgency.get:
+    call: '{"realmId":"12345678","taxagencyId":"35"}'
+  taxAgency.list:
+    call: '{"realmId":"12345678"}'
+  taxClassification.get:
+    call: '{"realmId":"12345678","taxClassificationId":"35"}'
+  taxClassification.list:
+    call: '{"realmId":"12345678"}'
+  taxClassification.listByLevel:
+    call: '{"realmId":"12345678","level":1}'
+  taxClassification.listChildren:
+    call: '{"realmId":"12345678","parentId":"35"}'
+  taxCode.get:
+    call: '{"realmId":"12345678","taxcodeId":"35"}'
+  taxCode.list:
+    call: '{"realmId":"12345678"}'
+  taxPayment.get:
+    call: '{"realmId":"12345678","taxPaymentId":"35"}'
+  taxPayment.list:
+    call: '{"realmId":"12345678"}'
+  taxRate.get:
+    call: '{"realmId":"12345678","taxrateId":"35"}'
+  taxRate.list:
+    call: '{"realmId":"12345678"}'
+  taxService.create:
+    call: '{"realmId":"12345678","body":{"TaxCode":"sample","TaxRateDetails":[]}}'
+  taxSummary.list:
+    call: '{"realmId":"12345678","params":{"agency_id":"1"}}'
+  term.create:
+    call: '{"realmId":"12345678","body":{"Name":"sample"}}'
+  term.get:
+    call: '{"realmId":"12345678","termId":"35"}'
+  term.list:
+    call: '{"realmId":"12345678"}'
+  term.update:
+    call: '{"realmId":"12345678","body":{"Name":"sample","Id":"35","SyncToken":"0"}}'
+  timeActivity.create:
+    call: '{"realmId":"12345678","body":{"NameOf":"sample"}}'
+  timeActivity.delete:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
+  timeActivity.get:
+    call: '{"realmId":"12345678","timeactivityId":"35"}'
+  timeActivity.list:
+    call: '{"realmId":"12345678"}'
+  timeActivity.update:
+    call: '{"realmId":"12345678","body":{"NameOf":"sample","Id":"35","SyncToken":"0"}}'
+  transactionList.list:
+    call: '{"realmId":"12345678","params":{}}'
+  transactionListByCustomer.list:
+    call: '{"realmId":"12345678","params":{}}'
+  transactionListByVendor.list:
+    call: '{"realmId":"12345678","params":{}}'
+  transactionListWithSplits.list:
+    call: '{"realmId":"12345678","params":{}}'
+  transfer.create:
+    call: '{"realmId":"12345678","body":{"Amount":1,"ToAccountRef":{"value":"sample"},"FromAccountRef":{"value":"sample"}}}'
+  transfer.delete:
+    call: '{"realmId":"12345678","body":{"ToAccountRef":{"value":"sample"},"Amount":1,"Id":"35","FromAccountRef":{"value":"sample"},"SyncToken":"0"}}'
+  transfer.get:
+    call: '{"realmId":"12345678","transferId":"35"}'
+  transfer.list:
+    call: '{"realmId":"12345678"}'
+  transfer.sparseUpdate:
+    call: '{"realmId":"12345678","body":{"Amount":1,"ToAccountRef":{"value":"sample"},"FromAccountRef":{"value":"sample"},"Id":"35","SyncToken":"0","sparse":true}}'
+  transfer.update:
+    call: '{"realmId":"12345678","body":{"Amount":1,"ToAccountRef":{"value":"sample"},"FromAccountRef":{"value":"sample"},"Id":"35","SyncToken":"0"}}'
+  trialBalance.list:
+    call: '{"realmId":"12345678","locale":"default","params":{}}'
+  vendor.create:
+    call: '{"realmId":"12345678","body":{}}'
+  vendor.get:
+    call: '{"realmId":"12345678","vendorId":"35"}'
+  vendor.list:
+    call: '{"realmId":"12345678"}'
+  vendor.update:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
+  vendorBalance.list:
+    call: '{"realmId":"12345678","params":{}}'
+  vendorBalanceDetail.list:
+    call: '{"realmId":"12345678","params":{}}'
+  vendorCredit.create:
+    call: '{"realmId":"12345678","body":{"VendorRef":{"value":"sample"},"Line":[]}}'
+  vendorCredit.delete:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
+  vendorCredit.get:
+    call: '{"realmId":"12345678","vendorcreditId":"35"}'
+  vendorCredit.list:
+    call: '{"realmId":"12345678"}'
+  vendorCredit.update:
+    call: '{"realmId":"12345678","body":{"VendorRef":{"value":"sample"},"Line":[],"Id":"35","SyncToken":"0"}}'
+  vendorExpenses.list:
+    call: '{"realmId":"12345678","params":{}}'

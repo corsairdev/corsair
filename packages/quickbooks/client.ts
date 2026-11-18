@@ -1,5 +1,6 @@
 import type {
 	ApiRequestOptions,
+	ApiResult,
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
@@ -22,15 +23,51 @@ export const QUICKBOOKS_RATE_LIMIT_CONFIG = {
 
 export type QuickBooksRequestOptions = {
 	method?: 'GET' | 'POST';
-	// unknown values let the request's Zod-validated endpoint body retain its exact fields.
-	body?: Record<string, unknown>;
+	body?: object;
 	query?: Record<string, string | number | boolean | undefined>;
+	formData?: Record<string, string | Blob | Array<string | Blob> | undefined>;
+	headers?: Record<string, string>;
+	responseType?: 'binary';
+	basePath?: 'v3' | 'manage';
 };
 
 export type QuickBooksAuthenticatedContext = {
 	key: string;
 	_refreshAuth?: () => Promise<string>;
 };
+
+function sanitizeFormDataError(
+	error: ApiError,
+	path: string,
+	options: QuickBooksRequestOptions,
+): ApiError {
+	const request: ApiRequestOptions = {
+		method: options.method ?? 'GET',
+		url: path,
+		mediaType: 'multipart/form-data',
+		...(options.query ? { query: options.query } : {}),
+		...(options.headers ? { headers: options.headers } : {}),
+	};
+	const response: ApiResult = {
+		url: error.url,
+		ok: false,
+		status: error.status,
+		statusText: error.statusText,
+		body: error.body,
+	};
+	return new ApiError(request, response, error.message, {
+		...(error.retryAfter !== undefined ? { retryAfter: error.retryAfter } : {}),
+		...(error.rateLimitReset !== undefined
+			? { rateLimitReset: error.rateLimitReset }
+			: {}),
+		...(error.rateLimitRemaining !== undefined
+			? { rateLimitRemaining: error.rateLimitRemaining }
+			: {}),
+		...(error.rateLimitLimit !== undefined
+			? { rateLimitLimit: error.rateLimitLimit }
+			: {}),
+	});
+}
 
 export function quickBooksApiBase(
 	environment: QuickBooksEnvironment = 'production',
@@ -49,9 +86,10 @@ export async function makeQuickBooksRequest<T>(
 	options: QuickBooksRequestOptions = {},
 	environment?: QuickBooksEnvironment,
 ): Promise<T> {
+	const basePath = options.basePath ?? 'v3';
 	const config: OpenAPIConfig = {
-		BASE: quickBooksApiBase(environment),
-		VERSION: '3',
+		BASE: `${API_HOSTS[environment ?? 'production']}/${basePath}`,
+		VERSION: basePath === 'v3' ? '3' : '',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: accessToken,
@@ -63,6 +101,9 @@ export async function makeQuickBooksRequest<T>(
 		...(options.body
 			? { body: options.body, mediaType: 'application/json' }
 			: {}),
+		...(options.formData ? { formData: options.formData } : {}),
+		...(options.headers ? { headers: options.headers } : {}),
+		...(options.responseType ? { responseType: options.responseType } : {}),
 	};
 
 	return request<T>(config, requestOptions, {
@@ -85,14 +126,26 @@ export async function makeAuthenticatedQuickBooksRequest<T>(
 		return await makeQuickBooksRequest<T>(path, ctx.key, options, environment);
 	} catch (error: unknown) {
 		// unknown because transport rejection values are untrusted; ApiError narrows the retryable case.
-		if (
-			!(error instanceof ApiError) ||
-			error.status !== 401 ||
-			!ctx._refreshAuth
-		) {
-			throw error;
+		if (error instanceof ApiError && error.status === 401 && ctx._refreshAuth) {
+			const freshToken = await ctx._refreshAuth();
+			try {
+				return await makeQuickBooksRequest<T>(
+					path,
+					freshToken,
+					options,
+					environment,
+				);
+			} catch (refreshError: unknown) {
+				// unknown because retry rejection values are untrusted; form data must not escape in ApiError.request.
+				if (options.formData && refreshError instanceof ApiError) {
+					throw sanitizeFormDataError(refreshError, path, options);
+				}
+				throw refreshError;
+			}
 		}
-		const freshToken = await ctx._refreshAuth();
-		return makeQuickBooksRequest<T>(path, freshToken, options, environment);
+		if (options.formData && error instanceof ApiError) {
+			throw sanitizeFormDataError(error, path, options);
+		}
+		throw error;
 	}
 }

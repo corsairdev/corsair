@@ -1,3 +1,5 @@
+import { QuickBooksCatalogEndpointSchemas } from './endpoints/catalog';
+import { QuickBooksSpecialEndpointSchemas } from './endpoints/special';
 import {
 	QuickBooksEndpointInputSchemas,
 	QuickBooksEndpointOutputSchemas,
@@ -22,12 +24,18 @@ describe('QuickBooks endpoint schemas', () => {
 			'accounts.list',
 			'company.get',
 			'company.list',
-		];
+			...Object.keys(QuickBooksCatalogEndpointSchemas),
+			...Object.keys(QuickBooksSpecialEndpointSchemas),
+		].sort();
 		expect(Object.keys(quickbooksEndpointSchemas).sort()).toEqual(operations);
+		expect(Object.keys(QuickBooksCatalogEndpointSchemas)).toHaveLength(229);
 		expect(Object.keys(QuickBooksEndpointInputSchemas)).toHaveLength(5);
 		expect(Object.keys(QuickBooksEndpointOutputSchemas)).toHaveLength(5);
 		const plugin = quickbooks();
 		expect(Object.keys(plugin.endpointMeta ?? {}).sort()).toEqual(operations);
+		expect(Object.keys(plugin.endpointSchemas ?? {}).sort()).toEqual(
+			operations,
+		);
 		expect(plugin.webhooks).toEqual({});
 		expect(plugin.options?.authType).toBe('oauth_2');
 	});
@@ -152,5 +160,54 @@ describe('QuickBooks endpoint schemas', () => {
 	it('keeps the persistence schema empty and versioned', () => {
 		expect(QuickBooksSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 		expect(QuickBooksSchema.entities).toEqual({});
+	});
+
+	it('strictly models the Batch item operation variants and 30-item cap', () => {
+		const inputSchema = QuickBooksSpecialEndpointSchemas['batch.execute'].input;
+		const realmId = '12345678';
+		const cases = [
+			{ bId: 'query-1', Query: 'SELECT * FROM Account' },
+			{
+				bId: 'create-1',
+				operation: 'create',
+				Customer: { DisplayName: 'Sample Customer' },
+			},
+			{
+				bId: 'update-1',
+				operation: 'update',
+				Customer: { Id: '35', SyncToken: '0', DisplayName: 'Sample Customer' },
+			},
+			{
+				bId: 'delete-1',
+				operation: 'delete',
+				Bill: { Id: '35', SyncToken: '0' },
+			},
+			{
+				bId: 'void-1',
+				operation: 'update',
+				optionsData: 'void',
+				Invoice: { Id: '35', SyncToken: '0', sparse: true },
+			},
+		];
+		for (const item of cases) {
+			expect(inputSchema.safeParse({ realmId, items: [item] }).success).toBe(
+				true,
+			);
+		}
+		expect(
+			inputSchema.safeParse({
+				realmId,
+				items: [{ bId: 'bad-1', Query: 'SELECT * FROM Account', extra: true }],
+			}).success,
+		).toBe(false);
+		expect(
+			inputSchema.safeParse({
+				realmId,
+				items: Array.from({ length: 31 }, (_, index) => ({
+					bId: String(index),
+					Query: 'SELECT * FROM Account',
+				})),
+			}).success,
+		).toBe(false);
 	});
 });
