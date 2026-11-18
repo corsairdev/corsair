@@ -1927,7 +1927,8 @@ function pluginNavEntryMatches(entry: unknown, pluginId: string): boolean {
 /**
  * Lists `plugins/<pluginId>/*.mdx` and updates `docs/docs.json` so the Mintlify sidebar
  * includes every page in Overview → Get credentials (if present) → API → Database → Webhooks → …
- * order, nested under the plugin display name. Re-sorts plugin groups alphabetically by display name.
+ * order, nested under the plugin display name. A new plugin goes in at its alphabetical place by
+ * display name; other plugins' entries are left where they are.
  */
 function syncPluginDocsJson(
 	repoRoot: string,
@@ -1980,23 +1981,23 @@ function syncPluginDocsJson(
 			? pagePaths[0]!
 			: { group: displayGroupTitle, pages: pagePaths };
 
+	// Touch only this plugin's entry. Re-sorting the whole list moved other
+	// plugins' groups (2Captcha, Raisely) on every run, so a docs PR for one
+	// plugin showed hundreds of unrelated docs.json lines.
 	const idx = pages.findIndex((e) => pluginNavEntryMatches(e, pluginId));
 	if (idx !== -1) {
 		pages[idx] = newEntry;
 	} else {
-		pages.push(newEntry);
+		const key = pluginNavGroupSortKey(newEntry);
+		const at = pages.findIndex(
+			(e) =>
+				pluginNavGroupSortKey(e).localeCompare(key, undefined, {
+					sensitivity: 'base',
+					numeric: true,
+				}) > 0,
+		);
+		pages.splice(at === -1 ? pages.length : at, 0, newEntry);
 	}
-
-	pages.sort((a, b) =>
-		pluginNavGroupSortKey(a).localeCompare(
-			pluginNavGroupSortKey(b),
-			undefined,
-			{
-				sensitivity: 'base',
-				numeric: true,
-			},
-		),
-	);
 
 	if (JSON.stringify(pages) === originalPluginPagesJson) {
 		return;
