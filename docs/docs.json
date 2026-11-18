@@ -6059,6 +6059,14 @@
                 ]
               },
               {
+                "group": "Zoho Invoice",
+                "pages": [
+                  "plugins/zohoinvoice/overview",
+                  "plugins/zohoinvoice/api",
+                  "plugins/zohoinvoice/database"
+                ]
+              },
+              {
                 "group": "Zoho Mail",
                 "pages": [
                   "plugins/zohomail/overview",
