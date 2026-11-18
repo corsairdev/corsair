@@ -149,6 +149,15 @@ describe('bound-account call path cost', () => {
 		});
 	});
 
+	it('concurrent calls share one account revalidation', async () => {
+		const { t } = await boot();
+		const one = await cost(() => t.demo.api.note());
+		const three = await cost(() =>
+			Promise.all([t.demo.api.note(), t.demo.api.note(), t.demo.api.note()]),
+		);
+		expect(three.queries).toBe(16);
+	});
+
 	it('a settled read is never reused: a rotated token is seen by the next call', async () => {
 		const { t, corsair } = await boot();
 		expect(await t.demo.api.token()).toBe('tok-a');

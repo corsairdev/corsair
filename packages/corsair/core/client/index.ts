@@ -306,7 +306,7 @@ function createAccountIdResolver(
 ): () => Promise<string> {
 	let cachedAccountId: string | null = null;
 
-	return async () => {
+	const resolve = async (): Promise<string> => {
 		if (!database) {
 			throw new Error('Database not configured');
 		}
@@ -347,6 +347,16 @@ function createAccountIdResolver(
 		if (account && !account.ref) return accountId;
 		cachedAccountId = accountId;
 		return cachedAccountId;
+	};
+
+	// Concurrent calls share the revalidation in flight now; a settled answer is
+	// never reused, so a rebound row is caught on the next call.
+	let inflight: Promise<string> | undefined;
+	return () => {
+		inflight ??= resolve().finally(() => {
+			inflight = undefined;
+		});
+		return inflight;
 	};
 }
 
