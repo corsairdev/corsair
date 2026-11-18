@@ -1,6 +1,6 @@
 # @corsair-dev/twittrapi
 
-TwittrAPI plugin for Corsair. X/Twitter data over REST with `format=simple` flat JSON and account-monitoring webhooks.
+TwittrAPI plugin for Corsair: public X (Twitter) data from [TwittrAPI](https://www.twittrapi.com) (twittrapi.com) in its compact `format=simple` JSON, plus account monitoring with signed webhooks. TwittrAPI is a different service from twitterapi.io, which has its own plugin, `@corsair-dev/twitterapiio`.
 
 ## Install
 
@@ -38,7 +38,6 @@ pnpm add @corsair-dev/twittrapi
 | `trends.getByLocation` | `twittrapi.api.trends.getByLocation` | `read` | Get trending topics by location (WOEID, 1 = worldwide) |
 | `trends.getLocations` | `twittrapi.api.trends.getLocations` | `read` | List available trend locations (WOEIDs) |
 | `tweets.getById` | `twittrapi.api.tweets.getById` | `read` | Get a single tweet by ID |
-| `tweets.getLikers` | `twittrapi.api.tweets.getLikers` | `read` | Get users who liked a tweet |
 | `tweets.getQuotes` | `twittrapi.api.tweets.getQuotes` | `read` | Get quote tweets for a tweet |
 | `tweets.getReplies` | `twittrapi.api.tweets.getReplies` | `read` | Get a tweet with its replies in display order |
 | `tweets.getRetweeters` | `twittrapi.api.tweets.getRetweeters` | `read` | Get users who retweeted a tweet |
@@ -62,7 +61,7 @@ Auth: API key in the `X-API-KEY` header. Corsair prompts your tenant for credent
 
 ## Webhooks
 
-Handles 2 webhook events (`tweet`, `test`). Verify with `X-TwittrAPI-Signature: t=<unix>,v1=<HMAC-SHA256("<t>.<raw body>")>` and dedupe on `X-TwittrAPI-Delivery`. See the reference for payloads and `webhookHooks`.
+Handles 2 webhook events (`tweet`, `test`). Deliveries are verified with `X-TwittrAPI-Signature: t=<unix>,v1=<HMAC-SHA256("<t>.<raw body>")>` using the webhook's `whsec_` secret, deduplicated by event ID, and routed to a tenant by the webhook ID in `X-TwittrAPI-Webhook` (store it as the account's `webhook_id`). See the reference for payloads and `webhookHooks`.
 
 ## Reference
 

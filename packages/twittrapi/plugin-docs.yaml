@@ -1,2 +1,56 @@
 displayName: TwittrAPI
-description: Third-party X/Twitter data API with simple-format JSON and account-monitoring webhooks.
+description: Read public X (Twitter) data through TwittrAPI (twittrapi.com) and get new tweets of the accounts you watch by signed webhook.
+domain: twittrapi.com
+recommendedAuth: api_key
+overviewNote: |
+  TwittrAPI is a third-party, prepaid X data API at twittrapi.com. It is a different service from twitterapi.io, which has its own Corsair plugin (`twitterapiio`). Neither needs an X developer account.
+
+  Get a key at https://app.twittrapi.com/api-key. A new account gets $0.50 of test credit, valid 7 days, no card needed. The plugin sends the key in the `X-API-KEY` header and asks for the compact `format=simple` JSON on every read.
+
+  Things worth knowing:
+
+  - **Reads are billed per call** (about $0.0001 each; a page of ~20 tweets is one call). `balance.get` and every `monitors.*` call are free.
+  - **IDs are numeric strings.** Tweet IDs are the number at the end of the tweet URL. The user operations that take `userId` also take `userId: "-1"` with `username` to work by handle; `users.resolveIds` turns up to 100 handles into IDs in one call.
+  - **Paging:** pass a page's `nextCursor` as `cursor`. X decides the page size, so `count` is a hint.
+  - **Account monitoring** needs a plan booked in the TwittrAPI dashboard under Monitors (one account on the 60-second class is free). Without a plan, `monitors.addAccounts` answers 402.
+  - **Webhooks:** each webhook has its own `whsec_` secret, returned by `monitors.createWebhook` (and by `monitors.updateWebhook` with `rotateSecret`). Store it as the integration's webhook secret; deliveries are verified with HMAC-SHA256 over `<t>.<raw body>` and rejected outside a 5-minute window. Put the webhook's ID in the account's `webhook_id` so deliveries reach the right tenant: every delivery names it in `X-TwittrAPI-Webhook`.
+  - **Deliveries are retried** with the same event ID until your endpoint answers 2xx; the plugin skips an event ID it has already stored.
+
+  Posting, liking, following and DMs (TwittrAPI's account actions) need the X account's session cookie and a proxy, so this plugin does not cover them.
+examples:
+  read:
+    path: tweets.search
+    title: Search the latest tweets from an account
+    args:
+      searchItem: 'from:XDevelopers'
+      category: Latest
+      count: 20
+  write:
+    path: monitors.addAccounts
+    title: Watch an account for new tweets
+    args:
+      usernames:
+        - XDevelopers
+apiExamples:
+  tweets.search:
+    call: "{ searchItem: 'from:XDevelopers', category: 'Latest', count: 20 }"
+  tweets.getById:
+    call: "{ tweetId: '2019881223666233717' }"
+  users.getByUsername:
+    call: "{ username: 'XDevelopers' }"
+  users.getTweets:
+    call: "{ userId: '2244994945', count: 20 }"
+  users.resolveIds:
+    call: "{ usernames: 'XDevelopers,jack' }"
+  lists.getTweets:
+    call: "{ listId: '84839422', count: 20 }"
+  trends.getByLocation:
+    call: "{ locationId: '1' }"
+  monitors.addAccounts:
+    call: "{ usernames: ['XDevelopers'] }"
+  monitors.updateAccount:
+    call: "{ usernameOrId: 'XDevelopers', filters: { replies: false } }"
+  monitors.createWebhook:
+    call: "{ url: 'https://example.com/hooks/twittrapi', label: 'Production' }"
+  monitors.getEvents:
+    call: "{ since: '1849203', limit: 100 }"

@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/twittrapi",
   "version": "0.1.0",
-  "description": "TwittrAPI plugin for Corsair",
+  "description": "TwittrAPI (twittrapi.com) plugin for Corsair: X data reads and account-monitoring webhooks",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
