@@ -90,6 +90,7 @@ export function sentHeader(name: string): string | null {
 /** The JSON body of the last request, as a plain record. */
 export const sentBody = (): Record<string, unknown> => {
 	// unknown: parsed JSON.
+	// unknown: parsed JSON.
 	const body = lastCall().init.body;
 	if (typeof body !== 'string') {
 		throw new Error('expected a JSON string body');

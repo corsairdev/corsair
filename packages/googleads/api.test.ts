@@ -13,9 +13,9 @@
  * Read-only: one accessible-customers call and one GAQL search. A search is
  * billed against the account's quota but changes nothing.
  */
-import { logEventFromContext } from 'corsair/core';
-import { search, searchStream } from './endpoints/reporting';
+
 import { listAccessible as customersListAccessible } from './endpoints/customers';
+import { search, searchStream } from './endpoints/reporting';
 import { GoogleAdsEndpointOutputSchemas } from './endpoints/types';
 
 jest.mock('corsair/core', () => ({
@@ -59,7 +59,7 @@ const ctx = {
 			login_customer_id: LOGIN_CUSTOMER_ID ?? null,
 		}),
 	},
-} as unknown as Parameters<typeof search>[0];
+} as unknown as Parameters<typeof search>[0]; // unknown: partial manager.
 
 /** The account to query: the explicit one, else the first accessible one. */
 async function resolveCustomerId(): Promise<string> {

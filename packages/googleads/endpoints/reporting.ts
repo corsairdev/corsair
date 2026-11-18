@@ -68,9 +68,9 @@ export const searchStream: GoogleAdsEndpoints['searchStream'] = async (
 					if (chunk === null || typeof chunk !== 'object') continue;
 					// unknown: one chunk's members until each is checked below.
 					const part = chunk as {
-						results?: unknown;
-						fieldMask?: unknown;
-						queryResourceConsumption?: unknown;
+						results?: unknown; // unknown: checked with Array.isArray.
+						fieldMask?: unknown; // unknown: checked with typeof.
+						queryResourceConsumption?: unknown; // unknown: checked with typeof.
 					};
 					if (Array.isArray(part.results)) results.push(...part.results);
 					if (typeof part.fieldMask === 'string') {
