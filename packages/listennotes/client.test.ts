@@ -116,7 +116,7 @@ describe('makeListennotesRequest', () => {
 			(e: unknown) => e,
 		);
 
-		expect(caught).toBeInstanceOf(ApiError);
+		expect(caught).toBe(rateLimited);
 		const error = caught as ApiError;
 		expect(error.status).toBe(429);
 		expect(error.retryAfter).toBe(2500);
@@ -148,7 +148,7 @@ describe('makeListennotesRequest', () => {
 
 		// `unknown` because sanitizeApiError accepts and returns unknown for non-ApiError fallback.
 		const sanitized: unknown = sanitizeApiError(raw);
-		expect(sanitized).toBeInstanceOf(ApiError);
+		expect(sanitized).toBe(raw);
 		const err = sanitized as ApiError;
 		expect(err.request.headers?.['x-listenapi-key']).toBe('[REDACTED]');
 		expect(err.request.body).toEqual({ apiKey: '[REDACTED]', safe: 'value' });

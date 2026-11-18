@@ -111,53 +111,45 @@ function redactSensitiveData(value: unknown): unknown {
 export function sanitizeApiError(error: unknown): unknown {
 	if (!(error instanceof ApiError)) return error;
 
-	const headers = error.request.headers
-		? Object.fromEntries(
-				Object.entries(error.request.headers).map(([k, v]) => [
+	if (error.request) {
+		const req = error.request as {
+			// unknown because headers dictionary values can be untyped strings or arrays.
+			headers?: Record<string, unknown>;
+			// unknown because query dictionary values can be untyped primitives.
+			query?: Record<string, unknown>;
+			// unknown because body is an untyped error payload that must be recursively redacted.
+			body?: unknown;
+		};
+
+		if (req.headers) {
+			req.headers = Object.fromEntries(
+				Object.entries(req.headers).map(([k, v]) => [
 					k,
 					isSensitiveKey(k) ? '[REDACTED]' : v,
 				]),
-			)
-		: undefined;
+			);
+		}
 
-	const query = error.request.query
-		? Object.fromEntries(
-				Object.entries(error.request.query).map(([k, v]) => [
+		if (req.query) {
+			req.query = Object.fromEntries(
+				Object.entries(req.query).map(([k, v]) => [
 					k,
 					isSensitiveKey(k) ? '[REDACTED]' : v,
 				]),
-			)
-		: undefined;
+			);
+		}
 
-	const sanitizedRequest: ApiRequestOptions = {
-		...error.request,
-		headers,
-		query,
-		// unknown because body is an untyped error payload that must be recursively redacted.
-		body: redactSensitiveData(error.request.body) as
-			| Record<string, unknown>
-			| undefined,
-	};
+		if (req.body !== undefined) {
+			req.body = redactSensitiveData(req.body);
+		}
+	}
 
-	const sanitized = new ApiError(
-		sanitizedRequest,
-		{
-			url: error.url,
-			ok: false,
-			status: error.status,
-			statusText: error.statusText,
-			body: redactSensitiveData(error.body),
-		},
-		error.message,
-		{
-			retryAfter: error.retryAfter,
-			rateLimitReset: error.rateLimitReset,
-			rateLimitRemaining: error.rateLimitRemaining,
-			rateLimitLimit: error.rateLimitLimit,
-		},
-	);
-	sanitized.stack = error.stack;
-	return sanitized;
+	if (error.body !== undefined) {
+		// unknown because response body can be arbitrary untyped JSON or text.
+		(error as { body?: unknown }).body = redactSensitiveData(error.body);
+	}
+
+	return error;
 }
 
 export async function makeListennotesRequest<T>(

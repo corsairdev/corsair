@@ -12,6 +12,11 @@ import {
 } from './endpoints/types';
 
 const LIVE_KEY = process.env.LISTENNOTES_API_KEY ?? '';
+if (LIVE_KEY.length === 0) {
+	console.warn(
+		'Skipping live Listen Notes API tests because LISTENNOTES_API_KEY is not set. Set LISTENNOTES_API_KEY to run live tests.',
+	);
+}
 const describeLive = LIVE_KEY.length > 0 ? describe : describe.skip;
 
 describeLive('Listen Notes live API (env-gated)', () => {
