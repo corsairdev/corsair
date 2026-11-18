@@ -2146,7 +2146,7 @@ await corsair.bugherd.api.tasks.uploadAttachment({ project_id: 552668, task_id: 
 | `task_id` | `number` | Yes | Global task id (the `id` field, not the #number shown in the UI). |
 | `file` | `string \| object` | Yes | A file: a public URL to it, or &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125; for a small one. |
 
-`POST /projects/{project_id}/tasks/{task_id}/attachments/upload` as multipart form data. BugHerd allows about 30 seconds per upload; use `tasks.createAttachment` with a URL for large files.
+`POST /projects/{project_id}/tasks/{task_id}/attachments/upload?file_name=...` with the file as the raw request body. BugHerd's reference shows multipart, but the live API stores a multipart upload without its file name. BugHerd allows about 30 seconds per upload; use `tasks.createAttachment` with a URL for large files.
 
 <AccordionGroup>
 <Accordion title="file full type">
