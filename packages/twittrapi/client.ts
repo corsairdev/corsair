@@ -50,8 +50,7 @@ export async function makeTwittrApiRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		// Forwarded for every method: POST /tweet/{id}/favorites needs
-		// ?format=simple just like the GET endpoints do.
+		// Forwarded for every method, not only GET.
 		query,
 	};
 

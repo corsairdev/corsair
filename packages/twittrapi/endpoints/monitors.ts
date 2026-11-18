@@ -150,8 +150,8 @@ export const listWebhooks: TwittrApiEndpoints['monitorsListWebhooks'] = async (
 		TwittrApiEndpointOutputs['monitorsListWebhooks']
 	>('/monitors/webhooks', ctx.key, { method: 'GET' });
 
-	if (response.webhooks && ctx.db.monitorWebhooks) {
-		for (const webhook of asArray(response.webhooks)) {
+	if (response.data && ctx.db.monitorWebhooks) {
+		for (const webhook of asArray(response.data)) {
 			try {
 				await ctx.db.monitorWebhooks.upsertByEntityId(
 					String(webhook.id),

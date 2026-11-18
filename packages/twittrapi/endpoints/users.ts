@@ -330,12 +330,6 @@ export const resolveIds: TwittrApiEndpoints['usersResolveIds'] = async (
 		query: { usernames: input.usernames, format: 'simple' },
 	});
 
-	try {
-		await persistUsers(response.data ?? [], ctx.db);
-	} catch {
-		// best-effort
-	}
-
 	await logEventFromContext(
 		ctx,
 		'twittrapi.users.resolveIds',

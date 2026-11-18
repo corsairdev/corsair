@@ -30,7 +30,9 @@ export const TwittrApiUser = z.object({
 });
 
 export const TwittrApiMedia = z.object({
-	type: z.enum(['photo', 'video', 'gif']),
+	// photo, video or gif today; a plain string so a new media type does not
+	// fail the whole page.
+	type: z.string(),
 	url: z.string(),
 	previewUrl: z.string(),
 	width: z.number(),
@@ -165,10 +167,12 @@ export const TwittrApiFriendship = z.object({
 	target: TwittrApiFriendshipSide,
 	following: z.boolean(),
 	followedBy: z.boolean(),
-	canDm: z.boolean(),
-	blocking: z.boolean(),
-	blockedBy: z.boolean(),
-	muting: z.boolean(),
+	// X leaves these null when it does not report them for the pair (seen
+	// live: blocking/blockedBy/muting null for two unrelated public accounts).
+	canDm: z.boolean().nullable(),
+	blocking: z.boolean().nullable(),
+	blockedBy: z.boolean().nullable(),
+	muting: z.boolean().nullable(),
 });
 
 // ── Monitor (account monitoring) entities ────────────────────────────────────

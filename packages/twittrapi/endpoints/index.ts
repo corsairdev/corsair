@@ -12,7 +12,6 @@ export const TweetsEndpoints = {
 	getReplies: Tweets.getReplies,
 	getQuotes: Tweets.getQuotes,
 	getRetweeters: Tweets.getRetweeters,
-	getLikers: Tweets.getLikers,
 };
 
 export const UsersEndpoints = {

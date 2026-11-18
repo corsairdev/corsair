@@ -64,6 +64,23 @@ const FriendshipResultSchema = z.object({
 	data: TwittrApiFriendship,
 });
 
+// /user/usernames/to/ids answers a map, not a user page: only resolved
+// handles are keys of userIds, the rest are listed in errors.
+const UsernamesToIdsSchema = z.object({
+	data: z.object({
+		userIds: z.record(z.string(), z.string()),
+		errors: z
+			.array(
+				z.object({
+					username: z.string(),
+					error: z.string(),
+					message: z.string().optional(),
+				}),
+			)
+			.optional(),
+	}),
+});
+
 const BalanceSchema = z.object({
 	user_id: z.number().optional(),
 	balance: z.number().optional(),
@@ -110,10 +127,6 @@ const TweetsGetRetweetersInputSchema = z.object({
 	tweetId: z.string().regex(/^[0-9]{1,30}$/),
 	count: z.number().int().min(1).max(100).optional(),
 	cursor: z.string().optional(),
-});
-
-const TweetsGetLikersInputSchema = z.object({
-	tweetId: z.string().regex(/^[0-9]{1,30}$/),
 });
 
 // ── Users inputs ─────────────────────────────────────────────────────────────
@@ -327,8 +340,10 @@ const MonitorsGetPlanResponseSchema = z.object({
 	webhooks: z.array(TwittrApiMonitorWebhook).optional(),
 });
 
+// GET /monitors/webhooks answers {data: [...]} (live, 11-18), unlike
+// GET /monitors, which lists them under webhooks.
 const MonitorsListWebhooksResponseSchema = z.object({
-	webhooks: z.array(TwittrApiMonitorWebhook),
+	data: z.array(TwittrApiMonitorWebhook),
 });
 
 const MonitorsWebhookResponseSchema = z.object({
@@ -375,7 +390,6 @@ export const TwittrApiEndpointInputSchemas = {
 	tweetsGetReplies: TweetsGetRepliesInputSchema,
 	tweetsGetQuotes: TweetsGetQuotesInputSchema,
 	tweetsGetRetweeters: TweetsGetRetweetersInputSchema,
-	tweetsGetLikers: TweetsGetLikersInputSchema,
 	usersGetByUsername: UsersGetByUsernameInputSchema,
 	usersGetById: UsersGetByIdInputSchema,
 	usersBatchGetByIds: UsersBatchGetByIdsInputSchema,
@@ -421,7 +435,6 @@ export const TwittrApiEndpointOutputSchemas = {
 	tweetsGetReplies: TweetPageSchema,
 	tweetsGetQuotes: TweetPageSchema,
 	tweetsGetRetweeters: UserPageSchema,
-	tweetsGetLikers: UserPageSchema,
 	usersGetByUsername: UserResultSchema,
 	usersGetById: UserResultSchema,
 	usersBatchGetByIds: UserPageSchema,
@@ -433,7 +446,7 @@ export const TwittrApiEndpointOutputSchemas = {
 	usersGetFollowings: UserPageSchema,
 	usersGetVerifiedFollowers: UserPageSchema,
 	usersGetFriendship: FriendshipResultSchema,
-	usersResolveIds: UserPageSchema,
+	usersResolveIds: UsernamesToIdsSchema,
 	listsGetDetails: ListResultSchema,
 	listsGetTweets: TweetPageSchema,
 	listsGetMembers: UserPageSchema,

@@ -158,29 +158,3 @@ export const getRetweeters: TwittrApiEndpoints['tweetsGetRetweeters'] = async (
 	);
 	return response;
 };
-
-export const getLikers: TwittrApiEndpoints['tweetsGetLikers'] = async (
-	ctx,
-	input,
-) => {
-	const response = await makeTwittrApiRequest<
-		TwittrApiEndpointOutputs['tweetsGetLikers']
-	>(`/tweet/${input.tweetId}/favorites`, ctx.key, {
-		method: 'POST',
-		query: { format: 'simple' },
-	});
-
-	try {
-		await persistUsers(response.data ?? [], ctx.db);
-	} catch {
-		// best-effort
-	}
-
-	await logEventFromContext(
-		ctx,
-		'twittrapi.tweets.getLikers',
-		{ ...input },
-		'completed',
-	);
-	return response;
-};
