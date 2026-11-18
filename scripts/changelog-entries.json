@@ -9113,5 +9113,32 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-18",
+    "package": "@corsair-dev/googlecontacts",
+    "dir": "packages/googlecontacts",
+    "name": "Google Contacts",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-18",
+    "package": "@corsair-dev/honeybadger",
+    "dir": "packages/honeybadger",
+    "name": "Honeybadger",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-18",
+    "package": "@corsair-dev/zohoinvoice",
+    "dir": "packages/zohoinvoice",
+    "name": "Zoho Invoice",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
