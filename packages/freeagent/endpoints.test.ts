@@ -1148,10 +1148,17 @@ const wireCases: readonly WireCase[] = [
 	{
 		name: 'financialReports.transactionsList',
 		handler: AccountingEndpoints.financialReports.transactionsList,
-		input: { query: { from_date: '2026-01-01', to_date: '2026-01-31' } },
+		input: {
+			query: {
+				page: 2,
+				per_page: 50,
+				from_date: '2026-01-01',
+				to_date: '2026-01-31',
+			},
+		},
 		method: 'GET',
 		pathAndQuery:
-			'/v2/accounting/transactions?from_date=2026-01-01&to_date=2026-01-31',
+			'/v2/accounting/transactions?page=2&per_page=50&from_date=2026-01-01&to_date=2026-01-31',
 		body: undefined,
 		response: { transactions: [] },
 		expected: { transactions: [], pagination },
@@ -2385,6 +2392,7 @@ const wireCases: readonly WireCase[] = [
 				reference: 'REF100',
 				dated_on: '2026-10-01',
 				due_on: '2026-10-31',
+				recurring: 'Monthly',
 				bill_items: [
 					{
 						category: 'https://api.freeagent.com/v2/categories/285',
@@ -2402,6 +2410,7 @@ const wireCases: readonly WireCase[] = [
 				reference: 'REF100',
 				dated_on: '2026-10-01',
 				due_on: '2026-10-31',
+				recurring: 'Monthly',
 				bill_items: [
 					{
 						category: 'https://api.freeagent.com/v2/categories/285',
@@ -2493,6 +2502,7 @@ const wireCases: readonly WireCase[] = [
 				dated_on: '2026-10-01',
 				description: 'Travel',
 				gross_value: '-20.0',
+				recurring: 'Monthly',
 			},
 		},
 		method: 'POST',
@@ -2504,6 +2514,7 @@ const wireCases: readonly WireCase[] = [
 				dated_on: '2026-10-01',
 				description: 'Travel',
 				gross_value: '-20.0',
+				recurring: 'Monthly',
 			},
 		},
 		response: { expense: { description: 'Travel', gross_value: '-20.0' } },

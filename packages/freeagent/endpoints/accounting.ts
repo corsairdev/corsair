@@ -284,7 +284,9 @@ const Transaction = z
 	.passthrough();
 const TransactionListInput = z
 	.object({
-		query: ReportDateQuery.extend({
+		query: PageQuery.extend({
+			from_date: ReportDateQuery.shape.from_date,
+			to_date: ReportDateQuery.shape.to_date,
 			nominal_code: z.string().optional(),
 		}).optional(),
 	})

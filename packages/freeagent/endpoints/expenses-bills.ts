@@ -131,7 +131,7 @@ const BillItemCreate = BillItemFields.extend({
 const BillItemUpdate = z.union([
 	z.object({ url: z.string().url(), _destroy: z.literal(1) }).strict(),
 	BillItemFields.extend({ url: z.string().url() }).strict(),
-	BillItemCreate.extend({ url: z.literal('') }).strict(),
+	BillItemCreate.safeExtend({ url: z.literal('') }).strict(),
 ]);
 const BillItem = z
 	.object({
@@ -220,6 +220,7 @@ const BillFields = z
 				'Weekly',
 				'Two Weekly',
 				'Four Weekly',
+				'Monthly',
 				'Two Monthly',
 				'Quarterly',
 				'Biannually',
@@ -364,6 +365,7 @@ const ExpenseFields = z
 				'Weekly',
 				'Two Weekly',
 				'Four Weekly',
+				'Monthly',
 				'Two Monthly',
 				'Quarterly',
 				'Biannually',
