@@ -1,0 +1,118 @@
+displayName: BugHerd
+description: Work with BugHerd website feedback and bug reports. List and triage tasks, move them across the board, comment, attach files, and manage projects, columns and webhooks.
+domain: bugherd.com
+recommendedAuth: api_key
+overviewNote: |
+  The [BugHerd API v2](https://docs.bugherd.com/api) authenticates with your organization's API key (Settings > organization > Authentication Token). It is sent as HTTP Basic with the key as the username and `x` as the password, and it can see every project in the organization.
+
+  Tasks have two ids: the global `id` that every task route takes, and `local_task_id`, the #number shown in the BugHerd UI. Use `tasks.showByLocalId` to turn a #number into a task, and `tasks.move` takes #numbers. A task's `status` is its column name (`backlog`, `todo`, `doing`, `done`, `closed` or a custom column); a task with no status sits in the Feedback panel.
+
+  Lists return up to 100 records per page; pass `page` to get the next one. An empty list means there are no more. BugHerd allows 60 requests a minute.
+
+  **Risk.** Deletes (projects, tasks, columns, attachments, webhooks) cannot be undone, and `projects.addGuest` with an email sends that person an invitation, so these are `destructive`. Projects come back without the project's widget `api_key`, which lets anyone post feedback into the project.
+references:
+  - title: BugHerd API v2 reference
+    url: https://docs.bugherd.com/api
+examples:
+  read:
+    path: tasks.list
+    title: Open tasks in a project
+    args:
+      project_id: 552668
+      status: todo
+  write:
+    path: tasks.update
+    title: Move a task to Doing and assign it
+    args:
+      project_id: 552668
+      task_id: 98765
+      status: doing
+      assigned_to_id: 4561
+apiNotes:
+  tasks.listForUser: |
+    `GET /users/{user_id}/tasks.json`. BugHerd answers with a bare array; the plugin returns it as `{ tasks }` like the other task lists.
+  tasks.show: |
+    `GET /projects/{project_id}/tasks/{task_id}.json`, or `GET /tasks/{task_id}.json` when no project id is given.
+  tasks.uploadAttachment: |
+    `POST /projects/{project_id}/tasks/{task_id}/attachments/upload` as multipart form data. BugHerd allows about 30 seconds per upload; use `tasks.createAttachment` with a URL for large files.
+  tasks.move: |
+    `POST /projects/{project_id}/move_tasks.json`. BugHerd notes the route may not be enabled on every account (404).
+apiExamples:
+  organization.show:
+    call: "{}"
+  users.list:
+    call: "{ updated_since: '2026-11-01T00:00:00Z' }"
+  users.listMembers:
+    call: "{}"
+  users.listGuests:
+    call: "{}"
+  users.listProjects:
+    call: "{ user_id: 4561, is_active: true }"
+  projects.list:
+    call: "{ page: 1 }"
+  projects.listActive:
+    call: "{}"
+  projects.show:
+    call: "{ project_id: 552668 }"
+  projects.create:
+    call: "{ name: 'Marketing site', devurl: 'https://www.example.com' }"
+  projects.update:
+    call: "{ project_id: 552668, is_public: false }"
+  projects.delete:
+    call: "{ project_id: 552668 }"
+  projects.addMember:
+    call: "{ project_id: 552668, user_id: 4561 }"
+  projects.addGuest:
+    call: "{ project_id: 552668, user_id: 123 }"
+  tasks.list:
+    call: "{ project_id: 552668, status: 'todo', priority: 'critical' }"
+  tasks.listFeedback:
+    call: "{ project_id: 552668 }"
+  tasks.listArchived:
+    call: "{ project_id: 552668 }"
+  tasks.listTaskboard:
+    call: "{ project_id: 552668 }"
+  tasks.show:
+    call: "{ task_id: 98765 }"
+  tasks.showByLocalId:
+    call: "{ project_id: 552668, local_task_id: 42 }"
+  tasks.create:
+    call: "{ project_id: 552668, description: 'Login button does nothing on Safari', priority: 'important', status: 'todo', tag_names: ['safari'] }"
+  tasks.update:
+    call: "{ project_id: 552668, task_id: 98765, status: 'doing', assigned_to_id: 4561 }"
+  tasks.delete:
+    call: "{ project_id: 552668, task_id: 98765 }"
+  tasks.move:
+    call: "{ project_id: 552668, destination_project_id: 552669, task_ids: [42, 43] }"
+  tasks.listForUser:
+    call: "{ user_id: 4561 }"
+  tasks.listComments:
+    call: "{ project_id: 552668, task_id: 98765 }"
+  tasks.createComment:
+    call: "{ project_id: 552668, task_id: 98765, text: 'Fixed in the next release.', is_private: true }"
+  tasks.listAttachments:
+    call: "{ project_id: 552668, task_id: 98765 }"
+  tasks.showAttachment:
+    call: "{ project_id: 552668, task_id: 98765, attachment_id: 331 }"
+  tasks.createAttachment:
+    call: "{ project_id: 552668, task_id: 98765, file_name: 'screenshot.png', url: 'https://example.com/screenshot.png' }"
+  tasks.uploadAttachment:
+    call: "{ project_id: 552668, task_id: 98765, file: { url: 'https://example.com/report.pdf' } }"
+  tasks.deleteAttachment:
+    call: "{ project_id: 552668, task_id: 98765, attachment_id: 331 }"
+  columns.list:
+    call: "{ project_id: 552668 }"
+  columns.show:
+    call: "{ project_id: 552668, column_id: 55 }"
+  columns.create:
+    call: "{ project_id: 552668, name: 'In Review' }"
+  columns.update:
+    call: "{ project_id: 552668, column_id: 55, name: 'QA' }"
+  columns.delete:
+    call: "{ project_id: 552668, column_id: 55 }"
+  webhooks.list:
+    call: "{}"
+  webhooks.create:
+    call: "{ target_url: 'https://example.com/bugherd', event: 'task_create', project_id: 552668 }"
+  webhooks.delete:
+    call: "{ webhook_id: 22649 }"

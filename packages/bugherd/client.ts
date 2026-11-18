@@ -1,36 +1,31 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
-
-export class BugherdAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-		public readonly status?: number,
-	) {
-		super(message);
-		this.name = 'BugherdAPIError';
-	}
-}
+import { request } from 'corsair/http';
 
 const BUGHERD_API_BASE = 'https://www.bugherd.com/api_v2';
 
-function getBasicAuthHeader(apiKey: string): string {
-	const credentials = `${apiKey}:x`;
-	return `Basic ${Buffer.from(credentials).toString('base64')}`;
-}
+export type BugherdQuery = Record<
+	string,
+	string | number | boolean | undefined
+>;
 
+/**
+ * One request to BugHerd API v2. Paths are relative to /api_v2 and end in
+ * `.json`, as in BugHerd's OpenAPI reference. Auth is HTTP Basic with the API
+ * key as the username and `x` as the password. Core's ApiError passes through
+ * unchanged so the error handlers can read its status and Retry-After.
+ */
 export async function makeBugherdRequest<T>(
 	endpoint: string,
 	apiKey: string,
 	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
 		body?: Record<string, unknown>;
+		// Sent as multipart/form-data (attachment uploads).
 		formData?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
+		query?: BugherdQuery;
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, formData, query } = options;
-	const isWrite = method === 'POST' || method === 'PUT' || method === 'PATCH';
 
 	const config: OpenAPIConfig = {
 		BASE: BUGHERD_API_BASE,
@@ -38,29 +33,26 @@ export async function makeBugherdRequest<T>(
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		HEADERS: {
-			Authorization: getBasicAuthHeader(apiKey),
-			...(isWrite && !formData ? { 'Content-Type': 'application/json' } : {}),
+			Accept: 'application/json',
+			Authorization: `Basic ${btoa(`${apiKey}:x`)}`,
 		},
 	};
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body: isWrite && !formData ? body : undefined,
-		formData: isWrite && formData ? formData : undefined,
-		mediaType:
-			isWrite && !formData ? 'application/json; charset=utf-8' : undefined,
 		query,
+		...(formData
+			? { formData }
+			: body
+				? { body, mediaType: 'application/json' }
+				: {}),
 	};
 
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		// ApiError carries status and retryAfter, which error-handlers.ts needs.
-		if (error instanceof ApiError) throw error;
-		if (error instanceof Error) {
-			throw new BugherdAPIError(error.message);
-		}
-		throw new BugherdAPIError('Unknown error');
-	}
+	return request<T>(config, requestOptions);
+}
+
+/** Numeric path segment, escaped. */
+export function seg(value: number): string {
+	return encodeURIComponent(String(value));
 }

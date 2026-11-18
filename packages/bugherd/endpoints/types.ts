@@ -1,659 +1,601 @@
+import { FileInputSchema } from 'corsair/http';
 import { z } from 'zod';
 
-// ── Shared Sub-Schemas ────────────────────────────────────────────────────────
+// Built from BugHerd's OpenAPI reference (docs.bugherd.com/api/openapi.yaml)
+// and checked against the live API. Responses are loose objects with optional
+// fields: list and detail routes return different subsets of the same record
+// (a project in projects.json has no is_active; in projects/{id}.json it does).
 
-const UserSchema = z.object({
+const str = z.string().nullable().optional();
+const num = z.number().nullable().optional();
+const bool = z.boolean().nullable().optional();
+
+// ── Shared response records ───────────────────────────────────────────────────
+
+const UserSchema = z.looseObject({
 	id: z.number(),
-	email: z.string(),
-	first_name: z.string().nullable(),
-	last_name: z.string().nullable(),
-	name: z.string(),
-	created_at: z.string(),
-	updated_at: z.string(),
+	email: str,
+	display_name: str,
+	avatar_url: str,
 });
 
-const ProjectSchema = z.object({
+// A user embedded in a task (assignee, requester). Requesters can be
+// outside the organization, so even the id is optional.
+const PersonSchema = z.looseObject({
+	id: num,
+	email: str,
+	display_name: str,
+});
+
+const ColumnSchema = z.looseObject({
 	id: z.number(),
-	name: z.string(),
-	is_active: z.boolean(),
-	is_public: z.boolean(),
-	created_at: z.string(),
-	updated_at: z.string(),
-	deleted_at: z.string().nullable(),
-	description: z.string().nullable(),
-	technical_contact_email: z.string().nullable(),
-	guest_default_role: z.string().nullable(),
-	settings: z.record(z.string(), z.unknown()).optional(),
+	name: str,
+	project_id: num,
+	position: num,
+	// BugHerd documents that this can be wrong, even negative.
+	tasks_count: num,
+	created_at: str,
+	updated_at: str,
 });
 
-const TaskSchema = z.object({
+// The project's widget `api_key` is removed before a project is returned.
+const ProjectSchema = z.looseObject({
 	id: z.number(),
-	description: z.string(),
-	status: z.string(),
-	priority: z.string().nullable(),
-	tag_list: z.array(z.string()),
-	created_at: z.string(),
-	updated_at: z.string(),
-	closed_at: z.string().nullable(),
-	project_id: z.number(),
-	reporter_id: z.number().nullable(),
-	assignee_id: z.number().nullable(),
-	external_id: z.string().nullable(),
-	attachments_count: z.number(),
-	comments_count: z.number(),
-	due_date: z.string().nullable(),
-	duedate: z.string().nullable(),
-	column_id: z.number().nullable(),
+	name: str,
+	created_at: str,
+	tasks: bool,
+	devurl: str,
+	is_active: bool,
+	is_public: bool,
+	has_custom_columns: bool,
+	guests_see_guests: bool,
+	owner_name: str,
+	sites: z.array(z.string()).nullable().optional(),
+	allow_guests_change_task_status: bool,
+	assign_guests: bool,
+	allow_project_summary_email: bool,
+	allow_task_done_email: bool,
+	allow_project_owner_notifications: bool,
+	change_guest_default_column: bool,
+	members: z.array(UserSchema).nullable().optional(),
+	guests: z.array(UserSchema).nullable().optional(),
+	columns: z.array(ColumnSchema).nullable().optional(),
 });
 
-const ColumnSchema = z.object({
+const AttachmentSchema = z.looseObject({
 	id: z.number(),
-	name: z.string(),
-	project_id: z.number(),
-	position: z.number(),
-	created_at: z.string(),
-	updated_at: z.string(),
+	file_name: str,
+	url: str,
+	created_at: str,
 });
 
-const AttachmentSchema = z.object({
+const TaskSchema = z.looseObject({
 	id: z.number(),
-	file_name: z.string(),
-	file_size: z.number(),
-	content_type: z.string(),
-	url: z.string(),
-	created_at: z.string(),
-	updated_at: z.string(),
-	task_id: z.number(),
-	user_id: z.number(),
+	local_task_id: num,
+	project_id: num,
+	created_at: str,
+	updated_at: str,
+	closed_at: str,
+	deleted_at: str,
+	title: str,
+	description: str,
+	// backlog, todo, doing, done, closed, or a custom column's name.
+	status: str,
+	status_id: num,
+	priority: str,
+	priority_id: num,
+	site: str,
+	url: str,
+	tag_names: z.array(z.string()).nullable().optional(),
+	external_id: str,
+	requester_email: str,
+	attachments: z.array(AttachmentSchema).nullable().optional(),
+	screenshot_url: str,
+	secret_link: str,
+	admin_link: str,
+	// User objects; BugHerd sends null when unset.
+	assigned_to: PersonSchema.nullable().optional(),
+	requester: PersonSchema.nullable().optional(),
+	project_name: str,
+	due_at: str,
+	assignee_ids: z.array(z.number()).nullable().optional(),
+	assigned_to_id: num,
+	requester_id: num,
+	column_id: num,
+	// Browser, OS and page details captured by the widget; shape varies.
+	metadata: z.record(z.string(), z.unknown()).nullable().optional(),
 });
 
-const CommentSchema = z.object({
+const CommentSchema = z.looseObject({
 	id: z.number(),
-	body: z.string(),
-	created_at: z.string(),
-	updated_at: z.string(),
-	task_id: z.number(),
-	user_id: z.number(),
+	text: str,
+	created_at: str,
+	user_id: num,
+	is_private: bool,
 });
 
-const WebhookSchema = z.object({
+const WebhookSchema = z.looseObject({
 	id: z.number(),
-	url: z.string(),
-	project_id: z.number(),
-	events: z.array(z.string()),
-	created_at: z.string(),
-	updated_at: z.string(),
+	target_url: str,
+	// project_create, task_create, task_update, comment, task_destroy.
+	event: str,
+	project_id: num,
+	project_name: str,
+	success_count: num,
+	error_count: num,
+	last_error_code: num,
+	last_error_at: str,
+	first_error_at: str,
+	first_success_at: str,
+	last_success_at: str,
 });
 
-const OrganizationSchema = z.object({
+const OrganizationSchema = z.looseObject({
 	id: z.number(),
-	name: z.string(),
-	created_at: z.string(),
-	updated_at: z.string(),
+	name: str,
 });
 
-const PaginationSchema = z.object({
-	page: z.number().optional(),
-	per_page: z.number().optional(),
-});
+const MetaSchema = z.looseObject({ count: num }).optional();
 
-// ── Input Schemas ─────────────────────────────────────────────────────────────
+const SuccessSchema = z.looseObject({ success: bool });
 
-// Add Guest to Project
-export const AddGuestToProjectInputSchema = z.object({
-	project_id: z.number(),
-	email: z.string().email(),
-	role: z.enum(['guest', 'client', 'member']).optional(),
-});
+// ── Shared input pieces ───────────────────────────────────────────────────────
 
-export type AddGuestToProjectInput = z.infer<
-	typeof AddGuestToProjectInputSchema
->;
+const Id = z.number().int().positive();
+const page = z
+	.number()
+	.int()
+	.positive()
+	.optional()
+	.describe('Page number, from 1. Pages hold up to 100 records.');
+const since = (what: string) =>
+	z
+		.string()
+		.optional()
+		.describe(`Only records ${what} after this ISO 8601 timestamp.`);
+const Priority = z
+	.enum(['not set', 'critical', 'important', 'normal', 'minor'])
+	.describe('Task priority.');
+const ProjectId = Id.describe('BugHerd project id.');
+const TaskId = Id.describe(
+	'Global task id (the `id` field, not the #number shown in the UI).',
+);
 
-// Add Member to Project
-export const AddMemberToProjectInputSchema = z.object({
-	project_id: z.number(),
-	user_id: z.number(),
-	role: z.enum(['member', 'manager']).optional(),
-});
+// ── Organization and users ────────────────────────────────────────────────────
 
-export type AddMemberToProjectInput = z.infer<
-	typeof AddMemberToProjectInputSchema
->;
-
-// Create Attachment
-export const CreateAttachmentInputSchema = z.object({
-	task_id: z.number(),
-	file_name: z.string().optional(),
-	file_size: z.number().optional(),
-	content_type: z.string().optional(),
-	url: z.string().url().optional(),
-});
-
-export type CreateAttachmentInput = z.infer<typeof CreateAttachmentInputSchema>;
-
-// Create Column
-export const CreateColumnInputSchema = z.object({
-	project_id: z.number(),
-	name: z.string(),
-	position: z.number().optional(),
-});
-
-export type CreateColumnInput = z.infer<typeof CreateColumnInputSchema>;
-
-// Create Comment
-export const CreateCommentInputSchema = z.object({
-	task_id: z.number(),
-	body: z.string(),
-});
-
-export type CreateCommentInput = z.infer<typeof CreateCommentInputSchema>;
-
-// Create Project
-export const CreateProjectInputSchema = z.object({
-	name: z.string(),
-	is_active: z.boolean().optional(),
-	is_public: z.boolean().optional(),
-	description: z.string().nullable().optional(),
-	technical_contact_email: z.string().nullable().optional(),
-	guest_default_role: z.string().nullable().optional(),
-});
-
-export type CreateProjectInput = z.infer<typeof CreateProjectInputSchema>;
-
-// Create Task
-export const CreateTaskInputSchema = z.object({
-	project_id: z.number(),
-	description: z.string(),
-	priority: z.enum(['critical', 'high', 'normal', 'low']).optional(),
-	status: z.string().optional(),
-	tag_list: z.array(z.string()).optional(),
-	assignee_id: z.number().nullable().optional(),
-	reporter_id: z.number().nullable().optional(),
-	external_id: z.string().nullable().optional(),
-	due_date: z.string().nullable().optional(),
-	column_id: z.number().nullable().optional(),
-});
-
-export type CreateTaskInput = z.infer<typeof CreateTaskInputSchema>;
-
-// Create Webhook
-export const CreateWebhookInputSchema = z.object({
-	project_id: z.number(),
-	url: z.string().url(),
-	events: z.array(z.string()),
-});
-
-export type CreateWebhookInput = z.infer<typeof CreateWebhookInputSchema>;
-
-// Delete Project
-export const DeleteProjectInputSchema = z.object({
-	project_id: z.number(),
-});
-
-export type DeleteProjectInput = z.infer<typeof DeleteProjectInputSchema>;
-
-// List Active Projects
-export const ListActiveProjectsInputSchema = z.object({
-	...PaginationSchema.shape,
-});
-
-export type ListActiveProjectsInput = z.infer<
-	typeof ListActiveProjectsInputSchema
->;
-
-// List Attachments
-export const ListAttachmentsInputSchema = z.object({
-	task_id: z.number(),
-	...PaginationSchema.shape,
-});
-
-export type ListAttachmentsInput = z.infer<typeof ListAttachmentsInputSchema>;
-
-// List Columns
-export const ListColumnsInputSchema = z.object({
-	project_id: z.number(),
-});
-
-export type ListColumnsInput = z.infer<typeof ListColumnsInputSchema>;
-
-// List Projects
-export const ListProjectsInputSchema = z.object({
-	...PaginationSchema.shape,
-});
-
-export type ListProjectsInput = z.infer<typeof ListProjectsInputSchema>;
-
-// List Users
-export const ListUsersInputSchema = z.object({
-	...PaginationSchema.shape,
-});
-
-export type ListUsersInput = z.infer<typeof ListUsersInputSchema>;
-
-// List Webhooks
-export const ListWebhooksInputSchema = z.object({
-	project_id: z.number(),
-	...PaginationSchema.shape,
-});
-
-export type ListWebhooksInput = z.infer<typeof ListWebhooksInputSchema>;
-
-// Show Attachment
-export const ShowAttachmentInputSchema = z.object({
-	attachment_id: z.number(),
-});
-
-export type ShowAttachmentInput = z.infer<typeof ShowAttachmentInputSchema>;
-
-// Show Column
-export const ShowColumnInputSchema = z.object({
-	column_id: z.number(),
-});
-
-export type ShowColumnInput = z.infer<typeof ShowColumnInputSchema>;
-
-// Show Organization
 export const ShowOrganizationInputSchema = z.object({});
-
-export type ShowOrganizationInput = z.infer<typeof ShowOrganizationInputSchema>;
-
-// Show Project Details
-export const ShowProjectDetailsInputSchema = z.object({
-	project_id: z.number(),
-});
-
-export type ShowProjectDetailsInput = z.infer<
-	typeof ShowProjectDetailsInputSchema
->;
-
-// Show User Projects
-export const ShowUserProjectsInputSchema = z.object({
-	user_id: z.number(),
-	...PaginationSchema.shape,
-});
-
-export type ShowUserProjectsInput = z.infer<typeof ShowUserProjectsInputSchema>;
-
-// Show User Tasks
-export const ShowUserTasksInputSchema = z.object({
-	user_id: z.number(),
-	...PaginationSchema.shape,
-});
-
-export type ShowUserTasksInput = z.infer<typeof ShowUserTasksInputSchema>;
-
-// Update Column
-export const UpdateColumnInputSchema = z.object({
-	column_id: z.number(),
-	name: z.string().optional(),
-	position: z.number().optional(),
-});
-
-export type UpdateColumnInput = z.infer<typeof UpdateColumnInputSchema>;
-
-// Update Project
-export const UpdateProjectInputSchema = z.object({
-	project_id: z.number(),
-	name: z.string().optional(),
-	is_active: z.boolean().optional(),
-	is_public: z.boolean().optional(),
-	description: z.string().nullable().optional(),
-	technical_contact_email: z.string().nullable().optional(),
-	guest_default_role: z.string().nullable().optional(),
-});
-
-export type UpdateProjectInput = z.infer<typeof UpdateProjectInputSchema>;
-
-// Update Task
-export const UpdateTaskInputSchema = z.object({
-	task_id: z.number(),
-	description: z.string().optional(),
-	priority: z.enum(['critical', 'high', 'normal', 'low']).optional(),
-	status: z.string().optional(),
-	tag_list: z.array(z.string()).optional(),
-	assignee_id: z.number().nullable().optional(),
-	reporter_id: z.number().nullable().optional(),
-	external_id: z.string().nullable().optional(),
-	due_date: z.string().nullable().optional(),
-	column_id: z.number().nullable().optional(),
-});
-
-export type UpdateTaskInput = z.infer<typeof UpdateTaskInputSchema>;
-
-// Upload Attachment
-export const UploadAttachmentInputSchema = z.object({
-	task_id: z.number(),
-	file: z.instanceof(File),
-});
-
-export type UploadAttachmentInput = z.infer<typeof UploadAttachmentInputSchema>;
-
-// ── Output Schemas ────────────────────────────────────────────────────────────
-
-export const AddGuestToProjectOutputSchema = z.object({
-	user: UserSchema,
-});
-
-export type AddGuestToProjectOutput = z.infer<
-	typeof AddGuestToProjectOutputSchema
->;
-
-export const AddMemberToProjectOutputSchema = z.object({
-	user: UserSchema,
-});
-
-export type AddMemberToProjectOutput = z.infer<
-	typeof AddMemberToProjectOutputSchema
->;
-
-export const CreateAttachmentOutputSchema = z.object({
-	attachment: AttachmentSchema,
-});
-
-export type CreateAttachmentOutput = z.infer<
-	typeof CreateAttachmentOutputSchema
->;
-
-export const CreateColumnOutputSchema = z.object({
-	column: ColumnSchema,
-});
-
-export type CreateColumnOutput = z.infer<typeof CreateColumnOutputSchema>;
-
-export const CreateCommentOutputSchema = z.object({
-	comment: CommentSchema,
-});
-
-export type CreateCommentOutput = z.infer<typeof CreateCommentOutputSchema>;
-
-export const CreateProjectOutputSchema = z.object({
-	project: ProjectSchema,
-});
-
-export type CreateProjectOutput = z.infer<typeof CreateProjectOutputSchema>;
-
-export const CreateTaskOutputSchema = z.object({
-	task: TaskSchema,
-});
-
-export type CreateTaskOutput = z.infer<typeof CreateTaskOutputSchema>;
-
-export const CreateWebhookOutputSchema = z.object({
-	webhook: WebhookSchema,
-});
-
-export type CreateWebhookOutput = z.infer<typeof CreateWebhookOutputSchema>;
-
-export const DeleteProjectOutputSchema = z.object({});
-
-export type DeleteProjectOutput = z.infer<typeof DeleteProjectOutputSchema>;
-
-export const ListActiveProjectsOutputSchema = z.object({
-	projects: z.array(ProjectSchema),
-	meta: z
-		.object({
-			current_page: z.number(),
-			total_pages: z.number(),
-			total_count: z.number(),
-		})
-		.optional(),
-});
-
-export type ListActiveProjectsOutput = z.infer<
-	typeof ListActiveProjectsOutputSchema
->;
-
-export const ListAttachmentsOutputSchema = z.object({
-	attachments: z.array(AttachmentSchema),
-	meta: z
-		.object({
-			current_page: z.number(),
-			total_pages: z.number(),
-			total_count: z.number(),
-		})
-		.optional(),
-});
-
-export type ListAttachmentsOutput = z.infer<typeof ListAttachmentsOutputSchema>;
-
-export const ListColumnsOutputSchema = z.object({
-	columns: z.array(ColumnSchema),
-});
-
-export type ListColumnsOutput = z.infer<typeof ListColumnsOutputSchema>;
-
-export const ListProjectsOutputSchema = z.object({
-	projects: z.array(ProjectSchema),
-	meta: z
-		.object({
-			current_page: z.number(),
-			total_pages: z.number(),
-			total_count: z.number(),
-		})
-		.optional(),
-});
-
-export type ListProjectsOutput = z.infer<typeof ListProjectsOutputSchema>;
-
-export const ListUsersOutputSchema = z.object({
-	users: z.array(UserSchema),
-	meta: z
-		.object({
-			current_page: z.number(),
-			total_pages: z.number(),
-			total_count: z.number(),
-		})
-		.optional(),
-});
-
-export type ListUsersOutput = z.infer<typeof ListUsersOutputSchema>;
-
-export const ListWebhooksOutputSchema = z.object({
-	webhooks: z.array(WebhookSchema),
-	meta: z
-		.object({
-			current_page: z.number(),
-			total_pages: z.number(),
-			total_count: z.number(),
-		})
-		.optional(),
-});
-
-export type ListWebhooksOutput = z.infer<typeof ListWebhooksOutputSchema>;
-
-export const ShowAttachmentOutputSchema = z.object({
-	attachment: AttachmentSchema,
-});
-
-export type ShowAttachmentOutput = z.infer<typeof ShowAttachmentOutputSchema>;
-
-export const ShowColumnOutputSchema = z.object({
-	column: ColumnSchema,
-});
-
-export type ShowColumnOutput = z.infer<typeof ShowColumnOutputSchema>;
-
-export const ShowOrganizationOutputSchema = z.object({
+export const ShowOrganizationOutputSchema = z.looseObject({
 	organization: OrganizationSchema,
 });
 
-export type ShowOrganizationOutput = z.infer<
-	typeof ShowOrganizationOutputSchema
->;
-
-export const ShowProjectDetailsOutputSchema = z.object({
-	project: ProjectSchema,
+export const ListUsersInputSchema = z.object({
+	updated_since: since('updated'),
+	page,
+});
+export const ListMembersInputSchema = z.object({ page });
+export const ListGuestsInputSchema = z.object({ page });
+export const UserListOutputSchema = z.looseObject({
+	users: z.array(UserSchema),
+	meta: MetaSchema,
 });
 
-export type ShowProjectDetailsOutput = z.infer<
-	typeof ShowProjectDetailsOutputSchema
->;
+export const ShowUserProjectsInputSchema = z.object({
+	user_id: Id.describe('BugHerd user id.'),
+	is_active: z
+		.boolean()
+		.optional()
+		.describe('Only active or inactive projects.'),
+	created_since: since('created'),
+	page,
+});
 
-export const ShowUserProjectsOutputSchema = z.object({
+export const ShowUserTasksInputSchema = z.object({
+	user_id: Id.describe('BugHerd user id.'),
+	updated_since: since('updated'),
+	created_since: since('created'),
+	priority: Priority.optional(),
+	tag: z.string().optional().describe('Only tasks with this tag.'),
+	assigned_to_id: Id.optional().describe('Only tasks assigned to this user.'),
+	page,
+});
+
+// ── Projects ──────────────────────────────────────────────────────────────────
+
+export const ListProjectsInputSchema = z.object({ page });
+export const ListActiveProjectsInputSchema = z.object({ page });
+export const ProjectListOutputSchema = z.looseObject({
 	projects: z.array(ProjectSchema),
-	meta: z
-		.object({
-			current_page: z.number(),
-			total_pages: z.number(),
-			total_count: z.number(),
-		})
-		.optional(),
+	meta: MetaSchema,
 });
 
-export type ShowUserProjectsOutput = z.infer<
-	typeof ShowUserProjectsOutputSchema
->;
+export const ShowProjectDetailsInputSchema = z.object({
+	project_id: ProjectId,
+});
+export const ProjectOutputSchema = z.looseObject({ project: ProjectSchema });
 
-export const ShowUserTasksOutputSchema = z.object({
+export const CreateProjectInputSchema = z.object({
+	name: z.string().min(1).describe('Project name.'),
+	devurl: z
+		.string()
+		.min(1)
+		.describe('The website the project gives feedback on.'),
+	is_active: z.boolean().optional(),
+	is_public: z
+		.boolean()
+		.optional()
+		.describe('Let anyone leave feedback without a login.'),
+	guests_see_guests: z
+		.boolean()
+		.optional()
+		.describe("Let guests see other guests' feedback."),
+});
+
+export const UpdateProjectInputSchema = z.object({
+	project_id: ProjectId,
+	name: z.string().min(1).optional(),
+	devurl: z.string().min(1).optional(),
+	is_active: z.boolean().optional(),
+	is_public: z.boolean().optional(),
+	has_custom_columns: z.boolean().optional(),
+	guests_see_guests: z.boolean().optional(),
+});
+
+export const DeleteProjectInputSchema = z.object({ project_id: ProjectId });
+export const DeleteOutputSchema = SuccessSchema;
+
+export const AddMemberToProjectInputSchema = z.object({
+	project_id: ProjectId,
+	user_id: z
+		.union([Id, z.array(Id).min(1)])
+		.describe('Id of an organization member, or a list of ids.'),
+});
+
+export const AddGuestToProjectInputSchema = z
+	.object({
+		project_id: ProjectId,
+		user_id: Id.optional().describe('Id of an existing user.'),
+		email: z
+			.string()
+			.email()
+			.optional()
+			.describe(
+				'Invite a new guest by email. BugHerd emails them an invitation.',
+			),
+	})
+	.refine((v) => (v.user_id === undefined) !== (v.email === undefined), {
+		message: 'Give user_id or email, not both.',
+	});
+
+// ── Tasks ─────────────────────────────────────────────────────────────────────
+
+export const ListTasksInputSchema = z.object({
+	project_id: ProjectId,
+	updated_since: since('updated'),
+	created_since: since('created'),
+	status: z
+		.string()
+		.optional()
+		.describe(
+			'Column name: backlog, todo, doing, done, closed or a custom column.',
+		),
+	priority: Priority.optional(),
+	tag: z.string().optional().describe('Only tasks with this tag.'),
+	assigned_to_id: Id.optional().describe('Only tasks assigned to this user.'),
+	external_id: z.string().optional(),
+	page,
+});
+export const ListProjectTasksViewInputSchema = z.object({
+	project_id: ProjectId,
+	page,
+});
+export const TaskListOutputSchema = z.looseObject({
 	tasks: z.array(TaskSchema),
-	meta: z
-		.object({
-			current_page: z.number(),
-			total_pages: z.number(),
-			total_count: z.number(),
-		})
-		.optional(),
+	meta: MetaSchema,
 });
 
-export type ShowUserTasksOutput = z.infer<typeof ShowUserTasksOutputSchema>;
+export const ShowTaskInputSchema = z.object({
+	task_id: TaskId,
+	project_id: ProjectId.optional().describe(
+		'Project id. Without it the task is looked up by its global id alone.',
+	),
+});
+export const ShowTaskByLocalIdInputSchema = z.object({
+	project_id: ProjectId,
+	local_task_id: Id.describe('The #number shown in the BugHerd UI.'),
+});
+export const TaskOutputSchema = z.looseObject({ task: TaskSchema });
 
-export const UpdateColumnOutputSchema = z.object({
-	column: ColumnSchema,
+export const CreateTaskInputSchema = z.object({
+	project_id: ProjectId,
+	description: z.string().min(1).describe('What the task is about.'),
+	priority: Priority.optional(),
+	status: z
+		.string()
+		.optional()
+		.describe(
+			'Column name. Leave it out to put the task in the Feedback panel.',
+		),
+	requester_id: Id.optional(),
+	requester_email: z.string().email().optional(),
+	assigned_to_id: Id.optional(),
+	assigned_to_email: z
+		.string()
+		.email()
+		.optional()
+		.describe('Must be a member of the project.'),
+	tag_names: z.array(z.string()).optional(),
+	external_id: z
+		.string()
+		.optional()
+		.describe('Your own reference for the task.'),
 });
 
-export type UpdateColumnOutput = z.infer<typeof UpdateColumnOutputSchema>;
-
-export const UpdateProjectOutputSchema = z.object({
-	project: ProjectSchema,
+export const UpdateTaskInputSchema = z.object({
+	project_id: ProjectId,
+	task_id: TaskId,
+	description: z.string().min(1).optional(),
+	priority: Priority.optional(),
+	status: z
+		.string()
+		.optional()
+		.describe(
+			'Column name, or `feedback` to move it back to the Feedback panel.',
+		),
+	assigned_to_id: Id.nullable()
+		.optional()
+		.describe('Assignee id, or null to unassign everyone.'),
+	assigned_to_email: z.string().email().optional(),
+	unassign_user: Id.optional().describe('Remove this one assignee.'),
+	tag_names: z.array(z.string()).optional(),
+	external_id: z.string().optional(),
+	site: z.string().optional(),
+	url: z.string().optional(),
+	updater_email: z
+		.string()
+		.email()
+		.optional()
+		.describe('Who to credit the change to in the task history.'),
 });
 
-export type UpdateProjectOutput = z.infer<typeof UpdateProjectOutputSchema>;
-
-export const UpdateTaskOutputSchema = z.object({
-	task: TaskSchema,
+export const DeleteTaskInputSchema = z.object({
+	project_id: ProjectId,
+	task_id: TaskId,
 });
 
-export type UpdateTaskOutput = z.infer<typeof UpdateTaskOutputSchema>;
+export const MoveTasksInputSchema = z.object({
+	project_id: ProjectId.describe('The project the tasks are in now.'),
+	destination_project_id: ProjectId.describe('The project to move them to.'),
+	task_ids: z
+		.array(Id)
+		.min(1)
+		.describe("The tasks' #numbers (local_task_id), not their global ids."),
+});
+export const MoveTasksOutputSchema = z.looseObject({});
 
-export const UploadAttachmentOutputSchema = z.object({
+// ── Comments ──────────────────────────────────────────────────────────────────
+
+export const ListCommentsInputSchema = z.object({
+	project_id: ProjectId,
+	task_id: TaskId,
+});
+export const CommentListOutputSchema = z.looseObject({
+	comments: z.array(CommentSchema),
+	meta: MetaSchema,
+});
+
+export const CreateCommentInputSchema = z.object({
+	project_id: ProjectId,
+	task_id: TaskId,
+	text: z.string().min(1).describe('Comment text.'),
+	user_id: Id.optional().describe('Who the comment is from.'),
+	email: z
+		.string()
+		.email()
+		.optional()
+		.describe('Who the comment is from, by email, instead of user_id.'),
+	is_private: z
+		.boolean()
+		.optional()
+		.describe('Visible to team members only, not guests.'),
+});
+export const CommentOutputSchema = z.looseObject({ comment: CommentSchema });
+
+// ── Attachments ───────────────────────────────────────────────────────────────
+
+export const ListAttachmentsInputSchema = z.object({
+	project_id: ProjectId,
+	task_id: TaskId,
+});
+export const AttachmentListOutputSchema = z.looseObject({
+	attachments: z.array(AttachmentSchema),
+	meta: MetaSchema,
+});
+
+export const ShowAttachmentInputSchema = z.object({
+	project_id: ProjectId,
+	task_id: TaskId,
+	attachment_id: Id,
+});
+export const AttachmentOutputSchema = z.looseObject({
 	attachment: AttachmentSchema,
 });
 
-export type UploadAttachmentOutput = z.infer<
-	typeof UploadAttachmentOutputSchema
->;
+export const CreateAttachmentInputSchema = z.object({
+	project_id: ProjectId,
+	task_id: TaskId,
+	file_name: z.string().min(1).describe('Name to show for the file.'),
+	url: z
+		.string()
+		.url()
+		.describe('Public URL of the file. BugHerd downloads and keeps a copy.'),
+});
 
-// ── Aggregated Types ──────────────────────────────────────────────────────────
+export const UploadAttachmentInputSchema = z.object({
+	project_id: ProjectId,
+	task_id: TaskId,
+	file: FileInputSchema,
+});
 
-export type BugherdEndpointInputs = {
-	addGuestToProject: AddGuestToProjectInput;
-	addMemberToProject: AddMemberToProjectInput;
-	createAttachment: CreateAttachmentInput;
-	createColumn: CreateColumnInput;
-	createComment: CreateCommentInput;
-	createProject: CreateProjectInput;
-	createTask: CreateTaskInput;
-	createWebhook: CreateWebhookInput;
-	deleteProject: DeleteProjectInput;
-	listActiveProjects: ListActiveProjectsInput;
-	listAttachments: ListAttachmentsInput;
-	listColumns: ListColumnsInput;
-	listProjects: ListProjectsInput;
-	listUsers: ListUsersInput;
-	listWebhooks: ListWebhooksInput;
-	showAttachment: ShowAttachmentInput;
-	showColumn: ShowColumnInput;
-	showOrganization: ShowOrganizationInput;
-	showProjectDetails: ShowProjectDetailsInput;
-	showUserProjects: ShowUserProjectsInput;
-	showUserTasks: ShowUserTasksInput;
-	updateColumn: UpdateColumnInput;
-	updateProject: UpdateProjectInput;
-	updateTask: UpdateTaskInput;
-	uploadAttachment: UploadAttachmentInput;
-};
+export const DeleteAttachmentInputSchema = z.object({
+	project_id: ProjectId,
+	task_id: TaskId,
+	attachment_id: Id,
+});
 
-export type BugherdEndpointOutputs = {
-	addGuestToProject: AddGuestToProjectOutput;
-	addMemberToProject: AddMemberToProjectOutput;
-	createAttachment: CreateAttachmentOutput;
-	createColumn: CreateColumnOutput;
-	createComment: CreateCommentOutput;
-	createProject: CreateProjectOutput;
-	createTask: CreateTaskOutput;
-	createWebhook: CreateWebhookOutput;
-	deleteProject: DeleteProjectOutput;
-	listActiveProjects: ListActiveProjectsOutput;
-	listAttachments: ListAttachmentsOutput;
-	listColumns: ListColumnsOutput;
-	listProjects: ListProjectsOutput;
-	listUsers: ListUsersOutput;
-	listWebhooks: ListWebhooksOutput;
-	showAttachment: ShowAttachmentOutput;
-	showColumn: ShowColumnOutput;
-	showOrganization: ShowOrganizationOutput;
-	showProjectDetails: ShowProjectDetailsOutput;
-	showUserProjects: ShowUserProjectsOutput;
-	showUserTasks: ShowUserTasksOutput;
-	updateColumn: UpdateColumnOutput;
-	updateProject: UpdateProjectOutput;
-	updateTask: UpdateTaskOutput;
-	uploadAttachment: UploadAttachmentOutput;
-};
+// ── Columns ───────────────────────────────────────────────────────────────────
+
+export const ListColumnsInputSchema = z.object({ project_id: ProjectId });
+export const ColumnListOutputSchema = z.looseObject({
+	columns: z.array(ColumnSchema),
+});
+
+export const ShowColumnInputSchema = z.object({
+	project_id: ProjectId,
+	column_id: Id,
+});
+export const ColumnOutputSchema = z.looseObject({ column: ColumnSchema });
+
+export const CreateColumnInputSchema = z.object({
+	project_id: ProjectId,
+	name: z
+		.string()
+		.min(1)
+		.describe('Column name. It is added at the end of the board.'),
+});
+
+export const UpdateColumnInputSchema = z.object({
+	project_id: ProjectId,
+	column_id: Id,
+	name: z.string().min(1),
+});
+
+export const DeleteColumnInputSchema = z.object({
+	project_id: ProjectId,
+	column_id: Id,
+});
+
+// ── Webhooks ──────────────────────────────────────────────────────────────────
+
+export const ListWebhooksInputSchema = z.object({});
+export const WebhookListOutputSchema = z.looseObject({
+	webhooks: z.array(WebhookSchema),
+});
+
+export const CreateWebhookInputSchema = z.object({
+	target_url: z.string().url().describe('Where BugHerd POSTs the event.'),
+	event: z.enum([
+		'project_create',
+		'task_create',
+		'task_update',
+		'comment',
+		'task_destroy',
+	]),
+	project_id: ProjectId.optional().describe('Leave out for every project.'),
+});
+export const WebhookOutputSchema = z.looseObject({ webhook: WebhookSchema });
+
+export const DeleteWebhookInputSchema = z.object({ webhook_id: Id });
+
+// ── Maps ──────────────────────────────────────────────────────────────────────
 
 export const BugherdEndpointInputSchemas = {
-	addGuestToProject: AddGuestToProjectInputSchema,
-	addMemberToProject: AddMemberToProjectInputSchema,
-	createAttachment: CreateAttachmentInputSchema,
-	createColumn: CreateColumnInputSchema,
-	createComment: CreateCommentInputSchema,
-	createProject: CreateProjectInputSchema,
-	createTask: CreateTaskInputSchema,
-	createWebhook: CreateWebhookInputSchema,
-	deleteProject: DeleteProjectInputSchema,
-	listActiveProjects: ListActiveProjectsInputSchema,
-	listAttachments: ListAttachmentsInputSchema,
-	listColumns: ListColumnsInputSchema,
-	listProjects: ListProjectsInputSchema,
-	listUsers: ListUsersInputSchema,
-	listWebhooks: ListWebhooksInputSchema,
-	showAttachment: ShowAttachmentInputSchema,
-	showColumn: ShowColumnInputSchema,
 	showOrganization: ShowOrganizationInputSchema,
-	showProjectDetails: ShowProjectDetailsInputSchema,
+	listUsers: ListUsersInputSchema,
+	listMembers: ListMembersInputSchema,
+	listGuests: ListGuestsInputSchema,
 	showUserProjects: ShowUserProjectsInputSchema,
 	showUserTasks: ShowUserTasksInputSchema,
-	updateColumn: UpdateColumnInputSchema,
+	listProjects: ListProjectsInputSchema,
+	listActiveProjects: ListActiveProjectsInputSchema,
+	showProjectDetails: ShowProjectDetailsInputSchema,
+	createProject: CreateProjectInputSchema,
 	updateProject: UpdateProjectInputSchema,
+	deleteProject: DeleteProjectInputSchema,
+	addMemberToProject: AddMemberToProjectInputSchema,
+	addGuestToProject: AddGuestToProjectInputSchema,
+	listTasks: ListTasksInputSchema,
+	listFeedbackTasks: ListProjectTasksViewInputSchema,
+	listArchivedTasks: ListProjectTasksViewInputSchema,
+	listTaskboardTasks: ListProjectTasksViewInputSchema,
+	showTask: ShowTaskInputSchema,
+	showTaskByLocalId: ShowTaskByLocalIdInputSchema,
+	createTask: CreateTaskInputSchema,
 	updateTask: UpdateTaskInputSchema,
+	deleteTask: DeleteTaskInputSchema,
+	moveTasks: MoveTasksInputSchema,
+	listComments: ListCommentsInputSchema,
+	createComment: CreateCommentInputSchema,
+	listAttachments: ListAttachmentsInputSchema,
+	showAttachment: ShowAttachmentInputSchema,
+	createAttachment: CreateAttachmentInputSchema,
 	uploadAttachment: UploadAttachmentInputSchema,
+	deleteAttachment: DeleteAttachmentInputSchema,
+	listColumns: ListColumnsInputSchema,
+	showColumn: ShowColumnInputSchema,
+	createColumn: CreateColumnInputSchema,
+	updateColumn: UpdateColumnInputSchema,
+	deleteColumn: DeleteColumnInputSchema,
+	listWebhooks: ListWebhooksInputSchema,
+	createWebhook: CreateWebhookInputSchema,
+	deleteWebhook: DeleteWebhookInputSchema,
 } as const;
 
 export const BugherdEndpointOutputSchemas = {
-	addGuestToProject: AddGuestToProjectOutputSchema,
-	addMemberToProject: AddMemberToProjectOutputSchema,
-	createAttachment: CreateAttachmentOutputSchema,
-	createColumn: CreateColumnOutputSchema,
-	createComment: CreateCommentOutputSchema,
-	createProject: CreateProjectOutputSchema,
-	createTask: CreateTaskOutputSchema,
-	createWebhook: CreateWebhookOutputSchema,
-	deleteProject: DeleteProjectOutputSchema,
-	listActiveProjects: ListActiveProjectsOutputSchema,
-	listAttachments: ListAttachmentsOutputSchema,
-	listColumns: ListColumnsOutputSchema,
-	listProjects: ListProjectsOutputSchema,
-	listUsers: ListUsersOutputSchema,
-	listWebhooks: ListWebhooksOutputSchema,
-	showAttachment: ShowAttachmentOutputSchema,
-	showColumn: ShowColumnOutputSchema,
 	showOrganization: ShowOrganizationOutputSchema,
-	showProjectDetails: ShowProjectDetailsOutputSchema,
-	showUserProjects: ShowUserProjectsOutputSchema,
-	showUserTasks: ShowUserTasksOutputSchema,
-	updateColumn: UpdateColumnOutputSchema,
-	updateProject: UpdateProjectOutputSchema,
-	updateTask: UpdateTaskOutputSchema,
-	uploadAttachment: UploadAttachmentOutputSchema,
+	listUsers: UserListOutputSchema,
+	listMembers: UserListOutputSchema,
+	listGuests: UserListOutputSchema,
+	showUserProjects: ProjectListOutputSchema,
+	showUserTasks: TaskListOutputSchema,
+	listProjects: ProjectListOutputSchema,
+	listActiveProjects: ProjectListOutputSchema,
+	showProjectDetails: ProjectOutputSchema,
+	createProject: ProjectOutputSchema,
+	updateProject: ProjectOutputSchema,
+	deleteProject: DeleteOutputSchema,
+	addMemberToProject: ProjectOutputSchema,
+	addGuestToProject: ProjectOutputSchema,
+	listTasks: TaskListOutputSchema,
+	listFeedbackTasks: TaskListOutputSchema,
+	listArchivedTasks: TaskListOutputSchema,
+	listTaskboardTasks: TaskListOutputSchema,
+	showTask: TaskOutputSchema,
+	showTaskByLocalId: TaskOutputSchema,
+	createTask: TaskOutputSchema,
+	updateTask: TaskOutputSchema,
+	deleteTask: DeleteOutputSchema,
+	moveTasks: MoveTasksOutputSchema,
+	listComments: CommentListOutputSchema,
+	createComment: CommentOutputSchema,
+	listAttachments: AttachmentListOutputSchema,
+	showAttachment: AttachmentOutputSchema,
+	createAttachment: AttachmentOutputSchema,
+	uploadAttachment: AttachmentOutputSchema,
+	deleteAttachment: DeleteOutputSchema,
+	listColumns: ColumnListOutputSchema,
+	showColumn: ColumnOutputSchema,
+	createColumn: ColumnOutputSchema,
+	updateColumn: ColumnOutputSchema,
+	deleteColumn: DeleteOutputSchema,
+	listWebhooks: WebhookListOutputSchema,
+	createWebhook: WebhookOutputSchema,
+	deleteWebhook: DeleteOutputSchema,
 } as const;
+
+type InputSchemas = typeof BugherdEndpointInputSchemas;
+type OutputSchemas = typeof BugherdEndpointOutputSchemas;
+
+export type BugherdEndpointInputs = {
+	[K in keyof InputSchemas]: z.input<InputSchemas[K]>;
+};
+export type BugherdEndpointOutputs = {
+	[K in keyof OutputSchemas]: z.infer<OutputSchemas[K]>;
+};
+
+export type BugherdProjectRecord = z.infer<typeof ProjectSchema>;
+export type BugherdTaskRecord = z.infer<typeof TaskSchema>;
+export type BugherdColumnRecord = z.infer<typeof ColumnSchema>;
+export type BugherdCommentRecord = z.infer<typeof CommentSchema>;
+export type BugherdAttachmentRecord = z.infer<typeof AttachmentSchema>;
+export type BugherdWebhookRecord = z.infer<typeof WebhookSchema>;
+export type BugherdUserRecord = z.infer<typeof UserSchema>;

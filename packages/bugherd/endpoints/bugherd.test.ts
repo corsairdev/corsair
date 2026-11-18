@@ -1,916 +1,809 @@
-import { makeBugherdRequest } from '../client';
-import * as endpoints from './bugherd';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
+import { ApiError, request } from 'corsair/http';
+import type { BugherdContext } from '../context';
+import { errorHandlers } from '../error-handlers';
+import { bugherd, bugherdEndpointSchemas } from '../index';
+import * as B from './bugherd';
 import {
-	AddGuestToProjectOutputSchema,
-	AddMemberToProjectOutputSchema,
-	CreateAttachmentOutputSchema,
-	CreateColumnOutputSchema,
-	CreateCommentOutputSchema,
-	CreateProjectOutputSchema,
-	CreateTaskOutputSchema,
-	CreateWebhookOutputSchema,
-	DeleteProjectOutputSchema,
-	ListActiveProjectsOutputSchema,
-	ListAttachmentsOutputSchema,
-	ListColumnsOutputSchema,
-	ListProjectsOutputSchema,
-	ListUsersOutputSchema,
-	ListWebhooksOutputSchema,
-	ShowAttachmentOutputSchema,
-	ShowColumnOutputSchema,
-	ShowOrganizationOutputSchema,
-	ShowProjectDetailsOutputSchema,
-	ShowUserProjectsOutputSchema,
-	ShowUserTasksOutputSchema,
-	UpdateColumnOutputSchema,
-	UpdateProjectOutputSchema,
-	UpdateTaskOutputSchema,
-	UploadAttachmentOutputSchema,
+	AddGuestToProjectInputSchema,
+	BugherdEndpointOutputSchemas,
+	CreateWebhookInputSchema,
+	ListTasksInputSchema,
 } from './types';
 
-jest.mock('../client', () => ({
-	makeBugherdRequest: jest.fn(),
-	BugherdAPIError: class extends Error {
-		constructor(message: string) {
-			super(message);
-			this.name = 'BugherdAPIError';
-		}
-	},
-}));
+jest.mock('corsair/core', () => {
+	const actual = jest.requireActual('corsair/core');
+	return {
+		...actual,
+		logEventFromContext: jest.fn().mockResolvedValue(undefined),
+	};
+});
+jest.mock('corsair/http', () => {
+	const actual = jest.requireActual('corsair/http');
+	return { ...actual, request: jest.fn() };
+});
 
-const mockMakeRequest = makeBugherdRequest as jest.MockedFunction<
-	typeof makeBugherdRequest
->;
+const mockRequest = jest.mocked(request);
+const mockLog = jest.mocked(logEventFromContext);
 
-const mockCtx = {
-	key: 'test-api-key',
-	log: jest.fn().mockResolvedValue(undefined),
-	database: undefined,
-	endpoints: {},
-} as any;
+function table() {
+	return {
+		upsertByEntityId: jest.fn().mockResolvedValue(undefined),
+		deleteByEntityId: jest.fn().mockResolvedValue(true),
+	};
+}
 
-describe('BugHerd Endpoint Tests (Mocked Client, Real Endpoints)', () => {
-	beforeEach(() => {
-		mockMakeRequest.mockReset();
+function tables() {
+	return {
+		projects: table(),
+		tasks: table(),
+		columns: table(),
+		comments: table(),
+		attachments: table(),
+		webhooks: table(),
+		users: table(),
+		organization: table(),
+	};
+}
+
+function context(db?: ReturnType<typeof tables>): BugherdContext {
+	return {
+		key: 'test-key',
+		db,
+		database: db ? {} : undefined,
+	} as unknown as BugherdContext;
+}
+
+/** The request options of the nth call: method, url, query, body, formData. */
+function call(n = 0) {
+	return mockRequest.mock.calls[n]?.[1];
+}
+
+// Trimmed from the live API (11-18), throwaway trial account.
+const USER = {
+	id: 634824,
+	email: 'someone@example.com',
+	display_name: 'Corsair Tests',
+	avatar_url: 'https://www.bugherd.com/images/sidebar/avatar-generic.svg',
+};
+const LIST_PROJECT = {
+	id: 552668,
+	name: "Corsair's First Project",
+	created_at: '2026-11-18 04:25:17',
+	owner_name: 'Corsair Tests',
+	tasks: false,
+	sites: [],
+};
+const COLUMN = {
+	id: 2387619,
+	name: 'backlog',
+	project_id: 552668,
+	tasks_count: 0,
+	created_at: '2026-11-18T04:25:17.382Z',
+	updated_at: '2026-11-18T04:25:17.382Z',
+};
+const PROJECT = {
+	id: 552668,
+	name: "Corsair's First Project",
+	owner_name: 'Corsair Tests',
+	devurl: null,
+	sites: [],
+	api_key: 'widget-key-not-for-output',
+	is_active: true,
+	is_public: null,
+	guests_see_guests: true,
+	members: [USER],
+	guests: [],
+	columns: [COLUMN],
+};
+const TASK = {
+	id: 98765,
+	local_task_id: 1,
+	project_id: 552668,
+	created_at: '2026-11-18T05:00:00Z',
+	updated_at: '2026-11-18T05:00:00Z',
+	closed_at: null,
+	deleted_at: null,
+	title: 'corsair-plugin-test',
+	description: 'corsair-plugin-test',
+	status: 'backlog',
+	status_id: 0,
+	priority: 'normal',
+	priority_id: 3,
+	tag_names: ['corsair'],
+	external_id: null,
+	requester_email: null,
+	assigned_to: null,
+	requester: null,
+	assigned_to_id: null,
+	requester_id: null,
+};
+const COMMENT = {
+	id: 8801,
+	text: 'corsair-plugin-test',
+	created_at: '2026-11-18T05:01:00Z',
+	user_id: 634824,
+	is_private: false,
+};
+const ATTACHMENT = {
+	id: 331,
+	file_name: 'corsair.png',
+	url: 'https://example.com/corsair.png',
+	created_at: '2026-11-18T05:02:00Z',
+};
+const WEBHOOK = {
+	id: 22649,
+	target_url: 'https://example.com/hook',
+	event: 'task_create',
+	project_id: 552668,
+	project_name: null,
+	success_count: 0,
+	error_count: null,
+};
+
+beforeEach(() => {
+	jest.clearAllMocks();
+});
+
+describe('client', () => {
+	it('sends HTTP Basic with the key and x', async () => {
+		mockRequest.mockResolvedValue({ organization: { id: 1, name: 'Org' } });
+		await B.showOrganization(context(), {});
+		const config = mockRequest.mock.calls[0]?.[0];
+		expect(config?.BASE).toBe('https://www.bugherd.com/api_v2');
+		expect(config?.HEADERS).toMatchObject({
+			Authorization: `Basic ${btoa('test-key:x')}`,
+		});
+		expect(call()).toMatchObject({ method: 'GET', url: '/organization.json' });
 	});
 
-	describe('projects', () => {
-		it('addGuestToProject calls client with correct args and returns parsed response', async () => {
-			const mockResponse = {
-				user: {
-					id: 1,
-					email: 'guest@example.com',
-					first_name: 'Test',
-					last_name: 'Guest',
-					name: 'Test Guest',
-					created_at: '2024-01-01T00:00:00Z',
-					updated_at: '2024-01-01T00:00:00Z',
-				},
-			};
-			mockMakeRequest.mockResolvedValue(mockResponse);
+	it('lets ApiError through unchanged', async () => {
+		const error = new ApiError(
+			{ method: 'GET', url: '/projects.json' },
+			{
+				url: 'https://www.bugherd.com/api_v2/projects.json',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: {},
+			},
+			'rate limited',
+		);
+		mockRequest.mockRejectedValue(error);
+		await expect(B.listProjects(context(), {})).rejects.toBe(error);
+	});
+});
 
-			const input = {
-				project_id: 123,
-				email: 'guest@example.com',
-				role: 'guest' as const,
-			};
-			const response = await endpoints.addGuestToProject(mockCtx, input);
-
-			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'projects/123/guests',
-				'test-api-key',
-				expect.objectContaining({
-					method: 'POST',
-					body: { email: 'guest@example.com', role: 'guest' },
-				}),
-			);
-
-			AddGuestToProjectOutputSchema.parse(response);
-			expect(response.user.email).toBe('guest@example.com');
+describe('organization and users', () => {
+	it('organization.show stores the organization', async () => {
+		const db = tables();
+		mockRequest.mockResolvedValue({
+			organization: { id: 126847, name: 'Corsair Plugin Test' },
 		});
-
-		it('addMemberToProject calls client with correct args and returns parsed response', async () => {
-			const mockResponse = {
-				user: {
-					id: 2,
-					email: 'member@example.com',
-					first_name: 'Test',
-					last_name: 'Member',
-					name: 'Test Member',
-					created_at: '2024-01-01T00:00:00Z',
-					updated_at: '2024-01-01T00:00:00Z',
-				},
-			};
-			mockMakeRequest.mockResolvedValue(mockResponse);
-
-			const input = { project_id: 123, user_id: 2, role: 'member' as const };
-			const response = await endpoints.addMemberToProject(mockCtx, input);
-
-			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'projects/123/members',
-				'test-api-key',
-				expect.objectContaining({
-					method: 'POST',
-					body: { user_id: 2, role: 'member' },
-				}),
-			);
-
-			AddMemberToProjectOutputSchema.parse(response);
-			expect(response.user.id).toBe(2);
+		const out = await B.showOrganization(context(db), {});
+		expect(out.organization.id).toBe(126847);
+		expect(db.organization.upsertByEntityId).toHaveBeenCalledWith('126847', {
+			id: '126847',
+			name: 'Corsair Plugin Test',
 		});
+	});
 
-		it('createProject calls client with correct args and returns parsed response', async () => {
-			const mockResponse = {
+	it.each([
+		['listUsers', '/users.json'],
+		['listMembers', '/users/members.json'],
+		['listGuests', '/users/guests.json'],
+	] as const)('%s calls %s and stores users', async (fn, url) => {
+		const db = tables();
+		mockRequest.mockResolvedValue({ users: [USER], meta: { count: 1 } });
+		const out = await B[fn](context(db), { page: 2 });
+		expect(call()).toMatchObject({ method: 'GET', url, query: { page: 2 } });
+		expect(out.users).toHaveLength(1);
+		expect(db.users.upsertByEntityId).toHaveBeenCalledWith('634824', {
+			id: '634824',
+			email: USER.email,
+			display_name: 'Corsair Tests',
+		});
+	});
+
+	it('users.list passes updated_since', async () => {
+		mockRequest.mockResolvedValue({ users: [] });
+		await B.listUsers(context(), { updated_since: '2026-11-01T00:00:00Z' });
+		expect(call()?.query).toEqual({ updated_since: '2026-11-01T00:00:00Z' });
+	});
+
+	it('users.listProjects filters and drops the widget key', async () => {
+		mockRequest.mockResolvedValue({
+			projects: [{ ...LIST_PROJECT, api_key: 'k' }],
+		});
+		const out = await B.showUserProjects(context(), {
+			user_id: 634824,
+			is_active: true,
+		});
+		expect(call()).toMatchObject({
+			url: '/users/634824/projects.json',
+			query: { is_active: true },
+		});
+		expect(out.projects[0]).not.toHaveProperty('api_key');
+	});
+
+	it('tasks.listForUser wraps the bare array BugHerd returns', async () => {
+		const db = tables();
+		mockRequest.mockResolvedValue([TASK]);
+		const out = await B.showUserTasks(context(db), {
+			user_id: 634824,
+			priority: 'critical',
+		});
+		expect(call()).toMatchObject({
+			url: '/users/634824/tasks.json',
+			query: { priority: 'critical' },
+		});
+		expect(out).toEqual({ tasks: [TASK] });
+		expect(db.tasks.upsertByEntityId).toHaveBeenCalledWith(
+			'98765',
+			expect.objectContaining({ id: '98765', project_id: 552668 }),
+		);
+		expect(
+			BugherdEndpointOutputSchemas.showUserTasks.safeParse(out).success,
+		).toBe(true);
+	});
+});
+
+describe('projects', () => {
+	it.each([
+		['listProjects', '/projects.json'],
+		['listActiveProjects', '/projects/active.json'],
+	] as const)('%s calls %s', async (fn, url) => {
+		const db = tables();
+		mockRequest.mockResolvedValue({
+			projects: [LIST_PROJECT],
+			meta: { count: 1 },
+		});
+		const out = await B[fn](context(db), {});
+		expect(call()).toMatchObject({ method: 'GET', url });
+		expect(call()?.query).toBeUndefined();
+		expect(out.projects[0]?.id).toBe(552668);
+		expect(db.projects.upsertByEntityId).toHaveBeenCalledWith(
+			'552668',
+			expect.objectContaining({ name: "Corsair's First Project" }),
+		);
+		expect(BugherdEndpointOutputSchemas[fn].safeParse(out).success).toBe(true);
+	});
+
+	it('projects.show returns details without the widget key and stores columns and people', async () => {
+		const db = tables();
+		mockRequest.mockResolvedValue({ project: PROJECT });
+		const out = await B.showProjectDetails(context(db), { project_id: 552668 });
+		expect(call()).toMatchObject({
+			method: 'GET',
+			url: '/projects/552668.json',
+		});
+		expect(out.project).not.toHaveProperty('api_key');
+		expect(JSON.stringify(out)).not.toContain('widget-key');
+		expect(db.columns.upsertByEntityId).toHaveBeenCalledWith(
+			'2387619',
+			expect.objectContaining({ name: 'backlog' }),
+		);
+		expect(db.users.upsertByEntityId).toHaveBeenCalledWith(
+			'634824',
+			expect.anything(),
+		);
+		expect(
+			BugherdEndpointOutputSchemas.showProjectDetails.safeParse(out).success,
+		).toBe(true);
+	});
+
+	it('projects.create wraps the fields in project', async () => {
+		mockRequest.mockResolvedValue({ project: { ...PROJECT, id: 7 } });
+		await B.createProject(context(), {
+			name: 'corsair-plugin-test',
+			devurl: 'https://example.com',
+			is_public: false,
+		});
+		expect(call()).toMatchObject({
+			method: 'POST',
+			url: '/projects.json',
+			body: {
 				project: {
-					id: 456,
-					name: 'New Project',
-					is_active: true,
+					name: 'corsair-plugin-test',
+					devurl: 'https://example.com',
 					is_public: false,
-					created_at: '2024-01-01T00:00:00Z',
-					updated_at: '2024-01-01T00:00:00Z',
-					deleted_at: null,
-					description: 'Test project',
-					technical_contact_email: null,
-					guest_default_role: null,
-					settings: {},
 				},
-			};
-			mockMakeRequest.mockResolvedValue(mockResponse);
-
-			const input = { name: 'New Project', is_active: true, is_public: false };
-			const response = await endpoints.createProject(mockCtx, input);
-
-			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'projects',
-				'test-api-key',
-				expect.objectContaining({
-					method: 'POST',
-					body: { name: 'New Project', is_active: true, is_public: false },
-				}),
-			);
-
-			CreateProjectOutputSchema.parse(response);
-			expect(response.project.name).toBe('New Project');
-		});
-
-		it('deleteProject calls client with correct args and returns parsed response', async () => {
-			const mockResponse = {};
-			mockMakeRequest.mockResolvedValue(mockResponse);
-
-			const input = { project_id: 456 };
-			const response = await endpoints.deleteProject(mockCtx, input);
-
-			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'projects/456',
-				'test-api-key',
-				expect.objectContaining({ method: 'DELETE' }),
-			);
-
-			DeleteProjectOutputSchema.parse(response);
-		});
-
-		it('listProjects calls client with correct args and returns parsed response', async () => {
-			const mockResponse = {
-				projects: [
-					{
-						id: 1,
-						name: 'Project 1',
-						is_active: true,
-						is_public: false,
-						created_at: '2024-01-01T00:00:00Z',
-						updated_at: '2024-01-01T00:00:00Z',
-						deleted_at: null,
-						description: null,
-						technical_contact_email: null,
-						guest_default_role: null,
-						settings: {},
-					},
-				],
-				meta: { current_page: 1, total_pages: 1, total_count: 1 },
-			};
-			mockMakeRequest.mockResolvedValue(mockResponse);
-
-			const input = {};
-			const response = await endpoints.listProjects(mockCtx, input);
-
-			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'projects',
-				'test-api-key',
-				expect.objectContaining({ method: 'GET' }),
-			);
-
-			ListProjectsOutputSchema.parse(response);
-			expect(response.projects).toHaveLength(1);
-		});
-
-		it('listActiveProjects calls client with correct args and returns parsed response', async () => {
-			const mockResponse = {
-				projects: [
-					{
-						id: 1,
-						name: 'Active Project',
-						is_active: true,
-						is_public: false,
-						created_at: '2024-01-01T00:00:00Z',
-						updated_at: '2024-01-01T00:00:00Z',
-						deleted_at: null,
-						description: null,
-						technical_contact_email: null,
-						guest_default_role: null,
-						settings: {},
-					},
-				],
-				meta: { current_page: 1, total_pages: 1, total_count: 1 },
-			};
-			mockMakeRequest.mockResolvedValue(mockResponse);
-
-			const input = {};
-			const response = await endpoints.listActiveProjects(mockCtx, input);
-
-			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'projects',
-				'test-api-key',
-				expect.objectContaining({
-					method: 'GET',
-					query: expect.objectContaining({ is_active: true }),
-				}),
-			);
-
-			ListActiveProjectsOutputSchema.parse(response);
-			expect(response.projects).toHaveLength(1);
-		});
-
-		it('showProjectDetails calls client with correct args and returns parsed response', async () => {
-			const mockResponse = {
-				project: {
-					id: 1,
-					name: 'Project 1',
-					is_active: true,
-					is_public: false,
-					created_at: '2024-01-01T00:00:00Z',
-					updated_at: '2024-01-01T00:00:00Z',
-					deleted_at: null,
-					description: 'Test',
-					technical_contact_email: null,
-					guest_default_role: null,
-					settings: {},
-				},
-			};
-			mockMakeRequest.mockResolvedValue(mockResponse);
-
-			const input = { project_id: 1 };
-			const response = await endpoints.showProjectDetails(mockCtx, input);
-
-			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'projects/1',
-				'test-api-key',
-				expect.objectContaining({ method: 'GET' }),
-			);
-
-			ShowProjectDetailsOutputSchema.parse(response);
-			expect(response.project.id).toBe(1);
-		});
-
-		it('updateProject calls client with correct args and returns parsed response', async () => {
-			const mockResponse = {
-				project: {
-					id: 1,
-					name: 'Updated Project',
-					is_active: true,
-					is_public: true,
-					created_at: '2024-01-01T00:00:00Z',
-					updated_at: '2024-01-02T00:00:00Z',
-					deleted_at: null,
-					description: 'Updated',
-					technical_contact_email: null,
-					guest_default_role: null,
-					settings: {},
-				},
-			};
-			mockMakeRequest.mockResolvedValue(mockResponse);
-
-			const input = { project_id: 1, name: 'Updated Project', is_public: true };
-			const response = await endpoints.updateProject(mockCtx, input);
-
-			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'projects/1',
-				'test-api-key',
-				expect.objectContaining({
-					method: 'PUT',
-					body: { name: 'Updated Project', is_public: true },
-				}),
-			);
-
-			UpdateProjectOutputSchema.parse(response);
-			expect(response.project.name).toBe('Updated Project');
+			},
+			mediaType: 'application/json',
 		});
 	});
 
-	describe('columns', () => {
-		it('createColumn calls client with correct args and returns parsed response', async () => {
-			const mockResponse = {
-				column: {
-					id: 10,
-					name: 'Backlog',
-					project_id: 1,
-					position: 1,
-					created_at: '2024-01-01T00:00:00Z',
-					updated_at: '2024-01-01T00:00:00Z',
-				},
-			};
-			mockMakeRequest.mockResolvedValue(mockResponse);
-
-			const input = { project_id: 1, name: 'Backlog', position: 1 };
-			const response = await endpoints.createColumn(mockCtx, input);
-
-			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'projects/1/columns',
-				'test-api-key',
-				expect.objectContaining({
-					method: 'POST',
-					body: { name: 'Backlog', position: 1 },
-				}),
-			);
-
-			CreateColumnOutputSchema.parse(response);
-			expect(response.column.name).toBe('Backlog');
-		});
-
-		it('listColumns calls client with correct args and returns parsed response', async () => {
-			const mockResponse = {
-				columns: [
-					{
-						id: 10,
-						name: 'Backlog',
-						project_id: 1,
-						position: 1,
-						created_at: '2024-01-01T00:00:00Z',
-						updated_at: '2024-01-01T00:00:00Z',
-					},
-				],
-			};
-			mockMakeRequest.mockResolvedValue(mockResponse);
-
-			const input = { project_id: 1 };
-			const response = await endpoints.listColumns(mockCtx, input);
-
-			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'projects/1/columns',
-				'test-api-key',
-				expect.objectContaining({ method: 'GET' }),
-			);
-
-			ListColumnsOutputSchema.parse(response);
-			expect(response.columns).toHaveLength(1);
-		});
-
-		it('showColumn calls client with correct args and returns parsed response', async () => {
-			const mockResponse = {
-				column: {
-					id: 10,
-					name: 'Backlog',
-					project_id: 1,
-					position: 1,
-					created_at: '2024-01-01T00:00:00Z',
-					updated_at: '2024-01-01T00:00:00Z',
-				},
-			};
-			mockMakeRequest.mockResolvedValue(mockResponse);
-
-			const input = { column_id: 10 };
-			const response = await endpoints.showColumn(mockCtx, input);
-
-			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'columns/10',
-				'test-api-key',
-				expect.objectContaining({ method: 'GET' }),
-			);
-
-			ShowColumnOutputSchema.parse(response);
-			expect(response.column.id).toBe(10);
-		});
-
-		it('updateColumn calls client with correct args and returns parsed response', async () => {
-			const mockResponse = {
-				column: {
-					id: 10,
-					name: 'Todo',
-					project_id: 1,
-					position: 2,
-					created_at: '2024-01-01T00:00:00Z',
-					updated_at: '2024-01-02T00:00:00Z',
-				},
-			};
-			mockMakeRequest.mockResolvedValue(mockResponse);
-
-			const input = { column_id: 10, name: 'Todo', position: 2 };
-			const response = await endpoints.updateColumn(mockCtx, input);
-
-			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'columns/10',
-				'test-api-key',
-				expect.objectContaining({
-					method: 'PUT',
-					body: { name: 'Todo', position: 2 },
-				}),
-			);
-
-			UpdateColumnOutputSchema.parse(response);
-			expect(response.column.name).toBe('Todo');
+	it('projects.update sends only the given fields', async () => {
+		mockRequest.mockResolvedValue({ project: PROJECT });
+		await B.updateProject(context(), { project_id: 552668, name: 'renamed' });
+		expect(call()).toMatchObject({
+			method: 'PUT',
+			url: '/projects/552668.json',
+			body: { project: { name: 'renamed' } },
 		});
 	});
 
-	describe('tasks', () => {
-		it('createTask calls client with correct args and returns parsed response', async () => {
-			const mockResponse = {
+	it('projects.delete removes the local row after BugHerd confirms', async () => {
+		const db = tables();
+		mockRequest.mockResolvedValue({ success: true });
+		const out = await B.deleteProject(context(db), { project_id: 7 });
+		expect(call()).toMatchObject({ method: 'DELETE', url: '/projects/7.json' });
+		expect(out).toEqual({ success: true });
+		expect(db.projects.deleteByEntityId).toHaveBeenCalledWith('7');
+	});
+
+	it('projects.delete keeps the local row when BugHerd refuses', async () => {
+		const db = tables();
+		mockRequest.mockRejectedValue(new Error('nope'));
+		await expect(
+			B.deleteProject(context(db), { project_id: 7 }),
+		).rejects.toThrow();
+		expect(db.projects.deleteByEntityId).not.toHaveBeenCalled();
+	});
+
+	it('projects.addMember posts user_id to add_member.json', async () => {
+		mockRequest.mockResolvedValue({ project: PROJECT });
+		await B.addMemberToProject(context(), {
+			project_id: 552668,
+			user_id: [1, 2],
+		});
+		expect(call()).toMatchObject({
+			method: 'POST',
+			url: '/projects/552668/add_member.json',
+			body: { user_id: [1, 2] },
+		});
+	});
+
+	it('projects.addGuest posts to add_guest.json and keeps the email out of the event', async () => {
+		mockRequest.mockResolvedValue({ project: PROJECT });
+		await B.addGuestToProject(context(), {
+			project_id: 552668,
+			email: 'guest@example.com',
+		});
+		expect(call()).toMatchObject({
+			method: 'POST',
+			url: '/projects/552668/add_guest.json',
+			body: { email: 'guest@example.com' },
+		});
+		expect(JSON.stringify(mockLog.mock.calls)).not.toContain(
+			'guest@example.com',
+		);
+	});
+
+	it('projects.addGuest takes user_id or email, not both or neither', () => {
+		expect(
+			AddGuestToProjectInputSchema.safeParse({ project_id: 1 }).success,
+		).toBe(false);
+		expect(
+			AddGuestToProjectInputSchema.safeParse({
+				project_id: 1,
+				user_id: 2,
+				email: 'a@example.com',
+			}).success,
+		).toBe(false);
+		expect(
+			AddGuestToProjectInputSchema.safeParse({ project_id: 1, user_id: 2 })
+				.success,
+		).toBe(true);
+	});
+});
+
+describe('tasks', () => {
+	it('tasks.list passes filters', async () => {
+		const db = tables();
+		mockRequest.mockResolvedValue({ tasks: [TASK], meta: { count: 1 } });
+		const out = await B.listTasks(context(db), {
+			project_id: 552668,
+			status: 'todo',
+			tag: 'corsair',
+			assigned_to_id: 5,
+			page: 1,
+		});
+		expect(call()).toMatchObject({
+			method: 'GET',
+			url: '/projects/552668/tasks.json',
+			query: { status: 'todo', tag: 'corsair', assigned_to_id: 5, page: 1 },
+		});
+		expect(db.tasks.upsertByEntityId).toHaveBeenCalledWith(
+			'98765',
+			expect.objectContaining({ status: 'backlog', tag_names: ['corsair'] }),
+		);
+		expect(BugherdEndpointOutputSchemas.listTasks.safeParse(out).success).toBe(
+			true,
+		);
+	});
+
+	it('tasks.list rejects a priority BugHerd does not have', () => {
+		expect(
+			ListTasksInputSchema.safeParse({ project_id: 1, priority: 'high' })
+				.success,
+		).toBe(false);
+	});
+
+	it.each([
+		['listFeedbackTasks', 'feedback'],
+		['listArchivedTasks', 'archive'],
+		['listTaskboardTasks', 'taskboard'],
+	] as const)('%s calls tasks/%s.json', async (fn, view) => {
+		mockRequest.mockResolvedValue({ tasks: [], meta: { count: 0 } });
+		await B[fn](context(), { project_id: 3, page: 2 });
+		expect(call()).toMatchObject({
+			method: 'GET',
+			url: `/projects/3/tasks/${view}.json`,
+			query: { page: 2 },
+		});
+	});
+
+	it('tasks.show uses the project route when given a project', async () => {
+		mockRequest.mockResolvedValue({ task: TASK });
+		await B.showTask(context(), { project_id: 552668, task_id: 98765 });
+		expect(call()?.url).toBe('/projects/552668/tasks/98765.json');
+	});
+
+	it('tasks.show uses the global route without a project', async () => {
+		mockRequest.mockResolvedValue({ task: TASK });
+		const out = await B.showTask(context(), { task_id: 98765 });
+		expect(call()?.url).toBe('/tasks/98765.json');
+		expect(BugherdEndpointOutputSchemas.showTask.safeParse(out).success).toBe(
+			true,
+		);
+	});
+
+	it('tasks.showByLocalId calls local_tasks', async () => {
+		mockRequest.mockResolvedValue({ task: TASK });
+		await B.showTaskByLocalId(context(), {
+			project_id: 552668,
+			local_task_id: 1,
+		});
+		expect(call()?.url).toBe('/projects/552668/local_tasks/1.json');
+	});
+
+	it('tasks.create wraps the fields in task', async () => {
+		const db = tables();
+		mockRequest.mockResolvedValue({ task: TASK });
+		await B.createTask(context(db), {
+			project_id: 552668,
+			description: 'corsair-plugin-test',
+			priority: 'normal',
+			tag_names: ['corsair'],
+		});
+		expect(call()).toMatchObject({
+			method: 'POST',
+			url: '/projects/552668/tasks.json',
+			body: {
 				task: {
-					id: 100,
-					description: 'New task',
-					status: 'backlog',
+					description: 'corsair-plugin-test',
 					priority: 'normal',
-					tag_list: ['test'],
-					created_at: '2024-01-01T00:00:00Z',
-					updated_at: '2024-01-01T00:00:00Z',
-					closed_at: null,
-					project_id: 1,
-					reporter_id: 1,
-					assignee_id: null,
-					external_id: null,
-					attachments_count: 0,
-					comments_count: 0,
-					due_date: null,
-					duedate: null,
-					column_id: 10,
+					tag_names: ['corsair'],
 				},
-			};
-			mockMakeRequest.mockResolvedValue(mockResponse);
-
-			const input = {
-				project_id: 1,
-				description: 'New task',
-				priority: 'normal' as const,
-				status: 'backlog',
-			};
-			const response = await endpoints.createTask(mockCtx, input);
-
-			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'projects/1/tasks',
-				'test-api-key',
-				expect.objectContaining({
-					method: 'POST',
-					body: {
-						description: 'New task',
-						priority: 'normal',
-						status: 'backlog',
-					},
-				}),
-			);
-
-			CreateTaskOutputSchema.parse(response);
-			expect(response.task.description).toBe('New task');
+			},
 		});
+		expect(db.tasks.upsertByEntityId).toHaveBeenCalledTimes(1);
+	});
 
-		it('updateTask calls client with correct args and returns parsed response', async () => {
-			const mockResponse = {
-				task: {
-					id: 100,
-					description: 'Updated task',
-					status: 'in_progress',
-					priority: 'high',
-					tag_list: ['test', 'urgent'],
-					created_at: '2024-01-01T00:00:00Z',
-					updated_at: '2024-01-02T00:00:00Z',
-					closed_at: null,
-					project_id: 1,
-					reporter_id: 1,
-					assignee_id: 2,
-					external_id: 'EXT-123',
-					attachments_count: 0,
-					comments_count: 0,
-					due_date: '2024-12-31',
-					duedate: '2024-12-31',
-					column_id: 11,
-				},
-			};
-			mockMakeRequest.mockResolvedValue(mockResponse);
-
-			const input = {
-				task_id: 100,
-				status: 'in_progress',
-				priority: 'high' as const,
-			};
-			const response = await endpoints.updateTask(mockCtx, input);
-
-			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'tasks/100',
-				'test-api-key',
-				expect.objectContaining({
-					method: 'PUT',
-					body: { status: 'in_progress', priority: 'high' },
-				}),
-			);
-
-			UpdateTaskOutputSchema.parse(response);
-			expect(response.task.status).toBe('in_progress');
+	it('tasks.update sends null to unassign', async () => {
+		mockRequest.mockResolvedValue({ task: TASK });
+		await B.updateTask(context(), {
+			project_id: 552668,
+			task_id: 98765,
+			status: 'doing',
+			assigned_to_id: null,
 		});
-
-		it('listAttachments calls client with correct args and returns parsed response', async () => {
-			const mockResponse = {
-				attachments: [
-					{
-						id: 200,
-						file_name: 'test.txt',
-						file_size: 1024,
-						content_type: 'text/plain',
-						url: 'https://example.com/test.txt',
-						created_at: '2024-01-01T00:00:00Z',
-						updated_at: '2024-01-01T00:00:00Z',
-						task_id: 100,
-						user_id: 1,
-					},
-				],
-				meta: { current_page: 1, total_pages: 1, total_count: 1 },
-			};
-			mockMakeRequest.mockResolvedValue(mockResponse);
-
-			const input = { task_id: 100 };
-			const response = await endpoints.listAttachments(mockCtx, input);
-
-			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'tasks/100/attachments',
-				'test-api-key',
-				expect.objectContaining({ method: 'GET' }),
-			);
-
-			ListAttachmentsOutputSchema.parse(response);
-			expect(response.attachments).toHaveLength(1);
+		expect(call()).toMatchObject({
+			method: 'PUT',
+			url: '/projects/552668/tasks/98765.json',
+			body: { task: { status: 'doing', assigned_to_id: null } },
 		});
+	});
 
-		it('showAttachment calls client with correct args and returns parsed response', async () => {
-			const mockResponse = {
+	it('tasks.delete removes the local row', async () => {
+		const db = tables();
+		mockRequest.mockResolvedValue({ success: true });
+		await B.deleteTask(context(db), { project_id: 552668, task_id: 98765 });
+		expect(call()).toMatchObject({
+			method: 'DELETE',
+			url: '/projects/552668/tasks/98765.json',
+		});
+		expect(db.tasks.deleteByEntityId).toHaveBeenCalledWith('98765');
+	});
+
+	it('tasks.move posts local ids and the destination', async () => {
+		mockRequest.mockResolvedValue('');
+		const out = await B.moveTasks(context(), {
+			project_id: 1,
+			destination_project_id: 2,
+			task_ids: [4, 5],
+		});
+		expect(call()).toMatchObject({
+			method: 'POST',
+			url: '/projects/1/move_tasks.json',
+			body: { destination_project_id: 2, task_ids: [4, 5] },
+		});
+		expect(out).toEqual({});
+	});
+});
+
+describe('comments', () => {
+	it('tasks.listComments reads comments.json and stores them', async () => {
+		const db = tables();
+		mockRequest.mockResolvedValue({ comments: [COMMENT] });
+		const out = await B.listComments(context(db), {
+			project_id: 1,
+			task_id: 2,
+		});
+		expect(call()).toMatchObject({
+			method: 'GET',
+			url: '/projects/1/tasks/2/comments.json',
+		});
+		expect(db.comments.upsertByEntityId).toHaveBeenCalledWith(
+			'8801',
+			expect.objectContaining({ task_id: 2, text: 'corsair-plugin-test' }),
+		);
+		expect(
+			BugherdEndpointOutputSchemas.listComments.safeParse(out).success,
+		).toBe(true);
+	});
+
+	it('tasks.createComment wraps text in comment', async () => {
+		mockRequest.mockResolvedValue({ comment: COMMENT });
+		await B.createComment(context(), {
+			project_id: 1,
+			task_id: 2,
+			text: 'corsair-plugin-test',
+			is_private: true,
+		});
+		expect(call()).toMatchObject({
+			method: 'POST',
+			url: '/projects/1/tasks/2/comments.json',
+			body: { comment: { text: 'corsair-plugin-test', is_private: true } },
+		});
+	});
+});
+
+describe('attachments', () => {
+	it('tasks.listAttachments', async () => {
+		mockRequest.mockResolvedValue({ attachments: [ATTACHMENT] });
+		const db = tables();
+		await B.listAttachments(context(db), { project_id: 1, task_id: 2 });
+		expect(call()?.url).toBe('/projects/1/tasks/2/attachments.json');
+		expect(db.attachments.upsertByEntityId).toHaveBeenCalledWith(
+			'331',
+			expect.objectContaining({ task_id: 2 }),
+		);
+	});
+
+	it('tasks.showAttachment', async () => {
+		mockRequest.mockResolvedValue({ attachment: ATTACHMENT });
+		await B.showAttachment(context(), {
+			project_id: 1,
+			task_id: 2,
+			attachment_id: 331,
+		});
+		expect(call()).toMatchObject({
+			method: 'GET',
+			url: '/projects/1/tasks/2/attachments/331.json',
+		});
+	});
+
+	it('tasks.createAttachment posts file_name and url', async () => {
+		mockRequest.mockResolvedValue({ attachment: ATTACHMENT });
+		await B.createAttachment(context(), {
+			project_id: 1,
+			task_id: 2,
+			file_name: 'corsair.png',
+			url: 'https://example.com/corsair.png',
+		});
+		expect(call()).toMatchObject({
+			method: 'POST',
+			url: '/projects/1/tasks/2/attachments.json',
+			body: {
 				attachment: {
-					id: 200,
-					file_name: 'test.txt',
-					file_size: 1024,
-					content_type: 'text/plain',
-					url: 'https://example.com/test.txt',
-					created_at: '2024-01-01T00:00:00Z',
-					updated_at: '2024-01-01T00:00:00Z',
-					task_id: 100,
-					user_id: 1,
+					file_name: 'corsair.png',
+					url: 'https://example.com/corsair.png',
 				},
-			};
-			mockMakeRequest.mockResolvedValue(mockResponse);
-
-			const input = { attachment_id: 200 };
-			const response = await endpoints.showAttachment(mockCtx, input);
-
-			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'attachments/200',
-				'test-api-key',
-				expect.objectContaining({ method: 'GET' }),
-			);
-
-			ShowAttachmentOutputSchema.parse(response);
-			expect(response.attachment.id).toBe(200);
-		});
-
-		it('createAttachment calls client with correct args and returns parsed response', async () => {
-			const mockResponse = {
-				attachment: {
-					id: 201,
-					file_name: 'new.txt',
-					file_size: 2048,
-					content_type: 'text/plain',
-					url: 'https://example.com/new.txt',
-					created_at: '2024-01-01T00:00:00Z',
-					updated_at: '2024-01-01T00:00:00Z',
-					task_id: 100,
-					user_id: 1,
-				},
-			};
-			mockMakeRequest.mockResolvedValue(mockResponse);
-
-			const input = {
-				task_id: 100,
-				file_name: 'new.txt',
-				file_size: 2048,
-				content_type: 'text/plain',
-			};
-			const response = await endpoints.createAttachment(mockCtx, input);
-
-			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'tasks/100/attachments',
-				'test-api-key',
-				expect.objectContaining({
-					method: 'POST',
-					body: {
-						file_name: 'new.txt',
-						file_size: 2048,
-						content_type: 'text/plain',
-					},
-				}),
-			);
-
-			CreateAttachmentOutputSchema.parse(response);
-			expect(response.attachment.file_name).toBe('new.txt');
-		});
-
-		it('createComment calls client with correct args and returns parsed response', async () => {
-			const mockResponse = {
-				comment: {
-					id: 300,
-					body: 'Test comment',
-					created_at: '2024-01-01T00:00:00Z',
-					updated_at: '2024-01-01T00:00:00Z',
-					task_id: 100,
-					user_id: 1,
-				},
-			};
-			mockMakeRequest.mockResolvedValue(mockResponse);
-
-			const input = { task_id: 100, body: 'Test comment' };
-			const response = await endpoints.createComment(mockCtx, input);
-
-			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'tasks/100/comments',
-				'test-api-key',
-				expect.objectContaining({
-					method: 'POST',
-					body: { body: 'Test comment' },
-				}),
-			);
-
-			CreateCommentOutputSchema.parse(response);
-			expect(response.comment.body).toBe('Test comment');
-		});
-
-		it('uploadAttachment calls client with multipart formData and returns parsed response', async () => {
-			const mockResponse = {
-				attachment: {
-					id: 202,
-					file_name: 'upload.txt',
-					file_size: 4096,
-					content_type: 'text/plain',
-					url: 'https://example.com/upload.txt',
-					created_at: '2024-01-01T00:00:00Z',
-					updated_at: '2024-01-01T00:00:00Z',
-					task_id: 100,
-					user_id: 1,
-				},
-			};
-			mockMakeRequest.mockResolvedValue(mockResponse);
-
-			const file = new File(['hello'], 'upload.txt', { type: 'text/plain' });
-			const input = { task_id: 100, file };
-			const response = await endpoints.uploadAttachment(mockCtx, input);
-
-			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'tasks/100/attachments',
-				'test-api-key',
-				expect.objectContaining({
-					method: 'POST',
-					formData: { file },
-				}),
-			);
-
-			UploadAttachmentOutputSchema.parse(response);
-			expect(response.attachment.id).toBe(202);
+			},
 		});
 	});
 
-	describe('webhooks', () => {
-		it('createWebhook calls client with correct args and returns parsed response', async () => {
-			const mockResponse = {
-				webhook: {
-					id: 500,
-					url: 'https://example.com/webhook',
-					project_id: 1,
-					events: ['task_created', 'task_updated'],
-					created_at: '2024-01-01T00:00:00Z',
-					updated_at: '2024-01-01T00:00:00Z',
-				},
-			};
-			mockMakeRequest.mockResolvedValue(mockResponse);
-
-			const input = {
-				project_id: 1,
-				url: 'https://example.com/webhook',
-				events: ['task_created'],
-			};
-			const response = await endpoints.createWebhook(mockCtx, input);
-
-			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'projects/1/webhooks',
-				'test-api-key',
-				expect.objectContaining({
-					method: 'POST',
-					body: {
-						url: 'https://example.com/webhook',
-						events: ['task_created'],
-					},
-				}),
-			);
-
-			CreateWebhookOutputSchema.parse(response);
-			expect(response.webhook.url).toBe('https://example.com/webhook');
+	it('tasks.uploadAttachment sends the file as multipart', async () => {
+		mockRequest.mockResolvedValue({ attachment: ATTACHMENT });
+		await B.uploadAttachment(context(), {
+			project_id: 1,
+			task_id: 2,
+			file: {
+				base64: Buffer.from('hello').toString('base64'),
+				filename: 'note.txt',
+				contentType: 'text/plain',
+			},
 		});
+		const options = call();
+		expect(options).toMatchObject({
+			method: 'POST',
+			url: '/projects/1/tasks/2/attachments/upload',
+		});
+		expect(options?.body).toBeUndefined();
+		const file = options?.formData?.file as File;
+		expect(file.name).toBe('note.txt');
+		expect(await file.text()).toBe('hello');
+	});
 
-		it('listWebhooks calls client with correct args and returns parsed response', async () => {
-			const mockResponse = {
-				webhooks: [
-					{
-						id: 500,
-						url: 'https://example.com/webhook',
-						project_id: 1,
-						events: ['task_created', 'task_updated'],
-						created_at: '2024-01-01T00:00:00Z',
-						updated_at: '2024-01-01T00:00:00Z',
-					},
-				],
-				meta: { current_page: 1, total_pages: 1, total_count: 1 },
-			};
-			mockMakeRequest.mockResolvedValue(mockResponse);
+	it('tasks.deleteAttachment removes the local row', async () => {
+		const db = tables();
+		mockRequest.mockResolvedValue({ success: true });
+		await B.deleteAttachment(context(db), {
+			project_id: 1,
+			task_id: 2,
+			attachment_id: 331,
+		});
+		expect(call()).toMatchObject({
+			method: 'DELETE',
+			url: '/projects/1/tasks/2/attachments/331.json',
+		});
+		expect(db.attachments.deleteByEntityId).toHaveBeenCalledWith('331');
+	});
+});
 
-			const input = { project_id: 1 };
-			const response = await endpoints.listWebhooks(mockCtx, input);
+describe('columns', () => {
+	it('columns.list', async () => {
+		const db = tables();
+		mockRequest.mockResolvedValue({ columns: [COLUMN] });
+		await B.listColumns(context(db), { project_id: 552668 });
+		expect(call()?.url).toBe('/projects/552668/columns.json');
+		expect(db.columns.upsertByEntityId).toHaveBeenCalledTimes(1);
+	});
 
-			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'projects/1/webhooks',
-				'test-api-key',
-				expect.objectContaining({ method: 'GET' }),
-			);
+	it('columns.show', async () => {
+		mockRequest.mockResolvedValue({ column: COLUMN });
+		await B.showColumn(context(), { project_id: 552668, column_id: 2387619 });
+		expect(call()?.url).toBe('/projects/552668/columns/2387619.json');
+	});
 
-			ListWebhooksOutputSchema.parse(response);
-			expect(response.webhooks).toHaveLength(1);
+	it('columns.create wraps the name in column', async () => {
+		mockRequest.mockResolvedValue({ column: COLUMN });
+		await B.createColumn(context(), { project_id: 1, name: 'QA' });
+		expect(call()).toMatchObject({
+			method: 'POST',
+			url: '/projects/1/columns.json',
+			body: { column: { name: 'QA' } },
 		});
 	});
 
-	describe('users', () => {
-		it('listUsers calls client with correct args and returns parsed response', async () => {
-			const mockResponse = {
-				users: [
-					{
-						id: 1,
-						email: 'user@example.com',
-						first_name: 'John',
-						last_name: 'Doe',
-						name: 'John Doe',
-						created_at: '2024-01-01T00:00:00Z',
-						updated_at: '2024-01-01T00:00:00Z',
-					},
-				],
-				meta: { current_page: 1, total_pages: 1, total_count: 1 },
-			};
-			mockMakeRequest.mockResolvedValue(mockResponse);
-
-			const input = {};
-			const response = await endpoints.listUsers(mockCtx, input);
-
-			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'users',
-				'test-api-key',
-				expect.objectContaining({ method: 'GET' }),
-			);
-
-			ListUsersOutputSchema.parse(response);
-			expect(response.users).toHaveLength(1);
+	it('columns.update', async () => {
+		mockRequest.mockResolvedValue({ column: COLUMN });
+		await B.updateColumn(context(), {
+			project_id: 1,
+			column_id: 9,
+			name: 'QA2',
 		});
-
-		it('showUserProjects calls client with correct args and returns parsed response', async () => {
-			const mockResponse = {
-				projects: [
-					{
-						id: 1,
-						name: 'Project 1',
-						is_active: true,
-						is_public: false,
-						created_at: '2024-01-01T00:00:00Z',
-						updated_at: '2024-01-01T00:00:00Z',
-						deleted_at: null,
-						description: null,
-						technical_contact_email: null,
-						guest_default_role: null,
-						settings: {},
-					},
-				],
-				meta: { current_page: 1, total_pages: 1, total_count: 1 },
-			};
-			mockMakeRequest.mockResolvedValue(mockResponse);
-
-			const input = { user_id: 1 };
-			const response = await endpoints.showUserProjects(mockCtx, input);
-
-			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'users/1/projects',
-				'test-api-key',
-				expect.objectContaining({ method: 'GET' }),
-			);
-
-			ShowUserProjectsOutputSchema.parse(response);
-			expect(response.projects).toHaveLength(1);
-		});
-
-		it('showUserTasks calls client with correct args and returns parsed response', async () => {
-			const mockResponse = {
-				tasks: [
-					{
-						id: 100,
-						description: 'User task',
-						status: 'backlog',
-						priority: 'normal',
-						tag_list: ['test'],
-						created_at: '2024-01-01T00:00:00Z',
-						updated_at: '2024-01-01T00:00:00Z',
-						closed_at: null,
-						project_id: 1,
-						reporter_id: 1,
-						assignee_id: 1,
-						external_id: null,
-						attachments_count: 0,
-						comments_count: 0,
-						due_date: null,
-						duedate: null,
-						column_id: 10,
-					},
-				],
-				meta: { current_page: 1, total_pages: 1, total_count: 1 },
-			};
-			mockMakeRequest.mockResolvedValue(mockResponse);
-
-			const input = { user_id: 1 };
-			const response = await endpoints.showUserTasks(mockCtx, input);
-
-			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'users/1/tasks',
-				'test-api-key',
-				expect.objectContaining({ method: 'GET' }),
-			);
-
-			ShowUserTasksOutputSchema.parse(response);
-			expect(response.tasks).toHaveLength(1);
+		expect(call()).toMatchObject({
+			method: 'PUT',
+			url: '/projects/1/columns/9.json',
+			body: { column: { name: 'QA2' } },
 		});
 	});
 
-	describe('organization', () => {
-		it('showOrganization calls client with correct args and returns parsed response', async () => {
-			const mockResponse = {
-				organization: {
-					id: 1,
-					name: 'Test Org',
-					created_at: '2024-01-01T00:00:00Z',
-					updated_at: '2024-01-01T00:00:00Z',
-				},
-			};
-			mockMakeRequest.mockResolvedValue(mockResponse);
+	it('columns.delete', async () => {
+		const db = tables();
+		mockRequest.mockResolvedValue({ success: true });
+		await B.deleteColumn(context(db), { project_id: 1, column_id: 9 });
+		expect(call()).toMatchObject({
+			method: 'DELETE',
+			url: '/projects/1/columns/9.json',
+		});
+		expect(db.columns.deleteByEntityId).toHaveBeenCalledWith('9');
+	});
+});
 
-			const input = {};
-			const response = await endpoints.showOrganization(mockCtx, input);
+describe('webhooks', () => {
+	it('webhooks.list', async () => {
+		mockRequest.mockResolvedValue({ webhooks: [WEBHOOK] });
+		const out = await B.listWebhooks(context(), {});
+		expect(call()).toMatchObject({ method: 'GET', url: '/webhooks.json' });
+		expect(
+			BugherdEndpointOutputSchemas.listWebhooks.safeParse(out).success,
+		).toBe(true);
+	});
 
-			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'organization',
-				'test-api-key',
-				expect.objectContaining({ method: 'GET' }),
-			);
-
-			ShowOrganizationOutputSchema.parse(response);
-			expect(response.organization.name).toBe('Test Org');
+	it('webhooks.create posts target_url, event and project_id', async () => {
+		mockRequest.mockResolvedValue({ webhook: WEBHOOK });
+		await B.createWebhook(context(), {
+			target_url: 'https://example.com/hook',
+			event: 'task_create',
+			project_id: 552668,
+		});
+		expect(call()).toMatchObject({
+			method: 'POST',
+			url: '/webhooks.json',
+			body: {
+				target_url: 'https://example.com/hook',
+				event: 'task_create',
+				project_id: 552668,
+			},
 		});
 	});
 
-	describe('Error handling', () => {
-		it('throws BugherdAPIError on failure', async () => {
-			const { BugherdAPIError } = await import('../client');
-			mockMakeRequest.mockRejectedValue(new BugherdAPIError('Not Found'));
+	it('webhooks.create only takes BugHerd events', () => {
+		expect(
+			CreateWebhookInputSchema.safeParse({
+				target_url: 'https://example.com',
+				event: 'task_created',
+			}).success,
+		).toBe(false);
+	});
 
-			await expect(
-				endpoints.showProjectDetails(mockCtx, { project_id: 999 }),
-			).rejects.toThrow(BugherdAPIError);
+	it('webhooks.delete', async () => {
+		const db = tables();
+		mockRequest.mockResolvedValue({ success: true });
+		await B.deleteWebhook(context(db), { webhook_id: 22649 });
+		expect(call()).toMatchObject({
+			method: 'DELETE',
+			url: '/webhooks/22649.json',
+		});
+		expect(db.webhooks.deleteByEntityId).toHaveBeenCalledWith('22649');
+	});
+});
+
+describe('plugin wiring', () => {
+	it('has a schema for every endpoint', () => {
+		const plugin = bugherd();
+		const paths = Object.entries(plugin.endpoints).flatMap(([group, ops]) =>
+			Object.keys(ops).map((op) => `${group}.${op}`),
+		);
+		expect(paths.sort()).toEqual(Object.keys(bugherdEndpointSchemas).sort());
+		expect(paths).toHaveLength(39);
+	});
+
+	it('marks deletes and email invites destructive', () => {
+		const meta = bugherd().endpointMeta as Record<
+			string,
+			{ riskLevel: string }
+		>;
+		const destructive = Object.entries(meta)
+			.filter(([, m]) => m.riskLevel === 'destructive')
+			.map(([path]) => path)
+			.sort();
+		expect(destructive).toEqual([
+			'columns.delete',
+			'projects.addGuest',
+			'projects.delete',
+			'tasks.delete',
+			'tasks.deleteAttachment',
+			'webhooks.delete',
+		]);
+		expect(meta['tasks.createComment']?.riskLevel).toBe('write');
+	});
+
+	it('throws AuthMissingError without a stored key', async () => {
+		const plugin = bugherd();
+		const ctx = {
+			authType: 'api_key',
+			keys: { get_api_key: jest.fn().mockResolvedValue(null) },
+		};
+		await expect(
+			plugin.keyBuilder(ctx as never, 'endpoint'),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('returns the stored key', async () => {
+		const plugin = bugherd();
+		const ctx = {
+			authType: 'api_key',
+			keys: { get_api_key: jest.fn().mockResolvedValue('stored') },
+		};
+		await expect(plugin.keyBuilder(ctx as never, 'endpoint')).resolves.toBe(
+			'stored',
+		);
+	});
+
+	it('does not retry a 429 core already retried', async () => {
+		const error = new ApiError(
+			{ method: 'GET', url: '/x' },
+			{ url: '/x', ok: false, status: 429, statusText: '', body: {} },
+			'429',
+		);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
+		await expect(errorHandlers.RATE_LIMIT_ERROR.handler()).resolves.toEqual({
+			maxRetries: 0,
 		});
 	});
 });

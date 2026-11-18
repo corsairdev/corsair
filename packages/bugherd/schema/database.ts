@@ -1,109 +1,81 @@
 import { z } from 'zod';
 
-const UserSchema = z.object({
-	id: z.number(),
-	email: z.string(),
-	first_name: z.string().nullable(),
-	last_name: z.string().nullable(),
-	name: z.string(),
-	created_at: z.string(),
-	updated_at: z.string(),
+// Local rows keep the fields an agent filters or joins on. Ids are BugHerd's
+// numeric ids as strings. Provider-side extras stay in the endpoint output.
+
+export const BugherdProject = z.object({
+	id: z.string(),
+	name: z.string().nullable().optional(),
+	devurl: z.string().nullable().optional(),
+	is_active: z.boolean().nullable().optional(),
+	is_public: z.boolean().nullable().optional(),
+	owner_name: z.string().nullable().optional(),
+	created_at: z.string().nullable().optional(),
 });
 
-const ProjectSchema = z.object({
-	id: z.number(),
-	name: z.string(),
-	is_active: z.boolean(),
-	is_public: z.boolean(),
-	created_at: z.string(),
-	updated_at: z.string(),
-	deleted_at: z.string().nullable(),
-	description: z.string().nullable(),
-	technical_contact_email: z.string().nullable(),
-	guest_default_role: z.string().nullable(),
-	settings: z.record(z.string(), z.unknown()).optional(),
+export const BugherdTask = z.object({
+	id: z.string(),
+	project_id: z.number().nullable().optional(),
+	local_task_id: z.number().nullable().optional(),
+	title: z.string().nullable().optional(),
+	description: z.string().nullable().optional(),
+	status: z.string().nullable().optional(),
+	priority: z.string().nullable().optional(),
+	tag_names: z.array(z.string()).nullable().optional(),
+	assigned_to_id: z.number().nullable().optional(),
+	external_id: z.string().nullable().optional(),
+	created_at: z.string().nullable().optional(),
+	updated_at: z.string().nullable().optional(),
+	closed_at: z.string().nullable().optional(),
 });
 
-const TaskSchema = z.object({
-	id: z.number(),
-	description: z.string(),
-	status: z.string(),
-	priority: z.string().nullable(),
-	tag_list: z.array(z.string()),
-	created_at: z.string(),
-	updated_at: z.string(),
-	closed_at: z.string().nullable(),
-	project_id: z.number(),
-	reporter_id: z.number().nullable(),
-	assignee_id: z.number().nullable(),
-	external_id: z.string().nullable(),
-	attachments_count: z.number(),
-	comments_count: z.number(),
-	due_date: z.string().nullable(),
-	duedate: z.string().nullable(),
-	column_id: z.number().nullable(),
+export const BugherdColumn = z.object({
+	id: z.string(),
+	project_id: z.number().nullable().optional(),
+	name: z.string().nullable().optional(),
+	position: z.number().nullable().optional(),
 });
 
-const ColumnSchema = z.object({
-	id: z.number(),
-	name: z.string(),
-	project_id: z.number(),
-	position: z.number(),
-	created_at: z.string(),
-	updated_at: z.string(),
+export const BugherdComment = z.object({
+	id: z.string(),
+	task_id: z.number().nullable().optional(),
+	user_id: z.number().nullable().optional(),
+	text: z.string().nullable().optional(),
+	is_private: z.boolean().nullable().optional(),
+	created_at: z.string().nullable().optional(),
 });
 
-const AttachmentSchema = z.object({
-	id: z.number(),
-	file_name: z.string(),
-	file_size: z.number(),
-	content_type: z.string(),
-	url: z.string(),
-	created_at: z.string(),
-	updated_at: z.string(),
-	task_id: z.number(),
-	user_id: z.number(),
+export const BugherdAttachment = z.object({
+	id: z.string(),
+	task_id: z.number().nullable().optional(),
+	file_name: z.string().nullable().optional(),
+	url: z.string().nullable().optional(),
+	created_at: z.string().nullable().optional(),
 });
 
-const CommentSchema = z.object({
-	id: z.number(),
-	body: z.string(),
-	created_at: z.string(),
-	updated_at: z.string(),
-	task_id: z.number(),
-	user_id: z.number(),
+export const BugherdWebhook = z.object({
+	id: z.string(),
+	target_url: z.string().nullable().optional(),
+	event: z.string().nullable().optional(),
+	project_id: z.number().nullable().optional(),
 });
 
-const WebhookSchema = z.object({
-	id: z.number(),
-	url: z.string(),
-	project_id: z.number(),
-	events: z.array(z.string()),
-	created_at: z.string(),
-	updated_at: z.string(),
+export const BugherdUser = z.object({
+	id: z.string(),
+	email: z.string().nullable().optional(),
+	display_name: z.string().nullable().optional(),
 });
 
-const OrganizationSchema = z.object({
-	id: z.number(),
-	name: z.string(),
-	created_at: z.string(),
-	updated_at: z.string(),
+export const BugherdOrganization = z.object({
+	id: z.string(),
+	name: z.string().nullable().optional(),
 });
-
-export const BugherdProject = ProjectSchema;
-export const BugherdTask = TaskSchema;
-export const BugherdColumn = ColumnSchema;
-export const BugherdAttachment = AttachmentSchema;
-export const BugherdComment = CommentSchema;
-export const BugherdWebhook = WebhookSchema;
-export const BugherdUser = UserSchema;
-export const BugherdOrganization = OrganizationSchema;
 
 export type BugherdProject = z.infer<typeof BugherdProject>;
 export type BugherdTask = z.infer<typeof BugherdTask>;
 export type BugherdColumn = z.infer<typeof BugherdColumn>;
-export type BugherdAttachment = z.infer<typeof BugherdAttachment>;
 export type BugherdComment = z.infer<typeof BugherdComment>;
+export type BugherdAttachment = z.infer<typeof BugherdAttachment>;
 export type BugherdWebhook = z.infer<typeof BugherdWebhook>;
 export type BugherdUser = z.infer<typeof BugherdUser>;
 export type BugherdOrganization = z.infer<typeof BugherdOrganization>;
