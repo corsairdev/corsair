@@ -2392,7 +2392,7 @@ const wireCases: readonly WireCase[] = [
 				reference: 'REF100',
 				dated_on: '2026-10-01',
 				due_on: '2026-10-31',
-				recurring: 'Monthly',
+				recurring: 'Two Monthly',
 				bill_items: [
 					{
 						category: 'https://api.freeagent.com/v2/categories/285',
@@ -2410,7 +2410,7 @@ const wireCases: readonly WireCase[] = [
 				reference: 'REF100',
 				dated_on: '2026-10-01',
 				due_on: '2026-10-31',
-				recurring: 'Monthly',
+				recurring: 'Two Monthly',
 				bill_items: [
 					{
 						category: 'https://api.freeagent.com/v2/categories/285',
@@ -2502,7 +2502,7 @@ const wireCases: readonly WireCase[] = [
 				dated_on: '2026-10-01',
 				description: 'Travel',
 				gross_value: '-20.0',
-				recurring: 'Monthly',
+				recurring: 'Two Monthly',
 			},
 		},
 		method: 'POST',
@@ -2514,7 +2514,7 @@ const wireCases: readonly WireCase[] = [
 				dated_on: '2026-10-01',
 				description: 'Travel',
 				gross_value: '-20.0',
-				recurring: 'Monthly',
+				recurring: 'Two Monthly',
 			},
 		},
 		response: { expense: { description: 'Travel', gross_value: '-20.0' } },

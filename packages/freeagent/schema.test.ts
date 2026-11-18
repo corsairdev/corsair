@@ -183,7 +183,24 @@ describe('FreeAgent schemas', () => {
 		).toBe(false);
 	});
 
-	it('accepts monthly recurrence for bills and expenses', () => {
+	it('enforces the documented recurrence values for bills and expenses', () => {
+		expect(
+			ExpensesBillsEndpointSchemas['bills.create'].input.safeParse({
+				bill: {
+					contact: 'https://api.freeagent.com/v2/contacts/1',
+					reference: 'TWO-MONTHLY',
+					dated_on: '2026-01-01',
+					due_on: '2026-01-31',
+					recurring: 'Two Monthly',
+					bill_items: [
+						{
+							category: 'https://api.freeagent.com/v2/categories/285',
+							total_value: '10.0',
+						},
+					],
+				},
+			}).success,
+		).toBe(true);
 		expect(
 			ExpensesBillsEndpointSchemas['bills.create'].input.safeParse({
 				bill: {
@@ -200,6 +217,18 @@ describe('FreeAgent schemas', () => {
 					],
 				},
 			}).success,
+		).toBe(false);
+		expect(
+			ExpensesBillsEndpointSchemas['expenses.create'].input.safeParse({
+				expense: {
+					user: 'https://api.freeagent.com/v2/users/1',
+					category: 'https://api.freeagent.com/v2/categories/285',
+					dated_on: '2026-01-01',
+					description: 'Monthly expense',
+					gross_value: '10.0',
+					recurring: 'Two Monthly',
+				},
+			}).success,
 		).toBe(true);
 		expect(
 			ExpensesBillsEndpointSchemas['expenses.create'].input.safeParse({
@@ -212,7 +241,7 @@ describe('FreeAgent schemas', () => {
 					recurring: 'Monthly',
 				},
 			}).success,
-		).toBe(true);
+		).toBe(false);
 	});
 
 	it('validates versioned attachment changes and banking filters', () => {
