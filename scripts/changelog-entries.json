@@ -9221,5 +9221,11 @@
     "version": "0.2.8",
     "isNew": false,
     "changes": []
+  },
+  {
+    "date": "2026-11-18",
+    "package": "cloud",
+    "version": "0.2.6",
+    "changes": []
   }
 ]
