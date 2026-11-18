@@ -203,6 +203,22 @@ describe('makeHoneybadgerRequest', () => {
 		expect(error.message).toBe('fetch failed');
 	});
 
+	it('keeps the token out of a transport error that quotes it', async () => {
+		// Headers rejects a value with a newline and quotes the value.
+		mockRequest.mockRejectedValueOnce(
+			new TypeError(
+				'Headers.append: "Bearer hbu_bad\n" is an invalid header value.',
+			),
+		);
+
+		const error = (await rejection(
+			makeHoneybadgerRequest('hbu_bad\n', { method: 'GET', path: '/projects' }),
+		)) as HoneybadgerAPIError;
+
+		expect(error.message).not.toContain('hbu_bad');
+		expect(error.message).toContain('[redacted]');
+	});
+
 	it('treats a GET as replayable and a POST as not, unless told otherwise', async () => {
 		mockRequest.mockRejectedValue(new TypeError('fetch failed'));
 

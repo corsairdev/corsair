@@ -275,10 +275,13 @@ export async function makeHoneybadgerRequest(
 		const timedOut =
 			(error instanceof Error || error instanceof DOMException) &&
 			error.name === 'TimeoutError';
-		const message =
+		const raw =
 			(error instanceof Error && error.message) ||
 			(error instanceof DOMException && error.message) ||
 			'Unknown Honeybadger error';
+		// A token with a character Headers refuses (a pasted newline) makes
+		// Headers throw a TypeError that quotes the header value.
+		const message = token ? raw.split(token).join('[redacted]') : raw;
 		throw new HoneybadgerAPIError(message, {
 			method,
 			replayable,
