@@ -92,7 +92,9 @@ function normalizePaging(value: unknown): unknown {
 	for (const [key, val] of Object.entries(value)) {
 		if (key === 'paging' && isRecord(val)) {
 			result.paging = {
-				...(isRecord(val.cursors) ? { cursors: normalizePaging(val.cursors) } : {}),
+				...(isRecord(val.cursors)
+					? { cursors: normalizePaging(val.cursors) }
+					: {}),
 				hasNextPage: typeof val.next === 'string',
 			};
 		} else {
