@@ -24,7 +24,7 @@ export async function resolveRegion(
 		// lookup throws, and the US default applies.
 		stored = undefined;
 	}
-	return stored && stored in HONEYBADGER_HOSTS
+	return stored && Object.hasOwn(HONEYBADGER_HOSTS, stored)
 		? (stored as HoneybadgerRegion)
 		: 'us';
 }
@@ -83,7 +83,8 @@ export function confirmDeleted<T extends Record<string, string>>(
 	raw: JsonValue | undefined,
 	ids: T,
 ): T & { deleted: true } {
-	if (raw !== undefined && raw !== null) {
+	// Core returns undefined for a 204; a JSON null came from a 200 with a body.
+	if (raw !== undefined) {
 		throw new Error(
 			'Expected an empty 204 from Honeybadger, but the answer carried a body.',
 		);

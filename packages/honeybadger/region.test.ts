@@ -46,6 +46,8 @@ describe('region', () => {
 	it('falls back to the US app when nothing is stored or the value is unknown', async () => {
 		expect(await hostFor(context(null))).toBe('app.honeybadger.io');
 		expect(await hostFor(context('mars'))).toBe('app.honeybadger.io');
+		// An inherited Object property name is not a region.
+		expect(await hostFor(context('constructor'))).toBe('app.honeybadger.io');
 	});
 
 	it('falls back to the US app when the account has nothing stored to read', async () => {
