@@ -1,0 +1,129 @@
+---
+title: "QuickBooks plugin"
+sidebarTitle: "Overview"
+description: "Create and read QuickBooks Online accounts, query accounts and company information, and read company details through verified Accounting API routes."
+---
+
+Use **QuickBooks** through Corsair: one client, typed API calls.
+
+This plugin implements five verified operations, not the full QuickBooks Accounting API. The OAuth redirect returns a realmId, which must be supplied as an input to each operation because Corsair's generic callback does not persist provider callback query parameters. Intuit's current default minor version is 75; this plugin does not pin an obsolete version. The first-party route and model catalogs list 237 operation entries across 74 resources; 232 are verified but pending implementation. See the package README for the complete resource-operation inventory and exclusions.
+
+**What you get:**
+
+- 5 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/quickbooks better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/quickbooks better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/quickbooks better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/quickbooks better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { quickbooks } from '@corsair-dev/quickbooks';
+
+export const corsair = createCorsair({
+	plugins: [
+		quickbooks(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your QuickBooks OAuth app.
+
+```ts
+quickbooks()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'quickbooks',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List accounts**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.quickbooks.api.accounts.list({ realmId: '9341452109871234', startPosition: 1, maxResults: 10 });
+```
+
+
+**Create a receivables account**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.quickbooks.api.accounts.create({ realmId: '9341452109871234', name: 'Operating Receivables', accountSubType: 'AccountsReceivable' });
+```
+
+
+See the full list on the [API](/plugins/quickbooks/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/quickbooks/api">
+    Every `quickbooks.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

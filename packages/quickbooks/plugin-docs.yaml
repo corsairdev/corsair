@@ -1,3 +1,59 @@
 # Display copy for the docs, the catalog, corsair.dev and Hub.
 displayName: "QuickBooks"
-description: "QuickBooks API integration scaffold with no exposed operations until official Intuit API contracts can be verified."
+description: "Create and read QuickBooks Online accounts, query accounts and company information, and read company details through verified Accounting API routes."
+overviewNote: >-
+  This plugin implements five verified operations, not the full QuickBooks
+  Accounting API. The OAuth redirect returns a realmId, which must be supplied
+  as an input to each operation because Corsair's generic callback does not
+  persist provider callback query parameters. Intuit's current default minor
+  version is 75; this plugin does not pin an obsolete version. The first-party
+  route and model catalogs list 237 operation entries across 74 resources;
+  232 are verified but pending implementation. See the package README for the
+  complete resource-operation inventory and exclusions.
+apiNotes:
+  accounts.create: >-
+    POST /v3/company/{realmId}/account. Name must be unique, at most 100
+    characters, and cannot contain a double quote or colon. Supply accountType
+    or accountSubType. Source:
+    https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/account
+  accounts.get: >-
+    GET /v3/company/{realmId}/account/{accountId}. Account IDs are strings.
+    Source:
+    https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/account
+  accounts.list: >-
+    GET /v3/company/{realmId}/query with SELECT * FROM Account. Pagination uses
+    STARTPOSITION and MAXRESULTS (1–1000; default 100). Source:
+    https://static.developer.intuit.com/output_html/qbo/docs/learn/explore-the-quickbooks-online-api/data-queries.html
+  company.get: >-
+    GET /v3/company/{realmId}/companyinfo/{realmId}. The realmId is required
+    twice in the provider path. Source:
+    https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/companyinfo
+  company.list: >-
+    GET /v3/company/{realmId}/query with SELECT * FROM CompanyInfo. Source:
+    https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/companyinfo
+examples:
+  read:
+    path: accounts.list
+    title: List accounts
+    args:
+      realmId: "9341452109871234"
+      startPosition: 1
+      maxResults: 10
+  write:
+    path: accounts.create
+    title: Create a receivables account
+    args:
+      realmId: "9341452109871234"
+      name: Operating Receivables
+      accountSubType: "AccountsReceivable"
+apiExamples:
+  accounts.create:
+    call: "{ realmId: '9341452109871234', name: 'Operating Checking', accountType: 'Bank' }"
+  accounts.get:
+    call: "{ realmId: '9341452109871234', accountId: '35' }"
+  accounts.list:
+    call: "{ realmId: '9341452109871234', startPosition: 1, maxResults: 50 }"
+  company.get:
+    call: "{ realmId: '9341452109871234' }"
+  company.list:
+    call: "{ realmId: '9341452109871234' }"

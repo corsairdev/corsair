@@ -1,0 +1,867 @@
+---
+title: "QuickBooks API reference"
+sidebarTitle: "API"
+description: "API reference for the QuickBooks plugin in Corsair: every `quickbooks.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Accounts
+
+### create
+
+`accounts.create`
+
+Create a QuickBooks account in the company chart of accounts
+
+**Risk:** `write`
+
+```ts
+await corsair.quickbooks.api.accounts.create({ realmId: '9341452109871234', name: 'Operating Checking', accountType: 'Bank' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `realmId` | `string` | Yes | QuickBooks company realm ID returned in Intuit’s OAuth redirect |
+| `name` | `string` | Yes | — |
+| `accountType` | `Bank \| Accounts Receivable \| Other Current Asset \| Fixed Asset \| Other Asset \| Accounts Payable \| Credit Card \| Other Current Liability \| Long Term Liability \| Equity \| Income \| Cost of Goods Sold \| Expense \| Other Income \| Other Expense` | No | — |
+| `accountSubType` | `string` | No | — |
+| `acctNum` | `string` | No | — |
+| `taxCodeRef` | `object` | No | — |
+
+POST /v3/company/&#123;realmId&#125;/account. Name must be unique, at most 100 characters, and cannot contain a double quote or colon. Supply accountType or accountSubType. Source: https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/account
+
+<AccordionGroup>
+<Accordion title="taxCodeRef full type">
+
+```ts
+{
+  name?: string,
+  type?: string,
+  value: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Account` | `object` | Yes | — |
+| `time` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Account full type">
+
+```ts
+{
+  Id: string,
+  SyncToken: string,
+  MetaData?: {
+    CreatedByRef?: {
+      name?: string,
+      type?: string,
+      value: string
+    },
+    CreateTime?: string,
+    LastModifiedByRef?: {
+      name?: string,
+      type?: string,
+      value: string
+    },
+    LastUpdatedTime?: string,
+    LastChangedInQB?: string,
+    Synchronized?: boolean
+  },
+  Name: string,
+  SubAccount?: boolean,
+  ParentRef?: {
+    name?: string,
+    type?: string,
+    value: string
+  },
+  Description?: string,
+  FullyQualifiedName?: string,
+  AccountAlias?: string,
+  TxnLocationType?: string,
+  Active?: boolean,
+  Classification?: Asset | Equity | Expense | Liability | Revenue,
+  AccountType?: Bank | Accounts Receivable | Other Current Asset | Fixed Asset | Other Asset | Accounts Payable | Credit Card | Other Current Liability | Long Term Liability | Equity | Income | Cost of Goods Sold | Expense | Other Income | Other Expense,
+  AccountSubType?: string,
+  AccountPurposes?: {
+    name?: string,
+    type?: string,
+    value: string
+  }[],
+  AcctNum?: string,
+  AcctNumExtn?: string,
+  BankNum?: string,
+  OpeningBalance?: number,
+  OpeningBalanceDate?: string,
+  CurrentBalance?: number,
+  CurrentBalanceWithSubAccounts?: number,
+  CurrencyRef?: {
+    name?: string,
+    type?: string,
+    value: string
+  },
+  TaxAccount?: boolean,
+  TaxCodeRef?: {
+    name?: string,
+    type?: string,
+    value: string
+  },
+  OnlineBankingEnabled?: boolean,
+  FIName?: string,
+  JournalCodeRef?: {
+    name?: string,
+    type?: string,
+    value: string
+  },
+  AccountEx?: any,
+  domain?: QBO,
+  sparse?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`accounts.get`
+
+Read one account by its QuickBooks account ID
+
+**Risk:** `read`
+
+```ts
+await corsair.quickbooks.api.accounts.get({ realmId: '9341452109871234', accountId: '35' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `realmId` | `string` | Yes | QuickBooks company realm ID returned in Intuit’s OAuth redirect |
+| `accountId` | `string` | Yes | — |
+
+GET /v3/company/&#123;realmId&#125;/account/&#123;accountId&#125;. Account IDs are strings. Source: https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/account
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Account` | `object` | Yes | — |
+| `time` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Account full type">
+
+```ts
+{
+  Id: string,
+  SyncToken: string,
+  MetaData?: {
+    CreatedByRef?: {
+      name?: string,
+      type?: string,
+      value: string
+    },
+    CreateTime?: string,
+    LastModifiedByRef?: {
+      name?: string,
+      type?: string,
+      value: string
+    },
+    LastUpdatedTime?: string,
+    LastChangedInQB?: string,
+    Synchronized?: boolean
+  },
+  Name: string,
+  SubAccount?: boolean,
+  ParentRef?: {
+    name?: string,
+    type?: string,
+    value: string
+  },
+  Description?: string,
+  FullyQualifiedName?: string,
+  AccountAlias?: string,
+  TxnLocationType?: string,
+  Active?: boolean,
+  Classification?: Asset | Equity | Expense | Liability | Revenue,
+  AccountType?: Bank | Accounts Receivable | Other Current Asset | Fixed Asset | Other Asset | Accounts Payable | Credit Card | Other Current Liability | Long Term Liability | Equity | Income | Cost of Goods Sold | Expense | Other Income | Other Expense,
+  AccountSubType?: string,
+  AccountPurposes?: {
+    name?: string,
+    type?: string,
+    value: string
+  }[],
+  AcctNum?: string,
+  AcctNumExtn?: string,
+  BankNum?: string,
+  OpeningBalance?: number,
+  OpeningBalanceDate?: string,
+  CurrentBalance?: number,
+  CurrentBalanceWithSubAccounts?: number,
+  CurrencyRef?: {
+    name?: string,
+    type?: string,
+    value: string
+  },
+  TaxAccount?: boolean,
+  TaxCodeRef?: {
+    name?: string,
+    type?: string,
+    value: string
+  },
+  OnlineBankingEnabled?: boolean,
+  FIName?: string,
+  JournalCodeRef?: {
+    name?: string,
+    type?: string,
+    value: string
+  },
+  AccountEx?: any,
+  domain?: QBO,
+  sparse?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`accounts.list`
+
+List accounts with QuickBooks query pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.quickbooks.api.accounts.list({ realmId: '9341452109871234', startPosition: 1, maxResults: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `realmId` | `string` | Yes | QuickBooks company realm ID returned in Intuit’s OAuth redirect |
+| `startPosition` | `number` | No | — |
+| `maxResults` | `number` | No | — |
+
+GET /v3/company/&#123;realmId&#125;/query with SELECT * FROM Account. Pagination uses STARTPOSITION and MAXRESULTS (1–1000; default 100). Source: https://static.developer.intuit.com/output_html/qbo/docs/learn/explore-the-quickbooks-online-api/data-queries.html
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `QueryResponse` | `object` | Yes | — |
+| `time` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="QueryResponse full type">
+
+```ts
+{
+  startPosition?: number,
+  maxResults?: number,
+  totalCount?: number,
+  Account?: {
+    Id: string,
+    SyncToken: string,
+    MetaData?: {
+      CreatedByRef?: {
+        name?: string,
+        type?: string,
+        value: string
+      },
+      CreateTime?: string,
+      LastModifiedByRef?: {
+        name?: string,
+        type?: string,
+        value: string
+      },
+      LastUpdatedTime?: string,
+      LastChangedInQB?: string,
+      Synchronized?: boolean
+    },
+    Name: string,
+    SubAccount?: boolean,
+    ParentRef?: {
+      name?: string,
+      type?: string,
+      value: string
+    },
+    Description?: string,
+    FullyQualifiedName?: string,
+    AccountAlias?: string,
+    TxnLocationType?: string,
+    Active?: boolean,
+    Classification?: Asset | Equity | Expense | Liability | Revenue,
+    AccountType?: Bank | Accounts Receivable | Other Current Asset | Fixed Asset | Other Asset | Accounts Payable | Credit Card | Other Current Liability | Long Term Liability | Equity | Income | Cost of Goods Sold | Expense | Other Income | Other Expense,
+    AccountSubType?: string,
+    AccountPurposes?: {
+      name?: string,
+      type?: string,
+      value: string
+    }[],
+    AcctNum?: string,
+    AcctNumExtn?: string,
+    BankNum?: string,
+    OpeningBalance?: number,
+    OpeningBalanceDate?: string,
+    CurrentBalance?: number,
+    CurrentBalanceWithSubAccounts?: number,
+    CurrencyRef?: {
+      name?: string,
+      type?: string,
+      value: string
+    },
+    TaxAccount?: boolean,
+    TaxCodeRef?: {
+      name?: string,
+      type?: string,
+      value: string
+    },
+    OnlineBankingEnabled?: boolean,
+    FIName?: string,
+    JournalCodeRef?: {
+      name?: string,
+      type?: string,
+      value: string
+    },
+    AccountEx?: any,
+    domain?: QBO,
+    sparse?: boolean
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Company
+
+### get
+
+`company.get`
+
+Read basic company information for a realm
+
+**Risk:** `read`
+
+```ts
+await corsair.quickbooks.api.company.get({ realmId: '9341452109871234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `realmId` | `string` | Yes | QuickBooks company realm ID returned in Intuit’s OAuth redirect |
+
+GET /v3/company/&#123;realmId&#125;/companyinfo/&#123;realmId&#125;. The realmId is required twice in the provider path. Source: https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/companyinfo
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `CompanyInfo` | `object` | Yes | — |
+| `time` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="CompanyInfo full type">
+
+```ts
+{
+  Id: string,
+  SyncToken?: string,
+  MetaData?: {
+    CreatedByRef?: {
+      name?: string,
+      type?: string,
+      value: string
+    },
+    CreateTime?: string,
+    LastModifiedByRef?: {
+      name?: string,
+      type?: string,
+      value: string
+    },
+    LastUpdatedTime?: string,
+    LastChangedInQB?: string,
+    Synchronized?: boolean
+  },
+  CompanyName: string,
+  LegalName?: string,
+  CompanyAddr?: {
+    Id?: string,
+    Line1?: string,
+    Line2?: string,
+    Line3?: string,
+    Line4?: string,
+    Line5?: string,
+    City?: string,
+    Country?: string,
+    CountryCode?: string,
+    County?: string,
+    CountrySubDivisionCode?: string,
+    PostalCode?: string,
+    PostalCodeSuffix?: string,
+    Lat?: string,
+    Long?: string,
+    Tag?: string,
+    Note?: string
+  },
+  CustomerCommunicationAddr?: {
+    Id?: string,
+    Line1?: string,
+    Line2?: string,
+    Line3?: string,
+    Line4?: string,
+    Line5?: string,
+    City?: string,
+    Country?: string,
+    CountryCode?: string,
+    County?: string,
+    CountrySubDivisionCode?: string,
+    PostalCode?: string,
+    PostalCodeSuffix?: string,
+    Lat?: string,
+    Long?: string,
+    Tag?: string,
+    Note?: string
+  },
+  LegalAddr?: {
+    Id?: string,
+    Line1?: string,
+    Line2?: string,
+    Line3?: string,
+    Line4?: string,
+    Line5?: string,
+    City?: string,
+    Country?: string,
+    CountryCode?: string,
+    County?: string,
+    CountrySubDivisionCode?: string,
+    PostalCode?: string,
+    PostalCodeSuffix?: string,
+    Lat?: string,
+    Long?: string,
+    Tag?: string,
+    Note?: string
+  },
+  CompanyEmailAddr?: {
+    Id?: string,
+    Address?: string,
+    Default?: boolean,
+    Tag?: string
+  },
+  CustomerCommunicationEmailAddr?: {
+    Id?: string,
+    Address?: string,
+    Default?: boolean,
+    Tag?: string
+  },
+  CompanyURL?: {
+    Id?: string,
+    URI?: string,
+    Default?: boolean,
+    Tag?: string
+  },
+  PrimaryPhone?: {
+    Id?: string,
+    DeviceType?: string,
+    CountryCode?: string,
+    AreaCode?: string,
+    ExchangeCode?: string,
+    Extension?: string,
+    FreeFormNumber?: string,
+    Default?: boolean,
+    Tag?: string
+  },
+  OtherContactInfo?: {
+    Type?: TelephoneNumber | EmailAddress | WebSiteAddress | GenericContactType
+  }[],
+  CompanyFileName?: string,
+  FlavorStratum?: string,
+  SampleFile?: boolean,
+  CompanyUserId?: string,
+  CompanyUserAdminEmail?: string,
+  CompanyStartDate?: string,
+  EmployerId?: string,
+  FiscalYearStartMonth?: January | February | March | April | May | June | July | August | September | October | November | December,
+  TaxYearStartMonth?: January | February | March | April | May | June | July | August | September | October | November | December,
+  QBVersion?: string,
+  Country?: string,
+  ShipAddr?: {
+    Id?: string,
+    Line1?: string,
+    Line2?: string,
+    Line3?: string,
+    Line4?: string,
+    Line5?: string,
+    City?: string,
+    Country?: string,
+    CountryCode?: string,
+    County?: string,
+    CountrySubDivisionCode?: string,
+    PostalCode?: string,
+    PostalCodeSuffix?: string,
+    Lat?: string,
+    Long?: string,
+    Tag?: string,
+    Note?: string
+  },
+  OtherAddr?: {
+    Id?: string,
+    Line1?: string,
+    Line2?: string,
+    Line3?: string,
+    Line4?: string,
+    Line5?: string,
+    City?: string,
+    Country?: string,
+    CountryCode?: string,
+    County?: string,
+    CountrySubDivisionCode?: string,
+    PostalCode?: string,
+    PostalCodeSuffix?: string,
+    Lat?: string,
+    Long?: string,
+    Tag?: string,
+    Note?: string
+  }[],
+  Mobile?: {
+    Id?: string,
+    DeviceType?: string,
+    CountryCode?: string,
+    AreaCode?: string,
+    ExchangeCode?: string,
+    Extension?: string,
+    FreeFormNumber?: string,
+    Default?: boolean,
+    Tag?: string
+  },
+  Fax?: {
+    Id?: string,
+    DeviceType?: string,
+    CountryCode?: string,
+    AreaCode?: string,
+    ExchangeCode?: string,
+    Extension?: string,
+    FreeFormNumber?: string,
+    Default?: boolean,
+    Tag?: string
+  },
+  Email?: {
+    Id?: string,
+    Address?: string,
+    Default?: boolean,
+    Tag?: string
+  },
+  WebAddr?: {
+    Id?: string,
+    URI?: string,
+    Default?: boolean,
+    Tag?: string
+  },
+  LastImportedTime?: string,
+  LastSyncTime?: string,
+  SupportedLanguages?: string,
+  DefaultTimeZone?: string,
+  MultiByteCharsSupported?: boolean,
+  NameValue?: {
+    Name?: string,
+    Value?: string
+  }[],
+  FifoCalculationStatus?: None | InProgress | Completed | Error,
+  CompanyInfoEx?: any,
+  domain?: QBO,
+  sparse?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`company.list`
+
+Query the CompanyInfo resource for a realm
+
+**Risk:** `read`
+
+```ts
+await corsair.quickbooks.api.company.list({ realmId: '9341452109871234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `realmId` | `string` | Yes | QuickBooks company realm ID returned in Intuit’s OAuth redirect |
+
+GET /v3/company/&#123;realmId&#125;/query with SELECT * FROM CompanyInfo. Source: https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/companyinfo
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `QueryResponse` | `object` | Yes | — |
+| `time` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="QueryResponse full type">
+
+```ts
+{
+  startPosition?: number,
+  maxResults?: number,
+  totalCount?: number,
+  CompanyInfo?: {
+    Id: string,
+    SyncToken?: string,
+    MetaData?: {
+      CreatedByRef?: {
+        name?: string,
+        type?: string,
+        value: string
+      },
+      CreateTime?: string,
+      LastModifiedByRef?: {
+        name?: string,
+        type?: string,
+        value: string
+      },
+      LastUpdatedTime?: string,
+      LastChangedInQB?: string,
+      Synchronized?: boolean
+    },
+    CompanyName: string,
+    LegalName?: string,
+    CompanyAddr?: {
+      Id?: string,
+      Line1?: string,
+      Line2?: string,
+      Line3?: string,
+      Line4?: string,
+      Line5?: string,
+      City?: string,
+      Country?: string,
+      CountryCode?: string,
+      County?: string,
+      CountrySubDivisionCode?: string,
+      PostalCode?: string,
+      PostalCodeSuffix?: string,
+      Lat?: string,
+      Long?: string,
+      Tag?: string,
+      Note?: string
+    },
+    CustomerCommunicationAddr?: {
+      Id?: string,
+      Line1?: string,
+      Line2?: string,
+      Line3?: string,
+      Line4?: string,
+      Line5?: string,
+      City?: string,
+      Country?: string,
+      CountryCode?: string,
+      County?: string,
+      CountrySubDivisionCode?: string,
+      PostalCode?: string,
+      PostalCodeSuffix?: string,
+      Lat?: string,
+      Long?: string,
+      Tag?: string,
+      Note?: string
+    },
+    LegalAddr?: {
+      Id?: string,
+      Line1?: string,
+      Line2?: string,
+      Line3?: string,
+      Line4?: string,
+      Line5?: string,
+      City?: string,
+      Country?: string,
+      CountryCode?: string,
+      County?: string,
+      CountrySubDivisionCode?: string,
+      PostalCode?: string,
+      PostalCodeSuffix?: string,
+      Lat?: string,
+      Long?: string,
+      Tag?: string,
+      Note?: string
+    },
+    CompanyEmailAddr?: {
+      Id?: string,
+      Address?: string,
+      Default?: boolean,
+      Tag?: string
+    },
+    CustomerCommunicationEmailAddr?: {
+      Id?: string,
+      Address?: string,
+      Default?: boolean,
+      Tag?: string
+    },
+    CompanyURL?: {
+      Id?: string,
+      URI?: string,
+      Default?: boolean,
+      Tag?: string
+    },
+    PrimaryPhone?: {
+      Id?: string,
+      DeviceType?: string,
+      CountryCode?: string,
+      AreaCode?: string,
+      ExchangeCode?: string,
+      Extension?: string,
+      FreeFormNumber?: string,
+      Default?: boolean,
+      Tag?: string
+    },
+    OtherContactInfo?: {
+      Type?: TelephoneNumber | EmailAddress | WebSiteAddress | GenericContactType
+    }[],
+    CompanyFileName?: string,
+    FlavorStratum?: string,
+    SampleFile?: boolean,
+    CompanyUserId?: string,
+    CompanyUserAdminEmail?: string,
+    CompanyStartDate?: string,
+    EmployerId?: string,
+    FiscalYearStartMonth?: January | February | March | April | May | June | July | August | September | October | November | December,
+    TaxYearStartMonth?: January | February | March | April | May | June | July | August | September | October | November | December,
+    QBVersion?: string,
+    Country?: string,
+    ShipAddr?: {
+      Id?: string,
+      Line1?: string,
+      Line2?: string,
+      Line3?: string,
+      Line4?: string,
+      Line5?: string,
+      City?: string,
+      Country?: string,
+      CountryCode?: string,
+      County?: string,
+      CountrySubDivisionCode?: string,
+      PostalCode?: string,
+      PostalCodeSuffix?: string,
+      Lat?: string,
+      Long?: string,
+      Tag?: string,
+      Note?: string
+    },
+    OtherAddr?: {
+      Id?: string,
+      Line1?: string,
+      Line2?: string,
+      Line3?: string,
+      Line4?: string,
+      Line5?: string,
+      City?: string,
+      Country?: string,
+      CountryCode?: string,
+      County?: string,
+      CountrySubDivisionCode?: string,
+      PostalCode?: string,
+      PostalCodeSuffix?: string,
+      Lat?: string,
+      Long?: string,
+      Tag?: string,
+      Note?: string
+    }[],
+    Mobile?: {
+      Id?: string,
+      DeviceType?: string,
+      CountryCode?: string,
+      AreaCode?: string,
+      ExchangeCode?: string,
+      Extension?: string,
+      FreeFormNumber?: string,
+      Default?: boolean,
+      Tag?: string
+    },
+    Fax?: {
+      Id?: string,
+      DeviceType?: string,
+      CountryCode?: string,
+      AreaCode?: string,
+      ExchangeCode?: string,
+      Extension?: string,
+      FreeFormNumber?: string,
+      Default?: boolean,
+      Tag?: string
+    },
+    Email?: {
+      Id?: string,
+      Address?: string,
+      Default?: boolean,
+      Tag?: string
+    },
+    WebAddr?: {
+      Id?: string,
+      URI?: string,
+      Default?: boolean,
+      Tag?: string
+    },
+    LastImportedTime?: string,
+    LastSyncTime?: string,
+    SupportedLanguages?: string,
+    DefaultTimeZone?: string,
+    MultiByteCharsSupported?: boolean,
+    NameValue?: {
+      Name?: string,
+      Value?: string
+    }[],
+    FifoCalculationStatus?: None | InProgress | Completed | Error,
+    CompanyInfoEx?: any,
+    domain?: QBO,
+    sparse?: boolean
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---

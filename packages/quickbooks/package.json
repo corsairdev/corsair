@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/quickbooks",
   "version": "0.1.0",
-  "description": "QuickBooks API integration scaffold blocked pending verifiable official Intuit API contracts",
+  "description": "Verified QuickBooks Online Accounting API operations with OAuth 2.0",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -16,7 +16,8 @@
   "scripts": {
     "build": "rm -rf dist && tsc --build --force && tsup",
     "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "test:live": "jest --testPathIgnorePatterns=/node_modules/ --testPathPattern=api\\.test\\.ts"
   },
   "peerDependencies": {
     "corsair": ">=0.1.0",
