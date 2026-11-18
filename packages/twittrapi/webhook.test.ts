@@ -1,5 +1,7 @@
-import type { WebhookRequest } from 'corsair/core';
+import type { RawWebhookRequest, WebhookRequest } from 'corsair/core';
 import { createHmac } from 'crypto';
+import { twittrapi } from './index';
+import { matchTwittrApiTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	alreadyDelivered,
 	recordDelivery,
@@ -287,6 +289,46 @@ describe('TwittrAPI webhooks', () => {
 				id: 'test-1',
 			});
 			expect(parsed.event).toBe('test');
+		});
+	});
+
+	describe('tenant and plugin routing', () => {
+		function raw(headers: Record<string, string>, body = tweetBody) {
+			const request: RawWebhookRequest = { headers, body };
+			return request;
+		}
+
+		it('routes by the webhook ID header, whatever account was watched', () => {
+			// Two deliveries for different watched accounts on the same webhook
+			// must reach the same tenant.
+			const other = JSON.stringify({
+				...JSON.parse(tweetBody),
+				monitoredUserId: '783214',
+			});
+			expect(
+				matchTwittrApiTenantWebhook(raw({ 'x-twittrapi-webhook': '18' })),
+			).toEqual({ linkType: 'webhook_id', externalId: '18' });
+			expect(
+				matchTwittrApiTenantWebhook(
+					raw({ 'x-twittrapi-webhook': '18' }, other),
+				),
+			).toEqual({ linkType: 'webhook_id', externalId: '18' });
+		});
+
+		it('returns null without the webhook ID header', () => {
+			expect(matchTwittrApiTenantWebhook(raw({}))).toBeNull();
+		});
+
+		it('claims signed TwittrAPI deliveries only', () => {
+			const matcher = twittrapi().pluginWebhookMatcher!;
+			expect(matcher(raw({ 'x-twittrapi-signature': 't=1,v1=abc' }))).toBe(
+				true,
+			);
+			expect(matcher(raw({ 'x-twittrapi-event': 'test' }))).toBe(true);
+			// Another provider's {"event":"test"} body without TwittrAPI headers.
+			expect(matcher(raw({}, JSON.stringify({ event: 'test', id: '1' })))).toBe(
+				false,
+			);
 		});
 	});
 });
