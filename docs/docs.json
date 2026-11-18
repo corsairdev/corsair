@@ -2955,6 +2955,14 @@
                 ]
               },
               {
+                "group": "Honeybadger",
+                "pages": [
+                  "plugins/honeybadger/overview",
+                  "plugins/honeybadger/api",
+                  "plugins/honeybadger/database"
+                ]
+              },
+              {
                 "group": "HoneyHive",
                 "pages": [
                   "plugins/honeyhive/overview",

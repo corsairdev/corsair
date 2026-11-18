@@ -353,6 +353,7 @@ export const BaseProviders = [
 	'heygen',
 	'heyy',
 	'higgsfield',
+	'honeybadger',
 	'honeyhive',
 	'hookdeck',
 	'htmltoimage',
@@ -1084,6 +1085,7 @@ export const ProviderDisplayNames = {
 	heygen: 'HeyGen',
 	heyy: 'Heyy',
 	higgsfield: 'Higgsfield',
+	honeybadger: 'Honeybadger',
 	honeyhive: 'HoneyHive',
 	hookdeck: 'Hookdeck',
 	htmltoimage: 'HtmlToImage',
@@ -1822,6 +1824,7 @@ export type AllProviders =
 	| 'heygen'
 	| 'heyy'
 	| 'higgsfield'
+	| 'honeybadger'
 	| 'honeyhive'
 	| 'hookdeck'
 	| 'htmltoimage'
