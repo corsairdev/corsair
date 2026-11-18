@@ -14,6 +14,17 @@ function stripWebhookSecret(
 	return rest;
 }
 
+// A receiver URL can carry a token in its query or userinfo; the event log
+// keeps the origin and path only.
+export function redactUrl(url: string): string {
+	try {
+		const parsed = new URL(url);
+		return `${parsed.origin}${parsed.pathname}`;
+	} catch {
+		return '[invalid url]';
+	}
+}
+
 export const getPlan: TwittrApiEndpoints['monitorsGetPlan'] = async (
 	ctx,
 	_input,
@@ -195,7 +206,7 @@ export const createWebhook: TwittrApiEndpoints['monitorsCreateWebhook'] =
 		await logEventFromContext(
 			ctx,
 			'twittrapi.monitors.createWebhook',
-			{ url: input.url },
+			{ url: redactUrl(input.url), label: input.label },
 			'completed',
 		);
 		return response;
@@ -259,7 +270,13 @@ export const updateWebhook: TwittrApiEndpoints['monitorsUpdateWebhook'] =
 		await logEventFromContext(
 			ctx,
 			'twittrapi.monitors.updateWebhook',
-			{ ...input },
+			{
+				webhookId: input.webhookId,
+				url: input.url === undefined ? undefined : redactUrl(input.url),
+				label: input.label,
+				active: input.active,
+				rotateSecret: input.rotateSecret,
+			},
 			'completed',
 		);
 		return response;
