@@ -37,6 +37,8 @@ describe('honeybadger live smoke', () => {
 
 	const plugin = honeybadger({ key: TOKEN });
 	const endpoints = plugin.endpoints as NonNullable<typeof plugin.endpoints>;
+	// unknown: one lookup table for every operation, each with its own output
+	// type; parse() is what narrows the value.
 	const schemas = plugin.endpointSchemas as Record<
 		string,
 		{ output: { parse: (value: unknown) => unknown } }
