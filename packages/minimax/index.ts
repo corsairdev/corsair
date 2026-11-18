@@ -250,6 +250,60 @@ export const minimaxEndpointSchemas = {
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
+// Speech, video and template tasks run after the call that starts them
+// returns. Status values are the output schemas' (endpoints/types.ts);
+// jobs.test.ts keeps them in step. Hailuo and template tasks are Preparing,
+// Queueing or Processing while running; H3 (v2) tasks are queued or running.
+const VIDEO_JOB = {
+	idPath: 'task_id',
+	status: {
+		op: 'video.query',
+		idArg: 'task_id',
+		statusPath: 'status',
+		done: ['Success'],
+		failed: ['Fail'],
+	},
+} as const;
+
+// H3 generation, Context-IR and regeneration tasks share one v2 read. Its
+// DELETE is not declared as the cancel: it cancels only a queued task,
+// refuses a running one and deletes the record of a finished one, so a late
+// cancel would erase the result.
+const VIDEO_V2_JOB = {
+	idPath: 'task_id',
+	status: {
+		op: 'video.queryV2',
+		idArg: 'task_id',
+		statusPath: 'task.status',
+		done: ['succeeded'],
+		failed: ['failed', 'cancelled'],
+	},
+} as const;
+
+const TEMPLATE_JOB = {
+	idPath: 'task_id',
+	status: {
+		op: 'video.templateQuery',
+		idArg: 'task_id',
+		statusPath: 'status',
+		done: ['Success'],
+		failed: ['Fail'],
+	},
+} as const;
+
+// The docs give the async speech statuses in both cases, so the schema
+// accepts both and each list names both. An expired task ended without audio.
+const SPEECH_JOB = {
+	idPath: 'task_id',
+	status: {
+		op: 'speech.queryAsyncTask',
+		idArg: 'task_id',
+		statusPath: 'status',
+		done: ['success', 'Success'],
+		failed: ['failed', 'Failed', 'expired', 'Expired'],
+	},
+} as const;
+
 const minimaxEndpointMeta = {
 	'chat.completion': {
 		riskLevel: 'read',
@@ -270,6 +324,7 @@ const minimaxEndpointMeta = {
 	'speech.createAsyncTask': {
 		riskLevel: 'write',
 		description: 'Create an asynchronous long-text speech synthesis task',
+		job: SPEECH_JOB,
 	},
 	'speech.queryAsyncTask': {
 		riskLevel: 'read',
@@ -315,6 +370,7 @@ const minimaxEndpointMeta = {
 		riskLevel: 'write',
 		description:
 			'Create a Hailuo video generation task (text, image, first/last frame or subject reference)',
+		job: VIDEO_JOB,
 	},
 	'video.query': {
 		riskLevel: 'read',
@@ -323,6 +379,7 @@ const minimaxEndpointMeta = {
 	'video.generateV2': {
 		riskLevel: 'write',
 		description: 'Create an H3 multimodal video generation task',
+		job: VIDEO_V2_JOB,
 	},
 	'video.queryV2': {
 		riskLevel: 'read',
@@ -341,14 +398,17 @@ const minimaxEndpointMeta = {
 	'video.contextIr': {
 		riskLevel: 'write',
 		description: 'Create an H3-Context-IR task that enriches a video prompt',
+		job: VIDEO_V2_JOB,
 	},
 	'video.regenerate': {
 		riskLevel: 'write',
 		description: 'Create a 2K video regeneration task',
+		job: VIDEO_V2_JOB,
 	},
 	'video.templateGenerate': {
 		riskLevel: 'write',
 		description: 'Create a Video Agent task from a template',
+		job: TEMPLATE_JOB,
 	},
 	'video.templateQuery': {
 		riskLevel: 'read',

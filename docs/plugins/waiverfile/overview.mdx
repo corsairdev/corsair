@@ -6,7 +6,7 @@ description: "Electronic waivers and booking with WaiverFile - read signed waive
 
 Use **WaiverFile** through Corsair: one client, typed API calls.
 
-Create the key in the WaiverFile admin under **Settings > API > API keys**; the same page shows the site ID. Every call needs that key **and the site ID it belongs to**, so store the pair in the key slot as `<apiKey>\n<siteID>` — the plugin splits it and reports a configuration error before any request if it is malformed.
+Create the key in the WaiverFile admin under **Settings &gt; API &gt; API keys**; the same page shows the site ID. Every call needs that key **and the site ID it belongs to**, so store the pair in the key slot as `<apiKey>\n<siteID>` — the plugin splits it and reports a configuration error before any request if it is malformed.
 
 - **Credentials travel in the query string, not a header.** Every route takes `apiKey` and `siteID` as query parameters; there is no bearer token. The plugin adds both to every call, so a bare key is rejected up front rather than failing with an obscure 404.
 - **`InsertEvent` is the exception.** It carries the credentials in the **body** as `APIKey` and `SiteID`, which the plugin fills in from the same packed key. The query still holds them, but the body's copy is what the route reads.

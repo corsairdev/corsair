@@ -1,0 +1,60 @@
+displayName: Postiz
+description: Social media scheduling API for publishing, scheduling and managing posts across connected channels.
+domain: postiz.com
+recommendedAuth: api_key
+overviewNote: |
+  Postiz schedules and publishes to more than thirty social platforms from one place. Create a key in Developer settings and paste it in; it travels in the `Authorization` header with no scheme prefix. For a self-hosted instance, also set the account's `base_url` to the instance's https URL, such as `https://postiz.example.com` (the plugin adds `/api/public/v1`). For Postiz Cloud, set it to `https://api.postiz.com`. An empty `base_url` also reaches Cloud, but Corsair then reports the account as partly set up. The `baseUrl` plugin option does the same for an inline key.
+
+  What to know before you publish:
+
+  - **The UI says channel, the API says integration.** Both mean one connected social account, and this plugin uses the API's word.
+  - **Three ways to create a post.** `posts.create` takes `type: 'draft'`, which saves without publishing; `'schedule'`, which queues for `date`; or `'now'`, which publishes as soon as Postiz accepts it. A draft may have no channels attached, and anything that will publish needs at least one, which the plugin enforces before sending.
+  - **Each platform has its own settings.** A post carries a `settings` object whose `__type` names the platform, and the rest follows that platform's schema. The plugin passes it through rather than guessing the fields.
+  - **Threads.** One post item's `value` is an array, so several entries make a thread, and `inter` sets the minutes between them.
+  - **Media must be uploaded first.** `media.uploadFromUrl` copies a public file into the library; then reference it in a post's `image` by its `id` and `path`. A body over 50 MB is rejected with 413.
+  - **Rate limit.** The create-post route allows 90 to 100 requests an hour for the whole instance, and scheduling several posts in one request is the way to stay inside it. Core retries a 429 three times, honouring Retry-After.
+  - **Scheduling is publishing.** `posts.changeStatus` with `status: 'schedule'` queues a post to go out at its stored date, so it is marked destructive like `posts.create`.
+  - **Paging.** `media.list` pages from 1 and returns `pages`; `notifications.list` pages from 0 and returns `hasMore`.
+  - **Deleting.** `posts.delete` removes every post in the group. A post already published stays live on the platform, because deleting here only forgets it.
+  - **Webhooks.** Postiz can notify another system when it publishes, but this plugin does not handle inbound deliveries.
+references:
+  - title: Postiz Public API
+    url: https://docs.postiz.com/public-api/introduction
+  - title: Create a post
+    url: https://docs.postiz.com/public-api/posts/create
+# `status` is an enum, and the validator renders enum members unquoted while
+# requiring a quoted string example, so that call lives in `apiExamples` below
+# where the argument string is passed through verbatim.
+examples:
+  read:
+    path: integrations.list
+    title: List the connected channels
+    args: {}
+  write:
+    path: posts.delete
+    title: Delete a post and everyone in its group
+    args:
+      id: post-123
+apiExamples:
+  integrations.list:
+    call: '{}'
+  integrations.isConnected:
+    call: '{}'
+  integrations.findSlot:
+    call: "{ id: 'cm4ean69r0003w8w1cdomox9n' }"
+  posts.list:
+    call: "{ startDate: '2024-12-01T00:00:00.000Z', endDate: '2024-12-31T23:59:59.000Z' }"
+  posts.create:
+    call: "{ type: 'schedule', date: '2024-12-14T10:00:00.000Z', shortLink: false, tags: [], posts: [{ integration: { id: 'cm4ean69r0003w8w1cdomox9n' }, value: [{ content: 'Hello from the Postiz API!' }], settings: { __type: 'x', who_can_reply_post: 'everyone' } }] }"
+  posts.delete:
+    call: "{ id: 'post-123' }"
+  posts.changeStatus:
+    call: "{ id: 'post-123', status: 'draft' }"
+  media.list:
+    call: "{ page: 1 }"
+  media.uploadFromUrl:
+    call: "{ url: 'https://example.com/image.png' }"
+  notifications.list:
+    call: "{ page: 0 }"
+  analytics.platform:
+    call: "{ integration: 'cm4ean69r0003w8w1cdomox9n', date: '30' }"

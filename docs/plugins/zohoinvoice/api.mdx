@@ -1,0 +1,1849 @@
+---
+title: "Zoho Invoice API reference"
+sidebarTitle: "API"
+description: "API reference for the Zoho Invoice plugin in Corsair: every `zohoinvoice.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Customers
+
+### create
+
+`customers.create`
+
+Create a Zoho Invoice customer
+
+**Risk:** `write`
+
+```ts
+await corsair.zohoinvoice.api.customers.create({ body: { contact_name: 'Acme Corp', company_name: 'Acme Corp' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `body` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  contact_id: string | number,
+  contact_name: string,
+  company_name?: string,
+  contact_type?: string,
+  status?: string,
+  email?: string,
+  phone?: string,
+  currency_code?: string,
+  payment_terms?: number,
+  billing_address?: {
+    attention?: string,
+    address?: string,
+    street2?: string,
+    city?: string,
+    state?: string,
+    zip?: string | number,
+    country?: string,
+    fax?: string | number,
+    phone?: string
+  },
+  shipping_address?: {
+    attention?: string,
+    address?: string,
+    street2?: string,
+    city?: string,
+    state?: string,
+    zip?: string | number,
+    country?: string,
+    fax?: string | number,
+    phone?: string
+  },
+  contact_persons?: {
+    first_name?: string,
+    last_name?: string,
+    email?: string,
+    phone?: string,
+    mobile?: string
+  }[],
+  custom_fields?: {
+    customfield_id?: string | number,
+    label?: string,
+    value?: any
+  }[],
+  created_time?: string,
+  last_modified_time?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`customers.delete`
+
+Delete a customer. Cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.zohoinvoice.api.customers.delete({ contactId: '460000000026049' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `contactId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`customers.get`
+
+Get a Zoho Invoice customer
+
+**Risk:** `read`
+
+```ts
+await corsair.zohoinvoice.api.customers.get({ contactId: '460000000026049' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `contactId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  contact_id: string | number,
+  contact_name: string,
+  company_name?: string,
+  contact_type?: string,
+  status?: string,
+  email?: string,
+  phone?: string,
+  currency_code?: string,
+  payment_terms?: number,
+  billing_address?: {
+    attention?: string,
+    address?: string,
+    street2?: string,
+    city?: string,
+    state?: string,
+    zip?: string | number,
+    country?: string,
+    fax?: string | number,
+    phone?: string
+  },
+  shipping_address?: {
+    attention?: string,
+    address?: string,
+    street2?: string,
+    city?: string,
+    state?: string,
+    zip?: string | number,
+    country?: string,
+    fax?: string | number,
+    phone?: string
+  },
+  contact_persons?: {
+    first_name?: string,
+    last_name?: string,
+    email?: string,
+    phone?: string,
+    mobile?: string
+  }[],
+  custom_fields?: {
+    customfield_id?: string | number,
+    label?: string,
+    value?: any
+  }[],
+  created_time?: string,
+  last_modified_time?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`customers.list`
+
+List Zoho Invoice customers
+
+**Risk:** `read`
+
+```ts
+await corsair.zohoinvoice.api.customers.list({ query: { search_text: 'Acme' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  contact_id: string | number,
+  contact_name: string,
+  company_name?: string,
+  contact_type?: string,
+  status?: string,
+  email?: string,
+  phone?: string,
+  currency_code?: string,
+  payment_terms?: number,
+  billing_address?: {
+    attention?: string,
+    address?: string,
+    street2?: string,
+    city?: string,
+    state?: string,
+    zip?: string | number,
+    country?: string,
+    fax?: string | number,
+    phone?: string
+  },
+  shipping_address?: {
+    attention?: string,
+    address?: string,
+    street2?: string,
+    city?: string,
+    state?: string,
+    zip?: string | number,
+    country?: string,
+    fax?: string | number,
+    phone?: string
+  },
+  contact_persons?: {
+    first_name?: string,
+    last_name?: string,
+    email?: string,
+    phone?: string,
+    mobile?: string
+  }[],
+  custom_fields?: {
+    customfield_id?: string | number,
+    label?: string,
+    value?: any
+  }[],
+  created_time?: string,
+  last_modified_time?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`customers.update`
+
+Update a Zoho Invoice customer
+
+**Risk:** `write`
+
+```ts
+await corsair.zohoinvoice.api.customers.update({ contactId: '460000000026049', body: { payment_terms: 30 } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `contactId` | `string \| number` | Yes | — |
+| `body` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  contact_id: string | number,
+  contact_name: string,
+  company_name?: string,
+  contact_type?: string,
+  status?: string,
+  email?: string,
+  phone?: string,
+  currency_code?: string,
+  payment_terms?: number,
+  billing_address?: {
+    attention?: string,
+    address?: string,
+    street2?: string,
+    city?: string,
+    state?: string,
+    zip?: string | number,
+    country?: string,
+    fax?: string | number,
+    phone?: string
+  },
+  shipping_address?: {
+    attention?: string,
+    address?: string,
+    street2?: string,
+    city?: string,
+    state?: string,
+    zip?: string | number,
+    country?: string,
+    fax?: string | number,
+    phone?: string
+  },
+  contact_persons?: {
+    first_name?: string,
+    last_name?: string,
+    email?: string,
+    phone?: string,
+    mobile?: string
+  }[],
+  custom_fields?: {
+    customfield_id?: string | number,
+    label?: string,
+    value?: any
+  }[],
+  created_time?: string,
+  last_modified_time?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Estimates
+
+### create
+
+`estimates.create`
+
+Create a Zoho Invoice estimate
+
+**Risk:** `write`
+
+```ts
+await corsair.zohoinvoice.api.estimates.create({ body: { customer_id: '460000000026049', line_items: [{ item_id: '460000000027009', quantity: 1 }] } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `body` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `estimate` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="estimate full type">
+
+```ts
+{
+  estimate_id: string | number,
+  estimate_number?: string,
+  customer_id?: string | number,
+  customer_name?: string,
+  status?: string,
+  date?: string,
+  expiry_date?: string,
+  total?: string | number,
+  line_items?: {
+    item_id?: string | number,
+    name?: string,
+    description?: string,
+    rate?: number,
+    quantity?: number,
+    unit?: string,
+    tax_id?: string | number,
+    discount?: string | number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`estimates.delete`
+
+Delete an estimate. Cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.zohoinvoice.api.estimates.delete({ estimateId: '460000000030001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `estimateId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### email
+
+`estimates.email`
+
+Email an estimate to the customer
+
+**Risk:** `destructive`
+
+```ts
+await corsair.zohoinvoice.api.estimates.email({ estimateId: '460000000030001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `estimateId` | `string \| number` | Yes | — |
+| `body` | `Record<string, any>` | No | Optional: to_mail_ids, cc_mail_ids, subject, body. Without it Zoho emails the customer contacts with the default template. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`estimates.get`
+
+Get a Zoho Invoice estimate
+
+**Risk:** `read`
+
+```ts
+await corsair.zohoinvoice.api.estimates.get({ estimateId: '460000000030001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `estimateId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `estimate` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="estimate full type">
+
+```ts
+{
+  estimate_id: string | number,
+  estimate_number?: string,
+  customer_id?: string | number,
+  customer_name?: string,
+  status?: string,
+  date?: string,
+  expiry_date?: string,
+  total?: string | number,
+  line_items?: {
+    item_id?: string | number,
+    name?: string,
+    description?: string,
+    rate?: number,
+    quantity?: number,
+    unit?: string,
+    tax_id?: string | number,
+    discount?: string | number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`estimates.list`
+
+List Zoho Invoice estimates
+
+**Risk:** `read`
+
+```ts
+await corsair.zohoinvoice.api.estimates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `estimates` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="estimates full type">
+
+```ts
+{
+  estimate_id: string | number,
+  estimate_number?: string,
+  customer_id?: string | number,
+  customer_name?: string,
+  status?: string,
+  date?: string,
+  expiry_date?: string,
+  total?: string | number,
+  line_items?: {
+    item_id?: string | number,
+    name?: string,
+    description?: string,
+    rate?: number,
+    quantity?: number,
+    unit?: string,
+    tax_id?: string | number,
+    discount?: string | number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### markAccepted
+
+`estimates.markAccepted`
+
+Mark an estimate as accepted by the customer
+
+**Risk:** `write`
+
+```ts
+await corsair.zohoinvoice.api.estimates.markAccepted({ estimateId: '460000000030001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `estimateId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### markDeclined
+
+`estimates.markDeclined`
+
+Mark an estimate as declined by the customer
+
+**Risk:** `write`
+
+```ts
+await corsair.zohoinvoice.api.estimates.markDeclined({ estimateId: '460000000030001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `estimateId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### markSent
+
+`estimates.markSent`
+
+Mark a draft estimate as sent without emailing it
+
+**Risk:** `write`
+
+```ts
+await corsair.zohoinvoice.api.estimates.markSent({ estimateId: '460000000030001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `estimateId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### update
+
+`estimates.update`
+
+Update a Zoho Invoice estimate
+
+**Risk:** `write`
+
+```ts
+await corsair.zohoinvoice.api.estimates.update({ estimateId: '460000000030001', body: { reference_number: 'Q-7' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `estimateId` | `string \| number` | Yes | — |
+| `body` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `estimate` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="estimate full type">
+
+```ts
+{
+  estimate_id: string | number,
+  estimate_number?: string,
+  customer_id?: string | number,
+  customer_name?: string,
+  status?: string,
+  date?: string,
+  expiry_date?: string,
+  total?: string | number,
+  line_items?: {
+    item_id?: string | number,
+    name?: string,
+    description?: string,
+    rate?: number,
+    quantity?: number,
+    unit?: string,
+    tax_id?: string | number,
+    discount?: string | number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Invoices
+
+### create
+
+`invoices.create`
+
+Create a Zoho Invoice invoice
+
+**Risk:** `write`
+
+```ts
+await corsair.zohoinvoice.api.invoices.create({ body: { customer_id: '460000000026049', date: '2026-11-18', line_items: [{ item_id: '460000000027009', quantity: 2 }] } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `body` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="invoice full type">
+
+```ts
+{
+  invoice_id: string | number,
+  invoice_number?: string,
+  customer_id?: string | number,
+  customer_name?: string,
+  status?: string,
+  date?: string,
+  due_date?: string,
+  total?: string | number,
+  balance?: string | number,
+  line_items?: {
+    item_id?: string | number,
+    name?: string,
+    description?: string,
+    rate?: number,
+    quantity?: number,
+    unit?: string,
+    tax_id?: string | number,
+    discount?: string | number
+  }[],
+  billing_address?: {
+    attention?: string,
+    address?: string,
+    street2?: string,
+    city?: string,
+    state?: string,
+    zip?: string | number,
+    country?: string,
+    fax?: string | number,
+    phone?: string
+  },
+  shipping_address?: {
+    attention?: string,
+    address?: string,
+    street2?: string,
+    city?: string,
+    state?: string,
+    zip?: string | number,
+    country?: string,
+    fax?: string | number,
+    phone?: string
+  },
+  custom_fields?: {
+    customfield_id?: string | number,
+    label?: string,
+    value?: any
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`invoices.delete`
+
+Delete a Zoho Invoice invoice. Cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.zohoinvoice.api.invoices.delete({ invoiceId: '460000000028192' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `invoiceId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### email
+
+`invoices.email`
+
+Email an invoice to the customer
+
+**Risk:** `destructive`
+
+```ts
+await corsair.zohoinvoice.api.invoices.email({ invoiceId: '460000000028192' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `invoiceId` | `string \| number` | Yes | — |
+| `body` | `Record<string, any>` | No | Optional: to_mail_ids, cc_mail_ids, subject, body. Without it Zoho emails the customer contacts with the default template. |
+
+`POST /invoices/{invoice_id}/email`. Without `body`, Zoho emails the customer's contact persons with the default template.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`invoices.get`
+
+Get a Zoho Invoice invoice
+
+**Risk:** `read`
+
+```ts
+await corsair.zohoinvoice.api.invoices.get({ invoiceId: '460000000028192' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `invoiceId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="invoice full type">
+
+```ts
+{
+  invoice_id: string | number,
+  invoice_number?: string,
+  customer_id?: string | number,
+  customer_name?: string,
+  status?: string,
+  date?: string,
+  due_date?: string,
+  total?: string | number,
+  balance?: string | number,
+  line_items?: {
+    item_id?: string | number,
+    name?: string,
+    description?: string,
+    rate?: number,
+    quantity?: number,
+    unit?: string,
+    tax_id?: string | number,
+    discount?: string | number
+  }[],
+  billing_address?: {
+    attention?: string,
+    address?: string,
+    street2?: string,
+    city?: string,
+    state?: string,
+    zip?: string | number,
+    country?: string,
+    fax?: string | number,
+    phone?: string
+  },
+  shipping_address?: {
+    attention?: string,
+    address?: string,
+    street2?: string,
+    city?: string,
+    state?: string,
+    zip?: string | number,
+    country?: string,
+    fax?: string | number,
+    phone?: string
+  },
+  custom_fields?: {
+    customfield_id?: string | number,
+    label?: string,
+    value?: any
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`invoices.list`
+
+List Zoho Invoice invoices
+
+**Risk:** `read`
+
+```ts
+await corsair.zohoinvoice.api.invoices.list({ query: { status: 'overdue' }, perPage: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoices` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="invoices full type">
+
+```ts
+{
+  invoice_id: string | number,
+  invoice_number?: string,
+  customer_id?: string | number,
+  customer_name?: string,
+  status?: string,
+  date?: string,
+  due_date?: string,
+  total?: string | number,
+  balance?: string | number,
+  line_items?: {
+    item_id?: string | number,
+    name?: string,
+    description?: string,
+    rate?: number,
+    quantity?: number,
+    unit?: string,
+    tax_id?: string | number,
+    discount?: string | number
+  }[],
+  billing_address?: {
+    attention?: string,
+    address?: string,
+    street2?: string,
+    city?: string,
+    state?: string,
+    zip?: string | number,
+    country?: string,
+    fax?: string | number,
+    phone?: string
+  },
+  shipping_address?: {
+    attention?: string,
+    address?: string,
+    street2?: string,
+    city?: string,
+    state?: string,
+    zip?: string | number,
+    country?: string,
+    fax?: string | number,
+    phone?: string
+  },
+  custom_fields?: {
+    customfield_id?: string | number,
+    label?: string,
+    value?: any
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listPayments
+
+`invoices.listPayments`
+
+List the payments recorded against an invoice
+
+**Risk:** `read`
+
+```ts
+await corsair.zohoinvoice.api.invoices.listPayments({ invoiceId: '460000000028192' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `invoiceId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `payments` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payments full type">
+
+```ts
+{
+  payment_id: string | number,
+  payment_mode?: string,
+  amount?: string | number,
+  date?: string,
+  status?: string,
+  customer_id?: string | number,
+  customer_name?: string,
+  reference_number?: string,
+  invoices?: Record<string, any>[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### markSent
+
+`invoices.markSent`
+
+Mark a draft invoice as sent without emailing it
+
+**Risk:** `write`
+
+```ts
+await corsair.zohoinvoice.api.invoices.markSent({ invoiceId: '460000000028192' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `invoiceId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### remind
+
+`invoices.remind`
+
+Email the customer a payment reminder for an invoice
+
+**Risk:** `destructive`
+
+```ts
+await corsair.zohoinvoice.api.invoices.remind({ invoiceId: '460000000028192' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `invoiceId` | `string \| number` | Yes | — |
+| `body` | `Record<string, any>` | No | Optional: to_mail_ids, cc_mail_ids, subject, body. Without it Zoho emails the customer contacts with the default template. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### update
+
+`invoices.update`
+
+Update a Zoho Invoice invoice
+
+**Risk:** `write`
+
+```ts
+await corsair.zohoinvoice.api.invoices.update({ invoiceId: '460000000028192', body: { reference_number: 'PO-1042' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `invoiceId` | `string \| number` | Yes | — |
+| `body` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="invoice full type">
+
+```ts
+{
+  invoice_id: string | number,
+  invoice_number?: string,
+  customer_id?: string | number,
+  customer_name?: string,
+  status?: string,
+  date?: string,
+  due_date?: string,
+  total?: string | number,
+  balance?: string | number,
+  line_items?: {
+    item_id?: string | number,
+    name?: string,
+    description?: string,
+    rate?: number,
+    quantity?: number,
+    unit?: string,
+    tax_id?: string | number,
+    discount?: string | number
+  }[],
+  billing_address?: {
+    attention?: string,
+    address?: string,
+    street2?: string,
+    city?: string,
+    state?: string,
+    zip?: string | number,
+    country?: string,
+    fax?: string | number,
+    phone?: string
+  },
+  shipping_address?: {
+    attention?: string,
+    address?: string,
+    street2?: string,
+    city?: string,
+    state?: string,
+    zip?: string | number,
+    country?: string,
+    fax?: string | number,
+    phone?: string
+  },
+  custom_fields?: {
+    customfield_id?: string | number,
+    label?: string,
+    value?: any
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### void
+
+`invoices.void`
+
+Void an invoice; it stops counting toward the balance
+
+**Risk:** `destructive`
+
+```ts
+await corsair.zohoinvoice.api.invoices.void({ invoiceId: '460000000028192' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `invoiceId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+## Items
+
+### create
+
+`items.create`
+
+Create a Zoho Invoice item
+
+**Risk:** `write`
+
+```ts
+await corsair.zohoinvoice.api.items.create({ body: { name: 'Consulting hour', rate: 120 } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `body` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  item_id: string | number,
+  name: string,
+  status?: string,
+  description?: string,
+  rate?: string | number,
+  unit?: string,
+  sku?: string,
+  product_type?: string,
+  tax_id?: string | number,
+  custom_fields?: {
+    customfield_id?: string | number,
+    label?: string,
+    value?: any
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`items.delete`
+
+Delete an item. Cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.zohoinvoice.api.items.delete({ itemId: '460000000027009' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `itemId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`items.get`
+
+Get a Zoho Invoice item
+
+**Risk:** `read`
+
+```ts
+await corsair.zohoinvoice.api.items.get({ itemId: '460000000027009' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `itemId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  item_id: string | number,
+  name: string,
+  status?: string,
+  description?: string,
+  rate?: string | number,
+  unit?: string,
+  sku?: string,
+  product_type?: string,
+  tax_id?: string | number,
+  custom_fields?: {
+    customfield_id?: string | number,
+    label?: string,
+    value?: any
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`items.list`
+
+List Zoho Invoice items
+
+**Risk:** `read`
+
+```ts
+await corsair.zohoinvoice.api.items.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+
+Items use Zoho's `ZohoInvoice.settings` scopes, not `ZohoInvoice.items`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  item_id: string | number,
+  name: string,
+  status?: string,
+  description?: string,
+  rate?: string | number,
+  unit?: string,
+  sku?: string,
+  product_type?: string,
+  tax_id?: string | number,
+  custom_fields?: {
+    customfield_id?: string | number,
+    label?: string,
+    value?: any
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`items.update`
+
+Update a Zoho Invoice item
+
+**Risk:** `write`
+
+```ts
+await corsair.zohoinvoice.api.items.update({ itemId: '460000000027009', body: { rate: 140 } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `itemId` | `string \| number` | Yes | — |
+| `body` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  item_id: string | number,
+  name: string,
+  status?: string,
+  description?: string,
+  rate?: string | number,
+  unit?: string,
+  sku?: string,
+  product_type?: string,
+  tax_id?: string | number,
+  custom_fields?: {
+    customfield_id?: string | number,
+    label?: string,
+    value?: any
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Organizations
+
+### list
+
+`organizations.list`
+
+List the Zoho Invoice organizations the account can use, with their ids
+
+**Risk:** `read`
+
+```ts
+await corsair.zohoinvoice.api.organizations.list({});
+```
+
+**Input:** _empty object_
+
+`GET /organizations`, without the organization header.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="organizations full type">
+
+```ts
+{
+  organization_id: string | number,
+  name?: string,
+  is_default_org?: boolean,
+  currency_code?: string,
+  country?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Payments
+
+### create
+
+`payments.create`
+
+Record a customer payment, optionally applied to invoices
+
+**Risk:** `write`
+
+```ts
+await corsair.zohoinvoice.api.payments.create({ body: { customer_id: '460000000026049', payment_mode: 'banktransfer', amount: 240, date: '2026-11-18', invoices: [{ invoice_id: '460000000028192', amount_applied: 240 }] } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `body` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `payment` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payment full type">
+
+```ts
+{
+  payment_id: string | number,
+  payment_mode?: string,
+  amount?: string | number,
+  date?: string,
+  status?: string,
+  customer_id?: string | number,
+  customer_name?: string,
+  reference_number?: string,
+  invoices?: Record<string, any>[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`payments.delete`
+
+Delete a recorded customer payment. Cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.zohoinvoice.api.payments.delete({ paymentId: '460000000029001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `paymentId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`payments.get`
+
+Get a Zoho Invoice customer payment
+
+**Risk:** `read`
+
+```ts
+await corsair.zohoinvoice.api.payments.get({ paymentId: '460000000029001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `paymentId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `payment` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payment full type">
+
+```ts
+{
+  payment_id: string | number,
+  payment_mode?: string,
+  amount?: string | number,
+  date?: string,
+  status?: string,
+  customer_id?: string | number,
+  customer_name?: string,
+  reference_number?: string,
+  invoices?: Record<string, any>[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`payments.list`
+
+List Zoho Invoice customer payments
+
+**Risk:** `read`
+
+```ts
+await corsair.zohoinvoice.api.payments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | Zoho Invoice organization id. Leave out to use the one saved at connection, or the only organization the account has. organizations.list lists them. |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerpayments` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="customerpayments full type">
+
+```ts
+{
+  payment_id: string | number,
+  payment_mode?: string,
+  amount?: string | number,
+  date?: string,
+  status?: string,
+  customer_id?: string | number,
+  customer_name?: string,
+  reference_number?: string,
+  invoices?: Record<string, any>[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

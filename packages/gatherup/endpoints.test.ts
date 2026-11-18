@@ -16,6 +16,9 @@ import {
 	invalidClientOn200,
 	invalidField,
 	lastBusinessPage,
+	liveBusiness,
+	liveCustomer,
+	liveCustomers,
 	notFound,
 	success,
 	unauthorized,
@@ -371,6 +374,30 @@ describe('businesses.delete', () => {
 			path: '/api/v2/business/delete',
 			body: { businessId: 34291, clientId: CLIENT_ID },
 		});
+	});
+});
+
+describe('live answers with numeric counters', () => {
+	it('reads a business whose customersNotSent is a number', async () => {
+		respond(liveBusiness);
+		await expect(
+			invoke(Businesses.get, { businessId: 34291 }),
+		).resolves.toMatchObject({ customersNotSent: 0 });
+	});
+
+	it('reads a customer whose unsubscribed is a number', async () => {
+		respond(liveCustomer);
+		await expect(
+			invoke(Customers.get, { businessId: 34291, customerId: 80717046 }),
+		).resolves.toMatchObject({ unsubscribed: 0 });
+	});
+
+	it('lists customers whose parentId is a number', async () => {
+		respond(liveCustomers);
+		const result = (await invoke(Customers.list, {
+			businessId: 177974,
+		})) as typeof liveCustomers;
+		expect(result.data[0]?.parentId).toBe(0);
 	});
 });
 

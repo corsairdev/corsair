@@ -1,5 +1,7 @@
 import { reencryptSealedAccountData } from '../../db/data-at-rest';
 import type { CorsairDatabase } from '../../db/kysely/database';
+import type { AccountConfig } from '../account-lookup';
+import { answersTo, findAccountRow, resolveAccount } from '../account-lookup';
 import type { AuthTypes } from '../constants';
 import {
 	decryptConfig,
@@ -9,6 +11,7 @@ import {
 	generateDEK,
 	reEncryptConfig,
 } from './encryption';
+import { singleFlight } from './single-flight';
 import type {
 	AccountKeyContext,
 	AccountKeyManagerFor,
@@ -275,6 +278,8 @@ export type AccountKeyManagerOptions<T extends AuthTypes> = {
 	/** Extra account-level fields from plugin authConfig */
 	extraAccountFields?: readonly string[];
 	ensureProvisioned?: () => Promise<void>;
+	/** Scope to one named account. Absent = the default (oldest) account. */
+	account?: { ref?: string };
 };
 
 /**
@@ -294,6 +299,7 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		database,
 		extraAccountFields = [],
 		ensureProvisioned,
+		account: scope,
 	} = options;
 
 	// Merge base + extra fields
@@ -312,6 +318,9 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		config: Record<string, unknown>;
 		dek: string | null;
 	} | null = null;
+
+	// Once a ref resolves its row id is pinned; the row is still re-read each call.
+	let pinnedAccountId: string | undefined;
 
 	const getIntegration = async () => {
 		if (cachedIntegration) return cachedIntegration;
@@ -347,6 +356,67 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		}
 	};
 
+	type AccountRow = Awaited<ReturnType<AccountKeyContext['getAccount']>>;
+	let accountRead: Promise<AccountRow> | undefined;
+	const readAccount = async (): Promise<AccountRow> => {
+		let provisionAttempted = false;
+
+		while (true) {
+			const integration = await getIntegration();
+
+			const where = { tenantId, integrationId: integration.id };
+			let account:
+				| { id: string; config: AccountConfig; dek?: string | null }
+				| undefined;
+			if (!scope) {
+				account = await findAccountRow(database.db, where);
+			} else {
+				if (pinnedAccountId) {
+					account = await database.db
+						.selectFrom('corsair_accounts')
+						.selectAll()
+						.where('id', '=', pinnedAccountId)
+						.where('tenant_id', '=', tenantId)
+						.executeTakeFirst();
+					if (
+						!account ||
+						(scope.ref && !(await answersTo(account, scope.ref, kek)))
+					) {
+						account = undefined;
+						pinnedAccountId = undefined;
+					}
+				}
+				if (!account) {
+					account = await resolveAccount({
+						db: database.db,
+						kek,
+						...where,
+						ref: scope.ref,
+					});
+					if (account && scope.ref) pinnedAccountId = account.id;
+				}
+			}
+
+			if (!account) {
+				if (!provisionAttempted && ensureProvisioned) {
+					provisionAttempted = true;
+					await ensureProvisioned();
+					continue;
+				}
+
+				throw new Error(
+					`Account not found for tenant "${tenantId}" and integration "${integrationName}". Make sure to create the account first.`,
+				);
+			}
+
+			return {
+				id: account.id,
+				config: parseConfig(account.config),
+				dek: account.dek ?? null,
+			};
+		}
+	};
+
 	const ctx: AccountKeyContext = {
 		kek,
 		integrationName,
@@ -354,37 +424,15 @@ export function createAccountKeyManager<T extends AuthTypes>(
 
 		getIntegration,
 
-		getAccount: async () => {
-			let provisionAttempted = false;
-
-			while (true) {
-				const integration = await getIntegration();
-
-				const account = await database.db
-					.selectFrom('corsair_accounts')
-					.selectAll()
-					.where('tenant_id', '=', tenantId)
-					.where('integration_id', '=', integration.id)
-					.executeTakeFirst();
-
-				if (!account) {
-					if (!provisionAttempted && ensureProvisioned) {
-						provisionAttempted = true;
-						await ensureProvisioned();
-						continue;
-					}
-
-					throw new Error(
-						`Account not found for tenant "${tenantId}" and integration "${integrationName}". Make sure to create the account first.`,
-					);
-				}
-
-				return {
-					id: account.id,
-					config: parseConfig(account.config),
-					dek: account.dek ?? null,
-				};
-			}
+		getAccount: () => {
+			// Concurrent callers share the read in flight; a settled read is never
+			// reused, so a rotated DEK or token is seen by the next call.
+			if (accountRead) return accountRead;
+			const read = readAccount().finally(() => {
+				if (accountRead === read) accountRead = undefined;
+			});
+			accountRead = read;
+			return read;
 		},
 
 		updateAccount: async (data) => {
@@ -398,6 +446,8 @@ export function createAccountKeyManager<T extends AuthTypes>(
 				})
 				.where('id', '=', account.id)
 				.execute();
+			// A read already in flight started before this write.
+			accountRead = undefined;
 		},
 	};
 
@@ -407,8 +457,7 @@ export function createAccountKeyManager<T extends AuthTypes>(
 	let cachedDekSource: string | null = null;
 	let cachedIntegrationDek: string | null = null;
 
-	const getDecryptedDek = async (): Promise<string> => {
-		const account = await ctx.getAccount();
+	const dekOf = async (account: AccountRow): Promise<string> => {
 		if (!account.dek) {
 			throw new Error(
 				`No DEK found for account (tenant: "${tenantId}", integration: "${integrationName}"). Initialize the account first.`,
@@ -421,6 +470,9 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		cachedDekSource = account.dek;
 		return cachedDek;
 	};
+
+	const getDecryptedDek = async (): Promise<string> =>
+		dekOf(await ctx.getAccount());
 
 	const getDecryptedIntegrationDek = async (): Promise<string> => {
 		if (cachedIntegrationDek) return cachedIntegrationDek;
@@ -438,7 +490,7 @@ export function createAccountKeyManager<T extends AuthTypes>(
 
 	const getDecryptedConfig = async (): Promise<Record<string, string>> => {
 		const account = await ctx.getAccount();
-		const dek = await getDecryptedDek();
+		const dek = await dekOf(account);
 		const config = account.config as Record<string, string>;
 
 		if (!config || Object.keys(config).length === 0) {
@@ -481,8 +533,9 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		// same snapshot. Reading them via two separate getAccount() calls lets a DEK
 		// rotation land between them, so we'd re-encrypt with a DEK that no longer
 		// matches the row — the next read then fails to decrypt and the catch below
-		// discards the config. One read keeps DEK and config consistent.
-		const account = await ctx.getAccount();
+		// discards the config. One read keeps DEK and config consistent. A write
+		// reads fresh, never a shared read that may predate another writer's commit.
+		const account = await readAccount();
 		if (!account.dek) {
 			throw new Error(
 				`No DEK found for account (tenant: "${tenantId}", integration: "${integrationName}"). Initialize the account first.`,
@@ -522,7 +575,7 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		get_dek: getDecryptedDek,
 
 		issue_new_dek: async () => {
-			const account = await ctx.getAccount();
+			const account = await readAccount();
 			const newDek = generateDEK();
 
 			// If there's an existing DEK, re-encrypt config and sealed rows; otherwise start fresh
@@ -557,6 +610,7 @@ export function createAccountKeyManager<T extends AuthTypes>(
 						.where('id', '=', account.id)
 						.execute();
 				});
+				accountRead = undefined;
 			} else {
 				await ctx.updateAccount({
 					config: newConfig,
@@ -568,6 +622,9 @@ export function createAccountKeyManager<T extends AuthTypes>(
 			cachedDekSource = encryptedNewDek;
 			return newDek;
 		},
+
+		single_flight: async <R>(name: string, run: () => Promise<R>) =>
+			singleFlight(database, `${name}:${(await ctx.getAccount()).id}`, run),
 
 		// Auto-generated field accessors
 		...createFieldAccessors(getDecryptedConfig, updateConfig, allFields),
@@ -651,12 +708,10 @@ export async function initializeAccountDEK(
 		throw new Error(`Integration "${integrationName}" not found.`);
 	}
 
-	const account = await database.db
-		.selectFrom('corsair_accounts')
-		.selectAll()
-		.where('tenant_id', '=', tenantId)
-		.where('integration_id', '=', integration.id)
-		.executeTakeFirst();
+	const account = await findAccountRow(database.db, {
+		tenantId,
+		integrationId: integration.id,
+	});
 
 	if (!account) {
 		throw new Error(

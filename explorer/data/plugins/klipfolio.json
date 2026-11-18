@@ -1,0 +1,5148 @@
+{
+  "id": "klipfolio",
+  "displayName": "Klipfolio",
+  "description": "Business intelligence platform API for managing clients, dashboards, Klips, data sources, users, groups, and roles.",
+  "npmPackageName": "@corsair-dev/klipfolio",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 125,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "klipfolio.api.clients.createClient",
+      "shortPath": "clients.createClient",
+      "description": "Create Client on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "setup | trial | active | disabled"
+          },
+          {
+            "key": "seats",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "custom_theme",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.clients.createClientSettings",
+      "shortPath": "clients.createClientSettings",
+      "description": "Set Client Settings on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dpn.env.date.language.tag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.clients.deleteClient",
+      "shortPath": "clients.deleteClient",
+      "description": "Delete Client on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.clients.deleteClientProperties",
+      "shortPath": "clients.deleteClientProperties",
+      "description": "Delete Client Property on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.clients.deleteClientShareRight",
+      "shortPath": "clients.deleteClientShareRight",
+      "description": "Revoke Group Access to Client on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.clients.enableDirectBillingClient",
+      "shortPath": "clients.enableDirectBillingClient",
+      "description": "Switch a client to direct billing on Klipfolio (cannot be undone)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.clients.extendTrialClient",
+      "shortPath": "clients.extendTrialClient",
+      "description": "Extend Trial on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "days",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.clients.listClients",
+      "shortPath": "clients.listClients",
+      "description": "List Clients on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "setup | trial | active | disabled"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ clients: {}[] }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.clients.retrieveClient",
+      "shortPath": "clients.retrieveClient",
+      "description": "Get Client on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "full",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.clients.retrieveClientFeatures",
+      "shortPath": "clients.retrieveClientFeatures",
+      "description": "Get Client Features on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.clients.retrieveClientProperties",
+      "shortPath": "clients.retrieveClientProperties",
+      "description": "Get Client Properties on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.clients.retrieveClientResources",
+      "shortPath": "clients.retrieveClientResources",
+      "description": "Get Client Resources on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "full",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.clients.retrieveClientSettings",
+      "shortPath": "clients.retrieveClientSettings",
+      "description": "Get Client Settings on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.clients.retrieveClientShareRights",
+      "shortPath": "clients.retrieveClientShareRights",
+      "description": "Get Client Share Rights on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.clients.setClientShareRights",
+      "shortPath": "clients.setClientShareRights",
+      "description": "Update Client Share Rights on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.clients.updateClient",
+      "shortPath": "clients.updateClient",
+      "description": "Update Client on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "setup | trial | active | disabled"
+          },
+          {
+            "key": "seats",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "custom_theme",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.clients.updateClientFeatures",
+      "shortPath": "clients.updateClientFeatures",
+      "description": "Update Client Features on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "features",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.clients.updateClientProperties",
+      "shortPath": "clients.updateClientProperties",
+      "description": "Update Client Properties on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.clients.updateClientResources",
+      "shortPath": "clients.updateClientResources",
+      "description": "Update Client Resources on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resources",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.datasources.createDatasource",
+      "shortPath": "datasources.createDatasource",
+      "description": "Create Data Source on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connector",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "refresh_interval",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.datasources.createDatasourceInstances",
+      "shortPath": "datasources.createDatasourceInstances",
+      "description": "Create Data Source Instance on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "datasource_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "no_refresh",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.datasources.deleteDatasource",
+      "shortPath": "datasources.deleteDatasource",
+      "description": "Delete Data Source on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.datasources.deleteDatasourceInstances",
+      "shortPath": "datasources.deleteDatasourceInstances",
+      "description": "Delete Data Source Instance on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.datasources.deleteDatasourceInstancesProperties",
+      "shortPath": "datasources.deleteDatasourceInstancesProperties",
+      "description": "Delete Data Source Instance Property on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.datasources.deleteDatasourceProperties",
+      "shortPath": "datasources.deleteDatasourceProperties",
+      "description": "Delete a Data Source Property on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.datasources.deleteDatasourceShareRight",
+      "shortPath": "datasources.deleteDatasourceShareRight",
+      "description": "Delete Data Source Share Right on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.datasources.deleteInstancesDatasource",
+      "shortPath": "datasources.deleteInstancesDatasource",
+      "description": "Delete Instances on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "last_access",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "keep_latest_instance",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.datasources.disableDatasource",
+      "shortPath": "datasources.disableDatasource",
+      "description": "Disable a Data Source on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.datasources.enableDatasource",
+      "shortPath": "datasources.enableDatasource",
+      "description": "Enable a Data Source on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.datasources.importDatasource",
+      "shortPath": "datasources.importDatasource",
+      "description": "Import a Data Source on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.datasources.listDatasourceInstances",
+      "shortPath": "datasources.listDatasourceInstances",
+      "description": "List Data Source Instances on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "datasource_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ instances: {}[] }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.datasources.listDatasources",
+      "shortPath": "datasources.listDatasources",
+      "description": "List Data Sources on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ datasources: {}[] }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.datasources.refreshDatasource",
+      "shortPath": "datasources.refreshDatasource",
+      "description": "Refresh Multiple Data Sources on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "datasources",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.datasources.refreshDatasourceInstances",
+      "shortPath": "datasources.refreshDatasourceInstances",
+      "description": "Refresh a Data Source Instance on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.datasources.retrieveDatasource",
+      "shortPath": "datasources.retrieveDatasource",
+      "description": "Get Data Source on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.datasources.retrieveDatasourceInstances",
+      "shortPath": "datasources.retrieveDatasourceInstances",
+      "description": "Get Data Source Instance on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.datasources.retrieveDatasourceInstancesData",
+      "shortPath": "datasources.retrieveDatasourceInstancesData",
+      "description": "Get Data Source Instance Data on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "klipfolio.api.datasources.retrieveDatasourceInstancesProperties",
+      "shortPath": "datasources.retrieveDatasourceInstancesProperties",
+      "description": "Get Data Source Instance Properties on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.datasources.retrieveDatasourceProperties",
+      "shortPath": "datasources.retrieveDatasourceProperties",
+      "description": "Get Data Source Properties on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.datasources.retrieveDatasourceShareRights",
+      "shortPath": "datasources.retrieveDatasourceShareRights",
+      "description": "Get Data Source Share Rights on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.datasources.setDatasourceShareRights",
+      "shortPath": "datasources.setDatasourceShareRights",
+      "description": "Update Data Source Share Rights on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "groups",
+            "optional": false,
+            "type": "any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.datasources.updateDatasource",
+      "shortPath": "datasources.updateDatasource",
+      "description": "Update Data Source on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "refresh_interval",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.datasources.updateDatasourceInstancesData",
+      "shortPath": "datasources.updateDatasourceInstancesData",
+      "description": "Replace a data source instance's data on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rawContent",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.datasources.updateDatasourceInstancesProperties",
+      "shortPath": "datasources.updateDatasourceInstancesProperties",
+      "description": "Create or Update Data Source Instance Properties on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.datasources.updateDatasourceProperties",
+      "shortPath": "datasources.updateDatasourceProperties",
+      "description": "Create or Update Data Source Properties on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.groups.addGroupDefaultTabs",
+      "shortPath": "groups.addGroupDefaultTabs",
+      "description": "Add Dashboard to Group on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tab_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "can_edit",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "library | dashboard | permanent"
+          },
+          {
+            "key": "index",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.groups.createGroup",
+      "shortPath": "groups.createGroup",
+      "description": "Create Group on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.groups.deleteGroup",
+      "shortPath": "groups.deleteGroup",
+      "description": "Delete Group on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.groups.deleteGroupDefaultTab",
+      "shortPath": "groups.deleteGroupDefaultTab",
+      "description": "Delete Group Default Tab on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id2",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.groups.deleteGroupUser",
+      "shortPath": "groups.deleteGroupUser",
+      "description": "Delete User from Group on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id2",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.groups.listGroups",
+      "shortPath": "groups.listGroups",
+      "description": "List Groups on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ groups: {}[] }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.groups.retrieveGroup",
+      "shortPath": "groups.retrieveGroup",
+      "description": "Get Group on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "full",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.groups.retrieveGroupDefaultTab",
+      "shortPath": "groups.retrieveGroupDefaultTab",
+      "description": "Get Group Default Tab on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id2",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.groups.retrieveGroupDefaultTabs",
+      "shortPath": "groups.retrieveGroupDefaultTabs",
+      "description": "List Group Default Tabs on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ tabs: {}[] }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.groups.retrieveGroupUsers",
+      "shortPath": "groups.retrieveGroupUsers",
+      "description": "List Users in Group on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ users: {}[] }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.groups.updateGroup",
+      "shortPath": "groups.updateGroup",
+      "description": "Update Group on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.groups.updateGroupDefaultTab",
+      "shortPath": "groups.updateGroupDefaultTab",
+      "description": "Update Group Default Tab on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id2",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "can_edit",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "library | dashboard | permanent"
+          },
+          {
+            "key": "index",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.groups.updateGroupUser",
+      "shortPath": "groups.updateGroupUser",
+      "description": "Add User to Group on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "userid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.klips.createKlip",
+      "shortPath": "klips.createKlip",
+      "description": "Create Klip on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "schema",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.klips.createKlipAnnotations",
+      "shortPath": "klips.createKlipAnnotations",
+      "description": "Create annotation on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.klips.deleteKlip",
+      "shortPath": "klips.deleteKlip",
+      "description": "Delete Klip on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.klips.deleteKlipAnnotation",
+      "shortPath": "klips.deleteKlipAnnotation",
+      "description": "Delete annotation on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "annotationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.klips.deleteKlipShareRights",
+      "shortPath": "klips.deleteKlipShareRights",
+      "description": "Delete Klip share rights on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.klips.importKlip",
+      "shortPath": "klips.importKlip",
+      "description": "Import Klip to client account on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.klips.listKlips",
+      "shortPath": "klips.listKlips",
+      "description": "List Klips on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "datasource_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ klips: {}[] }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.klips.retrieveKlip",
+      "shortPath": "klips.retrieveKlip",
+      "description": "Get Klip on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "full",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.klips.retrieveKlipAnnotation",
+      "shortPath": "klips.retrieveKlipAnnotation",
+      "description": "Get one annotation on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "annotationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.klips.retrieveKlipAnnotations",
+      "shortPath": "klips.retrieveKlipAnnotations",
+      "description": "List annotations on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.klips.retrieveKlipClientInstances",
+      "shortPath": "klips.retrieveKlipClientInstances",
+      "description": "Get Klip Client Instances on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.klips.retrieveKlipSchema",
+      "shortPath": "klips.retrieveKlipSchema",
+      "description": "Get Klip schema on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.klips.retrieveKlipShareRights",
+      "shortPath": "klips.retrieveKlipShareRights",
+      "description": "Get Klip share rights on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.klips.setKlipShareRights",
+      "shortPath": "klips.setKlipShareRights",
+      "description": "Update Klip share rights on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "groups",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.klips.updateFromParentKlip",
+      "shortPath": "klips.updateFromParentKlip",
+      "description": "Update client instance from parent (update_from_parent) on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.klips.updateKlip",
+      "shortPath": "klips.updateKlip",
+      "description": "Update Klip on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "klip_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.klips.updateKlipAnnotation",
+      "shortPath": "klips.updateKlipAnnotation",
+      "description": "Update annotation on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "annotationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.klips.updateKlipSchema",
+      "shortPath": "klips.updateKlipSchema",
+      "description": "Update Klip schema on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "wire_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "{ datasources: string[] }"
+          },
+          {
+            "key": "components",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.misc.createDashboardPublishedLinks",
+      "shortPath": "misc.createDashboardPublishedLinks",
+      "description": "Create published link on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dashboardId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isPublic",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "theme",
+            "optional": true,
+            "type": "light | dark"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "social",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "wantsAdvertising",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "useIpRanges",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.misc.deleteDashboardPublishedLinks",
+      "shortPath": "misc.deleteDashboardPublishedLinks",
+      "description": "Delete published link on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "publishedLinkId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.misc.listDashboardPublishedLinks",
+      "shortPath": "misc.listDashboardPublishedLinks",
+      "description": "Get published link(s) on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "dashboard_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ published_links: {}[] }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.misc.retrieveProfile",
+      "shortPath": "misc.retrieveProfile",
+      "description": "Get profile on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "full",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.misc.updateDashboardPublishedLinks",
+      "shortPath": "misc.updateDashboardPublishedLinks",
+      "description": "Update published link on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "publishedLinkId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isPublic",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "theme",
+            "optional": true,
+            "type": "light | dark"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "social",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "wantsAdvertising",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "useIpRanges",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.roles.createRole",
+      "shortPath": "roles.createRole",
+      "description": "Create role on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "permissions",
+            "optional": false,
+            "type": "any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.roles.deleteRole",
+      "shortPath": "roles.deleteRole",
+      "description": "Delete role on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.roles.deleteRolePermissions",
+      "shortPath": "roles.deleteRolePermissions",
+      "description": "Remove role permission on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.roles.deleteRoleUser",
+      "shortPath": "roles.deleteRoleUser",
+      "description": "Delete user from role on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "userid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.roles.listRoles",
+      "shortPath": "roles.listRoles",
+      "description": "List roles on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ roles: {}[] }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.roles.retrieveRole",
+      "shortPath": "roles.retrieveRole",
+      "description": "Get role on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "full",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.roles.retrieveRolePermissions",
+      "shortPath": "roles.retrieveRolePermissions",
+      "description": "Get role permissions on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.roles.retrieveRoleUsers",
+      "shortPath": "roles.retrieveRoleUsers",
+      "description": "List users for role on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.roles.updateRole",
+      "shortPath": "roles.updateRole",
+      "description": "Update role on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "permissions",
+            "optional": false,
+            "type": "any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.roles.updateRolePermissions",
+      "shortPath": "roles.updateRolePermissions",
+      "description": "Update role permissions on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "permissions",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.roles.updateRoleUser",
+      "shortPath": "roles.updateRoleUser",
+      "description": "Add user to role on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.tabs.createTab",
+      "shortPath": "tabs.createTab",
+      "description": "Create tab on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.tabs.deleteTab",
+      "shortPath": "tabs.deleteTab",
+      "description": "Delete tab on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.tabs.deleteTabKlipInstance",
+      "shortPath": "tabs.deleteTabKlipInstance",
+      "description": "Delete Klip from tab on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "klipInstanceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.tabs.deleteTabShareRight",
+      "shortPath": "tabs.deleteTabShareRight",
+      "description": "Revoke group access to tab on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.tabs.importTab",
+      "shortPath": "tabs.importTab",
+      "description": "Import tab to client account on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tab_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.tabs.listTabs",
+      "shortPath": "tabs.listTabs",
+      "description": "List tabs on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ tabs: {}[] }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.tabs.retrieveTab",
+      "shortPath": "tabs.retrieveTab",
+      "description": "Get tab on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "full",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.tabs.retrieveTabKlipInstances",
+      "shortPath": "tabs.retrieveTabKlipInstances",
+      "description": "List Klip instances on tab on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ klip_instances: {}[] }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.tabs.retrieveTabLayout",
+      "shortPath": "tabs.retrieveTabLayout",
+      "description": "Get tab layout on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.tabs.retrieveTabShareRights",
+      "shortPath": "tabs.retrieveTabShareRights",
+      "description": "Get tab share rights on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.tabs.setTabShareRights",
+      "shortPath": "tabs.setTabShareRights",
+      "description": "Update tab share rights on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.tabs.updateTab",
+      "shortPath": "tabs.updateTab",
+      "description": "Update tab on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.tabs.updateTabKlipInstances",
+      "shortPath": "tabs.updateTabKlipInstances",
+      "description": "Add Klip to tab on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "klips",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.tabs.updateTabLayout",
+      "shortPath": "tabs.updateTabLayout",
+      "description": "Replace a tab layout on Klipfolio (Klips left out are removed)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.users.createUser",
+      "shortPath": "users.createUser",
+      "description": "Create User on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "send_email",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "first_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "roles",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.users.deleteUser",
+      "shortPath": "users.deleteUser",
+      "description": "Delete User on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.users.deleteUserGroup",
+      "shortPath": "users.deleteUserGroup",
+      "description": "Delete user from group on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.users.deleteUserProperties",
+      "shortPath": "users.deleteUserProperties",
+      "description": "Delete user property on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.users.deleteUserRole",
+      "shortPath": "users.deleteUserRole",
+      "description": "Delete user from role on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "roleid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.users.deleteUserTabInstance",
+      "shortPath": "users.deleteUserTabInstance",
+      "description": "Delete user tab instance on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tabInstanceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.users.listUsers",
+      "shortPath": "users.listUsers",
+      "description": "Get Users on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "full",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_roles",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_groups",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ users: {}[] }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.users.resendInviteUser",
+      "shortPath": "users.resendInviteUser",
+      "description": "Resend the invitation email to a user on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.users.resetPasswordUser",
+      "shortPath": "users.resetPasswordUser",
+      "description": "Reset a user's password on Klipfolio",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.users.retrieveUser",
+      "shortPath": "users.retrieveUser",
+      "description": "Get User by ID on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "full",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.users.retrieveUserGroups",
+      "shortPath": "users.retrieveUserGroups",
+      "description": "Get user groups on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.users.retrieveUserProperties",
+      "shortPath": "users.retrieveUserProperties",
+      "description": "Get user properties on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.users.retrieveUserRoles",
+      "shortPath": "users.retrieveUserRoles",
+      "description": "Get user roles on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.users.retrieveUserTabInstances",
+      "shortPath": "users.retrieveUserTabInstances",
+      "description": "Get user tab instances on Klipfolio",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.users.updateUser",
+      "shortPath": "users.updateUser",
+      "description": "Update User on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.users.updateUserGroup",
+      "shortPath": "users.updateUserGroup",
+      "description": "Add user to group on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "can_edit",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.users.updateUserProperties",
+      "shortPath": "users.updateUserProperties",
+      "description": "Update user properties on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.users.updateUserRole",
+      "shortPath": "users.updateUserRole",
+      "description": "Assign user to role on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "roleId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "wire_id",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klipfolio.api.users.updateUserTabInstances",
+      "shortPath": "users.updateUserTabInstances",
+      "description": "Add tabs to user on Klipfolio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tab_ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ status: number, success: boolean }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

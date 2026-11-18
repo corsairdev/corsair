@@ -955,21 +955,90 @@ export const heygenEndpointSchemas = {
 	},
 } satisfies RequiredPluginEndpointSchemas<typeof heygenEndpointsNested>;
 
+// Renders, translations, lipsyncs, clipping jobs and video agent sessions run
+// after the call that starts them returns. Status values are the output
+// schemas' (endpoints/types.ts); jobs.test.ts keeps them in step. Only the
+// video agent has a stop operation here; the deletes remove a result rather
+// than stop a render, so none is declared as a cancel.
+// GET /v3/videos/{video_id} reads any video, whichever endpoint started it.
+const VIDEO_JOB = {
+	idPath: 'data.video_id',
+	status: {
+		op: 'videos.getStatus',
+		idArg: 'video_id',
+		statusPath: 'data.status',
+		done: ['completed'],
+		failed: ['failed'],
+	},
+} as const;
+
+const TRANSLATION_JOB = {
+	idPath: 'data.video_translation_id',
+	status: {
+		op: 'videos.translateStatus',
+		idArg: 'video_translate_id',
+		statusPath: 'data.status',
+		done: ['completed'],
+		failed: ['failed'],
+	},
+} as const;
+
+const LIPSYNC_JOB = {
+	idPath: 'data.lipsync_id',
+	status: {
+		op: 'lipsync.get',
+		idArg: 'lipsync_id',
+		statusPath: 'data.status',
+		done: ['completed'],
+		failed: ['failed'],
+	},
+} as const;
+
+const RENDER_JOB = {
+	idPath: 'data.render_id',
+	status: {
+		op: 'hyperframes.get',
+		idArg: 'render_id',
+		statusPath: 'data.status',
+		done: ['completed'],
+		failed: ['failed'],
+	},
+} as const;
+
+const CLIPPING_JOB = {
+	idPath: 'data.ai_clipping_id',
+	status: {
+		op: 'aiClipping.get',
+		idArg: 'job_id',
+		statusPath: 'data.status',
+		done: ['completed'],
+		failed: ['failed', 'cancelled'],
+	},
+} as const;
+
+// videoAgents.createSession declares no job. Its session's waiting_for_input
+// means the reserved video failed in generate mode but is a pause for
+// videoAgents.sendMessage in chat mode, and a job's status values can't depend
+// on the session's mode.
+
 const heygenEndpointMeta = {
 	'videos.generate': {
 		riskLevel: 'write',
 		description:
 			'Generate a customized avatar video with voices and character configs',
+		job: VIDEO_JOB,
 	},
 	'videos.templateGenerate': {
 		riskLevel: 'write',
 		description:
 			'Generate a customized video from a pre-existing template using variable definitions',
+		job: VIDEO_JOB,
 	},
 	'videos.createWebm': {
 		riskLevel: 'write',
 		description:
 			'Create a WebM format video with transparent background featuring studio avatars',
+		job: VIDEO_JOB,
 	},
 	'videos.personalizedAddContact': {
 		riskLevel: 'write',
@@ -1541,6 +1610,7 @@ const heygenEndpointMeta = {
 		riskLevel: 'write',
 		description:
 			'Render the final translated video from a completed proofread session',
+		job: TRANSLATION_JOB,
 	},
 
 	'lipsync.list': {
@@ -1551,6 +1621,7 @@ const heygenEndpointMeta = {
 		riskLevel: 'write',
 		description:
 			'Create a lipsync job that syncs a video to a separate audio track',
+		job: LIPSYNC_JOB,
 	},
 	'lipsync.get': {
 		riskLevel: 'read',
@@ -1574,6 +1645,7 @@ const heygenEndpointMeta = {
 		riskLevel: 'write',
 		description:
 			'Create a HyperFrames cloud render from an HTML/motion-graphics project',
+		job: RENDER_JOB,
 	},
 	'hyperframes.get': {
 		riskLevel: 'read',
@@ -1603,6 +1675,7 @@ const heygenEndpointMeta = {
 		riskLevel: 'write',
 		description:
 			'Create an AI clipping job that turns a long video into short highlight clips',
+		job: CLIPPING_JOB,
 	},
 } satisfies RequiredPluginEndpointMeta<typeof heygenEndpointsNested>;
 

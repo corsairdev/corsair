@@ -594,6 +594,16 @@
             "key": "after",
             "optional": true,
             "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{ createdAt?: { eq?: string, neq?: string, lt?: string, lte?: string, gt?: string, gte?: string }, updatedAt?: { eq?: string, neq?: string, lt?: string, lte?: string, gt?: string, gte?: string }, title?: { eq?: string, neq?: string, in?: string[], nin?: string[], contains?: string, containsIgnoreCase?: string, notContains?: string, notContainsIgnoreCase?: string, startsWith?: string, endsWith?: string }, description?: { eq?: string, neq?: string, in?: string[], nin?: string[], contains?: string, containsIgnoreCase?: string, notContains?: string, notContainsIgnoreCase?: string, startsWith?: string, endsWith?: string }, team?: { id?: { eq?: string, neq?: string, in?: string[], nin?: string[] } }, and?: (recursive)[], or?: (recursive)[] }"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "createdAt | updatedAt"
           }
         ]
       },

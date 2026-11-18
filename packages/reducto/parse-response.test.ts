@@ -62,6 +62,42 @@ describe('Reducto parse response', () => {
 		expect(parse(parseResponse(['a,b', '1,2'], ocr))).toBe(true);
 	});
 
+	it('accepts null in every block and OCR field Reducto may leave empty', () => {
+		// Seen 2026-11-14 on a 12-page PDF: blocks came back with `extra: null`, and
+		// Reducto's spec also allows null confidence, granular_confidence and
+		// merged_tables on a block and null confidence, chunk_index and rotation on
+		// an OCR word or line.
+		const body = parseResponse(null, {
+			words: [
+				{
+					text: 'Lorem',
+					bbox: { left: 0.1, top: 0.2, width: 0.1, height: 0.02, page: 1 },
+					confidence: null,
+					chunk_index: null,
+					rotation: null,
+				},
+			],
+			lines: [
+				{
+					text: 'Lorem ipsum',
+					bbox: { left: 0.1, top: 0.2, width: 0.3, height: 0.02, page: 1 },
+					confidence: null,
+					chunk_index: null,
+					rotation: null,
+				},
+			],
+		});
+		for (const block of body.result.chunks[0]!.blocks) {
+			Object.assign(block, {
+				extra: null,
+				confidence: null,
+				granular_confidence: null,
+				merged_tables: null,
+			});
+		}
+		expect(parse(body)).toBe(true);
+	});
+
 	it('rejects a chart_data that is not a list', () => {
 		expect(parse(parseResponse('a,b', null))).toBe(false);
 	});

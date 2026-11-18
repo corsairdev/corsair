@@ -6,7 +6,7 @@ description: "Webinar and event data from Demio - list events and their dates, r
 
 Use **Demio** through Corsair: one client, typed API calls.
 
-Demio issues two credentials and every request carries both, so connect with the key and the secret together. An account Owner generates the pair under **Account Settings > API**; there is no other credential and no token exchange.
+Demio issues two credentials and every request carries both, so connect with the key and the secret together. An account Owner generates the pair under **Account Settings &gt; API**; there is no other credential and no token exchange.
 
 - **One registration operation.** Demio accepts both `PUT` and `POST` on `/event/register` with identical behaviour. The plugin exposes one operation, `registrations.create`, sent as `POST`.
 - **Filtering events.** `events.list` takes `type`, one of `upcoming`, `past` or `automated`. Omit it to receive every event with its nearest date, ordered by date, ascending.

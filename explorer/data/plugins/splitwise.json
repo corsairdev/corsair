@@ -1,0 +1,1012 @@
+{
+  "id": "splitwise",
+  "displayName": "Splitwise",
+  "description": "Read and write a Splitwise account: groups, friends, expenses, comments and notifications.",
+  "npmPackageName": "@corsair-dev/splitwise",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 27,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "splitwise.api.categories.list",
+      "shortPath": "categories.list",
+      "description": "List expense categories with their subcategories; an expense must use a subcategory",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "categories",
+            "optional": false,
+            "type": "{ id: number, name: string, icon?: string | null, icon_types?: Record<string, Record<string, string>> | null, subcategories: { id: number, name: string, icon?: string | null, icon_types?: Record<string, Record<string, string>> | null }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "splitwise.api.comments.create",
+      "shortPath": "comments.create",
+      "description": "Post a comment on an expense",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "expense_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string",
+            "description": "Comment body"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comment",
+            "optional": false,
+            "type": "{ id: number, content: string, comment_type?: string | null, relation_type?: string | null, relation_id?: number | null, created_at?: string | null, deleted_at?: string | null, user?: { id: number, first_name?: string | null, last_name?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "splitwise.api.comments.delete",
+      "shortPath": "comments.delete",
+      "description": "Delete a comment; this cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comment",
+            "optional": false,
+            "type": "{ id: number, content: string, comment_type?: string | null, relation_type?: string | null, relation_id?: number | null, created_at?: string | null, deleted_at?: string | null, user?: { id: number, first_name?: string | null, last_name?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "splitwise.api.comments.list",
+      "shortPath": "comments.list",
+      "description": "List the comments on an expense",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "expense_id",
+            "optional": false,
+            "type": "number",
+            "description": "Expense whose comments to read"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comments",
+            "optional": false,
+            "type": "{ id: number, content: string, comment_type?: string | null, relation_type?: string | null, relation_id?: number | null, created_at?: string | null, deleted_at?: string | null, user?: { id: number, first_name?: string | null, last_name?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "splitwise.api.currencies.list",
+      "shortPath": "currencies.list",
+      "description": "List the currency codes Splitwise accepts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "currencies",
+            "optional": false,
+            "type": "{ currency_code: string, unit: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "splitwise.api.expenses.create",
+      "shortPath": "expenses.create",
+      "description": "Record an expense, split either equally across a group or by an explicit paid and owed share per person",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string",
+            "description": "A short description of the expense"
+          },
+          {
+            "key": "cost",
+            "optional": false,
+            "type": "number",
+            "description": "Total cost of the expense, e.g. 25.5"
+          },
+          {
+            "key": "details",
+            "optional": true,
+            "type": "string",
+            "description": "Free-text notes"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 date and time the expense took place, e.g. \"2026-05-02T13:00:00Z\""
+          },
+          {
+            "key": "currency_code",
+            "optional": true,
+            "type": "string",
+            "description": "Currency code from `currencies.list`; defaults to the group currency"
+          },
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "number",
+            "description": "A subcategory ID from `categories.list`; a parent category is rejected"
+          },
+          {
+            "key": "repeat_interval",
+            "optional": true,
+            "type": "never | weekly | fortnightly | monthly | yearly"
+          },
+          {
+            "key": "split_equally",
+            "optional": true,
+            "type": "true",
+            "description": "Split equally between the group; requires `group_id` and no `users`"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "number",
+            "description": "Group to put the expense in, or 0 for an expense outside a group"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "{ user_id?: number, first_name?: string, last_name?: string, email?: string, paid_share: number, owed_share: number }[]",
+            "description": "One entry per person, each with `paid_share` and `owed_share`"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "expenses",
+            "optional": false,
+            "type": "{ id: number, group_id?: number | null, friendship_id?: number | null, expense_bundle_id?: number | null, description: string, details?: string | null, cost: string, currency_code: string, date?: string | null, created_at?: string | null, created_by?: { id: number, first_name?: string | null, last_name?: string | null, email?: string | null, registration_status?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null, custom_picture?: boolean | null } | null, updated_at?: string | null, updated_by?: { id: number, first_name?: string | null, last_name?: string | null, email?: string | null, registration_status?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null, custom_picture?: boolean | null } | null, deleted_at?: string | null, deleted_by?: { id: number, first_name?: string | null, last_name?: string | null, email?: string | null, registration_status?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null, custom_picture?: boolean | null } | null, category?: { id: number, name: string } | null, receipt?: { large?: string | null, original?: string | null } | null, repeats?: boolean | null, repeat_interval?: string | null, email_reminder?: boolean | null, email_reminder_in_advance?: number | null, next_repeat?: string | null, comments_count?: number | null, payment?: boolean | null, transaction_confirmed?: boolean | null, repayments?: { from: number, to: number, amount: string }[] | null, users?: { user?: { id: number, first_name?: string | null, last_name?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null } | null, user_id: number, paid_share: string, owed_share: string, net_balance: string }[] | null, comments?: { id: number, content: string, comment_type?: string | null, relation_type?: string | null, relation_id?: number | null, created_at?: string | null, deleted_at?: string | null, user?: { id: number, first_name?: string | null, last_name?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null } | null }[] | null }[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "Record<string, string[]> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "splitwise.api.expenses.delete",
+      "shortPath": "expenses.delete",
+      "description": "Delete an expense; it can be restored with `expenses.undelete`",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "expense_id",
+            "optional": false,
+            "type": "number",
+            "description": "Splitwise expense ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "Record<string, string[]> | string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "splitwise.api.expenses.get",
+      "shortPath": "expenses.get",
+      "description": "Get one expense with its shares, repayments and comments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "expense_id",
+            "optional": false,
+            "type": "number",
+            "description": "Splitwise expense ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "expense",
+            "optional": false,
+            "type": "{ id: number, group_id?: number | null, friendship_id?: number | null, expense_bundle_id?: number | null, description: string, details?: string | null, cost: string, currency_code: string, date?: string | null, created_at?: string | null, created_by?: { id: number, first_name?: string | null, last_name?: string | null, email?: string | null, registration_status?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null, custom_picture?: boolean | null } | null, updated_at?: string | null, updated_by?: { id: number, first_name?: string | null, last_name?: string | null, email?: string | null, registration_status?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null, custom_picture?: boolean | null } | null, deleted_at?: string | null, deleted_by?: { id: number, first_name?: string | null, last_name?: string | null, email?: string | null, registration_status?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null, custom_picture?: boolean | null } | null, category?: { id: number, name: string } | null, receipt?: { large?: string | null, original?: string | null } | null, repeats?: boolean | null, repeat_interval?: string | null, email_reminder?: boolean | null, email_reminder_in_advance?: number | null, next_repeat?: string | null, comments_count?: number | null, payment?: boolean | null, transaction_confirmed?: boolean | null, repayments?: { from: number, to: number, amount: string }[] | null, users?: { user?: { id: number, first_name?: string | null, last_name?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null } | null, user_id: number, paid_share: string, owed_share: string, net_balance: string }[] | null, comments?: { id: number, content: string, comment_type?: string | null, relation_type?: string | null, relation_id?: number | null, created_at?: string | null, deleted_at?: string | null, user?: { id: number, first_name?: string | null, last_name?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null } | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "splitwise.api.expenses.list",
+      "shortPath": "expenses.list",
+      "description": "List the current user expenses, filtered by group, friend or date, with limit and offset paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "number",
+            "description": "Only expenses in this group; `friend_id` is then ignored"
+          },
+          {
+            "key": "friend_id",
+            "optional": true,
+            "type": "number",
+            "description": "Only expenses between the current user and this user"
+          },
+          {
+            "key": "dated_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dated_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Default 20"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Default 0"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "expenses",
+            "optional": false,
+            "type": "{ id: number, group_id?: number | null, friendship_id?: number | null, expense_bundle_id?: number | null, description: string, details?: string | null, cost: string, currency_code: string, date?: string | null, created_at?: string | null, created_by?: { id: number, first_name?: string | null, last_name?: string | null, email?: string | null, registration_status?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null, custom_picture?: boolean | null } | null, updated_at?: string | null, updated_by?: { id: number, first_name?: string | null, last_name?: string | null, email?: string | null, registration_status?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null, custom_picture?: boolean | null } | null, deleted_at?: string | null, deleted_by?: { id: number, first_name?: string | null, last_name?: string | null, email?: string | null, registration_status?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null, custom_picture?: boolean | null } | null, category?: { id: number, name: string } | null, receipt?: { large?: string | null, original?: string | null } | null, repeats?: boolean | null, repeat_interval?: string | null, email_reminder?: boolean | null, email_reminder_in_advance?: number | null, next_repeat?: string | null, comments_count?: number | null, payment?: boolean | null, transaction_confirmed?: boolean | null, repayments?: { from: number, to: number, amount: string }[] | null, users?: { user?: { id: number, first_name?: string | null, last_name?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null } | null, user_id: number, paid_share: string, owed_share: string, net_balance: string }[] | null, comments?: { id: number, content: string, comment_type?: string | null, relation_type?: string | null, relation_id?: number | null, created_at?: string | null, deleted_at?: string | null, user?: { id: number, first_name?: string | null, last_name?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null } | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "splitwise.api.expenses.undelete",
+      "shortPath": "expenses.undelete",
+      "description": "Restore a deleted expense",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "expense_id",
+            "optional": false,
+            "type": "number",
+            "description": "Splitwise expense ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "Record<string, string[]> | string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "splitwise.api.expenses.update",
+      "shortPath": "expenses.update",
+      "description": "Change an expense; passing any share replaces every share on it",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "A short description of the expense"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number",
+            "description": "Total cost of the expense, e.g. 25.5"
+          },
+          {
+            "key": "details",
+            "optional": true,
+            "type": "string | null",
+            "description": "Free-text notes; null clears them"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 date and time the expense took place, e.g. \"2026-05-02T13:00:00Z\""
+          },
+          {
+            "key": "currency_code",
+            "optional": true,
+            "type": "string",
+            "description": "Currency code from `currencies.list`; defaults to the group currency"
+          },
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "number",
+            "description": "A subcategory ID from `categories.list`; a parent category is rejected"
+          },
+          {
+            "key": "repeat_interval",
+            "optional": true,
+            "type": "never | weekly | fortnightly | monthly | yearly"
+          },
+          {
+            "key": "expense_id",
+            "optional": false,
+            "type": "number",
+            "description": "ID of the expense to update"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "{ user_id?: number, first_name?: string, last_name?: string, email?: string, paid_share: number, owed_share: number }[]",
+            "description": "Replaces every share on the expense when supplied"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "expenses",
+            "optional": false,
+            "type": "{ id: number, group_id?: number | null, friendship_id?: number | null, expense_bundle_id?: number | null, description: string, details?: string | null, cost: string, currency_code: string, date?: string | null, created_at?: string | null, created_by?: { id: number, first_name?: string | null, last_name?: string | null, email?: string | null, registration_status?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null, custom_picture?: boolean | null } | null, updated_at?: string | null, updated_by?: { id: number, first_name?: string | null, last_name?: string | null, email?: string | null, registration_status?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null, custom_picture?: boolean | null } | null, deleted_at?: string | null, deleted_by?: { id: number, first_name?: string | null, last_name?: string | null, email?: string | null, registration_status?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null, custom_picture?: boolean | null } | null, category?: { id: number, name: string } | null, receipt?: { large?: string | null, original?: string | null } | null, repeats?: boolean | null, repeat_interval?: string | null, email_reminder?: boolean | null, email_reminder_in_advance?: number | null, next_repeat?: string | null, comments_count?: number | null, payment?: boolean | null, transaction_confirmed?: boolean | null, repayments?: { from: number, to: number, amount: string }[] | null, users?: { user?: { id: number, first_name?: string | null, last_name?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null } | null, user_id: number, paid_share: string, owed_share: string, net_balance: string }[] | null, comments?: { id: number, content: string, comment_type?: string | null, relation_type?: string | null, relation_id?: number | null, created_at?: string | null, deleted_at?: string | null, user?: { id: number, first_name?: string | null, last_name?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null } | null }[] | null }[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "Record<string, string[]> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "splitwise.api.friends.add",
+      "shortPath": "friends.add",
+      "description": "Add a friend by email; a first name is needed when the person has no Splitwise account yet",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_email",
+            "optional": false,
+            "type": "string",
+            "description": "The friend's email address"
+          },
+          {
+            "key": "user_first_name",
+            "optional": true,
+            "type": "string",
+            "description": "Required only when the other person has no Splitwise account"
+          },
+          {
+            "key": "user_last_name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "friend",
+            "optional": false,
+            "type": "{ id: number, first_name?: string | null, last_name?: string | null, email?: string | null, registration_status?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null, custom_picture?: boolean | null, groups?: { group_id: number, balance?: { currency_code: string, amount: string }[] | null }[] | null, balance?: { currency_code: string, amount: string }[] | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "splitwise.api.friends.addMany",
+      "shortPath": "friends.addMany",
+      "description": "Add several friends in one call, returning each result alongside any errors",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ email: string, first_name?: string, last_name?: string }[]",
+            "description": "Friends to add in one call"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ id: number, first_name?: string | null, last_name?: string | null, email?: string | null, registration_status?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null, custom_picture?: boolean | null, groups?: { group_id: number, balance?: { currency_code: string, amount: string }[] | null }[] | null, balance?: { currency_code: string, amount: string }[] | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "Record<string, string[]> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "splitwise.api.friends.delete",
+      "shortPath": "friends.delete",
+      "description": "Break off the friendship; Splitwise keeps the expenses but the friend is removed from the list and there is no undelete call",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "friend_id",
+            "optional": false,
+            "type": "number",
+            "description": "The friend's user ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "Record<string, string[]> | string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "splitwise.api.friends.get",
+      "shortPath": "friends.get",
+      "description": "Get one friend with their balances and shared groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "friend_id",
+            "optional": false,
+            "type": "number",
+            "description": "The friend's user ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "friend",
+            "optional": false,
+            "type": "{ id: number, first_name?: string | null, last_name?: string | null, email?: string | null, registration_status?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null, custom_picture?: boolean | null, groups?: { group_id: number, balance?: { currency_code: string, amount: string }[] | null }[] | null, balance?: { currency_code: string, amount: string }[] | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "splitwise.api.friends.list",
+      "shortPath": "friends.list",
+      "description": "List the current user friends with the balance owed either way",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "friends",
+            "optional": false,
+            "type": "{ id: number, first_name?: string | null, last_name?: string | null, email?: string | null, registration_status?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null, custom_picture?: boolean | null, groups?: { group_id: number, balance?: { currency_code: string, amount: string }[] | null }[] | null, balance?: { currency_code: string, amount: string }[] | null, updated_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "splitwise.api.groups.addUser",
+      "shortPath": "groups.addUser",
+      "description": "Add a Splitwise user, or a new person by name and email, to a group",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id: number, first_name?: string | null, last_name?: string | null, email?: string | null, registration_status?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null, custom_picture?: boolean | null } | null"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "Record<string, string[]> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "splitwise.api.groups.create",
+      "shortPath": "groups.create",
+      "description": "Create a group and add members by user ID or by name and email; the current user is added automatically",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the group"
+          },
+          {
+            "key": "group_type",
+            "optional": true,
+            "type": "home | trip | couple | other | apartment | house",
+            "description": "Splitwise recommends `home` in place of `house` or `apartment`"
+          },
+          {
+            "key": "simplify_by_default",
+            "optional": true,
+            "type": "boolean",
+            "description": "Turn on simplify debts"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "{ user_id?: number, first_name?: string, last_name?: string, email?: string }[]",
+            "description": "Members to add besides the current user, who is added automatically"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group",
+            "optional": false,
+            "type": "{ id: number, name: string, group_type?: string | null, updated_at?: string | null, simplify_by_default?: boolean | null, members?: { id: number, first_name?: string | null, last_name?: string | null, email?: string | null, registration_status?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null, custom_picture?: boolean | null, balance?: { currency_code: string, amount: string }[] | null }[] | null, original_debts?: { from: number, to: number, amount: string, currency_code: string }[] | null, simplified_debts?: { from: number, to: number, amount: string, currency_code: string }[] | null, avatar?: { original?: string | null, xxlarge?: string | null, xlarge?: string | null, large?: string | null, medium?: string | null, small?: string | null } | null, custom_avatar?: boolean | null, cover_photo?: { original?: string | null, xxlarge?: string | null, xlarge?: string | null, large?: string | null, medium?: string | null, small?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "splitwise.api.groups.delete",
+      "shortPath": "groups.delete",
+      "description": "Delete a group and every expense in it; the group can be restored with `groups.undelete`",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number",
+            "description": "Splitwise group ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "Record<string, string[]> | string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "splitwise.api.groups.get",
+      "shortPath": "groups.get",
+      "description": "Get one group with its members, balances and debts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number",
+            "description": "Splitwise group ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group",
+            "optional": false,
+            "type": "{ id: number, name: string, group_type?: string | null, updated_at?: string | null, simplify_by_default?: boolean | null, members?: { id: number, first_name?: string | null, last_name?: string | null, email?: string | null, registration_status?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null, custom_picture?: boolean | null, balance?: { currency_code: string, amount: string }[] | null }[] | null, original_debts?: { from: number, to: number, amount: string, currency_code: string }[] | null, simplified_debts?: { from: number, to: number, amount: string, currency_code: string }[] | null, avatar?: { original?: string | null, xxlarge?: string | null, xlarge?: string | null, large?: string | null, medium?: string | null, small?: string | null } | null, custom_avatar?: boolean | null, cover_photo?: { original?: string | null, xxlarge?: string | null, xlarge?: string | null, large?: string | null, medium?: string | null, small?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "splitwise.api.groups.list",
+      "shortPath": "groups.list",
+      "description": "List the current user groups with their members, balances and simplified debts; expenses outside a group appear as group 0",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groups",
+            "optional": false,
+            "type": "{ id: number, name: string, group_type?: string | null, updated_at?: string | null, simplify_by_default?: boolean | null, members?: { id: number, first_name?: string | null, last_name?: string | null, email?: string | null, registration_status?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null, custom_picture?: boolean | null, balance?: { currency_code: string, amount: string }[] | null }[] | null, original_debts?: { from: number, to: number, amount: string, currency_code: string }[] | null, simplified_debts?: { from: number, to: number, amount: string, currency_code: string }[] | null, avatar?: { original?: string | null, xxlarge?: string | null, xlarge?: string | null, large?: string | null, medium?: string | null, small?: string | null } | null, custom_avatar?: boolean | null, cover_photo?: { original?: string | null, xxlarge?: string | null, xlarge?: string | null, large?: string | null, medium?: string | null, small?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "splitwise.api.groups.removeUser",
+      "shortPath": "groups.removeUser",
+      "description": "Remove a user from a group; Splitwise refuses while that user has a non-zero balance",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "Record<string, string[]> | string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "splitwise.api.groups.undelete",
+      "shortPath": "groups.undelete",
+      "description": "Restore a deleted group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number",
+            "description": "Splitwise group ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "splitwise.api.notifications.list",
+      "shortPath": "notifications.list",
+      "description": "List recent activity on the account, newest first, optionally after a given time",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "updated_after",
+            "optional": true,
+            "type": "string",
+            "description": "Only notifications created after this time"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum to return; omit for the provider maximum"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "notifications",
+            "optional": false,
+            "type": "{ id: number, type: number, created_at?: string | null, created_by?: number | null, source?: { type?: string | null, id?: number | null, url?: string | null } | null, image_url?: string | null, image_shape?: string | null, content?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "splitwise.api.users.get",
+      "shortPath": "users.get",
+      "description": "Get another user by ID; Splitwise only answers for people you share a group or expense with",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number",
+            "description": "Splitwise user ID, from `users.current` or a group member"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id: number, first_name?: string | null, last_name?: string | null, email?: string | null, registration_status?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null, custom_picture?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "splitwise.api.users.getCurrentUser",
+      "shortPath": "users.getCurrentUser",
+      "description": "Get the user the key belongs to, with its notification settings and unread count",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id: number, first_name?: string | null, last_name?: string | null, email?: string | null, registration_status?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null, custom_picture?: boolean | null, notifications_read?: string | null, notifications_count?: number | null, notifications?: Record<string, boolean> | null, default_currency?: string | null, locale?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "splitwise.api.users.update",
+      "shortPath": "users.update",
+      "description": "Change a user's name, email, password, locale or default currency",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number",
+            "description": "ID of the user to update"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 639-1 two-letter locale code, e.g. \"en\""
+          },
+          {
+            "key": "default_currency",
+            "optional": true,
+            "type": "string",
+            "description": "Currency code from `currencies.list`, e.g. \"USD\""
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id: number, first_name?: string | null, last_name?: string | null, email?: string | null, registration_status?: string | null, picture?: { small?: string | null, medium?: string | null, large?: string | null } | null, custom_picture?: boolean | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

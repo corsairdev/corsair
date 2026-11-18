@@ -130,6 +130,8 @@ export type OAuthTokensTunnelPayload = {
 	// Provider token-body identity (team, workspace_id, …) forwarded so the SDK
 	// resolver can read it — secrets stripped Hub-side.
 	providerData?: Record<string, unknown>;
+	account?: { id: string; label?: string };
+	accounts?: { id: string; label?: string }[];
 };
 
 export type PermissionDecisionTunnelPayload = {
@@ -221,7 +223,7 @@ async function resolveWebhookTenantId(
 	corsair: unknown,
 	internal: CorsairInternalConfig,
 	payload: WebhookTunnelPayload,
-): Promise<string | undefined> {
+): Promise<{ tenantId?: string; accountId?: string }> {
 	const explicitTenantId =
 		typeof payload.tenantId === 'string'
 			? payload.tenantId
@@ -229,26 +231,37 @@ async function resolveWebhookTenantId(
 				? payload.query.tenantId
 				: undefined;
 
-	if (explicitTenantId) return explicitTenantId;
-
 	if (
 		!internal.database ||
 		!payload.plugin ||
 		!payload.linkType ||
 		!payload.externalId
 	) {
-		return undefined;
+		return explicitTenantId ? { tenantId: explicitTenantId } : {};
 	}
 
-	const resolved = await resolveTenantIdFromWebhookLink({
-		database: internal.database,
-		kek: internal.kek,
-		pluginId: payload.plugin,
-		linkType: payload.linkType,
-		externalId: payload.externalId,
-	});
+	let account: Awaited<ReturnType<typeof resolveAccountFromWebhookLink>>;
+	try {
+		account = await resolveAccountFromWebhookLink({
+			database: internal.database,
+			kek: internal.kek,
+			pluginId: payload.plugin,
+			linkType: payload.linkType,
+			externalId: payload.externalId,
+			tenantId: explicitTenantId,
+		});
+	} catch (error) {
+		// An explicit tenant never needed this lookup; its delivery must not fail on it.
+		if (explicitTenantId) return { tenantId: explicitTenantId };
+		throw error;
+	}
 
-	return resolved ?? undefined;
+	if (explicitTenantId) {
+		return account?.tenant_id === explicitTenantId
+			? { tenantId: explicitTenantId, accountId: account.id }
+			: { tenantId: explicitTenantId };
+	}
+	return account ? { tenantId: account.tenant_id, accountId: account.id } : {};
 }
 
 async function handleWebhookTunnel(
@@ -257,7 +270,11 @@ async function handleWebhookTunnel(
 	payload: WebhookTunnelPayload,
 	envelopeVerified: boolean,
 ): Promise<TunnelAck> {
-	const tenantId = await resolveWebhookTenantId(corsair, internal, payload);
+	const { tenantId, accountId } = await resolveWebhookTenantId(
+		corsair,
+		internal,
+		payload,
+	);
 	const query = {
 		...(payload.query ?? {}),
 		...(tenantId ? { tenantId } : {}),
@@ -275,6 +292,7 @@ async function handleWebhookTunnel(
 		// provider signature verification.
 		{
 			plugin: payload.plugin,
+			accountId,
 			hubVerified: envelopeVerified && payload.hubVerified === true,
 		},
 	);
@@ -355,6 +373,8 @@ async function handleOAuthTokensTunnel(
 		scope: payload.scope,
 		authType: payload.authType,
 		providerData: payload.providerData,
+		account: payload.account,
+		accounts: payload.accounts,
 	});
 	return { status: 'ok' };
 }

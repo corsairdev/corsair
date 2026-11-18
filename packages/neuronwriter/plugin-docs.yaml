@@ -1,0 +1,58 @@
+displayName: NEURONwriter
+description: List NEURONwriter projects, start and poll content analyses, read their target word count, terms, questions and SERP competitors, and read, import or score article content.
+domain: neuronwriter.com
+recommendedAuth: api_key
+overviewNote: |
+  The API needs a Gold plan or higher. Copy the key from your profile, under the "Neuron API access" tab. Every request is a POST to `https://app.neuronwriter.com/neuron-api/0.5/writer/{method}` with the key in the `X-API-KEY` header.
+
+  The workflow is two calls, and they behave differently:
+
+  - **`analysis.start` queues work; it does not return results.** It answers a query id and three URLs, and takes about a minute before the recommendations exist.
+  - **`analysis.get` is the poll.** It answers `{ status }` alone while the analysis is `waiting` or `in progress`, and adds `metrics`, `terms`, `terms_txt`, `ideas` and `competitors` only once `status` is `ready`. So the response type has those fields optional, and a caller branches on the status rather than assuming they are there.
+
+  What costs money and what does not:
+
+  - **`analysis.start` spends one Content Writer analysis** from the account's monthly limit, the same as creating one in the app. At the Gold plan's 75 analyses, the API and the app share that total.
+  - **`analysis.get` spends nothing.** Polling it as often as needed is free.
+  - **`content.import` saves a revision; `content.evaluate` does not.** Both take the same body and return the same shape. Use evaluate to score a draft, then import once it is ready, and the revision history stays clean.
+
+  What to know when sizing and shaping a request:
+
+  - **`competitors_mode` changes the SERP sample.** The default `top10` analyses the ten top results, `top30` the thirty, and `top-intent` up to ten pages matching the dominant intent.
+  - **A query and a project are different ids.** The project id is in the project URL, and the query id comes back from `analysis.start` or `queries.list`.
+  - **`queries.list` filters by tags with AND.** Every tag sent has to be on the query, and one string behaves the same as a list of one.
+  - **Import takes HTML or a URL, never both.** When importing from a URL, `id` and `class` select the container to read.
+
+  Errors are thin: a bad or inactive key is the only documented failure, a 401 with `{ "error": "..." }`. The auth check runs before routing, so a bad key hides whether a method exists.
+examples:
+  read:
+    path: projects.list
+    title: List the account's projects
+    args: {}
+  write:
+    path: analysis.start
+    title: Queue an analysis for one keyword
+    args:
+      project: c2fe46bce8019bff
+      keyword: trail running shoes
+      engine: google.co.uk
+      language: English
+apiExamples:
+  projects.list: {}
+  analysis.start:
+    call: "{ project: 'c2fe46bce8019bff', keyword: 'trail running shoes', engine: 'google.co.uk', language: 'English', competitors_mode: 'top10' }"
+  analysis.get:
+    call: "{ query: '32dee2a89374a722' }"
+  queries.list:
+    call: "{ project: 'c2fe46bce8019bff', status: 'ready', tags: ['Done'] }"
+  content.get:
+    call: "{ query: '32dee2a89374a722', revision_type: 'all' }"
+  content.import:
+    call: "{ query: '32dee2a89374a722', html: '<h1>Best Trail Running Shoes</h1><p>...</p>' }"
+  content.evaluate:
+    call: "{ query: '32dee2a89374a722', url: 'https://example.com/draft', id: 'main-content' }"
+apiNotes:
+  analysis.start: 'Spends one Content Writer analysis from the monthly limit, and answers before the recommendations exist.'
+  analysis.get: 'Answers only a status until it is ready; the metrics, terms, ideas and competitors appear only then.'
+  content.evaluate: 'Scores the content without saving a revision, so it costs no revision history.'
+  content.import: 'Saves a new revision. Takes html or url, never both.'

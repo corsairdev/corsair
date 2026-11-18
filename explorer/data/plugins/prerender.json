@@ -1,0 +1,246 @@
+{
+  "id": "prerender",
+  "displayName": "Prerender",
+  "description": "Prerender service API for recaching pages, searching the cache, submitting sitemaps and tuning the render queue.",
+  "npmPackageName": "@corsair-dev/prerender",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 6,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "prerender.api.cache.clear",
+      "shortPath": "cache.clear",
+      "description": "Delete cached URLs matching a pattern. The clear runs as a job, and only one runs at a time",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "A SQL-like pattern: `%` matches any run of characters, `?` matches one. A trailing `%` clears everything under that prefix."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "prerender.api.cache.clearStatus",
+      "shortPath": "cache.clearStatus",
+      "description": "Read whether a cache clear job is still running: inProgress is true while one runs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "inProgress",
+            "optional": false,
+            "type": "boolean",
+            "description": "True while a clear job is running."
+          }
+        ]
+      }
+    },
+    {
+      "path": "prerender.api.cache.recache",
+      "shortPath": "cache.recache",
+      "description": "Render and cache one URL, or up to 1000 in one call, so crawlers see current content. Each URL spends one render from the plan, billed past the included amount",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "An absolute URL, including its scheme."
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "string[]",
+            "description": "Up to 1000 URLs, which is the API limit per request."
+          },
+          {
+            "key": "adaptiveType",
+            "optional": true,
+            "type": "desktop | mobile",
+            "description": "Which cached variant to act on. Defaults to desktop."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "prerender.api.cache.search",
+      "shortPath": "cache.search",
+      "description": "Search the cache by substring or exact URL, or list all of it, 200 results per page, optionally filtered by device",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "A substring match against the cached URLs."
+          },
+          {
+            "key": "exactMatch",
+            "optional": true,
+            "type": "string",
+            "description": "Only the URL identical to this. When both are given, only this is used."
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number",
+            "description": "Paging offset. Each page holds 200 URLs."
+          },
+          {
+            "key": "adaptiveType",
+            "optional": true,
+            "type": "desktop | mobile",
+            "description": "Which cached variant to act on. Defaults to desktop."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "{ url?: string | null, domain?: string | null, adaptiveType?: string | null, cacheState?: string | null, lastRefresh?: string | null, requestedRecacheAt?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "prerender.api.cache.sitemap",
+      "shortPath": "cache.sitemap",
+      "description": "Render and cache every URL in a sitemap that is not cached yet, spending one render per new URL. URLs already cached are left as they are",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The sitemap XML URL to read new URLs from."
+          },
+          {
+            "key": "adaptiveType",
+            "optional": true,
+            "type": "desktop | mobile",
+            "description": "Which cached variant to act on. Defaults to desktop."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "prerender.api.queue.changeSpeed",
+      "shortPath": "queue.changeSpeed",
+      "description": "Set how many URLs the render queue processes per hour, or restore the automatic delay. A faster rate can overload the origin",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "urlsPerHour",
+            "optional": false,
+            "type": "number",
+            "description": "How many URLs to recache per hour. `0` restores the automatic delay."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "recacheMetrics",
+            "optional": true,
+            "type": "{ delayBetweenURLs?: number | null, num10Sec?: number | null, num30Sec?: number | null, num1Min?: number | null, num10Min?: number | null, num1Hour?: number | null, num1Day?: number | null } | null"
+          },
+          {
+            "key": "isAutomaticDelay",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

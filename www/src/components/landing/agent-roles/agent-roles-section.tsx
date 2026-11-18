@@ -179,7 +179,7 @@ export function AgentRolesSection() {
 								href="/integrations"
 								className="text-[13px] text-[#1c1c1c99] no-underline hover:text-[#4a38f5]"
 							>
-								{item.apps.map((app) => app.name).join(', ')} and 400+ more apps
+								{item.apps.map((app) => app.name).join(', ')} and 700+ more apps
 							</Link>
 							<div className="flex shrink-0 items-center gap-4">
 								{item.useCase ? (
