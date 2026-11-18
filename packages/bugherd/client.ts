@@ -19,9 +19,13 @@ export async function makeBugherdRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+		// JSON request body. Values are whatever the endpoint's zod-checked
+		// input holds (strings, numbers, booleans, arrays, nested objects).
 		body?: Record<string, unknown>;
-		// Sent as the raw request body with this media type (attachment uploads).
-		file?: { data: Blob; contentType: string };
+		// Raw request body (attachment uploads). Core sends a Blob as is, with
+		// its type as the Content-Type; a mediaType here would make core
+		// JSON-encode a JSON file instead.
+		file?: Blob;
 		query?: BugherdQuery;
 	} = {},
 ): Promise<T> {
@@ -43,7 +47,7 @@ export async function makeBugherdRequest<T>(
 		url: endpoint,
 		query,
 		...(file
-			? { body: file.data, mediaType: file.contentType }
+			? { body: file }
 			: body
 				? { body, mediaType: 'application/json' }
 				: {}),

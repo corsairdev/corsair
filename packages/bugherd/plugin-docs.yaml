@@ -34,7 +34,7 @@ apiNotes:
   tasks.show: |
     `GET /projects/{project_id}/tasks/{task_id}.json`, or `GET /tasks/{task_id}.json` when no project id is given.
   tasks.uploadAttachment: |
-    `POST /projects/{project_id}/tasks/{task_id}/attachments/upload` as multipart form data. BugHerd allows about 30 seconds per upload; use `tasks.createAttachment` with a URL for large files.
+    `POST /projects/{project_id}/tasks/{task_id}/attachments/upload?file_name=...` with the file as the raw request body. BugHerd's reference shows multipart, but the live API stores a multipart upload without its file name. BugHerd allows about 30 seconds per upload; use `tasks.createAttachment` with a URL for large files.
   tasks.move: |
     `POST /projects/{project_id}/move_tasks.json`. BugHerd notes the route may not be enabled on every account (404).
 apiExamples:
