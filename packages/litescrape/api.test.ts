@@ -3,6 +3,7 @@
 //
 //   LITESCRAPE_API_KEY=ls_... pnpm test:live
 //   LITESCRAPE_API_KEY=ls_... LITESCRAPE_LIVE_ALL=1 pnpm test:live   (all 202)
+//   LITESCRAPE_LIVE_ONLY=amazon.search,web.fetch ...                  (a list)
 //
 // Every call spends one prepaid call (failed calls are free), so this file
 // never runs on an exported key by accident. Calls go through createCorsair,
@@ -20,6 +21,10 @@ if (!hasKey) {
 }
 const live = hasKey ? describe : describe.skip;
 const runAll = process.env.LITESCRAPE_LIVE_ALL === '1';
+const only = (process.env.LITESCRAPE_LIVE_ONLY ?? '')
+	.split(',')
+	.map((id) => id.trim())
+	.filter(Boolean);
 
 // jest-yaml-transform turns the yaml into a plain object.
 const docs = require('./plugin-docs.yaml') as {
@@ -49,16 +54,17 @@ const SAMPLE = [
 	'web.fetch',
 ];
 
-// Provider-side outcomes that are not plugin bugs: Litescrape answers 503
-// `service_unavailable` (not billed) when the upstream scraper fails, and 404
-// when the upstream page is gone. Anything else fails the test.
+// Provider-side outcomes that are not plugin bugs: Litescrape answers a 5xx
+// (503 `service_unavailable`, not billed) when the upstream scraper fails, and
+// 404 when the upstream page is gone. Anything else, including a response that
+// breaks its schema, fails the test.
 function isProviderOutage(error: unknown): boolean {
 	const status = (error as { status?: number }).status;
-	return status === 503 || status === 404;
+	return status === 404 || (status !== undefined && status >= 500);
 }
 
 live('Litescrape live API', () => {
-	jest.setTimeout(10 * 60 * 1000);
+	jest.setTimeout(8 * 60_000);
 	const api = createCorsair({
 		plugins: [litescrape({ key, permissions: { mode: 'readonly' } })],
 	}).litescrape.api as unknown as Record<
@@ -88,9 +94,12 @@ live('Litescrape live API', () => {
 		expect(usage.range).toBe('7d');
 	});
 
-	const ids = runAll
-		? litescrapeOperations.map((operation) => operation.id)
-		: SAMPLE;
+	const ids =
+		only.length > 0
+			? only
+			: runAll
+				? litescrapeOperations.map((operation) => operation.id)
+				: SAMPLE;
 	const outages: string[] = [];
 
 	it.each(ids)(
@@ -107,7 +116,8 @@ live('Litescrape live API', () => {
 				outages.push(`${id} ${(error as { status?: number }).status}`);
 			}
 		},
-		120_000,
+		// Core retries a 503 five times and each try may use the 90 s budget.
+		8 * 60_000,
 	);
 
 	afterAll(() => {
