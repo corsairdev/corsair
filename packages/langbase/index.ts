@@ -1,22 +1,24 @@
-import {
-	AuthMissingError,
-	type AuthTypes,
-	type BindEndpoints,
-	type CorsairEndpoint,
-	type CorsairErrorHandler,
-	type CorsairPlugin,
-	type CorsairPluginContext,
-	type KeyBuilderContext,
-	type PickAuth,
-	type PluginAuthConfig,
-	type PluginPermissionsConfig,
-	type RequiredPluginEndpointMeta,
-	type RequiredPluginEndpointSchemas,
+import { AuthMissingError } from 'corsair/core';
+import type {
+	AuthTypes,
+	BindEndpoints,
+	CorsairEndpoint,
+	CorsairErrorHandler,
+	CorsairPlugin,
+	CorsairPluginContext,
+	KeyBuilderContext,
+	PickAuth,
+	PluginAuthConfig,
+	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { memory, pipes, tools } from './endpoints';
+import type {
+	LangbaseEndpointInputs,
+	LangbaseEndpointOutputs,
+} from './endpoints/types';
 import {
-	type LangbaseEndpointInputs,
-	type LangbaseEndpointOutputs,
 	LangbaseEndpointInputSchemas,
 	LangbaseEndpointOutputSchemas,
 } from './endpoints/types';
@@ -43,12 +45,11 @@ export type LangbaseBoundEndpoints = BindEndpoints<
 	typeof langbaseEndpointsNested
 >;
 
-type LangbaseEndpoint<K extends keyof LangbaseEndpointOutputs> =
-	CorsairEndpoint<
-		LangbaseContext,
-		LangbaseEndpointInputs[K],
-		LangbaseEndpointOutputs[K]
-	>;
+type LangbaseEndpoint<K extends keyof LangbaseEndpointOutputs> = CorsairEndpoint<
+	LangbaseContext,
+	LangbaseEndpointInputs[K],
+	LangbaseEndpointOutputs[K]
+>;
 
 export type LangbaseEndpoints = {
 	'pipes.run': LangbaseEndpoint<'pipes.run'>;

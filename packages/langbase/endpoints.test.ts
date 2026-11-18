@@ -19,17 +19,19 @@ describe('Langbase endpoints', () => {
 	});
 
 	function mockFetchResponse(body: unknown, status = 200) {
-		globalThis.fetch = jest.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
-			const req = new Request(input, init);
-			capturedMethod = req.method;
-			capturedUrl = req.url;
-			const text = await req.text();
-			capturedBody = text ? JSON.parse(text) : null;
-			return new Response(JSON.stringify(body), {
-				status,
-				headers: { 'Content-Type': 'application/json' },
-			});
-		});
+		globalThis.fetch = jest.fn(
+			async (input: string | URL | Request, init?: RequestInit) => {
+				const req = new Request(input, init);
+				capturedMethod = req.method;
+				capturedUrl = req.url;
+				const text = await req.text();
+				capturedBody = text ? JSON.parse(text) : null;
+				return new Response(JSON.stringify(body), {
+					status,
+					headers: { 'Content-Type': 'application/json' },
+				});
+			},
+		);
 	}
 
 	describe('pipes endpoints', () => {
