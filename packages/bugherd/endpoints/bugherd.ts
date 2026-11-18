@@ -84,7 +84,8 @@ const taskRow = (t: BugherdTaskRecord) => ({
 	status: t.status,
 	priority: t.priority,
 	tag_names: t.tag_names,
-	assigned_to_id: t.assigned_to_id,
+	// BugHerd leaves assigned_to_id null and puts the user in assigned_to.
+	assigned_to_id: t.assigned_to?.id ?? t.assigned_to_id,
 	external_id: t.external_id,
 	created_at: t.created_at,
 	updated_at: t.updated_at,
@@ -718,7 +719,13 @@ export const uploadAttachment: Endpoint<'uploadAttachment'> = async (
 		input.task_id,
 		`${taskPath(input.project_id, input.task_id)}/attachments/upload`,
 		'bugherd.tasks.uploadAttachment',
-		{ method: 'POST', formData: { file: file.file } },
+		// BugHerd keeps the name only from ?file_name=; a multipart upload is
+		// stored as "attachment" with no file name.
+		{
+			method: 'POST',
+			query: { file_name: file.filename },
+			file: { data: file.file, contentType: file.contentType },
+		},
 	);
 };
 

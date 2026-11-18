@@ -99,6 +99,7 @@ const TaskSchema = z.looseObject({
 	project_name: str,
 	due_at: str,
 	assignee_ids: z.array(z.number()).nullable().optional(),
+	assignees: z.array(PersonSchema).nullable().optional(),
 	assigned_to_id: num,
 	requester_id: num,
 	column_id: num,

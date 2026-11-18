@@ -481,6 +481,28 @@ describe('tasks', () => {
 		expect(db.tasks.upsertByEntityId).toHaveBeenCalledTimes(1);
 	});
 
+	it('stores the assignee from assigned_to, which is where BugHerd puts it', async () => {
+		// Live run 11-18: assigned_to_id stays null; assigned_to and assignees
+		// carry the user.
+		const db = tables();
+		mockRequest.mockResolvedValue({
+			task: {
+				...TASK,
+				assigned_to_id: null,
+				assigned_to: { id: 634824, display_name: 'Corsair Tests' },
+				assignees: [{ id: 634824, display_name: 'Corsair Tests' }],
+			},
+		});
+		const out = await B.showTask(context(db), { task_id: 98765 });
+		expect(db.tasks.upsertByEntityId).toHaveBeenCalledWith(
+			'98765',
+			expect.objectContaining({ assigned_to_id: 634824 }),
+		);
+		expect(BugherdEndpointOutputSchemas.showTask.safeParse(out).success).toBe(
+			true,
+		);
+	});
+
 	it('tasks.update sends null to unassign', async () => {
 		mockRequest.mockResolvedValue({ task: TASK });
 		await B.updateTask(context(), {
@@ -605,7 +627,9 @@ describe('attachments', () => {
 		});
 	});
 
-	it('tasks.uploadAttachment sends the file as multipart', async () => {
+	it('tasks.uploadAttachment sends the raw file with its name in file_name', async () => {
+		// Live run 11-18: a multipart upload is stored as "attachment" with
+		// file_name null; the raw body with ?file_name= keeps the name.
 		mockRequest.mockResolvedValue({ attachment: ATTACHMENT });
 		await B.uploadAttachment(context(), {
 			project_id: 1,
@@ -620,11 +644,13 @@ describe('attachments', () => {
 		expect(options).toMatchObject({
 			method: 'POST',
 			url: '/projects/1/tasks/2/attachments/upload',
+			query: { file_name: 'note.txt' },
+			mediaType: 'text/plain',
 		});
-		expect(options?.body).toBeUndefined();
-		const file = options?.formData?.file as File;
-		expect(file.name).toBe('note.txt');
-		expect(await file.text()).toBe('hello');
+		expect(options?.formData).toBeUndefined();
+		const body = options?.body as Blob;
+		expect(body).toBeInstanceOf(Blob);
+		expect(await body.text()).toBe('hello');
 	});
 
 	it('tasks.deleteAttachment removes the local row', async () => {

@@ -20,12 +20,12 @@ export async function makeBugherdRequest<T>(
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
 		body?: Record<string, unknown>;
-		// Sent as multipart/form-data (attachment uploads).
-		formData?: Record<string, unknown>;
+		// Sent as the raw request body with this media type (attachment uploads).
+		file?: { data: Blob; contentType: string };
 		query?: BugherdQuery;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, formData, query } = options;
+	const { method = 'GET', body, file, query } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: BUGHERD_API_BASE,
@@ -42,8 +42,8 @@ export async function makeBugherdRequest<T>(
 		method,
 		url: endpoint,
 		query,
-		...(formData
-			? { formData }
+		...(file
+			? { body: file.data, mediaType: file.contentType }
 			: body
 				? { body, mediaType: 'application/json' }
 				: {}),
