@@ -1,0 +1,547 @@
+---
+title: "Laposta API reference"
+sidebarTitle: "API"
+description: "API reference for the Laposta plugin in Corsair: every `laposta.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Campaigns
+
+### get
+
+`campaigns.get`
+
+Retrieve a specific campaign by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.laposta.api.campaigns.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `Record<string, any>` | Yes | — |
+
+
+
+---
+
+### list
+
+`campaigns.list`
+
+Retrieve all email campaigns
+
+**Risk:** `read`
+
+```ts
+await corsair.laposta.api.campaigns.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, any>[]` | Yes | — |
+
+
+
+---
+
+## Fields
+
+### create
+
+`fields.create`
+
+Create a new custom field for a mailing list
+
+**Risk:** `write`
+
+```ts
+await corsair.laposta.api.fields.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `datatype` | `text \| numeric \| date \| select_single \| select_multiple` | No | — |
+| `defaultvalue` | `string` | No | — |
+| `options` | `string[]` | No | — |
+| `required` | `boolean` | No | — |
+| `in_form` | `boolean` | No | — |
+| `in_list` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `field` | `Record<string, any>` | Yes | — |
+
+
+
+---
+
+### delete
+
+`fields.delete`
+
+Delete a custom field from a mailing list
+
+**Risk:** `destructive`
+
+```ts
+await corsair.laposta.api.fields.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `field_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `field` | `Record<string, any>` | Yes | — |
+
+
+
+---
+
+### get
+
+`fields.get`
+
+Retrieve a specific custom field by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.laposta.api.fields.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `field_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `field` | `Record<string, any>` | Yes | — |
+
+
+
+---
+
+### list
+
+`fields.list`
+
+Retrieve custom fields for a mailing list
+
+**Risk:** `read`
+
+```ts
+await corsair.laposta.api.fields.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, any>[]` | Yes | — |
+
+
+
+---
+
+## Lists
+
+### create
+
+`lists.create`
+
+Create a new mailing list
+
+**Risk:** `write`
+
+```ts
+await corsair.laposta.api.lists.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `remarks` | `string` | No | — |
+| `subscribe_notification_email` | `string` | No | — |
+| `unsubscribe_notification_email` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list` | `Record<string, any>` | Yes | — |
+
+
+
+---
+
+### delete
+
+`lists.delete`
+
+Delete a mailing list
+
+**Risk:** `destructive`
+
+```ts
+await corsair.laposta.api.lists.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list` | `Record<string, any>` | Yes | — |
+
+
+
+---
+
+### get
+
+`lists.get`
+
+Retrieve a specific mailing list by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.laposta.api.lists.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list` | `Record<string, any>` | Yes | — |
+
+
+
+---
+
+### list
+
+`lists.list`
+
+Retrieve all mailing lists
+
+**Risk:** `read`
+
+```ts
+await corsair.laposta.api.lists.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, any>[]` | Yes | — |
+
+
+
+---
+
+### update
+
+`lists.update`
+
+Update an existing mailing list
+
+**Risk:** `write`
+
+```ts
+await corsair.laposta.api.lists.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `remarks` | `string` | No | — |
+| `subscribe_notification_email` | `string` | No | — |
+| `unsubscribe_notification_email` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list` | `Record<string, any>` | Yes | — |
+
+
+
+---
+
+## Members
+
+### create
+
+`members.create`
+
+Subscribe a new member to a mailing list
+
+**Risk:** `write`
+
+```ts
+await corsair.laposta.api.members.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `ip` | `string` | No | — |
+| `custom_fields` | `Record<string, any>` | No | — |
+| `options` | `Record<string, any>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `member` | `Record<string, any>` | Yes | — |
+
+
+
+---
+
+### delete
+
+`members.delete`
+
+Unsubscribe or delete a member from a list
+
+**Risk:** `destructive`
+
+```ts
+await corsair.laposta.api.members.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `member_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `member` | `Record<string, any>` | Yes | — |
+
+
+
+---
+
+### get
+
+`members.get`
+
+Retrieve a specific subscriber by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.laposta.api.members.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `member_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `member` | `Record<string, any>` | Yes | — |
+
+
+
+---
+
+### list
+
+`members.list`
+
+Retrieve subscribers for a mailing list
+
+**Risk:** `read`
+
+```ts
+await corsair.laposta.api.members.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `state` | `active \| unsubscribed \| cleaned` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, any>[]` | Yes | — |
+
+
+
+---
+
+### update
+
+`members.update`
+
+Update an existing subscriber
+
+**Risk:** `write`
+
+```ts
+await corsair.laposta.api.members.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `member_id` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `state` | `active \| unsubscribed \| cleaned` | No | — |
+| `custom_fields` | `Record<string, any>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `member` | `Record<string, any>` | Yes | — |
+
+
+
+---
+
+## Reports
+
+### get
+
+`reports.get`
+
+Retrieve analytics and delivery report for a campaign
+
+**Risk:** `read`
+
+```ts
+await corsair.laposta.api.reports.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `report` | `Record<string, any>` | Yes | — |
+
+
+
+---
+

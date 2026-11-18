@@ -1,41 +1,50 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
+import { AuthMissingError } from 'corsair/core';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import { request } from 'corsair/http';
 
 export class LapostaAPIError extends Error {
 	constructor(
 		message: string,
-		public readonly code?: string,
+		public readonly status?: number,
+		public readonly code?: string | number,
 	) {
 		super(message);
 		this.name = 'LapostaAPIError';
 	}
 }
 
-// TODO: Update with your API base URL
-const LAPOSTA_API_BASE = 'https://api.example.com';
+export const LAPOSTA_API_BASE = 'https://api.laposta.nl/v2';
 
 export async function makeLapostaRequest<T>(
 	endpoint: string,
-	apiKey: string,
+	apiKey?: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// `unknown` because request bodies are endpoint-specific payloads validated by Zod prior to network call.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
 
+	if (apiKey !== undefined && apiKey.length === 0) {
+		throw new AuthMissingError('laposta', 'api_key');
+	}
+
+	// Basic auth: Laposta uses the API key as username with an empty password
+	const authHeaders: Record<string, string> = apiKey
+		? { Authorization: `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}` }
+		: {};
+
 	const config: OpenAPIConfig = {
 		BASE: LAPOSTA_API_BASE,
-		VERSION: '1.0.0',
+		VERSION: '2.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			Accept: 'application/json',
+			...authHeaders,
 		},
 	};
 
@@ -47,19 +56,15 @@ export async function makeLapostaRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query,
 	};
 
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
-		// Rethrow core's ApiError as is: its status and retryAfter are what the
-		// error handlers match (429 retries) and what core reads to refresh an
-		// OAuth token after a 401. Wrapping it in a new error loses both.
-		if (error instanceof ApiError) throw error;
 		if (error instanceof Error) {
-			throw new LapostaAPIError(error.message);
+			throw error;
 		}
-		throw new LapostaAPIError('Unknown error');
+		throw new LapostaAPIError('Unknown error occurred during Laposta request');
 	}
 }
