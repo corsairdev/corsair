@@ -60,6 +60,11 @@ const plugin = {
 				first: z.number().int().default(10).describe('Page size'),
 				order: z.enum(['asc', 'desc']).default('asc'),
 				sort: z.string().default('name').describe('Sort key; default is name.'),
+				options: z
+					.object({ notify: z.boolean() })
+					.prefault({ notify: false })
+					.describe('Task options'),
+				pageSize: z.number().int().prefault(50),
 			}),
 			output: z.object({
 				results: z.array(z.string()).nullable(),
@@ -166,6 +171,20 @@ describe('docs introspection types', () => {
 		expect(fieldsOf('things.get', 'output').get('limit')).not.toHaveProperty(
 			'description',
 		);
+	});
+
+	it('reads .prefault() like .default(): inner type, optional, the default value', () => {
+		const input = fieldsOf('things.get', 'input');
+		expect(input.get('options')).toMatchObject({
+			type: '{ notify: boolean }',
+			optional: true,
+			description: 'Task options. Defaults to {"notify":false}.',
+		});
+		expect(input.get('pageSize')).toMatchObject({
+			type: 'number',
+			optional: true,
+			description: 'Defaults to 50.',
+		});
 	});
 
 	it('keeps | null on a nullish object that has a description', () => {
