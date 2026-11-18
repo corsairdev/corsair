@@ -146,6 +146,13 @@ async function clearEdgeWhite(bytes: Buffer): Promise<Buffer> {
  * `pnpm import:plugin-icon`, reviewed, and served from there.
  */
 const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
+	// Google's own Contacts product mark (the 192px branding PNG).
+	googlecontacts:
+		'https://www.gstatic.com/images/branding/product/2x/contacts_2022_96dp.png',
+	// plugin-docs.yaml names zoho.com, whose icon is the generic Zoho mark;
+	// App Store icon is Zoho Invoice's own.
+	zohoinvoice:
+		'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/6b/9d/8a/6b9d8a63-d208-8234-859f-1e4799464bd2/AppIcon-0-0-1x_U007epad-0-0-0-1-0-0-sRGB-0-85-220.png/256x256bb.png',
 	googledocs:
 		'https://www.gstatic.com/images/branding/product/2x/docs_2020q4_96dp.png',
 	filevine:
