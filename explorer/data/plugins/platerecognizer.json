@@ -1,0 +1,286 @@
+{
+  "id": "platerecognizer",
+  "displayName": "Plate Recognizer",
+  "description": "Read license plates (with optional make, model and color) and text identifiers such as VINs, trailer ids and odometers from images, and check usage. Requests send Authorization Token.",
+  "npmPackageName": "@corsair-dev/platerecognizer",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 4,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "platerecognizer.api.ocr.getUsage",
+      "shortPath": "ocr.getUsage",
+      "description": "Read the OCR calls used this period and the plan limit.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ month?: number, calls?: number, year?: number, resets_on?: string }"
+          },
+          {
+            "key": "total_calls",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "platerecognizer.api.ocr.read",
+      "shortPath": "ocr.read",
+      "description": "Read a VIN, trailer id, odometer, shipping container, boat registration or C-TPAT seal from an image. Uses one OCR call; takes 20 to 30 s.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "upload",
+            "optional": true,
+            "type": "string",
+            "description": "Base64 image, sent as the upload form field. Or use uploadUrl."
+          },
+          {
+            "key": "uploadUrl",
+            "optional": true,
+            "type": "string",
+            "description": "Public URL of the image, instead of upload."
+          },
+          {
+            "key": "cameraId",
+            "optional": true,
+            "type": "string",
+            "description": "Your camera identifier."
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string",
+            "description": "UTC ISO 8601 time the image was taken, e.g. 2019-08-19T13:11:25."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "vin | trailer_id | odometer | shipping_container | boat_reg_number | seal_ctpat",
+            "description": "What to read: vin, trailer_id, odometer, shipping_container, boat_reg_number or seal_ctpat."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ identifier?: { type?: string, props?: { code?: { value?: string, score?: number }[], orientation?: { value?: string, score?: number }[], label?: { value?: string, score?: number }[], confidence?: number } }, seal_identification?: { carrier_or_brand?: string | null, seal_type?: string | null }, text_ocr?: { serial_number?: { code?: { value?: string, confidence?: number } }, additional_markings?: string[] | null }, barcode_data?: { code_present?: boolean | null, code_type?: string | null, decoded_value?: string | null } }[]"
+          },
+          {
+            "key": "processing_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "camera_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "platerecognizer.api.plates.read",
+      "shortPath": "plates.read",
+      "description": "Read license plates (and optionally make, model and color) from an image. Uses one Snapshot lookup. Plate text is not stored.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "upload",
+            "optional": true,
+            "type": "string",
+            "description": "Base64 image, sent as the upload form field. Or use uploadUrl."
+          },
+          {
+            "key": "uploadUrl",
+            "optional": true,
+            "type": "string",
+            "description": "Public URL of the image, instead of upload."
+          },
+          {
+            "key": "cameraId",
+            "optional": true,
+            "type": "string",
+            "description": "Your camera identifier."
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string",
+            "description": "UTC ISO 8601 time the image was taken, e.g. 2019-08-19T13:11:25."
+          },
+          {
+            "key": "regions",
+            "optional": true,
+            "type": "string[]",
+            "description": "Country or state codes to match, e.g. [\"us-ca\", \"mx\"]."
+          },
+          {
+            "key": "mmc",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also predict make, model, color and orientation (paid add-on)."
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "boolean",
+            "description": "Predict the direction of travel. Needs mmc."
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Engine configuration, e.g. { detection_mode: \"vehicle\" } or { region: \"strict\" }."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ plate?: string | {} | null, score?: number, dscore?: number, region?: { code?: string, score?: number } }[]"
+          },
+          {
+            "key": "processing_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "camera_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "platerecognizer.api.usage.get",
+      "shortPath": "usage.get",
+      "description": "Read the current Snapshot usage period.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ month?: number, calls?: number, year?: number, resets_on?: string }"
+          },
+          {
+            "key": "total_calls",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "platerecognizer.db.usage.search",
+      "entityName": "usage",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "year",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "month",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "calls",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "resetsOn",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "totalCalls",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}

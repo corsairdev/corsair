@@ -1,0 +1,1123 @@
+---
+title: "New Relic API reference"
+sidebarTitle: "API"
+description: "API reference for the New Relic plugin in Corsair: every `newrelic.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Accounts
+
+### list
+
+`accounts.list`
+
+List the accounts this key can reach, with the ids NRQL and issues take
+
+**Risk:** `read`
+
+```ts
+await corsair.newrelic.api.accounts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `region` | `us \| eu` | No | Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accounts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="accounts full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Alerts
+
+### conditions
+
+`alerts.conditions`
+
+List the APM, browser and mobile conditions in one policy; external service, synthetic and NRQL conditions are separate endpoints and are not covered
+
+**Risk:** `read`
+
+```ts
+await corsair.newrelic.api.alerts.conditions({ policyId: 41534 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `region` | `us \| eu` | No | Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region. |
+| `policyId` | `number` | Yes | Only conditions in this policy. |
+| `page` | `number` | No | — |
+
+Only APM, browser and mobile conditions; external service, synthetic and NRQL conditions are separate endpoints.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conditions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="conditions full type">
+
+```ts
+{
+  id?: number | null,
+  type?: string | null,
+  name?: string | null,
+  enabled?: boolean | null,
+  entities?: (string | number)[] | null,
+  metric?: string | null,
+  condition_scope?: string | null,
+  terms?: {
+    duration?: string | null,
+    operator?: string | null,
+    priority?: string | null,
+    threshold?: string | null,
+    time_function?: string | null
+  }[] | null,
+  user_defined?: Record<string, string> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createNrqlCondition
+
+`alerts.createNrqlCondition`
+
+Add a static NRQL alert condition to a policy: the query, thresholds and how long they must hold
+
+**Risk:** `write`
+
+```ts
+await corsair.newrelic.api.alerts.createNrqlCondition({ policyId: 41534, condition: { name: 'Error spike', enabled: true, value_function: 'single_value', terms: [{ duration: '5', operator: 'above', priority: 'critical', threshold: '10', time_function: 'all' }], nrql: { query: "SELECT count(*) FROM TransactionError" } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `region` | `us \| eu` | No | Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region. |
+| `policyId` | `number` | Yes | The policy the condition joins. |
+| `condition` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="condition full type">
+
+```ts
+{
+  name: string,
+  enabled?: boolean,
+  runbook_url?: string,
+  terms: {
+    duration: string,
+    operator: above | above_or_equals | below | below_or_equals | equal | not_equals,
+    priority?: critical | warning,
+    threshold: string,
+    time_function: all | any
+  }[],
+  value_function: single_value | sum,
+  nrql: {
+    query: string,
+    since_value?: string
+  },
+  violation_time_limit_seconds?: number,
+  signal?: Record<string, any>,
+  expiration?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nrql_condition` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="nrql_condition full type">
+
+```ts
+{
+  id?: number | null,
+  entity_guid?: string | null,
+  type?: string | null,
+  name?: string | null,
+  enabled?: boolean | null,
+  runbook_url?: string | null,
+  value_function?: string | null,
+  violation_time_limit_seconds?: number | null,
+  terms?: {
+    duration?: string | number | null,
+    operator?: string | null,
+    priority?: string | null,
+    threshold?: string | number | null,
+    time_function?: string | null
+  }[] | null,
+  nrql?: {
+    query?: string | null,
+    since_value?: string | number | null
+  } | null,
+  signal?: Record<string, any> | null,
+  expiration?: Record<string, any> | null,
+  data_account_id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createPolicy
+
+`alerts.createPolicy`
+
+Create an alert policy and choose whether incidents roll up per policy, per condition, or per condition and signal
+
+**Risk:** `write`
+
+```ts
+await corsair.newrelic.api.alerts.createPolicy({ name: 'EMEA API alerts', incident_preference: 'PER_CONDITION' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `region` | `us \| eu` | No | Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region. |
+| `name` | `string` | Yes | The policy name. |
+| `incident_preference` | `PER_POLICY \| PER_CONDITION \| PER_CONDITION_AND_TARGET` | No | How alerts roll up into incidents. Defaults at New Relic to PER_POLICY. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `policy` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="policy full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  incident_preference?: string | null,
+  created_at?: number | null,
+  updated_at?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteNrqlCondition
+
+`alerts.deleteNrqlCondition`
+
+Delete a NRQL alert condition; New Relic has no restore call
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.newrelic.api.alerts.deleteNrqlCondition({ conditionId: 69879675 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `region` | `us \| eu` | No | Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region. |
+| `conditionId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nrql_condition` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="nrql_condition full type">
+
+```ts
+{
+  id?: number | null,
+  entity_guid?: string | null,
+  type?: string | null,
+  name?: string | null,
+  enabled?: boolean | null,
+  runbook_url?: string | null,
+  value_function?: string | null,
+  violation_time_limit_seconds?: number | null,
+  terms?: {
+    duration?: string | number | null,
+    operator?: string | null,
+    priority?: string | null,
+    threshold?: string | number | null,
+    time_function?: string | null
+  }[] | null,
+  nrql?: {
+    query?: string | null,
+    since_value?: string | number | null
+  } | null,
+  signal?: Record<string, any> | null,
+  expiration?: Record<string, any> | null,
+  data_account_id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deletePolicy
+
+`alerts.deletePolicy`
+
+Delete an alert policy and the conditions attached to it; New Relic has no restore call
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.newrelic.api.alerts.deletePolicy({ policyId: 41534 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `region` | `us \| eu` | No | Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region. |
+| `policyId` | `number` | Yes | — |
+
+Deleting a policy also deletes its conditions, and there is no restore call.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `policy` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="policy full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  incident_preference?: string | null,
+  created_at?: number | null,
+  updated_at?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### nrqlConditions
+
+`alerts.nrqlConditions`
+
+List the static NRQL conditions in one policy, with their query, thresholds and signal settings
+
+**Risk:** `read`
+
+```ts
+await corsair.newrelic.api.alerts.nrqlConditions({ policyId: 41534 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `region` | `us \| eu` | No | Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region. |
+| `policyId` | `number` | Yes | Only NRQL conditions in this policy. |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nrql_conditions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="nrql_conditions full type">
+
+```ts
+{
+  id?: number | null,
+  entity_guid?: string | null,
+  type?: string | null,
+  name?: string | null,
+  enabled?: boolean | null,
+  runbook_url?: string | null,
+  value_function?: string | null,
+  violation_time_limit_seconds?: number | null,
+  terms?: {
+    duration?: string | number | null,
+    operator?: string | null,
+    priority?: string | null,
+    threshold?: string | number | null,
+    time_function?: string | null
+  }[] | null,
+  nrql?: {
+    query?: string | null,
+    since_value?: string | number | null
+  } | null,
+  signal?: Record<string, any> | null,
+  expiration?: Record<string, any> | null,
+  data_account_id?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### policies
+
+`alerts.policies`
+
+List alert policies with their incident rollup preference
+
+**Risk:** `read`
+
+```ts
+await corsair.newrelic.api.alerts.policies({ name: 'Browser Agent Alert Policy' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `region` | `us \| eu` | No | Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region. |
+| `name` | `string` | No | Only policies with this name. |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `policies` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="policies full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  incident_preference?: string | null,
+  created_at?: number | null,
+  updated_at?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateNrqlCondition
+
+`alerts.updateNrqlCondition`
+
+Replace a NRQL condition, e.g. to enable it or move its threshold; send the whole condition, since a partial body is refused
+
+**Risk:** `write`
+
+```ts
+await corsair.newrelic.api.alerts.updateNrqlCondition({ conditionId: 69879675, condition: { name: 'Error spike', enabled: false, value_function: 'single_value', terms: [{ duration: '5', operator: 'above', priority: 'critical', threshold: '20', time_function: 'all' }], nrql: { query: "SELECT count(*) FROM TransactionError" } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `region` | `us \| eu` | No | Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region. |
+| `conditionId` | `number` | Yes | — |
+| `condition` | `object` | Yes | The whole condition with your changes; New Relic replaces the stored one. |
+
+Send the whole condition; a partial body answers 400.
+
+<AccordionGroup>
+<Accordion title="condition full type">
+
+```ts
+{
+  name: string,
+  enabled?: boolean,
+  runbook_url?: string,
+  terms: {
+    duration: string,
+    operator: above | above_or_equals | below | below_or_equals | equal | not_equals,
+    priority?: critical | warning,
+    threshold: string,
+    time_function: all | any
+  }[],
+  value_function: single_value | sum,
+  nrql: {
+    query: string,
+    since_value?: string
+  },
+  violation_time_limit_seconds?: number,
+  signal?: Record<string, any>,
+  expiration?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nrql_condition` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="nrql_condition full type">
+
+```ts
+{
+  id?: number | null,
+  entity_guid?: string | null,
+  type?: string | null,
+  name?: string | null,
+  enabled?: boolean | null,
+  runbook_url?: string | null,
+  value_function?: string | null,
+  violation_time_limit_seconds?: number | null,
+  terms?: {
+    duration?: string | number | null,
+    operator?: string | null,
+    priority?: string | null,
+    threshold?: string | number | null,
+    time_function?: string | null
+  }[] | null,
+  nrql?: {
+    query?: string | null,
+    since_value?: string | number | null
+  } | null,
+  signal?: Record<string, any> | null,
+  expiration?: Record<string, any> | null,
+  data_account_id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updatePolicy
+
+`alerts.updatePolicy`
+
+Rename an alert policy or change how its incidents roll up; both fields are sent, since New Relic replaces the policy
+
+**Risk:** `write`
+
+```ts
+await corsair.newrelic.api.alerts.updatePolicy({ policyId: 41534, name: 'EMEA API alerts', incident_preference: 'PER_CONDITION' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `region` | `us \| eu` | No | Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region. |
+| `policyId` | `number` | Yes | — |
+| `name` | `string` | Yes | The policy name (current or new). |
+| `incident_preference` | `PER_POLICY \| PER_CONDITION \| PER_CONDITION_AND_TARGET` | Yes | The incident roll-up (current or new). |
+
+Send both name and incident_preference; New Relic replaces the policy and refuses a partial body.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `policy` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="policy full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  incident_preference?: string | null,
+  created_at?: number | null,
+  updated_at?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Applications
+
+### get
+
+`applications.get`
+
+Read one application by id with the same health, reporting and summary block
+
+**Risk:** `read`
+
+```ts
+await corsair.newrelic.api.applications.get({ applicationId: 1129082 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `region` | `us \| eu` | No | Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region. |
+| `applicationId` | `number` | Yes | The application id, from applications.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `application` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="application full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  language?: string | null,
+  health_status?: string | null,
+  reporting?: boolean | null,
+  last_reported_at?: string | null,
+  application_summary?: {
+    response_time?: number | null,
+    throughput?: number | null,
+    error_rate?: number | null,
+    apdex_target?: number | null,
+    apdex_score?: number | null
+  } | null,
+  end_user_summary?: {
+    response_time?: number | null,
+    throughput?: number | null,
+    error_rate?: number | null,
+    apdex_target?: number | null,
+    apdex_score?: number | null
+  } | null,
+  settings?: {
+    app_apdex_threshold?: number | null,
+    end_user_apdex_threshold?: number | null,
+    enable_real_user_monitoring?: boolean | null,
+    use_server_side_config?: boolean | null
+  } | null,
+  links?: {
+    application_instances?: number[] | null,
+    application_hosts?: number[] | null,
+    servers?: number[] | null,
+    alert_policy?: number | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`applications.list`
+
+List applications with their health colour, whether they are reporting, and the summary metrics the UI shows
+
+**Risk:** `read`
+
+```ts
+await corsair.newrelic.api.applications.list({ name: 'Web', page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `region` | `us \| eu` | No | Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region. |
+| `name` | `string` | No | Only applications whose name contains this text. |
+| `host` | `string` | No | Only applications reporting from this host. |
+| `ids` | `number[]` | No | Only these application ids. |
+| `page` | `number` | No | REST v2 pages by number and reports the page count in a Link header, which this plugin cannot read. Pass a page explicitly to walk a long list. |
+
+health_status is green, orange, red or unknown; orange is the REST spelling of the UI yellow.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `applications` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="applications full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  language?: string | null,
+  health_status?: string | null,
+  reporting?: boolean | null,
+  last_reported_at?: string | null,
+  application_summary?: {
+    response_time?: number | null,
+    throughput?: number | null,
+    error_rate?: number | null,
+    apdex_target?: number | null,
+    apdex_score?: number | null
+  } | null,
+  end_user_summary?: {
+    response_time?: number | null,
+    throughput?: number | null,
+    error_rate?: number | null,
+    apdex_target?: number | null,
+    apdex_score?: number | null
+  } | null,
+  settings?: {
+    app_apdex_threshold?: number | null,
+    end_user_apdex_threshold?: number | null,
+    enable_real_user_monitoring?: boolean | null,
+    use_server_side_config?: boolean | null
+  } | null,
+  links?: {
+    application_instances?: number[] | null,
+    application_hosts?: number[] | null,
+    servers?: number[] | null,
+    alert_policy?: number | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Change Tracking
+
+### createDeployment
+
+`changeTracking.createDeployment`
+
+Record a deployment marker (version, commit, changelog) on an entity; markers cannot be deleted
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.newrelic.api.changeTracking.createDeployment({ entityGuid: 'MTIzNDU2N3xBUE18QVBQTElDQVRJT058MTEyOTA4Mg', version: '1.4.2', commit: 'a1b2c3d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `region` | `us \| eu` | No | Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region. |
+| `entityGuid` | `string` | Yes | The entity the deployment belongs to, e.g. an APM service. |
+| `version` | `string` | Yes | The version deployed, e.g. 1.4.2. |
+| `description` | `string` | No | — |
+| `changelog` | `string` | No | — |
+| `commit` | `string` | No | — |
+| `user` | `string` | No | — |
+| `deepLink` | `string` | No | — |
+| `groupId` | `string` | No | — |
+| `deploymentType` | `BASIC \| BLUE_GREEN \| CANARY \| OTHER \| ROLLING \| SHADOW` | No | — |
+| `timestamp` | `number` | No | Epoch milliseconds; defaults to now. |
+
+Markers cannot be deleted afterwards.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deploymentId` | `string \| null` | No | — |
+| `entityGuid` | `string \| null` | No | — |
+| `version` | `string \| null` | No | — |
+| `timestamp` | `number \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `changelog` | `string \| null` | No | — |
+| `commit` | `string \| null` | No | — |
+| `user` | `string \| null` | No | — |
+| `deepLink` | `string \| null` | No | — |
+| `groupId` | `string \| null` | No | — |
+| `deploymentType` | `string \| null` | No | — |
+
+
+
+---
+
+## Entities
+
+### get
+
+`entities.get`
+
+Read up to 25 entities by GUID with their type, reporting state, alert severity and tags
+
+**Risk:** `read`
+
+```ts
+await corsair.newrelic.api.entities.get({ guids: ['MTIzNDU2N3xBUE18QVBQTElDQVRJT058MTEyOTA4Mg'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `region` | `us \| eu` | No | Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region. |
+| `guids` | `string[]` | Yes | Entity GUIDs, from entities.search (at most 25). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entities` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="entities full type">
+
+```ts
+{
+  guid?: string | null,
+  name?: string | null,
+  entityType?: string | null,
+  domain?: string | null,
+  type?: string | null,
+  accountId?: number | null,
+  reporting?: boolean | null,
+  alertSeverity?: string | null,
+  permalink?: string | null,
+  tags?: {
+    key?: string | null,
+    values?: string[] | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`entities.search`
+
+Search monitored entities (services, hosts, browser apps, dashboards, monitors, alert conditions) with a filter such as type = 'APPLICATION'
+
+**Risk:** `read`
+
+```ts
+await corsair.newrelic.api.entities.search({ query: "domain = 'APM' AND type = 'APPLICATION'" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `region` | `us \| eu` | No | Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region. |
+| `query` | `string` | Yes | An entity search filter, e.g. type = 'APPLICATION', domain = 'APM', name LIKE 'checkout', or accountId = 123. Combine with AND. |
+| `cursor` | `string` | No | The nextCursor from the previous page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number \| null` | No | — |
+| `entities` | `object[]` | Yes | — |
+| `nextCursor` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="entities full type">
+
+```ts
+{
+  guid?: string | null,
+  name?: string | null,
+  entityType?: string | null,
+  domain?: string | null,
+  type?: string | null,
+  accountId?: number | null,
+  reporting?: boolean | null,
+  alertSeverity?: string | null,
+  permalink?: string | null,
+  tags?: {
+    key?: string | null,
+    values?: string[] | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Issues
+
+### list
+
+`issues.list`
+
+List alert issues for an account, filtered by state, priority, entity or time window
+
+**Risk:** `read`
+
+```ts
+await corsair.newrelic.api.issues.list({ accountId: 1234567, states: ['ACTIVATED'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `region` | `us \| eu` | No | Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region. |
+| `accountId` | `number` | Yes | — |
+| `states` | `(ACTIVATED \| CREATED \| CLOSED \| DEACTIVATED)[]` | No | Only issues in these states. |
+| `priority` | `(CRITICAL \| HIGH \| MEDIUM \| LOW)[]` | No | — |
+| `entityGuids` | `string[]` | No | — |
+| `startTime` | `number` | No | Epoch milliseconds; with endTime, limits the window. |
+| `endTime` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+title and description are lists in NerdGraph.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issues` | `object[]` | Yes | — |
+| `nextCursor` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="issues full type">
+
+```ts
+{
+  issueId?: string | null,
+  title?: string[] | null,
+  description?: string[] | null,
+  priority?: string | null,
+  state?: string | null,
+  sources?: string[] | null,
+  entityGuids?: string[] | null,
+  entityNames?: string[] | null,
+  policyIds?: (string | number)[] | null,
+  conditionName?: string[] | null,
+  totalIncidents?: number | null,
+  createdAt?: number | null,
+  activatedAt?: number | null,
+  closedAt?: number | null,
+  acknowledgedAt?: number | null,
+  updatedAt?: number | null,
+  deepLinkUrl?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Metrics
+
+### get
+
+`metrics.get`
+
+Read metric timeslices for an application over a time window, or one averaged value per metric with summarize
+
+**Risk:** `read`
+
+```ts
+await corsair.newrelic.api.metrics.get({ applicationId: 1129082, names: ['Apdex', 'Errors/all'], summarize: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `region` | `us \| eu` | No | Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region. |
+| `applicationId` | `number` | Yes | The application id, from applications.list. |
+| `names` | `string[]` | Yes | Metric names, sent as repeated `names[]` parameters, e.g. Apdex, Errors/all, WebTransaction. |
+| `from` | `string` | No | Start of the window. New Relic defaults to the last 30 minutes. |
+| `to` | `string` | No | End of the window. Defaults to now. |
+| `period` | `number` | No | Seconds per data point. |
+| `summarize` | `boolean` | No | Return one averaged value for the window rather than the series. |
+| `values` | `string[]` | No | Only these value fields, e.g. average_value, call_count. |
+
+Without from, New Relic returns the last 30 minutes. summarize collapses the window into one value per metric.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metric_data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metric_data full type">
+
+```ts
+{
+  from?: string | null,
+  to?: string | null,
+  metrics?: {
+    name?: string | null,
+    timeslice?: number | null,
+    values?: Record<string, number | null> | null,
+    timeslices?: {
+      from?: string | null,
+      to?: string | null,
+      values?: Record<string, number | null> | null
+    }[] | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Query
+
+### nrql
+
+`query.nrql`
+
+Run a NRQL query against one account through NerdGraph and return its rows and the time window New Relic actually ran over
+
+**Risk:** `read`
+
+```ts
+await corsair.newrelic.api.query.nrql({ accountId: 1234567, query: 'SELECT count(*) FROM Transaction SINCE 1 hour ago' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `region` | `us \| eu` | No | Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region. |
+| `accountId` | `number` | Yes | The New Relic account the query runs against. |
+| `query` | `string` | Yes | A NRQL statement, e.g. SELECT count(*) FROM Transaction SINCE 1 hour ago. |
+
+Runs through NerdGraph, so accountId is required. A bad query answers 200 with an errors array, which the plugin throws.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `Record<string, JsonValue>[]` | Yes | — |
+| `metadata` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+  timeWindow?: {
+    begin?: number | null,
+    end?: number | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

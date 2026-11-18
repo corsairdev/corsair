@@ -1,0 +1,136 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: "Supportbee"
+description: Help desk for reading, replying to and routing support tickets, with users, teams, labels, snippets and reports.
+domain: supportbee.com
+recommendedAuth: api_key
+overviewNote: |
+  **Every SupportBee desk is its own subdomain**, so there is no shared API host. Set `supportbee({ company: 'acme' })` or store it with `keys.set_company(company)`. The host on its own (`acme.supportbee.com`) and a pasted desk address (`https://acme.supportbee.com/tickets`) are accepted too. Requests only go to `https://<company>.supportbee.com`: another domain, an IP address or a port is rejected before anything is sent. Without a company the plugin throws before it sends anything.
+
+  Credentials are one **API token**, found on the desk under the profile picture, then API Token. Store it as the account's `api_key`, or pass it as `supportbee({ key })`.
+
+  Things to know before you call:
+
+  - **Every request needs `Accept: application/json`**, which the client sends. Without it the desk answers HTML.
+  - **Ticket search takes `query`, not `q`.** The route is `/tickets/search`, and a blank query is rejected before the request.
+  - **`tickets.delete` only works on a trashed ticket**, and only an admin can call it. Trash first, then delete.
+  - **The list route answers unarchived tickets only** unless `archived` names another scope, and it returns 15 tickets a page in last-activity order.
+  - **A reply leaves SupportBee.** `replies.create` mail reaches the real customer; `comments.create` is the internal note only staff see.
+  - **A ticket takes a user assignee or a team assignee, not both.** Reassigning to another team clears the user assignee.
+  - **A filter is three calls.** `filters.createRule` and `filters.createConsequence` each return an id, and `filters.create` links them. Until the link exists, nothing happens.
+  - **`emails` manages forwarding addresses**, not mail. SupportBee generates the `forward_to` address an existing mailbox forwards into.
+  - **The flag routes answer 204 with no body**, so the plugin reports `{ id, updated: true }` rather than returning nothing.
+  - **A customer group is a user with `type: customer_group`**, and its members are added with `users.addMember`. There is no route to remove a member.
+examples:
+  read:
+    path: tickets.list
+    title: List recent tickets
+    args:
+      page: 1
+  write:
+    path: replies.create
+    title: Reply to a ticket
+    args:
+      ticket_id: 1
+      content:
+        text: Thanks for reaching out, we are looking into this now.
+apiNotes:
+  tickets.list: |
+    Answers `{ tickets, total, current_page, per_page, total_pages }`, 15 a page in last-activity order. Only unarchived tickets are returned unless `archived` sets another scope. `sort_by` takes `last_activity_at` or `created_at`, and `requester_emails` takes a comma-separated list. `total_only: true` returns the count and no tickets.
+  tickets.create: |
+    Wraps the payload in `ticket` and answers the created ticket. SupportBee also accepts this route without a token, but this plugin always sends the account's token, so the 8-a-minute token limit applies. `content` takes `text`, `html` or both, plus `attachment_ids` from `attachments.create`. `notify_requester: true` sends a copy and suppresses the auto-response.
+  tickets.search: |
+    The parameter is **`query`**, not `q`. Answers the same wrapper as the list route. `spam` and `trash` widen the search to those scopes, and a blank query is rejected before the request is sent.
+  tickets.get: |
+    Answers `{ ticket }`. The ticket carries its requester, content, labels, and its current user and team assignee. The API spells those two `current_user_asignee` and `current_team_asignee`, with one `g`.
+  tickets.delete: |
+    Answers 204 and the plugin reports `{ id, deleted: true }`. **Only a trashed ticket can be deleted**, and only an admin can call it; anything else answers 404. This is the permanent one: `tickets.trash` is the restorable step before it.
+  tickets.archive: |
+    Answers 204 and reports `{ id, updated: true }`. Archiving takes the ticket out of the default list; it stays readable by id.
+  tickets.unarchive: |
+    Answers 204 and returns the ticket to the default list.
+  tickets.markAnswered: |
+    Answers 204. Use this to record an answer given outside SupportBee, without sending a reply.
+  tickets.markUnanswered: |
+    Answers 204. The ticket returns to the open queue, which is what an unanswered ticket looks like.
+  tickets.markSpam: |
+    Answers 204. A spam ticket is out of the default list but still counted in the total.
+  tickets.unmarkSpam: |
+    Answers 204 and clears the spam flag.
+  tickets.trash: |
+    Answers 204 and moves the ticket to the trash. It stays restorable with `tickets.untrash` until an admin deletes it.
+  tickets.untrash: |
+    Answers 204 and restores a trashed ticket.
+  tickets.assignUser: |
+    Wraps the id in `user_assignment` and answers that record plus an `asignee` object. If the ticket is already assigned to a team, the user must be a member of that team.
+  tickets.unassignUser: |
+    Answers 204 and clears the user assignee.
+  tickets.assignTeam: |
+    Wraps the id in `team_assignment` and answers that record. Reassigning a ticket that already has a team and a user clears the user assignee.
+  tickets.unassignTeam: |
+    Answers 204 and clears the team assignee.
+  tickets.audit: |
+    Answers `{ audit }`, the actions on the ticket oldest first. Each entry has an `action`, an `actor` (null for a system action), a `severity` of `info` or `error`, and a `happened_at`.
+  tickets.addLabel: |
+    The label name is a path segment. The label **must already exist on the company**, so create it in the dashboard or read `labels.list` first. Answers `{ label }`.
+  tickets.removeLabel: |
+    Answers 204, and the plugin reports `{ ticket_id, label_name, removed: true }`. The ticket keeps existing; only the label link goes.
+  replies.list: |
+    Answers `{ replies }` with no paging. Each reply carries its replier and the ticket's reply and comment counts.
+  replies.get: |
+    Answers one reply. The path is `/tickets/{ticket_id}/replies/{id}`, so both ids are needed even though the reply id is unique.
+  replies.create: |
+    **This sends mail to the real customer.** The payload is wrapped in `reply`. `content` takes `text`, `html` or both plus `attachment_ids`. `on_behalf_of` lets an admin reply as another agent, and a user trying that gets a 403.
+  comments.list: |
+    Answers `{ comments }`. A comment is internal: only staff see it, and the requester is not notified.
+  comments.create: |
+    Wraps the payload in `comment` and answers the created comment. Nothing leaves SupportBee.
+  drafts.get: |
+    Answers `{ draft }`. When no draft exists the route returns a new one quoting the last message, so `quote: false` gives an empty draft instead. `time_zone` changes how the quoted date is written.
+  drafts.create: |
+    Wraps the payload in `draft` and answers the created draft. `content` needs `text` or `html`. **`cc` and `bcc` are comma-separated strings on this route**, not the arrays the reply route takes.
+  drafts.update: |
+    Sends PUT to the same path as the create, with a `draft` wrapper. Answers 404 when no draft exists, so create before updating.
+  drafts.delete: |
+    Answers 204 and reports `{ ticket_id, deleted: true }`. The draft text is gone; nothing returns it.
+  users.list: |
+    Answers `{ users }`, which are the desk's users **and** its customer groups. `type: 'customer_group'` narrows it to groups, `with_invited: true` adds members who have not accepted yet, and `with_roles` takes a comma-separated list.
+  users.create: |
+    Wraps the payload in `user`. `name` is the one required field because a customer group has no email. `role` is 9 for collaborator, 10 for agent and 20 for admin; omit it for a customer. `type: 'customer_group'` creates a group instead of a user.
+  users.get: |
+    Answers `{ user }`. `max_tickets` caps the tickets listed on the record.
+  users.update: |
+    Sends PUT with a `user` wrapper, and only the fields you pass change. **The token's own user cannot be updated here**; SupportBee says to use the UI for that.
+  users.listMembers: |
+    Answers `{ users }`, the members of one customer group. Answers 404 when the id is not a group.
+  users.addMember: |
+    Wraps the id in `member` and answers the updated group. **There is no route to remove a member**; the document has only GET and POST on this path.
+  teams.list: |
+    Answers `{ teams }`. `with_users: true` adds each team's members, and `user` narrows to the teams one user belongs to.
+  attachments.create: |
+    Sends `multipart/form-data` with the file under `files[]`, which is the field name the route documents. `content` is base64, with or without a data URI prefix. The answer carries the `id` to pass in `content.attachment_ids` on a reply, comment, draft or ticket.
+  snippets.list: |
+    Answers `{ snippets }` with no paging.
+  snippets.create: |
+    Wraps the payload in `snippet`. `content` needs `text` or `html`; `tags` is one comma-separated string.
+  snippets.update: |
+    Sends PUT to the id with a `snippet` wrapper, and the whole record is replaced.
+  snippets.delete: |
+    Answers 204 and reports `{ id, deleted: true }`. The snippet text is gone.
+  filters.createRule: |
+    Creates the matching half of a filter and answers `{ rule: { id } }`. A rule matches on `requester_email`, `delivered_to`, `subject` or `body`. It does nothing until `filters.create` links it to a consequence.
+  filters.createConsequence: |
+    Creates the action half and answers `{ consequence: { id } }`. It can archive, spam, trash, label or assign, and **a consequence assigns a user or a team, not both**, so the schema rejects that pair. `assign_user` and `assign_team` are strings, not numbers.
+  filters.create: |
+    Links the two ids, which is what makes the filter act. The route documents 201 with no body, so the plugin reports `{ rule_id, consequence_id, created: true }`.
+  emails.list: |
+    Answers `{ forwarding_addresses }`. Each one has the `from` address a mailbox forwards and the generated `forward_to` address SupportBee reads. Despite the route name, this manages forwarding, not mail.
+  emails.create: |
+    Wraps the payload in `forwarding_address`. `email` is the address you will forward from. `filter_spam` runs a spam filter on incoming mail, and `use_agent_name` puts the agent's name in replies instead of the address name.
+  reports.avgFirstResponseTime: |
+    Answers `{ data_points: [{ value, timestamp }] }`. **`value` arrives as a string** even when it is a number, so parse it before doing arithmetic. `user`, `team` and `label` narrow the window and `since` takes any documented date format.
+  reports.ticketsCount: |
+    Answers `{ data_points }`, one point per day, with `value` as a string. A `since` date sets the start of the window.
+  reports.repliesCount: |
+    Answers `{ data_points }`, one point per day, with `value` as a string. A `since` date sets the start of the window.
+  labels.list: |
+    Answers `{ labels: [{ name, color }] }`. A ticket can only be given a label that exists here, so read this before `tickets.addLabel`.

@@ -1,0 +1,114 @@
+displayName: ToneDen
+description: 'Manage smart links, contests and social unlocks, ad campaigns and playbook campaigns, and read their performance data.'
+domain: toneden.io
+recommendedAuth: oauth_2
+overviewNote: |
+  ToneDen issues a user access token through an OAuth 2.0 authorization-code flow only, so this plugin uses `oauth_2` as its auth type. Register an app in Developer Settings at https://www.toneden.io/settings/developer to get a client ID and secret; ToneDen reviews the app before the API works. The token is a user token, so every call acts as that user.
+
+  Things to know:
+
+  - **Every route is scoped to a user.** Campaigns and user lists take `user_id` in the path, and links and attachments are listed per user (`links.listForUser`, `attachments.listForUser` with a `type` of `unlock` or `contest`). Call `users.get` with `user_id: 'me'` to read the connected user and its ID.
+  - **A taken path is a successful call.** `links.validPath` answers 200 with `valid: false` and a reason, so check the flag rather than catching an error.
+  - **Writes send only what you pass.** ToneDen documents no required body field, so an update with no field is rejected here rather than sending an empty body that changes nothing.
+  - **Campaign writes can spend money.** `campaigns.create` creates a real campaign on Facebook or Google, and a campaign or playbook update can change its budget or status, so `campaigns.create`, `campaigns.update`, `playbooks.create` and `playbooks.update` are `destructive`. Review the body before calling them.
+  - **Link insights need a metric.** `links.insights` takes `metric` (`clicks`, `clickthroughs` or `rsvps`) and the window as `start_date` and `end_date`.
+  - **Errors.** HTTP failures are core's `ApiError`; `describeToneDenError` reads the message out of its body.
+  - **Ad campaigns need a linked ad account.** A campaign write also needs the ad account, creative and targeting fields ToneDen documents; the plugin forwards whatever you send without inventing defaults.
+  - **User lists need ToneDen approval.** The custom-audience endpoints say to contact support for access.
+  - **No webhooks.** ToneDen posts no events, so performance is read through the insights routes.
+examples:
+  read:
+    path: links.listForUser
+    title: List your links
+    args:
+      user_id: 1
+      limit: 25
+  write:
+    path: links.create
+    title: Create a link
+    args:
+      title: New single
+      target_type: music
+      target_url: https://open.spotify.com/album/abc
+apiExamples:
+  links.listForUser:
+    call: "{ user_id: 1 }"
+  links.get:
+    call: "{ link_id: 48213 }"
+  links.create:
+    call: "{ title: 'New single', target_type: 'music', target_url: 'https://open.spotify.com/album/abc' }"
+  links.update:
+    call: "{ link_id: 48213, title: 'Renamed' }"
+  links.delete:
+    call: "{ link_id: 48213 }"
+  links.expand:
+    call: "{ url: 'https://open.spotify.com/album/abc' }"
+  links.validPath:
+    call: "{ path: 'new-single', subdomain: 'ada' }"
+  links.insights:
+    call: "{ link_id: 48213, metric: 'clicks', start_date: '2026-05-01', end_date: '2026-05-31' }"
+  links.insightsOverview:
+    call: "{ link_id: 48213 }"
+  attachments.listForUser:
+    call: "{ user_id: 1, type: 'unlock' }"
+  attachments.get:
+    call: "{ attachment_id: 9100 }"
+  attachments.create:
+    call: "{ type: 'contest', title: 'Win a vinyl' }"
+  attachments.update:
+    call: "{ attachment_id: 9100, title: 'Win a signed vinyl' }"
+  attachments.delete:
+    call: "{ attachment_id: 9100 }"
+  attachments.entries:
+    call: "{ attachment_id: 9100, start_date: '2026-05-01', aggregate_interval: 'day' }"
+  attachments.entriesTotals:
+    call: "{ attachment_id: 9100 }"
+  attachments.unlocks:
+    call: "{ attachment_id: 9100 }"
+  attachments.unlocksTotals:
+    call: "{ attachment_id: 9100 }"
+  attachments.unlockPlatforms:
+    call: "{ attachment_id: 9100 }"
+  campaigns.list:
+    call: "{ user_id: 1 }"
+  campaigns.get:
+    call: "{ campaign_id: 7788 }"
+  campaigns.create:
+    call: "{ title: 'Spring tour', target_type: 'link', target: 'https://toneden.io/ada/new-single' }"
+  campaigns.update:
+    call: "{ campaign_id: 7788, status: 'paused' }"
+  campaigns.delete:
+    call: "{ campaign_id: 7788 }"
+  campaigns.insights:
+    call: "{ campaign_id: 7788 }"
+  campaigns.creativeInsights:
+    call: "{ campaign_id: 7788 }"
+  userLists.list:
+    call: "{ user_id: 1 }"
+  userLists.create:
+    call: "{ external_ad_account_id: 'act_123', type: 'email' }"
+  userLists.updateContacts:
+    call: "{ list_id: 55, add: [{ email: 'a@acme.com' }] }"
+  offlineConversions.upload:
+    call: "{ user_id: 1, events: [{ user: { email: 'fan@example.com' }, event: 'Purchase', timestamp: 1779000000, value: 25 }] }"
+  playbooks.get:
+    call: "{ campaign_id: 9900 }"
+  playbooks.create:
+    call: "{ title: 'Album rollout', template_id: 12 }"
+  playbooks.update:
+    call: "{ campaign_id: 9900, is_archived: true }"
+  playbooks.delete:
+    call: "{ campaign_id: 9900 }"
+  users.get:
+    call: "{ user_id: 'me' }"
+  users.update:
+    call: "{ user_id: 1, display_name: 'Ada L.' }"
+apiNotes:
+  links.validPath: 'A taken path answers 200 with `valid: false` and a reason; it is not an error.'
+  links.update: 'Only the fields you pass are sent, and a call with no field is rejected before the request.'
+  links.delete: 'A deleted link cannot be restored.'
+  campaigns.create: 'Creates a real campaign on Facebook or Google. ToneDen documents no required field, so pass the targeting and creative fields the campaign type needs.'
+  campaigns.update: 'Only the fields you pass are sent. Use `status` to pause or resume.'
+  campaigns.creativeInsights: 'Returns performance for each ad within the campaign rather than one total.'
+  userLists.create: 'ToneDen asks you to contact support for access to user lists before using this.'
+  playbooks.update: 'Only the fields you pass are sent; archive rather than delete to keep the history.'

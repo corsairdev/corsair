@@ -113,6 +113,21 @@ export const gladiaEndpointSchemas = {
 	typeof gladiaEndpointsNested
 >;
 
+// A pre-recorded transcription runs after the call that starts it returns.
+// Status values are the output schema's (endpoints/types.ts StatusSchema);
+// jobs.test.ts keeps them in step. queued and processing are still going.
+// Gladia has no way to stop a running job, so no cancel is declared.
+const TRANSCRIPTION_JOB = {
+	idPath: 'id',
+	status: {
+		op: 'preRecorded.getJob',
+		idArg: 'id',
+		statusPath: 'status',
+		done: ['done'],
+		failed: ['error'],
+	},
+} as const;
+
 const gladiaEndpointMeta = {
 	'upload.audioVideoFile': {
 		riskLevel: 'write',
@@ -139,6 +154,7 @@ const gladiaEndpointMeta = {
 	'preRecorded.initiateTranscription': {
 		riskLevel: 'write',
 		description: 'Start a pre-recorded transcription job',
+		job: TRANSCRIPTION_JOB,
 	},
 	'preRecorded.listJobs': {
 		riskLevel: 'read',

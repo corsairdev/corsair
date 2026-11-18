@@ -1,0 +1,800 @@
+{
+  "id": "hypeauditor",
+  "displayName": "HypeAuditor",
+  "description": "HypeAuditor influencer data - reports, media, audience history, brand mentions, discovery search and saved lists.",
+  "npmPackageName": "@corsair-dev/hypeauditor",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 26,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "client_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "hypeauditor.api.account.planInfo",
+      "shortPath": "account.planInfo",
+      "description": "Read the report credits and discovery calls left in the plan; API subscriptions only",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hypeauditor.api.account.unlockedReports",
+      "shortPath": "account.unlockedReports",
+      "description": "List the reports unlocked on the account, with `refunded` marking a credit returned after a failed build",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-based index of the first item."
+          },
+          {
+            "key": "date_from",
+            "optional": true,
+            "type": "string",
+            "description": "Only reports unlocked on or after this date. A date without a time is read as `00:00:00`."
+          },
+          {
+            "key": "date_to",
+            "optional": true,
+            "type": "string",
+            "description": "Only reports unlocked on or before this date. Omitted, the window runs from account creation to now."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ report_id?: number | null, username?: string | null, type?: string | null, unlocked_at?: number | string | null, refunded?: boolean | null }[] | Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hypeauditor.api.discovery.keywords",
+      "shortPath": "discovery.keywords",
+      "description": "Read the posts behind a keyword search by their content IDs, which is free and safe to repeat",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "socialNetwork",
+            "optional": false,
+            "type": "instagram | youtube | tiktok | twitter | twitch"
+          },
+          {
+            "key": "contentIds",
+            "optional": false,
+            "type": "string",
+            "description": "Comma separated content IDs to look up."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hypeauditor.api.discovery.search",
+      "shortPath": "discovery.search",
+      "description": "Search creators with the documented filters, 20 per page; each page costs one discovery call, and `sandbox` answers sample data without spending one",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "social_network",
+            "optional": false,
+            "type": "instagram | youtube | tiktok | twitter | twitch",
+            "description": "Which network to search. Required."
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null",
+            "description": "The documented discovery filters, sent as the request body alongside `social_network`: `search`, `search_content`, `search_description`, `niche_search`, `category`, `account_geo`, `subscribers_count`, `er`, `growth`, `sort`, `username_exclude` and the rest. See https://hypeauditor.readme.io/reference/general_discovery."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, 1-indexed, 20 items per page. The result is capped at 10,000 rows, so the highest page is 500. Each page costs one discovery call."
+          },
+          {
+            "key": "sandbox",
+            "optional": true,
+            "type": "boolean",
+            "description": "Use the sandbox action, which validates the request and returns a sample without spending a call. Defaults to false."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hypeauditor.api.history.instagram",
+      "shortPath": "history.instagram",
+      "description": "Read the Instagram metrics history for a username. HypeAuditor unlocks the creator’s report on this call, so the first request for a creator spends a credit; repeating it is free",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string",
+            "description": "The account identifier from its URL: a username for TikTok, Twitch, Twitter and Snapchat, and a channel ID or username for YouTube."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hypeauditor.api.history.tiktok",
+      "shortPath": "history.tiktok",
+      "description": "Read the TikTok metrics history for a channel. HypeAuditor unlocks the creator’s report on this call, so the first request for a creator spends a credit; repeating it is free",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string",
+            "description": "The account identifier from its URL: a username for TikTok, Twitch, Twitter and Snapchat, and a channel ID or username for YouTube."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hypeauditor.api.history.twitch",
+      "shortPath": "history.twitch",
+      "description": "Read the Twitch metrics history for a channel. HypeAuditor unlocks the creator’s report on this call, so the first request for a creator spends a credit; repeating it is free",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string",
+            "description": "The account identifier from its URL: a username for TikTok, Twitch, Twitter and Snapchat, and a channel ID or username for YouTube."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hypeauditor.api.history.twitter",
+      "shortPath": "history.twitter",
+      "description": "Read the Twitter metrics history for a channel. HypeAuditor unlocks the creator’s report on this call, so the first request for a creator spends a credit; repeating it is free",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string",
+            "description": "The account identifier from its URL: a username for TikTok, Twitch, Twitter and Snapchat, and a channel ID or username for YouTube."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hypeauditor.api.history.youtube",
+      "shortPath": "history.youtube",
+      "description": "Read the YouTube metrics history for a channel. HypeAuditor documents that history calls unlock the creator’s report on the other networks, so treat the first request as spending a credit; repeating it is free",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string",
+            "description": "The account identifier from its URL: a username for TikTok, Twitch, Twitter and Snapchat, and a channel ID or username for YouTube."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hypeauditor.api.lists.add",
+      "shortPath": "lists.add",
+      "description": "Add a report to a saved list; repeating it leaves the report in the list, so it is safe to retry",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "number",
+            "description": "The list to add the report to."
+          },
+          {
+            "key": "channel_id",
+            "optional": false,
+            "type": "string",
+            "description": "The channel: a username for `IG`, `TT`, `TW` and `TR`, and a channel ID for `YT`."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "IG | YT | TT | TW | TR",
+            "description": "`IG`, `YT`, `TT`, `TW` or `TR`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hypeauditor.api.lists.items",
+      "shortPath": "lists.items",
+      "description": "Read the reports saved in one list, up to 100 per page, which is free and safe to repeat",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The list ID. `id: 0` is the default \"Recent searches\" list."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, at most 100. Defaults to the provider's 100."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-based index of the first item. Defaults to 0."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ report_id?: number | null, name?: string | null, username?: string | null, type?: string | null, followers?: number | null, comment?: string | null, lists?: string | null, created?: number | null }[] | Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hypeauditor.api.lists.list",
+      "shortPath": "lists.list",
+      "description": "List the saved lists in the account; the default \"Recent searches\" list is `id: 0`",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, count?: number | null, created?: number | null, updated?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hypeauditor.api.lists.remove",
+      "shortPath": "lists.remove",
+      "description": "Remove a report from a saved list; the default \"Recent searches\" list cannot be changed",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "report_id",
+            "optional": false,
+            "type": "number",
+            "description": "The report to remove."
+          },
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "number",
+            "description": "The list to remove it from. The default \"Recent searches\" list, `id: 0`, cannot be changed."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hypeauditor.api.media.instagram",
+      "shortPath": "media.instagram",
+      "description": "Read an Instagram account’s recent media, which is free and safe to repeat",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string",
+            "description": "The account identifier from its URL: a username for TikTok, Twitch, Twitter and Snapchat, and a channel ID or username for YouTube."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hypeauditor.api.media.tiktok",
+      "shortPath": "media.tiktok",
+      "description": "Read a TikTok account’s media by channel ID, which is free and safe to repeat",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string",
+            "description": "The numeric TikTok user ID (`result.report.basic.id` in the TikTok report), sent as `channelId`. Not the username."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hypeauditor.api.media.youtube",
+      "shortPath": "media.youtube",
+      "description": "Read a YouTube channel’s media, one page at a time, which is free and safe to repeat",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string",
+            "description": "The account identifier from its URL: a username for TikTok, Twitch, Twitter and Snapchat, and a channel ID or username for YouTube."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, 1-indexed. Omitted reads the first page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hypeauditor.api.mentions.tiktok",
+      "shortPath": "mentions.tiktok",
+      "description": "Read the brands a TikTok account’s videos mention, which is free and safe to repeat",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string",
+            "description": "The account identifier from its URL: a username for TikTok, Twitch, Twitter and Snapchat, and a channel ID or username for YouTube."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hypeauditor.api.mentions.youtube",
+      "shortPath": "mentions.youtube",
+      "description": "Read the brands a YouTube channel’s videos mention, which is free and safe to repeat",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string",
+            "description": "The account identifier from its URL: a username for TikTok, Twitch, Twitter and Snapchat, and a channel ID or username for YouTube."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hypeauditor.api.reports.instagram",
+      "shortPath": "reports.instagram",
+      "description": "Read the Instagram report by username or user ID; the first request for a creator spends a credit, and a 202 answer carries `retryTtl`",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string",
+            "description": "Instagram username without `@`. Send this or `user_id`, not both."
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string",
+            "description": "Instagram user ID, which the report returns as `user.id`. Send this or `username`, not both."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "report | advanced_report",
+            "description": "`report` is the mini report and costs one mini-report credit; `advanced_report` is the full report and costs one report credit. Omitted, the provider unlocks the advanced report."
+          },
+          {
+            "key": "features",
+            "optional": true,
+            "type": "string[]",
+            "description": "Additional report features, such as `ranking` or `mentions`. Omitted returns the default set, and not every feature is in the mini report."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ result: { retryTtl: number, restTokens?: number | null } } | { result: { report_state?: string | null, user?: { id?: string | number | null, username?: string | null, full_name?: string | null, is_private?: boolean | null, is_verified?: boolean | null, is_deleted?: boolean | null, about?: string | null, photo_url?: string | null } | null, validUntil?: number | null, restTokens?: number | null, _report_quality?: string | null } }"
+      }
+    },
+    {
+      "path": "hypeauditor.api.reports.snapchat",
+      "shortPath": "reports.snapchat",
+      "description": "Read the Snapchat report by username; the first request for a creator spends a credit, and a 202 answer carries `retryTtl`",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string",
+            "description": "The account identifier from its URL: a username for TikTok, Twitch, Twitter and Snapchat, and a channel ID or username for YouTube."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ result: { retryTtl: number, restTokens?: number | null } } | { result: { report_state?: string | null, user?: { id?: string | number | null, username?: string | null, full_name?: string | null, is_private?: boolean | null, is_verified?: boolean | null, is_deleted?: boolean | null, about?: string | null, photo_url?: string | null } | null, validUntil?: number | null, restTokens?: number | null, _report_quality?: string | null } }"
+      }
+    },
+    {
+      "path": "hypeauditor.api.reports.tiktok",
+      "shortPath": "reports.tiktok",
+      "description": "Read the TikTok report by username or user ID; the first request for a creator spends a credit, and a 202 answer carries `retryTtl`",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string",
+            "description": "TikTok username without `@`. Send this or `user_id`."
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string",
+            "description": "TikTok user ID. Send this or `channel`."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "report | advanced_report",
+            "description": "`report` is the mini report and costs one mini-report credit; `advanced_report` is the full report and costs one report credit. Omitted, the provider unlocks the advanced report."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ result: { retryTtl: number, restTokens?: number | null } } | { result: { report_state?: string | null, user?: { id?: string | number | null, username?: string | null, full_name?: string | null, is_private?: boolean | null, is_verified?: boolean | null, is_deleted?: boolean | null, about?: string | null, photo_url?: string | null } | null, validUntil?: number | null, restTokens?: number | null, _report_quality?: string | null } }"
+      }
+    },
+    {
+      "path": "hypeauditor.api.reports.twitch",
+      "shortPath": "reports.twitch",
+      "description": "Read the Twitch report by username; the first request for a creator spends a credit, and a 202 answer carries `retryTtl`",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string",
+            "description": "The account identifier from its URL: a username for TikTok, Twitch, Twitter and Snapchat, and a channel ID or username for YouTube."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ result: { retryTtl: number, restTokens?: number | null } } | { result: { report_state?: string | null, user?: { id?: string | number | null, username?: string | null, full_name?: string | null, is_private?: boolean | null, is_verified?: boolean | null, is_deleted?: boolean | null, about?: string | null, photo_url?: string | null } | null, validUntil?: number | null, restTokens?: number | null, _report_quality?: string | null } }"
+      }
+    },
+    {
+      "path": "hypeauditor.api.reports.twitter",
+      "shortPath": "reports.twitter",
+      "description": "Read the Twitter report by username; the first request for a creator spends a credit, and a 202 answer carries `retryTtl`",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string",
+            "description": "The account identifier from its URL: a username for TikTok, Twitch, Twitter and Snapchat, and a channel ID or username for YouTube."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ result: { retryTtl: number, restTokens?: number | null } } | { result: { report_state?: string | null, user?: { id?: string | number | null, username?: string | null, full_name?: string | null, is_private?: boolean | null, is_verified?: boolean | null, is_deleted?: boolean | null, about?: string | null, photo_url?: string | null } | null, validUntil?: number | null, restTokens?: number | null, _report_quality?: string | null } }"
+      }
+    },
+    {
+      "path": "hypeauditor.api.reports.youtube",
+      "shortPath": "reports.youtube",
+      "description": "Read the YouTube report by channel ID or username; the first request for a creator spends a credit, and a 202 answer carries `retryTtl`",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string",
+            "description": "The account identifier from its URL: a username for TikTok, Twitch, Twitter and Snapchat, and a channel ID or username for YouTube."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "report | advanced_report",
+            "description": "`report` is the mini report and costs one mini-report credit; `advanced_report` is the full report and costs one report credit. Omitted, the provider unlocks the advanced report."
+          },
+          {
+            "key": "features",
+            "optional": true,
+            "type": "string[]",
+            "description": "Additional report features, such as `ranking` or `mentions`. Omitted returns the default set, and not every feature is in the mini report."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ result: { retryTtl: number, restTokens?: number | null } } | { result: { report_state?: string | null, user?: { id?: string | number | null, username?: string | null, full_name?: string | null, is_private?: boolean | null, is_verified?: boolean | null, is_deleted?: boolean | null, about?: string | null, photo_url?: string | null } | null, validUntil?: number | null, restTokens?: number | null, _report_quality?: string | null } }"
+      }
+    },
+    {
+      "path": "hypeauditor.api.suggester.get",
+      "shortPath": "suggester.get",
+      "description": "Suggest a channel name from a partial one, which is free and safe to repeat",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": false,
+            "type": "string",
+            "description": "The name to look for."
+          },
+          {
+            "key": "st",
+            "optional": true,
+            "type": "string",
+            "description": "A network title to restrict the suggestion to: instagram, youtube, twitter, tiktok, twitch or snapchat."
+          },
+          {
+            "key": "exclSt",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated network titles to leave out, e.g. `instagram,twitter`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "JsonValue | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hypeauditor.api.taxonomy.get",
+      "shortPath": "taxonomy.get",
+      "description": "Read the category, thematics and language ids the discovery filters take",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

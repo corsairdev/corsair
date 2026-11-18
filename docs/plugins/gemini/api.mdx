@@ -488,7 +488,7 @@ await corsair.gemini.api.videos.generateVideos({});
 
 `videos.getVideosOperation`
 
-(Deprecated — use videos.waitForVideo) Check the status of a Veo video generation operation
+Where a Veo video generation stands: state RUNNING, SUCCEEDED or FAILED. videos.waitForVideo waits for it and returns the file
 
 **Risk:** `read`
 
@@ -513,6 +513,7 @@ await corsair.gemini.api.videos.getVideosOperation({});
 | `metadata` | `any` | No | — |
 | `error` | `object` | No | — |
 | `response` | `object` | No | — |
+| `state` | `RUNNING \| SUCCEEDED \| FAILED` | Yes | RUNNING until the operation is done; then SUCCEEDED with a generated video, or FAILED with an error or no video |
 
 <AccordionGroup>
 <Accordion title="error full type">

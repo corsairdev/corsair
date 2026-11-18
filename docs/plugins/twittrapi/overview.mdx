@@ -1,0 +1,165 @@
+---
+title: "TwittrAPI plugin"
+sidebarTitle: "Overview"
+description: "Read public X (Twitter) data through TwittrAPI (twittrapi.com) and get new tweets of the accounts you watch by signed webhook."
+---
+
+Use **TwittrAPI** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+
+TwittrAPI is a third-party, prepaid X data API at twittrapi.com. It is a different service from twitterapi.io, which has its own Corsair plugin (`twitterapiio`). Neither needs an X developer account.
+
+Get a key at https://app.twittrapi.com/api-key. A new account gets $0.50 of test credit, valid 7 days, no card needed. The plugin sends the key in the `X-API-KEY` header and asks for the compact `format=simple` JSON on every read.
+
+Things worth knowing:
+
+- **Reads are billed per call** (about $0.0001 each; a page of ~20 tweets is one call). `balance.get` and every `monitors.*` call are free.
+- **IDs are numeric strings.** Tweet IDs are the number at the end of the tweet URL. The user operations that take `userId` also take `userId: "-1"` with `username` to work by handle; `users.resolveIds` turns up to 100 handles into IDs in one call.
+- **Paging:** pass a page's `nextCursor` as `cursor`. X decides the page size, so `count` is a hint.
+- **Account monitoring** needs a plan booked in the TwittrAPI dashboard under Monitors (one account on the 60-second class is free). Without a plan, `monitors.addAccounts` answers 402.
+- **Webhooks:** each webhook has its own `whsec_` secret, returned by `monitors.createWebhook` (and by `monitors.updateWebhook` with `rotateSecret`). Store it as the integration's webhook secret; deliveries are verified with HMAC-SHA256 over `<t>.<raw body>` and rejected outside a 5-minute window. Put the webhook's ID in the account's `webhook_id` so deliveries reach the right tenant: every delivery names it in `X-TwittrAPI-Webhook`.
+- **Deliveries are at least once.** A failed delivery (no 2xx within 5 seconds) is retried with the same event ID, with backoff up to 2 hours, for 24 hours; a retry can rarely arrive twice. The plugin stores events by ID, so a repeat stores nothing new, but each delivery is logged as an event and reaches your `webhookHooks`: dedupe on the event's `id` if a hook must run once.
+- **A webhook is turned off after 20 failed deliveries in a row** (`active: false` with `disabledReason`). Fix the endpoint, send `monitors.updateWebhook` with `active: true`, and read what was missed with `monitors.getEvents` (events are kept 7 days).
+
+Posting, liking, following and DMs (TwittrAPI's account actions) need the X account's session cookie and a proxy, so this plugin does not cover them.
+
+**What you get:**
+
+- 42 typed API operations
+- 10 synced entities (`communities`, `friendships`, `lists`, `monitoredAccounts`, `monitorEvents`, `monitorWebhooks`, and 4 more) for fast `.search()` / `.list()`
+- 2 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/twittrapi better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/twittrapi better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/twittrapi better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/twittrapi better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { twittrapi } from '@corsair-dev/twittrapi';
+
+export const corsair = createCorsair({
+	plugins: [
+		twittrapi(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the TwittrAPI API key before the first call: `pnpm corsair setup --plugin=twittrapi --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+twittrapi()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'twittrapi',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Search tweets from an account**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.twittrapi.api.tweets.search({ searchItem: 'from:XDevelopers', count: 20 });
+```
+
+
+**Watch an account for new tweets**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.twittrapi.api.monitors.addAccounts({
+	usernames: ['XDevelopers'],
+});
+```
+
+
+See the full list on the [API](/plugins/twittrapi/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.twittrapi.db.<entity>.search()` and `.list()`: `communities`, `friendships`, `lists`, `monitoredAccounts`, `monitorEvents`, `monitorWebhooks`, `trendLocations`, `trends`, `tweets`, `users`.
+
+See [Database](/plugins/twittrapi/database) for filters and operators.
+
+## Webhooks
+
+This plugin registers **2** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/twittrapi/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/twittrapi/api">
+    Every `twittrapi.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/twittrapi/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/twittrapi/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

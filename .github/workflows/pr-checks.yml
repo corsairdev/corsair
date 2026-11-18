@@ -105,7 +105,11 @@ jobs:
       - name: Validate Plugins
         run: pnpm run validate:plugins
 
+      # The check imports every plugin into one process and ran out of Node's
+      # default 4 GB heap; it peaks near 5 GB. The runner has 16 GB.
       - name: Check plugin READMEs and npm metadata
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
         run: pnpm generate:readmes:all --check
 
       - name: Validate Docs
@@ -131,6 +135,7 @@ jobs:
           scripts/plugin-docs-requirements.test.ts
           scripts/release-on-merge.test.mjs
           scripts/plugin-icon-svg.test.ts
+          scripts/mdx-escape.test.ts
 
       # ts-jest only transpiles (isolatedModules in tsconfig.base.json), so test
       # types are checked by each package's own tsc build. This covers the

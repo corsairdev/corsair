@@ -1,0 +1,276 @@
+{
+  "id": "currencyscoop",
+  "displayName": "CurrencyScoop",
+  "description": "Read CurrencyScoop rates, conversions, and supported currencies. The live host is CurrencyBeacon.",
+  "npmPackageName": "@corsair-dev/currencyscoop",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 5,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "currencyscoop.api.currencies.list",
+      "shortPath": "currencies.list",
+      "description": "List supported CurrencyBeacon currency codes.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "currencies",
+            "optional": false,
+            "type": "{ id: string, name?: string, symbol?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "currencyscoop.api.quotes.convert",
+      "shortPath": "quotes.convert",
+      "description": "Convert an amount between two currencies.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "currencyscoop.api.quotes.historical",
+      "shortPath": "quotes.historical",
+      "description": "Read mid-market rates for one date.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "base",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "symbols",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "quotes",
+            "optional": false,
+            "type": "{ id: string, date: string, base: string, code: string, rate: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "currencyscoop.api.quotes.latest",
+      "shortPath": "quotes.latest",
+      "description": "Read the latest mid-market rates.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "base",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "symbols",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "quotes",
+            "optional": false,
+            "type": "{ id: string, date: string, base: string, code: string, rate: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "currencyscoop.api.quotes.timeseries",
+      "shortPath": "quotes.timeseries",
+      "description": "Read daily rates between two dates.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "base",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "symbols",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "quotes",
+            "optional": false,
+            "type": "{ id: string, date: string, base: string, code: string, rate: number }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "currencyscoop.db.currencies.search",
+      "entityName": "currencies",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "symbol",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "currencyscoop.db.quotes.search",
+      "entityName": "quotes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "base",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "rate",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}

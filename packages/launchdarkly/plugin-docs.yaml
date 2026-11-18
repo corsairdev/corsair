@@ -1,0 +1,219 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: LaunchDarkly
+description: Manage LaunchDarkly feature flags, environments, projects, user segments, audit logs, account members, teams, custom roles, and contexts via the LaunchDarkly REST API.
+overviewNote: >-
+  This plugin exposes 53 selected stable API v2 operations, not the complete
+  LaunchDarkly API. It sends personal or service access tokens in the
+  Authorization header and pins `LD-API-Version` to `20240415`. It currently
+  uses the commercial default host only; EU and Federal hosts are not
+  configurable. Pagination is caller-controlled through the documented page
+  parameters or response links. LaunchDarkly publishes variable rate limits;
+  the client honors `Retry-After` on 429 responses. No webhook receiver or
+  webhook delivery behavior is implemented.
+examples:
+  read:
+    path: projects.list
+    title: List projects in the account
+    args:
+      limit: 10
+  write:
+    path: featureFlags.create
+    title: Create a new boolean feature flag
+    args:
+      projectKey: default
+      key: new-search-algorithm
+      name: New Search Algorithm
+apiExamples:
+  projects.list:
+    limit: 10
+  projects.get:
+    projectKey: default
+  projects.create:
+    key: mobile-app
+    name: Mobile App
+    tags:
+      - mobile
+  projects.update:
+    projectKey: default
+    patch:
+      - op: replace
+        path: /name
+        value: Default Project
+  projects.delete:
+    projectKey: old-project
+
+  environments.list:
+    projectKey: default
+  environments.get:
+    projectKey: default
+    environmentKey: production
+  environments.create:
+    projectKey: default
+    key: staging
+    name: Staging
+    color: FF9900
+  environments.update:
+    projectKey: default
+    environmentKey: staging
+    patch:
+      - op: replace
+        path: /name
+        value: Staging V2
+  environments.delete:
+    projectKey: default
+    environmentKey: qa
+  environments.resetSdkKey:
+    projectKey: default
+    environmentKey: production
+  environments.resetMobileKey:
+    projectKey: default
+    environmentKey: production
+
+  featureFlags.list:
+    projectKey: default
+  featureFlags.get:
+    projectKey: default
+    featureFlagKey: enable-feature
+  featureFlags.create:
+    projectKey: default
+    key: new-feature
+    name: New Feature
+  featureFlags.update:
+    projectKey: default
+    featureFlagKey: new-feature
+    patch:
+      - op: replace
+        path: /description
+        value: Updated description
+  featureFlags.delete:
+    projectKey: default
+    featureFlagKey: temp-feature
+  featureFlags.getStatus:
+    projectKey: default
+    environmentKey: production
+    featureFlagKey: enable-feature
+  featureFlags.listStatuses:
+    projectKey: default
+    environmentKey: production
+
+  segments.list:
+    projectKey: default
+    environmentKey: production
+  segments.get:
+    projectKey: default
+    environmentKey: production
+    segmentKey: beta-testers
+  segments.create:
+    projectKey: default
+    environmentKey: production
+    key: beta-testers
+    name: Beta Testers
+  segments.update:
+    projectKey: default
+    environmentKey: production
+    segmentKey: beta-testers
+    patch:
+      - op: replace
+        path: /description
+        value: Early adopters
+  segments.delete:
+    projectKey: default
+    environmentKey: production
+    segmentKey: old-testers
+
+  auditLog.list:
+    limit: 10
+  auditLog.get:
+    id: 5a5c0b000000000000000001
+
+  accountMembers.list:
+    limit: 10
+  accountMembers.get:
+    id: 5a5c0b000000000000000001
+  accountMembers.invite:
+    members:
+      - email: dev@example.com
+        role: writer
+  accountMembers.update:
+    id: 5a5c0b000000000000000001
+    patch:
+      - op: replace
+        path: /role
+        value: writer
+  accountMembers.delete:
+    id: 5a5c0b000000000000000001
+
+  teams.list:
+    limit: 10
+  teams.get:
+    teamKey: frontend-team
+  teams.create:
+    key: frontend-team
+    name: Frontend Team
+  teams.update:
+    teamKey: frontend-team
+    instructions:
+      - kind: updateName
+        value: Frontend Core Team
+  teams.delete:
+    teamKey: legacy-team
+
+  customRoles.list:
+    limit: 10
+  customRoles.get:
+    customRoleKey: flag-admin
+  customRoles.create:
+    key: flag-admin
+    name: Flag Administrator
+    policy:
+      - effect: allow
+        actions:
+          - "*"
+        resources:
+          - "proj/*:env/*:flag/*"
+  customRoles.update:
+    customRoleKey: flag-admin
+    patch:
+      - op: replace
+        path: /name
+        value: Lead Flag Administrator
+  customRoles.delete:
+    customRoleKey: deprecated-role
+
+  contexts.search:
+    projectKey: default
+    environmentKey: production
+    limit: 10
+  contexts.get:
+    projectKey: default
+    environmentKey: production
+    kind: user
+    key: user-123
+  contexts.listKinds:
+    projectKey: default
+
+  users.list:
+    projectKey: default
+    environmentKey: production
+  users.get:
+    projectKey: default
+    environmentKey: production
+    userKey: user-123
+  users.search:
+    projectKey: default
+    environmentKey: production
+    q: test@example.com
+
+  accessTokens.list:
+    limit: 10
+  accessTokens.get:
+    id: 5a5c0b000000000000000001
+  accessTokens.create:
+    name: CI Deployment Token
+  accessTokens.delete:
+    id: 5a5c0b000000000000000001
+
+  tags.list:
+    limit: 20
+
+  root.get: {}

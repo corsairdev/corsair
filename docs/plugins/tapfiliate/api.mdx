@@ -1,0 +1,2705 @@
+---
+title: "Tapfiliate API reference"
+sidebarTitle: "API"
+description: "API reference for the Tapfiliate plugin in Corsair: every `tapfiliate.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Affiliates
+
+### balances
+
+`affiliates.balances`
+
+Read one affiliate's balance per currency
+
+**Risk:** `read`
+
+```ts
+await corsair.tapfiliate.api.affiliates.balances({ affiliateId: 'jane-jameson' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `affiliateId` | `string` | Yes | The affiliate ID, an `id` from `affiliates.list`. |
+
+
+
+**Output:** `Record<string, number>`
+
+
+---
+
+### create
+
+`affiliates.create`
+
+Create an affiliate and run the Affiliate created triggers; the new affiliate joins no program until you add it to one
+
+**Risk:** `write`
+
+```ts
+await corsair.tapfiliate.api.affiliates.create({ email: 'jane@example-blog.inc', firstname: 'Jane', lastname: 'Jameson' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | The affiliate's email. |
+| `password` | `string` | No | The account password. Tapfiliate generates one and returns it when this is omitted. |
+| `firstname` | `string` | No | The affiliate's first name. |
+| `lastname` | `string` | No | The affiliate's last name. |
+| `company` | `object` | No | The affiliate's company. |
+| `address` | `object` | No | The address. `address`, `postal_code`, `city` and `country.code` are required together, because Tapfiliate drops a partial address without an error. |
+| `custom_fields` | `Record<string, string>` | No | Custom field values keyed by the field ID from `affiliates.customFields`. |
+
+The reference documents a 200 with no body; then the plugin reports `{ created: true, email }` and the id (derived from the first and last name) comes from affiliates.list. An address is kept only when address, postal_code, city and country.code are all sent.
+
+<AccordionGroup>
+<Accordion title="company full type">
+
+```ts
+{
+  name?: string,
+  description?: string
+}
+```
+</Accordion>
+
+<Accordion title="address full type">
+
+```ts
+{
+  address: string,
+  postal_code: string,
+  city: string,
+  country: {
+    code: string
+  },
+  address_two?: string,
+  state?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  firstname?: string | null,
+  lastname?: string | null,
+  email?: string | null,
+  company?: {
+    name?: string | null,
+    description?: string | null
+  } | null,
+  address?: {
+    address?: string | null,
+    address_two?: string | null,
+    postal_code?: string | null,
+    city?: string | null,
+    state?: string | null,
+    country?: {
+      code?: string | null,
+      name?: string | null
+    } | null
+  } | null,
+  meta_data?: Record<string, string> | null,
+  parent_id?: string | null,
+  affiliate_group_id?: string | null,
+  created_at?: string | null,
+  promoted_at?: string | null,
+  promotion_method?: string | null,
+  custom_fields?: Record<string, string> | null,
+  fraud?: boolean | null,
+  password?: string | null
+} | {
+  created: true,
+  email: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### customFields
+
+`affiliates.customFields`
+
+List the custom fields on your signup form, whose IDs affiliate creates take
+
+**Risk:** `read`
+
+```ts
+await corsair.tapfiliate.api.affiliates.customFields({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  choices?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`affiliates.delete`
+
+Permanently delete an affiliate; their personal data is cleared and the record is locked
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.tapfiliate.api.affiliates.delete({ affiliateId: 'jane-jameson' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `affiliateId` | `string` | Yes | The affiliate ID, an `id` from `affiliates.list`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`affiliates.get`
+
+Read one affiliate with their company, address, custom fields and metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.tapfiliate.api.affiliates.get({ affiliateId: 'jane-jameson' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `affiliateId` | `string` | Yes | The affiliate ID, an `id` from `affiliates.list`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `firstname` | `string \| null` | No | — |
+| `lastname` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `company` | `object \| null` | No | — |
+| `address` | `object \| null` | No | — |
+| `meta_data` | `Record<string, string> \| null` | No | — |
+| `parent_id` | `string \| null` | No | — |
+| `affiliate_group_id` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `promoted_at` | `string \| null` | No | — |
+| `promotion_method` | `string \| null` | No | — |
+| `custom_fields` | `Record<string, string> \| null` | No | — |
+| `fraud` | `boolean \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="company full type">
+
+```ts
+{
+  name?: string | null,
+  description?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="address full type">
+
+```ts
+{
+  address?: string | null,
+  address_two?: string | null,
+  postal_code?: string | null,
+  city?: string | null,
+  state?: string | null,
+  country?: {
+    code?: string | null,
+    name?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`affiliates.list`
+
+List affiliates, newest first, 25 per page, filtered by email, referral code, click, parent or group
+
+**Risk:** `read`
+
+```ts
+await corsair.tapfiliate.api.affiliates.list({ page: 1, email: 'jane@example-blog.inc' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, starting at 1. Each page holds 25 items. |
+| `click_id` | `string` | No | Only affiliates for this click. |
+| `source_id` | `string` | No | Only affiliates for this click source. |
+| `email` | `string` | No | Only affiliates with this email. |
+| `referral_code` | `string` | No | Only the affiliate whose referral code this is. |
+| `parent_id` | `string` | No | Only affiliates under this parent. |
+| `affiliate_group_id` | `string` | No | Only affiliates in this group. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  firstname?: string | null,
+  lastname?: string | null,
+  email?: string | null,
+  company?: {
+    name?: string | null,
+    description?: string | null
+  } | null,
+  address?: {
+    address?: string | null,
+    address_two?: string | null,
+    postal_code?: string | null,
+    city?: string | null,
+    state?: string | null,
+    country?: {
+      code?: string | null,
+      name?: string | null
+    } | null
+  } | null,
+  meta_data?: Record<string, string> | null,
+  parent_id?: string | null,
+  affiliate_group_id?: string | null,
+  created_at?: string | null,
+  promoted_at?: string | null,
+  promotion_method?: string | null,
+  custom_fields?: Record<string, string> | null,
+  fraud?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### payments
+
+`affiliates.payments`
+
+List one affiliate's payments, newest first
+
+**Risk:** `read`
+
+```ts
+await corsair.tapfiliate.api.affiliates.payments({ affiliateId: 'jane-jameson' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `affiliateId` | `string` | Yes | The affiliate ID, an `id` from `affiliates.list`. |
+| `page` | `number` | No | Page number, starting at 1. Each page holds 25 items. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  created_at?: string | null,
+  affiliate?: {
+    id?: string | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  amount?: number | null,
+  currency?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### programs
+
+`affiliates.programs`
+
+List the programs an affiliate belongs to, with the coupon, approval state and referral link for each
+
+**Risk:** `read`
+
+```ts
+await corsair.tapfiliate.api.affiliates.programs({ affiliateId: 'jane-jameson' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `affiliateId` | `string` | Yes | The affiliate ID, an `id` from `affiliates.list`. |
+| `page` | `number` | No | Page number, starting at 1. Each page holds 25 items. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  applied_at?: string | null,
+  approved?: boolean | null,
+  coupon?: string | null,
+  id?: string | null,
+  referral_link?: {
+    asset_id?: string | null,
+    link?: string | null,
+    source_id?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Balances
+
+### list
+
+`balances.list`
+
+List what you owe each affiliate with a non-zero balance, per currency
+
+**Risk:** `read`
+
+```ts
+await corsair.tapfiliate.api.balances.list({ page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, starting at 1. Each page holds 25 items. |
+| `include_fraud` | `boolean` | No | Include balances held back for suspected fraud. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  affiliate_id: string,
+  balances: Record<string, number>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Clicks
+
+### create
+
+`clicks.create`
+
+Record a click and return its ID for use as click_id when creating a conversion
+
+**Risk:** `write`
+
+```ts
+await corsair.tapfiliate.api.clicks.create({ referral_code: 'janejameson' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `referral_code` | `string` | No | An affiliate's referral code, the `ref=` value in their link. |
+| `tracking_id` | `string` | No | The tracking ID from the Tapfiliate JavaScript library. |
+| `click_id` | `string` | No | A click ID from `clicks.create`. |
+| `coupon` | `string` | No | A coupon code to attribute by. |
+| `asset_id` | `string` | No | The tracking asset ID. |
+| `source_id` | `string` | No | The click source ID. Pair it with `asset_id`; on a click it can also override the source of a `referral_code`. |
+| `ip` | `string` | No | Stored as sent. |
+| `user_agent` | `string` | No | Stored as sent. |
+| `referrer` | `string` | No | Stored as sent. |
+| `landing_page` | `string` | No | Stored as sent. |
+
+Returns `{ id }` for use as click_id in conversions.create. Name the affiliate with referral_code (a source_id then overrides its source) or with asset_id and source_id. ip, user_agent, referrer and landing_page are stored as sent.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`clicks.get`
+
+Read one click with its device details, country and metadata, plus its affiliate and program
+
+**Risk:** `read`
+
+```ts
+await corsair.tapfiliate.api.clicks.get({ clickId: '1-abc' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `clickId` | `string` | Yes | The click ID, the `id` that `clicks.create` returned. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `created_at` | `string \| null` | No | — |
+| `meta_data` | `object[] \| null` | No | — |
+| `details` | `Record<string, string> \| null` | No | — |
+| `affiliate` | `object \| null` | No | — |
+| `program` | `object \| null` | No | — |
+| `asset_id` | `string \| null` | No | — |
+| `source_id` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta_data full type">
+
+```ts
+{
+  key?: string | null,
+  value?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="affiliate full type">
+
+```ts
+{
+  id?: string | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="program full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  currency?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`clicks.list`
+
+List clicks on your programs, filtered by program, affiliate or date; needs the click-report feature on your plan
+
+**Risk:** `read`
+
+```ts
+await corsair.tapfiliate.api.clicks.list({ page: 1, program_id: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, starting at 1. Each page holds 25 items. |
+| `program_id` | `string` | No | — |
+| `affiliate_id` | `string` | No | — |
+| `date_from` | `string` | No | A date as "YYYY-MM-DD". |
+| `date_to` | `string` | No | A date as "YYYY-MM-DD". |
+| `meta_data` | `object` | No | Only clicks whose meta data has this key and value; sent as meta_data[key] and meta_data[value]. |
+
+Requires the click-report feature on your plan, otherwise 403.
+
+<AccordionGroup>
+<Accordion title="meta_data full type">
+
+```ts
+{
+  key: string,
+  value: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  created_at?: string | null,
+  meta_data?: {
+    key?: string | null,
+    value?: string | null
+  }[] | null,
+  details?: Record<string, string> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Commissions
+
+### approve
+
+`commissions.approve`
+
+Approve a commission, also when it was disapproved before, and fire the commission triggers
+
+**Risk:** `destructive`
+
+```ts
+await corsair.tapfiliate.api.commissions.approve({ commissionId: 1234 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `commissionId` | `number` | Yes | The numeric commission ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `conversion_sub_amount` | `number \| null` | No | — |
+| `amount` | `number \| null` | No | — |
+| `commission_type` | `string \| null` | No | — |
+| `approved` | `boolean \| null` | No | — |
+| `affiliate` | `object \| null` | No | — |
+| `conversion` | `object \| null` | No | — |
+| `kind` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `payout` | `number \| string \| boolean \| null` | No | — |
+| `comment` | `string \| null` | No | — |
+| `final` | `boolean \| null` | No | — |
+| `finalization_date` | `string \| null` | No | — |
+| `commission_name` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="affiliate full type">
+
+```ts
+{
+  id?: string | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="conversion full type">
+
+```ts
+{
+  id?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### disapprove
+
+`commissions.disapprove`
+
+Disapprove a commission from pending or approved, which removes it from the affiliate balance
+
+**Risk:** `destructive`
+
+```ts
+await corsair.tapfiliate.api.commissions.disapprove({ commissionId: 1234 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `commissionId` | `number` | Yes | The numeric commission ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `conversion_sub_amount` | `number \| null` | No | — |
+| `amount` | `number \| null` | No | — |
+| `commission_type` | `string \| null` | No | — |
+| `approved` | `boolean \| null` | No | — |
+| `affiliate` | `object \| null` | No | — |
+| `conversion` | `object \| null` | No | — |
+| `kind` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `payout` | `number \| string \| boolean \| null` | No | — |
+| `comment` | `string \| null` | No | — |
+| `final` | `boolean \| null` | No | — |
+| `finalization_date` | `string \| null` | No | — |
+| `commission_name` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="affiliate full type">
+
+```ts
+{
+  id?: string | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="conversion full type">
+
+```ts
+{
+  id?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`commissions.get`
+
+Read one commission of any kind: regular, recurring, MLM level or bonus
+
+**Risk:** `read`
+
+```ts
+await corsair.tapfiliate.api.commissions.get({ commissionId: 1234 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `commissionId` | `number` | Yes | The numeric commission ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `conversion_sub_amount` | `number \| null` | No | — |
+| `amount` | `number \| null` | No | — |
+| `commission_type` | `string \| null` | No | — |
+| `approved` | `boolean \| null` | No | — |
+| `affiliate` | `object \| null` | No | — |
+| `conversion` | `object \| null` | No | — |
+| `kind` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `payout` | `number \| string \| boolean \| null` | No | — |
+| `comment` | `string \| null` | No | — |
+| `final` | `boolean \| null` | No | — |
+| `finalization_date` | `string \| null` | No | — |
+| `commission_name` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="affiliate full type">
+
+```ts
+{
+  id?: string | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="conversion full type">
+
+```ts
+{
+  id?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`commissions.list`
+
+List commissions, filtered by affiliate, status or whether they are paid
+
+**Risk:** `read`
+
+```ts
+await corsair.tapfiliate.api.commissions.list({ page: 1, status: 'approved' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, starting at 1. Each page holds 25 items. |
+| `affiliate_id` | `string` | No | — |
+| `status` | `string` | No | Only commissions in this status. |
+| `paid` | `boolean` | No | Only commissions in a paid payout (true), or all others (false). Sent as 1 or 0. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  conversion_sub_amount?: number | null,
+  amount?: number | null,
+  commission_type?: string | null,
+  approved?: boolean | null,
+  affiliate?: {
+    id?: string | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  conversion?: {
+    id?: number | null
+  } | null,
+  kind?: string | null,
+  currency?: string | null,
+  created_at?: string | null,
+  payout?: number | string | boolean | null,
+  comment?: string | null,
+  final?: boolean | null,
+  finalization_date?: string | null,
+  commission_name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`commissions.update`
+
+Change a commission's amount or comment
+
+**Risk:** `destructive`
+
+```ts
+await corsair.tapfiliate.api.commissions.update({ commissionId: 1234, amount: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `commissionId` | `number` | Yes | The numeric commission ID. |
+| `amount` | `number` | No | The new commission amount. |
+| `comment` | `string` | No | A comment on the commission. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `conversion_sub_amount` | `number \| null` | No | — |
+| `amount` | `number \| null` | No | — |
+| `commission_type` | `string \| null` | No | — |
+| `approved` | `boolean \| null` | No | — |
+| `affiliate` | `object \| null` | No | — |
+| `conversion` | `object \| null` | No | — |
+| `kind` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `payout` | `number \| string \| boolean \| null` | No | — |
+| `comment` | `string \| null` | No | — |
+| `final` | `boolean \| null` | No | — |
+| `finalization_date` | `string \| null` | No | — |
+| `commission_name` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="affiliate full type">
+
+```ts
+{
+  id?: string | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="conversion full type">
+
+```ts
+{
+  id?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Conversions
+
+### create
+
+`conversions.create`
+
+Track a conversion and create its commissions, attributed through a coupon, click, referral code, asset or tracking ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.tapfiliate.api.conversions.create({ click_id: '1-abc', amount: 30.55, currency: 'USD', external_id: 'order-100' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `referral_code` | `string` | No | An affiliate's referral code, the `ref=` value in their link. |
+| `tracking_id` | `string` | No | The tracking ID from the Tapfiliate JavaScript library. |
+| `click_id` | `string` | No | A click ID from `clicks.create`. |
+| `coupon` | `string` | No | A coupon code to attribute by. |
+| `asset_id` | `string` | No | The tracking asset ID. |
+| `source_id` | `string` | No | The click source ID. Pair it with `asset_id`; on a click it can also override the source of a `referral_code`. |
+| `amount` | `number` | Yes | The conversion amount. |
+| `currency` | `string` | No | The three-letter ISO currency code. |
+| `external_id` | `string` | No | An ID meaningful to you, such as an order number. |
+| `customer_id` | `string` | No | Your own customer ID (`customer.customer_id`, not the `cu_...` id). On its own it attributes the conversion only when it matches an existing customer in a recurring program; otherwise send a tracking reference too. |
+| `commissions` | `object[]` | No | One commission per entry, whose `sub_amount`s must add up to `amount`. When omitted, Tapfiliate creates the single commission the program defines. |
+| `meta_data` | `Record<string, string>` | No | Up to 40 key/value pairs. |
+
+Send at least one of coupon, click_id, referral_code, asset_id or tracking_id, or a customer_id that matches an existing customer in a recurring program; with commissions, their sub_amount values must add up to amount.
+
+<AccordionGroup>
+<Accordion title="commissions full type">
+
+```ts
+{
+  sub_amount: number,
+  commission_type?: string,
+  comment?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `external_id` | `string \| null` | No | — |
+| `amount` | `number \| null` | No | — |
+| `click` | `object \| null` | No | — |
+| `commissions` | `object[] \| null` | No | — |
+| `program` | `object \| null` | No | — |
+| `affiliate` | `object \| null` | No | — |
+| `customer` | `object \| null` | No | — |
+| `affiliate_meta_data` | `Record<string, string> \| null` | No | — |
+| `meta_data` | `Record<string, string> \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="click full type">
+
+```ts
+{
+  created_at?: string | null,
+  referrer?: string | null,
+  landing_page?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="commissions full type">
+
+```ts
+{
+  id: number,
+  conversion_sub_amount?: number | null,
+  amount?: number | null,
+  commission_type?: string | null,
+  approved?: boolean | null,
+  affiliate?: {
+    id?: string | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  conversion?: {
+    id?: number | null
+  } | null,
+  kind?: string | null,
+  currency?: string | null,
+  created_at?: string | null,
+  payout?: number | string | boolean | null,
+  comment?: string | null,
+  final?: boolean | null,
+  finalization_date?: string | null,
+  commission_name?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="program full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  currency?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="affiliate full type">
+
+```ts
+{
+  id?: string | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="customer full type">
+
+```ts
+{
+  id?: string | null,
+  customer_id?: string | null,
+  status?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`conversions.delete`
+
+Permanently delete a conversion with all of its commissions and metadata
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.tapfiliate.api.conversions.delete({ conversionId: 4321 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversionId` | `number` | Yes | The numeric conversion ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`conversions.get`
+
+Read one conversion with every commission, including MLM levels, and its fraud warnings
+
+**Risk:** `read`
+
+```ts
+await corsair.tapfiliate.api.conversions.get({ conversionId: 4321 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversionId` | `number` | Yes | The numeric conversion ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `external_id` | `string \| null` | No | — |
+| `amount` | `number \| null` | No | — |
+| `click` | `object \| null` | No | — |
+| `commissions` | `object[] \| null` | No | — |
+| `program` | `object \| null` | No | — |
+| `affiliate` | `object \| null` | No | — |
+| `customer` | `object \| null` | No | — |
+| `affiliate_meta_data` | `Record<string, string> \| null` | No | — |
+| `meta_data` | `Record<string, string> \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="click full type">
+
+```ts
+{
+  created_at?: string | null,
+  referrer?: string | null,
+  landing_page?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="commissions full type">
+
+```ts
+{
+  id: number,
+  conversion_sub_amount?: number | null,
+  amount?: number | null,
+  commission_type?: string | null,
+  approved?: boolean | null,
+  affiliate?: {
+    id?: string | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  conversion?: {
+    id?: number | null
+  } | null,
+  kind?: string | null,
+  currency?: string | null,
+  created_at?: string | null,
+  payout?: number | string | boolean | null,
+  comment?: string | null,
+  final?: boolean | null,
+  finalization_date?: string | null,
+  commission_name?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="program full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  currency?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="affiliate full type">
+
+```ts
+{
+  id?: string | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="customer full type">
+
+```ts
+{
+  id?: string | null,
+  customer_id?: string | null,
+  status?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`conversions.list`
+
+List conversions with their commissions, newest first, filtered by program, affiliate, external ID or date
+
+**Risk:** `read`
+
+```ts
+await corsair.tapfiliate.api.conversions.list({ page: 1, program_id: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, starting at 1. Each page holds 25 items. |
+| `program_id` | `string` | No | — |
+| `external_id` | `string` | No | — |
+| `affiliate_id` | `string` | No | — |
+| `pending` | `boolean` | No | Only conversions that have at least one pending commission. |
+| `date_from` | `string` | No | A date as "YYYY-MM-DD". |
+| `date_to` | `string` | No | A date as "YYYY-MM-DD". |
+| `use_profile_timezone` | `boolean` | No | Read the dates in the account's timezone instead of UTC. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  external_id?: string | null,
+  amount?: number | null,
+  click?: {
+    created_at?: string | null,
+    referrer?: string | null,
+    landing_page?: string | null
+  } | null,
+  commissions?: {
+    id: number,
+    conversion_sub_amount?: number | null,
+    amount?: number | null,
+    commission_type?: string | null,
+    approved?: boolean | null,
+    affiliate?: {
+      id?: string | null,
+      firstname?: string | null,
+      lastname?: string | null
+    } | null,
+    conversion?: {
+      id?: number | null
+    } | null,
+    kind?: string | null,
+    currency?: string | null,
+    created_at?: string | null,
+    payout?: number | string | boolean | null,
+    comment?: string | null,
+    final?: boolean | null,
+    finalization_date?: string | null,
+    commission_name?: string | null
+  }[] | null,
+  program?: {
+    id?: string | null,
+    title?: string | null,
+    currency?: string | null
+  } | null,
+  affiliate?: {
+    id?: string | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  customer?: {
+    id?: string | null,
+    customer_id?: string | null,
+    status?: string | null
+  } | null,
+  affiliate_meta_data?: Record<string, string> | null,
+  meta_data?: Record<string, string> | null,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`conversions.update`
+
+Change a conversion's amount, external ID or metadata; commissions change only with recalculate_commissions and a numeric amount
+
+**Risk:** `destructive`
+
+```ts
+await corsair.tapfiliate.api.conversions.update({ conversionId: 4321, amount: 40, recalculate_commissions: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversionId` | `number` | Yes | The numeric conversion ID. |
+| `amount` | `number` | No | The new conversion amount. |
+| `external_id` | `string` | No | — |
+| `meta_data` | `Record<string, string>` | No | Replaces the whole set. Up to 40 keys. |
+| `recalculate_commissions` | `boolean` | No | Recalculate the commission amounts from the new amount. Without this, `amount` changes but the commissions do not. |
+
+recalculate_commissions travels as a query flag and needs a numeric amount; without it the amount changes and the commissions do not. The route answers 200 with no body, so the plugin reports `{ id, updated: true }`.
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  external_id?: string | null,
+  amount?: number | null,
+  click?: {
+    created_at?: string | null,
+    referrer?: string | null,
+    landing_page?: string | null
+  } | null,
+  commissions?: {
+    id: number,
+    conversion_sub_amount?: number | null,
+    amount?: number | null,
+    commission_type?: string | null,
+    approved?: boolean | null,
+    affiliate?: {
+      id?: string | null,
+      firstname?: string | null,
+      lastname?: string | null
+    } | null,
+    conversion?: {
+      id?: number | null
+    } | null,
+    kind?: string | null,
+    currency?: string | null,
+    created_at?: string | null,
+    payout?: number | string | boolean | null,
+    comment?: string | null,
+    final?: boolean | null,
+    finalization_date?: string | null,
+    commission_name?: string | null
+  }[] | null,
+  program?: {
+    id?: string | null,
+    title?: string | null,
+    currency?: string | null
+  } | null,
+  affiliate?: {
+    id?: string | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  customer?: {
+    id?: string | null,
+    customer_id?: string | null,
+    status?: string | null
+  } | null,
+  affiliate_meta_data?: Record<string, string> | null,
+  meta_data?: Record<string, string> | null,
+  created_at?: string | null
+} | {
+  id: number,
+  updated: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Customers
+
+### cancel
+
+`customers.cancel`
+
+Cancel a customer, which stops its automatic recurring commissions; another call can reactivate it
+
+**Risk:** `write`
+
+```ts
+await corsair.tapfiliate.api.customers.cancel({ customerId: 'cu_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | The customer ID, a `cu_...` value. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `customer_id` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `click` | `object \| null` | No | — |
+| `program` | `object \| null` | No | — |
+| `affiliate` | `object \| null` | No | — |
+| `affiliate_meta_data` | `Record<string, string> \| null` | No | — |
+| `meta_data` | `Record<string, string> \| null` | No | — |
+| `warnings` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="click full type">
+
+```ts
+{
+  created_at?: string | null,
+  referrer?: string | null,
+  landing_page?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="program full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  currency?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="affiliate full type">
+
+```ts
+{
+  id?: string | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`customers.create`
+
+Create a customer attributed to an affiliate; no commission is created until a conversion arrives
+
+**Risk:** `write`
+
+```ts
+await corsair.tapfiliate.api.customers.create({ customer_id: 'cust-1', referral_code: 'janejameson' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `referral_code` | `string` | No | An affiliate's referral code, the `ref=` value in their link. |
+| `tracking_id` | `string` | No | The tracking ID from the Tapfiliate JavaScript library. |
+| `click_id` | `string` | No | A click ID from `clicks.create`. |
+| `coupon` | `string` | No | A coupon code to attribute by. |
+| `asset_id` | `string` | No | The tracking asset ID. |
+| `source_id` | `string` | No | The click source ID. Pair it with `asset_id`; on a click it can also override the source of a `referral_code`. |
+| `customer_id` | `string` | Yes | Your own customer ID. It must be unique in the account. |
+| `status` | `new \| trial \| lead` | No | The starting status. Tapfiliate defaults to `new`. |
+
+customer_id is required and must be unique; at least one tracking reference is required. status takes new (the default), trial or lead.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `customer_id` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `click` | `object \| null` | No | — |
+| `program` | `object \| null` | No | — |
+| `affiliate` | `object \| null` | No | — |
+| `affiliate_meta_data` | `Record<string, string> \| null` | No | — |
+| `meta_data` | `Record<string, string> \| null` | No | — |
+| `warnings` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="click full type">
+
+```ts
+{
+  created_at?: string | null,
+  referrer?: string | null,
+  landing_page?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="program full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  currency?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="affiliate full type">
+
+```ts
+{
+  id?: string | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`customers.delete`
+
+Permanently delete a customer and its metadata; its conversions and commissions stay but lose the link
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.tapfiliate.api.customers.delete({ customerId: 'cu_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | The customer ID, a `cu_...` value. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`customers.get`
+
+Read one customer with the click it was tracked from and its current fraud warnings
+
+**Risk:** `read`
+
+```ts
+await corsair.tapfiliate.api.customers.get({ customerId: 'cu_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | The customer ID, a `cu_...` value. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `customer_id` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `click` | `object \| null` | No | — |
+| `program` | `object \| null` | No | — |
+| `affiliate` | `object \| null` | No | — |
+| `affiliate_meta_data` | `Record<string, string> \| null` | No | — |
+| `meta_data` | `Record<string, string> \| null` | No | — |
+| `warnings` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="click full type">
+
+```ts
+{
+  created_at?: string | null,
+  referrer?: string | null,
+  landing_page?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="program full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  currency?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="affiliate full type">
+
+```ts
+{
+  id?: string | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`customers.list`
+
+List customers, newest first, filtered by program, customer ID, affiliate or date range
+
+**Risk:** `read`
+
+```ts
+await corsair.tapfiliate.api.customers.list({ page: 1, customer_id: 'cust-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, starting at 1. Each page holds 25 items. |
+| `program_id` | `string` | No | — |
+| `customer_id` | `string` | No | — |
+| `affiliate_id` | `string` | No | — |
+| `date_from` | `string` | No | — |
+| `date_to` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  customer_id?: string | null,
+  status?: string | null,
+  created_at?: string | null,
+  click?: {
+    created_at?: string | null,
+    referrer?: string | null,
+    landing_page?: string | null
+  } | null,
+  program?: {
+    id?: string | null,
+    title?: string | null,
+    currency?: string | null
+  } | null,
+  affiliate?: {
+    id?: string | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  affiliate_meta_data?: Record<string, string> | null,
+  meta_data?: Record<string, string> | null,
+  warnings?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### uncancel
+
+`customers.uncancel`
+
+Reactivate a canceled customer, restoring recurring commissions from now without back-filling
+
+**Risk:** `write`
+
+```ts
+await corsair.tapfiliate.api.customers.uncancel({ customerId: 'cu_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | The customer ID, a `cu_...` value. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `customer_id` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `click` | `object \| null` | No | — |
+| `program` | `object \| null` | No | — |
+| `affiliate` | `object \| null` | No | — |
+| `affiliate_meta_data` | `Record<string, string> \| null` | No | — |
+| `meta_data` | `Record<string, string> \| null` | No | — |
+| `warnings` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="click full type">
+
+```ts
+{
+  created_at?: string | null,
+  referrer?: string | null,
+  landing_page?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="program full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  currency?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="affiliate full type">
+
+```ts
+{
+  id?: string | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`customers.update`
+
+Change a customer's customer_id or replace its metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.tapfiliate.api.customers.update({ customerId: 'cu_123', customer_id: 'cust-2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | The customer ID, a `cu_...` value. |
+| `customer_id` | `string` | No | The new customer ID. |
+| `meta_data` | `Record<string, string>` | No | Replaces the whole set. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `customer_id` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `click` | `object \| null` | No | — |
+| `program` | `object \| null` | No | — |
+| `affiliate` | `object \| null` | No | — |
+| `affiliate_meta_data` | `Record<string, string> \| null` | No | — |
+| `meta_data` | `Record<string, string> \| null` | No | — |
+| `warnings` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="click full type">
+
+```ts
+{
+  created_at?: string | null,
+  referrer?: string | null,
+  landing_page?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="program full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  currency?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="affiliate full type">
+
+```ts
+{
+  id?: string | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Payments
+
+### cancel
+
+`payments.cancel`
+
+Cancel a payment. It stops counting against the affiliate balance, so the balance goes back up by its amount; an outside payout already sent is not reversed, and there is no undo
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.tapfiliate.api.payments.cancel({ paymentId: 'pa_abc123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `paymentId` | `string` | Yes | The payment ID, a `pa_...` value. |
+
+A DELETE route that cancels the payment and raises the affiliate balance again; it does not reverse a payout made outside Tapfiliate.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### create
+
+`payments.create`
+
+Record one payment or an array of payments; an affiliate on an automated payout method is also paid out through that provider. Tapfiliate creates none when any entry is invalid
+
+**Risk:** `destructive`
+
+```ts
+await corsair.tapfiliate.api.payments.create({ affiliate_id: 'jane-jameson', amount: 30.55, currency: 'USD' });
+```
+
+**Input:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  affiliate_id: string,
+  amount: number,
+  currency: string
+} | {
+  affiliate_id: string,
+  amount: number,
+  currency: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  created_at?: string | null,
+  affiliate?: {
+    id?: string | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  amount?: number | null,
+  currency?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`payments.get`
+
+Read one payment with its affiliate, amount and currency
+
+**Risk:** `read`
+
+```ts
+await corsair.tapfiliate.api.payments.get({ paymentId: 'pa_abc123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `paymentId` | `string` | Yes | The payment ID, a `pa_...` value. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `created_at` | `string \| null` | No | — |
+| `affiliate` | `object \| null` | No | — |
+| `amount` | `number \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="affiliate full type">
+
+```ts
+{
+  id?: string | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`payments.list`
+
+List payments that were not canceled, newest first
+
+**Risk:** `read`
+
+```ts
+await corsair.tapfiliate.api.payments.list({ page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, starting at 1. Each page holds 25 items. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  created_at?: string | null,
+  affiliate?: {
+    id?: string | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  amount?: number | null,
+  currency?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Programs
+
+### addAffiliate
+
+`programs.addAffiliate`
+
+Add an existing affiliate to a program, approved by default (which sends the approval email when the program notifies on approval), or pending or disapproved explicitly
+
+**Risk:** `destructive`
+
+```ts
+await corsair.tapfiliate.api.programs.addAffiliate({ programId: '1', affiliateId: 'jane-jameson', coupon: 'JANE10OFF' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `programId` | `string` | Yes | The program ID, an `id` from `programs.list`. |
+| `affiliateId` | `string` | Yes | The affiliate ID, an `id` from `affiliates.list`. |
+| `approved` | `boolean \| null` | No | The approval state: true approves, false disapproves, and `null` leaves it pending. Tapfiliate approves by default and does not apply the program auto-approve setting. |
+| `coupon` | `string` | No | A coupon for this affiliate. It must be unique across all programs. |
+
+approved defaults to true, false disapproves and null leaves the affiliate pending; the program auto-approve setting is not applied.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `firstname` | `string \| null` | No | — |
+| `lastname` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `company` | `object \| null` | No | — |
+| `address` | `object \| null` | No | — |
+| `meta_data` | `Record<string, string> \| null` | No | — |
+| `parent_id` | `string \| null` | No | — |
+| `affiliate_group_id` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `promoted_at` | `string \| null` | No | — |
+| `promotion_method` | `string \| null` | No | — |
+| `custom_fields` | `Record<string, string> \| null` | No | — |
+| `fraud` | `boolean \| null` | No | — |
+| `coupon` | `string \| null` | No | — |
+| `approved` | `boolean \| null` | No | — |
+| `applied_at` | `string \| null` | No | — |
+| `referral_link` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="company full type">
+
+```ts
+{
+  name?: string | null,
+  description?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="address full type">
+
+```ts
+{
+  address?: string | null,
+  address_two?: string | null,
+  postal_code?: string | null,
+  city?: string | null,
+  state?: string | null,
+  country?: {
+    code?: string | null,
+    name?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="referral_link full type">
+
+```ts
+{
+  asset_id?: string | null,
+  link?: string | null,
+  source_id?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### affiliates
+
+`programs.affiliates`
+
+List a program's affiliates in every approval state, with each one's coupon and referral link
+
+**Risk:** `read`
+
+```ts
+await corsair.tapfiliate.api.programs.affiliates({ programId: '1', page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `programId` | `string` | Yes | The program ID, an `id` from `programs.list`. |
+| `page` | `number` | No | Page number, starting at 1. Each page holds 25 items. |
+| `source_id` | `string` | No | — |
+| `email` | `string` | No | — |
+| `parent_id` | `string` | No | — |
+| `group_id` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  firstname?: string | null,
+  lastname?: string | null,
+  email?: string | null,
+  company?: {
+    name?: string | null,
+    description?: string | null
+  } | null,
+  address?: {
+    address?: string | null,
+    address_two?: string | null,
+    postal_code?: string | null,
+    city?: string | null,
+    state?: string | null,
+    country?: {
+      code?: string | null,
+      name?: string | null
+    } | null
+  } | null,
+  meta_data?: Record<string, string> | null,
+  parent_id?: string | null,
+  affiliate_group_id?: string | null,
+  created_at?: string | null,
+  promoted_at?: string | null,
+  promotion_method?: string | null,
+  custom_fields?: Record<string, string> | null,
+  fraud?: boolean | null,
+  coupon?: string | null,
+  approved?: boolean | null,
+  applied_at?: string | null,
+  referral_link?: {
+    asset_id?: string | null,
+    link?: string | null,
+    source_id?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### approveAffiliate
+
+`programs.approveAffiliate`
+
+Approve an affiliate for a program and email them when the program notifies on approval
+
+**Risk:** `destructive`
+
+```ts
+await corsair.tapfiliate.api.programs.approveAffiliate({ programId: '1', affiliateId: 'jane-jameson' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `programId` | `string` | Yes | The program ID, an `id` from `programs.list`. |
+| `affiliateId` | `string` | Yes | The affiliate ID, an `id` from `affiliates.list`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `firstname` | `string \| null` | No | — |
+| `lastname` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `company` | `object \| null` | No | — |
+| `address` | `object \| null` | No | — |
+| `meta_data` | `Record<string, string> \| null` | No | — |
+| `parent_id` | `string \| null` | No | — |
+| `affiliate_group_id` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `promoted_at` | `string \| null` | No | — |
+| `promotion_method` | `string \| null` | No | — |
+| `custom_fields` | `Record<string, string> \| null` | No | — |
+| `fraud` | `boolean \| null` | No | — |
+| `coupon` | `string \| null` | No | — |
+| `approved` | `boolean \| null` | No | — |
+| `applied_at` | `string \| null` | No | — |
+| `referral_link` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="company full type">
+
+```ts
+{
+  name?: string | null,
+  description?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="address full type">
+
+```ts
+{
+  address?: string | null,
+  address_two?: string | null,
+  postal_code?: string | null,
+  city?: string | null,
+  state?: string | null,
+  country?: {
+    code?: string | null,
+    name?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="referral_link full type">
+
+```ts
+{
+  asset_id?: string | null,
+  link?: string | null,
+  source_id?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### disapproveAffiliate
+
+`programs.disapproveAffiliate`
+
+Disapprove an affiliate for a program; they keep the record but earn nothing there
+
+**Risk:** `write`
+
+```ts
+await corsair.tapfiliate.api.programs.disapproveAffiliate({ programId: '1', affiliateId: 'jane-jameson' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `programId` | `string` | Yes | The program ID, an `id` from `programs.list`. |
+| `affiliateId` | `string` | Yes | The affiliate ID, an `id` from `affiliates.list`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `firstname` | `string \| null` | No | — |
+| `lastname` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `company` | `object \| null` | No | — |
+| `address` | `object \| null` | No | — |
+| `meta_data` | `Record<string, string> \| null` | No | — |
+| `parent_id` | `string \| null` | No | — |
+| `affiliate_group_id` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `promoted_at` | `string \| null` | No | — |
+| `promotion_method` | `string \| null` | No | — |
+| `custom_fields` | `Record<string, string> \| null` | No | — |
+| `fraud` | `boolean \| null` | No | — |
+| `coupon` | `string \| null` | No | — |
+| `approved` | `boolean \| null` | No | — |
+| `applied_at` | `string \| null` | No | — |
+| `referral_link` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="company full type">
+
+```ts
+{
+  name?: string | null,
+  description?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="address full type">
+
+```ts
+{
+  address?: string | null,
+  address_two?: string | null,
+  postal_code?: string | null,
+  city?: string | null,
+  state?: string | null,
+  country?: {
+    code?: string | null,
+    name?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="referral_link full type">
+
+```ts
+{
+  asset_id?: string | null,
+  link?: string | null,
+  source_id?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`programs.get`
+
+Read one program, including an archived one, with its currency, cookie time and status
+
+**Risk:** `read`
+
+```ts
+await corsair.tapfiliate.api.programs.get({ programId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `programId` | `string` | Yes | The program ID, an `id` from `programs.list`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `currency` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `cookie_time` | `number \| null` | No | — |
+| `default_landing_page_url` | `string \| null` | No | — |
+| `recurring` | `boolean \| null` | No | — |
+| `status` | `string \| null` | No | — |
+
+
+
+---
+
+### getAffiliate
+
+`programs.getAffiliate`
+
+Read one affiliate within a program, with their program-specific coupon and approval state
+
+**Risk:** `read`
+
+```ts
+await corsair.tapfiliate.api.programs.getAffiliate({ programId: '1', affiliateId: 'jane-jameson' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `programId` | `string` | Yes | The program ID, an `id` from `programs.list`. |
+| `affiliateId` | `string` | Yes | The affiliate ID, an `id` from `affiliates.list`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `firstname` | `string \| null` | No | — |
+| `lastname` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `company` | `object \| null` | No | — |
+| `address` | `object \| null` | No | — |
+| `meta_data` | `Record<string, string> \| null` | No | — |
+| `parent_id` | `string \| null` | No | — |
+| `affiliate_group_id` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `promoted_at` | `string \| null` | No | — |
+| `promotion_method` | `string \| null` | No | — |
+| `custom_fields` | `Record<string, string> \| null` | No | — |
+| `fraud` | `boolean \| null` | No | — |
+| `coupon` | `string \| null` | No | — |
+| `approved` | `boolean \| null` | No | — |
+| `applied_at` | `string \| null` | No | — |
+| `referral_link` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="company full type">
+
+```ts
+{
+  name?: string | null,
+  description?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="address full type">
+
+```ts
+{
+  address?: string | null,
+  address_two?: string | null,
+  postal_code?: string | null,
+  city?: string | null,
+  state?: string | null,
+  country?: {
+    code?: string | null,
+    name?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="referral_link full type">
+
+```ts
+{
+  asset_id?: string | null,
+  link?: string | null,
+  source_id?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`programs.list`
+
+List your programs, archived ones included, 25 per page
+
+**Risk:** `read`
+
+```ts
+await corsair.tapfiliate.api.programs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, starting at 1. Each page holds 25 items. |
+| `asset_id` | `string` | No | An `<id>-<secret>` asset ID from a tracking link. Tapfiliate returns only the program that owns it, or every program when the value is not in that two-part form. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  currency?: string | null,
+  title?: string | null,
+  cookie_time?: number | null,
+  default_landing_page_url?: string | null,
+  recurring?: boolean | null,
+  status?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateAffiliate
+
+`programs.updateAffiliate`
+
+Change an affiliate's coupon in a program; null removes it and omitting it changes nothing
+
+**Risk:** `write`
+
+```ts
+await corsair.tapfiliate.api.programs.updateAffiliate({ programId: '1', affiliateId: 'jane-jameson', coupon: 'JANE20OFF' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `programId` | `string` | Yes | The program ID, an `id` from `programs.list`. |
+| `affiliateId` | `string` | Yes | The affiliate ID, an `id` from `affiliates.list`. |
+| `coupon` | `string \| null` | No | The new coupon for this program. `null` removes it, and leaving the field out changes nothing. An empty string is rejected. |
+
+coupon null removes the coupon, a string replaces it, and omitting the field changes nothing.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `firstname` | `string \| null` | No | — |
+| `lastname` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `company` | `object \| null` | No | — |
+| `address` | `object \| null` | No | — |
+| `meta_data` | `Record<string, string> \| null` | No | — |
+| `parent_id` | `string \| null` | No | — |
+| `affiliate_group_id` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `promoted_at` | `string \| null` | No | — |
+| `promotion_method` | `string \| null` | No | — |
+| `custom_fields` | `Record<string, string> \| null` | No | — |
+| `fraud` | `boolean \| null` | No | — |
+| `coupon` | `string \| null` | No | — |
+| `approved` | `boolean \| null` | No | — |
+| `applied_at` | `string \| null` | No | — |
+| `referral_link` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="company full type">
+
+```ts
+{
+  name?: string | null,
+  description?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="address full type">
+
+```ts
+{
+  address?: string | null,
+  address_two?: string | null,
+  postal_code?: string | null,
+  city?: string | null,
+  state?: string | null,
+  country?: {
+    code?: string | null,
+    name?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="referral_link full type">
+
+```ts
+{
+  asset_id?: string | null,
+  link?: string | null,
+  source_id?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

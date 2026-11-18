@@ -1,0 +1,143 @@
+---
+title: "Nango plugin"
+sidebarTitle: "Overview"
+description: "Manage Nango integrations, connections, Connect sessions, syncs and synced records, call tools, and proxy requests to your end users' APIs."
+---
+
+Use **Nango** through Corsair: one client, typed API calls.
+
+The [Nango API](https://nango.dev/docs/reference/api) authenticates with an environment secret key (Environment settings &gt; API keys). Use the key of the environment you want the agent to work in (dev or prod); a scoped key limits which operations succeed.
+
+The plugin covers integrations, connections, Connect sessions, functions, syncs and records, tool calls, legacy actions, providers, environment variables and the proxy (GET, POST, PUT, PATCH, DELETE).
+
+**Secrets.** `connections.get` drops the connection's third-party credentials unless you pass `include_credentials: true`, and `connections.import` never returns the credentials it sent. `integrations.get` with `include: ["credentials"]` and `environment.getVariables` return secrets in plain text. Errors never carry the request body or the environment key.
+
+**Risk.** Proxy writes, tool calls and legacy actions act on your end customer's third-party account, so they are `destructive`, as are deletes, `connections.setMetadata` (replaces all metadata) and `connections.import` (can overwrite a connection's credentials).
+
+Not included: environment and API-key administration, webhook signing-key rotation, function compile/deploy, sync variants, record pruning and inbound webhooks.
+
+**What you get:**
+
+- 35 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/nango better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/nango better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/nango better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/nango better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { nango } from '@corsair-dev/nango';
+
+export const corsair = createCorsair({
+	plugins: [
+		nango(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Nango API key before the first call: `pnpm corsair setup --plugin=nango --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+nango()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'nango',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`connections.list`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.nango.api.connections.list({
+	tags: { end_user_id: 'user-123' },
+	limit: 20,
+});
+```
+
+
+**`sessions.create`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.nango.api.sessions.create({
+	tags: { end_user_id: 'user-123' },
+	allowed_integrations: ['github'],
+});
+```
+
+
+See the full list on the [API](/plugins/nango/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/nango/api">
+    Every `nango.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
