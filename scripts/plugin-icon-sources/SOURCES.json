@@ -333,16 +333,16 @@
     "from": "https://media.brand.dev/26c85f2e-2b63-4b32-8c33-1452cf91249b.svg",
     "note": "found with the context.dev Brand API for hex.tech"
   },
-  "honeybadger": {
-    "from": "https://media.brand.dev/670e348e-ea99-4429-ba02-b917c1cbc1f8.svg",
-    "note": "found with the context.dev Brand API for honeybadger.io"
-  },
   "hubplanner": {
     "from": "https://media.brand.dev/f4a6845b-7f17-42f5-baaf-719a313793d2.svg",
     "note": "found with the context.dev Brand API for hubplanner.com"
   },
   "huggingface": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/hugging_face.svg"
+  },
+  "hypeauditor": {
+    "from": "https://media.brand.dev/a17b422f-e87c-4596-ac72-5f36d7d8b9fa.svg",
+    "note": "flame mark cut from hypeauditor.com's logo SVG (context.dev Brand API); wordmark removed"
   },
   "identitycheck": {
     "from": "https://media.brand.dev/baeb30ed-6c4a-4d66-a5cf-db3df3444426.svg",
@@ -588,7 +588,7 @@
   },
   "snowflake": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/snowflake.svg",
-    "note": "® removed"
+    "note": "\u00ae removed"
   },
   "sourcegraph": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/sourcegraph.svg"
@@ -671,10 +671,6 @@
   },
   "twitter": {
     "from": "https://svgl.app/library/x.svg"
-  },
-  "twittrapi": {
-    "from": "https://media.brand.dev/9340600d-2c81-46f9-9357-56efe4f7a032.svg",
-    "note": "found with the context.dev Brand API for twittrapi.com"
   },
   "userlist": {
     "from": "/tmp/claude-1000/-home-pranayasus-Corsair/519fcfce-bcca-4c8e-800d-d20fb6759bba/scratchpad/icons/real/userlist-inline.svg",
