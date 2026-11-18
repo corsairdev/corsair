@@ -83,11 +83,7 @@ export function sanitizeApiError(error: ApiError, apiKey?: string): ApiError {
 		secrets.push(apiKey);
 	}
 
-	const {
-		body: _body,
-		headers: _headers,
-		...cleanRequest
-	} = error.request;
+	const { body: _body, headers: _headers, ...cleanRequest } = error.request;
 
 	// `unknown` because the sanitized body maintains the structure of the provider error body
 	const sanitizedBody: unknown = sanitizeValue(error.body, secrets);

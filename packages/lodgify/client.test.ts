@@ -65,11 +65,9 @@ describe('makeLodgifyRequest', () => {
 		mockRequest.mockResolvedValue({ items: [] });
 
 		// `unknown` because catch receives untrusted rejection type
-		const error: unknown = await makeLodgifyRequest(
-			'/v2/properties',
-			'',
-			{ method: 'GET' },
-		).catch((e: unknown) => e);
+		const error: unknown = await makeLodgifyRequest('/v2/properties', '', {
+			method: 'GET',
+		}).catch((e: unknown) => e);
 
 		expect(error).toBeInstanceOf(AuthMissingError);
 		expect(mockRequest).not.toHaveBeenCalled();
@@ -139,7 +137,9 @@ describe('makeLodgifyRequest', () => {
 
 		expect(sanitized.message).not.toContain(secretKey);
 		expect(sanitized.message).toContain('[REDACTED]');
-		expect(sanitized.url).toBe('https://api.lodgify.com/v2/reservations/bookings');
+		expect(sanitized.url).toBe(
+			'https://api.lodgify.com/v2/reservations/bookings',
+		);
 		expect(sanitized.request.url).toBe('/v2/reservations/bookings');
 		expect(sanitized.request.body).toBeUndefined();
 		// `unknown` because body may be of any shape
@@ -158,6 +158,8 @@ describe('makeLodgifyRequest', () => {
 		).catch((caught: unknown) => caught);
 
 		expect(error).toBeInstanceOf(LodgifyAPIError);
-		expect((error as LodgifyAPIError).message).toBe('Network connection failed');
+		expect((error as LodgifyAPIError).message).toBe(
+			'Network connection failed',
+		);
 	});
 });

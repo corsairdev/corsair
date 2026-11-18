@@ -9,7 +9,6 @@ import {
 } from './endpoints';
 import type { LodgifyContext } from './index';
 import {
-	lodgify,
 	lodgifyEndpointMeta,
 	lodgifyEndpointSchemas,
 	lodgifyEndpointsNested,

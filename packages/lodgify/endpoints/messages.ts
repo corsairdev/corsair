@@ -7,8 +7,7 @@ import {
 } from './types';
 
 export const list: LodgifyEndpoints['messages.list'] = async (ctx, input) => {
-	const parsedInput =
-		LodgifyEndpointInputSchemas['messages.list'].parse(input);
+	const parsedInput = LodgifyEndpointInputSchemas['messages.list'].parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {};
 	if (parsedInput.page !== undefined) query.page = parsedInput.page;
 	if (parsedInput.size !== undefined) query.size = parsedInput.size;
@@ -36,8 +35,7 @@ export const list: LodgifyEndpoints['messages.list'] = async (ctx, input) => {
 };
 
 export const send: LodgifyEndpoints['messages.send'] = async (ctx, input) => {
-	const parsedInput =
-		LodgifyEndpointInputSchemas['messages.send'].parse(input);
+	const parsedInput = LodgifyEndpointInputSchemas['messages.send'].parse(input);
 
 	// `unknown` because provider API response is untrusted until parsed by Zod schema
 	const response: unknown = await makeLodgifyRequest('/v2/messages', ctx.key, {

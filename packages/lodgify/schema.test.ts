@@ -62,12 +62,12 @@ describe('Lodgify properties schemas', () => {
 				},
 			],
 		};
-		expect(LodgifyPropertiesListOutputSchema.safeParse(validOutput).success).toBe(
-			true,
-		);
-		expect(LodgifyPropertiesListOutputSchema.safeParse({ count: 1 }).success).toBe(
-			false,
-		);
+		expect(
+			LodgifyPropertiesListOutputSchema.safeParse(validOutput).success,
+		).toBe(true);
+		expect(
+			LodgifyPropertiesListOutputSchema.safeParse({ count: 1 }).success,
+		).toBe(false);
 	});
 
 	it('validates properties.get input and output', () => {
@@ -111,9 +111,8 @@ describe('Lodgify properties schemas', () => {
 			LodgifyPropertiesGetRoomsOutputSchema.safeParse(validRooms).success,
 		).toBe(true);
 		expect(
-			LodgifyPropertiesGetRoomsOutputSchema.safeParse([
-				{ name: 'Missing id' },
-			]).success,
+			LodgifyPropertiesGetRoomsOutputSchema.safeParse([{ name: 'Missing id' }])
+				.success,
 		).toBe(false);
 	});
 });
@@ -180,9 +179,9 @@ describe('Lodgify reservations schemas', () => {
 			roomTypes: [{ id: 201, people: 2 }],
 			total_amount: 1200,
 		};
-		expect(LodgifyReservationsCreateInputSchema.safeParse(validInput).success).toBe(
-			true,
-		);
+		expect(
+			LodgifyReservationsCreateInputSchema.safeParse(validInput).success,
+		).toBe(true);
 
 		// Missing required departure
 		expect(
@@ -238,9 +237,9 @@ describe('Lodgify quotes schemas', () => {
 			departure: '2026-06-05',
 			guests: 2,
 		};
-		expect(LodgifyQuotesCalculateInputSchema.safeParse(validInput).success).toBe(
-			true,
-		);
+		expect(
+			LodgifyQuotesCalculateInputSchema.safeParse(validInput).success,
+		).toBe(true);
 
 		expect(
 			LodgifyQuotesCalculateInputSchema.safeParse({
