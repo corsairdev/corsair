@@ -353,8 +353,12 @@ function expectedResponseFor(
 				links: { self: webhookSelfUrl },
 			},
 		};
-	if (operation.name === 'webhooks.delete') return null;
-	return { data: [] };
+	if (operation.noContent) return null;
+	if (operation.outputKind === 'list' || operation.name === 'teams.search')
+		return { data: [], links: { next: null } };
+	if (operation.name === 'teams.list')
+		return { data: [], links: { next: null } };
+	return { data: { id: 'resource-id' } };
 }
 
 function expectedPath(
@@ -457,10 +461,42 @@ describe('Productboard operations', () => {
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 
+	it('sends documented empty bodies for team and connection searches', async () => {
+		const listResponse = { data: [], links: { next: null } };
+		mockedRequest
+			.mockResolvedValueOnce(listResponse)
+			.mockResolvedValueOnce(listResponse);
+
+		await expect(
+			createTestEndpoint(ProductboardOperations['teams.search'])(ctx, {
+				body: {},
+			}),
+		).resolves.toEqual(listResponse);
+		await expect(
+			createTestEndpoint(
+				ProductboardOperations['pluginIntegrations.connections.search'],
+			)(ctx, { integrationId: 'integration-id', body: {} }),
+		).resolves.toEqual(listResponse);
+
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			1,
+			'/teams/search',
+			'test-productboard-token',
+			expect.objectContaining({ method: 'POST', body: {} }),
+		);
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			2,
+			'/plugin-integrations/integration-id/connections/search',
+			'test-productboard-token',
+			expect.objectContaining({ method: 'POST', body: {} }),
+		);
+	});
+
 	it('logs operation names only, not note text or member details', async () => {
 		const endpoint = createProductboardEndpoint(
 			ProductboardOperations['notes.create'],
 		);
+		mockedRequest.mockResolvedValueOnce({ data: { id: 'synthetic-note-id' } });
 		await endpoint(ctx, {
 			body: {
 				data: {
@@ -488,5 +524,56 @@ describe('Productboard operations', () => {
 		);
 		await expect(endpoint(ctx, { query: {} })).rejects.toThrow();
 		expect(mockedLogEvent).not.toHaveBeenCalled();
+	});
+
+	it('maps an empty transport response to null only for documented 204 operations', async () => {
+		for (const operation of Object.values(ProductboardOperations)) {
+			mockedRequest.mockResolvedValueOnce(undefined);
+			const endpoint = createTestEndpoint(operation);
+			const result = endpoint(ctx, inputFor(operation));
+			if ('noContent' in operation && operation.noContent) {
+				await expect(result).resolves.toBeNull();
+			} else {
+				await expect(result).rejects.toThrow();
+			}
+		}
+	});
+
+	it('rejects malformed list, resource, and no-content response shapes', async () => {
+		mockedRequest.mockResolvedValueOnce({ data: {} });
+		await expect(
+			createTestEndpoint(ProductboardOperations['teams.list'])(ctx, {
+				query: {},
+			}),
+		).rejects.toThrow();
+
+		mockedRequest.mockResolvedValueOnce({ data: [] });
+		await expect(
+			createTestEndpoint(ProductboardOperations['teams.create'])(ctx, {
+				body: {
+					data: {
+						fields: { name: 'Synthetic Team', handle: 'syntheticteam' },
+					},
+				},
+			}),
+		).rejects.toThrow();
+
+		mockedRequest.mockResolvedValueOnce({ data: {} });
+		await expect(
+			createTestEndpoint(ProductboardOperations['teams.create'])(ctx, {
+				body: {
+					data: {
+						fields: { name: 'Synthetic Team', handle: 'syntheticteam' },
+					},
+				},
+			}),
+		).rejects.toThrow();
+
+		mockedRequest.mockResolvedValueOnce({ data: { id: 'unexpected' } });
+		await expect(
+			createTestEndpoint(ProductboardOperations['notes.delete'])(ctx, {
+				id: 'note-id',
+			}),
+		).rejects.toThrow();
 	});
 });

@@ -1,13 +1,17 @@
 import { ProductboardOperations } from './endpoints/operations';
 import {
+	ProductboardConnectionSearchBodySchema,
 	ProductboardJsonObjectSchema,
+	ProductboardNoteCreateBodySchema,
 	ProductboardOperationInputSchema,
 	ProductboardOutputSchema,
 	ProductboardRequestBodySchema,
+	ProductboardTeamSearchBodySchema,
+	ProductboardTeamsListOutputSchema,
 	ProductboardWebhookCreateBodySchema,
 	ProductboardWebhookGetOutputSchema,
 } from './endpoints/types';
-import { productboardEndpointSchemas } from './index';
+import { productboard, productboardEndpointSchemas } from './index';
 import { ProductboardSchema } from './schema';
 
 describe('Productboard plugin schema', () => {
@@ -23,6 +27,13 @@ describe('Productboard plugin schema', () => {
 		for (const schemaPair of Object.values(productboardEndpointSchemas)) {
 			expect(schemaPair.input).toBeDefined();
 			expect(schemaPair.output).toBeDefined();
+		}
+		for (const operation of Object.values(ProductboardOperations)) {
+			expect(
+				('outputSchema' in operation && operation.outputSchema) ||
+					('noContent' in operation && operation.noContent) ||
+					('outputKind' in operation && operation.outputKind),
+			).toBeTruthy();
 		}
 	});
 
@@ -42,6 +53,69 @@ describe('Productboard plugin schema', () => {
 				body: { data: { filter: { state: ['connected'] } } },
 			}).success,
 		).toBe(true);
+		expect(ProductboardTeamSearchBodySchema.safeParse({}).success).toBe(true);
+		expect(
+			ProductboardTeamSearchBodySchema.safeParse({ data: {} }).success,
+		).toBe(true);
+		expect(
+			ProductboardTeamSearchBodySchema.safeParse({
+				data: { search: 'string instead of object' },
+			}).success,
+		).toBe(false);
+		expect(
+			productboardEndpointSchemas['teams.search'].input?.safeParse({
+				body: { data: { other: true } },
+			}).success,
+		).toBe(false);
+		expect(
+			productboardEndpointSchemas['teams.search'].input?.safeParse({
+				body: {},
+			}).success,
+		).toBe(true);
+		expect(
+			productboardEndpointSchemas[
+				'pluginIntegrations.connections.search'
+			].input?.safeParse({
+				integrationId: 'integration-id',
+				body: { data: { search: {} } },
+			}).success,
+		).toBe(false);
+		expect(
+			ProductboardConnectionSearchBodySchema.safeParse({ data: { filter: [] } })
+				.success,
+		).toBe(false);
+		expect(ProductboardConnectionSearchBodySchema.safeParse({}).success).toBe(
+			true,
+		);
+		expect(
+			ProductboardConnectionSearchBodySchema.safeParse({
+				data: { filter: { state: ['connected'] } },
+			}).success,
+		).toBe(true);
+	});
+
+	it('requires Productboard note creation fields while retaining dynamic field names and types', () => {
+		expect(
+			ProductboardNoteCreateBodySchema.safeParse({
+				data: {
+					type: 'textNote',
+					fields: {
+						name: 'Synthetic note',
+						customWorkspaceField: { value: 'kept' },
+					},
+				},
+			}).success,
+		).toBe(true);
+		expect(
+			ProductboardNoteCreateBodySchema.safeParse({
+				data: { fields: { name: 'Missing note type' } },
+			}).success,
+		).toBe(false);
+		expect(
+			ProductboardNoteCreateBodySchema.safeParse({
+				data: { type: 'textNote', fields: { content: 'No name' } },
+			}).success,
+		).toBe(false);
 	});
 
 	it('validates webhook subscriptions against the documented contract', () => {
@@ -114,6 +188,14 @@ describe('Productboard plugin schema', () => {
 			url: 'https://receiver.example/productboard',
 			version: 1,
 		});
+		expect(
+			ProductboardWebhookGetOutputSchema.safeParse({
+				data: {
+					...responseWithUnexpectedSecret.data,
+					createdAt: '2024-01-15T11:30:00+01:00',
+				},
+			}).success,
+		).toBe(true);
 	});
 
 	it('keeps operation inputs strict while accepting documented JSON query/body values', () => {
@@ -152,13 +234,46 @@ describe('Productboard plugin schema', () => {
 			ProductboardOutputSchema.safeParse({ data: { id: 'resource-id' } })
 				.success,
 		).toBe(true);
-		expect(ProductboardOutputSchema.safeParse(null).success).toBe(true);
+		expect(ProductboardOutputSchema.safeParse(null).success).toBe(false);
 		expect(
 			ProductboardOutputSchema.safeParse({ links: { next: null } }).success,
 		).toBe(false);
 		expect(
 			ProductboardOutputSchema.safeParse('not-json-envelope').success,
 		).toBe(false);
+	});
+
+	it('exposes operation-specific response schemas and destructive reset risks', () => {
+		expect(
+			productboardEndpointSchemas['teams.list'].output?.safeParse({ data: [] })
+				.success,
+		).toBe(true);
+		expect(
+			productboardEndpointSchemas['teams.list'].output?.safeParse({
+				data: {},
+			}).success,
+		).toBe(false);
+		expect(
+			ProductboardTeamsListOutputSchema.safeParse({ data: [null] }).success,
+		).toBe(false);
+		expect(
+			productboardEndpointSchemas['teams.create'].output?.safeParse({
+				data: [],
+			}).success,
+		).toBe(false);
+		expect(
+			productboardEndpointSchemas['notes.delete'].output?.safeParse(null)
+				.success,
+		).toBe(true);
+		expect(
+			productboardEndpointSchemas['notes.delete'].output?.safeParse({
+				data: {},
+			}).success,
+		).toBe(false);
+		expect(productboard().endpointMeta).toMatchObject({
+			'pluginIntegrations.connections.update': { riskLevel: 'destructive' },
+			'pluginIntegrations.connections.delete': { riskLevel: 'destructive' },
+		});
 	});
 
 	it('has official v2 source evidence and a method/path for each operation', () => {

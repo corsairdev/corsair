@@ -17,6 +17,65 @@ export const ProductboardRequestBodySchema = z
 	.object({ data: ProductboardJsonObjectSchema })
 	.strict();
 
+export type ProductboardRequestBody = z.infer<
+	typeof ProductboardRequestBodySchema
+>;
+
+export const ProductboardEmptyRequestBodySchema = z.object({}).strict();
+
+export const ProductboardTeamSearchBodySchema = z
+	.union([ProductboardRequestBodySchema, ProductboardEmptyRequestBodySchema])
+	.superRefine((body, context) => {
+		if (!('data' in body)) return;
+		for (const field of ['filter', 'search']) {
+			const value = body.data[field];
+			if (
+				value !== undefined &&
+				(value === null || typeof value !== 'object' || Array.isArray(value))
+			) {
+				context.addIssue({
+					code: 'custom',
+					path: ['data', field],
+					message: 'Search filters must be JSON objects',
+				});
+			}
+		}
+	});
+
+export const ProductboardConnectionSearchBodySchema = z
+	.union([ProductboardRequestBodySchema, ProductboardEmptyRequestBodySchema])
+	.superRefine((body, context) => {
+		if (!('data' in body)) return;
+		const filter = body.data.filter;
+		if (
+			filter !== undefined &&
+			(filter === null || typeof filter !== 'object' || Array.isArray(filter))
+		) {
+			context.addIssue({
+				code: 'custom',
+				path: ['data', 'filter'],
+				message: 'Connection filters must be a JSON object',
+			});
+		}
+	});
+
+const ProductboardNoteFieldsSchema = z
+	.object({ name: z.string().min(1) })
+	.catchall(ProductboardJsonSchema);
+
+export const ProductboardNoteCreateBodySchema = z
+	.object({
+		data: z
+			.object({
+				type: z.string().min(1),
+				fields: ProductboardNoteFieldsSchema,
+				metadata: ProductboardJsonObjectSchema.optional(),
+				relationships: ProductboardJsonObjectSchema.optional(),
+			})
+			.strict(),
+	})
+	.strict();
+
 const ProductboardWebhookEventTypeSchema = z.enum([
 	'feature.created',
 	'feature.updated',
@@ -97,7 +156,7 @@ const ProductboardWebhookReferenceSchema = z.object({
 const ProductboardWebhookSubscriptionSchema = z.object({
 	id: z.string().uuid(),
 	type: z.literal('webhook'),
-	createdAt: z.string().datetime(),
+	createdAt: z.iso.datetime({ offset: true }),
 	fields: z.object({
 		name: z.string().min(1).max(255),
 		events: ProductboardWebhookEventsSchema,
@@ -124,6 +183,49 @@ export const ProductboardWebhookListOutputSchema = z.object({
 
 export const ProductboardWebhookDeleteOutputSchema = z.null();
 
+const ProductboardResourceDataSchema = ProductboardJsonObjectSchema.refine(
+	(data) => Object.keys(data).length > 0,
+	{ message: 'Productboard resource response data must not be empty' },
+);
+
+export const ProductboardResourceOutputSchema = z
+	.object({ data: ProductboardResourceDataSchema })
+	.catchall(ProductboardJsonSchema);
+
+export const ProductboardListOutputSchema = z
+	.object({
+		data: z.array(ProductboardJsonObjectSchema),
+		links: ProductboardJsonObjectSchema.optional(),
+	})
+	.catchall(ProductboardJsonSchema);
+
+const ProductboardTeamResourceSchema = z
+	.object({
+		id: z.string().uuid(),
+		type: z.literal('team'),
+		fields: z
+			.object({
+				name: z.string().min(1),
+				handle: z.string().min(1),
+			})
+			.catchall(ProductboardJsonSchema),
+		createdAt: z.iso.datetime({ offset: true }),
+		updatedAt: z.iso.datetime({ offset: true }),
+		links: z
+			.object({ self: z.string().url() })
+			.catchall(ProductboardJsonSchema),
+	})
+	.catchall(ProductboardJsonSchema);
+
+export const ProductboardTeamsListOutputSchema = z
+	.object({
+		data: z.array(ProductboardTeamResourceSchema),
+		links: ProductboardJsonObjectSchema.optional(),
+	})
+	.catchall(ProductboardJsonSchema);
+
+export const ProductboardNoContentOutputSchema = z.null();
+
 export const ProductboardEnvelopeSchema = z
 	.object({
 		data: ProductboardJsonSchema,
@@ -131,16 +233,15 @@ export const ProductboardEnvelopeSchema = z
 	})
 	.passthrough();
 
-export const ProductboardOutputSchema = z.union([
-	ProductboardEnvelopeSchema,
-	z.null(),
-]);
+export const ProductboardOutputSchema = ProductboardEnvelopeSchema;
 
 export type ProductboardJson = z.infer<typeof ProductboardJsonSchema>;
 export type ProductboardJsonObject = z.infer<
 	typeof ProductboardJsonObjectSchema
 >;
-export type ProductboardOutput = z.infer<typeof ProductboardOutputSchema>;
+export type ProductboardOutput = z.infer<
+	typeof ProductboardOutputSchema
+> | null;
 
 export const ProductboardOperationInputSchema = z
 	.object({
@@ -154,7 +255,12 @@ export const ProductboardOperationInputSchema = z
 		entityId: z.string().min(1).optional(),
 		webhookId: z.string().min(1).optional(),
 		query: ProductboardJsonObjectSchema.optional(),
-		body: ProductboardRequestBodySchema.optional(),
+		body: z
+			.union([
+				ProductboardRequestBodySchema,
+				ProductboardEmptyRequestBodySchema,
+			])
+			.optional(),
 	})
 	.strict();
 

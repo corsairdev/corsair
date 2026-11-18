@@ -21,9 +21,9 @@ export const PRODUCTBOARD_API_BASE = 'https://api.productboard.com/v2';
 
 const PRODUCTBOARD_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 0,
-	initialRetryDelay: 0,
-	backoffMultiplier: 1,
+	maxRetries: 3,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
 	headerNames: {
 		retryAfter: 'retry-after',
 		remaining: 'x-ratelimit-remaining',
@@ -74,27 +74,22 @@ export async function makeProductboardRequest<T>(
 		});
 	} catch (error) {
 		// Rejection values have no declared type; instanceof narrows core API errors safely.
-		// Preserve transport status and rate-limit metadata while dropping the
-		// provider body and request payload, which can contain customer feedback,
-		// member email addresses, or other workspace data.
+		// Keep the original ApiError (and its status/retry metadata) for R8 while
+		// redacting provider and request data that can contain workspace content.
 		if (error instanceof ApiError) {
-			throw new ApiError(
-				{ method: requestOptions.method, url: requestOptions.url },
-				{
-					url: `${PRODUCTBOARD_API_BASE}${requestOptions.url}`,
-					ok: false,
-					status: error.status,
-					statusText: 'Productboard request failed',
-					body: {},
-				},
+			const safeStack = error.stack?.replace(
+				error.message,
 				'Productboard request failed',
-				{
-					retryAfter: error.retryAfter,
-					rateLimitReset: error.rateLimitReset,
-					rateLimitRemaining: error.rateLimitRemaining,
-					rateLimitLimit: error.rateLimitLimit,
-				},
 			);
+			Object.assign(error, {
+				message: 'Productboard request failed',
+				statusText: 'Productboard request failed',
+				body: {},
+				url: PRODUCTBOARD_API_BASE,
+				request: { method: requestOptions.method, url: '/[redacted]' },
+				...(safeStack ? { stack: safeStack } : {}),
+			});
+			throw error;
 		}
 		if (error instanceof Error) {
 			throw new ProductboardAPIError('Productboard request failed');

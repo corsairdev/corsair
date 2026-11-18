@@ -24,10 +24,10 @@ import {
 import {
 	ProductboardOperations,
 	productboardOperationInputSchema,
+	productboardOperationOutputSchema,
 } from './endpoints/operations';
 import type { ProductboardOutput } from './endpoints/types';
 import {
-	ProductboardOutputSchema,
 	ProductboardWebhookCreateOutputSchema,
 	ProductboardWebhookDeleteOutputSchema,
 	ProductboardWebhookGetOutputSchema,
@@ -74,325 +74,433 @@ export const productboardEndpointSchemas = {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['notes.list'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['notes.list'],
+		),
 	},
 	'notes.search': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['notes.search'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['notes.search'],
+		),
 	},
 	'notes.create': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['notes.create'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['notes.create'],
+		),
 	},
 	'notes.get': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['notes.get'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['notes.get'],
+		),
 	},
 	'notes.update': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['notes.update'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['notes.update'],
+		),
 	},
 	'notes.delete': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['notes.delete'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['notes.delete'],
+		),
 	},
 	'notes.configurations.list': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['notes.configurations.list'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['notes.configurations.list'],
+		),
 	},
 	'notes.configurations.get': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['notes.configurations.get'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['notes.configurations.get'],
+		),
 	},
 	'notes.relationships.list': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['notes.relationships.list'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['notes.relationships.list'],
+		),
 	},
 	'notes.relationships.create': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['notes.relationships.create'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['notes.relationships.create'],
+		),
 	},
 	'notes.relationships.setCustomer': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['notes.relationships.setCustomer'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['notes.relationships.setCustomer'],
+		),
 	},
 	'notes.relationships.delete': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['notes.relationships.delete'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['notes.relationships.delete'],
+		),
 	},
 	'entities.list': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['entities.list'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['entities.list'],
+		),
 	},
 	'entities.search': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['entities.search'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['entities.search'],
+		),
 	},
 	'entities.create': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['entities.create'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['entities.create'],
+		),
 	},
 	'entities.get': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['entities.get'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['entities.get'],
+		),
 	},
 	'entities.update': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['entities.update'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['entities.update'],
+		),
 	},
 	'entities.delete': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['entities.delete'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['entities.delete'],
+		),
 	},
 	'entities.configurations.list': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['entities.configurations.list'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['entities.configurations.list'],
+		),
 	},
 	'entities.configurations.get': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['entities.configurations.get'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['entities.configurations.get'],
+		),
 	},
 	'entities.relationships.list': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['entities.relationships.list'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['entities.relationships.list'],
+		),
 	},
 	'entities.relationships.create': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['entities.relationships.create'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['entities.relationships.create'],
+		),
 	},
 	'entities.relationships.setParent': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['entities.relationships.setParent'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['entities.relationships.setParent'],
+		),
 	},
 	'entities.relationships.delete': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['entities.relationships.delete'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['entities.relationships.delete'],
+		),
 	},
 	'entities.fieldValues.list': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['entities.fieldValues.list'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['entities.fieldValues.list'],
+		),
 	},
 	'entities.fieldValues.create': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['entities.fieldValues.create'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['entities.fieldValues.create'],
+		),
 	},
 	'entities.fieldValues.update': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['entities.fieldValues.update'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['entities.fieldValues.update'],
+		),
 	},
 	'entities.fieldValues.delete': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['entities.fieldValues.delete'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['entities.fieldValues.delete'],
+		),
 	},
 	'entities.customerScore': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['entities.customerScore'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['entities.customerScore'],
+		),
 	},
 	'analytics.memberActivities': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['analytics.memberActivities'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['analytics.memberActivities'],
+		),
 	},
 	'members.list': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['members.list'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['members.list'],
+		),
 	},
 	'members.search': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['members.search'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['members.search'],
+		),
 	},
 	'members.get': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['members.get'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['members.get'],
+		),
 	},
 	'teams.list': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['teams.list'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['teams.list'],
+		),
 	},
 	'teams.search': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['teams.search'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['teams.search'],
+		),
 	},
 	'teams.create': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['teams.create'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['teams.create'],
+		),
 	},
 	'teams.get': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['teams.get'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['teams.get'],
+		),
 	},
 	'teams.update': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['teams.update'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['teams.update'],
+		),
 	},
 	'teams.delete': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['teams.delete'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['teams.delete'],
+		),
 	},
 	'teams.members': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['teams.members'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['teams.members'],
+		),
 	},
 	'jiraIntegrations.list': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['jiraIntegrations.list'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['jiraIntegrations.list'],
+		),
 	},
 	'jiraIntegrations.get': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['jiraIntegrations.get'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['jiraIntegrations.get'],
+		),
 	},
 	'jiraIntegrations.connections': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['jiraIntegrations.connections'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['jiraIntegrations.connections'],
+		),
 	},
 	'jiraIntegrations.connection': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['jiraIntegrations.connection'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['jiraIntegrations.connection'],
+		),
 	},
 	'pluginIntegrations.list': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['pluginIntegrations.list'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['pluginIntegrations.list'],
+		),
 	},
 	'pluginIntegrations.create': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['pluginIntegrations.create'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['pluginIntegrations.create'],
+		),
 	},
 	'pluginIntegrations.get': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['pluginIntegrations.get'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['pluginIntegrations.get'],
+		),
 	},
 	'pluginIntegrations.update': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['pluginIntegrations.update'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['pluginIntegrations.update'],
+		),
 	},
 	'pluginIntegrations.delete': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['pluginIntegrations.delete'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['pluginIntegrations.delete'],
+		),
 	},
 	'pluginIntegrations.connections.list': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['pluginIntegrations.connections.list'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['pluginIntegrations.connections.list'],
+		),
 	},
 	'pluginIntegrations.connections.search': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['pluginIntegrations.connections.search'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['pluginIntegrations.connections.search'],
+		),
 	},
 	'pluginIntegrations.connections.get': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['pluginIntegrations.connections.get'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['pluginIntegrations.connections.get'],
+		),
 	},
 	'pluginIntegrations.connections.update': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['pluginIntegrations.connections.update'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['pluginIntegrations.connections.update'],
+		),
 	},
 	'pluginIntegrations.connections.delete': {
 		input: productboardOperationInputSchema(
 			ProductboardOperations['pluginIntegrations.connections.delete'],
 		),
-		output: ProductboardOutputSchema,
+		output: productboardOperationOutputSchema(
+			ProductboardOperations['pluginIntegrations.connections.delete'],
+		),
 	},
 	'webhooks.list': {
 		input: productboardOperationInputSchema(
@@ -625,11 +733,12 @@ const productboardEndpointMeta = {
 		description: 'Get one connection; missing links return the initial state.',
 	},
 	'pluginIntegrations.connections.update': {
-		riskLevel: 'write',
-		description: 'Create or replace a connection state via upsert.',
+		riskLevel: 'destructive',
+		description:
+			'Create or replace a connection state via upsert; setting it to initial permanently resets the connection.',
 	},
 	'pluginIntegrations.connections.delete': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Reset a connection to its initial state.',
 	},
 	'webhooks.list': {

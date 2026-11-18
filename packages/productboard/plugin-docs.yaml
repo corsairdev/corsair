@@ -4,7 +4,7 @@ recommendedAuth: api_key
 overviewNote: |
   Configure a Productboard personal access token in Corsair. Productboard requires `Authorization: Bearer <token>` and `Accept: application/json`; personal access tokens are available on Pro plans and above. This plugin supports API-token authentication only. OAuth login, token issuance, and refresh are unavailable because Productboard's detailed OAuth guide and v2 per-route OpenAPI security sections disagree on authorization/token URLs and scopes; OAuth access-token compatibility is not claimed.
 
-  Productboard uses opaque cursor pagination (`pageCursor`) with `links.next`; its documented default rate limit is 50 requests per second per token. On 429 responses the shared transport preserves `Retry-After` and the plugin avoids duplicate retries.
+  Productboard uses opaque cursor pagination (`pageCursor`) with `links.next`; its documented default rate limit is 50 requests per second per token. On 429 responses the shared transport makes up to three bounded retries using `Retry-After`; the plugin handler prevents a second retry loop. 5xx and network failures are not retried.
 
   Entity and note field names and values are workspace-configurable. The plugin strictly validates operation-level inputs and accepts JSON for provider-native request envelopes, query structures, and dynamic field maps. PII may be redacted by Productboard without `members:pii:read`. The customer-score operation is beta. All four documented webhook subscription-management routes are available, but inbound webhook/action callback handlers are not included. Documents operations are intentionally excluded: first-party entity references establish opaque document IDs, route paths and PBFM semantics, but not complete standalone auth, request, and response contracts. OAuth routes remain excluded because Productboard's OAuth guides and v2 OpenAPI security definitions disagree on URLs and scopes.
 examples:
@@ -48,9 +48,9 @@ apiExamples:
   notes.relationships.create: { args: { id: 00000000-0000-4000-8000-000000000001, body: { data: { type: link, target: { id: 00000000-0000-4000-8000-000000000002, type: link } } } } }
   notes.relationships.setCustomer: { args: { id: 00000000-0000-4000-8000-000000000001, body: { data: { target: { id: 00000000-0000-4000-8000-000000000003, type: user } } } } }
   notes.relationships.delete: { args: { id: 00000000-0000-4000-8000-000000000001, targetType: link, targetId: 00000000-0000-4000-8000-000000000002 } }
-  entities.list: { args: { query: { 'type[]': [feature] } } }
+  entities.list: {}
   entities.search: { args: { body: { data: { filter: { type: [feature] } } } } }
-  entities.create: { args: { body: { data: { type: feature, fields: { name: Synthetic feature } } } } }
+  entities.create: { args: { body: { data: { type: feature, fields: { name: Synthetic feature }, relationships: [{ type: parent, target: { id: 00000000-0000-4000-8000-000000000005 } }] } } } }
   entities.get: { args: { id: 00000000-0000-4000-8000-000000000004 } }
   entities.update: { args: { id: 00000000-0000-4000-8000-000000000004, body: { data: { fields: { name: Updated feature } } } } }
   entities.delete: { args: { id: 00000000-0000-4000-8000-000000000004 } }
@@ -71,7 +71,7 @@ apiExamples:
   members.get: { args: { id: 00000000-0000-4000-8000-000000000007 } }
   teams.list: { args: { query: { name: Product Team } } }
   teams.search: { args: { body: { data: { search: { query: product } } } } }
-  teams.create: { args: { body: { data: { fields: { name: Synthetic Team, handle: synthetic-team } } } } }
+  teams.create: { args: { body: { data: { fields: { name: Synthetic Team, handle: syntheticteam } } } } }
   teams.get: { args: { id: 00000000-0000-4000-8000-000000000008 } }
   teams.update: { args: { id: 00000000-0000-4000-8000-000000000008, body: { data: { fields: { name: Updated Team } } } } }
   teams.delete: { args: { id: 00000000-0000-4000-8000-000000000008 } }
@@ -88,6 +88,7 @@ apiExamples:
           fields:
             type: com.example.corsair
             name: Synthetic integration
+            integrationStatus: disabled
             initialState:
               label: Push
             action:
@@ -149,16 +150,17 @@ apiExamples:
   webhooks.get: { args: { webhookId: 00000000-0000-4000-8000-000000000011 } }
   webhooks.delete: { args: { webhookId: 00000000-0000-4000-8000-000000000011 } }
 apiNotes:
+  entities.create: 'If your workspace feature configuration requires a parent, include a `parent` relationship to an existing entity ID as shown; check the configuration for any other required fields.'
   entities.fieldValues.create: 'Productboard only supports creating values for SINGLE_SELECT, MULTI_SELECT, and TAG fields here; STATUS values are managed separately.'
   entities.fieldValues.update: 'Productboard does not support updating STATUS values through this operation.'
   entities.fieldValues.delete: 'Productboard does not support deleting STATUS values. The `force` and `replaceWith` query options are mutually exclusive.'
   entities.customerScore: 'This Productboard customer-score API is documented as beta and may change or be removed.'
   notes.search: 'Structured filter groups use the documented relationship semantics. `pageCursor` is passed as a query parameter.'
   entities.search: 'Entity types and available fields are workspace-configured. Only documented AND filter semantics are supported.'
-  pluginIntegrations.create: 'Productboard sends a probe to the configured HTTPS action URL during creation. `action.headers.authorization` is write-only and is never returned.'
+  pluginIntegrations.create: 'This example creates the integration disabled, which skips Productboard’s endpoint probe. Enabled creation requires a publicly reachable action URL that can answer the probe; the plugin validates URL syntax, length, and the HTTPS prefix but cannot verify public reachability. `action.headers.authorization` is write-only and is never returned.'
   pluginIntegrations.update: 'Changing an enabled integration action URL triggers a Productboard probe. The action authorization secret is write-only.'
   pluginIntegrations.connections.list: 'List responses exclude connections in the initial state; follow the cursor in `links.next`.'
   pluginIntegrations.connections.get: 'If no connection exists, Productboard returns the initial state instead of 404.'
   pluginIntegrations.connections.update: 'The operation is an upsert. State `initial` resets the connection, equivalent to delete.'
-  webhooks.create: 'The notification URL must be a publicly reachable HTTPS endpoint. Its optional authorization header is write-only and is never logged or returned.'
+  webhooks.create: 'The plugin validates notification URL syntax, length, and the HTTPS prefix; Productboard checks public reachability after the request is sent. Its optional authorization header is write-only and is never logged or returned.'
   webhooks.delete: 'Deleting a subscription is permanent and stops future notifications; the inbound notification receiver remains the caller''s responsibility.'

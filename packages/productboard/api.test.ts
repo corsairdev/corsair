@@ -1,6 +1,5 @@
 import { makeProductboardRequest } from './client';
-import type { ProductboardOutput } from './endpoints/types';
-import { ProductboardOutputSchema } from './endpoints/types';
+import { ProductboardTeamsListOutputSchema } from './endpoints/types';
 
 const productboardApiKey = process.env.PRODUCTBOARD_API_KEY;
 
@@ -13,10 +12,12 @@ if (!productboardApiKey) {
 const liveTest = productboardApiKey ? it : it.skip;
 
 liveTest('lists Productboard teams with a read-only request', async () => {
-	const response = await makeProductboardRequest<ProductboardOutput>(
+	const response = await makeProductboardRequest<unknown>(
 		'/teams',
 		productboardApiKey ?? '',
 		{ method: 'GET' },
 	);
-	expect(ProductboardOutputSchema.safeParse(response).success).toBe(true);
+	expect(ProductboardTeamsListOutputSchema.safeParse(response).success).toBe(
+		true,
+	);
 });

@@ -1,5 +1,9 @@
 import { AuthMissingError } from 'corsair/core';
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 import { makeProductboardRequest, PRODUCTBOARD_API_BASE } from './client';
 import { errorHandlers } from './error-handlers';
@@ -56,6 +60,15 @@ describe('makeProductboardRequest', () => {
 				query: { pageCursor: 'opaque-cursor' },
 			}),
 		);
+		expect(mockedRequest.mock.calls[0]?.[2]).toMatchObject({
+			rateLimitConfig: {
+				enabled: true,
+				maxRetries: 3,
+				initialRetryDelay: 1000,
+				backoffMultiplier: 2,
+				headerNames: { retryAfter: 'retry-after' },
+			},
+		});
 	});
 
 	it('sends JSON request bodies on writes', async () => {
@@ -79,34 +92,106 @@ describe('makeProductboardRequest', () => {
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 
-	it('keeps rate-limit metadata while redacting the provider body and request payload', async () => {
+	it('redacts sensitive ApiError fields without replacing the original error', async () => {
 		const providerError = apiError(429, 4000);
 		mockedRequest.mockRejectedValue(providerError);
 		// Rejection values have no static type, so unknown is narrowed with instanceof below.
-		const received = await makeProductboardRequest(
-			'/notes',
-			'test-token',
-		).catch((error: unknown) => error);
+		const received = await makeProductboardRequest('/notes', 'test-token', {
+			method: 'POST',
+			body: { data: { fields: { content: 'Private customer feedback' } } },
+		}).catch((error: unknown) => error);
 
+		expect(received).toBe(providerError);
 		expect(received).toBeInstanceOf(ApiError);
-		expect(received).toMatchObject({ status: 429, retryAfter: 4000, body: {} });
+		expect(received).toMatchObject({
+			status: 429,
+			retryAfter: 4000,
+			body: {},
+			statusText: 'Productboard request failed',
+			url: PRODUCTBOARD_API_BASE,
+			request: { method: 'POST', url: '/[redacted]' },
+		});
 		if (received instanceof ApiError) {
 			expect(received.request).not.toHaveProperty('body');
+			expect(received.request).not.toHaveProperty('query');
 			expect(received.message).not.toContain('sensitive');
+			expect(received.stack).not.toContain('sensitive');
 			expect(received.url).not.toContain('person@example.com');
 		}
 	});
 
-	it('extracts Retry-After with the real shared transport without duplicate retries', async () => {
+	it('retries 429 responses up to the configured bound and honors Retry-After', async () => {
 		const originalFetch = globalThis.fetch;
-		const fetchMock = jest.fn().mockResolvedValue(
+		const throttledResponse = () =>
 			new Response(
 				JSON.stringify({ errors: [{ code: 'rate.limitExceeded' }] }),
 				{
 					status: 429,
-					headers: { 'content-type': 'application/json', 'retry-after': '4' },
+					headers: { 'content-type': 'application/json', 'retry-after': '2' },
 				},
-			),
+			);
+		const fetchMock = jest
+			.fn()
+			.mockResolvedValueOnce(throttledResponse())
+			.mockResolvedValueOnce(throttledResponse())
+			.mockResolvedValueOnce(
+				new Response(JSON.stringify({ data: [] }), {
+					status: 200,
+					headers: { 'content-type': 'application/json' },
+				}),
+			);
+		globalThis.fetch = fetchMock;
+		const realRequest =
+			jest.requireActual<typeof import('corsair/http')>('corsair/http').request;
+		const config: OpenAPIConfig = {
+			BASE: PRODUCTBOARD_API_BASE,
+			VERSION: '2.0.0',
+			WITH_CREDENTIALS: false,
+			CREDENTIALS: 'omit',
+			HEADERS: { Authorization: 'Bearer test-token' },
+		};
+		const options: ApiRequestOptions = {
+			method: 'POST',
+			url: '/notes',
+			body: { data: { fields: { name: 'Synthetic note' } } },
+		};
+		const rateLimitConfig: RateLimitConfig = {
+			enabled: true,
+			maxRetries: 3,
+			initialRetryDelay: 1000,
+			backoffMultiplier: 2,
+			headerNames: { retryAfter: 'retry-after' },
+		};
+
+		try {
+			jest.useFakeTimers();
+			const requestPromise = realRequest(config, options, { rateLimitConfig });
+			await jest.advanceTimersByTimeAsync(1999);
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+			await jest.advanceTimersByTimeAsync(1);
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+			await jest.advanceTimersByTimeAsync(1999);
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+			await jest.advanceTimersByTimeAsync(1);
+			await expect(requestPromise).resolves.toEqual({ data: [] });
+			expect(fetchMock).toHaveBeenCalledTimes(3);
+		} finally {
+			jest.useRealTimers();
+			globalThis.fetch = originalFetch;
+		}
+	});
+
+	it('bounds repeated 429 retries at three and does not retry writes on 5xx or network errors', async () => {
+		const originalFetch = globalThis.fetch;
+		const fetchMock = jest.fn().mockImplementation(
+			() =>
+				new Response(
+					JSON.stringify({ errors: [{ code: 'rate.limitExceeded' }] }),
+					{
+						status: 429,
+						headers: { 'content-type': 'application/json' },
+					},
+				),
 		);
 		globalThis.fetch = fetchMock;
 		const realRequest =
@@ -118,20 +203,40 @@ describe('makeProductboardRequest', () => {
 			CREDENTIALS: 'omit',
 			HEADERS: { Authorization: 'Bearer test-token' },
 		};
-		const options: ApiRequestOptions = { method: 'GET', url: '/teams' };
+		const options: ApiRequestOptions = {
+			method: 'POST',
+			url: '/notes',
+			body: { data: { fields: { name: 'Synthetic note' } } },
+		};
+		const rateLimitConfig: RateLimitConfig = {
+			enabled: true,
+			maxRetries: 3,
+			initialRetryDelay: 0,
+			backoffMultiplier: 1,
+			headerNames: { retryAfter: 'retry-after' },
+		};
 
 		try {
 			await expect(
-				realRequest(config, options, {
-					rateLimitConfig: {
-						enabled: true,
-						maxRetries: 0,
-						initialRetryDelay: 0,
-						backoffMultiplier: 1,
-						headerNames: { retryAfter: 'retry-after' },
-					},
+				realRequest(config, options, { rateLimitConfig }),
+			).rejects.toMatchObject({ status: 429 });
+			expect(fetchMock).toHaveBeenCalledTimes(4);
+
+			fetchMock.mockReset().mockResolvedValue(
+				new Response(JSON.stringify({ errors: [{ code: 'server.error' }] }), {
+					status: 500,
+					headers: { 'content-type': 'application/json' },
 				}),
-			).rejects.toMatchObject({ status: 429, retryAfter: 4000 });
+			);
+			await expect(
+				realRequest(config, options, { rateLimitConfig }),
+			).rejects.toMatchObject({ status: 500 });
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+
+			fetchMock.mockReset().mockRejectedValue(new TypeError('network failure'));
+			await expect(
+				realRequest(config, options, { rateLimitConfig }),
+			).rejects.toThrow('network failure');
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
 			globalThis.fetch = originalFetch;

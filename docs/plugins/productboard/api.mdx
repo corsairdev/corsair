@@ -3,6 +3,7 @@ title: "Productboard API reference"
 sidebarTitle: "API"
 description: "API reference for the Productboard plugin in Corsair: every `productboard.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
+
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
@@ -31,19 +32,13 @@ await corsair.productboard.api.analytics.memberActivities({
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -70,19 +65,12 @@ await corsair.productboard.api.entities.configurations.get({ type: 'feature' });
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -107,19 +95,13 @@ await corsair.productboard.api.entities.configurations.list({});
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -138,6 +120,10 @@ await corsair.productboard.api.entities.create({
 		data: {
 			type: 'feature',
 			fields: { name: 'Synthetic feature' },
+			relationships: [{
+				type: 'parent',
+				target: { id: '00000000-0000-4000-8000-000000000005' },
+			}],
 		},
 	},
 });
@@ -148,6 +134,8 @@ await corsair.productboard.api.entities.create({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `object` | Yes | — |
+
+If your workspace feature configuration requires a parent, include a `parent` relationship to an existing entity ID as shown; check the configuration for any other required fields.
 
 <AccordionGroup>
 <Accordion title="body full type">
@@ -162,19 +150,12 @@ await corsair.productboard.api.entities.create({
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -201,19 +182,12 @@ This Productboard customer-score API is documented as beta and may change or be 
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -238,19 +212,7 @@ await corsair.productboard.api.entities.delete({ id: '00000000-0000-4000-8000-00
 
 
 
-**Output:** `object \| null`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `null`
 
 
 ---
@@ -296,19 +258,12 @@ Productboard only supports creating values for SINGLE_SELECT, MULTI_SELECT, and 
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -337,19 +292,7 @@ Productboard does not support deleting STATUS values. The `force` and `replaceWi
 
 
 
-**Output:** `object \| null`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `null`
 
 
 ---
@@ -375,19 +318,13 @@ await corsair.productboard.api.entities.fieldValues.list({ fieldId: 'status' });
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -435,19 +372,12 @@ Productboard does not support updating STATUS values through this operation.
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -473,19 +403,12 @@ await corsair.productboard.api.entities.get({ id: '00000000-0000-4000-8000-00000
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -499,11 +422,7 @@ List entities across configured workspace resource types.
 **Risk:** `read`
 
 ```ts
-await corsair.productboard.api.entities.list({
-	query: {
-		type[]: ['feature'],
-	},
-});
+await corsair.productboard.api.entities.list({});
 ```
 
 **Input**
@@ -514,19 +433,13 @@ await corsair.productboard.api.entities.list({
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -571,19 +484,12 @@ await corsair.productboard.api.entities.relationships.create({
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -610,19 +516,7 @@ await corsair.productboard.api.entities.relationships.delete({ id: '00000000-000
 
 
 
-**Output:** `object \| null`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `null`
 
 
 ---
@@ -648,19 +542,13 @@ await corsair.productboard.api.entities.relationships.list({ id: '00000000-0000-
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -704,19 +592,12 @@ await corsair.productboard.api.entities.relationships.setParent({
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -763,19 +644,13 @@ Entity types and available fields are workspace-configured. Only documented AND 
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -819,19 +694,12 @@ await corsair.productboard.api.entities.update({
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -859,19 +727,12 @@ await corsair.productboard.api.jiraIntegrations.connection({ integrationId: '000
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -897,19 +758,13 @@ await corsair.productboard.api.jiraIntegrations.connections({ integrationId: '00
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -934,19 +789,12 @@ await corsair.productboard.api.jiraIntegrations.get({ id: '00000000-0000-4000-80
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -971,19 +819,13 @@ await corsair.productboard.api.jiraIntegrations.list({});
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -1010,19 +852,12 @@ await corsair.productboard.api.members.get({ id: '00000000-0000-4000-8000-000000
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -1049,19 +884,13 @@ await corsair.productboard.api.members.list({
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -1104,19 +933,13 @@ await corsair.productboard.api.members.search({
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -1143,19 +966,12 @@ await corsair.productboard.api.notes.configurations.get({ type: 'textNote' });
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -1180,19 +996,13 @@ await corsair.productboard.api.notes.configurations.list({});
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -1227,7 +1037,14 @@ await corsair.productboard.api.notes.create({
 
 ```ts
 {
-  data: Record<string, JsonValue>
+  data: {
+    type: string,
+    fields: {
+      name: string
+    },
+    metadata?: Record<string, JsonValue>,
+    relationships?: Record<string, JsonValue>
+  }
 }
 ```
 </Accordion>
@@ -1235,19 +1052,12 @@ await corsair.productboard.api.notes.create({
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -1272,19 +1082,7 @@ await corsair.productboard.api.notes.delete({ id: '00000000-0000-4000-8000-00000
 
 
 
-**Output:** `object \| null`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `null`
 
 
 ---
@@ -1310,19 +1108,12 @@ await corsair.productboard.api.notes.get({ id: '00000000-0000-4000-8000-00000000
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -1349,19 +1140,13 @@ await corsair.productboard.api.notes.list({
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -1406,19 +1191,12 @@ await corsair.productboard.api.notes.relationships.create({
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -1445,19 +1223,7 @@ await corsair.productboard.api.notes.relationships.delete({ id: '00000000-0000-4
 
 
 
-**Output:** `object \| null`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `null`
 
 
 ---
@@ -1483,19 +1249,13 @@ await corsair.productboard.api.notes.relationships.list({ id: '00000000-0000-400
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -1539,19 +1299,12 @@ await corsair.productboard.api.notes.relationships.setCustomer({
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -1596,19 +1349,13 @@ Structured filter groups use the documented relationship semantics. `pageCursor`
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -1652,19 +1399,12 @@ await corsair.productboard.api.notes.update({
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -1677,7 +1417,7 @@ await corsair.productboard.api.notes.update({
 
 Reset a connection to its initial state.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.productboard.api.pluginIntegrations.connections.delete({ integrationId: '00000000-0000-4000-8000-000000000010', entityId: '00000000-0000-4000-8000-000000000004' });
@@ -1692,19 +1432,7 @@ await corsair.productboard.api.pluginIntegrations.connections.delete({ integrati
 
 
 
-**Output:** `object \| null`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `null`
 
 
 ---
@@ -1732,19 +1460,12 @@ If no connection exists, Productboard returns the initial state instead of 404.
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -1772,19 +1493,13 @@ List responses exclude connections in the initial state; follow the cursor in `l
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -1824,6 +1539,7 @@ await corsair.productboard.api.pluginIntegrations.connections.search({
 ```ts
 {
   data: Record<string, JsonValue>
+} | {
 }
 ```
 </Accordion>
@@ -1831,19 +1547,13 @@ await corsair.productboard.api.pluginIntegrations.connections.search({
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -1852,9 +1562,9 @@ await corsair.productboard.api.pluginIntegrations.connections.search({
 
 `pluginIntegrations.connections.update`
 
-Create or replace a connection state via upsert.
+Create or replace a connection state via upsert; setting it to initial permanently resets the connection.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.productboard.api.pluginIntegrations.connections.update({
@@ -1893,19 +1603,12 @@ The operation is an upsert. State `initial` resets the connection, equivalent to
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -1925,6 +1628,7 @@ await corsair.productboard.api.pluginIntegrations.create({
 			fields: {
 				type: 'com.example.corsair',
 				name: 'Synthetic integration',
+				integrationStatus: 'disabled',
 				initialState: { label: 'Push' },
 				action: { url: 'https://receiver.example/productboard', version: 1 },
 			},
@@ -1939,7 +1643,7 @@ await corsair.productboard.api.pluginIntegrations.create({
 |------|------|----------|-------------|
 | `body` | `object` | Yes | — |
 
-Productboard sends a probe to the configured HTTPS action URL during creation. `action.headers.authorization` is write-only and is never returned.
+This example creates the integration disabled, which skips Productboard’s endpoint probe. Enabled creation requires a publicly reachable action URL that can answer the probe; the plugin validates URL syntax, length, and the HTTPS prefix but cannot verify public reachability. `action.headers.authorization` is write-only and is never returned.
 
 <AccordionGroup>
 <Accordion title="body full type">
@@ -1954,19 +1658,12 @@ Productboard sends a probe to the configured HTTPS action URL during creation. `
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -1991,19 +1688,7 @@ await corsair.productboard.api.pluginIntegrations.delete({ integrationId: '00000
 
 
 
-**Output:** `object \| null`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `null`
 
 
 ---
@@ -2028,19 +1713,12 @@ await corsair.productboard.api.pluginIntegrations.get({ integrationId: '00000000
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -2065,19 +1743,13 @@ await corsair.productboard.api.pluginIntegrations.list({});
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -2123,19 +1795,12 @@ Changing an enabled integration action URL triggers a Productboard probe. The ac
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -2154,7 +1819,7 @@ Create a team.
 await corsair.productboard.api.teams.create({
 	body: {
 		data: {
-			fields: { name: 'Synthetic Team', handle: 'synthetic-team' },
+			fields: { name: 'Synthetic Team', handle: 'syntheticteam' },
 		},
 	},
 });
@@ -2179,19 +1844,12 @@ await corsair.productboard.api.teams.create({
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -2216,19 +1874,7 @@ await corsair.productboard.api.teams.delete({ id: '00000000-0000-4000-8000-00000
 
 
 
-**Output:** `object \| null`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `null`
 
 
 ---
@@ -2253,19 +1899,12 @@ await corsair.productboard.api.teams.get({ id: '00000000-0000-4000-8000-00000000
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -2292,19 +1931,34 @@ await corsair.productboard.api.teams.list({
 
 
 
-**Output:** `object \| null`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="data full type">
 
 ```ts
 {
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
+  id: string,
+  type: team,
+  fields: {
+    name: string,
+    handle: string
+  },
+  createdAt: string,
+  updatedAt: string,
+  links: {
+    self: string
+  }
+}[]
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -2330,19 +1984,13 @@ await corsair.productboard.api.teams.members({ id: '00000000-0000-4000-8000-0000
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -2378,6 +2026,7 @@ await corsair.productboard.api.teams.search({
 ```ts
 {
   data: Record<string, JsonValue>
+} | {
 }
 ```
 </Accordion>
@@ -2385,19 +2034,34 @@ await corsair.productboard.api.teams.search({
 
 
 
-**Output:** `object \| null`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="data full type">
 
 ```ts
 {
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
+  id: string,
+  type: team,
+  fields: {
+    name: string,
+    handle: string
+  },
+  createdAt: string,
+  updatedAt: string,
+  links: {
+    self: string
+  }
+}[]
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -2441,19 +2105,12 @@ await corsair.productboard.api.teams.update({
 
 
 
-**Output:** `object \| null`
+**Output**
 
-<AccordionGroup>
-<Accordion title="Output full type">
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
 
-```ts
-{
-  data: JsonValue,
-  links?: Record<string, JsonValue>
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 ---
@@ -2488,7 +2145,7 @@ await corsair.productboard.api.webhooks.create({
 |------|------|----------|-------------|
 | `body` | `object` | Yes | — |
 
-The notification URL must be a publicly reachable HTTPS endpoint. Its optional authorization header is write-only and is never logged or returned.
+The plugin validates notification URL syntax, length, and the HTTPS prefix; Productboard checks public reachability after the request is sent. Its optional authorization header is write-only and is never logged or returned.
 
 <AccordionGroup>
 <Accordion title="body full type">

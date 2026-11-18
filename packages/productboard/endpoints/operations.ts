@@ -7,11 +7,18 @@ import type {
 	ProductboardJsonObject,
 	ProductboardOperationInput,
 	ProductboardOutput,
+	ProductboardRequestBody,
 } from './types';
 import {
+	ProductboardConnectionSearchBodySchema,
 	ProductboardJsonObjectSchema,
-	ProductboardOutputSchema,
+	ProductboardListOutputSchema,
+	ProductboardNoContentOutputSchema,
+	ProductboardNoteCreateBodySchema,
 	ProductboardRequestBodySchema,
+	ProductboardResourceOutputSchema,
+	ProductboardTeamSearchBodySchema,
+	ProductboardTeamsListOutputSchema,
 	ProductboardWebhookCreateBodySchema,
 	ProductboardWebhookCreateOutputSchema,
 	ProductboardWebhookDeleteOutputSchema,
@@ -41,9 +48,16 @@ export type ProductboardOperation = {
 	bodyDataFields?: readonly string[];
 	bodySchema?: z.ZodType<NonNullable<ProductboardOperationInput['body']>>;
 	outputSchema?: z.ZodType<ProductboardOutput>;
+	outputKind?: 'list' | 'resource';
+	noContent?: true;
 	riskLevel: 'read' | 'write' | 'destructive';
 	description: string;
 };
+
+type ProductboardOperationBodyInput<Operation extends ProductboardOperation> =
+	NonNullable<Operation['bodySchema']> extends z.ZodType
+		? z.input<NonNullable<Operation['bodySchema']>>
+		: ProductboardRequestBody;
 
 type ProductboardRequiredPathInput<Operation extends ProductboardOperation> =
 	Operation['pathFields'] extends readonly PathField[]
@@ -61,7 +75,7 @@ export type ProductboardOperationCallerInput<
 					? { query?: ProductboardJsonObject }
 					: {}) &
 				(Operation['body'] extends true
-					? { body: NonNullable<ProductboardOperationInput['body']> }
+					? { body: ProductboardOperationBodyInput<Operation> }
 					: {})
 		: never;
 
@@ -80,6 +94,7 @@ export function productboardOperationInputSchema(
 		if (operation.bodyDataFields) {
 			bodySchema = bodySchema.superRefine((body, context) => {
 				if (!operation.bodyDataFields) return;
+				if (!('data' in body)) return;
 				for (const field of Object.keys(body.data)) {
 					if (!operation.bodyDataFields.includes(field)) {
 						context.addIssue({
@@ -105,6 +120,7 @@ const operationDefinitions = {
 		path: '/notes',
 		doc: `${READ_API}listnotes`,
 		query: true,
+		outputKind: 'list',
 		riskLevel: 'read',
 		description: 'List notes using documented filters and cursor pagination.',
 	},
@@ -115,6 +131,7 @@ const operationDefinitions = {
 		doc: `${READ_API}performnotessearch`,
 		query: true,
 		body: true,
+		outputKind: 'list',
 		bodyDataFields: ['search', 'filter', 'return'],
 		riskLevel: 'read',
 		description: 'Search notes with structured filters and relationships.',
@@ -126,6 +143,8 @@ const operationDefinitions = {
 		doc: `${READ_API}createnote`,
 		body: true,
 		bodyDataFields: ['type', 'fields', 'metadata', 'relationships'],
+		bodySchema: ProductboardNoteCreateBodySchema,
+		outputKind: 'resource',
 		riskLevel: 'write',
 		description:
 			'Create a text or conversation note, optionally with relationships.',
@@ -137,6 +156,7 @@ const operationDefinitions = {
 		doc: `${READ_API}getnote`,
 		pathFields: ['id'],
 		query: true,
+		outputKind: 'resource',
 		riskLevel: 'read',
 		description: 'Get a note by UUID.',
 	},
@@ -147,6 +167,7 @@ const operationDefinitions = {
 		doc: `${READ_API}updatenote`,
 		pathFields: ['id'],
 		body: true,
+		outputKind: 'resource',
 		bodyDataFields: ['fields', 'patch'],
 		riskLevel: 'write',
 		description: 'Update note fields or apply documented patch operations.',
@@ -157,6 +178,7 @@ const operationDefinitions = {
 		path: '/notes/{id}',
 		doc: `${READ_API}deletenote`,
 		pathFields: ['id'],
+		noContent: true,
 		riskLevel: 'destructive',
 		description: 'Permanently delete a note.',
 	},
@@ -166,6 +188,7 @@ const operationDefinitions = {
 		path: '/notes/configurations',
 		doc: `${READ_API}listnoteconfigurations`,
 		query: true,
+		outputKind: 'list',
 		riskLevel: 'read',
 		description: 'List note-type configuration metadata.',
 	},
@@ -175,6 +198,7 @@ const operationDefinitions = {
 		path: '/notes/configurations/{type}',
 		doc: `${READ_API}getnoteconfiguration`,
 		pathFields: ['type'],
+		outputKind: 'resource',
 		riskLevel: 'read',
 		description: 'Get configuration metadata for one note type.',
 	},
@@ -185,6 +209,7 @@ const operationDefinitions = {
 		doc: `${READ_API}listnoterelationships`,
 		pathFields: ['id'],
 		query: true,
+		outputKind: 'list',
 		riskLevel: 'read',
 		description: 'List a note’s customer and product-link relationships.',
 	},
@@ -195,6 +220,7 @@ const operationDefinitions = {
 		doc: `${READ_API}createnoterelationship`,
 		pathFields: ['id'],
 		body: true,
+		outputKind: 'resource',
 		bodyDataFields: ['type', 'target'],
 		riskLevel: 'write',
 		description: 'Create a customer or product-link relationship for a note.',
@@ -206,6 +232,7 @@ const operationDefinitions = {
 		doc: `${READ_API}replacenotecustomerrelationship`,
 		pathFields: ['id'],
 		body: true,
+		outputKind: 'resource',
 		bodyDataFields: ['target'],
 		riskLevel: 'write',
 		description: 'Replace a note’s single customer relationship.',
@@ -216,6 +243,7 @@ const operationDefinitions = {
 		path: '/notes/{id}/relationships/{targetType}/{targetId}',
 		doc: `${READ_API}delete-note-relationship`,
 		pathFields: ['id', 'targetType', 'targetId'],
+		noContent: true,
 		riskLevel: 'write',
 		description: 'Remove a note relationship.',
 	},
@@ -225,6 +253,7 @@ const operationDefinitions = {
 		path: '/entities',
 		doc: `${READ_API}listentities`,
 		query: true,
+		outputKind: 'list',
 		riskLevel: 'read',
 		description: 'List entities across configured workspace resource types.',
 	},
@@ -235,6 +264,7 @@ const operationDefinitions = {
 		doc: `${READ_API}performentitiessearch`,
 		query: true,
 		body: true,
+		outputKind: 'list',
 		bodyDataFields: ['filter', 'return'],
 		riskLevel: 'read',
 		description: 'Search entities using structured filters.',
@@ -245,6 +275,7 @@ const operationDefinitions = {
 		path: '/entities',
 		doc: `${READ_API}createentity`,
 		body: true,
+		outputKind: 'resource',
 		bodyDataFields: ['type', 'fields', 'metadata', 'relationships'],
 		riskLevel: 'write',
 		description: 'Create a workspace-configured Productboard entity.',
@@ -256,6 +287,7 @@ const operationDefinitions = {
 		doc: `${READ_API}getentity`,
 		pathFields: ['id'],
 		query: true,
+		outputKind: 'resource',
 		riskLevel: 'read',
 		description: 'Get an entity by UUID.',
 	},
@@ -266,6 +298,7 @@ const operationDefinitions = {
 		doc: `${READ_API}updateentity`,
 		pathFields: ['id'],
 		body: true,
+		outputKind: 'resource',
 		bodyDataFields: ['fields', 'patch', 'metadata'],
 		riskLevel: 'write',
 		description: 'Update entity fields or patch operations.',
@@ -276,6 +309,7 @@ const operationDefinitions = {
 		path: '/entities/{id}',
 		doc: `${READ_API}deleteentity`,
 		pathFields: ['id'],
+		noContent: true,
 		riskLevel: 'destructive',
 		description: 'Permanently delete an entity.',
 	},
@@ -285,6 +319,7 @@ const operationDefinitions = {
 		path: '/entities/configurations',
 		doc: `${READ_API}listentityconfigurations`,
 		query: true,
+		outputKind: 'list',
 		riskLevel: 'read',
 		description: 'List workspace-specific entity configurations.',
 	},
@@ -294,6 +329,7 @@ const operationDefinitions = {
 		path: '/entities/configurations/{type}',
 		doc: `${READ_API}getentityconfiguration`,
 		pathFields: ['type'],
+		outputKind: 'resource',
 		riskLevel: 'read',
 		description: 'Get configuration for an entity type.',
 	},
@@ -304,6 +340,7 @@ const operationDefinitions = {
 		doc: `${READ_API}listentityrelationships`,
 		pathFields: ['id'],
 		query: true,
+		outputKind: 'list',
 		riskLevel: 'read',
 		description: 'List an entity’s parent, child, and linked relationships.',
 	},
@@ -314,6 +351,7 @@ const operationDefinitions = {
 		doc: `${READ_API}createentityrelationship`,
 		pathFields: ['id'],
 		body: true,
+		outputKind: 'resource',
 		bodyDataFields: ['type', 'target', 'fields'],
 		riskLevel: 'write',
 		description: 'Create a relationship between two entities.',
@@ -325,6 +363,7 @@ const operationDefinitions = {
 		doc: `${READ_API}replaceentityrelationship`,
 		pathFields: ['id'],
 		body: true,
+		outputKind: 'resource',
 		bodyDataFields: ['type', 'target'],
 		riskLevel: 'write',
 		description: 'Replace an entity’s parent relationship.',
@@ -335,6 +374,7 @@ const operationDefinitions = {
 		path: '/entities/{id}/relationships/{type}/{targetId}',
 		doc: `${READ_API}deleteentityrelationship`,
 		pathFields: ['id', 'type', 'targetId'],
+		noContent: true,
 		riskLevel: 'write',
 		description: 'Delete an entity relationship.',
 	},
@@ -345,6 +385,7 @@ const operationDefinitions = {
 		doc: `${READ_API}listentityfieldvalues`,
 		pathFields: ['fieldId'],
 		query: true,
+		outputKind: 'list',
 		riskLevel: 'read',
 		description: 'List paginated select, tag, or status field values.',
 	},
@@ -355,6 +396,7 @@ const operationDefinitions = {
 		doc: `${READ_API}createentityfieldvalue`,
 		pathFields: ['fieldId'],
 		body: true,
+		outputKind: 'resource',
 		bodyDataFields: ['fields'],
 		riskLevel: 'write',
 		description: 'Create a value for a select-type or tag field (not STATUS).',
@@ -366,6 +408,7 @@ const operationDefinitions = {
 		doc: `${READ_API}updateentityfieldvalue`,
 		pathFields: ['fieldId', 'valueId'],
 		body: true,
+		outputKind: 'resource',
 		bodyDataFields: ['fields'],
 		riskLevel: 'write',
 		description: 'Update a select-type or tag value (not STATUS).',
@@ -377,6 +420,7 @@ const operationDefinitions = {
 		doc: `${READ_API}deleteentityfieldvalue`,
 		pathFields: ['fieldId', 'valueId'],
 		query: true,
+		noContent: true,
 		riskLevel: 'destructive',
 		description: 'Delete a select-type or tag value (not STATUS).',
 	},
@@ -386,6 +430,7 @@ const operationDefinitions = {
 		path: '/entities/{id}/score',
 		doc: `${READ_API}getcustomerscore`,
 		pathFields: ['id'],
+		outputKind: 'resource',
 		riskLevel: 'read',
 		description: 'Read the documented beta aggregated customer score.',
 	},
@@ -395,6 +440,7 @@ const operationDefinitions = {
 		path: '/analytics/member-activities',
 		doc: `${READ_API}listmemberactivities`,
 		query: true,
+		outputKind: 'list',
 		riskLevel: 'read',
 		description:
 			'List member activities with date filters and cursor pagination.',
@@ -405,6 +451,7 @@ const operationDefinitions = {
 		path: '/members',
 		doc: `${READ_API}listmembers`,
 		query: true,
+		outputKind: 'list',
 		riskLevel: 'read',
 		description: 'List workspace members; PII may be redacted by Productboard.',
 	},
@@ -415,6 +462,7 @@ const operationDefinitions = {
 		doc: `${READ_API}performmemberssearch`,
 		query: true,
 		body: true,
+		outputKind: 'list',
 		bodyDataFields: ['filter', 'search', 'return'],
 		riskLevel: 'read',
 		description: 'Search or batch-lookup workspace members.',
@@ -425,6 +473,7 @@ const operationDefinitions = {
 		path: '/members/{id}',
 		doc: `${READ_API}getmember`,
 		pathFields: ['id'],
+		outputKind: 'resource',
 		riskLevel: 'read',
 		description: 'Get one workspace member.',
 	},
@@ -434,6 +483,7 @@ const operationDefinitions = {
 		path: '/teams',
 		doc: `${READ_API}listteams`,
 		query: true,
+		outputSchema: ProductboardTeamsListOutputSchema,
 		riskLevel: 'read',
 		description: 'List teams with cursor pagination and filters.',
 	},
@@ -444,7 +494,9 @@ const operationDefinitions = {
 		doc: `${READ_API}performteamssearch`,
 		query: true,
 		body: true,
+		bodySchema: ProductboardTeamSearchBodySchema,
 		bodyDataFields: ['filter', 'search'],
+		outputSchema: ProductboardTeamsListOutputSchema,
 		riskLevel: 'read',
 		description: 'Search or batch-lookup teams.',
 	},
@@ -454,6 +506,7 @@ const operationDefinitions = {
 		path: '/teams',
 		doc: `${READ_API}createteam`,
 		body: true,
+		outputKind: 'resource',
 		bodyDataFields: ['fields'],
 		riskLevel: 'write',
 		description: 'Create a team.',
@@ -464,6 +517,7 @@ const operationDefinitions = {
 		path: '/teams/{id}',
 		doc: `${READ_API}getteam`,
 		pathFields: ['id'],
+		outputKind: 'resource',
 		riskLevel: 'read',
 		description: 'Get one team.',
 	},
@@ -474,6 +528,7 @@ const operationDefinitions = {
 		doc: `${READ_API}updateteam`,
 		pathFields: ['id'],
 		body: true,
+		outputKind: 'resource',
 		bodyDataFields: ['fields', 'patch'],
 		riskLevel: 'write',
 		description: 'Update team fields or member assignments.',
@@ -484,6 +539,7 @@ const operationDefinitions = {
 		path: '/teams/{id}',
 		doc: `${READ_API}deleteteam`,
 		pathFields: ['id'],
+		noContent: true,
 		riskLevel: 'destructive',
 		description: 'Permanently delete a team and its memberships.',
 	},
@@ -494,6 +550,7 @@ const operationDefinitions = {
 		doc: `${READ_API}listteammembers`,
 		pathFields: ['id'],
 		query: true,
+		outputKind: 'list',
 		riskLevel: 'read',
 		description: 'List a team’s members with cursor pagination.',
 	},
@@ -503,6 +560,7 @@ const operationDefinitions = {
 		path: '/jira-integrations',
 		doc: `${READ_API}listjiraintegrations`,
 		query: true,
+		outputKind: 'list',
 		riskLevel: 'read',
 		description: 'List Jira integrations with cursor pagination.',
 	},
@@ -512,6 +570,7 @@ const operationDefinitions = {
 		path: '/jira-integrations/{id}',
 		doc: `${READ_API}getjiraintegration`,
 		pathFields: ['id'],
+		outputKind: 'resource',
 		riskLevel: 'read',
 		description: 'Get one Jira integration.',
 	},
@@ -522,6 +581,7 @@ const operationDefinitions = {
 		doc: `${READ_API}listjiraintegrationconnections`,
 		pathFields: ['integrationId'],
 		query: true,
+		outputKind: 'list',
 		riskLevel: 'read',
 		description: 'List feature-to-Jira issue connections.',
 	},
@@ -531,6 +591,7 @@ const operationDefinitions = {
 		path: '/jira-integrations/{integrationId}/connections/{entityId}',
 		doc: `${READ_API}getjiraintegrationconnection`,
 		pathFields: ['integrationId', 'entityId'],
+		outputKind: 'resource',
 		riskLevel: 'read',
 		description: 'Get one feature-to-Jira issue connection.',
 	},
@@ -540,6 +601,7 @@ const operationDefinitions = {
 		path: '/plugin-integrations',
 		doc: `${READ_API}listpluginintegrations`,
 		query: true,
+		outputKind: 'list',
 		riskLevel: 'read',
 		description: 'List configured plugin integrations with cursor pagination.',
 	},
@@ -549,6 +611,7 @@ const operationDefinitions = {
 		path: '/plugin-integrations',
 		doc: `${READ_API}createpluginintegration`,
 		body: true,
+		outputKind: 'resource',
 		bodyDataFields: ['fields'],
 		riskLevel: 'write',
 		description:
@@ -560,6 +623,7 @@ const operationDefinitions = {
 		path: '/plugin-integrations/{integrationId}',
 		doc: `${READ_API}getpluginintegration`,
 		pathFields: ['integrationId'],
+		outputKind: 'resource',
 		riskLevel: 'read',
 		description:
 			'Get an integration; its action authorization secret is write-only.',
@@ -571,6 +635,7 @@ const operationDefinitions = {
 		doc: `${READ_API}updatepluginintegration`,
 		pathFields: ['integrationId'],
 		body: true,
+		outputKind: 'resource',
 		bodyDataFields: ['fields'],
 		riskLevel: 'write',
 		description:
@@ -582,6 +647,7 @@ const operationDefinitions = {
 		path: '/plugin-integrations/{integrationId}',
 		doc: `${READ_API}deletepluginintegration`,
 		pathFields: ['integrationId'],
+		noContent: true,
 		riskLevel: 'destructive',
 		description: 'Delete an integration and all associated connections.',
 	},
@@ -592,6 +658,7 @@ const operationDefinitions = {
 		doc: `${READ_API}listpluginintegrationconnections`,
 		pathFields: ['integrationId'],
 		query: true,
+		outputKind: 'list',
 		riskLevel: 'read',
 		description: 'List non-initial connections with cursor pagination.',
 	},
@@ -603,6 +670,8 @@ const operationDefinitions = {
 		pathFields: ['integrationId'],
 		query: true,
 		body: true,
+		bodySchema: ProductboardConnectionSearchBodySchema,
+		outputKind: 'list',
 		bodyDataFields: ['filter'],
 		riskLevel: 'read',
 		description: 'Search connections by documented state or entity-ID filters.',
@@ -613,6 +682,7 @@ const operationDefinitions = {
 		path: '/plugin-integrations/{integrationId}/connections/{entityId}',
 		doc: `${READ_API}getpluginintegrationconnection`,
 		pathFields: ['integrationId', 'entityId'],
+		outputKind: 'resource',
 		riskLevel: 'read',
 		description: 'Get one connection; missing links return the initial state.',
 	},
@@ -623,9 +693,11 @@ const operationDefinitions = {
 		doc: `${READ_API}updatepluginintegrationconnectionstate`,
 		pathFields: ['integrationId', 'entityId'],
 		body: true,
+		outputKind: 'resource',
 		bodyDataFields: ['fields'],
-		riskLevel: 'write',
-		description: 'Create or replace a connection state via upsert.',
+		riskLevel: 'destructive',
+		description:
+			'Create or replace a connection state via upsert; setting it to initial permanently resets the connection.',
 	},
 	'pluginIntegrations.connections.delete': {
 		name: 'pluginIntegrations.connections.delete',
@@ -633,7 +705,8 @@ const operationDefinitions = {
 		path: '/plugin-integrations/{integrationId}/connections/{entityId}',
 		doc: `${READ_API}deletepluginintegrationconnection`,
 		pathFields: ['integrationId', 'entityId'],
-		riskLevel: 'write',
+		noContent: true,
+		riskLevel: 'destructive',
 		description: 'Reset a connection to its initial state.',
 	},
 	'webhooks.list': {
@@ -675,6 +748,7 @@ const operationDefinitions = {
 		path: '/webhooks/{webhookId}',
 		doc: `${READ_API}deletewebhook`,
 		pathFields: ['webhookId'],
+		noContent: true,
 		outputSchema: ProductboardWebhookDeleteOutputSchema,
 		riskLevel: 'destructive',
 		description: 'Permanently delete a webhook subscription.',
@@ -684,6 +758,19 @@ const operationDefinitions = {
 export const ProductboardOperations = operationDefinitions;
 
 export type ProductboardOperationName = keyof typeof ProductboardOperations;
+
+export function productboardOperationOutputSchema(
+	operation: ProductboardOperation,
+): z.ZodType<ProductboardOutput> {
+	if (operation.outputSchema) return operation.outputSchema;
+	if (operation.noContent) return ProductboardNoContentOutputSchema;
+	if (operation.outputKind === 'list') return ProductboardListOutputSchema;
+	if (operation.outputKind === 'resource')
+		return ProductboardResourceOutputSchema;
+	throw new Error(
+		`Missing Productboard response contract for ${operation.name}`,
+	);
+}
 
 export function createProductboardEndpoint<
 	const Operation extends ProductboardOperation,
@@ -716,8 +803,8 @@ export function createProductboardEndpoint<
 			query: operation.query ? parsedInput.query : undefined,
 			body: operation.body ? parsedInput.body : undefined,
 		});
-		const response = (operation.outputSchema ?? ProductboardOutputSchema).parse(
-			rawResponse ?? null,
+		const response = productboardOperationOutputSchema(operation).parse(
+			operation.noContent && rawResponse === undefined ? null : rawResponse,
 		);
 		await logEventFromContext(
 			ctx,

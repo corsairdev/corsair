@@ -7,8 +7,8 @@ export const errorHandlers = {
 			if (error instanceof ApiError && error.status === 429) return true;
 			return false;
 		},
-		// The transport sets maxRetries: 0 but still extracts Retry-After; this
-		// handler also disables endpoint retries, so the 429 is not retried.
+		// The transport owns up to three Retry-After-aware 429 retries. This
+		// handler disables a second retry loop around those transport attempts.
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	AUTH_ERROR: {
