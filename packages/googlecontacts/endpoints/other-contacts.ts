@@ -11,6 +11,7 @@ import {
 	persistContacts,
 } from './persist';
 import type { GoogleContactsEndpointOutputs } from './types';
+import { GoogleContactsEndpointInputSchemas as Inputs } from './types';
 
 /** Google serves only these fields for other contacts. */
 const DEFAULT_OTHER_CONTACT_FIELDS = [
@@ -21,8 +22,9 @@ const DEFAULT_OTHER_CONTACT_FIELDS = [
 
 export const list: GoogleContactsEndpoints['otherContactsList'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = Inputs.otherContactsList.parse(rawInput);
 	const readMask = input.readMask ?? DEFAULT_OTHER_CONTACT_FIELDS;
 	const result = await makeAuthenticatedPeopleRequest<
 		GoogleContactsEndpointOutputs['otherContactsList']
@@ -49,8 +51,9 @@ export const list: GoogleContactsEndpoints['otherContactsList'] = async (
 
 export const search: GoogleContactsEndpoints['otherContactsSearch'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = Inputs.otherContactsSearch.parse(rawInput);
 	const readMask = input.readMask ?? DEFAULT_OTHER_CONTACT_FIELDS;
 	const result = await makeAuthenticatedPeopleRequest<
 		GoogleContactsEndpointOutputs['otherContactsSearch']
@@ -80,7 +83,8 @@ export const search: GoogleContactsEndpoints['otherContactsSearch'] = async (
 };
 
 export const copyToContacts: GoogleContactsEndpoints['otherContactsCopyToContacts'] =
-	async (ctx, input) => {
+	async (ctx, rawInput) => {
+		const input = Inputs.otherContactsCopyToContacts.parse(rawInput);
 		const personFields = input.personFields ?? DEFAULT_PERSON_FIELDS;
 		const result = await makeAuthenticatedPeopleRequest<
 			GoogleContactsEndpointOutputs['otherContactsCopyToContacts']

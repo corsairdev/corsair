@@ -375,14 +375,18 @@ describe('Google Contacts plugin', () => {
 		});
 
 		it('DELETEs a group and evicts the cached row', async () => {
-			mockRequest.mockResolvedValueOnce(undefined);
+			mockRequest
+				.mockResolvedValueOnce({ resourceName: 'contactGroups/g1' })
+				.mockResolvedValueOnce(undefined);
 
 			await plugin.endpoints.contactGroups.delete(ctx, {
 				resourceName: 'contactGroups/g1',
 				deleteContacts: true,
 			});
 
-			expect(lastCall().query.deleteContacts).toBe(true);
+			const call = mockRequest.mock.calls[1]?.[1] as any;
+			expect(call.method).toBe('DELETE');
+			expect(call.query.deleteContacts).toBe(true);
 			expect(deleteGroup).toHaveBeenCalledWith('contactGroups/g1');
 		});
 
@@ -657,6 +661,42 @@ describe('Google Contacts plugin', () => {
 				groupType: 'USER_CONTACT_GROUP',
 				memberCount: 4,
 			});
+		});
+
+		it('parses inputs before any request', async () => {
+			await expect(
+				plugin.endpoints.contacts.list(ctx, { personFields: [] }),
+			).rejects.toThrow();
+			await expect(
+				plugin.endpoints.contacts.create(ctx, {
+					person: { birthdays: [{ text: 'x' }] },
+				}),
+			).rejects.toThrow();
+			expect(mockRequest).not.toHaveBeenCalled();
+		});
+
+		it('drops saved member rows when a group is deleted with its contacts', async () => {
+			mockRequest
+				.mockResolvedValueOnce({
+					resourceName: 'contactGroups/abc',
+					memberResourceNames: ['people/c1', 'people/c2'],
+				})
+				.mockResolvedValueOnce({});
+
+			await plugin.endpoints.contactGroups.delete(ctx, {
+				resourceName: 'contactGroups/abc',
+				deleteContacts: true,
+			});
+
+			expect((mockRequest.mock.calls[0]?.[1] as any).method).toBe('GET');
+			expect((mockRequest.mock.calls[1]?.[1] as any).method).toBe('DELETE');
+			expect(deleteContact).toHaveBeenCalledWith('people/c1');
+			expect(deleteContact).toHaveBeenCalledWith('people/c2');
+			expect(deleteGroup).toHaveBeenCalledWith('contactGroups/abc');
+		});
+
+		it('declares no extra OAuth account fields', () => {
+			expect(plugin.authConfig.oauth_2.account).toEqual([]);
 		});
 
 		it('does not stack its own 429 retries on top of core', async () => {

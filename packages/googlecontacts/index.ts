@@ -253,9 +253,11 @@ const googleContactsEndpointMeta = {
 	},
 } satisfies RequiredPluginEndpointMeta<typeof googleContactsEndpointsNested>;
 
+// No extra account fields: the OAuth tokens are all this plugin needs, and an
+// unfilled extra field would mark every connection as partial.
 export const googleContactsAuthConfig = {
 	oauth_2: {
-		account: ['resource_name'] as const,
+		account: [] as const,
 	},
 } as const satisfies PluginAuthConfig;
 

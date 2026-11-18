@@ -11,11 +11,13 @@ import {
 	WRITE_GROUP_FIELDS,
 } from './persist';
 import type { GoogleContactsEndpointOutputs } from './types';
+import { GoogleContactsEndpointInputSchemas as Inputs } from './types';
 
 export const list: GoogleContactsEndpoints['contactGroupsList'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = Inputs.contactGroupsList.parse(rawInput);
 	const result = await makeAuthenticatedPeopleRequest<
 		GoogleContactsEndpointOutputs['contactGroupsList']
 	>('/contactGroups', ctx, {
@@ -43,8 +45,9 @@ export const list: GoogleContactsEndpoints['contactGroupsList'] = async (
 
 export const get: GoogleContactsEndpoints['contactGroupsGet'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = Inputs.contactGroupsGet.parse(rawInput);
 	const result = await makeAuthenticatedPeopleRequest<
 		GoogleContactsEndpointOutputs['contactGroupsGet']
 	>(resourcePath('contactGroups', input.resourceName), ctx, {
@@ -71,8 +74,9 @@ export const get: GoogleContactsEndpoints['contactGroupsGet'] = async (
 
 export const create: GoogleContactsEndpoints['contactGroupsCreate'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = Inputs.contactGroupsCreate.parse(rawInput);
 	const result = await makeAuthenticatedPeopleRequest<
 		GoogleContactsEndpointOutputs['contactGroupsCreate']
 	>('/contactGroups', ctx, {
@@ -92,8 +96,9 @@ export const create: GoogleContactsEndpoints['contactGroupsCreate'] = async (
 
 export const update: GoogleContactsEndpoints['contactGroupsUpdate'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = Inputs.contactGroupsUpdate.parse(rawInput);
 	const result = await makeAuthenticatedPeopleRequest<
 		GoogleContactsEndpointOutputs['contactGroupsUpdate']
 	>(resourcePath('contactGroups', input.resourceName), ctx, {
@@ -117,22 +122,44 @@ export const update: GoogleContactsEndpoints['contactGroupsUpdate'] = async (
 	return result;
 };
 
+/** Upper bound for the member list read before a delete-with-contacts. */
+const MAX_MEMBERS = 10000;
+
 export const deleteGroup: GoogleContactsEndpoints['contactGroupsDelete'] =
-	async (ctx, input) => {
-		await makeAuthenticatedPeopleRequest<void>(
-			resourcePath('contactGroups', input.resourceName),
-			ctx,
-			{
-				method: 'DELETE',
-				query: { deleteContacts: input.deleteContacts },
-			},
-		);
+	async (ctx, rawInput) => {
+		const input = Inputs.contactGroupsDelete.parse(rawInput);
+		const path = resourcePath('contactGroups', input.resourceName);
+
+		// With deleteContacts Google removes the members too, so read who they
+		// are first; their saved rows go once the delete succeeds.
+		let members: string[] = [];
+		if (input.deleteContacts && ctx.db.contacts) {
+			const group = await makeAuthenticatedPeopleRequest<
+				GoogleContactsEndpointOutputs['contactGroupsGet']
+			>(path, ctx, {
+				method: 'GET',
+				query: { maxMembers: MAX_MEMBERS, groupFields: 'name' },
+			});
+			members = group.memberResourceNames ?? [];
+		}
+
+		await makeAuthenticatedPeopleRequest<void>(path, ctx, {
+			method: 'DELETE',
+			query: { deleteContacts: input.deleteContacts },
+		});
 
 		if (ctx.db.contactGroups) {
 			try {
 				await ctx.db.contactGroups.deleteByEntityId(input.resourceName);
 			} catch (error) {
 				console.warn('Failed to delete contact group from database:', error);
+			}
+		}
+		for (const member of members) {
+			try {
+				await ctx.db.contacts?.deleteByEntityId(member);
+			} catch (error) {
+				console.warn('Failed to delete contact from database:', error);
 			}
 		}
 
@@ -148,7 +175,8 @@ export const deleteGroup: GoogleContactsEndpoints['contactGroupsDelete'] =
 	};
 
 export const modifyMembers: GoogleContactsEndpoints['contactGroupsModifyMembers'] =
-	async (ctx, input) => {
+	async (ctx, rawInput) => {
+		const input = Inputs.contactGroupsModifyMembers.parse(rawInput);
 		const result = await makeAuthenticatedPeopleRequest<
 			GoogleContactsEndpointOutputs['contactGroupsModifyMembers']
 		>(

@@ -113,14 +113,18 @@ const PersonSchema = z.object({
 });
 
 /** Fields the API accepts on write; server-managed fields are rejected. */
-const WritablePersonSchema = z.object({
-	names: z.array(PersonNameSchema).optional(),
-	emailAddresses: z.array(EmailAddressSchema).optional(),
-	phoneNumbers: z.array(PhoneNumberSchema).optional(),
-	organizations: z.array(OrganizationSchema).optional(),
-	addresses: z.array(AddressSchema).optional(),
-	biographies: z.array(BiographySchema).optional(),
-});
+// Strict: inputs are parsed before the request, and a field this schema does
+// not model should fail loudly rather than be dropped from the contact.
+const WritablePersonSchema = z
+	.object({
+		names: z.array(PersonNameSchema).optional(),
+		emailAddresses: z.array(EmailAddressSchema).optional(),
+		phoneNumbers: z.array(PhoneNumberSchema).optional(),
+		organizations: z.array(OrganizationSchema).optional(),
+		addresses: z.array(AddressSchema).optional(),
+		biographies: z.array(BiographySchema).optional(),
+	})
+	.strict();
 
 const ContactGroupSchema = z.object({
 	resourceName: z.string(),

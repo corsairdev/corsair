@@ -15,6 +15,7 @@ const PEOPLE_API_BASE = 'https://people.googleapis.com/v1';
 
 type PeopleRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+	// `unknown`: each endpoint's input schema has already checked the body.
 	body?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
 };

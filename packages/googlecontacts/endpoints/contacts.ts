@@ -11,11 +11,13 @@ import {
 	persistContacts,
 } from './persist';
 import type { GoogleContactsEndpointOutputs } from './types';
+import { GoogleContactsEndpointInputSchemas as Inputs } from './types';
 
 export const list: GoogleContactsEndpoints['contactsList'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = Inputs.contactsList.parse(rawInput);
 	const personFields = input.personFields ?? DEFAULT_PERSON_FIELDS;
 	const result = await makeAuthenticatedPeopleRequest<
 		GoogleContactsEndpointOutputs['contactsList']
@@ -43,8 +45,9 @@ export const list: GoogleContactsEndpoints['contactsList'] = async (
 
 export const get: GoogleContactsEndpoints['contactsGet'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = Inputs.contactsGet.parse(rawInput);
 	const personFields = input.personFields ?? DEFAULT_PERSON_FIELDS;
 	const result = await makeAuthenticatedPeopleRequest<
 		GoogleContactsEndpointOutputs['contactsGet']
@@ -65,8 +68,9 @@ export const get: GoogleContactsEndpoints['contactsGet'] = async (
 
 export const search: GoogleContactsEndpoints['contactsSearch'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = Inputs.contactsSearch.parse(rawInput);
 	const readMask = input.readMask ?? DEFAULT_PERSON_FIELDS;
 	const result = await makeAuthenticatedPeopleRequest<
 		GoogleContactsEndpointOutputs['contactsSearch']
@@ -97,8 +101,9 @@ export const search: GoogleContactsEndpoints['contactsSearch'] = async (
 
 export const create: GoogleContactsEndpoints['contactsCreate'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = Inputs.contactsCreate.parse(rawInput);
 	const personFields = input.personFields ?? DEFAULT_PERSON_FIELDS;
 	const result = await makeAuthenticatedPeopleRequest<
 		GoogleContactsEndpointOutputs['contactsCreate']
@@ -120,8 +125,9 @@ export const create: GoogleContactsEndpoints['contactsCreate'] = async (
 
 export const update: GoogleContactsEndpoints['contactsUpdate'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = Inputs.contactsUpdate.parse(rawInput);
 	const personFields = input.personFields ?? DEFAULT_PERSON_FIELDS;
 	const result = await makeAuthenticatedPeopleRequest<
 		GoogleContactsEndpointOutputs['contactsUpdate']
@@ -146,8 +152,9 @@ export const update: GoogleContactsEndpoints['contactsUpdate'] = async (
 
 export const deleteContact: GoogleContactsEndpoints['contactsDelete'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = Inputs.contactsDelete.parse(rawInput);
 	await makeAuthenticatedPeopleRequest<void>(
 		`${resourcePath('people', input.resourceName)}:deleteContact`,
 		ctx,
@@ -182,7 +189,8 @@ type PhotoMutateResponse = {
 };
 
 export const updatePhoto: GoogleContactsEndpoints['contactsUpdatePhoto'] =
-	async (ctx, input) => {
+	async (ctx, rawInput) => {
+		const input = Inputs.contactsUpdatePhoto.parse(rawInput);
 		const personFields = withPhotos(input.personFields);
 		// updateContactPhoto takes the mask in the body; deleteContactPhoto
 		// takes it in the query.
@@ -215,7 +223,8 @@ export const updatePhoto: GoogleContactsEndpoints['contactsUpdatePhoto'] =
 	};
 
 export const deletePhoto: GoogleContactsEndpoints['contactsDeletePhoto'] =
-	async (ctx, input) => {
+	async (ctx, rawInput) => {
+		const input = Inputs.contactsDeletePhoto.parse(rawInput);
 		const personFields = withPhotos(input.personFields);
 		const response = await makeAuthenticatedPeopleRequest<PhotoMutateResponse>(
 			`${resourcePath('people', input.resourceName)}:deleteContactPhoto`,

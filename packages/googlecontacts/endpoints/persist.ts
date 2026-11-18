@@ -7,7 +7,7 @@ export const DEFAULT_PERSON_FIELDS = [
 	'phoneNumbers',
 ];
 
-/** Row keys derived from each People API person field. */
+/** Row keys derived from each People API person field. Keyed by any mask string a caller passes. */
 const ROW_KEYS_BY_PERSON_FIELD: Record<string, string[]> = {
 	names: ['displayName', 'givenName', 'familyName'],
 	emailAddresses: ['primaryEmail', 'emails'],
@@ -51,6 +51,8 @@ export async function persistContact(
 	const name = primaryOf(person.names);
 	const organization = primaryOf(person.organizations);
 
+	// `unknown`: the row mixes strings, string arrays and dates; the contacts
+	// entity schema checks the shape when the row is written.
 	const derived: Record<string, unknown> = {
 		displayName: name?.displayName,
 		givenName: name?.givenName,
@@ -73,6 +75,7 @@ export async function persistContact(
 	// A field the caller asked for but Google returned empty has been cleared
 	// upstream, so it must overwrite. A field never asked for says nothing
 	// about the stored value and must be left alone.
+	// `unknown`: a subset of `derived`, same value types.
 	const incoming: Record<string, unknown> = {};
 	for (const field of requestedFields) {
 		for (const key of ROW_KEYS_BY_PERSON_FIELD[field] ?? []) {
@@ -137,6 +140,7 @@ export async function persistContactGroup(
 		return;
 	}
 
+	// `unknown`: strings and a number; the group entity schema checks the row.
 	const derived: Record<string, unknown> = {
 		name: group.name,
 		formattedName: group.formattedName,
@@ -145,6 +149,7 @@ export async function persistContactGroup(
 	};
 	// Same rule as contacts: only fields in the response mask may overwrite
 	// the stored row.
+	// `unknown`: a subset of `derived`, same value types.
 	const incoming: Record<string, unknown> = {};
 	for (const field of requestedFields) {
 		for (const key of ROW_KEYS_BY_GROUP_FIELD[field] ?? []) {
