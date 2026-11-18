@@ -1,7 +1,8 @@
 import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
-import type { JsonValue } from './client';
+import type { HoneybadgerAPIError, JsonValue } from './client';
 import { honeybadger } from './index';
+import { rejection } from './test-helpers';
 
 /**
  * The endpoints send one attempt because the client sets `maxRetries: 0`; only
@@ -180,9 +181,7 @@ describe('retries through the bound client', () => {
 			for (const [status, call] of calls) {
 				respond({ error: { code: 'refused', message: 'Refused' } }, status);
 				const before = fetchMock.mock.calls.length;
-				const error = (await call().catch((e: unknown) => e)) as {
-					status?: number;
-				};
+				const error = (await rejection(call())) as HoneybadgerAPIError;
 				expect(error.status).toBe(status);
 				expect(fetchMock.mock.calls.length - before).toBe(1);
 			}
