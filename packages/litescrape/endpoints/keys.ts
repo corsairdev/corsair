@@ -66,6 +66,7 @@ export const KeysUsageResponseSchema = z
 			.array(UsageCountsSchema.extend({ bucket: z.string().nullish() }))
 			.nullish(),
 		// Per-API, provider, channel and error breakdowns; their item shape is not documented.
+		// `unknown` is necessary because Litescrape doesn't document the shape of these breakdown rows.
 		apis: z.array(z.unknown()).nullish(),
 		providers: z.array(z.unknown()).nullish(),
 		channels: z.array(z.unknown()).nullish(),
@@ -84,6 +85,7 @@ export const status: CorsairEndpoint<
 	KeysStatusResponse
 > = async (ctx, input) => {
 	KeysStatusInputSchema.parse(input ?? {});
+	// `unknown` is necessary because the response is untrusted JSON until KeysStatusResponseSchema parses it.
 	const response = await makeLitescrapeRequest<unknown>(
 		'/api/keys/status',
 		ctx.key,
@@ -101,6 +103,7 @@ export const usage: CorsairEndpoint<
 	KeysUsageResponse
 > = async (ctx, input) => {
 	const parsedInput = KeysUsageInputSchema.parse(input ?? {});
+	// `unknown` is necessary because the response is untrusted JSON until KeysUsageResponseSchema parses it.
 	const response = await makeLitescrapeRequest<unknown>('/api/usage', ctx.key, {
 		method: 'GET',
 		query: { range: parsedInput.range, tz: parsedInput.tz },

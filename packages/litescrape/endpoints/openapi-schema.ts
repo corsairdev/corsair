@@ -25,8 +25,25 @@ function isRecord(value: unknown): value is OpenApiDocument {
  */
 type SchemaMode = 'request' | 'response';
 
-// A JSON scalar of any type, for response fields declared as enums or constants.
-const looseScalar = z.union([z.string(), z.number(), z.boolean()]);
+/**
+ * An open enum for responses: any value of the declared type, so a status
+ * Litescrape adds later still parses, but never a value of another type (a
+ * number where the spec and the exported types say string). Without a declared
+ * type, the members' own types decide.
+ */
+// `unknown` is necessary because enum and const members are provider JSON scalars of any type.
+function openScalarSchema(type: unknown, members: unknown[]): z.ZodType {
+	const kinds = new Set<string>();
+	if (type === 'string') kinds.add('string');
+	else if (type === 'integer' || type === 'number') kinds.add('number');
+	else if (type === 'boolean') kinds.add('boolean');
+	else for (const member of members) kinds.add(typeof member);
+	const options: z.ZodType[] = [];
+	if (kinds.has('string')) options.push(z.string());
+	if (kinds.has('number')) options.push(z.number());
+	if (kinds.has('boolean')) options.push(z.boolean());
+	return options.length > 0 ? unionOf(options) : z.unknown();
+}
 
 function withDescription(schema: z.ZodType, value: OpenApiDocument) {
 	return typeof value.description === 'string'
@@ -63,6 +80,7 @@ function enumSchema(members: unknown[]): z.ZodType {
 	);
 }
 
+// `unknown` is necessary because anyOf members are provider JSON Schema values of any shape.
 function isNullSchema(value: unknown): boolean {
 	return isRecord(value) && value.type === 'null';
 }
@@ -106,9 +124,11 @@ function schemaFromOpenApi(
 	if ('const' in value) {
 		schema = strict
 			? z.literal(value.const as string | number | boolean)
-			: looseScalar;
+			: openScalarSchema(type, [value.const]);
 	} else if (Array.isArray(value.enum)) {
-		schema = strict ? enumSchema(value.enum) : looseScalar;
+		schema = strict
+			? enumSchema(value.enum)
+			: openScalarSchema(type, value.enum);
 	} else if (type === 'string') {
 		let stringSchema = z.string();
 		if (strict && typeof value.minLength === 'number') {
@@ -195,6 +215,7 @@ function schemaFromOpenApi(
 // Built on first use, one operation at a time: converting all 200 operations at
 // import would build every response model for an instance that may call two.
 const definitionCache = new Map<string, z.ZodType>();
+// `unknown` is necessary because each cached request schema has its own fields.
 const inputSchemaCache = new Map<string, z.ZodType<Record<string, unknown>>>();
 const outputSchemaCache = new Map<string, z.ZodType>();
 const operationsById = new Map(

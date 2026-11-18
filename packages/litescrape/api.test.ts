@@ -54,19 +54,25 @@ const SAMPLE = [
 	'web.fetch',
 ];
 
+// Each data call's Litescrape budget. Low enough that six tries (a 503 and
+// five retries) finish well inside the test deadline below.
+const PER_CALL_BUDGET_SECONDS = 60;
+
 // Provider-side outcomes that are not plugin bugs: Litescrape answers a 5xx
 // (503 `service_unavailable`, not billed) when the upstream scraper fails, and
 // 404 when the upstream page is gone. Anything else, including a response that
 // breaks its schema, fails the test.
+// `unknown` is necessary because a thrown value has no guaranteed type; the status is read defensively.
 function isProviderOutage(error: unknown): boolean {
 	const status = (error as { status?: number }).status;
 	return status === 404 || (status !== undefined && status >= 500);
 }
 
 live('Litescrape live API', () => {
-	jest.setTimeout(8 * 60_000);
+	jest.setTimeout(12 * 60_000);
 	const api = createCorsair({
 		plugins: [litescrape({ key, permissions: { mode: 'readonly' } })],
+		// `unknown` is necessary because the bound API tree is indexed by operation names from the manifest at runtime.
 	}).litescrape.api as unknown as Record<
 		string,
 		Record<string, AnyEndpoint>
@@ -77,6 +83,7 @@ live('Litescrape live API', () => {
 		};
 	};
 
+	// `unknown` is necessary because each operation takes its own input type; the docs example is validated by the endpoint.
 	function call(id: string, input: unknown): Promise<unknown> {
 		const [group, action] = id.split('.') as [string, string];
 		const endpoint = api[group]?.[action];
@@ -84,19 +91,27 @@ live('Litescrape live API', () => {
 		return endpoint(input);
 	}
 
-	it('keys.status reports the remaining calls', async () => {
-		const status = await api.keys.status({});
-		expect(status.remaining_calls).toBeGreaterThan(0);
-	});
+	// The keys checks run on the default and full runs, and on a
+	// LITESCRAPE_LIVE_ONLY list only when it names them.
+	const keysTest = (id: string) =>
+		only.length === 0 || only.includes(id) ? it : it.skip;
 
-	it('keys.usage reports a usage window', async () => {
+	keysTest('keys.status')(
+		'keys.status reports the remaining calls',
+		async () => {
+			const status = await api.keys.status({});
+			expect(status.remaining_calls).toBeGreaterThan(0);
+		},
+	);
+
+	keysTest('keys.usage')('keys.usage reports a usage window', async () => {
 		const usage = await api.keys.usage({ range: '7d' });
 		expect(usage.range).toBe('7d');
 	});
 
 	const ids =
 		only.length > 0
-			? only
+			? only.filter((id) => !id.startsWith('keys.'))
 			: runAll
 				? litescrapeOperations.map((operation) => operation.id)
 				: SAMPLE;
@@ -108,7 +123,10 @@ live('Litescrape live API', () => {
 			const args = docs.apiExamples[id]?.args;
 			expect(args).toBeDefined();
 			try {
-				const result = await call(id, { ...args, timeout: 85 });
+				const result = await call(id, {
+					...args,
+					timeout: PER_CALL_BUDGET_SECONDS,
+				});
 				expect(typeof result).toBe('object');
 				expect(result).not.toBeNull();
 			} catch (error) {
@@ -116,8 +134,9 @@ live('Litescrape live API', () => {
 				outages.push(`${id} ${(error as { status?: number }).status}`);
 			}
 		},
-		// Core retries a 503 five times and each try may use the 90 s budget.
-		8 * 60_000,
+		// Core retries a 503 five times: six tries of the budget plus the
+		// client's 5 s margin is 390 s, and Retry-After waits come on top.
+		12 * 60_000,
 	);
 
 	afterAll(() => {

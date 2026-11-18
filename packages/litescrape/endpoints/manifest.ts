@@ -44,6 +44,7 @@ type LitescrapeManifest = z.infer<typeof LitescrapeManifestSchema>;
 
 // Typed by LitescrapeManifestSchema; schema.test.ts parses the file with it.
 export const litescrapeManifest =
+	// `unknown` is necessary because a JSON import's inferred type is too wide to assign directly; schema.test.ts parses the file with LitescrapeManifestSchema.
 	litescrapeManifestJson as unknown as LitescrapeManifest;
 
 export const litescrapeOperations: readonly LitescrapeOperationDefinition[] =

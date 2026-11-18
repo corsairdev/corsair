@@ -1718,6 +1718,11 @@
 						"type": "string",
 						"description": "Bing search query after trimming. Accepted length: 1 through 2,048 characters. Control characters are rejected. Bing query syntax such as quoted phrases and exclusions remains available."
 					},
+					"engine": {
+						"const": "bing",
+						"type": "string",
+						"description": "Selects the Bing web-search engine."
+					},
 					"location": {
 						"anyOf": [
 							{

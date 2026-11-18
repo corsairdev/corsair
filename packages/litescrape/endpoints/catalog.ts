@@ -1359,7 +1359,8 @@ export const litescrapeEndpointMeta = {
 	},
 	'web.screenshot': {
 		riskLevel: 'read',
-		description: 'Capture a web page screenshot as a PNG download URL (Alpha)',
+		description:
+			'Capture a web page screenshot, returned as base64 PNG data in screenshot_base64 (Alpha)',
 	},
 	'wholefoods.product': {
 		riskLevel: 'read',

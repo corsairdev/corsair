@@ -35,6 +35,7 @@ export function createLitescrapeOperation<Id extends LitescrapeOperationId>(
 		const parsedInput = getLitescrapeInputSchema(id).parse(input ?? {});
 
 		// Send what was validated, not the caller's object.
+		// `unknown` is necessary because the body's fields differ per operation; each was just validated by its input schema.
 		const body: Record<string, unknown> = { ...parsedInput };
 		const query: Record<string, string | number | boolean | undefined> = {};
 		for (const name of litescrapeQueryFields(id)) {
@@ -49,6 +50,7 @@ export function createLitescrapeOperation<Id extends LitescrapeOperationId>(
 			}
 		}
 
+		// `unknown` is necessary because the response is untrusted JSON until the operation's output schema parses it.
 		const response = await makeLitescrapeRequest<unknown>(
 			operation.path,
 			ctx.key,

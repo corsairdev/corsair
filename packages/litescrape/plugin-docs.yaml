@@ -1,6 +1,6 @@
 displayName: LiteScrape
 description: "Web data API with 200 read operations across 70 sites: Google, Bing, Brave, Yahoo, Baidu, Naver and Yandex search; Google, Apple, Bing and DuckDuckGo maps and reviews; Amazon, Walmart, eBay and other shops; TikTok, Instagram, X, YouTube, LinkedIn and Reddit; job boards; real estate; and web page fetch and screenshots."
-overviewNote: "Every operation is a read that spends one prepaid Litescrape call; failed calls are not billed. Pass `timeout` (seconds, up to 90) to bound a slow scrape. `keys.status` shows the calls left."
+overviewNote: "Every data operation is a read that spends one prepaid Litescrape call; failed calls are not billed. `keys.status` is free and shows the calls left. Pass `timeout` (seconds, up to 90) to bound a slow scrape."
 examples:
   read:
     path: google.search

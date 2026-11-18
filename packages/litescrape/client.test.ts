@@ -89,23 +89,83 @@ describe('makeLitescrapeRequest', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
-	it('rethrows a 429 ApiError with retryAfter intact', async () => {
+	it('rethrows a 429 as an ApiError with status and retryAfter intact', async () => {
 		const rateLimited = apiError(429, 'Too Many Requests', 3000);
 		mockRequest.mockRejectedValue(rateLimited);
 
-		await expect(
-			makeLitescrapeRequest('/api/google/search', 'ls_live_test', {
-				method: 'GET',
-			}),
-		).rejects.toBe(rateLimited);
+		const thrown = await makeLitescrapeRequest(
+			'/api/google/search',
+			'ls_live_test',
+			{ method: 'GET' },
+		).catch((error: Error) => error);
 
-		expect(errorHandlers.RATE_LIMIT_ERROR.match(rateLimited)).toBe(true);
+		expect(thrown).toBeInstanceOf(ApiError);
+		const error = thrown as ApiError;
+		expect(error.status).toBe(429);
+		expect(error.retryAfter).toBe(3000);
+		expect(error.message).toBe('Too Many Requests');
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
 		await expect(
-			errorHandlers.RATE_LIMIT_ERROR.handler(rateLimited),
+			errorHandlers.RATE_LIMIT_ERROR.handler(error),
 		).resolves.toEqual({
 			maxRetries: 5,
 			headersRetryAfterMs: 3000,
 		});
+	});
+
+	it('keeps the sent body and echoed inputs out of the thrown ApiError', async () => {
+		const sent = {
+			url: 'https://example.com',
+			set_cookies: [{ name: 'session', value: 'secret-cookie' }],
+		};
+		mockRequest.mockRejectedValue(
+			new ApiError(
+				{ method: 'POST', url: '/api/web/fetch', body: sent },
+				{
+					url: 'https://api.litescrape.com/api/web/fetch',
+					ok: false,
+					status: 422,
+					statusText: 'Unprocessable Entity',
+					body: {
+						detail: [
+							{
+								loc: ['body', 'set_cookies'],
+								msg: 'bad cookie',
+								input: sent.set_cookies,
+							},
+						],
+					},
+				},
+				'Unprocessable Entity',
+			),
+		);
+
+		const thrown = (await makeLitescrapeRequest(
+			'/api/web/fetch',
+			'ls_live_test',
+			{ method: 'POST', body: sent },
+		).catch((error: Error) => error)) as ApiError;
+
+		expect(thrown.status).toBe(422);
+		expect(JSON.stringify(thrown.request)).not.toContain('secret-cookie');
+		expect(JSON.stringify(thrown.body)).not.toContain('secret-cookie');
+		expect(thrown.request.body).toBe('[REDACTED]');
+		expect(errorHandlers.BAD_REQUEST_ERROR.match(thrown)).toBe(true);
+	});
+
+	it('waits the call budget plus 5 s, in whole milliseconds', async () => {
+		mockRequest.mockResolvedValue({});
+		await makeLitescrapeRequest('/api/web/fetch', 'ls_live_test', {
+			method: 'POST',
+			body: { url: 'https://example.com' },
+			budgetSeconds: 10.0005,
+		});
+		await makeLitescrapeRequest('/api/web/fetch', 'ls_live_test', {
+			method: 'POST',
+			body: { url: 'https://example.com' },
+		});
+		expect(mockRequest.mock.calls[0]?.[0].TIMEOUT).toBe(15001);
+		expect(mockRequest.mock.calls[1]?.[0].TIMEOUT).toBe(95000);
 	});
 
 	it('wraps only non-Error throwables in a LitescrapeAPIError', async () => {

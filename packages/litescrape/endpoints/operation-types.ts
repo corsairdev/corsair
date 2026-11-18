@@ -9787,6 +9787,8 @@ export type LitescrapeOperationInputs = {
 	'bing.search': {
 		/** Bing search query after trimming. Accepted length: 1 through 2,048 characters. Control characters are rejected. Bing query syntax such as quoted phrases and exclusions remains available. */
 		q: string;
+		/** Selects the Bing web-search engine. */
+		engine?: 'bing';
 		/** Named city-level origin used to localize the Bing request. Maximum length: 256 characters. Control characters are rejected. */
 		location?: string | null;
 		/** Latitude from -90 through 90. May be supplied independently or with lon. */

@@ -71,6 +71,7 @@ const PUBLISHED_BEFORE = [
 	'keys.status',
 ];
 
+// `unknown` is necessary because the walk visits every JSON value in the manifest, of any shape.
 function collectRefs(value: unknown, refs: Set<string>): Set<string> {
 	if (Array.isArray(value)) {
 		for (const item of value) collectRefs(item, refs);
@@ -195,8 +196,10 @@ describe('request schemas', () => {
 		expect(bing().safeParse({ q: 'x', timeout: 30 }).success).toBe(true);
 	});
 
-	it('leaves out the route-fixed engine field but keeps other fixed fields', () => {
-		expect(bing().safeParse({ q: 'x', engine: 'bing' }).success).toBe(false);
+	it('accepts fixed-value fields (engine, type) only with their one value', () => {
+		// 0.1 accepted `engine` and dropped it; the API takes it, so it stays.
+		expect(bing().safeParse({ q: 'x', engine: 'bing' }).success).toBe(true);
+		expect(bing().safeParse({ q: 'x', engine: 'google' }).success).toBe(false);
 		const product = getLitescrapeInputSchema('appleAppStore.product');
 		expect(
 			product.safeParse({ product_id: '570060128', type: 'app' }).success,
@@ -257,6 +260,23 @@ describe('response schemas', () => {
 	it('still checks the documented types', () => {
 		expect(bing().safeParse({ organic_results: 'nope' }).success).toBe(false);
 		expect(bing().safeParse(null).success).toBe(false);
+	});
+
+	it('keeps enums and constants open but of their declared type', () => {
+		const images = getLitescrapeOutputSchema('bing.images');
+		// `status` is the string constant "Success" in the spec.
+		expect(
+			images.safeParse({ search_metadata: { status: 'Success' } }).success,
+		).toBe(true);
+		expect(
+			images.safeParse({ search_metadata: { status: 'Partial' } }).success,
+		).toBe(true);
+		expect(images.safeParse({ search_metadata: { status: 123 } }).success).toBe(
+			false,
+		);
+		expect(
+			images.safeParse({ search_metadata: { status: true } }).success,
+		).toBe(false);
 	});
 
 	it('passes unknown fields through to the caller', () => {

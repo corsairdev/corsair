@@ -1,7 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import * as client from './client';
 import { litescrapeEndpointsNested } from './endpoints/catalog';
-import { litescrapeOperations } from './endpoints/manifest';
+import {
+	litescrapeDefinitions,
+	litescrapeOperations,
+} from './endpoints/manifest';
 import type { LitescrapeContext } from './index';
 
 jest.mock('corsair/core', () => {
@@ -45,6 +48,7 @@ const ctx = buildCtx();
 
 // `unknown` because each operation has its own input and output type; the
 // table below drives all 200 through the same assertions.
+// `unknown` is necessary because the table drives all 200 operations, each with its own input and output type, through one signature.
 type AnyEndpoint = (
 	context: LitescrapeContext,
 	input: unknown,
@@ -52,12 +56,14 @@ type AnyEndpoint = (
 
 function endpointFor(id: string): AnyEndpoint {
 	const [group, action] = id.split('.') as [string, string];
-	const actions = (
-		litescrapeEndpointsNested as unknown as Record<
-			string,
-			Record<string, AnyEndpoint>
-		>
-	)[group];
+	const actions =
+		// `unknown` is necessary because the nested endpoint tree is indexed by strings from the manifest, which its literal type cannot express.
+		(
+			litescrapeEndpointsNested as unknown as Record<
+				string,
+				Record<string, AnyEndpoint>
+			>
+		)[group];
 	const endpoint = actions?.[action];
 	if (!endpoint) throw new Error(`no endpoint ${id}`);
 	return endpoint;
@@ -100,6 +106,54 @@ describe('every manifest operation', () => {
 				{ operationId: id },
 				'completed',
 			);
+		},
+	);
+});
+
+/**
+ * A top-level field of the operation's own response model with a value of the
+ * wrong type: a string where the spec says list or object, or, for the few
+ * models with only scalars (google.gemini, web.screenshot), a number where it
+ * says string.
+ */
+// `unknown` is necessary because the wrong value is a string or a number.
+function wrongTypedField(id: string): [string, unknown] {
+	const operation = litescrapeOperations.find((op) => op.id === id);
+	const model = operation
+		? litescrapeDefinitions[operation.output.$ref]
+		: undefined;
+	// `unknown` is necessary because property schemas are provider JSON Schema of any shape.
+	const properties = (model?.properties ?? {}) as Record<string, unknown>;
+	for (const [name, property] of Object.entries(properties)) {
+		const options = (
+			(property as { anyOf?: { type?: string; $ref?: string }[] }).anyOf ?? [
+				property as { type?: string; $ref?: string },
+			]
+		).filter((option) => option.type !== 'null');
+		const structured = options.every(
+			(option) =>
+				option.type === 'array' ||
+				option.type === 'object' ||
+				(option.$ref !== undefined && option.$ref !== 'JsonValue'),
+		);
+		if (options.length > 0 && structured) return [name, 'not structured'];
+	}
+	for (const [name, property] of Object.entries(properties)) {
+		if ((property as { type?: string }).type === 'string') return [name, 123];
+	}
+	throw new Error(`${id}: no typed field in its response model`);
+}
+
+describe('every operation parses with its own response model', () => {
+	it.each(litescrapeOperations.map((operation) => operation.id))(
+		'%s rejects a wrongly typed field of its model',
+		async (id) => {
+			const [field, value] = wrongTypedField(id);
+			mockedRequest.mockResolvedValueOnce({ [field]: value });
+			await expect(
+				endpointFor(id)(ctx, docs.apiExamples[id]?.args),
+			).rejects.toThrow();
+			expect(mockedLogEvent).not.toHaveBeenCalled();
 		},
 	);
 });
@@ -206,6 +260,7 @@ describe('keys operations', () => {
 	it('keys.usage rejects an undocumented window', async () => {
 		await expect(
 			litescrapeEndpointsNested.keys.usage(ctx, {
+				// `unknown` is necessary because the test sends a value the input type forbids, to check the runtime rejects it.
 				range: '1y' as unknown as '7d',
 			}),
 		).rejects.toThrow();
