@@ -5,10 +5,7 @@
 //   LISTENNOTES_API_KEY=... pnpm test:live
 //
 import { makeListennotesRequest } from './client';
-import type {
-	GenresListResponse,
-	SearchResponse,
-} from './endpoints/types';
+import type { GenresListResponse, SearchResponse } from './endpoints/types';
 import {
 	GenresListResponseSchema,
 	SearchResponseSchema,

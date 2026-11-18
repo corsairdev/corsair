@@ -20,8 +20,7 @@ export class ListennotesAPIError extends Error {
  * Base URL for Listen Notes API v2.
  * Official docs: https://www.listennotes.com/api/docs/
  */
-export const LISTENNOTES_API_BASE =
-	'https://listen-api.listennotes.com/api/v2';
+export const LISTENNOTES_API_BASE = 'https://listen-api.listennotes.com/api/v2';
 
 /**
  * Handler owns rate-limit retries; transport retries are set to 0 while
@@ -76,7 +75,12 @@ const SENSITIVE_KEYS = new Set([
 
 function isSensitiveKey(key: string): boolean {
 	const normalized = key.toLowerCase().replace(/[-_]/g, '');
-	return SENSITIVE_KEYS.has(key.toLowerCase()) || normalized.includes('apikey') || normalized.includes('token') || normalized.includes('secret');
+	return (
+		SENSITIVE_KEYS.has(key.toLowerCase()) ||
+		normalized.includes('apikey') ||
+		normalized.includes('token') ||
+		normalized.includes('secret')
+	);
 }
 
 // unknown because provider error responses are untrusted and unvalidated until inspected.
@@ -130,7 +134,9 @@ export function sanitizeApiError(error: unknown): unknown {
 		headers,
 		query,
 		// unknown because body is an untyped error payload that must be recursively redacted.
-		body: redactSensitiveData(error.request.body) as Record<string, unknown> | undefined,
+		body: redactSensitiveData(error.request.body) as
+			| Record<string, unknown>
+			| undefined,
 	};
 
 	const sanitized = new ApiError(

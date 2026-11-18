@@ -26,9 +26,7 @@ import {
 	TypeaheadInputSchema,
 	TypeaheadResponseSchema,
 } from './endpoints/types';
-import {
-	listennotesEndpointSchemas,
-} from './index';
+import { listennotesEndpointSchemas } from './index';
 import { ListennotesSchema } from './schema';
 import { listennotesEntities } from './schema/database';
 
@@ -73,9 +71,9 @@ describe('Listen Notes endpoint schemas', () => {
 		const validTypeaheadOutput = {
 			terms: ['tech', 'technology'],
 		};
-		expect(TypeaheadResponseSchema.safeParse(validTypeaheadOutput).success).toBe(
-			true,
-		);
+		expect(
+			TypeaheadResponseSchema.safeParse(validTypeaheadOutput).success,
+		).toBe(true);
 		expect(TypeaheadResponseSchema.safeParse({}).success).toBe(false);
 	});
 
@@ -91,7 +89,9 @@ describe('Listen Notes endpoint schemas', () => {
 			title: 'Podcast 1',
 			episodes: [],
 		};
-		expect(PodcastsGetResponseSchema.safeParse(validPodcast).success).toBe(true);
+		expect(PodcastsGetResponseSchema.safeParse(validPodcast).success).toBe(
+			true,
+		);
 		expect(PodcastsGetResponseSchema.safeParse({ id: 'pod1' }).success).toBe(
 			false,
 		);
@@ -115,7 +115,9 @@ describe('Listen Notes endpoint schemas', () => {
 			}).success,
 		).toBe(true);
 
-		expect(PodcastsGetBestInputSchema.safeParse({ page: 1 }).success).toBe(true);
+		expect(PodcastsGetBestInputSchema.safeParse({ page: 1 }).success).toBe(
+			true,
+		);
 		expect(
 			PodcastsGetBestResponseSchema.safeParse({
 				id: 1,
@@ -138,7 +140,9 @@ describe('Listen Notes endpoint schemas', () => {
 			id: 'ep1',
 			title: 'Ep 1',
 		};
-		expect(EpisodesGetResponseSchema.safeParse(validEpisode).success).toBe(true);
+		expect(EpisodesGetResponseSchema.safeParse(validEpisode).success).toBe(
+			true,
+		);
 
 		expect(
 			EpisodesGetRecommendationsInputSchema.safeParse({ id: 'ep1' }).success,
@@ -152,12 +156,12 @@ describe('Listen Notes endpoint schemas', () => {
 
 	it('validates genres schemas', () => {
 		expect(GenresListInputSchema.safeParse({}).success).toBe(true);
-		expect(
-			GenresListInputSchema.safeParse({ top_level_only: 1 }).success,
-		).toBe(true);
-		expect(
-			GenresListInputSchema.safeParse({ top_level_only: 5 }).success,
-		).toBe(false);
+		expect(GenresListInputSchema.safeParse({ top_level_only: 1 }).success).toBe(
+			true,
+		);
+		expect(GenresListInputSchema.safeParse({ top_level_only: 5 }).success).toBe(
+			false,
+		);
 
 		expect(
 			GenresListResponseSchema.safeParse({

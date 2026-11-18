@@ -128,7 +128,9 @@ export const PodcastTypeaheadResultSchema = z.object({
 	thumbnail: z.string().optional(),
 	explicit_content: z.boolean().optional(),
 });
-export type PodcastTypeaheadResult = z.infer<typeof PodcastTypeaheadResultSchema>;
+export type PodcastTypeaheadResult = z.infer<
+	typeof PodcastTypeaheadResultSchema
+>;
 
 // Endpoint input & output schemas
 
@@ -318,7 +320,9 @@ export const PodcastsGetEpisodesInputSchema = z
 			.describe('Sort episodes'),
 	})
 	.strict();
-export type PodcastsGetEpisodesInput = z.infer<typeof PodcastsGetEpisodesInputSchema>;
+export type PodcastsGetEpisodesInput = z.infer<
+	typeof PodcastsGetEpisodesInputSchema
+>;
 
 export const PodcastsGetEpisodesResponseSchema = z.object({
 	id: z.string().optional(),
@@ -326,7 +330,9 @@ export const PodcastsGetEpisodesResponseSchema = z.object({
 	next_episode_pub_date: z.number().nullable().optional(),
 	episodes: z.array(EpisodeMinimumSchema),
 });
-export type PodcastsGetEpisodesResponse = z.infer<typeof PodcastsGetEpisodesResponseSchema>;
+export type PodcastsGetEpisodesResponse = z.infer<
+	typeof PodcastsGetEpisodesResponseSchema
+>;
 
 export const PodcastsGetRecommendationsInputSchema = z
 	.object({
@@ -386,7 +392,9 @@ export const PodcastsGetBestResponseSchema = z.object({
 	listennotes_url: z.string(),
 	podcasts: z.array(PodcastSimpleSchema),
 });
-export type PodcastsGetBestResponse = z.infer<typeof PodcastsGetBestResponseSchema>;
+export type PodcastsGetBestResponse = z.infer<
+	typeof PodcastsGetBestResponseSchema
+>;
 
 export const EpisodesGetInputSchema = z
 	.object({

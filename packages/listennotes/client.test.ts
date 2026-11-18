@@ -108,7 +108,10 @@ describe('makeListennotesRequest', () => {
 		mockedRequest.mockRejectedValue(rateLimited);
 
 		// `unknown` because rejection value has no static type before caught.
-		const caught: unknown = await makeListennotesRequest('/genres', 'test-api-key').catch(
+		const caught: unknown = await makeListennotesRequest(
+			'/genres',
+			'test-api-key',
+		).catch(
 			// `unknown` because catch clause error is untyped.
 			(e: unknown) => e,
 		);

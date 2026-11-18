@@ -173,23 +173,19 @@ const listennotesEndpointMeta = {
 	},
 	'search.typeahead': {
 		riskLevel: 'read',
-		description:
-			'Typeahead search for podcast titles, genres, and terms',
+		description: 'Typeahead search for podcast titles, genres, and terms',
 	},
 	'podcasts.get': {
 		riskLevel: 'read',
-		description:
-			'Fetch detailed metadata and episodes for a podcast by ID',
+		description: 'Fetch detailed metadata and episodes for a podcast by ID',
 	},
 	'podcasts.getEpisodes': {
 		riskLevel: 'read',
-		description:
-			'Fetch paginated episodes for a podcast by ID',
+		description: 'Fetch paginated episodes for a podcast by ID',
 	},
 	'podcasts.getRecommendations': {
 		riskLevel: 'read',
-		description:
-			'Fetch recommended podcasts based on a given podcast ID',
+		description: 'Fetch recommended podcasts based on a given podcast ID',
 	},
 	'podcasts.getBest': {
 		riskLevel: 'read',
@@ -197,18 +193,15 @@ const listennotesEndpointMeta = {
 	},
 	'episodes.get': {
 		riskLevel: 'read',
-		description:
-			'Fetch detailed metadata for an episode by ID',
+		description: 'Fetch detailed metadata for an episode by ID',
 	},
 	'episodes.getRecommendations': {
 		riskLevel: 'read',
-		description:
-			'Fetch recommended episodes based on a given episode ID',
+		description: 'Fetch recommended episodes based on a given episode ID',
 	},
 	'genres.list': {
 		riskLevel: 'read',
-		description:
-			'Fetch a list of podcast genres supported by Listen Notes',
+		description: 'Fetch a list of podcast genres supported by Listen Notes',
 	},
 	'curated.list': {
 		riskLevel: 'read',
@@ -313,11 +306,11 @@ export type {
 	ListennotesEndpointInputs,
 	ListennotesEndpointOutputs,
 	PlaylistItem,
+	PlaylistSummary,
 	PlaylistsGetInput,
 	PlaylistsGetResponse,
 	PlaylistsListInput,
 	PlaylistsListResponse,
-	PlaylistSummary,
 	PodcastFull,
 	PodcastSimple,
 	PodcastsGetBestInput,
