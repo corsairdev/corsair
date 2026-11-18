@@ -72,10 +72,10 @@ For `apiV1.mailbox.updateMailThreadDetails`, explicit `null` values for the null
 
 The following inventory covers the additional 321 operations, one row per versioned method/path. Together with the 44 convenience operations above, the plugin implements 365 of the 371 operations in Pipedrive's published OpenAPI contracts. The `apiV1` and `apiV2` namespaces preserve the provider's version-specific path, method, parameters, request media type, and response contract; optional groups are nested under `query`, path identifiers under `path`, and request bodies under `body`.
 
+<!-- PIPEDRIVE_CATALOG_START -->
+
 | Corsair operation | Provider route | API-token cost | OAuth scope(s) | Official reference |
 | --- | --- | ---: | --- | --- |
-
-<!-- PIPEDRIVE_CATALOG_START -->
 | `apiV1.activityFields.getActivityFields` | `GET https://api.pipedrive.com/v1/activityFields` | 20 | `activities:read`, `activities:full` | [ActivityFields](https://developers.pipedrive.com/docs/api/v1/ActivityFields) |
 | `apiV1.activityTypes.getActivityTypes` | `GET https://api.pipedrive.com/v1/activityTypes` | 20 | `activities:read`, `activities:full`, `admin` | [ActivityTypes](https://developers.pipedrive.com/docs/api/v1/ActivityTypes) |
 | `apiV1.activityTypes.addActivityType` | `POST https://api.pipedrive.com/v1/activityTypes` | 10 | `admin` | [ActivityTypes](https://developers.pipedrive.com/docs/api/v1/ActivityTypes) |

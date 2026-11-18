@@ -104,23 +104,13 @@ export async function makePipedriveRequest<T>(
 			void _requestBody;
 			void _requestQuery;
 			void _requestHeaders;
-			throw new ApiError(
-				safeRequest,
-				{
-					url: error.url?.split('?', 1)[0] ?? `${base}${endpoint}`,
-					ok: false,
-					status: error.status,
-					statusText: error.statusText,
-					body: { error: 'Pipedrive request failed' },
-				},
-				`Pipedrive request failed with HTTP ${error.status}`,
-				{
-					retryAfter: error.retryAfter,
-					rateLimitReset: error.rateLimitReset,
-					rateLimitRemaining: error.rateLimitRemaining,
-					rateLimitLimit: error.rateLimitLimit,
-				},
+			Reflect.set(error, 'request', safeRequest);
+			Reflect.set(
+				error,
+				'url',
+				error.url.split('?', 1)[0] ?? `${base}${endpoint}`,
 			);
+			throw error;
 		}
 		throw error;
 	}
