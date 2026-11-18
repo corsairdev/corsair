@@ -169,11 +169,9 @@ const ChannelInputShape = {
 		),
 } as const;
 
+/** Twitch, Twitter and Snapchat reports take only the channel; the docs list no report type for them. */
 export const ReportsByChannelInputSchema = z
-	.object({
-		...ChannelInputShape,
-		type: ReportTypeSchema.optional(),
-	})
+	.object({ ...ChannelInputShape })
 	.strict();
 export type ReportsByChannelInput = z.input<typeof ReportsByChannelInputSchema>;
 

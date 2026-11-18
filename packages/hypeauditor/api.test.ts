@@ -25,6 +25,12 @@ import { rejection } from './test-helpers';
 const CLIENT_ID = process.env.HYPEAUDITOR_CLIENT_ID;
 const TOKEN = process.env.HYPEAUDITOR_API_TOKEN;
 const HAVE_CREDENTIALS = Boolean(CLIENT_ID && TOKEN);
+/**
+ * The NASA report is free only with HypeAuditor's sandbox credentials; with a
+ * paid account it spends a credit. It runs only when the caller says the
+ * credentials are sandbox ones.
+ */
+const SANDBOX_CREDENTIALS = process.env.HYPEAUDITOR_SANDBOX === '1';
 
 describe('hypeauditor live smoke', () => {
 	if (!HAVE_CREDENTIALS) {
@@ -127,10 +133,12 @@ describe('hypeauditor live smoke', () => {
 		});
 	});
 
-	describeIfKey('reports.youtube', () => {
+	const describeIfSandbox =
+		HAVE_CREDENTIALS && SANDBOX_CREDENTIALS ? describe : describe.skip;
+
+	describeIfSandbox('reports.youtube', () => {
 		it('reads the documented free YouTube report', async () => {
-			// The docs name this channel as free on every network, so it is the one
-			// report read that does not spend a credit.
+			// Free only with sandbox credentials (HYPEAUDITOR_SANDBOX=1).
 			const result = await endpoints.reports.youtube(ctx, {
 				channel: 'UCLA_DiR1FfKNvjuUpBHmylQ',
 			});

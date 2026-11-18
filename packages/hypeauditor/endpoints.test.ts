@@ -7,6 +7,7 @@ import {
 	ReportResultSchema,
 	ReportsByChannelInputSchema,
 	ReportsInstagramInputSchema,
+	ReportsYoutubeInputSchema,
 	UnlockedReportsInputSchema,
 } from './endpoints/types';
 
@@ -101,12 +102,20 @@ describe('report input rules', () => {
 
 	it('refuses a report type the docs do not list', () => {
 		expect(() =>
-			ReportsByChannelInputSchema.parse({ channel: 'NASA', type: 'full' }),
+			ReportsYoutubeInputSchema.parse({ channel: 'NASA', type: 'full' }),
 		).toThrow();
 		expect(
-			ReportsByChannelInputSchema.parse({ channel: 'NASA', type: 'report' })
-				.type,
+			ReportsYoutubeInputSchema.parse({ channel: 'NASA', type: 'report' }).type,
 		).toBe('report');
+	});
+
+	it('refuses a report type on Twitch, Twitter and Snapchat, which take none', () => {
+		expect(() =>
+			ReportsByChannelInputSchema.parse({ channel: 'nasa', type: 'report' }),
+		).toThrow();
+		expect(ReportsByChannelInputSchema.parse({ channel: 'nasa' })).toEqual({
+			channel: 'nasa',
+		});
 	});
 });
 
