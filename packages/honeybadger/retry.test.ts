@@ -168,22 +168,23 @@ describe('retries through the bound client', () => {
 	it('does not retry a 400, a 401 or a 422', async () => {
 		const { corsair, testDb } = await createClient();
 		try {
-			for (const status of [400, 401, 422]) {
-				respond(
-					{ error: { code: 'unauthorized', message: 'Access denied' } },
-					status,
-				);
-			}
-
-			for (const [index, call] of [
-				() => corsair.honeybadger.api.projects.list({ per_page: 999 }),
-				() => corsair.honeybadger.api.projects.get({ project_id: 'x' }),
-				() => corsair.honeybadger.api.projects.create({ name: 'Billing' }),
-			].entries()) {
+			// Valid inputs, so each call reaches fetch and gets its own status.
+			const calls = [
+				[400, () => corsair.honeybadger.api.projects.list({ per_page: 10 })],
+				[401, () => corsair.honeybadger.api.projects.get({ project_id: 'x' })],
+				[
+					422,
+					() => corsair.honeybadger.api.projects.create({ name: 'Billing' }),
+				],
+			] as const;
+			for (const [status, call] of calls) {
+				respond({ error: { code: 'refused', message: 'Refused' } }, status);
 				const before = fetchMock.mock.calls.length;
-				await expect(call()).rejects.toBeDefined();
-				expect(fetchMock.mock.calls.length - before).toBeLessThanOrEqual(1);
-				expect(index).toBeGreaterThanOrEqual(0);
+				const error = (await call().catch((e: unknown) => e)) as {
+					status?: number;
+				};
+				expect(error.status).toBe(status);
+				expect(fetchMock.mock.calls.length - before).toBe(1);
 			}
 		} finally {
 			testDb.cleanup();
