@@ -1,8 +1,26 @@
 import { logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { HoneybadgerContext } from '..';
-import type { HoneybadgerRequest, JsonValue } from '../client';
-import { makeHoneybadgerRequest } from '../client';
+import type {
+	HoneybadgerRegion,
+	HoneybadgerRequest,
+	JsonValue,
+} from '../client';
+import { HONEYBADGER_HOSTS, makeHoneybadgerRequest } from '../client';
+
+/**
+ * The plugin option wins when set in code; otherwise the tenant's stored
+ * `region` account field; otherwise the US app.
+ */
+export async function resolveRegion(
+	ctx: HoneybadgerContext,
+): Promise<HoneybadgerRegion> {
+	if (ctx.options?.region) return ctx.options.region;
+	const stored = (await ctx.keys?.get_region?.())?.trim().toLowerCase();
+	return stored && stored in HONEYBADGER_HOSTS
+		? (stored as HoneybadgerRegion)
+		: 'us';
+}
 
 type LogFields = Record<string, string | number | boolean | undefined>;
 
@@ -33,7 +51,7 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	const raw = await makeHoneybadgerRequest(
 		ctx.key,
 		toRequest(parsed),
-		ctx.options?.region ?? 'us',
+		await resolveRegion(ctx),
 	);
 	const result = operation.output.parse(
 		options.shape ? options.shape(raw, parsed) : raw,

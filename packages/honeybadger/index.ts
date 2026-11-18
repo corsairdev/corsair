@@ -6,6 +6,7 @@ import type {
 	CorsairPluginContext,
 	KeyBuilderContext,
 	PickAuth,
+	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
@@ -34,6 +35,17 @@ import {
 } from './endpoints/types';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { HoneybadgerSchema } from './schema';
+
+/**
+ * The region is an account setting: each tenant's token belongs to one
+ * Honeybadger app (`us` or `eu`), and only they know which. The `region`
+ * option, when set in code, overrides the stored value for every tenant.
+ */
+export const honeybadgerAuthConfig = {
+	api_key: {
+		account: ['region'] as const,
+	},
+} as const satisfies PluginAuthConfig;
 
 export type HoneybadgerPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -822,6 +834,7 @@ export function honeybadger<const T extends HoneybadgerPluginOptions>(
 	};
 	return {
 		id: 'honeybadger',
+		authConfig: honeybadgerAuthConfig,
 		schema: HoneybadgerSchema,
 		options,
 		hooks: options.hooks,
