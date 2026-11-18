@@ -1,0 +1,1075 @@
+{
+  "id": "kalshi",
+  "displayName": "Kalshi",
+  "description": "A regulated prediction-market exchange. Read markets, events and your portfolio, and place, amend and cancel orders, with a demo environment for testing.",
+  "npmPackageName": "@corsair-dev/kalshi",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 21,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "private_key"]
+    }
+  ],
+  "api": [
+    {
+      "path": "kalshi.api.events.get",
+      "shortPath": "events.get",
+      "description": "Get an event by ticker",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_ticker",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "with_nested_markets",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "{ event_ticker: string, series_ticker: string, title: string, sub_title?: string, category?: string, mutually_exclusive?: boolean, markets?: { ticker: string, event_ticker: string, market_type?: binary | scalar, title?: string, subtitle?: string, yes_sub_title?: string, no_sub_title?: string, status: string, open_time?: string, close_time?: string, yes_bid_dollars?: string, yes_ask_dollars?: string, no_bid_dollars?: string, no_ask_dollars?: string, last_price_dollars?: string, volume_fp?: string, volume_24h_fp?: string, open_interest_fp?: string, result?: string, price_ranges?: { start: string, end: string, step: string }[] }[] }"
+          },
+          {
+            "key": "markets",
+            "optional": true,
+            "type": "{ ticker: string, event_ticker: string, market_type?: binary | scalar, title?: string, subtitle?: string, yes_sub_title?: string, no_sub_title?: string, status: string, open_time?: string, close_time?: string, yes_bid_dollars?: string, yes_ask_dollars?: string, no_bid_dollars?: string, no_ask_dollars?: string, last_price_dollars?: string, volume_fp?: string, volume_24h_fp?: string, open_interest_fp?: string, result?: string, price_ranges?: { start: string, end: string, step: string }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kalshi.api.events.list",
+      "shortPath": "events.list",
+      "description": "List events with filters and cursor pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "with_nested_markets",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "series_ticker",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tickers",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "min_close_ts",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "events",
+            "optional": false,
+            "type": "{ event_ticker: string, series_ticker: string, title: string, sub_title?: string, category?: string, mutually_exclusive?: boolean, markets?: { ticker: string, event_ticker: string, market_type?: binary | scalar, title?: string, subtitle?: string, yes_sub_title?: string, no_sub_title?: string, status: string, open_time?: string, close_time?: string, yes_bid_dollars?: string, yes_ask_dollars?: string, no_bid_dollars?: string, no_ask_dollars?: string, last_price_dollars?: string, volume_fp?: string, volume_24h_fp?: string, open_interest_fp?: string, result?: string, price_ranges?: { start: string, end: string, step: string }[] }[] }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kalshi.api.exchange.schedule",
+      "shortPath": "exchange.schedule",
+      "description": "Get the exchange trading schedule and maintenance windows",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schedule",
+            "optional": false,
+            "type": "{ standard_hours?: {}[], maintenance_windows?: { start_datetime: string, end_datetime: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kalshi.api.exchange.status",
+      "shortPath": "exchange.status",
+      "description": "Get whether the exchange and trading are currently active",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exchange_active",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "trading_active",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "exchange_estimated_resume_time",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kalshi.api.markets.candlesticks",
+      "shortPath": "markets.candlesticks",
+      "description": "Get OHLC candlesticks for a market over a time range, by minute, hour or day",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "series_ticker",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ticker",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start_ts",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "end_ts",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "period_interval",
+            "optional": false,
+            "type": "1 | 60 | 1440"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticker",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "candlesticks",
+            "optional": false,
+            "type": "{ end_period_ts: number, yes_bid: { open_dollars: string, low_dollars: string, high_dollars: string, close_dollars: string }, yes_ask: { open_dollars: string, low_dollars: string, high_dollars: string, close_dollars: string }, price: { open_dollars?: string | null, low_dollars?: string | null, high_dollars?: string | null, close_dollars?: string | null, mean_dollars?: string | null, previous_dollars?: string | null, min_dollars?: string | null, max_dollars?: string | null }, volume_fp: string, open_interest_fp: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kalshi.api.markets.get",
+      "shortPath": "markets.get",
+      "description": "Get a market by ticker, including its price ranges",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticker",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "market",
+            "optional": false,
+            "type": "{ ticker: string, event_ticker: string, market_type?: binary | scalar, title?: string, subtitle?: string, yes_sub_title?: string, no_sub_title?: string, status: string, open_time?: string, close_time?: string, yes_bid_dollars?: string, yes_ask_dollars?: string, no_bid_dollars?: string, no_ask_dollars?: string, last_price_dollars?: string, volume_fp?: string, volume_24h_fp?: string, open_interest_fp?: string, result?: string, price_ranges?: { start: string, end: string, step: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kalshi.api.markets.list",
+      "shortPath": "markets.list",
+      "description": "List markets with filters and cursor pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_ticker",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "series_ticker",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tickers",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "min_close_ts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_close_ts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "mve_filter",
+            "optional": true,
+            "type": "only | exclude"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "markets",
+            "optional": false,
+            "type": "{ ticker: string, event_ticker: string, market_type?: binary | scalar, title?: string, subtitle?: string, yes_sub_title?: string, no_sub_title?: string, status: string, open_time?: string, close_time?: string, yes_bid_dollars?: string, yes_ask_dollars?: string, no_bid_dollars?: string, no_ask_dollars?: string, last_price_dollars?: string, volume_fp?: string, volume_24h_fp?: string, open_interest_fp?: string, result?: string, price_ranges?: { start: string, end: string, step: string }[] }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kalshi.api.markets.orderbook",
+      "shortPath": "markets.orderbook",
+      "description": "Get the order book for a market",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticker",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "depth",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orderbook_fp",
+            "optional": false,
+            "type": "{ yes_dollars: string[][], no_dollars: string[][] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kalshi.api.markets.trades",
+      "shortPath": "markets.trades",
+      "description": "List recent trades, optionally for one market",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticker",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "min_ts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_ts",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "trades",
+            "optional": false,
+            "type": "{ trade_id: string, ticker: string, count_fp: string, yes_price_dollars: string, no_price_dollars: string, taker_outcome_side?: string, created_time: string }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kalshi.api.orders.amend",
+      "shortPath": "orders.amend",
+      "description": "Change an existing order's price or size; a new price can fill at once and spend real money in production",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ticker",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "side",
+            "optional": false,
+            "type": "bid | ask"
+          },
+          {
+            "key": "price",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_client_order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expiration_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "subaccount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "remaining_count",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fill_count",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "average_fill_price",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "average_fee_paid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ts_ms",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kalshi.api.orders.batchCreate",
+      "shortPath": "orders.batchCreate",
+      "description": "Place several orders in one request. Spends real money when the environment is production",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orders",
+            "optional": false,
+            "type": "{ ticker: string, client_order_id?: string, side: bid | ask, count: string, price: string, expiration_time?: number, time_in_force: fill_or_kill | good_till_canceled | immediate_or_cancel, post_only?: boolean, self_trade_prevention_type: taker_at_cross | maker, cancel_order_on_pause?: boolean, reduce_only?: boolean, subaccount?: number }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orders",
+            "optional": false,
+            "type": "{ order_id?: string, client_order_id?: string | null, fill_count?: string, remaining_count?: string, ts_ms?: number | null, error?: any }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kalshi.api.orders.cancel",
+      "shortPath": "orders.cancel",
+      "description": "Cancel a resting order's remaining contracts; a cancelled order can't be restored",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subaccount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "market_ticker",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reduced_by",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ts_ms",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kalshi.api.orders.create",
+      "shortPath": "orders.create",
+      "description": "Place an order. Spends real money when the environment is production",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticker",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "side",
+            "optional": false,
+            "type": "bid | ask"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "price",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expiration_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_in_force",
+            "optional": false,
+            "type": "fill_or_kill | good_till_canceled | immediate_or_cancel"
+          },
+          {
+            "key": "post_only",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "self_trade_prevention_type",
+            "optional": true,
+            "type": "taker_at_cross | maker",
+            "description": "Defaults to \"taker_at_cross\"."
+          },
+          {
+            "key": "cancel_order_on_pause",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "reduce_only",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "subaccount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fill_count",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "remaining_count",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "average_fill_price",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "average_fee_paid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ts_ms",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kalshi.api.orders.get",
+      "shortPath": "orders.get",
+      "description": "Get a single order by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order",
+            "optional": false,
+            "type": "{ order_id: string, client_order_id?: string, ticker: string, status: string, outcome_side?: string, book_side?: string, type?: string, yes_price_dollars?: string, no_price_dollars?: string, initial_count_fp?: string, fill_count_fp?: string, remaining_count_fp?: string, created_time?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kalshi.api.orders.list",
+      "shortPath": "orders.list",
+      "description": "List orders, optionally filtered by status or market",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticker",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_ticker",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "min_ts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_ts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "resting | canceled | executed"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subaccount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orders",
+            "optional": false,
+            "type": "{ order_id: string, client_order_id?: string, ticker: string, status: string, outcome_side?: string, book_side?: string, type?: string, yes_price_dollars?: string, no_price_dollars?: string, initial_count_fp?: string, fill_count_fp?: string, remaining_count_fp?: string, created_time?: string | null }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kalshi.api.portfolio.balance",
+      "shortPath": "portfolio.balance",
+      "description": "Get the account balance and portfolio value",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subaccount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "balance",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "balance_dollars",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "portfolio_value",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_ts",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kalshi.api.portfolio.fills",
+      "shortPath": "portfolio.fills",
+      "description": "List order fills for the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticker",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "min_ts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_ts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subaccount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fills",
+            "optional": false,
+            "type": "{ fill_id: string, order_id: string, ticker: string, count_fp: string, yes_price_dollars: string, no_price_dollars: string, is_taker?: boolean, created_time?: string }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kalshi.api.portfolio.positions",
+      "shortPath": "portfolio.positions",
+      "description": "List market and event positions. Includes closed markets awaiting settlement and fully exited positions, so not every row is open exposure",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count_filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "settlement_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ticker",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_ticker",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subaccount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "market_positions",
+            "optional": false,
+            "type": "{ ticker: string, position_fp: string, market_exposure_dollars?: string, realized_pnl_dollars?: string, fees_paid_dollars?: string }[]"
+          },
+          {
+            "key": "event_positions",
+            "optional": false,
+            "type": "{ event_ticker: string, event_exposure_dollars?: string, realized_pnl_dollars?: string }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kalshi.api.portfolio.settlements",
+      "shortPath": "portfolio.settlements",
+      "description": "List settled positions for the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ticker",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_ticker",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "min_ts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_ts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "subaccount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "settlements",
+            "optional": false,
+            "type": "{ ticker: string, event_ticker?: string, market_result?: string, settled_time?: string, revenue?: number }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kalshi.api.series.get",
+      "shortPath": "series.get",
+      "description": "Get a series by ticker",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "series_ticker",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include_volume",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "series",
+            "optional": false,
+            "type": "{ ticker: string, title: string, frequency?: string, category?: string, tags?: string[] | null, volume_fp?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "kalshi.api.series.list",
+      "shortPath": "series.list",
+      "description": "List event series, optionally by category or tags",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_volume",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "series",
+            "optional": false,
+            "type": "{ ticker: string, title: string, frequency?: string, category?: string, tags?: string[] | null, volume_fp?: string }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

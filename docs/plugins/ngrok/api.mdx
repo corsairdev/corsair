@@ -1,0 +1,1302 @@
+---
+title: "ngrok API reference"
+sidebarTitle: "API"
+description: "API reference for the ngrok plugin in Corsair: every `ngrok.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Api Keys
+
+### create
+
+`apiKeys.create`
+
+Mint an API key; the token is returned once in this response and never again, so it must be stored now
+
+**Risk:** `write`
+
+```ts
+await corsair.ngrok.api.apiKeys.create({ description: 'CI deploy' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `description` | `string` | No | — |
+| `metadata` | `string` | No | — |
+| `owner_id` | `string` | No | Create the key for this user instead of the caller. |
+
+The token appears only in this response and never on a later read, so store it now.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `uri` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `metadata` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `token` | `string \| null` | No | — |
+| `owner_id` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`apiKeys.delete`
+
+Revoke an API key permanently; anything still using it stops authenticating
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.ngrok.api.apiKeys.delete({ id: 'ak_2f1c8d9e3a5b4c6d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The resource id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`apiKeys.list`
+
+List the account’s API keys without their tokens, with owner and creation time
+
+**Risk:** `read`
+
+```ts
+await corsair.ngrok.api.apiKeys.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `before_id` | `string` | No | The page cursor: the before_id from the last next_page_uri, or that whole URL. |
+| `limit` | `number` | No | Most results to return. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keys` | `object[]` | Yes | — |
+| `uri` | `string \| null` | No | — |
+| `next_page_uri` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="keys full type">
+
+```ts
+{
+  id?: string | null,
+  uri?: string | null,
+  description?: string | null,
+  metadata?: string | null,
+  created_at?: string | null,
+  token?: string | null,
+  owner_id?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Domains
+
+### create
+
+`domains.create`
+
+Reserve a hostname and return the CNAME target to point DNS at; certificate issuance starts once it resolves
+
+**Risk:** `write`
+
+```ts
+await corsair.ngrok.api.domains.create({ domain: 'acme.example.com', description: 'Acme production' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | The hostname to reserve, e.g. app.example.com. |
+| `region` | `string` | No | — |
+| `description` | `string` | No | — |
+| `metadata` | `string` | No | — |
+| `certificate_id` | `string` | No | Attach an uploaded certificate instead of an automatic one. |
+| `certificate_management_policy` | `object` | No | Automatic certificate issuance and renewal; an empty object takes the defaults. |
+| `resolves_to` | `object[]` | No | Only serve the domain from these points of presence, e.g. [&#123; value: 'us-cal-1' &#125;, &#123; value: 'eu' &#125;]. |
+
+Reserving returns a cname_target to point DNS at; certificate issuance starts once the record resolves.
+
+<AccordionGroup>
+<Accordion title="certificate_management_policy full type">
+
+```ts
+{
+  authority?: string,
+  private_key_type?: string
+}
+```
+</Accordion>
+
+<Accordion title="resolves_to full type">
+
+```ts
+{
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `uri` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `metadata` | `string \| null` | No | — |
+| `domain` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `cname_target` | `string \| null` | No | — |
+| `certificate` | `object \| null` | No | — |
+| `certificate_management_policy` | `object \| null` | No | — |
+| `resolves_to` | `object[] \| null` | No | — |
+| `is_dev` | `boolean \| null` | No | — |
+| `certificate_management_status` | `object \| null` | No | — |
+| `acme_challenge_cname_target` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="certificate full type">
+
+```ts
+{
+  id?: string | null,
+  uri?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="certificate_management_policy full type">
+
+```ts
+{
+  authority?: string | null,
+  private_key_type?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="resolves_to full type">
+
+```ts
+{
+  value?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="certificate_management_status full type">
+
+```ts
+{
+  renews_at?: string | null,
+  provisioning_job?: {
+    error_code?: string | null,
+    started_at?: string | null,
+    finished_at?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`domains.delete`
+
+Release a reserved domain, which stops it resolving through ngrok; another account can then claim it
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.ngrok.api.domains.delete({ id: 'rd_2f1c8d9e3a5b4c6d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The resource id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`domains.get`
+
+Read one reserved domain, including its certificate provisioning status
+
+**Risk:** `read`
+
+```ts
+await corsair.ngrok.api.domains.get({ id: 'rd_2f1c8d9e3a5b4c6d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The resource id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `uri` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `metadata` | `string \| null` | No | — |
+| `domain` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `cname_target` | `string \| null` | No | — |
+| `certificate` | `object \| null` | No | — |
+| `certificate_management_policy` | `object \| null` | No | — |
+| `resolves_to` | `object[] \| null` | No | — |
+| `is_dev` | `boolean \| null` | No | — |
+| `certificate_management_status` | `object \| null` | No | — |
+| `acme_challenge_cname_target` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="certificate full type">
+
+```ts
+{
+  id?: string | null,
+  uri?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="certificate_management_policy full type">
+
+```ts
+{
+  authority?: string | null,
+  private_key_type?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="resolves_to full type">
+
+```ts
+{
+  value?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="certificate_management_status full type">
+
+```ts
+{
+  renews_at?: string | null,
+  provisioning_job?: {
+    error_code?: string | null,
+    started_at?: string | null,
+    finished_at?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`domains.list`
+
+List reserved domains with their CNAME target and certificate state
+
+**Risk:** `read`
+
+```ts
+await corsair.ngrok.api.domains.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `before_id` | `string` | No | The page cursor: the before_id from the last next_page_uri, or that whole URL. |
+| `limit` | `number` | No | Most results to return. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reserved_domains` | `object[]` | Yes | — |
+| `uri` | `string \| null` | No | — |
+| `next_page_uri` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="reserved_domains full type">
+
+```ts
+{
+  id?: string | null,
+  uri?: string | null,
+  created_at?: string | null,
+  description?: string | null,
+  metadata?: string | null,
+  domain?: string | null,
+  region?: string | null,
+  cname_target?: string | null,
+  certificate?: {
+    id?: string | null,
+    uri?: string | null
+  } | null,
+  certificate_management_policy?: {
+    authority?: string | null,
+    private_key_type?: string | null
+  } | null,
+  resolves_to?: {
+    value?: string | null
+  }[] | null,
+  is_dev?: boolean | null,
+  certificate_management_status?: {
+    renews_at?: string | null,
+    provisioning_job?: {
+      error_code?: string | null,
+      started_at?: string | null,
+      finished_at?: string | null
+    } | null
+  } | null,
+  acme_challenge_cname_target?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`domains.update`
+
+Change a reserved domain’s description, certificate, management policy or allowed IPs
+
+**Risk:** `write`
+
+```ts
+await corsair.ngrok.api.domains.update({ id: 'rd_2f1c8d9e3a5b4c6d', description: 'Renamed', resolves_to: [{ value: 'eu' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The resource id. |
+| `description` | `string` | No | — |
+| `metadata` | `string` | No | — |
+| `certificate_id` | `string` | No | — |
+| `certificate_management_policy` | `object` | No | Automatic certificate issuance and renewal; an empty object takes the defaults. |
+| `resolves_to` | `object[]` | No | Only serve the domain from these points of presence, e.g. [&#123; value: 'us-cal-1' &#125;, &#123; value: 'eu' &#125;]. |
+
+<AccordionGroup>
+<Accordion title="certificate_management_policy full type">
+
+```ts
+{
+  authority?: string,
+  private_key_type?: string
+}
+```
+</Accordion>
+
+<Accordion title="resolves_to full type">
+
+```ts
+{
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `uri` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `metadata` | `string \| null` | No | — |
+| `domain` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `cname_target` | `string \| null` | No | — |
+| `certificate` | `object \| null` | No | — |
+| `certificate_management_policy` | `object \| null` | No | — |
+| `resolves_to` | `object[] \| null` | No | — |
+| `is_dev` | `boolean \| null` | No | — |
+| `certificate_management_status` | `object \| null` | No | — |
+| `acme_challenge_cname_target` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="certificate full type">
+
+```ts
+{
+  id?: string | null,
+  uri?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="certificate_management_policy full type">
+
+```ts
+{
+  authority?: string | null,
+  private_key_type?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="resolves_to full type">
+
+```ts
+{
+  value?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="certificate_management_status full type">
+
+```ts
+{
+  renews_at?: string | null,
+  provisioning_job?: {
+    error_code?: string | null,
+    started_at?: string | null,
+    finished_at?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Endpoints
+
+### create
+
+`endpoints.create`
+
+Create a cloud endpoint at a URL you own (e.g. your ngrok dev domain); its required Traffic Policy decides what happens to requests, and it serves immediately
+
+**Risk:** `write`
+
+```ts
+await corsair.ngrok.api.endpoints.create({ url: 'https://acme.ngrok-free.dev', type: 'cloud', traffic_policy: '{"on_http_request":[{"actions":[{"type":"forward-internal","config":{"url":"https://api.internal"}}]}]}', description: 'Acme API' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The endpoint's own address, the URL clients connect to, e.g. https://your-domain.ngrok-free.dev. Where traffic goes is set in traffic_policy. |
+| `type` | `string` | No | The endpoint type. Only 'cloud' is supported; defaults to it. |
+| `traffic_policy` | `string` | Yes | The Traffic Policy, as YAML or JSON text. Required for a cloud endpoint, and it must end in a terminal action such as forward-internal, redirect or custom-response. |
+| `description` | `string` | No | — |
+| `metadata` | `string` | No | — |
+| `bindings` | `string[]` | No | — |
+
+The endpoint starts forwarding on its public URL as soon as it exists.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `public_url` | `string \| null` | No | — |
+| `proto` | `string \| null` | No | — |
+| `scheme` | `string \| null` | No | — |
+| `hostport` | `string \| null` | No | — |
+| `host` | `string \| null` | No | — |
+| `port` | `number \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `metadata` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `domain` | `object \| null` | No | — |
+| `tcp_addr` | `object \| null` | No | — |
+| `tunnel` | `object \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `upstream_url` | `string \| null` | No | — |
+| `upstream_protocol` | `string \| null` | No | — |
+| `traffic_policy` | `string \| null` | No | — |
+| `bindings` | `string[] \| null` | No | — |
+| `principal` | `object \| null` | No | — |
+| `tunnel_session` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="domain full type">
+
+```ts
+{
+  id?: string | null,
+  uri?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="tcp_addr full type">
+
+```ts
+{
+  id?: string | null,
+  uri?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="tunnel full type">
+
+```ts
+{
+  id?: string | null,
+  uri?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="principal full type">
+
+```ts
+{
+  id?: string | null,
+  uri?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="tunnel_session full type">
+
+```ts
+{
+  id?: string | null,
+  uri?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`endpoints.delete`
+
+Delete a cloud endpoint; its public URL stops resolving and ngrok has no restore call
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.ngrok.api.endpoints.delete({ id: 'ep_2f1c8d9e3a5b4c6d8e9f0a1b2c3d4e5f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The resource id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`endpoints.get`
+
+Read one cloud endpoint by id
+
+**Risk:** `read`
+
+```ts
+await corsair.ngrok.api.endpoints.get({ id: 'ep_2f1c8d9e3a5b4c6d8e9f0a1b2c3d4e5f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The resource id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `public_url` | `string \| null` | No | — |
+| `proto` | `string \| null` | No | — |
+| `scheme` | `string \| null` | No | — |
+| `hostport` | `string \| null` | No | — |
+| `host` | `string \| null` | No | — |
+| `port` | `number \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `metadata` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `domain` | `object \| null` | No | — |
+| `tcp_addr` | `object \| null` | No | — |
+| `tunnel` | `object \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `upstream_url` | `string \| null` | No | — |
+| `upstream_protocol` | `string \| null` | No | — |
+| `traffic_policy` | `string \| null` | No | — |
+| `bindings` | `string[] \| null` | No | — |
+| `principal` | `object \| null` | No | — |
+| `tunnel_session` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="domain full type">
+
+```ts
+{
+  id?: string | null,
+  uri?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="tcp_addr full type">
+
+```ts
+{
+  id?: string | null,
+  uri?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="tunnel full type">
+
+```ts
+{
+  id?: string | null,
+  uri?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="principal full type">
+
+```ts
+{
+  id?: string | null,
+  uri?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="tunnel_session full type">
+
+```ts
+{
+  id?: string | null,
+  uri?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`endpoints.list`
+
+List cloud endpoints with their public URL, upstream and traffic policy, newest first
+
+**Risk:** `read`
+
+```ts
+await corsair.ngrok.api.endpoints.list({ limit: 10, filter: 'obj.proto == "https"' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `before_id` | `string` | No | The page cursor: the before_id from the last next_page_uri, or that whole URL. |
+| `limit` | `number` | No | Most results to return. |
+| `filter` | `string` | No | A CEL expression over each item as `obj`, e.g. obj.description == "my app" or obj.proto == "https". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpoints` | `object[]` | Yes | — |
+| `uri` | `string \| null` | No | — |
+| `next_page_uri` | `string \| null` | No | The next page URL, null on the last page; pass it (or its before_id) as before_id. |
+
+<AccordionGroup>
+<Accordion title="endpoints full type">
+
+```ts
+{
+  id?: string | null,
+  region?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  public_url?: string | null,
+  proto?: string | null,
+  scheme?: string | null,
+  hostport?: string | null,
+  host?: string | null,
+  port?: number | null,
+  type?: string | null,
+  metadata?: string | null,
+  description?: string | null,
+  domain?: {
+    id?: string | null,
+    uri?: string | null
+  } | null,
+  tcp_addr?: {
+    id?: string | null,
+    uri?: string | null
+  } | null,
+  tunnel?: {
+    id?: string | null,
+    uri?: string | null
+  } | null,
+  url?: string | null,
+  upstream_url?: string | null,
+  upstream_protocol?: string | null,
+  traffic_policy?: string | null,
+  bindings?: string[] | null,
+  principal?: {
+    id?: string | null,
+    uri?: string | null
+  } | null,
+  tunnel_session?: {
+    id?: string | null,
+    uri?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`endpoints.update`
+
+Change an endpoint’s description, metadata, traffic policy or bindings, leaving fields that are omitted alone
+
+**Risk:** `write`
+
+```ts
+await corsair.ngrok.api.endpoints.update({ id: 'ep_2f1c8d9e3a5b4c6d8e9f0a1b2c3d4e5f', description: 'Renamed' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The resource id. |
+| `description` | `string` | No | A new description. An empty string clears it. |
+| `metadata` | `string` | No | — |
+| `traffic_policy` | `string` | No | — |
+| `bindings` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `public_url` | `string \| null` | No | — |
+| `proto` | `string \| null` | No | — |
+| `scheme` | `string \| null` | No | — |
+| `hostport` | `string \| null` | No | — |
+| `host` | `string \| null` | No | — |
+| `port` | `number \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `metadata` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `domain` | `object \| null` | No | — |
+| `tcp_addr` | `object \| null` | No | — |
+| `tunnel` | `object \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `upstream_url` | `string \| null` | No | — |
+| `upstream_protocol` | `string \| null` | No | — |
+| `traffic_policy` | `string \| null` | No | — |
+| `bindings` | `string[] \| null` | No | — |
+| `principal` | `object \| null` | No | — |
+| `tunnel_session` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="domain full type">
+
+```ts
+{
+  id?: string | null,
+  uri?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="tcp_addr full type">
+
+```ts
+{
+  id?: string | null,
+  uri?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="tunnel full type">
+
+```ts
+{
+  id?: string | null,
+  uri?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="principal full type">
+
+```ts
+{
+  id?: string | null,
+  uri?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="tunnel_session full type">
+
+```ts
+{
+  id?: string | null,
+  uri?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Events
+
+### create
+
+`events.create`
+
+Subscribe to event types and deliver them to existing destination ids, which are created through a separate API
+
+**Risk:** `write`
+
+```ts
+await corsair.ngrok.api.events.create({ sources: [{ type: 'endpoint.created' }], destination_ids: ['ed_1'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sources` | `object[]` | Yes | Event types that trigger the subscription, e.g. [&#123; type: "endpoint.created" &#125;]. |
+| `destination_ids` | `string[]` | Yes | Where to deliver the events. A destination is created separately and is not wrapped here. |
+| `description` | `string` | No | — |
+| `metadata` | `string` | No | — |
+
+Destination ids must already exist; destinations are created through a separate ngrok API.
+
+<AccordionGroup>
+<Accordion title="sources full type">
+
+```ts
+{
+  type: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `uri` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `metadata` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `sources` | `object[] \| null` | No | — |
+| `destinations` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="sources full type">
+
+```ts
+{
+  type?: string | null,
+  uri?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="destinations full type">
+
+```ts
+{
+  id?: string | null,
+  uri?: string | null,
+  description?: string | null,
+  metadata?: string | null,
+  created_at?: string | null,
+  target?: {
+    id?: string | null,
+    uri?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`events.delete`
+
+Delete an event subscription, which stops those events being delivered
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.ngrok.api.events.delete({ id: 'es_2f1c8d9e3a5b4c6d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The resource id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`events.get`
+
+Read one event subscription by id
+
+**Risk:** `read`
+
+```ts
+await corsair.ngrok.api.events.get({ id: 'es_2f1c8d9e3a5b4c6d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The resource id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `uri` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `metadata` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `sources` | `object[] \| null` | No | — |
+| `destinations` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="sources full type">
+
+```ts
+{
+  type?: string | null,
+  uri?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="destinations full type">
+
+```ts
+{
+  id?: string | null,
+  uri?: string | null,
+  description?: string | null,
+  metadata?: string | null,
+  created_at?: string | null,
+  target?: {
+    id?: string | null,
+    uri?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`events.list`
+
+List event subscriptions with their sources and destinations
+
+**Risk:** `read`
+
+```ts
+await corsair.ngrok.api.events.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `before_id` | `string` | No | The page cursor: the before_id from the last next_page_uri, or that whole URL. |
+| `limit` | `number` | No | Most results to return. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_subscriptions` | `object[]` | Yes | — |
+| `uri` | `string \| null` | No | — |
+| `next_page_uri` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="event_subscriptions full type">
+
+```ts
+{
+  id?: string | null,
+  uri?: string | null,
+  created_at?: string | null,
+  metadata?: string | null,
+  description?: string | null,
+  sources?: {
+    type?: string | null,
+    uri?: string | null
+  }[] | null,
+  destinations?: {
+    id?: string | null,
+    uri?: string | null,
+    description?: string | null,
+    metadata?: string | null,
+    created_at?: string | null,
+    target?: {
+      id?: string | null,
+      uri?: string | null
+    } | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tunnels
+
+### list
+
+`tunnels.list`
+
+List the tunnels open agent sessions and their public URLs
+
+**Risk:** `read`
+
+```ts
+await corsair.ngrok.api.tunnels.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `before_id` | `string` | No | The page cursor: the before_id from the last next_page_uri, or that whole URL. |
+| `limit` | `number` | No | Most results to return. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tunnels` | `object[]` | Yes | — |
+| `uri` | `string \| null` | No | — |
+| `next_page_uri` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tunnels full type">
+
+```ts
+{
+  id?: string | null,
+  public_url?: string | null,
+  started_at?: string | null,
+  metadata?: string | null,
+  proto?: string | null,
+  region?: string | null,
+  tunnel_session?: {
+    id?: string | null,
+    uri?: string | null
+  } | null,
+  endpoint?: {
+    id?: string | null,
+    uri?: string | null
+  } | null,
+  labels?: Record<string, string> | null,
+  backends?: {
+    id?: string | null,
+    uri?: string | null
+  }[] | null,
+  forwards_to?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

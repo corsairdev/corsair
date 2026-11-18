@@ -1,0 +1,1022 @@
+{
+  "id": "needle",
+  "displayName": "Needle",
+  "description": "Manage Needle leads and their LinkedIn and Instagram identities, run campaigns and enroll or stop leads, maintain suppression lists, search places and preview AI-composed messages.",
+  "npmPackageName": "@corsair-dev/needle",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 23,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "needle.api.account.me",
+      "shortPath": "account.me",
+      "description": "Read the user and organization the API key belongs to, with the key’s role",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id?: string | null, email?: string | null, name?: string | null, imageUrl?: string | null, organization?: { id?: string | null, name?: string | null, domain?: string | null, imageUrl?: string | null, role?: string | null } | null }"
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "needle.api.campaigns.create",
+      "shortPath": "campaigns.create",
+      "description": "Create a campaign in draft from a sequence graph; it contacts nobody until campaigns.update sets it active",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "graph",
+            "optional": false,
+            "type": "{ nodes: { id: string, kind: start | end | delay | action | condition | wait_until, label?: string, duration?: { days?: number, hours?: number, minutes?: number }, test?: { predicate: is_connection } | { predicate: has_attribute, attribute: string, equals?: string }, event?: linkedin_invite_accepted | linkedin_message_received | instagram_message_received, timeout?: { days?: number, hours?: number, minutes?: number }, channel?: linkedin | instagram, connectedAccountId?: string, action?: linkedin_invitation | linkedin_cancel_invitation | linkedin_message | linkedin_inmail | linkedin_profile_view | linkedin_search | linkedin_comment | linkedin_reaction | linkedin_post_view | linkedin_company_view | linkedin_job_view | linkedin_conversation_view | linkedin_network_view | linkedin_invitation_list | linkedin_invitation_response | linkedin_search_parameter | linkedin_inmail_balance | linkedin_own_profile | instagram_message | instagram_profile_view | instagram_follow | instagram_unfollow | instagram_comment | instagram_reaction | instagram_post | instagram_post_view | instagram_conversation_view | instagram_network_view | instagram_own_profile, content?: { kind: template, text: string, subject?: string } | { kind: ai, prompt: string, context?: (profile | posts | conversation | lead_properties)[], maxChars?: number, fallbackText?: string, requiresApproval?: boolean } }[], edges: { from: string, to: string, label?: next | yes | no | on_event | on_timeout }[] }"
+          },
+          {
+            "key": "schedule",
+            "optional": true,
+            "type": "{ workingDays?: number[], startTime?: string, endTime?: string }",
+            "description": "The sending window."
+          },
+          {
+            "key": "limits",
+            "optional": true,
+            "type": "{ minGapSeconds?: number, maxGapSeconds?: number }",
+            "description": "The gap between two actions, in seconds. Defaults 30 to 60."
+          },
+          {
+            "key": "suppressionPolicy",
+            "optional": true,
+            "type": "{ bypassSuppressionReasons?: (manual | unsubscribed | not_interested | existing_customer | open_opportunity | competitor | employee | invalid_recipient | complained | recently_contacted | unresponsive)[], cooldownDays?: number, unresponsiveAfterTouches?: number, autoSuppressKeywords?: string[] }",
+            "description": "Who the campaign skips and when a lead counts as unresponsive."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, status?: string | null, startedAt?: string | null, pausedAt?: string | null, archivedAt?: string | null, enrollmentCount?: number | null, progress?: number | null, createdAt?: string | null, updatedAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "needle.api.campaigns.delete",
+      "shortPath": "campaigns.delete",
+      "description": "Archive a campaign: it stops sending and leaves the active list, and the record is kept",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "archived",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "needle.api.campaigns.enroll",
+      "shortPath": "campaigns.enroll",
+      "description": "Enroll up to 500 leads at once, with one result per lead so a batch can partly succeed; an enrolled lead can be contacted",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "leadIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "Leads to enroll, by id. Create them first."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ index?: number | null, status?: string | null, leadId?: string | null, enrollmentId?: string | null, reason?: string | null, message?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "needle.api.campaigns.get",
+      "shortPath": "campaigns.get",
+      "description": "Read one campaign, including its sequence graph and status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, status?: string | null, startedAt?: string | null, pausedAt?: string | null, archivedAt?: string | null, enrollmentCount?: number | null, progress?: number | null, createdAt?: string | null, updatedAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "needle.api.campaigns.leads",
+      "shortPath": "campaigns.leads",
+      "description": "Page through the leads enrolled in a campaign with their status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leads",
+            "optional": false,
+            "type": "{ leadId?: string | null, enrollmentId?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, companyDomain?: string | null, jobTitle?: string | null, status?: string | null }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "needle.api.campaigns.list",
+      "shortPath": "campaigns.list",
+      "description": "Page through campaigns, optionally filtered by status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "draft | active | paused | archived",
+            "description": "Only campaigns in this status."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaigns",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, status?: string | null, startedAt?: string | null, pausedAt?: string | null, archivedAt?: string | null, enrollmentCount?: number | null, progress?: number | null, createdAt?: string | null, updatedAt?: string | null }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "needle.api.campaigns.stats",
+      "shortPath": "campaigns.stats",
+      "description": "Read a campaign’s progress and funnel: invites, messages, replies, and why leads were skipped",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stats",
+            "optional": false,
+            "type": "{ progress?: number | null, funnel?: { enrolled?: number | null, skippedByReason?: Record<string, number> | null, invitesSent?: number | null, invitesAccepted?: number | null, acceptanceRate?: number | null, messagesSent?: number | null, repliedLeads?: number | null, replyRate?: number | null, repliedBySentiment?: Record<string, number> | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "needle.api.campaigns.stopLeads",
+      "shortPath": "campaigns.stopLeads",
+      "description": "Stop leads in a campaign so no further step reaches them, keeping them in the list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "leadIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ index?: number | null, status?: string | null, leadId?: string | null, enrollmentId?: string | null, reason?: string | null, message?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "needle.api.campaigns.update",
+      "shortPath": "campaigns.update",
+      "description": "Rename a campaign, replace its graph, or set active to start sending and paused to halt it; going active begins contact and cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | paused",
+            "description": "Set active to start or resume, paused to halt contact."
+          },
+          {
+            "key": "graph",
+            "optional": true,
+            "type": "{ nodes: { id: string, kind: start | end | delay | action | condition | wait_until, label?: string, duration?: { days?: number, hours?: number, minutes?: number }, test?: { predicate: is_connection } | { predicate: has_attribute, attribute: string, equals?: string }, event?: linkedin_invite_accepted | linkedin_message_received | instagram_message_received, timeout?: { days?: number, hours?: number, minutes?: number }, channel?: linkedin | instagram, connectedAccountId?: string, action?: linkedin_invitation | linkedin_cancel_invitation | linkedin_message | linkedin_inmail | linkedin_profile_view | linkedin_search | linkedin_comment | linkedin_reaction | linkedin_post_view | linkedin_company_view | linkedin_job_view | linkedin_conversation_view | linkedin_network_view | linkedin_invitation_list | linkedin_invitation_response | linkedin_search_parameter | linkedin_inmail_balance | linkedin_own_profile | instagram_message | instagram_profile_view | instagram_follow | instagram_unfollow | instagram_comment | instagram_reaction | instagram_post | instagram_post_view | instagram_conversation_view | instagram_network_view | instagram_own_profile, content?: { kind: template, text: string, subject?: string } | { kind: ai, prompt: string, context?: (profile | posts | conversation | lead_properties)[], maxChars?: number, fallbackText?: string, requiresApproval?: boolean } }[], edges: { from: string, to: string, label?: next | yes | no | on_event | on_timeout }[] }"
+          },
+          {
+            "key": "schedule",
+            "optional": true,
+            "type": "{ workingDays?: number[], startTime?: string, endTime?: string }",
+            "description": "The sending window."
+          },
+          {
+            "key": "limits",
+            "optional": true,
+            "type": "{ minGapSeconds?: number, maxGapSeconds?: number }",
+            "description": "The gap between two actions, in seconds. Defaults 30 to 60."
+          },
+          {
+            "key": "suppressionPolicy",
+            "optional": true,
+            "type": "{ bypassSuppressionReasons?: (manual | unsubscribed | not_interested | existing_customer | open_opportunity | competitor | employee | invalid_recipient | complained | recently_contacted | unresponsive)[], cooldownDays?: number, unresponsiveAfterTouches?: number, autoSuppressKeywords?: string[] }",
+            "description": "Who the campaign skips and when a lead counts as unresponsive."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, status?: string | null, startedAt?: string | null, pausedAt?: string | null, archivedAt?: string | null, enrollmentCount?: number | null, progress?: number | null, createdAt?: string | null, updatedAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "needle.api.compose.preview",
+      "shortPath": "compose.preview",
+      "description": "Preview an AI-composed message for a lead without sending it, with the context sources it used",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "linkedin | instagram"
+          },
+          {
+            "key": "connectedAccountId",
+            "optional": false,
+            "type": "string",
+            "description": "The connected account the message would be sent from."
+          },
+          {
+            "key": "identity",
+            "optional": false,
+            "type": "string",
+            "description": "Who the message is for: a LinkedIn identifier, path, URL or user id, or an Instagram username, handle or URL."
+          },
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string",
+            "description": "What the message should say, in plain instructions."
+          },
+          {
+            "key": "context",
+            "optional": true,
+            "type": "(profile | posts | conversation | lead_properties)[]",
+            "description": "What the composer may read. Defaults at the provider to conversation only."
+          },
+          {
+            "key": "maxChars",
+            "optional": true,
+            "type": "number",
+            "description": "An upper bound on the message length."
+          },
+          {
+            "key": "leadProperties",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Facts about the lead the composer may use."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ contextUsed?: { source?: string | null, cached?: boolean | null }[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "needle.api.leads.create",
+      "shortPath": "leads.create",
+      "description": "Create a lead with a LinkedIn or Instagram identity; a duplicate identity is refused with 409, so use leads.upsert to merge instead",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identities",
+            "optional": false,
+            "type": "{ linkedin?: string, instagram?: string }"
+          },
+          {
+            "key": "timezone",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyDomain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "imageUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Custom properties, as a name-to-string map."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lead",
+            "optional": false,
+            "type": "{ id?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, companyDomain?: string | null, jobTitle?: string | null, email?: string | null, imageUrl?: string | null, timezone?: string | null, identities?: { channel?: string | null, channelIdentity?: string | null }[] | null, liveEnrollment?: { campaignId?: string | null, status?: string | null, stepId?: string | null } | null, properties?: Record<string, string> | null, createdAt?: string | null, updatedAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "needle.api.leads.delete",
+      "shortPath": "leads.delete",
+      "description": "Delete a lead and its identities permanently; there is no restore call",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "needle.api.leads.get",
+      "shortPath": "leads.get",
+      "description": "Read one lead by id, with its identities and live enrollment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lead",
+            "optional": false,
+            "type": "{ id?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, companyDomain?: string | null, jobTitle?: string | null, email?: string | null, imageUrl?: string | null, timezone?: string | null, identities?: { channel?: string | null, channelIdentity?: string | null }[] | null, liveEnrollment?: { campaignId?: string | null, status?: string | null, stepId?: string | null } | null, properties?: Record<string, string> | null, createdAt?: string | null, updatedAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "needle.api.leads.list",
+      "shortPath": "leads.list",
+      "description": "Page through the workspace’s leads by cursor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "The nextCursor from a prior page."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leads",
+            "optional": false,
+            "type": "{ id?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, companyDomain?: string | null, jobTitle?: string | null, email?: string | null, imageUrl?: string | null, timezone?: string | null, identities?: { channel?: string | null, channelIdentity?: string | null }[] | null, liveEnrollment?: { campaignId?: string | null, status?: string | null, stepId?: string | null } | null, properties?: Record<string, string> | null, createdAt?: string | null, updatedAt?: string | null }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass as `cursor` for the next page; null on the last one."
+          }
+        ]
+      }
+    },
+    {
+      "path": "needle.api.leads.search",
+      "shortPath": "leads.search",
+      "description": "Search leads by free text and structured filters, combined with AND, paged by cursor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "Free text. Every word must appear in the name, email, company, domain, job title or a profile handle."
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ field: string, operator: eq | neq | in | not_in | contains | not_contains | starts_with | gt | gte | lt | lte | before | after | on | between | is_set | is_not_set, value?: string | number | boolean | (string | number)[] }[]",
+            "description": "Every filter must match. Combined with `query` as AND."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leads",
+            "optional": false,
+            "type": "{ id?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, companyDomain?: string | null, jobTitle?: string | null, email?: string | null, imageUrl?: string | null, timezone?: string | null, identities?: { channel?: string | null, channelIdentity?: string | null }[] | null, liveEnrollment?: { campaignId?: string | null, status?: string | null, stepId?: string | null } | null, properties?: Record<string, string> | null, createdAt?: string | null, updatedAt?: string | null }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass as `cursor` for the next page; null on the last one."
+          }
+        ]
+      }
+    },
+    {
+      "path": "needle.api.leads.update",
+      "shortPath": "leads.update",
+      "description": "Patch a lead’s fields by id; sending identities replaces the whole set rather than adding to it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "string",
+            "description": "The lead to update."
+          },
+          {
+            "key": "identities",
+            "optional": true,
+            "type": "{ linkedin?: string, instagram?: string }"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "IANA time zone used for the sending window, e.g. Europe/London."
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyDomain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "imageUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Custom properties, as a name-to-string map."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lead",
+            "optional": false,
+            "type": "{ id?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, companyDomain?: string | null, jobTitle?: string | null, email?: string | null, imageUrl?: string | null, timezone?: string | null, identities?: { channel?: string | null, channelIdentity?: string | null }[] | null, liveEnrollment?: { campaignId?: string | null, status?: string | null, stepId?: string | null } | null, properties?: Record<string, string> | null, createdAt?: string | null, updatedAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "needle.api.leads.upsert",
+      "shortPath": "leads.upsert",
+      "description": "Create the lead, or patch the fields onto the one an identity already belongs to, reporting created or matched",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identities",
+            "optional": false,
+            "type": "{ linkedin?: string, instagram?: string }"
+          },
+          {
+            "key": "timezone",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyDomain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "imageUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Custom properties, as a name-to-string map."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "created for a new lead, matched when an identity already belonged to one and the fields were patched onto it."
+          },
+          {
+            "key": "lead",
+            "optional": false,
+            "type": "{ id?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, companyDomain?: string | null, jobTitle?: string | null, email?: string | null, imageUrl?: string | null, timezone?: string | null, identities?: { channel?: string | null, channelIdentity?: string | null }[] | null, liveEnrollment?: { campaignId?: string | null, status?: string | null, stepId?: string | null } | null, properties?: Record<string, string> | null, createdAt?: string | null, updatedAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "needle.api.places.search",
+      "shortPath": "places.search",
+      "description": "Search places by free text or around a point, returning addresses, coordinates and websites",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "Free text such as \"dentists in Munich\"."
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ latitude: number, longitude: number }",
+            "description": "Centre point for a nearby search."
+          },
+          {
+            "key": "radiusMeters",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string",
+            "description": "Place type for a nearby search, e.g. restaurant."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "The cursor from the previous text-search page. Nearby search does not page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hits",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, formattedAddress?: string | null, city?: string | null, region?: string | null, country?: string | null, postalCode?: string | null, location?: { latitude?: number | null, longitude?: number | null } | null, googleMapsUrl?: string | null, websiteUrl?: string | null }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass as `cursor` for the next text-search page; absent on the last."
+          },
+          {
+            "key": "remainingUsage",
+            "optional": true,
+            "type": "any",
+            "description": "What is left of the account's places quota."
+          }
+        ]
+      }
+    },
+    {
+      "path": "needle.api.suppressions.check",
+      "shortPath": "suppressions.check",
+      "description": "Check up to 1000 identities against the suppression list and answer contactable with the reason when not",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identities",
+            "optional": false,
+            "type": "{ channel: linkedin | instagram, identity: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ channel?: string | null, identity?: string | null, decision?: { contactable: boolean, reason?: string | null, source?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "needle.api.suppressions.create",
+      "shortPath": "suppressions.create",
+      "description": "Suppress up to 1000 leads or company domains, with counts for what was created and what was already listed",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "({ scope: lead, leadId: string, reason: manual | unsubscribed | not_interested | existing_customer | open_opportunity | competitor | employee | invalid_recipient | complained | recently_contacted | unresponsive, note?: string, expiresAt?: string | null } | { scope: company, companyDomain: string, reason: manual | unsubscribed | not_interested | existing_customer | open_opportunity | competitor | employee | invalid_recipient | complained | recently_contacted | unresponsive, note?: string, expiresAt?: string | null })[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "created",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "alreadyListed",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "needle.api.suppressions.delete",
+      "shortPath": "suppressions.delete",
+      "description": "Remove a suppression entry, which makes that person or domain contactable again",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suppressionId",
+            "optional": false,
+            "type": "string",
+            "description": "The suppression entry to delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "needle.api.suppressions.list",
+      "shortPath": "suppressions.list",
+      "description": "Page through suppression entries, optionally filtered by reason",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "manual | unsubscribed | not_interested | existing_customer | open_opportunity | competitor | employee | invalid_recipient | complained | recently_contacted | unresponsive"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suppressions",
+            "optional": false,
+            "type": "{ id?: string | null, scope?: string | null, leadId?: string | null, companyDomain?: string | null, reason?: string | null, note?: string | null, expiresAt?: string | null, createdAt?: string | null }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

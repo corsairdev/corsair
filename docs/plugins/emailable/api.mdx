@@ -1,0 +1,236 @@
+---
+title: "Emailable API reference"
+sidebarTitle: "API"
+description: "API reference for the Emailable plugin in Corsair: every `emailable.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Get the credits left on the account. The owner email is not stored.
+
+**Risk:** `read`
+
+```ts
+await corsair.emailable.api.account.get({});
+```
+
+**Input:** _empty object_
+
+`GET /v1/account`. Stores available credits. The owner email is not stored.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="account full type">
+
+```ts
+{
+  id: account,
+  availableCredits?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Batches
+
+### create
+
+`batches.create`
+
+Start verifying a list of up to 50,000 addresses. Uses one credit per address. Poll batches.get for the results.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.emailable.api.batches.create({ emails: ['deliverable@example.com', 'risky@example.com'], url: 'https://example.com/emailable-results' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emails` | `string[]` | Yes | — |
+| `url` | `string` | No | HTTPS URL Emailable POSTs the results to when the batch finishes. |
+| `responseFields` | `(accept_all \| birth_year \| did_you_mean \| disposable \| domain \| email \| first_name \| free \| full_name \| gender \| last_name \| mailbox_full \| mx_record \| no_reply \| reason \| role \| score \| smtp_provider \| state \| tag \| user)[]` | No | Only return these fields per address. |
+| `retries` | `boolean` | No | Retry unclear mail-server answers (default true). Off is faster. |
+
+`POST /v1/batch` with a JSON body. Stores the batch id and message.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batch` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="batch full type">
+
+```ts
+{
+  id: string,
+  message?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`batches.get`
+
+Get a batch: progress, counts per state and reason, and each address's result (up to 1,000 addresses) or a download link (larger batches).
+
+**Risk:** `read`
+
+```ts
+await corsair.emailable.api.batches.get({ id: '6afc45aa1b2c3d4e5f607182' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `partial` | `boolean` | No | Return results verified so far (batches of up to 1,000 only). |
+
+`GET /v1/batch`. Results per address for batches up to 1,000, a download link above that.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batch` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="batch full type">
+
+```ts
+{
+  id: string,
+  message?: string,
+  processed?: number,
+  total?: number,
+  done: boolean,
+  emails?: {
+    email?: string,
+    state?: string | null,
+    reason?: string | null,
+    score?: number | null,
+    domain?: string | null,
+    user?: string | null,
+    tag?: string | null,
+    did_you_mean?: string | null,
+    accept_all?: boolean | null,
+    disposable?: boolean | null,
+    free?: boolean | null,
+    role?: boolean | null,
+    no_reply?: boolean | null,
+    mailbox_full?: boolean | null,
+    smtp_provider?: string | null,
+    mx_record?: string | null,
+    duration?: number | null
+  }[],
+  downloadFile?: string,
+  totalCounts?: Record<string, number>,
+  reasonCounts?: Record<string, number>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Verifications
+
+### verify
+
+`verifications.verify`
+
+Verify one email address: state (deliverable, undeliverable, risky, unknown), reason, score, and flags such as disposable, free, role and accept-all, plus a did-you-mean suggestion. Uses one credit. If `pending` is true, call again within 5 minutes at no extra cost.
+
+**Risk:** `read`
+
+```ts
+await corsair.emailable.api.verifications.verify({ email: 'deliverable@example.com', smtp: true, timeout: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `smtp` | `boolean` | No | Run the SMTP check (default true). Off is faster but less accurate. |
+| `acceptAll` | `boolean` | No | Also run the accept-all check (default false). Slower. |
+| `timeout` | `number` | No | Seconds to wait for a result (2-10, default 5). |
+
+`GET /v1/verify`. Stores the address, state, score, and reason. HTTP 249 returns pending.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `verification` | `object` | No | — |
+| `pending` | `boolean` | Yes | True when Emailable is still verifying (HTTP 249). Call again within 5 minutes; repeats in that window are free. |
+| `message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="verification full type">
+
+```ts
+{
+  email: string,
+  state?: string | null,
+  reason?: string | null,
+  score?: number | null,
+  domain?: string | null,
+  user?: string | null,
+  tag?: string | null,
+  did_you_mean?: string | null,
+  accept_all?: boolean | null,
+  disposable?: boolean | null,
+  free?: boolean | null,
+  role?: boolean | null,
+  no_reply?: boolean | null,
+  mailbox_full?: boolean | null,
+  smtp_provider?: string | null,
+  mx_record?: string | null,
+  duration?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

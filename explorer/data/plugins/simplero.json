@@ -1,0 +1,1510 @@
+{
+  "id": "simplero",
+  "displayName": "Simplero",
+  "description": "Email marketing and online courses from Simplero - manage contacts, email lists, tags and products, read purchases and subscriptions, and tag contacts or unsubscribe them from a list.",
+  "npmPackageName": "@corsair-dev/simplero",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 27,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "simplero.api.customers.addTag",
+      "shortPath": "customers.addTag",
+      "description": "Add one tag or a list of tags to a contact, which can start the automations that tag is attached to",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A Simplero integer id."
+          },
+          {
+            "key": "tag_id",
+            "optional": true,
+            "type": "number",
+            "description": "One tag to add or remove."
+          },
+          {
+            "key": "tag_ids",
+            "optional": true,
+            "type": "number[]",
+            "description": "Several tags to add or remove."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ success: boolean, message?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplero.api.customers.adjustLeadScore",
+      "shortPath": "customers.adjustLeadScore",
+      "description": "Add to a contact's lead score and record the change in their history; customers.update replaces the score instead",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A Simplero integer id."
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number",
+            "description": "Added to the stored score (negative to subtract), unlike customers.update which replaces it."
+          },
+          {
+            "key": "explanation",
+            "optional": true,
+            "type": "string",
+            "description": "Why the score changed, shown in the contact's history."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ success: boolean, message?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplero.api.customers.create",
+      "shortPath": "customers.create",
+      "description": "Create a contact. Email and lead score are the required pair; a score sent here replaces rather than adds",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first_names",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "The address Simplero matches the contact on."
+          },
+          {
+            "key": "alternative_emails",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "do_not_contact",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "do_not_sms",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "gdpr_consent",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "lead_score",
+            "optional": false,
+            "type": "number",
+            "description": "Setting it replaces the score. Use customers.adjustLeadScore to add to it instead."
+          },
+          {
+            "key": "field_value_ids",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, first_names?: string | null, last_name?: string | null, email?: string | null, alternative_emails?: string[] | null, phone_number?: string | null, do_not_contact?: boolean | null, do_not_sms?: boolean | null, locale?: string | null, gdpr_consent?: boolean | null, lead_score?: number | null, lifetime_value_cents_excl_tax?: number | null, lead_acquisition_cost_cents_excl_tax?: number | null, customer_acquisition_cost_cents_excl_tax?: number | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplero.api.customers.get",
+      "shortPath": "customers.get",
+      "description": "Read one contact: their name, email, phone, locale, consent flags, lead score and lifetime value",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A Simplero integer id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, first_names?: string | null, last_name?: string | null, email?: string | null, alternative_emails?: string[] | null, phone_number?: string | null, do_not_contact?: boolean | null, do_not_sms?: boolean | null, locale?: string | null, gdpr_consent?: boolean | null, lead_score?: number | null, lifetime_value_cents_excl_tax?: number | null, lead_acquisition_cost_cents_excl_tax?: number | null, customer_acquisition_cost_cents_excl_tax?: number | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplero.api.customers.list",
+      "shortPath": "customers.list",
+      "description": "List contacts with filters for name, email, tag, segment, list, product and stage; page by number or continue with `after`",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1. Ignored when `after` is set."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, 1 to 100. Defaults to 20."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "number",
+            "description": "Cursor paging: pass the last id of the previous page to get the next one. `total` and `total_pages` are null when this is used."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Search, matching the fields the route documents."
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string",
+            "description": "A date filter such as 2026-01-01..2026-01-31."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_names",
+            "optional": true,
+            "type": "string",
+            "description": "Matches the first names."
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "segment_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "customers | leads | clients",
+            "description": "Only contacts at this stage."
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "list_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "product_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, first_names?: string | null, last_name?: string | null, email?: string | null, alternative_emails?: string[] | null, phone_number?: string | null, do_not_contact?: boolean | null, do_not_sms?: boolean | null, locale?: string | null, gdpr_consent?: boolean | null, lead_score?: number | null, lifetime_value_cents_excl_tax?: number | null, lead_acquisition_cost_cents_excl_tax?: number | null, customer_acquisition_cost_cents_excl_tax?: number | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page?: number | null, per_page?: number | null, total?: number | null, total_pages?: number | null, next_after?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplero.api.customers.removeTag",
+      "shortPath": "customers.removeTag",
+      "description": "Remove one tag or a list of tags from a contact, which can stop the automations that tag is attached to",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A Simplero integer id."
+          },
+          {
+            "key": "tag_id",
+            "optional": true,
+            "type": "number",
+            "description": "One tag to add or remove."
+          },
+          {
+            "key": "tag_ids",
+            "optional": true,
+            "type": "number[]",
+            "description": "Several tags to add or remove."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ success: boolean, message?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplero.api.customers.update",
+      "shortPath": "customers.update",
+      "description": "Change part of a contact. Only the fields sent change, so an omitted field keeps its stored value",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A Simplero integer id."
+          },
+          {
+            "key": "first_names",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "The address Simplero matches the contact on."
+          },
+          {
+            "key": "alternative_emails",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "do_not_contact",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "do_not_sms",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "gdpr_consent",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "lead_score",
+            "optional": true,
+            "type": "number",
+            "description": "Setting it replaces the score. Use customers.adjustLeadScore to add to it instead."
+          },
+          {
+            "key": "field_value_ids",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, first_names?: string | null, last_name?: string | null, email?: string | null, alternative_emails?: string[] | null, phone_number?: string | null, do_not_contact?: boolean | null, do_not_sms?: boolean | null, locale?: string | null, gdpr_consent?: boolean | null, lead_score?: number | null, lifetime_value_cents_excl_tax?: number | null, lead_acquisition_cost_cents_excl_tax?: number | null, customer_acquisition_cost_cents_excl_tax?: number | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplero.api.lists.create",
+      "shortPath": "lists.create",
+      "description": "Create an email list. Name and internal name are both required by Simplero",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "internal_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "show_in_admin",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "require_confirmation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sender_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sender_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "label_ids",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, token?: string | null, name?: string | null, internal_name?: string | null, handle?: string | null, labels?: { id?: number | null, name?: string | null, color?: string | null }[] | null, show_in_admin?: boolean | null, require_confirmation?: boolean | null, sender_name?: string | null, sender_email?: string | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplero.api.lists.get",
+      "shortPath": "lists.get",
+      "description": "Read one list with its sender, confirmation settings and labels",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A Simplero integer id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, token?: string | null, name?: string | null, internal_name?: string | null, handle?: string | null, labels?: { id?: number | null, name?: string | null, color?: string | null }[] | null, show_in_admin?: boolean | null, require_confirmation?: boolean | null, sender_name?: string | null, sender_email?: string | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplero.api.lists.list",
+      "shortPath": "lists.list",
+      "description": "List the email lists on the account with their names and handles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1. Ignored when `after` is set."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, 1 to 100. Defaults to 20."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "number",
+            "description": "Cursor paging: pass the last id of the previous page to get the next one. `total` and `total_pages` are null when this is used."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Search, matching the fields the route documents."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, token?: string | null, name?: string | null, internal_name?: string | null, handle?: string | null, labels?: { id?: number | null, name?: string | null, color?: string | null }[] | null, show_in_admin?: boolean | null, require_confirmation?: boolean | null, sender_name?: string | null, sender_email?: string | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page?: number | null, per_page?: number | null, total?: number | null, total_pages?: number | null, next_after?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplero.api.lists.update",
+      "shortPath": "lists.update",
+      "description": "Change part of a list, such as its name, sender or whether signups need confirmation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A Simplero integer id."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "internal_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "handle",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "show_in_admin",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "require_confirmation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sender_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sender_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "label_ids",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, token?: string | null, name?: string | null, internal_name?: string | null, handle?: string | null, labels?: { id?: number | null, name?: string | null, color?: string | null }[] | null, show_in_admin?: boolean | null, require_confirmation?: boolean | null, sender_name?: string | null, sender_email?: string | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplero.api.products.create",
+      "shortPath": "products.create",
+      "description": "Create a product. Name and internal name are both required by Simplero",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "internal_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subtitle",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "short_description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "long_description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "listing_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "product_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "show_in_admin",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "label_ids",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, token?: string | null, name?: string | null, internal_name?: string | null, subtitle?: string | null, summary?: string | null, short_description?: string | null, long_description?: string | null, listing_type?: string | null, product_type?: string | null, labels?: { id?: number | null, name?: string | null, color?: string | null }[] | null, show_in_admin?: boolean | null, recurring?: boolean | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplero.api.products.get",
+      "shortPath": "products.get",
+      "description": "Read one product with its descriptions, listing type and product type",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A Simplero integer id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, token?: string | null, name?: string | null, internal_name?: string | null, subtitle?: string | null, summary?: string | null, short_description?: string | null, long_description?: string | null, listing_type?: string | null, product_type?: string | null, labels?: { id?: number | null, name?: string | null, color?: string | null }[] | null, show_in_admin?: boolean | null, recurring?: boolean | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplero.api.products.list",
+      "shortPath": "products.list",
+      "description": "List the products on the account, filtered by name, listing type or whether they recur",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1. Ignored when `after` is set."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, 1 to 100. Defaults to 20."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "number",
+            "description": "Cursor paging: pass the last id of the previous page to get the next one. `total` and `total_pages` are null when this is used."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Search, matching the fields the route documents."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "listing_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recurring",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, token?: string | null, name?: string | null, internal_name?: string | null, subtitle?: string | null, summary?: string | null, short_description?: string | null, long_description?: string | null, listing_type?: string | null, product_type?: string | null, labels?: { id?: number | null, name?: string | null, color?: string | null }[] | null, show_in_admin?: boolean | null, recurring?: boolean | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page?: number | null, per_page?: number | null, total?: number | null, total_pages?: number | null, next_after?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplero.api.products.update",
+      "shortPath": "products.update",
+      "description": "Change part of a product, such as its name, summary or listing type",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A Simplero integer id."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "internal_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subtitle",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "short_description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "long_description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "listing_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "product_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "show_in_admin",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "label_ids",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, token?: string | null, name?: string | null, internal_name?: string | null, subtitle?: string | null, summary?: string | null, short_description?: string | null, long_description?: string | null, listing_type?: string | null, product_type?: string | null, labels?: { id?: number | null, name?: string | null, color?: string | null }[] | null, show_in_admin?: boolean | null, recurring?: boolean | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplero.api.purchases.get",
+      "shortPath": "purchases.get",
+      "description": "Read one purchase with its state, amounts, buyer details and dates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A Simplero integer id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, token?: string | null, customer_id?: number | null, product_id?: number | null, price_id?: number | null, state?: string | null, email?: string | null, first_names?: string | null, last_name?: string | null, currency_code?: string | null, country_code?: string | null, received_price_cents?: number | null, purchased_at?: string | null, canceled_at?: string | null, refunded_at?: string | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplero.api.purchases.list",
+      "shortPath": "purchases.list",
+      "description": "List purchases with filters for state, customer, product, price and the purchase, cancel and refund dates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1. Ignored when `after` is set."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, 1 to 100. Defaults to 20."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "number",
+            "description": "Cursor paging: pass the last id of the previous page to get the next one. `total` and `total_pages` are null when this is used."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Search, matching the fields the route documents."
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "product_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "price_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "purchased_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "canceled_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "refunded_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subscription",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, token?: string | null, customer_id?: number | null, product_id?: number | null, price_id?: number | null, state?: string | null, email?: string | null, first_names?: string | null, last_name?: string | null, currency_code?: string | null, country_code?: string | null, received_price_cents?: number | null, purchased_at?: string | null, canceled_at?: string | null, refunded_at?: string | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page?: number | null, per_page?: number | null, total?: number | null, total_pages?: number | null, next_after?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplero.api.purchases.update",
+      "shortPath": "purchases.update",
+      "description": "Change a purchase's buyer details and marketing preferences. Money movements (refund, cancel, capture, change price) are separate actions and are not wrapped",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A Simplero integer id."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "first_names",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "vat_no",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address_2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "postal_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "region_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "wants_marketing",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "wants_notifications",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "utm_source",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utm_medium",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utm_campaign",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, token?: string | null, customer_id?: number | null, product_id?: number | null, price_id?: number | null, state?: string | null, email?: string | null, first_names?: string | null, last_name?: string | null, currency_code?: string | null, country_code?: string | null, received_price_cents?: number | null, purchased_at?: string | null, canceled_at?: string | null, refunded_at?: string | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplero.api.subscriptions.get",
+      "shortPath": "subscriptions.get",
+      "description": "Read one subscription with whether it is active and confirmed, and when it was unsubscribed or suspended",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A Simplero integer id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, token?: string | null, list_id?: number | null, customer_id?: number | null, active?: boolean | null, confirmed?: boolean | null, first_activated_at?: string | null, unsubscribed_at?: string | null, suspended_at?: string | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplero.api.subscriptions.list",
+      "shortPath": "subscriptions.list",
+      "description": "List list subscriptions with filters for state, list, tag, email and the unsubscribe date",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1. Ignored when `after` is set."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, 1 to 100. Defaults to 20."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "number",
+            "description": "Cursor paging: pass the last id of the previous page to get the next one. `total` and `total_pages` are null when this is used."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Search, matching the fields the route documents."
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "list_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tag_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_names",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unsubscribed_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, token?: string | null, list_id?: number | null, customer_id?: number | null, active?: boolean | null, confirmed?: boolean | null, first_activated_at?: string | null, unsubscribed_at?: string | null, suspended_at?: string | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page?: number | null, per_page?: number | null, total?: number | null, total_pages?: number | null, next_after?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplero.api.subscriptions.resubscribe",
+      "shortPath": "subscriptions.resubscribe",
+      "description": "Put an unsubscribed contact back on a list, so they receive its mailings again",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A Simplero integer id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ success: boolean, message?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplero.api.subscriptions.unsubscribe",
+      "shortPath": "subscriptions.unsubscribe",
+      "description": "Unsubscribe a contact from a list; they stop receiving its mailings. Resubscribe puts them back",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A Simplero integer id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ success: boolean, message?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplero.api.subscriptions.update",
+      "shortPath": "subscriptions.update",
+      "description": "Change a subscription's tracking data. Whether a contact is subscribed changes through unsubscribe or resubscribe, not this body",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A Simplero integer id."
+          },
+          {
+            "key": "track",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utm_source",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utm_medium",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utm_campaign",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utm_content",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utm_term",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, token?: string | null, list_id?: number | null, customer_id?: number | null, active?: boolean | null, confirmed?: boolean | null, first_activated_at?: string | null, unsubscribed_at?: string | null, suspended_at?: string | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplero.api.tags.create",
+      "shortPath": "tags.create",
+      "description": "Create a tag, which contacts can then be tagged with",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "show_in_admin",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "label_ids",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, token?: string | null, name?: string | null, description?: string | null, color?: string | null, labels?: { id?: number | null, name?: string | null, color?: string | null }[] | null, show_in_admin?: boolean | null, undeleted_customers_count?: number | null, last_tagging_at?: string | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplero.api.tags.get",
+      "shortPath": "tags.get",
+      "description": "Read one tag with its colour, owner and how many contacts carry it",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A Simplero integer id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, token?: string | null, name?: string | null, description?: string | null, color?: string | null, labels?: { id?: number | null, name?: string | null, color?: string | null }[] | null, show_in_admin?: boolean | null, undeleted_customers_count?: number | null, last_tagging_at?: string | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplero.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "List the tags on the account, optionally only those one owner created",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1. Ignored when `after` is set."
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, 1 to 100. Defaults to 20."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "number",
+            "description": "Cursor paging: pass the last id of the previous page to get the next one. `total` and `total_pages` are null when this is used."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Search, matching the fields the route documents."
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, token?: string | null, name?: string | null, description?: string | null, color?: string | null, labels?: { id?: number | null, name?: string | null, color?: string | null }[] | null, show_in_admin?: boolean | null, undeleted_customers_count?: number | null, last_tagging_at?: string | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page?: number | null, per_page?: number | null, total?: number | null, total_pages?: number | null, next_after?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "simplero.api.tags.update",
+      "shortPath": "tags.update",
+      "description": "Change part of a tag, such as its name, description or colour",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "A Simplero integer id."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "show_in_admin",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "label_ids",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, token?: string | null, name?: string | null, description?: string | null, color?: string | null, labels?: { id?: number | null, name?: string | null, color?: string | null }[] | null, show_in_admin?: boolean | null, undeleted_customers_count?: number | null, last_tagging_at?: string | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -1,0 +1,1159 @@
+{
+  "id": "niftyimages",
+  "displayName": "NiftyImages",
+  "description": "Read NiftyImages images, widgets, maps and Photoshop images with their open stats, manage Data Store records, map locations and widget or Bee Plugin users, move countdown timer dates, and edit Photoshop layers.",
+  "npmPackageName": "@corsair-dev/niftyimages",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 27,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "niftyimages.api.beePlugin.suspendUser",
+      "shortPath": "beePlugin.suspendUser",
+      "description": "Suspend or reinstate a Bee Plugin user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pluginKey",
+            "optional": false,
+            "type": "string",
+            "description": "The Bee Plugin key from the NiftyImages app."
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string",
+            "description": "The Bee Plugin user name."
+          },
+          {
+            "key": "suspend",
+            "optional": false,
+            "type": "boolean",
+            "description": "true suspends the user, false lifts the suspension."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "niftyimages.api.beePlugin.userImages",
+      "shortPath": "beePlugin.userImages",
+      "description": "List the images one Bee Plugin user made over a window",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pluginKey",
+            "optional": false,
+            "type": "string",
+            "description": "The Bee Plugin key from the NiftyImages app."
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string",
+            "description": "The Bee Plugin user name."
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "The first instant to include."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "The last instant to include."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "images",
+            "optional": false,
+            "type": "{ ImageID?: number | string | null, ImageType?: string | null, Name?: string | null, UserName?: string | null, Opens?: number | string | null, Uri?: string | null, Status?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "niftyimages.api.beePlugin.users",
+      "shortPath": "beePlugin.users",
+      "description": "List Bee Plugin users with their image and open counts over a window",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pluginKey",
+            "optional": false,
+            "type": "string",
+            "description": "The Bee Plugin key from the NiftyImages app."
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "The first instant to include."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "The last instant to include."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ UserName?: string | null, Images?: number | null, Opens?: number | string | null, Status?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "niftyimages.api.images.delete",
+      "shortPath": "images.delete",
+      "description": "Delete an image or timer by URL; emails that embed it stop showing it",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The image URL from NiftyImages, e.g. https://img1.niftyimages.com/p/lop/m7w."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "niftyimages.api.images.get",
+      "shortPath": "images.get",
+      "description": "Read one image or timer by its URL: type, opens, dates and whether it is active",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The image URL from NiftyImages, e.g. https://img1.niftyimages.com/p/lop/m7w."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Opens",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "Clicks",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "ImageType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CreateDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "LastUpdated",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Active",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "niftyimages.api.images.list",
+      "shortPath": "images.list",
+      "description": "Page through every personalized image and countdown timer in the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 10."
+          },
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 1."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "images",
+            "optional": false,
+            "type": "{ Name?: string | null, Url?: string | null, Opens?: number | string | null, Clicks?: number | string | null, ImageType?: string | null, CreateDate?: string | null, LastUpdated?: string | null, Active?: boolean | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "niftyimages.api.images.stats",
+      "shortPath": "images.stats",
+      "description": "Opens per image over a date range (the last 30 days by default)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "The first instant to include."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "The last instant to include."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "images",
+            "optional": false,
+            "type": "{ Name?: string | null, Url?: string | null, Opens?: number | string | null, Clicks?: number | string | null, ImageType?: string | null, CreateDate?: string | null, LastUpdated?: string | null, Active?: boolean | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "niftyimages.api.maps.addLocation",
+      "shortPath": "maps.addLocation",
+      "description": "Add a location to a map by address or coordinates, with custom properties",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The map image URL."
+          },
+          {
+            "key": "Address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Latitude",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Longitude",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "LocationID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Properties",
+            "optional": true,
+            "type": "{ Name: string, Value: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "msg",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "niftyimages.api.maps.deleteLocation",
+      "shortPath": "maps.deleteLocation",
+      "description": "Remove a location from a map",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The map image URL."
+          },
+          {
+            "key": "locationID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "niftyID",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "niftyimages.api.maps.get",
+      "shortPath": "maps.get",
+      "description": "Read one map: how many locations are searchable, failed or queued, plus opens and clicks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The image URL from NiftyImages, e.g. https://img1.niftyimages.com/p/lop/m7w."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "LocationsGood",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "LocationsBad",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "LocationsNotProcessed",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Opens",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "Clicks",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "CreateDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "LastUpdated",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "niftyimages.api.maps.list",
+      "shortPath": "maps.list",
+      "description": "List the map images in the account with their opens",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "images",
+            "optional": false,
+            "type": "{ Name?: string | null, Url?: string | null, Opens?: number | string | null, Clicks?: number | string | null, ImageType?: string | null, CreateDate?: string | null, LastUpdated?: string | null, Active?: boolean | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "niftyimages.api.maps.searchLocations",
+      "shortPath": "maps.searchLocations",
+      "description": "Find locations in a map by address, location id, NiftyID or latitude and longitude",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The map image URL to search."
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locationID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lng",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "niftyID",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "locations",
+            "optional": false,
+            "type": "{ NiftyID?: string | null, LocationID?: string | number | null, Address?: string | null, Latitude?: number | null, Longitude?: number | null, Properties?: { Name?: string | null, Value?: string | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "niftyimages.api.maps.updateLocation",
+      "shortPath": "maps.updateLocation",
+      "description": "Change a map location found by NiftyID or location id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The map image URL."
+          },
+          {
+            "key": "NiftyID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Latitude",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Longitude",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "LocationID",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Properties",
+            "optional": true,
+            "type": "{ Name: string, Value: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "msg",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "niftyimages.api.psd.get",
+      "shortPath": "psd.get",
+      "description": "Read a Photoshop image: its text variables and every layer with its type and settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The image URL from NiftyImages, e.g. https://img1.niftyimages.com/p/lop/m7w."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Variables",
+            "optional": true,
+            "type": "{ Name?: string | null, DefaultValue?: string | null }[] | null"
+          },
+          {
+            "key": "Layers",
+            "optional": true,
+            "type": "{ LayerName?: string | null, LayerType?: string | null, Hide?: boolean | null }[] | null"
+          },
+          {
+            "key": "LastUpdated",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Active",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "niftyimages.api.psd.update",
+      "shortPath": "psd.update",
+      "description": "Change a Photoshop image: rename it, set variable defaults, or edit layers by name (text, colours, images, visibility)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The Photoshop image URL."
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Variables",
+            "optional": true,
+            "type": "{ Name: string, DefaultValue: string }[]"
+          },
+          {
+            "key": "Layers",
+            "optional": true,
+            "type": "{ LayerName: string, Hide?: boolean, TextValue?: string, TextColor?: string, ShapeColor?: string, ImageUrl?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Variables",
+            "optional": true,
+            "type": "{ Name?: string | null, DefaultValue?: string | null }[] | null"
+          },
+          {
+            "key": "Layers",
+            "optional": true,
+            "type": "{ LayerName?: string | null, LayerType?: string | null, Hide?: boolean | null }[] | null"
+          },
+          {
+            "key": "LastUpdated",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Active",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "niftyimages.api.store.addRecord",
+      "shortPath": "store.addRecord",
+      "description": "Add a Data Store record, or update the one whose unique fields match",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "record",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "The record, keyed by Data Store field name (see store.fields). A record whose unique fields match an existing one updates it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "record",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "niftyimages.api.store.deleteById",
+      "shortPath": "store.deleteById",
+      "description": "Delete a Data Store record by its id (the value of its unique field)",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number",
+            "description": "The record id: the value of its unique field."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "niftyimages.api.store.deleteRecord",
+      "shortPath": "store.deleteRecord",
+      "description": "Delete the Data Store record whose unique fields match the ones given",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "record",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "The record, keyed by Data Store field name (see store.fields). A record whose unique fields match an existing one updates it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "niftyimages.api.store.fields",
+      "shortPath": "store.fields",
+      "description": "List the Data Store fields with their types and which ones are unique",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{ name?: string | null, type?: string | null, unique?: boolean | null, date_input_format?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "niftyimages.api.timers.updateTargetDate",
+      "shortPath": "timers.updateTargetDate",
+      "description": "Move a countdown timer to a new target date, optionally shifted by hours, days or months",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "TimerImageUrl",
+            "optional": false,
+            "type": "string",
+            "description": "The countdown timer image URL."
+          },
+          {
+            "key": "TargetDate",
+            "optional": false,
+            "type": "string",
+            "description": "The new date to count down to, ISO 8601 unless Format is set."
+          },
+          {
+            "key": "Format",
+            "optional": true,
+            "type": "string",
+            "description": "The date format of TargetDate when it is not ISO 8601."
+          },
+          {
+            "key": "IsUtc",
+            "optional": true,
+            "type": "boolean",
+            "description": "True to convert TargetDate into the timer's own time zone."
+          },
+          {
+            "key": "AddHours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "AddDays",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "AddMonths",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "TimerImageUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TimerTimezone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UpdatedTargetUtc",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UpdatedTargetTimezone",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "niftyimages.api.widgets.images",
+      "shortPath": "widgets.images",
+      "description": "List the images a widget generated in a time window, with each image’s URL and own counts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "widgetKey",
+            "optional": false,
+            "type": "string",
+            "description": "The widget key, a GUID from widgets.list."
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "The first instant to include."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "The last instant to include."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "images",
+            "optional": false,
+            "type": "{ ImageID?: number | string | null, ImageType?: string | null, Name?: string | null, User?: string | null, Impressions?: number | null, Suspended?: boolean | null, Uri?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "niftyimages.api.widgets.list",
+      "shortPath": "widgets.list",
+      "description": "List the account’s widgets with their names and keys, which every other widget call needs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "The first instant to include."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "The last instant to include."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "widgets",
+            "optional": false,
+            "type": "{ Name?: string | null, WidgetKey?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "niftyimages.api.widgets.stats",
+      "shortPath": "widgets.stats",
+      "description": "Read per-widget user, image and impression counts for a time window, for every widget at once",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "The first instant to include."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "The last instant to include."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stats",
+            "optional": false,
+            "type": "{ WidgetKey?: string | null, Name?: string | null, Active?: boolean | null, Users?: number | null, Images?: number | null, Impressions?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "niftyimages.api.widgets.suspendUser",
+      "shortPath": "widgets.suspendUser",
+      "description": "Suspend or reinstate a widget user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "widgetKey",
+            "optional": false,
+            "type": "string",
+            "description": "The widget key, a GUID from widgets.list."
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string",
+            "description": "The widget user, from widgets.users."
+          },
+          {
+            "key": "suspend",
+            "optional": false,
+            "type": "boolean",
+            "description": "true suspends the user, false lifts the suspension."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "niftyimages.api.widgets.userImages",
+      "shortPath": "widgets.userImages",
+      "description": "List the images a widget generated for one recipient",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "widgetKey",
+            "optional": false,
+            "type": "string",
+            "description": "The widget key, a GUID from widgets.list."
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string",
+            "description": "The user id or email to read images for."
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "The first instant to include."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "The last instant to include."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "images",
+            "optional": false,
+            "type": "{ ImageID?: number | string | null, ImageType?: string | null, Name?: string | null, User?: string | null, Impressions?: number | null, Suspended?: boolean | null, Uri?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "niftyimages.api.widgets.users",
+      "shortPath": "widgets.users",
+      "description": "List the users one widget recorded in a time window, with their image and impression counts and whether they are suspended",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "widgetKey",
+            "optional": false,
+            "type": "string",
+            "description": "The widget key, a GUID from widgets.list."
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "The first instant to include."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "The last instant to include."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ User?: string | null, Images?: number | null, Impressions?: number | null, Suspended?: boolean | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "niftyimages.api.widgets.userStats",
+      "shortPath": "widgets.userStats",
+      "description": "Read aggregated stats for one recipient of one widget",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "widgetKey",
+            "optional": false,
+            "type": "string",
+            "description": "The widget key, a GUID from widgets.list."
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string",
+            "description": "The user id or email the widget recorded for the recipient."
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "The first instant to include."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "The last instant to include."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stats",
+            "optional": false,
+            "type": "{ User?: string | null, Images?: number | null, Impressions?: number | null, Suspended?: boolean | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

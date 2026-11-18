@@ -1,3 +1,4 @@
+import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
 
 // ── Shared sub-schemas ────────────────────────────────────────────────────────
@@ -246,7 +247,7 @@ const FilesDeleteResponseSchema = z.object({
 	success: z.boolean(),
 });
 
-const FilesDownloadResponseSchema = z.string();
+const FilesDownloadResponseSchema = FileOutputSchema;
 
 const FilesSearchResponseSchema = z.object({
 	total_count: z.number().optional(),

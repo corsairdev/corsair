@@ -4,6 +4,22 @@ import { GEMINI_API_BASE, makeGeminiRequest } from '../client';
 import type { VideoFile, VideoOperation } from '../schema/videos';
 import type { GetVideosOperationResponse, WaitForVideoResponse } from './types';
 
+/**
+ * Where a Veo operation stands, as one value a job can be followed by. Done
+ * counts as SUCCEEDED only with the video file waitForVideo downloads (the
+ * first sample's video.uri), so a job never succeeds without one.
+ */
+export function videoOperationState(
+	operation: VideoOperation,
+): GetVideosOperationResponse['state'] {
+	if (operation.error) return 'FAILED';
+	if (!operation.done) return 'RUNNING';
+	return operation.response?.generateVideoResponse?.generatedSamples?.[0]?.video
+		?.uri
+		? 'SUCCEEDED'
+		: 'FAILED';
+}
+
 type VideoFileResult =
 	| { ok: true; videoFile: VideoFile }
 	| { ok: false; code?: number; message?: string };
@@ -38,7 +54,7 @@ export const getVideosOperation: GeminiEndpoints['getVideosOperation'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeGeminiRequest<GetVideosOperationResponse>(
+	const response = await makeGeminiRequest<VideoOperation>(
 		`/${input.operationName}`,
 		ctx.key,
 		{ method: 'GET' },
@@ -51,7 +67,7 @@ export const getVideosOperation: GeminiEndpoints['getVideosOperation'] = async (
 		{ ...input },
 		response.error ? 'failed' : 'completed',
 	);
-	return response;
+	return { ...response, state: videoOperationState(response) };
 };
 
 async function fetchVideoFile(
@@ -103,7 +119,7 @@ export const waitForVideo: GeminiEndpoints['waitForVideo'] = async (
 ) => {
 	const deadline = Date.now() + input.timeoutMs;
 
-	let operation = await makeGeminiRequest<GetVideosOperationResponse>(
+	let operation = await makeGeminiRequest<VideoOperation>(
 		`/${input.operationName}`,
 		ctx.key,
 		{ method: 'GET' },
@@ -115,7 +131,7 @@ export const waitForVideo: GeminiEndpoints['waitForVideo'] = async (
 		Date.now() + input.pollIntervalMs <= deadline
 	) {
 		await new Promise((resolve) => setTimeout(resolve, input.pollIntervalMs));
-		operation = await makeGeminiRequest<GetVideosOperationResponse>(
+		operation = await makeGeminiRequest<VideoOperation>(
 			`/${input.operationName}`,
 			ctx.key,
 			{ method: 'GET' },

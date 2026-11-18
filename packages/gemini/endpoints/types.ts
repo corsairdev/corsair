@@ -165,7 +165,7 @@ export type GenerateVideosResponse = z.infer<
 >;
 
 // ─────────────────────────────────────────────────────────────────────────────
-// GEMINI_GET_VIDEOS_OPERATION (deprecated — prefer GEMINI_WAIT_FOR_VIDEO)
+// GEMINI_GET_VIDEOS_OPERATION
 // ─────────────────────────────────────────────────────────────────────────────
 
 const GetVideosOperationInputSchema = z.object({
@@ -177,7 +177,23 @@ export type GetVideosOperationInput = z.infer<
 	typeof GetVideosOperationInputSchema
 >;
 
-const GetVideosOperationResponseSchema = VideoOperationSchema;
+// Google's operation says only whether it is `done` and, if it failed, an
+// `error`. The read adds a `state` string so a job has one value to follow.
+// A done operation with no generated sample ended without a video (the safety
+// filter removed them all), so it is FAILED too.
+export const VIDEO_OPERATION_STATES = [
+	'RUNNING',
+	'SUCCEEDED',
+	'FAILED',
+] as const;
+
+const GetVideosOperationResponseSchema = VideoOperationSchema.extend({
+	state: z
+		.enum(VIDEO_OPERATION_STATES)
+		.describe(
+			'RUNNING until the operation is done; then SUCCEEDED with a generated video, or FAILED with an error or no video',
+		),
+});
 export type GetVideosOperationResponse = z.infer<
 	typeof GetVideosOperationResponseSchema
 >;

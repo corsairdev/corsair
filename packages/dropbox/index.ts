@@ -154,7 +154,11 @@ const dropboxEndpointMeta = {
 		riskLevel: 'destructive',
 		description: 'Delete a file',
 	},
-	'files.download': { riskLevel: 'read', description: 'Download a file' },
+	'files.download': {
+		riskLevel: 'read',
+		description:
+			'Download a file. A text file comes back as text, any other file as base64, up to about 700 KB; size and type are always returned.',
+	},
 	'files.move': {
 		riskLevel: 'write',
 		description: 'Move a file to a new location',

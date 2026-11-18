@@ -1,0 +1,100 @@
+displayName: NiftyImages
+description: Read NiftyImages images, widgets, maps and Photoshop images with their open stats, manage Data Store records, map locations and widget or Bee Plugin users, move countdown timer dates, and edit Photoshop layers.
+domain: niftyimages.com
+recommendedAuth: api_key
+overviewNote: |
+  The API key comes from the NiftyImages account. NiftyImages sells the Developer API on its Enterprise plan; a free or Starter account has no key. The plugin sends the key in the `ApiKey` header, one of the transports the docs allow, so it never appears in a URL a proxy would log.
+
+  What each group does:
+
+  - **Images.** `images.list` pages through every personalized image and countdown timer, `images.stats` reports opens over a window, and `images.get` and `images.delete` take the image's URL.
+  - **Timers.** `timers.updateTargetDate` moves a countdown timer's deadline.
+  - **Data Store.** `store.fields` lists the fields, `store.addRecord` adds a record or updates the one whose unique fields match, and `store.deleteById` and `store.deleteRecord` remove one.
+  - **Maps.** `maps.list`, `maps.get` and `maps.searchLocations` read maps; `maps.addLocation`, `maps.updateLocation` and `maps.deleteLocation` change their locations, which NiftyImages geocodes in the background.
+  - **Photoshop images.** `psd.get` lists the variables and layers, and `psd.update` edits layers by `LayerName` (text, colours, images, visibility).
+  - **Widgets and Bee Plugin.** List widgets and their stats, users and images, and suspend or reinstate a widget or Bee Plugin user.
+
+  Things worth knowing:
+
+  - **Lists answer bare arrays.** `widgets.list` sends `[{ "Name": "...", "WidgetKey": "..." }]` with no envelope, so the plugin keys each list (`widgets`, `images`, `fields`, `locations`). A non-array body means an error rather than an empty page.
+  - **Property names are PascalCase**, as sent: `WidgetKey`, `Impressions`, `CreateDate`. Only the Data Store field list is lowercase (`name`, `type`, `unique`).
+  - **`Opens` is a string in lists and a number on one image.** Both are accepted.
+  - **Images, maps and Photoshop images are addressed by their image URL**, e.g. `https://img1.niftyimages.com/p/lop/m7w`, passed as `url`.
+  - **Deletes, suspends and Data Store deletes answer an empty 200.** The plugin reports `{ success: true }`.
+  - **Every date is ISO 8601**, e.g. `2016-03-12T08:00Z`. Stats windows default to the last 30 days.
+  - **A user or recipient goes in the path**, usually an email address, so the plugin percent-encodes it.
+  - **A wrong path can answer an HTML page rather than JSON**, which is reported as a path problem.
+examples:
+  read:
+    path: images.list
+    title: Page through the account's images
+    args:
+      pageSize: 10
+  write:
+    path: timers.updateTargetDate
+    title: Move a countdown timer
+    args:
+      TimerImageUrl: https://img1.niftyimages.com/z/qwcd/ywcd
+      TargetDate: "2026-12-24T00:00:00Z"
+apiExamples:
+  widgets.list:
+    call: "{}"
+  widgets.stats:
+    call: "{ startDate: '2016-02-10T08:00Z', endDate: '2016-03-10T08:00Z' }"
+  widgets.users:
+    call: "{ widgetKey: '153607b3-da74-48ed-a579-d2d2430a7578' }"
+  widgets.userStats:
+    call: "{ widgetKey: '153607b3-da74-48ed-a579-d2d2430a7578', user: 'jordan@acme-logistics.com' }"
+  widgets.images:
+    call: "{ widgetKey: '153607b3-da74-48ed-a579-d2d2430a7578' }"
+  widgets.userImages:
+    call: "{ widgetKey: '153607b3-da74-48ed-a579-d2d2430a7578', user: 'jordan@acme-logistics.com' }"
+  widgets.suspendUser:
+    call: "{ widgetKey: '153607b3-da74-48ed-a579-d2d2430a7578', user: 'jordan@acme-logistics.com', suspend: true }"
+  beePlugin.users:
+    call: "{ pluginKey: 'YOUR_PLUGIN_KEY' }"
+  beePlugin.userImages:
+    call: "{ pluginKey: 'YOUR_PLUGIN_KEY', user: 'Test User' }"
+  beePlugin.suspendUser:
+    call: "{ pluginKey: 'YOUR_PLUGIN_KEY', user: 'Test User', suspend: false }"
+  images.list:
+    call: "{ pageSize: 10, pageNumber: 1 }"
+  images.stats:
+    call: "{ startDate: '2016-03-01', endDate: '2016-04-01' }"
+  images.get:
+    call: "{ url: 'https://img1.niftyimages.com/p/lop/m7w' }"
+  images.delete:
+    call: "{ url: 'https://img1.niftyimages.com/p/lop/m7w' }"
+  timers.updateTargetDate:
+    call: "{ TimerImageUrl: 'https://img1.niftyimages.com/z/qwcd/ywcd', TargetDate: '2026-12-24T00:00:00Z' }"
+  store.fields:
+    call: "{}"
+  store.addRecord:
+    call: "{ record: { EmployeeID: 3, First: 'John', Last: 'Dutton' } }"
+  store.deleteById:
+    call: "{ id: 3 }"
+  store.deleteRecord:
+    call: "{ record: { EmployeeID: 3 } }"
+  maps.list:
+    call: "{}"
+  maps.get:
+    call: "{ url: 'https://img1.niftyimages.com/p/lop/m7w' }"
+  maps.searchLocations:
+    call: "{ url: 'https://img1.niftyimages.com/p/lop/m7w', address: 'San Francisco' }"
+  maps.addLocation:
+    call: "{ url: 'https://img1.niftyimages.com/p/lop/m7w', Address: '5411 3rd St, San Francisco, CA 94124', LocationID: '22' }"
+  maps.updateLocation:
+    call: "{ url: 'https://img1.niftyimages.com/p/lop/m7w', LocationID: '22', Properties: [{ Name: 'Phone', Value: '(415) 555-0100' }] }"
+  maps.deleteLocation:
+    call: "{ url: 'https://img1.niftyimages.com/p/lop/m7w', locationID: '22' }"
+  psd.get:
+    call: "{ url: 'https://img1.niftyimages.com/p/lop/m7w' }"
+  psd.update:
+    call: "{ url: 'https://img1.niftyimages.com/p/lop/m7w', Layers: [{ LayerName: 'StockPrice', TextValue: '25,149.30' }] }"
+apiNotes:
+  widgets.list: 'Answers a bare array of widgets with Name and WidgetKey, which the plugin keys as `widgets`.'
+  widgets.stats: 'Reads AllStats, so one call covers every widget.'
+  widgets.userStats: 'The user is percent-encoded into the path, because it is usually an email address.'
+  store.addRecord: 'Updates the existing record when its unique fields match; keys that are not Data Store fields are ignored.'
+  images.delete: 'Emails that embed the image stop showing it.'
+  maps.addLocation: 'Address maps take Address; latitude/longitude maps take Latitude and Longitude. Geocoding runs in the background.'
