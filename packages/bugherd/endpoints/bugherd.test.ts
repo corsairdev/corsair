@@ -27,10 +27,12 @@ jest.mock('corsair/http', () => {
 const mockRequest = jest.mocked(request);
 const mockLog = jest.mocked(logEventFromContext);
 
-function table() {
+function table(saved: Record<string, unknown> | null = null) {
 	return {
 		upsertByEntityId: jest.fn().mockResolvedValue(undefined),
 		deleteByEntityId: jest.fn().mockResolvedValue(true),
+		findByEntityId: jest.fn().mockResolvedValue(saved ? { data: saved } : null),
+		search: jest.fn().mockResolvedValue([]),
 	};
 }
 
@@ -656,12 +658,29 @@ describe('attachments', () => {
 			method: 'POST',
 			url: '/projects/1/tasks/2/attachments/upload',
 			query: { file_name: 'note.txt' },
-			mediaType: 'text/plain',
 		});
+		expect(options?.mediaType).toBeUndefined();
 		expect(options?.formData).toBeUndefined();
 		const body = options?.body as Blob;
 		expect(body).toBeInstanceOf(Blob);
+		expect(body.type).toBe('text/plain');
 		expect(await body.text()).toBe('hello');
+	});
+
+	it('tasks.uploadAttachment sends a JSON file as bytes, not re-encoded', async () => {
+		// With a JSON mediaType core would JSON.stringify the Blob ("{}").
+		mockRequest.mockResolvedValue({ attachment: ATTACHMENT });
+		await B.uploadAttachment(context(), {
+			project_id: 1,
+			task_id: 2,
+			file: {
+				base64: Buffer.from('{"a":1}').toString('base64'),
+				filename: 'data.json',
+				contentType: 'application/json',
+			},
+		});
+		expect(call()?.mediaType).toBeUndefined();
+		expect(await (call()?.body as Blob).text()).toBe('{"a":1}');
 	});
 
 	it('tasks.deleteAttachment removes the local row', async () => {
@@ -780,10 +799,100 @@ describe('webhooks', () => {
 	});
 });
 
+describe('local storage', () => {
+	it('a short list row keeps fields a detail read saved', async () => {
+		const db = tables();
+		db.projects = table({ id: '552668', name: 'old', is_active: true });
+		mockRequest.mockResolvedValue({ projects: [LIST_PROJECT] });
+		await B.listProjects(context(db), {});
+		expect(db.projects.upsertByEntityId).toHaveBeenCalledWith(
+			'552668',
+			expect.objectContaining({
+				name: "Corsair's First Project",
+				is_active: true,
+			}),
+		);
+	});
+
+	it('tasks.delete removes saved comments and attachments of the task', async () => {
+		const db = tables();
+		db.comments.search.mockResolvedValue([{ entity_id: '8801' }]);
+		db.attachments.search.mockResolvedValue([{ entity_id: '331' }]);
+		mockRequest.mockResolvedValue({ success: true });
+		await B.deleteTask(context(db), { project_id: 1, task_id: 98765 });
+		expect(db.comments.search).toHaveBeenCalledWith(
+			expect.objectContaining({ data: { task_id: 98765 } }),
+		);
+		expect(db.comments.deleteByEntityId).toHaveBeenCalledWith('8801');
+		expect(db.attachments.deleteByEntityId).toHaveBeenCalledWith('331');
+	});
+
+	it('projects.delete removes its saved tasks, their comments, and its columns', async () => {
+		const db = tables();
+		db.tasks.search.mockResolvedValue([{ entity_id: '98765' }]);
+		db.columns.search.mockResolvedValue([{ entity_id: '2387619' }]);
+		db.comments.search.mockResolvedValue([{ entity_id: '8801' }]);
+		mockRequest.mockResolvedValue({ success: true });
+		await B.deleteProject(context(db), { project_id: 7 });
+		expect(db.tasks.deleteByEntityId).toHaveBeenCalledWith('98765');
+		expect(db.columns.deleteByEntityId).toHaveBeenCalledWith('2387619');
+		expect(db.comments.deleteByEntityId).toHaveBeenCalledWith('8801');
+	});
+
+	it("tasks.move drops the moved tasks' saved rows", async () => {
+		const db = tables();
+		db.tasks.search.mockResolvedValue([{ entity_id: '98765' }]);
+		mockRequest.mockResolvedValue({ success: true });
+		await B.moveTasks(context(db), {
+			project_id: 1,
+			destination_project_id: 2,
+			task_ids: [4],
+		});
+		expect(db.tasks.search).toHaveBeenCalledWith(
+			expect.objectContaining({ data: { project_id: 1, local_task_id: 4 } }),
+		);
+		expect(db.tasks.deleteByEntityId).toHaveBeenCalledWith('98765');
+	});
+});
+
+describe('validation', () => {
+	it('rejects bad input before calling BugHerd', async () => {
+		const plugin = bugherd();
+		await expect(
+			plugin.endpoints!.projects.addGuest(context(), {
+				project_id: 1,
+			} as never),
+		).rejects.toThrow();
+		await expect(
+			plugin.endpoints!.tasks.list(context(), {
+				project_id: 1,
+				priority: 'high',
+			} as never),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('checks the response against the output schema', async () => {
+		mockRequest.mockResolvedValue({ task: { title: 'no id' } });
+		await expect(
+			bugherd().endpoints!.tasks.show(context(), { task_id: 1 }),
+		).rejects.toThrow();
+	});
+
+	it('passes valid input through', async () => {
+		mockRequest.mockResolvedValue({ task: TASK });
+		const out = await bugherd().endpoints!.tasks.show(context(), {
+			task_id: 98765,
+		});
+		expect(out.task.id).toBe(98765);
+	});
+});
+
 describe('plugin wiring', () => {
 	it('has a schema for every endpoint', () => {
 		const plugin = bugherd();
-		const paths = Object.entries(plugin.endpoints).flatMap(([group, ops]) =>
+		const groups = plugin.endpoints as Record<string, Record<string, unknown>>;
+		const paths = Object.entries(groups).flatMap(([group, ops]) =>
 			Object.keys(ops).map((op) => `${group}.${op}`),
 		);
 		expect(paths.sort()).toEqual(Object.keys(bugherdEndpointSchemas).sort());
@@ -817,7 +926,7 @@ describe('plugin wiring', () => {
 			keys: { get_api_key: jest.fn().mockResolvedValue(null) },
 		};
 		await expect(
-			plugin.keyBuilder(ctx as never, 'endpoint'),
+			plugin.keyBuilder?.(ctx as never, 'endpoint'),
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 
@@ -827,7 +936,7 @@ describe('plugin wiring', () => {
 			authType: 'api_key',
 			keys: { get_api_key: jest.fn().mockResolvedValue('stored') },
 		};
-		await expect(plugin.keyBuilder(ctx as never, 'endpoint')).resolves.toBe(
+		await expect(plugin.keyBuilder?.(ctx as never, 'endpoint')).resolves.toBe(
 			'stored',
 		);
 	});
