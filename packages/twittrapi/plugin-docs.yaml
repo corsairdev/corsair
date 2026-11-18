@@ -20,7 +20,7 @@ overviewNote: |
 examples:
   read:
     path: tweets.search
-    title: Search the latest tweets from an account
+    title: Search tweets from an account
     args:
       searchItem: 'from:XDevelopers'
       count: 20
