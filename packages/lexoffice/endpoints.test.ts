@@ -92,9 +92,13 @@ describe('Contacts endpoints', () => {
 
 		const result = await Contacts.get(ctx, { id: 'c-123' });
 		expect(result).toEqual(mockContact);
-		expect(mockedRequest).toHaveBeenCalledWith('/contacts/c-123', 'test-api-key', {
-			method: 'GET',
-		});
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/contacts/c-123',
+			'test-api-key',
+			{
+				method: 'GET',
+			},
+		);
 		expect(mockedLogEvent).toHaveBeenCalledWith(
 			ctx,
 			'lexoffice.contacts.get',
@@ -145,14 +149,18 @@ describe('Contacts endpoints', () => {
 		};
 		const result = await Contacts.update(ctx, input);
 		expect(result).toEqual(mutationResponse);
-		expect(mockedRequest).toHaveBeenCalledWith('/contacts/c-123', 'test-api-key', {
-			method: 'PUT',
-			body: {
-				version: 0,
-				roles: { customer: { number: 101 } },
-				person: { lastName: 'Updated' },
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/contacts/c-123',
+			'test-api-key',
+			{
+				method: 'PUT',
+				body: {
+					version: 0,
+					roles: { customer: { number: 101 } },
+					person: { lastName: 'Updated' },
+				},
 			},
-		});
+		);
 		expect(mockedLogEvent).toHaveBeenCalledWith(
 			ctx,
 			'lexoffice.contacts.update',
@@ -217,9 +225,13 @@ describe('Invoices endpoints', () => {
 
 		const result = await Invoices.get(ctx, { id: 'inv-1' });
 		expect(result).toEqual(mockInvoice);
-		expect(mockedRequest).toHaveBeenCalledWith('/invoices/inv-1', 'test-api-key', {
-			method: 'GET',
-		});
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/invoices/inv-1',
+			'test-api-key',
+			{
+				method: 'GET',
+			},
+		);
 		expect(mockedLogEvent).toHaveBeenCalledWith(
 			ctx,
 			'lexoffice.invoices.get',
@@ -261,7 +273,11 @@ describe('Invoices endpoints', () => {
 					{
 						type: 'custom',
 						name: 'Service',
-						unitPrice: { currency: 'EUR', netAmount: 100, taxRatePercentage: 19 },
+						unitPrice: {
+							currency: 'EUR',
+							netAmount: 100,
+							taxRatePercentage: 19,
+						},
 					},
 				],
 				totalPrice: { currency: 'EUR' },
@@ -349,9 +365,13 @@ describe('Vouchers endpoints', () => {
 
 		const result = await Vouchers.get(ctx, { id: 'v-1' });
 		expect(result).toEqual(mockVoucher);
-		expect(mockedRequest).toHaveBeenCalledWith('/vouchers/v-1', 'test-api-key', {
-			method: 'GET',
-		});
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/vouchers/v-1',
+			'test-api-key',
+			{
+				method: 'GET',
+			},
+		);
 		expect(mockedLogEvent).toHaveBeenCalledWith(
 			ctx,
 			'lexoffice.vouchers.get',
@@ -439,10 +459,14 @@ describe('CreditNotes endpoints', () => {
 
 		const result = await CreditNotes.list(ctx, { page: 0 });
 		expect(result).toEqual(mockResponse);
-		expect(mockedRequest).toHaveBeenCalledWith('/credit-notes', 'test-api-key', {
-			method: 'GET',
-			query: { page: 0 },
-		});
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/credit-notes',
+			'test-api-key',
+			{
+				method: 'GET',
+				query: { page: 0 },
+			},
+		);
 		expect(mockedLogEvent).toHaveBeenCalledWith(
 			ctx,
 			'lexoffice.creditNotes.list',

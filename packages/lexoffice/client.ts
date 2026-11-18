@@ -104,7 +104,9 @@ export function redactSensitiveData(value: unknown): unknown {
 export function sanitizeApiError(error: ApiError): ApiError {
 	const sanitizedRequest: ApiRequestOptions = {
 		...error.request,
-		body: error.request?.body ? redactSensitiveData(error.request.body) : undefined,
+		body: error.request?.body
+			? redactSensitiveData(error.request.body)
+			: undefined,
 	};
 	const sanitizedResponse: ApiResult = {
 		status: error.status,
@@ -113,17 +115,12 @@ export function sanitizeApiError(error: ApiError): ApiError {
 		ok: error.status >= 200 && error.status < 300,
 		body: error.body ? redactSensitiveData(error.body) : undefined,
 	};
-	return new ApiError(
-		sanitizedRequest,
-		sanitizedResponse,
-		error.message,
-		{
-			retryAfter: error.retryAfter,
-			rateLimitReset: error.rateLimitReset,
-			rateLimitRemaining: error.rateLimitRemaining,
-			rateLimitLimit: error.rateLimitLimit,
-		},
-	);
+	return new ApiError(sanitizedRequest, sanitizedResponse, error.message, {
+		retryAfter: error.retryAfter,
+		rateLimitReset: error.rateLimitReset,
+		rateLimitRemaining: error.rateLimitRemaining,
+		rateLimitLimit: error.rateLimitLimit,
+	});
 }
 
 export type LexofficeRequestOptions = {

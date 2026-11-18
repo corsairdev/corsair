@@ -106,7 +106,9 @@ describe('Lexoffice endpoint schemas', () => {
 
 	it('validates invoices schemas', () => {
 		expect(InvoicesListInputSchema.safeParse({ page: 0 }).success).toBe(true);
-		expect(InvoicesGetInputSchema.safeParse({ id: 'inv-1' }).success).toBe(true);
+		expect(InvoicesGetInputSchema.safeParse({ id: 'inv-1' }).success).toBe(
+			true,
+		);
 
 		const invoiceCreate = {
 			voucherDate: '2026-01-01',
@@ -121,7 +123,9 @@ describe('Lexoffice endpoint schemas', () => {
 			totalPrice: { currency: 'EUR' },
 			taxConditions: { taxType: 'net' as const },
 		};
-		expect(InvoiceCreateInputSchema.safeParse(invoiceCreate).success).toBe(true);
+		expect(InvoiceCreateInputSchema.safeParse(invoiceCreate).success).toBe(
+			true,
+		);
 		expect(
 			InvoiceCreateInputSchema.safeParse({
 				...invoiceCreate,
@@ -187,7 +191,9 @@ describe('Lexoffice endpoint schemas', () => {
 			],
 			version: 0,
 		};
-		expect(VoucherCreateInputSchema.safeParse(voucherCreate).success).toBe(true);
+		expect(VoucherCreateInputSchema.safeParse(voucherCreate).success).toBe(
+			true,
+		);
 
 		const voucherDetails = {
 			id: 'v-1',
@@ -230,7 +236,9 @@ describe('Lexoffice endpoint schemas', () => {
 			ProfileGetResponseSchema.safeParse({ organizationId: 'org-1' }).success,
 		).toBe(true);
 
-		expect(CreditNotesListInputSchema.safeParse({ page: 0 }).success).toBe(true);
+		expect(CreditNotesListInputSchema.safeParse({ page: 0 }).success).toBe(
+			true,
+		);
 		expect(CreditNotesGetInputSchema.safeParse({ id: 'cn-1' }).success).toBe(
 			true,
 		);

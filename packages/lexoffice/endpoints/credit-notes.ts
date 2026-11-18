@@ -1,10 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { LexofficeEndpoints } from '..';
 import { makeLexofficeRequest } from '../client';
-import type {
-	CreditNoteDetails,
-	CreditNotesListResponse,
-} from './types';
+import type { CreditNoteDetails, CreditNotesListResponse } from './types';
 import {
 	LexofficeEndpointInputSchemas,
 	LexofficeEndpointOutputSchemas,
@@ -14,7 +11,8 @@ export const list: LexofficeEndpoints['creditNotesList'] = async (
 	ctx,
 	input,
 ) => {
-	const parsedInput = LexofficeEndpointInputSchemas.creditNotesList.parse(input);
+	const parsedInput =
+		LexofficeEndpointInputSchemas.creditNotesList.parse(input);
 	const response = await makeLexofficeRequest<CreditNotesListResponse>(
 		'/credit-notes',
 		ctx.key,

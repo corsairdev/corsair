@@ -196,8 +196,7 @@ const lexofficeEndpointMeta = {
 	},
 	'invoices.render': {
 		riskLevel: 'read',
-		description:
-			'Render an invoice PDF and retrieve its document file ID',
+		description: 'Render an invoice PDF and retrieve its document file ID',
 	},
 	'vouchers.list': {
 		riskLevel: 'read',
@@ -224,7 +223,9 @@ const lexofficeEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Retrieve credit note details by ID',
 	},
-} as const satisfies RequiredPluginEndpointMeta<typeof lexofficeEndpointsNested>;
+} as const satisfies RequiredPluginEndpointMeta<
+	typeof lexofficeEndpointsNested
+>;
 
 export const lexofficeAuthConfig = {
 	api_key: {},
@@ -240,7 +241,8 @@ export type BaseLexofficePlugin<T extends LexofficePluginOptions> =
 		typeof defaultAuthType
 	>;
 
-export type InternalLexofficePlugin = BaseLexofficePlugin<LexofficePluginOptions>;
+export type InternalLexofficePlugin =
+	BaseLexofficePlugin<LexofficePluginOptions>;
 
 export type ExternalLexofficePlugin<T extends LexofficePluginOptions> =
 	BaseLexofficePlugin<T>;
@@ -248,7 +250,8 @@ export type ExternalLexofficePlugin<T extends LexofficePluginOptions> =
 const PUBLIC_ENDPOINTS = new Set<string>();
 
 export function lexoffice<const T extends LexofficePluginOptions>(
-	incomingOptions: LexofficePluginOptions & T = {} as LexofficePluginOptions & T,
+	incomingOptions: LexofficePluginOptions & T = {} as LexofficePluginOptions &
+		T,
 ): ExternalLexofficePlugin<T> {
 	const options = {
 		...incomingOptions,

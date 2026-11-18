@@ -56,11 +56,11 @@ describe('Lexoffice error handlers', () => {
 	it('routes 406 to NOT_ACCEPTABLE_ERROR without retrying', async () => {
 		const error = apiError(406, 'Not Acceptable');
 		expect(route(error)).toBe('NOT_ACCEPTABLE_ERROR');
-		await expect(
-			errorHandlers.NOT_ACCEPTABLE_ERROR.handler(),
-		).resolves.toEqual({
-			maxRetries: 0,
-		});
+		await expect(errorHandlers.NOT_ACCEPTABLE_ERROR.handler()).resolves.toEqual(
+			{
+				maxRetries: 0,
+			},
+		);
 	});
 
 	it('routes 409 to CONFLICT_ERROR without retrying', async () => {
