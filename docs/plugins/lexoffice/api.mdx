@@ -1,0 +1,1385 @@
+---
+title: "Lexoffice API reference"
+sidebarTitle: "API"
+description: "API reference for the Lexoffice plugin in Corsair: every `lexoffice.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a new customer or vendor contact in Lexoffice
+
+**Risk:** `write`
+
+```ts
+await corsair.lexoffice.api.contacts.create({
+	version: 0,
+	roles: {
+		customer: {},
+	},
+	person: { lastName: 'Mustermann' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `version` | `number` | No | Defaults to 0. |
+| `roles` | `object` | Yes | — |
+| `person` | `object` | No | — |
+| `company` | `object` | No | — |
+| `addresses` | `object` | No | — |
+| `emailAddresses` | `object` | No | — |
+| `phoneNumbers` | `object` | No | — |
+| `note` | `string` | No | — |
+| `archived` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="roles full type">
+
+```ts
+{
+  customer?: {
+    number?: number
+  },
+  vendor?: {
+    number?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="person full type">
+
+```ts
+{
+  salutation?: string,
+  firstName?: string,
+  lastName: string
+}
+```
+</Accordion>
+
+<Accordion title="company full type">
+
+```ts
+{
+  name: string,
+  taxNumber?: string,
+  vatRegistrationId?: string,
+  allowTaxFreeInvoices?: boolean,
+  contactPersons?: {
+    salutation?: string,
+    firstName?: string,
+    lastName: string,
+    primary?: boolean,
+    emailAddress?: string,
+    phoneNumber?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="addresses full type">
+
+```ts
+{
+  billing?: {
+    name?: string,
+    supplement?: string,
+    street?: string,
+    city?: string,
+    zip?: string,
+    countryCode: string
+  }[],
+  shipping?: {
+    name?: string,
+    supplement?: string,
+    street?: string,
+    city?: string,
+    zip?: string,
+    countryCode: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="emailAddresses full type">
+
+```ts
+{
+  business?: string[],
+  office?: string[],
+  private?: string[],
+  other?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="phoneNumbers full type">
+
+```ts
+{
+  business?: string[],
+  office?: string[],
+  mobile?: string[],
+  private?: string[],
+  fax?: string[],
+  other?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `resourceUri` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `version` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Retrieve a Lexoffice contact by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.lexoffice.api.contacts.get({ id: 'c-00000000-0000-4000-8000-000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `organizationId` | `string` | No | — |
+| `version` | `number` | Yes | — |
+| `roles` | `object` | No | — |
+| `person` | `object` | No | — |
+| `company` | `object` | No | — |
+| `addresses` | `object` | No | — |
+| `emailAddresses` | `object` | No | — |
+| `phoneNumbers` | `object` | No | — |
+| `note` | `string` | No | — |
+| `archived` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="roles full type">
+
+```ts
+{
+  customer?: {
+    number?: number
+  },
+  vendor?: {
+    number?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="person full type">
+
+```ts
+{
+  salutation?: string,
+  firstName?: string,
+  lastName: string
+}
+```
+</Accordion>
+
+<Accordion title="company full type">
+
+```ts
+{
+  name: string,
+  taxNumber?: string,
+  vatRegistrationId?: string,
+  allowTaxFreeInvoices?: boolean,
+  contactPersons?: {
+    salutation?: string,
+    firstName?: string,
+    lastName: string,
+    primary?: boolean,
+    emailAddress?: string,
+    phoneNumber?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="addresses full type">
+
+```ts
+{
+  billing?: {
+    name?: string,
+    supplement?: string,
+    street?: string,
+    city?: string,
+    zip?: string,
+    countryCode: string
+  }[],
+  shipping?: {
+    name?: string,
+    supplement?: string,
+    street?: string,
+    city?: string,
+    zip?: string,
+    countryCode: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="emailAddresses full type">
+
+```ts
+{
+  business?: string[],
+  office?: string[],
+  private?: string[],
+  other?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="phoneNumbers full type">
+
+```ts
+{
+  business?: string[],
+  office?: string[],
+  mobile?: string[],
+  private?: string[],
+  fax?: string[],
+  other?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List and filter Lexoffice contacts with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.lexoffice.api.contacts.list({ page: 0, size: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `name` | `string` | No | — |
+| `number` | `number` | No | — |
+| `customer` | `boolean` | No | — |
+| `vendor` | `boolean` | No | — |
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `object[]` | Yes | — |
+| `first` | `boolean` | Yes | — |
+| `last` | `boolean` | Yes | — |
+| `totalPages` | `number` | Yes | — |
+| `totalElements` | `number` | Yes | — |
+| `numberOfElements` | `number` | Yes | — |
+| `size` | `number` | Yes | — |
+| `number` | `number` | Yes | — |
+| `sort` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  id: string,
+  organizationId?: string,
+  version: number,
+  roles?: {
+    customer?: {
+      number?: number
+    },
+    vendor?: {
+      number?: number
+    }
+  },
+  person?: {
+    salutation?: string,
+    firstName?: string,
+    lastName: string
+  },
+  company?: {
+    name: string,
+    taxNumber?: string,
+    vatRegistrationId?: string,
+    allowTaxFreeInvoices?: boolean,
+    contactPersons?: {
+      salutation?: string,
+      firstName?: string,
+      lastName: string,
+      primary?: boolean,
+      emailAddress?: string,
+      phoneNumber?: string
+    }[]
+  },
+  addresses?: {
+    billing?: {
+      name?: string,
+      supplement?: string,
+      street?: string,
+      city?: string,
+      zip?: string,
+      countryCode: string
+    }[],
+    shipping?: {
+      name?: string,
+      supplement?: string,
+      street?: string,
+      city?: string,
+      zip?: string,
+      countryCode: string
+    }[]
+  },
+  emailAddresses?: {
+    business?: string[],
+    office?: string[],
+    private?: string[],
+    other?: string[]
+  },
+  phoneNumbers?: {
+    business?: string[],
+    office?: string[],
+    mobile?: string[],
+    private?: string[],
+    fax?: string[],
+    other?: string[]
+  },
+  note?: string,
+  archived?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="sort full type">
+
+```ts
+{
+  property?: string,
+  direction?: string,
+  ignoreCase?: boolean,
+  nullHandling?: string,
+  ascending?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update an existing contact in Lexoffice
+
+**Risk:** `write`
+
+```ts
+await corsair.lexoffice.api.contacts.update({
+	id: 'c-00000000-0000-4000-8000-000000000001',
+	version: 1,
+	roles: {
+		customer: {},
+	},
+	person: { lastName: 'Mustermann' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `version` | `number` | Yes | — |
+| `roles` | `object` | Yes | — |
+| `person` | `object` | No | — |
+| `company` | `object` | No | — |
+| `addresses` | `object` | No | — |
+| `emailAddresses` | `object` | No | — |
+| `phoneNumbers` | `object` | No | — |
+| `note` | `string` | No | — |
+| `archived` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="roles full type">
+
+```ts
+{
+  customer?: {
+    number?: number
+  },
+  vendor?: {
+    number?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="person full type">
+
+```ts
+{
+  salutation?: string,
+  firstName?: string,
+  lastName: string
+}
+```
+</Accordion>
+
+<Accordion title="company full type">
+
+```ts
+{
+  name: string,
+  taxNumber?: string,
+  vatRegistrationId?: string,
+  allowTaxFreeInvoices?: boolean,
+  contactPersons?: {
+    salutation?: string,
+    firstName?: string,
+    lastName: string,
+    primary?: boolean,
+    emailAddress?: string,
+    phoneNumber?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="addresses full type">
+
+```ts
+{
+  billing?: {
+    name?: string,
+    supplement?: string,
+    street?: string,
+    city?: string,
+    zip?: string,
+    countryCode: string
+  }[],
+  shipping?: {
+    name?: string,
+    supplement?: string,
+    street?: string,
+    city?: string,
+    zip?: string,
+    countryCode: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="emailAddresses full type">
+
+```ts
+{
+  business?: string[],
+  office?: string[],
+  private?: string[],
+  other?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="phoneNumbers full type">
+
+```ts
+{
+  business?: string[],
+  office?: string[],
+  mobile?: string[],
+  private?: string[],
+  fax?: string[],
+  other?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `resourceUri` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `version` | `number` | No | — |
+
+
+
+---
+
+## Credit Notes
+
+### get
+
+`creditNotes.get`
+
+Retrieve credit note details by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.lexoffice.api.creditNotes.get({ id: 'cn-00000000-0000-4000-8000-000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `organizationId` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `version` | `number` | Yes | — |
+| `language` | `string` | No | — |
+| `archived` | `boolean` | No | — |
+| `voucherStatus` | `string` | Yes | — |
+| `voucherNumber` | `string` | No | — |
+| `voucherDate` | `string` | Yes | — |
+| `address` | `object` | No | — |
+| `lineItems` | `object[]` | No | — |
+| `totalPrice` | `object` | Yes | — |
+| `taxAmounts` | `object[]` | No | — |
+| `taxConditions` | `object` | No | — |
+| `title` | `string` | No | — |
+| `introduction` | `string` | No | — |
+| `remark` | `string` | No | — |
+| `files` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  contactId?: string,
+  name?: string,
+  supplement?: string,
+  street?: string,
+  city?: string,
+  zip?: string,
+  countryCode?: string
+}
+```
+</Accordion>
+
+<Accordion title="lineItems full type">
+
+```ts
+{
+  id?: string,
+  type: string,
+  name: string,
+  description?: string,
+  quantity?: number,
+  unitName?: string,
+  unitPrice?: {
+    currency: string,
+    netAmount: number,
+    grossAmount?: number,
+    taxRatePercentage: number
+  },
+  discountPercentage?: number,
+  lineItemAmount?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="totalPrice full type">
+
+```ts
+{
+  currency: string,
+  totalNetAmount?: number,
+  totalGrossAmount?: number,
+  totalTaxAmount?: number
+}
+```
+</Accordion>
+
+<Accordion title="taxAmounts full type">
+
+```ts
+{
+  taxRatePercentage: number,
+  taxAmount: number,
+  netAmount: number
+}[]
+```
+</Accordion>
+
+<Accordion title="taxConditions full type">
+
+```ts
+{
+  taxType: string,
+  taxTypeNote?: string
+}
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+{
+  documentFileId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`creditNotes.list`
+
+List credit notes with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.lexoffice.api.creditNotes.list({ page: 0, size: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `object[]` | Yes | — |
+| `first` | `boolean` | Yes | — |
+| `last` | `boolean` | Yes | — |
+| `totalPages` | `number` | Yes | — |
+| `totalElements` | `number` | Yes | — |
+| `numberOfElements` | `number` | Yes | — |
+| `size` | `number` | Yes | — |
+| `number` | `number` | Yes | — |
+| `sort` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  id: string,
+  voucherStatus: string,
+  voucherNumber?: string,
+  voucherDate: string,
+  createdDate?: string,
+  updatedDate?: string,
+  address?: {
+    name?: string,
+    city?: string,
+    countryCode?: string,
+    contactId?: string
+  },
+  totalPrice?: {
+    currency: string,
+    totalNetAmount?: number,
+    totalGrossAmount?: number,
+    totalTaxAmount?: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="sort full type">
+
+```ts
+{
+  property?: string,
+  direction?: string,
+  ignoreCase?: boolean,
+  nullHandling?: string,
+  ascending?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Invoices
+
+### create
+
+`invoices.create`
+
+Create an invoice in draft or finalized state
+
+**Risk:** `write`
+
+```ts
+await corsair.lexoffice.api.invoices.create({ voucherDate: '2026-01-01', address: { name: 'Acme Corp' }, lineItems: [{ type: 'custom', name: 'Consulting', unitPrice: { currency: 'EUR', netAmount: 100, taxRatePercentage: 19 } }], totalPrice: { currency: 'EUR' }, taxConditions: { taxType: 'net' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `finalize` | `boolean` | No | — |
+| `voucherDate` | `string` | Yes | — |
+| `address` | `object` | Yes | — |
+| `lineItems` | `object[]` | Yes | — |
+| `totalPrice` | `object` | Yes | — |
+| `taxConditions` | `object` | Yes | — |
+| `title` | `string` | No | — |
+| `introduction` | `string` | No | — |
+| `remark` | `string` | No | — |
+| `shippingConditions` | `object` | No | — |
+
+Invoices cannot be updated or deleted once created via the API due to accounting compliance regulations (GoBD).
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  contactId?: string,
+  name?: string,
+  supplement?: string,
+  street?: string,
+  city?: string,
+  zip?: string,
+  countryCode?: string
+}
+```
+</Accordion>
+
+<Accordion title="lineItems full type">
+
+```ts
+{
+  type: custom | text,
+  name: string,
+  description?: string,
+  quantity?: number,
+  unitName?: string,
+  unitPrice?: {
+    currency: string,
+    netAmount: number,
+    grossAmount?: number,
+    taxRatePercentage: number
+  },
+  discountPercentage?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="totalPrice full type">
+
+```ts
+{
+  currency: string
+}
+```
+</Accordion>
+
+<Accordion title="taxConditions full type">
+
+```ts
+{
+  taxType: net | gross | vatfree,
+  taxTypeNote?: string
+}
+```
+</Accordion>
+
+<Accordion title="shippingConditions full type">
+
+```ts
+{
+  shippingDate?: string,
+  shippingType?: service | delivery
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `resourceUri` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `version` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`invoices.get`
+
+Retrieve invoice details by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.lexoffice.api.invoices.get({ id: 'i-00000000-0000-4000-8000-000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `organizationId` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `version` | `number` | Yes | — |
+| `language` | `string` | No | — |
+| `archived` | `boolean` | No | — |
+| `voucherStatus` | `string` | Yes | — |
+| `voucherNumber` | `string` | No | — |
+| `voucherDate` | `string` | Yes | — |
+| `dueDate` | `string \| null` | No | — |
+| `address` | `object` | No | — |
+| `lineItems` | `object[]` | No | — |
+| `totalPrice` | `object` | Yes | — |
+| `taxAmounts` | `object[]` | No | — |
+| `taxConditions` | `object` | No | — |
+| `title` | `string` | No | — |
+| `introduction` | `string` | No | — |
+| `remark` | `string` | No | — |
+| `files` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  contactId?: string,
+  name?: string,
+  supplement?: string,
+  street?: string,
+  city?: string,
+  zip?: string,
+  countryCode?: string
+}
+```
+</Accordion>
+
+<Accordion title="lineItems full type">
+
+```ts
+{
+  id?: string,
+  type: string,
+  name: string,
+  description?: string,
+  quantity?: number,
+  unitName?: string,
+  unitPrice?: {
+    currency: string,
+    netAmount: number,
+    grossAmount?: number,
+    taxRatePercentage: number
+  },
+  discountPercentage?: number,
+  lineItemAmount?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="totalPrice full type">
+
+```ts
+{
+  currency: string,
+  totalNetAmount?: number,
+  totalGrossAmount?: number,
+  totalTaxAmount?: number
+}
+```
+</Accordion>
+
+<Accordion title="taxAmounts full type">
+
+```ts
+{
+  taxRatePercentage: number,
+  taxAmount: number,
+  netAmount: number
+}[]
+```
+</Accordion>
+
+<Accordion title="taxConditions full type">
+
+```ts
+{
+  taxType: string,
+  taxTypeNote?: string
+}
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+{
+  documentFileId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`invoices.list`
+
+List outgoing invoices with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.lexoffice.api.invoices.list({ page: 0, size: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `object[]` | Yes | — |
+| `first` | `boolean` | Yes | — |
+| `last` | `boolean` | Yes | — |
+| `totalPages` | `number` | Yes | — |
+| `totalElements` | `number` | Yes | — |
+| `numberOfElements` | `number` | Yes | — |
+| `size` | `number` | Yes | — |
+| `number` | `number` | Yes | — |
+| `sort` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  id: string,
+  voucherStatus: string,
+  voucherNumber?: string,
+  voucherDate: string,
+  createdDate?: string,
+  updatedDate?: string,
+  dueDate?: string | null,
+  address?: {
+    name?: string,
+    city?: string,
+    countryCode?: string,
+    contactId?: string
+  },
+  totalPrice?: {
+    currency: string,
+    totalNetAmount?: number,
+    totalGrossAmount?: number,
+    totalTaxAmount?: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="sort full type">
+
+```ts
+{
+  property?: string,
+  direction?: string,
+  ignoreCase?: boolean,
+  nullHandling?: string,
+  ascending?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### render
+
+`invoices.render`
+
+Render an invoice PDF and retrieve its document file ID
+
+**Risk:** `read`
+
+```ts
+await corsair.lexoffice.api.invoices.render({ id: 'i-00000000-0000-4000-8000-000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+Document rendering returns a documentFileId for finalized (open) invoices. For draft invoices, Lexoffice returns HTTP 406 Not Acceptable.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentFileId` | `string` | Yes | — |
+
+
+
+---
+
+## Profile
+
+### get
+
+`profile.get`
+
+Retrieve organization and account profile details
+
+**Risk:** `read`
+
+```ts
+await corsair.lexoffice.api.profile.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | Yes | — |
+| `companyName` | `string` | No | — |
+| `created` | `object` | No | — |
+| `connectionId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="created full type">
+
+```ts
+{
+  userId?: string,
+  userName?: string,
+  userEmail?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Vouchers
+
+### create
+
+`vouchers.create`
+
+Create a new bookkeeping voucher
+
+**Risk:** `write`
+
+```ts
+await corsair.lexoffice.api.vouchers.create({ type: 'purchaseinvoice', voucherDate: '2026-01-01', totalNetAmount: 100, totalGrossAmount: 119, taxType: 'net', voucherItems: [{ amount: 100, taxRatePercent: 19, categoryId: 'cat-00000000-0000-4000-8000-000000000001' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `salesinvoice \| salescreditnote \| purchaseinvoice \| purchasecreditnote` | Yes | — |
+| `voucherNumber` | `string` | No | — |
+| `voucherDate` | `string` | Yes | — |
+| `dueDate` | `string` | No | — |
+| `totalNetAmount` | `number` | Yes | — |
+| `totalGrossAmount` | `number` | Yes | — |
+| `taxType` | `net \| gross \| vatfree` | Yes | — |
+| `useCollectiveContact` | `boolean` | No | — |
+| `contactId` | `string` | No | — |
+| `remark` | `string` | No | — |
+| `voucherItems` | `object[]` | Yes | — |
+| `version` | `number` | No | Defaults to 0. |
+
+<AccordionGroup>
+<Accordion title="voucherItems full type">
+
+```ts
+{
+  amount: number,
+  taxAmount?: number,
+  taxRatePercent: number,
+  categoryId: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `resourceUri` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `version` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`vouchers.get`
+
+Retrieve voucher details by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.lexoffice.api.vouchers.get({ id: 'v-00000000-0000-4000-8000-000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `organizationId` | `string` | No | — |
+| `type` | `string` | Yes | — |
+| `voucherStatus` | `string` | Yes | — |
+| `voucherNumber` | `string` | No | — |
+| `voucherDate` | `string` | Yes | — |
+| `dueDate` | `string \| null` | No | — |
+| `totalNetAmount` | `number` | No | — |
+| `totalGrossAmount` | `number` | No | — |
+| `totalTaxAmount` | `number` | No | — |
+| `taxType` | `string` | No | — |
+| `useCollectiveContact` | `boolean` | No | — |
+| `contactId` | `string` | No | — |
+| `contactName` | `string` | No | — |
+| `remark` | `string` | No | — |
+| `voucherItems` | `object[]` | Yes | — |
+| `files` | `object[]` | No | — |
+| `version` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="voucherItems full type">
+
+```ts
+{
+  amount: number,
+  taxAmount?: number,
+  taxRatePercent: number,
+  categoryId: string
+}[]
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+{
+  id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`vouchers.list`
+
+List bookkeeping vouchers with optional voucher number filter
+
+**Risk:** `read`
+
+```ts
+await corsair.lexoffice.api.vouchers.list({ page: 0, size: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voucherNumber` | `string` | No | — |
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `object[]` | Yes | — |
+| `first` | `boolean` | Yes | — |
+| `last` | `boolean` | Yes | — |
+| `totalPages` | `number` | Yes | — |
+| `totalElements` | `number` | Yes | — |
+| `numberOfElements` | `number` | Yes | — |
+| `size` | `number` | Yes | — |
+| `number` | `number` | Yes | — |
+| `sort` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  id: string,
+  voucherType?: string,
+  voucherStatus?: string,
+  voucherNumber?: string,
+  voucherDate: string,
+  totalAmount?: number,
+  currency?: string,
+  createdDate?: string,
+  updatedDate?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="sort full type">
+
+```ts
+{
+  property?: string,
+  direction?: string,
+  ignoreCase?: boolean,
+  nullHandling?: string,
+  ascending?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

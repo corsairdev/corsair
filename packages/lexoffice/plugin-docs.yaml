@@ -1,4 +1,64 @@
-# Display copy for the docs, the catalog, corsair.dev and Hub.
-# `pnpm validate:plugins` fails until the TODO is replaced.
-displayName: "Lexoffice"
-description: TODO one sentence on what the API is and what this plugin can do with it.
+displayName: Lexoffice
+description: Cloud-based accounting, invoicing, and bookkeeping platform for managing contacts, sales invoices, credit notes, and vouchers.
+overviewNote: |
+  Connect with your Lexoffice API key generated in the Lexoffice web dashboard under Settings > Public API.
+examples:
+  read:
+    path: profile.get
+    title: Get organization profile
+    args: {}
+  write:
+    path: contacts.create
+    title: Create a new contact
+    args:
+      version: 0
+      roles:
+        customer: {}
+      person:
+        lastName: Mustermann
+apiExamples:
+  contacts.list:
+    page: 0
+    size: 25
+  contacts.get:
+    id: c-00000000-0000-4000-8000-000000000001
+  contacts.create:
+    version: 0
+    roles:
+      customer: {}
+    person:
+      lastName: Mustermann
+  contacts.update:
+    id: c-00000000-0000-4000-8000-000000000001
+    version: 1
+    roles:
+      customer: {}
+    person:
+      lastName: Mustermann
+  invoices.list:
+    page: 0
+    size: 25
+  invoices.get:
+    id: i-00000000-0000-4000-8000-000000000001
+  invoices.create:
+    call: "{ voucherDate: '2026-01-01', address: { name: 'Acme Corp' }, lineItems: [{ type: 'custom', name: 'Consulting', unitPrice: { currency: 'EUR', netAmount: 100, taxRatePercentage: 19 } }], totalPrice: { currency: 'EUR' }, taxConditions: { taxType: 'net' } }"
+  invoices.render:
+    id: i-00000000-0000-4000-8000-000000000001
+  vouchers.list:
+    page: 0
+    size: 25
+  vouchers.get:
+    id: v-00000000-0000-4000-8000-000000000001
+  vouchers.create:
+    call: "{ type: 'purchaseinvoice', voucherDate: '2026-01-01', totalNetAmount: 100, totalGrossAmount: 119, taxType: 'net', voucherItems: [{ amount: 100, taxRatePercent: 19, categoryId: 'cat-00000000-0000-4000-8000-000000000001' }] }"
+  profile.get: {}
+  creditNotes.list:
+    page: 0
+    size: 25
+  creditNotes.get:
+    id: cn-00000000-0000-4000-8000-000000000001
+apiNotes:
+  invoices.render: |
+    Document rendering returns a documentFileId for finalized (open) invoices. For draft invoices, Lexoffice returns HTTP 406 Not Acceptable.
+  invoices.create: |
+    Invoices cannot be updated or deleted once created via the API due to accounting compliance regulations (GoBD).

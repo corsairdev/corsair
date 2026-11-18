@@ -1,40 +1,40 @@
-import type {
-	BindEndpoints,
-	BindWebhooks,
-	CorsairEndpoint,
-	CorsairErrorHandler,
-	CorsairPlugin,
-	CorsairPluginContext,
-	CorsairWebhook,
-	KeyBuilderContext,
-	PickAuth,
-	PluginAuthConfig,
-	PluginPermissionsConfig,
-	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
+import {
+	AuthMissingError,
+	type AuthTypes,
+	type BindEndpoints,
+	type CorsairEndpoint,
+	type CorsairErrorHandler,
+	type CorsairPlugin,
+	type CorsairPluginContext,
+	type KeyBuilderContext,
+	type PickAuth,
+	type PluginAuthConfig,
+	type PluginPermissionsConfig,
+	type RequiredPluginEndpointMeta,
+	type RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { LexofficeEndpointInputs, LexofficeEndpointOutputs } from './endpoints/types';
-import { LexofficeEndpointInputSchemas, LexofficeEndpointOutputSchemas } from './endpoints/types';
+import {
+	Contacts,
+	CreditNotes,
+	Invoices,
+	Profile,
+	Vouchers,
+} from './endpoints';
 import type {
-	LexofficeWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
-import { Example } from './endpoints';
-import { LexofficeSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
+	LexofficeEndpointInputs,
+	LexofficeEndpointOutputs,
+} from './endpoints/types';
+import {
+	LexofficeEndpointInputSchemas,
+	LexofficeEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
-import { matchLexofficeTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveLexofficeOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { LexofficeSchema } from './schema';
 
 export type LexofficePluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalLexofficePlugin['hooks'];
-	webhookHooks?: InternalLexofficePlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof lexofficeEndpointsNested>;
 };
@@ -44,91 +44,208 @@ export type LexofficeContext = CorsairPluginContext<
 	LexofficePluginOptions
 >;
 
-export type LexofficeKeyBuilderContext = KeyBuilderContext<LexofficePluginOptions>;
+export type LexofficeKeyBuilderContext =
+	KeyBuilderContext<LexofficePluginOptions>;
 
-export type LexofficeBoundEndpoints = BindEndpoints<typeof lexofficeEndpointsNested>;
-
-type LexofficeEndpoint<
-	K extends keyof LexofficeEndpointOutputs,
-> = CorsairEndpoint<
-	LexofficeContext,
-	LexofficeEndpointInputs[K],
-	LexofficeEndpointOutputs[K]
+export type LexofficeBoundEndpoints = BindEndpoints<
+	typeof lexofficeEndpointsNested
 >;
 
+type LexofficeEndpoint<K extends keyof LexofficeEndpointOutputs> =
+	CorsairEndpoint<
+		LexofficeContext,
+		LexofficeEndpointInputs[K],
+		LexofficeEndpointOutputs[K]
+	>;
+
 export type LexofficeEndpoints = {
-	exampleGet: LexofficeEndpoint<'exampleGet'>;
+	contactsList: LexofficeEndpoint<'contactsList'>;
+	contactsGet: LexofficeEndpoint<'contactsGet'>;
+	contactsCreate: LexofficeEndpoint<'contactsCreate'>;
+	contactsUpdate: LexofficeEndpoint<'contactsUpdate'>;
+	invoicesList: LexofficeEndpoint<'invoicesList'>;
+	invoicesGet: LexofficeEndpoint<'invoicesGet'>;
+	invoicesCreate: LexofficeEndpoint<'invoicesCreate'>;
+	invoicesRender: LexofficeEndpoint<'invoicesRender'>;
+	vouchersList: LexofficeEndpoint<'vouchersList'>;
+	vouchersGet: LexofficeEndpoint<'vouchersGet'>;
+	vouchersCreate: LexofficeEndpoint<'vouchersCreate'>;
+	profileGet: LexofficeEndpoint<'profileGet'>;
+	creditNotesList: LexofficeEndpoint<'creditNotesList'>;
+	creditNotesGet: LexofficeEndpoint<'creditNotesGet'>;
 };
-
-type LexofficeWebhook<
-	K extends keyof LexofficeWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<LexofficeContext, TEvent, LexofficeWebhookOutputs[K]>;
-
-export type LexofficeWebhooks = {
-	example: LexofficeWebhook<'example', ExampleEvent>;
-};
-
-export type LexofficeBoundWebhooks = BindWebhooks<LexofficeWebhooks>;
 
 const lexofficeEndpointsNested = {
-	example: {
-		get: Example.get,
+	contacts: {
+		list: Contacts.list,
+		get: Contacts.get,
+		create: Contacts.create,
+		update: Contacts.update,
 	},
-} as const;
-
-const lexofficeWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
+	invoices: {
+		list: Invoices.list,
+		get: Invoices.get,
+		create: Invoices.create,
+		render: Invoices.render,
+	},
+	vouchers: {
+		list: Vouchers.list,
+		get: Vouchers.get,
+		create: Vouchers.create,
+	},
+	profile: {
+		get: Profile.get,
+	},
+	creditNotes: {
+		list: CreditNotes.list,
+		get: CreditNotes.get,
 	},
 } as const;
 
 export const lexofficeEndpointSchemas = {
-	'example.get': {
-		input: LexofficeEndpointInputSchemas.exampleGet,
-		output: LexofficeEndpointOutputSchemas.exampleGet,
+	'contacts.list': {
+		input: LexofficeEndpointInputSchemas.contactsList,
+		output: LexofficeEndpointOutputSchemas.contactsList,
 	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof lexofficeEndpointsNested>;
-
-const lexofficeWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
+	'contacts.get': {
+		input: LexofficeEndpointInputSchemas.contactsGet,
+		output: LexofficeEndpointOutputSchemas.contactsGet,
 	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof lexofficeWebhooksNested>;
+	'contacts.create': {
+		input: LexofficeEndpointInputSchemas.contactsCreate,
+		output: LexofficeEndpointOutputSchemas.contactsCreate,
+	},
+	'contacts.update': {
+		input: LexofficeEndpointInputSchemas.contactsUpdate,
+		output: LexofficeEndpointOutputSchemas.contactsUpdate,
+	},
+	'invoices.list': {
+		input: LexofficeEndpointInputSchemas.invoicesList,
+		output: LexofficeEndpointOutputSchemas.invoicesList,
+	},
+	'invoices.get': {
+		input: LexofficeEndpointInputSchemas.invoicesGet,
+		output: LexofficeEndpointOutputSchemas.invoicesGet,
+	},
+	'invoices.create': {
+		input: LexofficeEndpointInputSchemas.invoicesCreate,
+		output: LexofficeEndpointOutputSchemas.invoicesCreate,
+	},
+	'invoices.render': {
+		input: LexofficeEndpointInputSchemas.invoicesRender,
+		output: LexofficeEndpointOutputSchemas.invoicesRender,
+	},
+	'vouchers.list': {
+		input: LexofficeEndpointInputSchemas.vouchersList,
+		output: LexofficeEndpointOutputSchemas.vouchersList,
+	},
+	'vouchers.get': {
+		input: LexofficeEndpointInputSchemas.vouchersGet,
+		output: LexofficeEndpointOutputSchemas.vouchersGet,
+	},
+	'vouchers.create': {
+		input: LexofficeEndpointInputSchemas.vouchersCreate,
+		output: LexofficeEndpointOutputSchemas.vouchersCreate,
+	},
+	'profile.get': {
+		input: LexofficeEndpointInputSchemas.profileGet,
+		output: LexofficeEndpointOutputSchemas.profileGet,
+	},
+	'creditNotes.list': {
+		input: LexofficeEndpointInputSchemas.creditNotesList,
+		output: LexofficeEndpointOutputSchemas.creditNotesList,
+	},
+	'creditNotes.get': {
+		input: LexofficeEndpointInputSchemas.creditNotesGet,
+		output: LexofficeEndpointOutputSchemas.creditNotesGet,
+	},
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof lexofficeEndpointsNested
+>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const lexofficeEndpointMeta = {
-	'example.get': {
+	'contacts.list': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description: 'List and filter Lexoffice contacts with pagination',
+	},
+	'contacts.get': {
+		riskLevel: 'read',
+		description: 'Retrieve a Lexoffice contact by ID',
+	},
+	'contacts.create': {
+		riskLevel: 'write',
+		description: 'Create a new customer or vendor contact in Lexoffice',
+	},
+	'contacts.update': {
+		riskLevel: 'write',
+		description: 'Update an existing contact in Lexoffice',
+	},
+	'invoices.list': {
+		riskLevel: 'read',
+		description: 'List outgoing invoices with pagination',
+	},
+	'invoices.get': {
+		riskLevel: 'read',
+		description: 'Retrieve invoice details by ID',
+	},
+	'invoices.create': {
+		riskLevel: 'write',
+		description: 'Create an invoice in draft or finalized state',
+	},
+	'invoices.render': {
+		riskLevel: 'read',
+		description:
+			'Render an invoice PDF and retrieve its document file ID',
+	},
+	'vouchers.list': {
+		riskLevel: 'read',
+		description:
+			'List bookkeeping vouchers with optional voucher number filter',
+	},
+	'vouchers.get': {
+		riskLevel: 'read',
+		description: 'Retrieve voucher details by ID',
+	},
+	'vouchers.create': {
+		riskLevel: 'write',
+		description: 'Create a new bookkeeping voucher',
+	},
+	'profile.get': {
+		riskLevel: 'read',
+		description: 'Retrieve organization and account profile details',
+	},
+	'creditNotes.list': {
+		riskLevel: 'read',
+		description: 'List credit notes with pagination',
+	},
+	'creditNotes.get': {
+		riskLevel: 'read',
+		description: 'Retrieve credit note details by ID',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof lexofficeEndpointsNested>;
 
 export const lexofficeAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
-export type BaseLexofficePlugin<T extends LexofficePluginOptions> = CorsairPlugin<
-	'lexoffice',
-	typeof LexofficeSchema,
-	typeof lexofficeEndpointsNested,
-	typeof lexofficeWebhooksNested,
-	T,
-	typeof defaultAuthType
->;
+export type BaseLexofficePlugin<T extends LexofficePluginOptions> =
+	CorsairPlugin<
+		'lexoffice',
+		typeof LexofficeSchema,
+		typeof lexofficeEndpointsNested,
+		Record<string, never>,
+		T,
+		typeof defaultAuthType
+	>;
 
 export type InternalLexofficePlugin = BaseLexofficePlugin<LexofficePluginOptions>;
 
 export type ExternalLexofficePlugin<T extends LexofficePluginOptions> =
 	BaseLexofficePlugin<T>;
+
+const PUBLIC_ENDPOINTS = new Set<string>();
 
 export function lexoffice<const T extends LexofficePluginOptions>(
 	incomingOptions: LexofficePluginOptions & T = {} as LexofficePluginOptions & T,
@@ -137,66 +254,74 @@ export function lexoffice<const T extends LexofficePluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+
+	const { DEFAULT: builtInDefault, ...builtIns } = errorHandlers;
+	const { DEFAULT: callerDefault, ...callers } = options.errorHandlers ?? {};
+	const orderedErrorHandlers = {
+		...callers,
+		...builtIns,
+		...callers,
+		DEFAULT: callerDefault ?? builtInDefault,
+	};
+
 	return {
 		id: 'lexoffice',
 		authConfig: lexofficeAuthConfig,
 		schema: LexofficeSchema,
-		options: options,
+		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: lexofficeEndpointsNested,
-		webhooks: lexofficeWebhooksNested,
+		webhooks: {},
 		endpointMeta: lexofficeEndpointMeta,
 		endpointSchemas: lexofficeEndpointSchemas,
-		webhookSchemas: lexofficeWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-lexoffice-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchLexofficeTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveLexofficeOAuthWebhookTenantLink,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		errorHandlers: orderedErrorHandlers,
 		keyBuilder: async (ctx: LexofficeKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && options.key) {
-				return options.key;
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			if (source !== 'endpoint') return '';
+			if (options.key) return options.key;
+			if (PUBLIC_ENDPOINTS.has(ctx.meteredOperationId ?? '')) return '';
+			if (!ctx.keys) throw new AuthMissingError('lexoffice', 'api_key');
+			const apiKey = await ctx.keys.get_api_key();
+			if (!apiKey) throw new AuthMissingError('lexoffice', 'api_key');
+			return apiKey;
 		},
 	} satisfies InternalLexofficePlugin;
 }
 
 export type {
-	ExampleEvent,
-	LexofficeWebhookOutputs,
-} from './webhooks/types';
-
-export type {
+	Contact,
+	ContactAddress,
+	ContactCompany,
+	ContactCreateInput,
+	ContactPerson,
+	ContactRoles,
+	ContactsGetInput,
+	ContactsListInput,
+	ContactsListResponse,
+	ContactUpdateInput,
+	CreditNoteDetails,
+	CreditNotesGetInput,
+	CreditNotesListInput,
+	CreditNotesListResponse,
+	CreditNoteSummary,
+	InvoiceCreateInput,
+	InvoiceDetails,
+	InvoicesGetInput,
+	InvoicesListInput,
+	InvoicesListResponse,
+	InvoicesRenderInput,
+	InvoicesRenderResponse,
+	InvoiceSummary,
 	LexofficeEndpointInputs,
 	LexofficeEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
+	LineItem,
+	ProfileGetInput,
+	ProfileGetResponse,
+	ResourceMutationResponse,
+	VoucherCreateInput,
+	VoucherDetails,
+	VoucherItem,
+	VouchersGetInput,
+	VouchersListInput,
+	VouchersListResponse,
+	VoucherSummary,
 } from './endpoints/types';
