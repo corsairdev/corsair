@@ -82,30 +82,8 @@ export async function makeRootlyRequest<T>(
 	};
 
 	try {
-		const response = await request<T | string>(config, requestOptions);
-
-		// When the shared request() parser doesn't recognize JSON:API media type
-		// (e.g. application/vnd.api+json), it returns a raw string. Parse to object.
-		if (typeof response === 'string') {
-			try {
-				// JSON.parse returns `any`; returning it directly preserves the
-				// generic T contract without a type assertion.
-				return JSON.parse(response);
-			} catch (parseError) {
-				throw new RootlyAPIError(
-					'Failed to parse Rootly API JSON response',
-					undefined,
-					{ cause: parseError instanceof Error ? parseError : undefined },
-				);
-			}
-		}
-
-		return response;
+		return await request<T>(config, requestOptions);
 	} catch (error) {
-		if (error instanceof RootlyAPIError) {
-			throw error;
-		}
-
 		if (error instanceof ApiError) {
 			throw new RootlyAPIError(error.message, error.status, {
 				cause: error,
